@@ -177,10 +177,16 @@ main {
 }
 
 .caja-card h3 {
-  margin: 0 0 0.6rem;
+  margin: 0 0 0.3rem;
   font-size: 1rem;
   color: var(--accent);
-  text-transform: capitalize;
+}
+
+.caja-desc {
+  margin: 0 0 0.7rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-style: italic;
 }
 
 .caja-card.sin-asignar {

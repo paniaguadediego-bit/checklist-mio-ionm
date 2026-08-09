@@ -23,6 +23,22 @@ conexión a internet (no hace ninguna petición de red).
 - `data/surgeries.js` — **el único archivo que necesitas tocar** para añadir
   o modificar cirugías
 
+## Las cajas del INOMED
+
+El array `"cajas_material"` (arriba del todo en `data/surgeries.js`) es el
+catálogo fijo de las 7 cajas físicas del equipo INOMED:
+caja de estímulo, TES MEP, registro corticales/Erb/CvAnterior, registro
+muscular etiqueta 1 (MMSS), etiqueta 2 (MMII), y las etiquetas 3 y 4 (poco
+usadas). Cada una tiene un `"nombre"` y una `"descripcion"` de uso que se
+muestran en la tarjeta correspondiente.
+
+Cada cirugía referencia estas mismas claves (`"caja_estimulo"`, `"tes_mep"`,
+`"registro_cortical"`, `"registro_muscular_mmss"`, `"registro_muscular_mmii"`,
+`"caja_etiqueta_3"`, `"caja_etiqueta_4"`) dentro de su propio `"cajas"`,
+incluyendo solo las que usa. Si en el futuro hace falta una caja que no está
+en el catálogo, puedes usar cualquier otra clave libre — se mostrará con un
+título genérico sin descripción.
+
 ## Cómo añadir una cirugía nueva
 
 Abre `data/surgeries.js` y añade un objeto nuevo dentro de `"cirugias"`.
@@ -34,10 +50,10 @@ a partir de las claves que pongas.
   "nombre": "Nombre visible de la cirugía",
   "modalidades": ["PESS", "PEM"],
   "cajas": {
-    "caja_1": [
+    "caja_estimulo": [
       { "item": "Nombre del ítem", "material": "Tipo de material", "cantidad": 2 }
     ],
-    "otra_caja": [
+    "registro_cortical": [
       { "item": "Otro ítem", "cantidad_pares": 3, "detalle": "Texto opcional" }
     ]
   }
@@ -46,9 +62,10 @@ a partir de las claves que pongas.
 
 Puntos importantes:
 
-- `"cajas"` puede tener **cualquier número de cajas con cualquier nombre**
-  (claves libres, por ejemplo `"cabeza"`, `"resto"`, `"registro_cortical"`...).
-  Cada una se renderiza como una tarjeta independiente.
+- `"cajas"` puede tener **cualquier número de cajas**; lo normal es usar las
+  claves del catálogo `"cajas_material"`, pero admite cualquier nombre libre.
+  Cada una se renderiza como una tarjeta independiente, en el orden del
+  catálogo.
 - Cada ítem admite estos campos, todos opcionales salvo `"item"`:
   - `"material"` — tipo de material (aguja, pegatina, etc.)
   - `"cantidad"` / `"cantidad_pares"` / `"cantidad_paquetes"` — usa el que
@@ -72,15 +89,17 @@ Dentro de una cirugía, añade un bloque `"opciones"`:
     "etiqueta": "¿Se usa tal cosa?",
     "descripcion": "Texto opcional de aclaración",
     "items_extra": [
-      { "item": "Ítem extra", "cantidad": 1 }
+      { "item": "Ítem extra", "cantidad": 1, "caja": "tes_mep" }
     ]
   }
 }
 ```
 
 Cada opción aparece como un checkbox encima del checklist. Al marcarlo, sus
-`"items_extra"` se añaden a una tarjeta "Material añadido por opciones" sin
-recargar la página; al desmarcarlo, desaparecen.
+`"items_extra"` se insertan sin recargar la página; al desmarcarlo,
+desaparecen. Si un ítem extra lleva `"caja"`, se añade dentro de esa caja
+(con un fondo distinto para diferenciarlo). Si no lleva `"caja"`, aparece en
+una tarjeta aparte "Material añadido por opciones".
 
 ## Material base
 

@@ -88,6 +88,11 @@
     return key.replace(/_/g, " ");
   }
 
+  function cajaInfo(key) {
+    var catalogo = DATA.cajas_material || {};
+    return catalogo[key] || { nombre: "Caja " + humanizeCajaName(key), descripcion: "" };
+  }
+
   function renderMaterialBase() {
     var base = DATA.material_base || {};
     document.getElementById("base-descripcion").textContent = base.descripcion || "";
@@ -166,6 +171,23 @@
     });
   }
 
+  function ordenCajas(cirugia, cajaKeysConExtras) {
+    var catalogoKeys = Object.keys(DATA.cajas_material || {});
+    var presentes = Object.keys(cirugia.cajas || {}).concat(cajaKeysConExtras);
+    var vistos = {};
+    var enCatalogo = catalogoKeys.filter(function (k) {
+      var ok = presentes.indexOf(k) !== -1 && !vistos[k];
+      if (ok) vistos[k] = true;
+      return ok;
+    });
+    var fueraDeCatalogo = presentes.filter(function (k) {
+      var ok = catalogoKeys.indexOf(k) === -1 && !vistos[k];
+      if (ok) vistos[k] = true;
+      return ok;
+    });
+    return enCatalogo.concat(fueraDeCatalogo);
+  }
+
   function renderChecklist(cirugiaId) {
     checklistContainer.innerHTML = "";
     var cirugia = (DATA.cirugias || {})[cirugiaId];
@@ -201,24 +223,49 @@
     grid.className = "cajas-grid";
 
     var cajas = cirugia.cajas || {};
-    Object.keys(cajas).forEach(function (cajaKey) {
+    var extraActivos = itemsExtraActivos(cirugia, cirugiaId);
+    var extrasConCaja = extraActivos.filter(function (i) { return !!i.caja; });
+    var extrasSinCaja = extraActivos.filter(function (i) { return !i.caja; });
+    var cajaKeysConExtras = extrasConCaja.map(function (i) { return i.caja; });
+
+    ordenCajas(cirugia, cajaKeysConExtras).forEach(function (cajaKey) {
+      var itemsBase = cajas[cajaKey] || [];
+      var itemsExtraDeCaja = extrasConCaja.filter(function (i) { return i.caja === cajaKey; });
+      if (!itemsBase.length && !itemsExtraDeCaja.length) return;
+
+      var info = cajaInfo(cajaKey);
       var cajaCard = document.createElement("div");
       cajaCard.className = "card caja-card";
       var h3 = document.createElement("h3");
-      h3.textContent = "Caja " + humanizeCajaName(cajaKey);
+      h3.textContent = info.nombre;
       cajaCard.appendChild(h3);
-      cajaCard.appendChild(renderItemList(cajas[cajaKey], null));
+      if (info.descripcion) {
+        var desc = document.createElement("p");
+        desc.className = "caja-desc";
+        desc.textContent = info.descripcion;
+        cajaCard.appendChild(desc);
+      }
+
+      var ul = renderItemList(itemsBase, null);
+      itemsExtraDeCaja.forEach(function (item) {
+        ul.appendChild(renderItemLi(item, "item-extra"));
+      });
+      // quita el mensaje "sin ítems" si al final sí hay contenido de opciones
+      if (itemsBase.length === 0 && itemsExtraDeCaja.length > 0) {
+        var hint = ul.querySelector(".empty-hint");
+        if (hint) hint.remove();
+      }
+      cajaCard.appendChild(ul);
       grid.appendChild(cajaCard);
     });
 
-    var extraActivos = itemsExtraActivos(cirugia, cirugiaId);
-    if (extraActivos.length) {
+    if (extrasSinCaja.length) {
       var extraCard = document.createElement("div");
       extraCard.className = "card caja-card";
       var h3e = document.createElement("h3");
       h3e.textContent = "Material añadido por opciones";
       extraCard.appendChild(h3e);
-      extraCard.appendChild(renderItemList(extraActivos, "item-extra"));
+      extraCard.appendChild(renderItemList(extrasSinCaja, "item-extra"));
       grid.appendChild(extraCard);
     }
 
