@@ -1,0 +1,289 @@
+:root {
+  --bg: #f4f6f8;
+  --card-bg: #ffffff;
+  --border: #d9dfe4;
+  --text: #1f2933;
+  --text-muted: #5c6b73;
+  --accent: #2f6f4f;
+  --accent-light: #e4f1ea;
+  --pendiente-bg: #fff4e5;
+  --pendiente-border: #e8a33d;
+  --pendiente-text: #8a5a12;
+  --tag-bg: #e8edf1;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+header {
+  background: var(--accent);
+  color: #fff;
+  padding: 1.5rem 1.5rem 1.25rem;
+}
+
+header h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.4rem;
+}
+
+.subtitle {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 0.95rem;
+}
+
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.base-card {
+  border-left: 5px solid var(--accent);
+}
+
+.base-card h2 {
+  margin-top: 0;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-size: 0.7rem;
+  font-weight: normal;
+  background: var(--tag-bg);
+  color: var(--text-muted);
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+}
+
+.descripcion {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin: 0.25rem 0 0.5rem;
+}
+
+.cajas-nombres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+}
+
+.caja-chip {
+  background: var(--accent-light);
+  color: var(--accent);
+  font-size: 0.8rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+}
+
+.selector-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.selector-card label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
+}
+
+#cirugia-select {
+  width: 100%;
+  padding: 0.55rem 0.6rem;
+  font-size: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+}
+
+.opcion-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.8rem 1.1rem;
+  margin-bottom: 1.25rem;
+}
+
+.opcion-checkbox input {
+  margin-top: 0.2rem;
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.opcion-checkbox .opcion-text strong {
+  display: block;
+}
+
+.opcion-checkbox .opcion-text small {
+  color: var(--text-muted);
+}
+
+.cirugia-header {
+  margin-bottom: 1rem;
+}
+
+.cirugia-header h2 {
+  margin: 0 0 0.3rem;
+}
+
+.modalidades {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.modalidad-chip {
+  font-size: 0.75rem;
+  background: var(--tag-bg);
+  color: var(--text-muted);
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+}
+
+.cajas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.caja-card h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1rem;
+  color: var(--accent);
+  text-transform: capitalize;
+}
+
+.caja-card.sin-asignar {
+  border-left: 5px solid var(--pendiente-border);
+}
+
+.caja-card.sin-asignar h3 {
+  color: var(--pendiente-text);
+}
+
+.item-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item-list li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.item-list li:last-child {
+  border-bottom: none;
+}
+
+.item-nombre {
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.item-cantidad {
+  color: var(--accent);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.item-material {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.item-detalle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
+
+.item-sitios {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.35rem;
+}
+
+.sitio-chip {
+  font-size: 0.72rem;
+  background: var(--tag-bg);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.item-extra {
+  background: var(--accent-light);
+}
+
+.pendiente-nota {
+  background: var(--pendiente-bg);
+  border: 1px solid var(--pendiente-border);
+  color: var(--pendiente-text);
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  font-size: 0.88rem;
+  margin-bottom: 1rem;
+}
+
+.pendiente-nota strong {
+  display: inline-block;
+  margin-right: 0.3rem;
+}
+
+.empty-hint {
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14181b;
+    --card-bg: #1e2529;
+    --border: #313a3f;
+    --text: #e6ebee;
+    --text-muted: #a2adb3;
+    --accent: #4caf7d;
+    --accent-light: #1f2f27;
+    --pendiente-bg: #332612;
+    --pendiente-border: #b5822c;
+    --pendiente-text: #e8b767;
+    --tag-bg: #2a3236;
+  }
+  #cirugia-select { background: #1e2529; color: var(--text); }
+}

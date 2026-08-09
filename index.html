@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist material MIO/IONM</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Checklist de material — MIO/IONM</h1>
+  <p class="subtitle">Selecciona el tipo de cirugía para ver el material necesario</p>
+</header>
+
+<main>
+  <section class="card base-card" id="material-base">
+    <h2>Material base <span class="tag">común a todas las cirugías</span></h2>
+    <p class="descripcion" id="base-descripcion"></p>
+    <div class="cajas-nombres" id="base-cajas"></div>
+    <ul class="item-list" id="base-items"></ul>
+  </section>
+
+  <section class="selector-card">
+    <label for="cirugia-select">Tipo de cirugía</label>
+    <select id="cirugia-select">
+      <option value="">— Selecciona una cirugía —</option>
+    </select>
+  </section>
+
+  <section id="opciones-container"></section>
+
+  <section id="checklist-container"></section>
+</main>
+
+<script src="data/surgeries.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
