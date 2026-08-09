@@ -68,18 +68,31 @@ window.SURGERIES_DATA = {
         "tes_mep": [
           {
             "item": "Electrodos sacacorchos — estimulación",
-            "sitios": ["Cz-1", "Cz+6cm", "C1", "C2", "C3", "C4"],
+            "sitios": [
+              { "nombre": "Cz-1" },
+              { "nombre": "Cz+6cm" },
+              { "nombre": "C1", "color": "verde" },
+              { "nombre": "C2", "color": "amarillo" },
+              { "nombre": "C3", "color": "rojo" },
+              { "nombre": "C4", "color": "azul" }
+            ],
             "cantidad": 6
           }
         ],
         "registro_cortical": [
           {
             "item": "Electrodos sacacorchos — registro",
-            "sitios": ["Cz'", "C3'", "C4'", "Fz", "Cv2"],
+            "sitios": [
+              { "nombre": "Cz'" },
+              { "nombre": "C3'", "color": "rojo" },
+              { "nombre": "C4'", "color": "azul" },
+              { "nombre": "Fz" },
+              { "nombre": "Cv2" }
+            ],
             "cantidad": 5
           },
-          { "item": "Registro cervical anterior (CvAnt)", "material": "Aguja monopolar", "cantidad": 1 },
-          { "item": "Punto de Erb", "material": "Agujas trenzadas", "cantidad_pares": 1 },
+          { "item": "Registro cervical anterior (CvAnt)", "material": "Aguja subdérmica", "detalle": "Registro monopolar", "cantidad": 1 },
+          { "item": "Punto de Erb", "material": "Agujas trenzadas", "detalle": "Colores: roja y negra", "cantidad_pares": 1 },
           { "item": "Tierra", "material": "Aguja subdérmica", "cantidad": 1 }
         ],
         "registro_muscular_mmss": [
@@ -117,18 +130,31 @@ window.SURGERIES_DATA = {
         "tes_mep": [
           {
             "item": "Electrodos sacacorchos — estimulación",
-            "sitios": ["C1", "C2", "C3", "C4", "Cz-1", "Cz+6"],
+            "sitios": [
+              { "nombre": "C1", "color": "verde" },
+              { "nombre": "C2", "color": "amarillo" },
+              { "nombre": "C3", "color": "rojo" },
+              { "nombre": "C4", "color": "azul" },
+              { "nombre": "Cz-1" },
+              { "nombre": "Cz+6" }
+            ],
             "cantidad": 6
           }
         ],
         "registro_cortical": [
           {
             "item": "Electrodos sacacorchos — registro",
-            "sitios": ["Fz", "Cz'", "C3'", "C4'", "Cv2"],
+            "sitios": [
+              { "nombre": "Fz" },
+              { "nombre": "Cz'" },
+              { "nombre": "C3'", "color": "rojo" },
+              { "nombre": "C4'", "color": "azul" },
+              { "nombre": "Cv2" }
+            ],
             "cantidad": 5
           },
-          { "item": "Registro cervical anterior (CvAnt)", "material": "Aguja monopolar", "cantidad": 1 },
-          { "item": "Punto de Erb", "material": "Agujas trenzadas", "cantidad_pares": 1 },
+          { "item": "Registro cervical anterior (CvAnt)", "material": "Aguja subdérmica", "detalle": "Registro monopolar", "cantidad": 1 },
+          { "item": "Punto de Erb", "material": "Agujas trenzadas", "detalle": "Colores: roja y negra", "cantidad_pares": 1 },
           { "item": "Tierra", "material": "Aguja subdérmica", "cantidad": 1 }
         ],
         "registro_muscular_mmss": [

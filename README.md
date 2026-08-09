@@ -71,7 +71,11 @@ Puntos importantes:
   - `"cantidad"` / `"cantidad_pares"` / `"cantidad_paquetes"` — usa el que
     corresponda; se muestra como etiqueta de cantidad
   - `"detalle"` — texto libre con aclaraciones
-  - `"sitios"` — lista de ubicaciones/electrodos, se muestran como chips
+  - `"sitios"` — lista de ubicaciones/electrodos, se muestran como chips.
+    Cada sitio puede ser un texto simple (`"Fz"`) o un objeto con color
+    real del electrodo: `{ "nombre": "C3", "color": "rojo" }`. Colores
+    admitidos: `rojo`, `azul`, `verde`, `amarillo`. Código de color del
+    INOMED: C1/C5 verde, C2/C6 amarillo, C3 y C3' rojo, C4 y C4' azul.
 - Si tienes material que aún no has repartido entre cajas, ponlo en un array
   `"sin_asignar"` al mismo nivel que `"cajas"` — aparece en una tarjeta
   aparte llamada "Sin asignar todavía".

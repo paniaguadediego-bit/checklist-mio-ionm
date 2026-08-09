@@ -57,9 +57,17 @@
       var sitiosDiv = document.createElement("div");
       sitiosDiv.className = "item-sitios";
       item.sitios.forEach(function (sitio) {
+        var esObjeto = typeof sitio === "object" && sitio !== null;
+        var nombre = esObjeto ? sitio.nombre : sitio;
+        var color = esObjeto ? sitio.color : null;
         var chip = document.createElement("span");
         chip.className = "sitio-chip";
-        chip.textContent = sitio;
+        if (color) {
+          var dot = document.createElement("span");
+          dot.className = "color-dot color-" + color;
+          chip.appendChild(dot);
+        }
+        chip.appendChild(document.createTextNode(nombre));
         sitiosDiv.appendChild(chip);
       });
       li.appendChild(sitiosDiv);
