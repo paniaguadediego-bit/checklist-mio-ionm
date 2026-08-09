@@ -49,7 +49,15 @@ window.SURGERIES_DATA = {
   },
   "material_base": {
     "descripcion": "Común a todas las cirugías, no se repite por checklist",
-    "cajas": ["1 cortical", "2 de registro", "2 de estímulo"],
+    "cajas": [
+      "Caja de estímulo",
+      "TES MEP",
+      "Registro corticales, Erb, CvAnterior",
+      "Registro muscular — etiqueta 1",
+      "Registro muscular — etiqueta 2",
+      "Caja etiqueta 3",
+      "Caja etiqueta 4"
+    ],
     "items": []
   },
   "cirugias": {
@@ -59,9 +67,9 @@ window.SURGERIES_DATA = {
       "cajas": {
         "caja_estimulo": [
           {
-            "item": "Estimulación periférica (para PESS)",
+            "item": "Estimulación periférica (para PESS y reflejo H)",
             "material": "Pegatinas",
-            "detalle": "Tibial posterior, hueco poplíteo, mediano o cubital",
+            "detalle": "Tibial posterior, hueco poplíteo (reflejo H), mediano o cubital",
             "cantidad_pares": 6
           }
         ],
