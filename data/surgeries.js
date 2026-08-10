@@ -109,8 +109,8 @@ window.SURGERIES_DATA = {
         { "id": "c2", "nombre": "C2", "color": "amarillo", "material": "Electrodo sacacorchos" },
         { "id": "c3", "nombre": "C3", "color": "rojo", "material": "Electrodo sacacorchos" },
         { "id": "c4", "nombre": "C4", "color": "azul", "material": "Electrodo sacacorchos" },
-        { "id": "c5", "nombre": "C5", "color": "verde", "material": "Electrodo sacacorchos" },
-        { "id": "c6", "nombre": "C6", "color": "amarillo", "material": "Electrodo sacacorchos" },
+        { "id": "c5", "nombre": "C5", "color": "verde", "material": "Electrodo sacacorchos", "nota": "Vías corticobulbares (pares craneales) — combinación principal junto a C6; admite otras con distintas referencias" },
+        { "id": "c6", "nombre": "C6", "color": "amarillo", "material": "Electrodo sacacorchos", "nota": "Vías corticobulbares (pares craneales) — combinación principal junto a C5; admite otras con distintas referencias" },
         { "id": "cz_menos1", "nombre": "Cz-1", "material": "Electrodo sacacorchos" },
         { "id": "cz_mas6", "nombre": "Cz+6cm", "material": "Electrodo sacacorchos" },
         {
@@ -132,41 +132,58 @@ window.SURGERIES_DATA = {
         { "id": "fz", "nombre": "Fz", "material": "Electrodo sacacorchos", "nota": "Referencia habitual" },
         { "id": "cv2", "nombre": "Cv2", "material": "Electrodo sacacorchos" },
         { "id": "cz_doble_prima", "nombre": "Cz''", "material": "Electrodo sacacorchos", "nota": "Alternativa a Ref.Raabe (ánodo de referencia)" },
-        { "id": "ref_raabe", "nombre": "Ref.Raabe", "material": "Electrodo sacacorchos", "nota": "Referencia del estimulador Raabe" }
+        { "id": "ref_raabe", "nombre": "Ref.Raabe", "color": "rojo", "material": "Electrodo sacacorchos", "nota": "Referencia del estimulador Raabe — ánodo (entrada roja)" }
       ]
     },
     {
       "categoria": "Registro cervical / plexo",
       "items": [
-        { "id": "cvant", "nombre": "CvAnt", "material": "Aguja subdérmica", "nota": "Registro cervical anterior, monopolar" },
-        { "id": "erb1", "nombre": "Erb1", "material": "Aguja trenzada", "nota": "Punto de Erb — trenzada roja y negra" },
-        { "id": "erb2", "nombre": "Erb2", "material": "Aguja trenzada", "nota": "Punto de Erb — trenzada roja y negra" }
+        { "id": "cvant", "nombre": "CvAnt", "color": "amarillo", "material": "Aguja subdérmica", "nota": "Registro cervical anterior, monopolar" },
+        { "id": "erb1", "nombre": "Erb1", "color": "negro", "material": "Aguja trenzada (par)", "media_unidad": true, "nota": "Punto de Erb — aguja negra del par trenzado (Erb1 + Erb2 = 1 paquete)" },
+        { "id": "erb2", "nombre": "Erb2", "color": "rojo", "material": "Aguja trenzada (par)", "media_unidad": true, "nota": "Punto de Erb — aguja roja del par trenzado (Erb1 + Erb2 = 1 paquete)" }
       ]
     },
     {
       "categoria": "Músculos MMSS",
       "items": [
-        { "id": "l_apb", "nombre": "L.APB", "material": "Agujas trenzadas (par)", "nota": "Abductor pollicis brevis izquierdo" },
-        { "id": "r_apb", "nombre": "R.APB", "material": "Agujas trenzadas (par)", "nota": "Abductor pollicis brevis derecho" },
-        { "id": "l_fdio", "nombre": "L.Fdio", "material": "Agujas trenzadas (par)", "nota": "1er interóseo dorsal izquierdo" },
-        { "id": "r_fdio", "nombre": "R.Fdio", "material": "Agujas trenzadas (par)", "nota": "1er interóseo dorsal derecho" },
-        { "id": "l_ext", "nombre": "L.E", "material": "Agujas trenzadas (par)", "nota": "Extensor izquierdo" },
-        { "id": "r_ext", "nombre": "R.E", "material": "Agujas trenzadas (par)", "nota": "Extensor derecho" },
-        { "id": "l_bcps", "nombre": "L.B", "material": "Agujas trenzadas (par)", "nota": "Bíceps izquierdo" },
-        { "id": "r_bcps", "nombre": "R.B", "material": "Agujas trenzadas (par)", "nota": "Bíceps derecho" }
+        { "id": "l_apb", "nombre": "L.APB", "material": "Aguja trenzada (par)", "nota": "Abductor pollicis brevis izquierdo" },
+        { "id": "r_apb", "nombre": "R.APB", "material": "Aguja trenzada (par)", "nota": "Abductor pollicis brevis derecho" },
+        { "id": "l_fdio", "nombre": "L.Fdio", "material": "Aguja trenzada (par)", "nota": "1er interóseo dorsal izquierdo" },
+        { "id": "r_fdio", "nombre": "R.Fdio", "material": "Aguja trenzada (par)", "nota": "1er interóseo dorsal derecho" },
+        { "id": "l_ext", "nombre": "L.E", "material": "Aguja trenzada (par)", "nota": "Extensor izquierdo" },
+        { "id": "r_ext", "nombre": "R.E", "material": "Aguja trenzada (par)", "nota": "Extensor derecho" },
+        { "id": "l_bcps", "nombre": "L.B", "material": "Aguja trenzada (par)", "nota": "Bíceps izquierdo" },
+        { "id": "r_bcps", "nombre": "R.B", "material": "Aguja trenzada (par)", "nota": "Bíceps derecho" }
+      ]
+    },
+    {
+      "categoria": "Músculos craneales (pares craneales)",
+      "items": [
+        { "id": "l_mass", "nombre": "L.Mass", "material": "Aguja trenzada (par)", "nota": "Maseterino izquierdo — V par craneal" },
+        { "id": "r_mass", "nombre": "R.Mass", "material": "Aguja trenzada (par)", "nota": "Maseterino derecho — V par craneal" },
+        { "id": "l_ooc", "nombre": "L.OOc", "material": "Aguja trenzada (par)", "nota": "Orbicular de los párpados izquierdo — VII par; registro del Blink Reflex" },
+        { "id": "r_ooc", "nombre": "R.OOc", "material": "Aguja trenzada (par)", "nota": "Orbicular de los párpados derecho — VII par; registro del Blink Reflex" },
+        { "id": "l_ment", "nombre": "L.Ment", "material": "Aguja trenzada (par)", "nota": "Mentoniano izquierdo — VII par craneal" },
+        { "id": "r_ment", "nombre": "R.Ment", "material": "Aguja trenzada (par)", "nota": "Mentoniano derecho — VII par craneal" },
+        { "id": "l_crico", "nombre": "L.Crico", "material": "Aguja trenzada (par)", "nota": "Cricotiroideo izquierdo — X par; registro del reflejo trigémino-cervical" },
+        { "id": "r_crico", "nombre": "R.Crico", "material": "Aguja trenzada (par)", "nota": "Cricotiroideo derecho — X par; registro del reflejo trigémino-cervical" },
+        { "id": "l_vocal", "nombre": "L.Vocal", "material": "Sensor de tubo orotraqueal", "nota": "Cuerda vocal izquierda — X par; sensor bilateral en tubo orotraqueal; registro del reflejo trigémino-vocal" },
+        { "id": "r_vocal", "nombre": "R.Vocal", "material": "Sensor de tubo orotraqueal", "nota": "Cuerda vocal derecha — X par; sensor bilateral en tubo orotraqueal; registro del reflejo trigémino-vocal" },
+        { "id": "l_stcm", "nombre": "L.STCM", "material": "Aguja trenzada (par)", "nota": "Esternocleidomastoideo izquierdo — XI par; registro del reflejo trigémino-cervical" },
+        { "id": "r_stcm", "nombre": "R.STCM", "material": "Aguja trenzada (par)", "nota": "Esternocleidomastoideo derecho — XI par; registro del reflejo trigémino-cervical" }
       ]
     },
     {
       "categoria": "Músculos MMII",
       "items": [
-        { "id": "l_q", "nombre": "L.Q", "material": "Agujas trenzadas (par)", "nota": "Cuádriceps izquierdo" },
-        { "id": "r_q", "nombre": "R.Q", "material": "Agujas trenzadas (par)", "nota": "Cuádriceps derecho" },
-        { "id": "l_ta", "nombre": "L.Ta", "material": "Agujas trenzadas (par)", "nota": "Tibial anterior izquierdo" },
-        { "id": "r_ta", "nombre": "R.Ta", "material": "Agujas trenzadas (par)", "nota": "Tibial anterior derecho" },
-        { "id": "l_ah", "nombre": "L.Ah", "material": "Agujas trenzadas (par)", "nota": "Abductor hallucis izquierdo" },
-        { "id": "r_ah", "nombre": "R.Ah", "material": "Agujas trenzadas (par)", "nota": "Abductor hallucis derecho" },
-        { "id": "l_g", "nombre": "L.G", "material": "Agujas trenzadas (par)", "nota": "Gastrocnemio medial izquierdo" },
-        { "id": "r_g", "nombre": "R.G", "material": "Agujas trenzadas (par)", "nota": "Gastrocnemio medial derecho" }
+        { "id": "l_q", "nombre": "L.Q", "material": "Aguja trenzada (par)", "nota": "Cuádriceps izquierdo" },
+        { "id": "r_q", "nombre": "R.Q", "material": "Aguja trenzada (par)", "nota": "Cuádriceps derecho" },
+        { "id": "l_ta", "nombre": "L.Ta", "material": "Aguja trenzada (par)", "nota": "Tibial anterior izquierdo" },
+        { "id": "r_ta", "nombre": "R.Ta", "material": "Aguja trenzada (par)", "nota": "Tibial anterior derecho" },
+        { "id": "l_ah", "nombre": "L.Ah", "material": "Aguja trenzada (par)", "nota": "Abductor hallucis izquierdo" },
+        { "id": "r_ah", "nombre": "R.Ah", "material": "Aguja trenzada (par)", "nota": "Abductor hallucis derecho" },
+        { "id": "l_g", "nombre": "L.G", "material": "Aguja trenzada (par)", "nota": "Gastrocnemio medial izquierdo" },
+        { "id": "r_g", "nombre": "R.G", "material": "Aguja trenzada (par)", "nota": "Gastrocnemio medial derecho" }
       ]
     },
     {
@@ -183,6 +200,17 @@ window.SURGERIES_DATA = {
       ]
     },
     {
+      "categoria": "Estimulación trigeminal (reflejos)",
+      "items": [
+        { "id": "l_v1", "nombre": "L.V1", "material": "Pegatinas (par)", "nota": "Rama oftálmica izquierda del V par — Blink Reflex (registro en orbiculares oculi)" },
+        { "id": "r_v1", "nombre": "R.V1", "material": "Pegatinas (par)", "nota": "Rama oftálmica derecha del V par — Blink Reflex (registro en orbiculares oculi)" },
+        { "id": "l_v2", "nombre": "L.V2", "material": "Pegatinas (par)", "nota": "Rama maxilar izquierda del V par — reflejo trigémino-cervical (registro en STCM y cricotiroideo)" },
+        { "id": "r_v2", "nombre": "R.V2", "material": "Pegatinas (par)", "nota": "Rama maxilar derecha del V par — reflejo trigémino-cervical (registro en STCM y cricotiroideo)" },
+        { "id": "l_v3", "nombre": "L.V3", "material": "Pegatinas (par)", "nota": "Rama mandibular izquierda del V par — reflejo trigémino-vocal (registro en cuerdas vocales)" },
+        { "id": "r_v3", "nombre": "R.V3", "material": "Pegatinas (par)", "nota": "Rama mandibular derecha del V par — reflejo trigémino-vocal (registro en cuerdas vocales)" }
+      ]
+    },
+    {
       "categoria": "GRID / estimulación directa",
       "items": [
         { "id": "grid1", "nombre": "GRID 1", "material": "Electrodo de grid" },
@@ -195,7 +223,7 @@ window.SURGERIES_DATA = {
         { "id": "grid8", "nombre": "GRID 8", "material": "Electrodo de grid" },
         { "id": "dcs_v2", "nombre": "DCS / V2", "material": "Sin determinar", "nota": "Aparece rotulado en el canal 8 anodal de la caja real — función sin confirmar" },
         { "id": "hc", "nombre": "HC", "material": "Sin determinar", "nota": "Aparece rotulado en el canal 11 de la caja real — función sin confirmar" },
-        { "id": "raabe_estim", "nombre": "Raabe (estímulo)", "material": "Sonda Raabe", "nota": "Cátodo negro del estimulador tipo aspiración" }
+        { "id": "raabe_estim", "nombre": "Raabe (estímulo)", "color": "negro", "material": "Sonda Raabe", "nota": "Cátodo del estimulador tipo aspiración (entrada negra)" }
       ]
     },
     {

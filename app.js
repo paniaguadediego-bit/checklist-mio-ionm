@@ -594,7 +594,8 @@
           if (sel) nombre += " → " + sel;
         }
         detalle.push({ entrada: etiqueta, nombre: nombre, color: item.color });
-        totalMaterial[item.material] = (totalMaterial[item.material] || 0) + 1;
+        // media_unidad: dos entradas que salen del mismo paquete (Erb1 + Erb2)
+        totalMaterial[item.material] = (totalMaterial[item.material] || 0) + (item.media_unidad ? 0.5 : 1);
         totalEntradas++;
       });
       if (detalle.length) {
@@ -628,7 +629,12 @@
       td1.textContent = mat;
       var td2 = document.createElement("td");
       td2.className = "num";
-      td2.textContent = totalMaterial[mat];
+      // Media unidad suelta: se redondea hacia arriba (hay que abrir el paquete igual)
+      var cantidad = totalMaterial[mat];
+      td2.textContent = Number.isInteger(cantidad) ? cantidad : Math.ceil(cantidad);
+      if (!Number.isInteger(cantidad)) {
+        td2.title = "Redondeado hacia arriba: " + cantidad + " paquetes en uso";
+      }
       tr.appendChild(td1);
       tr.appendChild(td2);
       tbodyMat.appendChild(tr);

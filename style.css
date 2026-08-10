@@ -390,6 +390,7 @@ body.hay-seleccion .slot:hover {
 .color-dot.color-azul { background: #2f6fd6; }
 .color-dot.color-verde { background: #2f9e44; }
 .color-dot.color-amarillo { background: #e0b400; }
+.color-dot.color-negro { background: #16181a; border-color: rgba(255,255,255,0.75); }
 
 /* ------------------------------- Cajas --------------------------------- */
 .cajas-grid {
