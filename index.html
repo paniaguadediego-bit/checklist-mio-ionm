@@ -7,54 +7,51 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-  <h1>Checklist de material — MIO/IONM</h1>
-  <p class="subtitle">Monta el escenario de la cirugía y obtén el material necesario</p>
+
+<header class="barra-sup">
+  <span class="marca">MIO<span class="marca-sep">/</span>IONM</span>
+  <select id="escenario-select" aria-label="Escenario de cirugía"></select>
+  <span class="barra-flex"></span>
+  <button type="button" id="btn-quirofano" class="btn-modo" title="Oculta el catálogo y las técnicas para dejar solo el montaje y el resumen">Modo quirófano</button>
 </header>
 
 <main>
 
   <section class="toolbar no-print">
-    <div class="toolbar-fila">
-      <label for="escenario-select">Escenario de cirugía</label>
-      <select id="escenario-select"></select>
-    </div>
-    <div class="toolbar-botones">
-      <button type="button" id="btn-nuevo">+ Nuevo</button>
-      <button type="button" id="btn-duplicar">Duplicar</button>
-      <button type="button" id="btn-renombrar">Renombrar</button>
-      <button type="button" id="btn-vaciar">Vaciar</button>
-      <button type="button" id="btn-borrar" class="peligro">Borrar</button>
-      <span class="toolbar-sep"></span>
-      <button type="button" id="btn-exportar">Exportar JSON</button>
-      <button type="button" id="btn-imprimir">Imprimir resumen</button>
-      <button type="button" id="btn-restablecer" class="peligro">Restablecer todo</button>
-    </div>
-    <p class="guardado-aviso" id="guardado-aviso"></p>
+    <button type="button" id="btn-nuevo">Nuevo</button>
+    <button type="button" id="btn-duplicar">Duplicar</button>
+    <button type="button" id="btn-renombrar">Renombrar</button>
+    <button type="button" id="btn-vaciar">Vaciar</button>
+    <button type="button" id="btn-borrar" class="peligro">Borrar</button>
+    <span class="barra-flex"></span>
+    <button type="button" id="btn-exportar">Exportar</button>
+    <button type="button" id="btn-imprimir">Imprimir</button>
+    <button type="button" id="btn-restablecer" class="peligro">Restablecer</button>
+    <span class="guardado-aviso" id="guardado-aviso"></span>
   </section>
 
   <div class="layout">
 
     <aside class="panel-catalogo no-print" id="panel-catalogo">
       <div class="panel-cab">
-        <h2>Catálogo maestro</h2>
+        <h2>Catálogo</h2>
         <button type="button" id="btn-plegar" title="Plegar / desplegar">▾</button>
       </div>
       <input type="search" id="catalogo-buscar" placeholder="Buscar material…" autocomplete="off">
       <p class="panel-ayuda">
-        Pulsa un ítem para <b>seleccionarlo</b> y luego pulsa la entrada donde
-        va. También puedes arrastrarlo. Para quitarlo de una entrada: la ✕ o
-        arrástralo aquí.
+        Pulsa un ítem y luego la entrada donde va. También puedes arrastrarlo.
+        Para quitarlo: ✕ o arrástralo aquí.
       </p>
       <div id="catalogo-contenido"></div>
     </aside>
 
     <div class="columna-principal">
+
       <section class="card tecnicas-card no-print" id="tecnicas">
-        <div class="tecnicas-cab">
+        <div class="card-cab">
           <h2>Técnicas</h2>
           <label class="perfil-label">
-            Aplicar perfil
+            Perfil
             <select id="perfil-select"></select>
           </label>
         </div>
@@ -62,11 +59,14 @@
       </section>
 
       <section class="card resumen-card" id="resumen">
-        <h2>Resumen de material</h2>
+        <div class="card-cab">
+          <h2>Resumen de material</h2>
+        </div>
         <div id="resumen-contenido"></div>
       </section>
 
       <section id="cajas-contenido"></section>
+
     </div>
 
   </div>
@@ -74,8 +74,8 @@
 </main>
 
 <div class="barra-seleccion no-print" id="barra-seleccion" hidden>
-  <span class="bs-texto">Colocando <b id="bs-nombre"></b> — pulsa una entrada</span>
-  <button type="button" id="bs-cancelar">Cancelar (Esc)</button>
+  <span>Colocando <b id="bs-nombre"></b> — pulsa una entrada</span>
+  <button type="button" id="bs-cancelar">Cancelar</button>
 </div>
 
 <script src="data/surgeries.js"></script>

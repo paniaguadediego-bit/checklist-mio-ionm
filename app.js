@@ -400,7 +400,8 @@
 
       var bloque = document.createElement("div");
       bloque.className = "catalogo-grupo";
-      var h = document.createElement("h4");
+      var h = document.createElement("div");
+      h.className = "grupo-titulo";
       h.textContent = grupo.categoria;
       bloque.appendChild(h);
       var fila = document.createElement("div");
@@ -432,7 +433,8 @@
     TECNICAS.forEach(function (grupo) {
       var bloque = document.createElement("div");
       bloque.className = "tecnicas-grupo";
-      var h = document.createElement("h4");
+      var h = document.createElement("div");
+      h.className = "grupo-titulo";
       h.textContent = grupo.grupo;
       bloque.appendChild(h);
 
@@ -549,24 +551,31 @@
     var card = document.createElement("div");
     card.className = "card caja-card";
 
+    var cab = document.createElement("div");
+    cab.className = "caja-cab";
+
     var h3 = document.createElement("h3");
     h3.textContent = info.nombre;
-    card.appendChild(h3);
+    cab.appendChild(h3);
+
+    // La descripción va en un icono con tooltip para no gastar altura
+    if (info.descripcion) {
+      var info_i = document.createElement("span");
+      info_i.className = "caja-info";
+      info_i.textContent = "i";
+      info_i.title = info.descripcion;
+      cab.appendChild(info_i);
+    }
 
     var usadas = entradas.filter(function (e) {
       return !!asignacionesDe(cajaKey)[e.id];
     }).length;
     var contador = document.createElement("span");
     contador.className = "caja-contador" + (usadas === 0 ? " vacia" : "");
-    contador.textContent = usadas + " / " + entradas.length + " entradas";
-    card.appendChild(contador);
+    contador.textContent = usadas + "/" + entradas.length;
+    cab.appendChild(contador);
 
-    if (info.descripcion) {
-      var d = document.createElement("p");
-      d.className = "caja-desc";
-      d.textContent = info.descripcion;
-      card.appendChild(d);
-    }
+    card.appendChild(cab);
 
     var box = document.createElement("div");
     box.className = "caja-fisica";
@@ -737,13 +746,21 @@
       return;
     }
 
+    // Dos columnas: recuento a la izquierda, desglose por caja a la derecha
+    var cols = document.createElement("div");
+    cols.className = "resumen-cols";
+    var colIzq = document.createElement("div");
+    var colDer = document.createElement("div");
+    cols.appendChild(colIzq);
+    cols.appendChild(colDer);
+    cont.appendChild(cols);
+
     // Bloque: material total
     var secMat = document.createElement("div");
     secMat.className = "resumen-bloque";
     secMat.innerHTML = "<h3>Material a preparar</h3>";
     var tablaMat = document.createElement("table");
     tablaMat.className = "tabla-resumen";
-    tablaMat.innerHTML = "<thead><tr><th>Material</th><th>Cantidad</th></tr></thead>";
     var tbodyMat = document.createElement("tbody");
     Object.keys(totalMaterial).sort().forEach(function (mat) {
       var tr = document.createElement("tr");
@@ -763,7 +780,7 @@
     });
     tablaMat.appendChild(tbodyMat);
     secMat.appendChild(tablaMat);
-    cont.appendChild(secMat);
+    colIzq.appendChild(secMat);
 
     // Bloque: cajas necesarias
     var secCajas = document.createElement("div");
@@ -802,7 +819,7 @@
       bloque.appendChild(lista);
       secCajas.appendChild(bloque);
     });
-    cont.appendChild(secCajas);
+    colDer.appendChild(secCajas);
 
     // Bloque: material extra (no ocupa entrada)
     if (extras.length) {
@@ -819,7 +836,7 @@
         listaEx.appendChild(el);
       });
       secEx.appendChild(listaEx);
-      cont.appendChild(secEx);
+      colIzq.appendChild(secEx);
     }
 
     // Avisos
@@ -993,6 +1010,22 @@
     if (e.key === "Escape") seleccionar(null);
   });
 
+  // Modo quirófano: deja solo el montaje y el resumen, sin herramientas de edición
+  var MODO_KEY = "mio_ionm_modo_quirofano";
+
+  function aplicarModoQuirofano(activo) {
+    document.body.classList.toggle("modo-quirofano", activo);
+    var btn = document.getElementById("btn-quirofano");
+    btn.classList.toggle("activo", activo);
+    btn.textContent = activo ? "Salir del modo quirófano" : "Modo quirófano";
+    try { localStorage.setItem(MODO_KEY, activo ? "1" : "0"); } catch (e) { /* sin persistencia */ }
+    if (activo) seleccionar(null);
+  }
+
+  document.getElementById("btn-quirofano").addEventListener("click", function () {
+    aplicarModoQuirofano(!document.body.classList.contains("modo-quirofano"));
+  });
+
   document.getElementById("btn-plegar").addEventListener("click", function () {
     var panel = document.getElementById("panel-catalogo");
     panel.classList.toggle("plegado");
@@ -1005,5 +1038,10 @@
   cargarEstado();
   renderPerfilSelect();
   renderTodo();
+  try {
+    aplicarModoQuirofano(localStorage.getItem(MODO_KEY) === "1");
+  } catch (e) {
+    aplicarModoQuirofano(false);
+  }
   avisoGuardado("Los cambios se guardan solos en este navegador.");
 })();

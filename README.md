@@ -27,6 +27,17 @@ conexión a internet (no hace ninguna petición de red).
 - `data/surgeries.js` — **el único archivo que necesitas tocar**, con tres
   bloques: `cajas_material`, `catalogo_material` y `escenarios`
 
+## Modo quirófano
+
+El botón **Modo quirófano** (arriba a la derecha) oculta el catálogo, las
+técnicas y los botones de edición, y deja solo el resumen —fijado en la
+parte superior— y las cajas montadas, en una rejilla compacta que se ve de
+un vistazo. Está pensado para consultar durante la cirugía, no para editar.
+El selector de escenario sigue accesible, y se puede seguir quitando o
+moviendo material si hace falta un ajuste sobre la marcha.
+
+El modo se recuerda entre sesiones en ese navegador.
+
 ## Cómo funciona
 
 ### 1. Catálogo maestro
