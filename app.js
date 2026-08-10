@@ -101,6 +101,7 @@
     var info = catalogo[key] || { nombre: "Caja " + humanizeCajaName(key), descripcion: "" };
     if (!info.canales) info.canales = 8;
     if (!info.conector) info.conector = "par";
+    if (!info.especiales) info.especiales = [];
     return info;
   }
 
@@ -108,7 +109,14 @@
     var out = [];
     var contador = 0;
     (items || []).forEach(function (item) {
-      if (item.sitios && item.sitios.length) {
+      if (item.conmutador) {
+        contador++;
+        var opciones = (item.sitios || []).map(function (sitio) {
+          var esObjeto = typeof sitio === "object" && sitio !== null;
+          return { nombre: esObjeto ? sitio.nombre : sitio, color: esObjeto ? sitio.color : null };
+        });
+        out.push({ id: cajaKey + "-u" + contador, label: item.item, tipo: "conmutador", opciones: opciones });
+      } else if (item.sitios && item.sitios.length) {
         item.sitios.forEach(function (sitio) {
           var esObjeto = typeof sitio === "object" && sitio !== null;
           var nombre = esObjeto ? sitio.nombre : sitio;
@@ -133,6 +141,22 @@
     chip.className = "pool-chip";
     chip.draggable = true;
     chip.dataset.unidadId = unidad.id;
+
+    if (unidad.tipo === "conmutador") {
+      chip.classList.add("chip-conmutador");
+      chip.appendChild(document.createTextNode(unidad.label + " "));
+      var select = document.createElement("select");
+      unidad.opciones.forEach(function (op) {
+        var opt = document.createElement("option");
+        opt.textContent = op.color ? op.nombre + " (" + op.color + ")" : op.nombre;
+        select.appendChild(opt);
+      });
+      select.addEventListener("mousedown", function (e) { e.stopPropagation(); });
+      select.addEventListener("click", function (e) { e.stopPropagation(); });
+      chip.appendChild(select);
+      return chip;
+    }
+
     if (unidad.color) {
       var dot = document.createElement("span");
       dot.className = "color-dot color-" + unidad.color;
@@ -191,6 +215,78 @@
     });
   }
 
+  function crearSlot(datasetInfo) {
+    var slot = document.createElement("div");
+    slot.className = "canal-slot";
+    Object.keys(datasetInfo || {}).forEach(function (k) {
+      slot.dataset[k] = datasetInfo[k];
+    });
+    return slot;
+  }
+
+  function crearConector(clase) {
+    var c = document.createElement("span");
+    c.className = "conector " + clase;
+    return c;
+  }
+
+  function crearFilaSimple(etiqueta, conectorClase) {
+    var row = document.createElement("div");
+    row.className = "canal-row";
+    var num = document.createElement("span");
+    num.className = "canal-num";
+    num.textContent = etiqueta;
+    row.appendChild(num);
+    var conectores = document.createElement("span");
+    conectores.className = "canal-conectores";
+    conectores.appendChild(crearConector(conectorClase));
+    row.appendChild(conectores);
+    var slot = crearSlot({ canal: etiqueta });
+    row.appendChild(slot);
+    return row;
+  }
+
+  function crearFilaPar(etiqueta) {
+    var row = document.createElement("div");
+    row.className = "canal-row";
+    var num = document.createElement("span");
+    num.className = "canal-num";
+    num.textContent = etiqueta;
+    row.appendChild(num);
+    var conectores = document.createElement("span");
+    conectores.className = "canal-conectores";
+    conectores.appendChild(crearConector("rojo"));
+    conectores.appendChild(crearConector("negro"));
+    row.appendChild(conectores);
+    var slot = crearSlot({ canal: etiqueta });
+    row.appendChild(slot);
+    return row;
+  }
+
+  function crearFilaAnodalCatodal(numero) {
+    var row = document.createElement("div");
+    row.className = "canal-row canal-row-doble";
+
+    var num = document.createElement("span");
+    num.className = "canal-num";
+    num.textContent = numero;
+    row.appendChild(num);
+
+    var mitadA = document.createElement("div");
+    mitadA.className = "canal-mitad";
+    mitadA.appendChild(crearConector("rojo"));
+    mitadA.appendChild(crearSlot({ canal: numero, polo: "anodal" }));
+    row.appendChild(mitadA);
+
+    var mitadC = document.createElement("div");
+    mitadC.className = "canal-mitad";
+    mitadC.appendChild(crearConector("negro"));
+    mitadC.appendChild(crearSlot({ canal: numero, polo: "catodal" }));
+    row.appendChild(mitadC);
+
+    return row;
+  }
+
   function renderCajaFisica(cajaKey, itemsBase, itemsExtra) {
     var info = cajaInfo(cajaKey);
 
@@ -204,6 +300,9 @@
 
     var box = document.createElement("div");
     box.className = "caja-fisica";
+    if (info.conector === "anodal_catodal" || info.conector === "individual_2col") {
+      box.classList.add("caja-fisica-ancha");
+    }
 
     var tab = document.createElement("div");
     tab.className = "caja-fisica-tab";
@@ -212,39 +311,65 @@
 
     var canalesWrap = document.createElement("div");
     canalesWrap.className = "canales-wrap";
-    for (var i = 1; i <= info.canales; i++) {
-      var row = document.createElement("div");
-      row.className = "canal-row";
+    var i;
 
-      var num = document.createElement("span");
-      num.className = "canal-num";
-      num.textContent = i;
-      row.appendChild(num);
-
-      var conectores = document.createElement("span");
-      conectores.className = "canal-conectores";
-      if (info.conector === "par") {
-        var rojo = document.createElement("span");
-        rojo.className = "conector rojo";
-        var negro = document.createElement("span");
-        negro.className = "conector negro";
-        conectores.appendChild(rojo);
-        conectores.appendChild(negro);
-      } else {
-        var ind = document.createElement("span");
-        ind.className = "conector individual";
-        conectores.appendChild(ind);
+    if (info.conector === "anodal_catodal") {
+      canalesWrap.classList.add("anodal-catodal-header");
+      var cabecera = document.createElement("div");
+      cabecera.className = "canal-row canal-row-doble canal-cabecera";
+      var espaciador = document.createElement("span");
+      espaciador.className = "canal-num";
+      cabecera.appendChild(espaciador);
+      var etA = document.createElement("div");
+      etA.className = "canal-mitad-titulo";
+      etA.textContent = "Anodal (rojo)";
+      cabecera.appendChild(etA);
+      var etC = document.createElement("div");
+      etC.className = "canal-mitad-titulo";
+      etC.textContent = "Catodal (negro)";
+      cabecera.appendChild(etC);
+      canalesWrap.appendChild(cabecera);
+      for (i = 1; i <= info.canales; i++) {
+        canalesWrap.appendChild(crearFilaAnodalCatodal(i));
       }
-      row.appendChild(conectores);
-
-      var slot = document.createElement("div");
-      slot.className = "canal-slot";
-      slot.dataset.canal = i;
-      row.appendChild(slot);
-
-      canalesWrap.appendChild(row);
+    } else if (info.conector === "individual_2col") {
+      canalesWrap.classList.add("dos-columnas");
+      var mitad = Math.ceil(info.canales / 2);
+      var colIzq = document.createElement("div");
+      colIzq.className = "columna-canales";
+      var colDer = document.createElement("div");
+      colDer.className = "columna-canales";
+      for (i = 1; i <= mitad; i++) {
+        colIzq.appendChild(crearFilaSimple(i, "individual"));
+      }
+      for (i = mitad + 1; i <= info.canales; i++) {
+        colDer.appendChild(crearFilaSimple(i, "individual"));
+      }
+      canalesWrap.appendChild(colIzq);
+      canalesWrap.appendChild(colDer);
+    } else {
+      for (i = 1; i <= info.canales; i++) {
+        canalesWrap.appendChild(info.conector === "par" ? crearFilaPar(i) : crearFilaSimple(i, "individual"));
+      }
     }
     box.appendChild(canalesWrap);
+
+    if (info.especiales && info.especiales.length) {
+      var especialesWrap = document.createElement("div");
+      especialesWrap.className = "canales-especiales";
+      info.especiales.forEach(function (esp) {
+        var row = esp.conector === "par" ? crearFilaPar(esp.nombre) : crearFilaSimple(esp.nombre, esp.color ? esp.color : "individual");
+        row.querySelector(".canal-slot").dataset.canal = esp.clave;
+        if (esp.nota) {
+          var nota = document.createElement("span");
+          nota.className = "canal-especial-nota";
+          nota.textContent = esp.nota;
+          row.appendChild(nota);
+        }
+        especialesWrap.appendChild(row);
+      });
+      box.appendChild(especialesWrap);
+    }
 
     var plate = document.createElement("div");
     plate.className = "caja-fisica-plate";

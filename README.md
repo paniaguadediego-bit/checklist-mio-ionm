@@ -39,12 +39,35 @@ incluyendo solo las que usa. Si en el futuro hace falta una caja que no está
 en el catálogo, puedes usar cualquier otra clave libre — se mostrará con un
 título genérico sin descripción.
 
-Cada entrada del catálogo admite además `"canales"` (número de entradas de
-la caja física) y `"conector"` (`"par"` para entradas rojo+negro tipo
-estímulo/registro muscular, o `"individual"` para un único círculo tipo
-REF-AEP). Son aproximados a partir de fotos reales del equipo — ajústalos
-si no cuadran. Si una caja no los especifica, se usa 8 canales tipo "par"
-por defecto.
+Cada entrada del catálogo admite además `"canales"` (número de entradas) y
+`"conector"`, con cuatro tipos posibles:
+
+- `"par"` — una sola entrada roja+negra por número (agujas trenzadas/
+  pareadas: registro muscular, estímulo). Un ítem ocupa las dos a la vez.
+- `"individual"` — un único círculo por número, en una sola columna.
+- `"individual_2col"` — como `"individual"` pero repartido en 2 columnas
+  de `canales / 2` (p. ej. REF-AEP: 1-8 a la izquierda, 9-16 a la derecha).
+- `"anodal_catodal"` — 2 columnas independientes que comparten numeración
+  (TES MEP): izquierda = anodal/rojo, derecha = catodal/negro. Cada lado
+  se puede arrastrar por separado, no van ligados como en `"par"`.
+
+Además puede llevar `"especiales"`: un array de conectores fijos fuera de
+la numeración normal (p. ej. Ref, GND, PEATC de REF-AEP, o el DNS de la
+caja de estímulo), cada uno con `"clave"`, `"nombre"`, `"conector"`
+(`"individual"` o `"par"`) y opcionalmente `"color"` (p. ej. `"amarillo"`
+para PEATC) y `"nota"` (texto aclaratorio, p. ej. "Habitualmente Fz").
+
+Estos valores son una aproximación a partir de fotos reales del equipo —
+ajústalos si no cuadran. Si una caja no especifica `"canales"`/`"conector"`,
+se usan 8 canales tipo `"par"` por defecto.
+
+### Ítem "conmutador" (TES MEP)
+
+Un ítem puede llevar `"conmutador": true` cuando representa una sola
+entrada física que se subdivide por software entre varias combinaciones
+(el canal 6 anodal de TES MEP, que alterna entre C1/C2/C3/C4/Cz-1/Cz+6).
+En ese caso `"sitios"` define las opciones del desplegable que aparece
+junto al chip en la caja física, en vez de generar un chip por sitio.
 
 ## Vista de caja física (arrastrar y soltar)
 

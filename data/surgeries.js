@@ -22,19 +22,28 @@ window.SURGERIES_DATA = {
       "nombre": "Caja de estímulo",
       "descripcion": "Uso principalmente para mediano y tibial posterior, aunque puede variar según la cirugía por comodidad (p. ej. a la altura de las piernas, usando tibial posterior y hueco poplíteo para el H-reflex).",
       "canales": 4,
-      "conector": "par"
+      "conector": "par",
+      "especiales": [
+        { "clave": "dns", "nombre": "DNS", "conector": "individual", "nota": "Función sin confirmar" },
+        { "clave": "extra_par", "nombre": "Entrada adicional", "conector": "par", "nota": "Sin nombre ni numeración en la caja real" }
+      ]
     },
     "tes_mep": {
       "nombre": "TES MEP",
-      "descripcion": "Conmutador en el canal 6 con las combinaciones de ánodo/cátodo (C1, C2, C3, C4, Cz-1, Cz+6); incluye los canales del GRID (entradas de cátodo, negras) y el Raabe (cátodo negro que estimula + ánodo rojo de referencia).",
+      "descripcion": "Columna izquierda (roja) = anodal: el canal 6 es el conmutador que se subdivide en C1/C2/C3/C4/Cz-1/Cz+6; el resto de canales anodales sirven de referencia (Raabe, Cz'', etc.). Columna derecha (negra) = catodal, todo estimulación catódica; ahí suele ir el GRID (habitualmente en el 8) tras el phase reversal.",
       "canales": 12,
-      "conector": "par"
+      "conector": "anodal_catodal"
     },
     "registro_cortical": {
-      "nombre": "Registro corticales, Erb, CvAnterior",
-      "descripcion": "Registro cortical, punto de Erb y CvAnterior; si se usan, también potenciales auditivos.",
-      "canales": 8,
-      "conector": "individual"
+      "nombre": "Registro corticales, Erb, CvAnterior (REF-AEP)",
+      "descripcion": "16 entradas individuales en 2 columnas de 8, más Ref (habitualmente Fz), GND y la entrada de PEATC (amarilla) si se usan potenciales auditivos.",
+      "canales": 16,
+      "conector": "individual_2col",
+      "especiales": [
+        { "clave": "ref", "nombre": "Ref", "conector": "individual", "nota": "Habitualmente Fz" },
+        { "clave": "gnd", "nombre": "GND", "conector": "individual" },
+        { "clave": "peatc", "nombre": "PEATC", "conector": "individual", "color": "amarillo" }
+      ]
     },
     "registro_muscular_mmss": {
       "nombre": "Registro muscular — etiqueta 1",
@@ -84,12 +93,15 @@ window.SURGERIES_DATA = {
             "item": "Estimulación periférica (para PESS y reflejo H)",
             "material": "Pegatinas",
             "detalle": "Tibial posterior, hueco poplíteo (reflejo H), mediano o cubital",
+            "sitios": ["L.Mediano", "R.Mediano", "L.Tibial post.", "R.Tibial post.", "L.Poplíteo (H)", "R.Poplíteo (H)"],
             "cantidad_pares": 6
           }
         ],
         "tes_mep": [
           {
-            "item": "Electrodos sacacorchos — estimulación",
+            "item": "Conmutador (canal 6 anodal)",
+            "detalle": "Se subdivide por software entre estas 6 combinaciones; solo ocupa la entrada 6 anodal.",
+            "conmutador": true,
             "sitios": [
               { "nombre": "Cz-1" },
               { "nombre": "Cz+6cm" },
@@ -122,6 +134,7 @@ window.SURGERIES_DATA = {
             "item": "Registro muscular — 1er interóseo (control)",
             "material": "Agujas subdérmicas pareadas",
             "detalle": "1 par por lado, bilateral",
+            "sitios": ["L.Fdio", "R.Fdio"],
             "cantidad_pares": 2
           },
           { "item": "Tierra", "material": "Aguja subdérmica", "cantidad": 1 }
@@ -131,6 +144,7 @@ window.SURGERIES_DATA = {
             "item": "Registro muscular",
             "material": "Agujas subdérmicas pareadas",
             "detalle": "4 niveles por lado: cuádriceps, tibial anterior, abductor hallucis, gastrocnemio medial",
+            "sitios": ["L.Q", "R.Q", "L.Ta", "R.Ta", "L.Ah", "R.Ah", "L.G", "R.G"],
             "cantidad_pares": 8
           },
           { "item": "Tierra", "material": "Aguja subdérmica", "cantidad": 1 }
@@ -146,12 +160,15 @@ window.SURGERIES_DATA = {
             "item": "Estimulación periférica",
             "material": "Pegatinas",
             "detalle": "Mediano bilateral, tibial posterior bilateral, hueco poplíteo (reflejo H) bilateral — 1 par por lado y sitio",
+            "sitios": ["L.Mediano", "R.Mediano", "L.Tibial post.", "R.Tibial post.", "L.Poplíteo (H)", "R.Poplíteo (H)"],
             "cantidad_pares": 6
           }
         ],
         "tes_mep": [
           {
-            "item": "Electrodos sacacorchos — estimulación",
+            "item": "Conmutador (canal 6 anodal)",
+            "detalle": "Se subdivide por software entre estas 6 combinaciones; solo ocupa la entrada 6 anodal.",
+            "conmutador": true,
             "sitios": [
               { "nombre": "C1", "color": "verde" },
               { "nombre": "C2", "color": "amarillo" },
@@ -161,6 +178,12 @@ window.SURGERIES_DATA = {
               { "nombre": "Cz+6" }
             ],
             "cantidad": 6
+          },
+          {
+            "item": "GRID (electrodo de tira)",
+            "material": "Electrodo de grid",
+            "detalle": "Va en la columna catódica (derecha), tras el phase reversal, para identificar la zona motora. La entrada 8 es la más habitual, pero se puede colocar en cualquiera de la columna catódica.",
+            "sitios": ["GRID 1", "GRID 2", "GRID 3", "GRID 4", "GRID 5", "GRID 6", "GRID 7", "GRID 8"]
           }
         ],
         "registro_cortical": [
@@ -184,6 +207,7 @@ window.SURGERIES_DATA = {
             "item": "Registro muscular — 1er interóseo y extensor",
             "material": "Paquete de agujas trenzadas",
             "detalle": "1 paquete por músculo y lado, bilateral. Si se amplía, siempre en el lado contralateral a la lesión.",
+            "sitios": ["L.Fdio", "R.Fdio", "L.E", "R.E"],
             "cantidad_paquetes": 4
           },
           { "item": "Tierra", "material": "Aguja subdérmica", "cantidad": 1 }
@@ -193,6 +217,7 @@ window.SURGERIES_DATA = {
             "item": "Registro muscular — tibial anterior y abductor hallucis",
             "material": "Paquete de agujas trenzadas",
             "detalle": "1 paquete por músculo y lado, bilateral. Si se amplía, siempre en el lado contralateral a la lesión.",
+            "sitios": ["L.Ta", "R.Ta", "L.Ah", "R.Ah"],
             "cantidad_paquetes": 4
           },
           { "item": "Tierra", "material": "Aguja subdérmica", "cantidad": 1 }
