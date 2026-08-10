@@ -139,8 +139,8 @@ window.SURGERIES_DATA = {
       "categoria": "Registro cervical / plexo",
       "items": [
         { "id": "cvant", "nombre": "CvAnt", "color": "amarillo", "material": "Aguja subdérmica", "nota": "Registro cervical anterior, monopolar" },
-        { "id": "erb1", "nombre": "Erb1", "color": "negro", "material": "Aguja trenzada (par)", "media_unidad": true, "nota": "Punto de Erb — aguja negra del par trenzado (Erb1 + Erb2 = 1 paquete)" },
-        { "id": "erb2", "nombre": "Erb2", "color": "rojo", "material": "Aguja trenzada (par)", "media_unidad": true, "nota": "Punto de Erb — aguja roja del par trenzado (Erb1 + Erb2 = 1 paquete)" }
+        { "id": "erb1", "nombre": "Erb1", "color": "rojo", "material": "Aguja trenzada (par)", "media_unidad": true, "nota": "Punto de Erb — aguja roja del par trenzado (Erb1 + Erb2 = 1 paquete)" },
+        { "id": "erb2", "nombre": "Erb2", "color": "negro", "material": "Aguja trenzada (par)", "media_unidad": true, "nota": "Punto de Erb — aguja negra del par trenzado (Erb1 + Erb2 = 1 paquete)" }
       ]
     },
     {
