@@ -39,8 +39,9 @@ window.SURGERIES_DATA = {
     },
     "tes_mep": {
       "nombre": "TES MEP",
-      "descripcion": "Dos columnas independientes. Anodal (roja): el canal 6 es el conmutador que se subdivide en C1/C2/C3/C4/Cz-1/Cz+6; el resto sirven de referencia (Ref.Raabe, Cz''...). Catodal (negra): estimulación catódica, ahí va el GRID (habitualmente el 8) tras el phase reversal.",
-      "canales": 12,
+      "descripcion": "Numerada del 5 al 12 (no tiene entradas 1-4). Dos columnas independientes. Anodal (roja): el canal 6 es el conmutador que se subdivide en C1/C2/C3/C4/Cz-1/Cz+6; el resto sirven de referencia (Ref.Raabe, Cz''...). Catodal (negra): estimulación catódica, ahí van el GRID (habitualmente el 8) tras el phase reversal y el estimulador Raabe (habitualmente el 12).",
+      "canales": 8,
+      "numeracion_inicio": 5,
       "conector": "anodal_catodal"
     },
     "registro_cortical": {
@@ -113,6 +114,7 @@ window.SURGERIES_DATA = {
         { "id": "cz_menos1", "nombre": "Cz-1", "material": "Electrodo sacacorchos" },
         { "id": "cz_mas6", "nombre": "Cz+6cm", "material": "Electrodo sacacorchos" },
         { "id": "mapping", "nombre": "Mapping", "material": "Sonda de mapeo cortical", "nota": "Mapeo cortical con técnica de Penfield" },
+        { "id": "raabe_estim", "nombre": "Raabe (estímulo)", "color": "negro", "material": "Sonda Raabe", "nota": "Estimulador cortical tipo aspiración — cátodo, columna catodal (negra) de TES MEP, habitualmente el canal 12. Su ánodo de referencia es Ref.Raabe" },
         {
           "id": "conmutador",
           "nombre": "Conmutador",
@@ -222,8 +224,7 @@ window.SURGERIES_DATA = {
         { "id": "grid7", "nombre": "GRID 7", "material": "Electrodo de grid" },
         { "id": "grid8", "nombre": "GRID 8", "material": "Electrodo de grid" },
         { "id": "dcs_v2", "nombre": "DCS / V2", "material": "Sin determinar", "nota": "Aparece rotulado en el canal 8 anodal de la caja real — función sin confirmar" },
-        { "id": "hc", "nombre": "HC", "material": "Sin determinar", "nota": "Aparece rotulado en el canal 11 de la caja real — función sin confirmar" },
-        { "id": "raabe_estim", "nombre": "Raabe (estímulo)", "color": "negro", "material": "Sonda Raabe", "nota": "Cátodo del estimulador tipo aspiración (entrada negra)" }
+        { "id": "hc", "nombre": "HC", "material": "Sin determinar", "nota": "Aparece rotulado en el canal 11 de la caja real — función sin confirmar" }
       ]
     },
     {
