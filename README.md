@@ -39,6 +39,28 @@ incluyendo solo las que usa. Si en el futuro hace falta una caja que no está
 en el catálogo, puedes usar cualquier otra clave libre — se mostrará con un
 título genérico sin descripción.
 
+Cada entrada del catálogo admite además `"canales"` (número de entradas de
+la caja física) y `"conector"` (`"par"` para entradas rojo+negro tipo
+estímulo/registro muscular, o `"individual"` para un único círculo tipo
+REF-AEP). Son aproximados a partir de fotos reales del equipo — ajústalos
+si no cuadran. Si una caja no los especifica, se usa 8 canales tipo "par"
+por defecto.
+
+## Vista de caja física (arrastrar y soltar)
+
+Cada tarjeta de caja incluye, debajo del listado de material, un dibujo de
+la caja física (forma vertical, cabecera "kΩ", entradas numeradas, placa
+con el nombre abajo) con el material de esa caja como chips sueltos debajo
+("Material sin colocar"). Puedes arrastrar cualquier chip a una entrada
+para ver cómo quedaría la caja montada, mover uno de una entrada a otra, o
+devolverlo al grupo de "sin colocar".
+
+Esto es **solo una ayuda visual de la sesión actual**: no se guarda en
+ningún sitio ni se sincroniza con git. Al recargar la página vuelve a
+empezar con todo sin colocar. Los datos que sí son fijos (qué material
+lleva cada cirugía, en qué caja) siguen viviendo en `data/surgeries.js`
+como siempre.
+
 ## Cómo añadir una cirugía nueva
 
 Abre `data/surgeries.js` y añade un objeto nuevo dentro de `"cirugias"`.

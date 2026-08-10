@@ -20,31 +20,45 @@ window.SURGERIES_DATA = {
   "cajas_material": {
     "caja_estimulo": {
       "nombre": "Caja de estímulo",
-      "descripcion": "Uso principalmente para mediano y tibial posterior, aunque puede variar según la cirugía por comodidad (p. ej. a la altura de las piernas, usando tibial posterior y hueco poplíteo para el H-reflex)."
+      "descripcion": "Uso principalmente para mediano y tibial posterior, aunque puede variar según la cirugía por comodidad (p. ej. a la altura de las piernas, usando tibial posterior y hueco poplíteo para el H-reflex).",
+      "canales": 4,
+      "conector": "par"
     },
     "tes_mep": {
       "nombre": "TES MEP",
-      "descripcion": "Conmutador en el canal 6 con las combinaciones de ánodo/cátodo (C1, C2, C3, C4, Cz-1, Cz+6); incluye los canales del GRID (entradas de cátodo, negras) y el Raabe (cátodo negro que estimula + ánodo rojo de referencia)."
+      "descripcion": "Conmutador en el canal 6 con las combinaciones de ánodo/cátodo (C1, C2, C3, C4, Cz-1, Cz+6); incluye los canales del GRID (entradas de cátodo, negras) y el Raabe (cátodo negro que estimula + ánodo rojo de referencia).",
+      "canales": 12,
+      "conector": "par"
     },
     "registro_cortical": {
       "nombre": "Registro corticales, Erb, CvAnterior",
-      "descripcion": "Registro cortical, punto de Erb y CvAnterior; si se usan, también potenciales auditivos."
+      "descripcion": "Registro cortical, punto de Erb y CvAnterior; si se usan, también potenciales auditivos.",
+      "canales": 8,
+      "conector": "individual"
     },
     "registro_muscular_mmss": {
       "nombre": "Registro muscular — etiqueta 1",
-      "descripcion": "Generalmente miembros superiores, aunque puede variar."
+      "descripcion": "Generalmente miembros superiores, aunque puede variar.",
+      "canales": 8,
+      "conector": "par"
     },
     "registro_muscular_mmii": {
       "nombre": "Registro muscular — etiqueta 2",
-      "descripcion": "Generalmente miembros inferiores, aunque puede variar."
+      "descripcion": "Generalmente miembros inferiores, aunque puede variar.",
+      "canales": 8,
+      "conector": "par"
     },
     "caja_etiqueta_3": {
       "nombre": "Caja etiqueta 3",
-      "descripcion": "No se suele usar, pero está disponible si se necesita."
+      "descripcion": "No se suele usar, pero está disponible si se necesita.",
+      "canales": 8,
+      "conector": "par"
     },
     "caja_etiqueta_4": {
       "nombre": "Caja etiqueta 4",
-      "descripcion": "No se suele usar, pero está disponible si se necesita."
+      "descripcion": "No se suele usar, pero está disponible si se necesita.",
+      "canales": 8,
+      "conector": "par"
     }
   },
   "material_base": {

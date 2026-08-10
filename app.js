@@ -98,7 +98,178 @@
 
   function cajaInfo(key) {
     var catalogo = DATA.cajas_material || {};
-    return catalogo[key] || { nombre: "Caja " + humanizeCajaName(key), descripcion: "" };
+    var info = catalogo[key] || { nombre: "Caja " + humanizeCajaName(key), descripcion: "" };
+    if (!info.canales) info.canales = 8;
+    if (!info.conector) info.conector = "par";
+    return info;
+  }
+
+  function construirUnidades(items, cajaKey) {
+    var out = [];
+    var contador = 0;
+    (items || []).forEach(function (item) {
+      if (item.sitios && item.sitios.length) {
+        item.sitios.forEach(function (sitio) {
+          var esObjeto = typeof sitio === "object" && sitio !== null;
+          var nombre = esObjeto ? sitio.nombre : sitio;
+          var color = esObjeto ? sitio.color : null;
+          contador++;
+          out.push({ id: cajaKey + "-u" + contador, label: nombre, color: color });
+        });
+      } else {
+        var cantidad = item.cantidad || item.cantidad_pares || item.cantidad_paquetes || 1;
+        for (var i = 1; i <= cantidad; i++) {
+          contador++;
+          var label = cantidad > 1 ? item.item + " (" + i + "/" + cantidad + ")" : item.item;
+          out.push({ id: cajaKey + "-u" + contador, label: label, color: null });
+        }
+      }
+    });
+    return out;
+  }
+
+  function crearChipUnidad(unidad) {
+    var chip = document.createElement("span");
+    chip.className = "pool-chip";
+    chip.draggable = true;
+    chip.dataset.unidadId = unidad.id;
+    if (unidad.color) {
+      var dot = document.createElement("span");
+      dot.className = "color-dot color-" + unidad.color;
+      chip.appendChild(dot);
+    }
+    chip.appendChild(document.createTextNode(unidad.label));
+    return chip;
+  }
+
+  function wireDragDrop(container) {
+    var draggedEl = null;
+
+    container.addEventListener("dragstart", function (e) {
+      var chip = e.target.closest(".pool-chip");
+      if (!chip) return;
+      draggedEl = chip;
+      chip.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", chip.dataset.unidadId || "x");
+    });
+
+    container.addEventListener("dragend", function () {
+      if (draggedEl) draggedEl.classList.remove("dragging");
+      draggedEl = null;
+      container.querySelectorAll(".dragover").forEach(function (el) {
+        el.classList.remove("dragover");
+      });
+    });
+
+    container.addEventListener("dragover", function (e) {
+      var target = e.target.closest(".canal-slot, .material-pool");
+      if (!target) return;
+      e.preventDefault();
+      target.classList.add("dragover");
+    });
+
+    container.addEventListener("dragleave", function (e) {
+      var target = e.target.closest(".canal-slot, .material-pool");
+      if (target) target.classList.remove("dragover");
+    });
+
+    container.addEventListener("drop", function (e) {
+      var target = e.target.closest(".canal-slot, .material-pool");
+      if (!target || !draggedEl) return;
+      e.preventDefault();
+      target.classList.remove("dragover");
+
+      if (target.classList.contains("canal-slot")) {
+        var ocupante = target.querySelector(".pool-chip");
+        if (ocupante && ocupante !== draggedEl) {
+          var pool = container.querySelector(".material-pool");
+          pool.appendChild(ocupante);
+        }
+      }
+      target.appendChild(draggedEl);
+    });
+  }
+
+  function renderCajaFisica(cajaKey, itemsBase, itemsExtra) {
+    var info = cajaInfo(cajaKey);
+
+    var wrap = document.createElement("div");
+    wrap.className = "caja-fisica-wrap";
+
+    var header = document.createElement("div");
+    header.className = "caja-fisica-header";
+    header.textContent = "Vista de caja física — arrastra el material a su entrada";
+    wrap.appendChild(header);
+
+    var box = document.createElement("div");
+    box.className = "caja-fisica";
+
+    var tab = document.createElement("div");
+    tab.className = "caja-fisica-tab";
+    tab.textContent = "kΩ";
+    box.appendChild(tab);
+
+    var canalesWrap = document.createElement("div");
+    canalesWrap.className = "canales-wrap";
+    for (var i = 1; i <= info.canales; i++) {
+      var row = document.createElement("div");
+      row.className = "canal-row";
+
+      var num = document.createElement("span");
+      num.className = "canal-num";
+      num.textContent = i;
+      row.appendChild(num);
+
+      var conectores = document.createElement("span");
+      conectores.className = "canal-conectores";
+      if (info.conector === "par") {
+        var rojo = document.createElement("span");
+        rojo.className = "conector rojo";
+        var negro = document.createElement("span");
+        negro.className = "conector negro";
+        conectores.appendChild(rojo);
+        conectores.appendChild(negro);
+      } else {
+        var ind = document.createElement("span");
+        ind.className = "conector individual";
+        conectores.appendChild(ind);
+      }
+      row.appendChild(conectores);
+
+      var slot = document.createElement("div");
+      slot.className = "canal-slot";
+      slot.dataset.canal = i;
+      row.appendChild(slot);
+
+      canalesWrap.appendChild(row);
+    }
+    box.appendChild(canalesWrap);
+
+    var plate = document.createElement("div");
+    plate.className = "caja-fisica-plate";
+    plate.textContent = info.nombre;
+    box.appendChild(plate);
+
+    wrap.appendChild(box);
+
+    var poolHeader = document.createElement("div");
+    poolHeader.className = "material-pool-header";
+    poolHeader.textContent = "Material sin colocar";
+    wrap.appendChild(poolHeader);
+
+    var pool = document.createElement("div");
+    pool.className = "material-pool";
+    wrap.appendChild(pool);
+
+    var unidades = construirUnidades((itemsBase || []).concat(itemsExtra || []), cajaKey);
+    unidades.forEach(function (u) {
+      pool.appendChild(crearChipUnidad(u));
+    });
+
+    wireDragDrop(wrap);
+
+    return wrap;
   }
 
   function renderMaterialBase() {
@@ -264,6 +435,7 @@
         if (hint) hint.remove();
       }
       cajaCard.appendChild(ul);
+      cajaCard.appendChild(renderCajaFisica(cajaKey, itemsBase, itemsExtraDeCaja));
       grid.appendChild(cajaCard);
     });
 

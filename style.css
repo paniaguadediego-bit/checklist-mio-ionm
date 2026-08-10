@@ -293,6 +293,153 @@ main {
   text-align: center;
 }
 
+.caja-fisica-wrap {
+  margin-top: 0.9rem;
+  border-top: 1px dashed var(--border);
+  padding-top: 0.7rem;
+}
+
+.caja-fisica-header,
+.material-pool-header {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+
+.caja-fisica {
+  background: #16232f;
+  border-radius: 16px;
+  padding: 0.6rem 0.6rem 0.5rem;
+  color: #eaf1f7;
+  max-width: 220px;
+  margin: 0 auto;
+}
+
+.caja-fisica-tab {
+  width: 3.2rem;
+  margin: 0 auto 0.5rem;
+  background: #22333f;
+  border-radius: 0 0 10px 10px;
+  text-align: center;
+  font-size: 0.7rem;
+  padding: 0.15rem 0;
+  color: #cfe0ec;
+}
+
+.canales-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.canal-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.canal-num {
+  width: 1.1rem;
+  font-size: 0.62rem;
+  color: #8fa4b8;
+  text-align: right;
+  flex: 0 0 auto;
+}
+
+.canal-conectores {
+  display: flex;
+  gap: 0.15rem;
+  flex: 0 0 auto;
+}
+
+.conector {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  border: 2px solid;
+  box-sizing: border-box;
+}
+
+.conector.rojo { border-color: #e5473b; background: #3a1613; }
+.conector.negro { border-color: #cfd8e0; background: #1c1c1c; }
+.conector.individual { border-color: #cfd8e0; background: transparent; }
+
+.canal-slot {
+  flex: 1;
+  min-height: 1.35rem;
+  border: 1px dashed rgba(255, 255, 255, 0.28);
+  border-radius: 6px;
+  font-size: 0.68rem;
+  display: flex;
+  align-items: center;
+  padding: 0 0.35rem;
+  overflow: hidden;
+}
+
+.canal-slot.dragover {
+  border-color: #6fd39a;
+  background: rgba(111, 211, 154, 0.18);
+}
+
+.canal-slot:empty::after {
+  content: "vacío";
+  opacity: 0.35;
+  font-size: 0.62rem;
+  font-style: italic;
+}
+
+.caja-fisica-plate {
+  margin-top: 0.55rem;
+  background: #eef2f5;
+  color: #16232f;
+  text-align: center;
+  border-radius: 6px;
+  padding: 0.25rem;
+  font-weight: 600;
+  font-size: 0.78rem;
+}
+
+.material-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  min-height: 1.8rem;
+  border: 1px dashed transparent;
+  border-radius: 8px;
+  padding: 0.2rem;
+}
+
+.material-pool.dragover {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+.pool-chip,
+.canal-slot .pool-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: var(--tag-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.72rem;
+  cursor: grab;
+  white-space: nowrap;
+}
+
+.canal-slot .pool-chip {
+  background: rgba(111, 211, 154, 0.16);
+  border-color: rgba(111, 211, 154, 0.5);
+  color: #eaf1f7;
+  max-width: 100%;
+  white-space: normal;
+}
+
+.pool-chip.dragging {
+  opacity: 0.4;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #14181b;
