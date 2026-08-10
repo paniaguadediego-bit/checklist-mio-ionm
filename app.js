@@ -12,7 +12,11 @@
   var ITEMS = {};
   CATALOGO.forEach(function (grupo) {
     (grupo.items || []).forEach(function (item) {
-      ITEMS[item.id] = Object.assign({}, item, { categoria: grupo.categoria });
+      ITEMS[item.id] = Object.assign({}, item, {
+        categoria: grupo.categoria,
+        // Material que se prepara pero no se conecta a ninguna entrada
+        sin_entrada: !!(item.sin_entrada || grupo.sin_entrada)
+      });
     });
   });
 
@@ -73,6 +77,23 @@
 
   function escenarioActual() {
     return escenarios[activo] || null;
+  }
+
+  // Material extra del escenario (no ocupa entrada de ninguna caja)
+  function extrasDe() {
+    var esc = escenarioActual();
+    if (!esc) return [];
+    if (!esc.extras) esc.extras = [];
+    return esc.extras;
+  }
+
+  function alternarExtra(itemId) {
+    var arr = extrasDe();
+    var i = arr.indexOf(itemId);
+    if (i === -1) arr.push(itemId); else arr.splice(i, 1);
+    guardarEstado();
+    renderCatalogo();
+    renderResumen();
   }
 
   function asignacionesDe(cajaKey) {
@@ -178,6 +199,15 @@
       chip.appendChild(dot);
     }
     chip.appendChild(document.createTextNode(item.nombre));
+
+    if (item.sin_entrada) {
+      // No se arrastra ni se coloca: se activa o desactiva para el escenario
+      chip.draggable = false;
+      chip.classList.add("chip-extra");
+      if (extrasDe().indexOf(item.id) !== -1) chip.classList.add("activo");
+      chip.addEventListener("click", function () { alternarExtra(item.id); });
+      return chip;
+    }
 
     if (item.conmutador && opciones.colocado) {
       var sel = document.createElement("select");
@@ -609,7 +639,12 @@
       }
     });
 
-    if (!totalEntradas) {
+    var extras = extrasDe().map(function (id) { return ITEMS[id]; }).filter(Boolean);
+    extras.forEach(function (item) {
+      totalMaterial[item.material] = (totalMaterial[item.material] || 0) + 1;
+    });
+
+    if (!totalEntradas && !extras.length) {
       cont.insertAdjacentHTML("beforeend",
         '<p class="empty-hint">Escenario vacío. Arrastra material del catálogo a las entradas de las cajas.</p>');
       return;
@@ -681,6 +716,24 @@
       secCajas.appendChild(bloque);
     });
     cont.appendChild(secCajas);
+
+    // Bloque: material extra (no ocupa entrada)
+    if (extras.length) {
+      var secEx = document.createElement("div");
+      secEx.className = "resumen-bloque";
+      secEx.innerHTML = "<h3>Material extra (no ocupa entrada)</h3>";
+      var listaEx = document.createElement("div");
+      listaEx.className = "resumen-entradas";
+      extras.forEach(function (item) {
+        var el = document.createElement("span");
+        el.className = "resumen-entrada";
+        el.textContent = item.nombre;
+        if (item.nota) el.title = item.nota;
+        listaEx.appendChild(el);
+      });
+      secEx.appendChild(listaEx);
+      cont.appendChild(secEx);
+    }
 
     // Avisos
     var avisos = [];
@@ -789,6 +842,7 @@
     if (!confirm("¿Vaciar todas las entradas de “" + esc.nombre + "”?\nEl escenario se conserva, pero se queda sin material colocado.")) return;
     esc.asignaciones = {};
     esc.conmutador = {};
+    esc.extras = [];
     guardarEstado();
     renderTodo();
   });

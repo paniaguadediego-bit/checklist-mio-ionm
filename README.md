@@ -48,6 +48,13 @@ veces como haga falta (el catálogo no se "gasta"):
 - **Arrastrar y soltar**: arrastra el ítem hasta la entrada. Si te acercas
   al borde superior o inferior de la ventana, la página hace scroll sola.
 
+**Material extra**: la última categoría del catálogo (auriculares PEATC,
+gafas VEP...) es material que se prepara pero no se conecta a ninguna
+entrada. Esos ítems no se arrastran: funcionan como interruptor — pulsas
+para activarlos (☑) y aparecen en el resumen; pulsas otra vez para
+quitarlos. En el JSON se marcan con `"sin_entrada": true`, en el ítem o en
+la categoría entera.
+
 ### 2. Cajas físicas
 
 `cajas_material` describe las cajas reales del INOMED. Cada caja se dibuja

@@ -303,6 +303,25 @@ main {
 .chip:active { cursor: grabbing; }
 .chip.arrastrando { opacity: 0.4; }
 
+/* Material extra: interruptor, no se arrastra */
+.chip-extra {
+  cursor: pointer;
+  border-style: dashed;
+}
+.chip-extra::before {
+  content: "☐";
+  font-size: 0.8rem;
+  line-height: 1;
+}
+.chip-extra.activo {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  border-style: solid;
+  color: var(--accent);
+  font-weight: 600;
+}
+.chip-extra.activo::before { content: "☑"; }
+
 .chip.seleccionado {
   background: var(--accent);
   border-color: var(--accent);

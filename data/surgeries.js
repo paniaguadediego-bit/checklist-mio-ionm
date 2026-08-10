@@ -228,14 +228,29 @@ window.SURGERIES_DATA = {
     {
       "categoria": "Potenciales auditivos (PEATC)",
       "items": [
-        { "id": "a1", "nombre": "A1", "material": "Aguja subdérmica", "nota": "Registro auditivo del lado izquierdo (lóbulo/mastoides). Va en una de las entradas numeradas de REF-AEP" },
-        { "id": "a2", "nombre": "A2", "material": "Aguja subdérmica", "nota": "Registro auditivo del lado derecho (lóbulo/mastoides). Va en una de las entradas numeradas de REF-AEP" }
+        { "id": "a1", "nombre": "A1", "material": "Electrodo sacacorchos", "nota": "Registro auditivo del lado izquierdo. Va en una de las entradas numeradas de REF-AEP" },
+        { "id": "a2", "nombre": "A2", "material": "Electrodo sacacorchos", "nota": "Registro auditivo del lado derecho. Va en una de las entradas numeradas de REF-AEP" }
+      ]
+    },
+    {
+      "categoria": "Potenciales visuales (VEP)",
+      "items": [
+        { "id": "o1", "nombre": "O1", "material": "Electrodo sacacorchos", "nota": "Registro visual occipital izquierdo. Va en una de las entradas numeradas de REF-AEP" },
+        { "id": "o2", "nombre": "O2", "material": "Electrodo sacacorchos", "nota": "Registro visual occipital derecho. Va en una de las entradas numeradas de REF-AEP" }
       ]
     },
     {
       "categoria": "Tierras y referencias",
       "items": [
         { "id": "tierra", "nombre": "Tierra", "material": "Aguja subdérmica", "nota": "Una por caja de registro" }
+      ]
+    },
+    {
+      "categoria": "Material extra (no ocupa entrada)",
+      "sin_entrada": true,
+      "items": [
+        { "id": "auriculares_peatc", "nombre": "Auriculares PEATC", "material": "Auriculares PEATC", "nota": "Estimulación auditiva para los PEATC (A1/A2). Se conectan al conector amarillo de REF-AEP, no ocupan entrada" },
+        { "id": "gafas_vep", "nombre": "Gafas VEP", "material": "Gafas de estimulación VEP", "nota": "Estimulación visual para los potenciales visuales (O1/O2). No ocupan entrada" }
       ]
     }
   ],
