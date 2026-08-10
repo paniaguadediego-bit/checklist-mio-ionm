@@ -127,6 +127,39 @@
   }
 
   /* ---------------------------------------------------------------- *
+   * Selección por clic (alternativa a arrastrar)
+   * ---------------------------------------------------------------- */
+  var seleccionado = null;
+
+  function seleccionar(itemId) {
+    seleccionado = itemId;
+    var barra = document.getElementById("barra-seleccion");
+    if (itemId && ITEMS[itemId]) {
+      document.getElementById("bs-nombre").textContent = ITEMS[itemId].nombre;
+      barra.hidden = false;
+      document.body.classList.add("hay-seleccion");
+    } else {
+      seleccionado = null;
+      barra.hidden = true;
+      document.body.classList.remove("hay-seleccion");
+    }
+    document.querySelectorAll(".chip.seleccionado").forEach(function (c) {
+      c.classList.remove("seleccionado");
+    });
+    if (seleccionado) {
+      document.querySelectorAll('#catalogo-contenido .chip[data-item-id="' + seleccionado + '"]')
+        .forEach(function (c) { c.classList.add("seleccionado"); });
+    }
+  }
+
+  function colocar(cajaKey, entradaId, itemId) {
+    asignacionesDe(cajaKey)[entradaId] = itemId;
+    guardarEstado();
+    renderCajas();
+    renderResumen();
+  }
+
+  /* ---------------------------------------------------------------- *
    * Chips
    * ---------------------------------------------------------------- */
   function crearChip(item, opciones) {
@@ -170,6 +203,13 @@
       chip.appendChild(sel);
     }
 
+    if (!opciones.colocado) {
+      // Chip del catálogo: al pulsarlo queda seleccionado para colocar
+      chip.addEventListener("click", function () {
+        seleccionar(seleccionado === item.id ? null : item.id);
+      });
+    }
+
     if (opciones.colocado) {
       var quitar = document.createElement("button");
       quitar.type = "button";
@@ -208,6 +248,7 @@
   });
 
   document.addEventListener("dragend", function (e) {
+    pararAutoScroll();
     var chip = e.target.closest && e.target.closest(".chip");
     if (chip) chip.classList.remove("arrastrando");
     document.querySelectorAll(".sobre").forEach(function (el) {
@@ -216,7 +257,24 @@
     arrastrando = null;
   });
 
+  // Auto-scroll al arrastrar cerca del borde superior/inferior de la ventana
+  var autoScroll = null;
+  function pararAutoScroll() {
+    if (autoScroll) { clearInterval(autoScroll); autoScroll = null; }
+  }
+  function evaluarAutoScroll(y) {
+    var margen = 90;
+    var dir = 0;
+    if (y < margen) dir = -1;
+    else if (y > window.innerHeight - margen) dir = 1;
+    pararAutoScroll();
+    if (dir) {
+      autoScroll = setInterval(function () { window.scrollBy(0, dir * 22); }, 16);
+    }
+  }
+
   document.addEventListener("dragover", function (e) {
+    evaluarAutoScroll(e.clientY);
     var slot = e.target.closest && e.target.closest(".slot");
     if (slot) {
       e.preventDefault();
@@ -225,7 +283,7 @@
       return;
     }
     // Soltar sobre el catálogo = quitar de la caja
-    var cat = e.target.closest && e.target.closest(".catalogo-card");
+    var cat = e.target.closest && e.target.closest(".panel-catalogo");
     if (cat && arrastrando && arrastrando.origenCaja) {
       e.preventDefault();
       cat.classList.add("sobre");
@@ -233,11 +291,12 @@
   });
 
   document.addEventListener("dragleave", function (e) {
-    var el = e.target.closest && e.target.closest(".slot, .catalogo-card");
+    var el = e.target.closest && e.target.closest(".slot, .panel-catalogo");
     if (el) el.classList.remove("sobre");
   });
 
   document.addEventListener("drop", function (e) {
+    pararAutoScroll();
     if (!arrastrando) return;
 
     var slot = e.target.closest && e.target.closest(".slot");
@@ -258,7 +317,7 @@
       return;
     }
 
-    var cat = e.target.closest && e.target.closest(".catalogo-card");
+    var cat = e.target.closest && e.target.closest(".panel-catalogo");
     if (cat && arrastrando.origenCaja) {
       e.preventDefault();
       cat.classList.remove("sobre");
@@ -320,6 +379,11 @@
     slot.className = "slot";
     slot.dataset.caja = cajaKey;
     slot.dataset.entrada = entrada.id;
+    slot.addEventListener("click", function (e) {
+      if (!seleccionado) return;
+      if (e.target.closest(".chip-quitar, .chip-select")) return;
+      colocar(cajaKey, entrada.id, seleccionado);
+    });
     var itemId = asignacionesDe(cajaKey)[entrada.id];
     if (itemId && ITEMS[itemId]) {
       slot.appendChild(crearChip(ITEMS[itemId], {
@@ -767,7 +831,24 @@
     window.print();
   });
 
-  document.getElementById("catalogo-buscar").addEventListener("input", renderCatalogo);
+  document.getElementById("catalogo-buscar").addEventListener("input", function () {
+    renderCatalogo();
+    seleccionar(seleccionado); // mantiene el resaltado tras filtrar
+  });
+
+  document.getElementById("bs-cancelar").addEventListener("click", function () {
+    seleccionar(null);
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") seleccionar(null);
+  });
+
+  document.getElementById("btn-plegar").addEventListener("click", function () {
+    var panel = document.getElementById("panel-catalogo");
+    panel.classList.toggle("plegado");
+    this.textContent = panel.classList.contains("plegado") ? "▸" : "▾";
+  });
 
   /* ---------------------------------------------------------------- *
    * Arranque

@@ -33,18 +33,27 @@ conexión a internet (no hace ninguna petición de red).
 
 `catalogo_material` es la lista de **todo** el material que se puede colocar
 en una entrada: electrodos corticales, músculos, estimulaciones periféricas,
-GRID, tierras... Aparece agrupado por categorías en la parte de arriba, con
-buscador. Arrastra cualquier ítem a una entrada de cualquier caja.
+GRID, tierras... Vive en un **panel lateral fijo** que no se mueve al hacer
+scroll, así que siempre lo tienes a mano aunque estés mirando la última caja.
+Está agrupado por categorías y tiene buscador; el botón ▾ lo pliega si
+necesitas más sitio.
 
-Un mismo ítem se puede usar tantas veces como haga falta (el catálogo es una
-fuente infinita, no se "gasta").
+Hay dos formas de colocar material, y un mismo ítem se puede usar tantas
+veces como haga falta (el catálogo no se "gasta"):
+
+- **Pulsar y colocar** (recomendado, sin arrastrar): pulsa el ítem — se
+  queda resaltado y aparece una barra abajo — y luego pulsa la entrada donde
+  va. Sigue seleccionado, así que puedes colocarlo en varias entradas
+  seguidas. `Esc` o el botón *Cancelar* lo suelta.
+- **Arrastrar y soltar**: arrastra el ítem hasta la entrada. Si te acercas
+  al borde superior o inferior de la ventana, la página hace scroll sola.
 
 ### 2. Cajas físicas
 
 `cajas_material` describe las cajas reales del INOMED. Cada caja se dibuja
 con sus entradas y conectores. Para quitar material de una entrada: pulsa la
-✕ del chip o arrástralo de vuelta al catálogo. Para moverlo: arrástralo a
-otra entrada, aunque sea de otra caja.
+✕ del chip o arrástralo de vuelta al panel del catálogo. Para moverlo:
+arrástralo a otra entrada, aunque sea de otra caja.
 
 ### 3. Escenarios (presets)
 

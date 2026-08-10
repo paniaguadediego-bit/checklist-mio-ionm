@@ -11,6 +11,7 @@
   --aviso-text: #8a5a12;
   --tag-bg: #e8edf1;
   --peligro: #b3392f;
+  --quitar-bg: #fbeae8;
 }
 
 * { box-sizing: border-box; }
@@ -186,29 +187,84 @@ main {
   border-radius: 999px;
 }
 
-/* ------------------------------ Catálogo ------------------------------- */
-.catalogo-card.sobre {
-  border-color: var(--peligro);
-  background: #fbeae8;
+/* ------------------------- Layout con panel fijo ------------------------ */
+.layout {
+  display: grid;
+  grid-template-columns: 290px minmax(0, 1fr);
+  gap: 1.15rem;
+  align-items: start;
 }
 
-.catalogo-header {
+.columna-principal { min-width: 0; }
+
+.panel-catalogo {
+  position: sticky;
+  top: 0.6rem;
+  max-height: calc(100vh - 1.2rem);
+  overflow-y: auto;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.8rem 0.9rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.panel-catalogo.sobre {
+  border-color: var(--peligro);
+  background: var(--quitar-bg);
+}
+
+.panel-cab {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 0.8rem;
-  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
+.panel-cab h2 { margin: 0; font-size: 1rem; }
+
+#btn-plegar {
+  font: inherit;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-muted);
+  border-radius: 5px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.15rem 0.4rem;
+}
+
+.panel-ayuda {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin: 0.5rem 0 0.2rem;
+  line-height: 1.35;
+}
+
+.panel-catalogo.plegado #catalogo-buscar,
+.panel-catalogo.plegado .panel-ayuda,
+.panel-catalogo.plegado #catalogo-contenido { display: none; }
+
 #catalogo-buscar {
+  width: 100%;
+  margin-top: 0.5rem;
   padding: 0.35rem 0.6rem;
   border: 1px solid var(--border);
   border-radius: 6px;
   font: inherit;
   font-size: 0.85rem;
-  min-width: 180px;
   background: #fff;
   color: var(--text);
+}
+
+/* Panel apilado arriba en pantallas estrechas */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .panel-catalogo {
+    top: 0;
+    max-height: 42vh;
+    z-index: 5;
+  }
 }
 
 .catalogo-grupo { margin-top: 0.7rem; }
@@ -246,6 +302,54 @@ main {
 
 .chip:active { cursor: grabbing; }
 .chip.arrastrando { opacity: 0.4; }
+
+.chip.seleccionado {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 0 2px var(--accent-light);
+}
+.chip.seleccionado .color-dot { border-color: rgba(255,255,255,0.7); }
+
+/* Barra flotante mientras hay un ítem seleccionado */
+.barra-seleccion {
+  position: fixed;
+  left: 50%;
+  bottom: 1rem;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: var(--accent);
+  color: #fff;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+  font-size: 0.85rem;
+}
+.barra-seleccion[hidden] { display: none; }
+.barra-seleccion button {
+  font: inherit;
+  font-size: 0.78rem;
+  background: rgba(255,255,255,0.16);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  cursor: pointer;
+}
+.barra-seleccion button:hover { background: rgba(255,255,255,0.3); }
+
+/* Con un ítem seleccionado, las entradas invitan a pulsar */
+body.hay-seleccion .slot {
+  border-color: rgba(111,211,154,0.6);
+  cursor: pointer;
+}
+body.hay-seleccion .slot:hover {
+  border-style: solid;
+  background: rgba(111,211,154,0.22);
+}
 
 .chip-colocado {
   background: var(--accent-light);
@@ -448,6 +552,7 @@ main {
   .no-print, header { display: none !important; }
   body { background: #fff; }
   main { max-width: none; padding: 0; }
+  .layout { display: block; }
   .card { border: none; box-shadow: none; padding: 0; }
   .resumen-card { border-left: none; }
   #cajas-contenido { display: none; }
@@ -469,8 +574,9 @@ main {
     --aviso-text: #e8b767;
     --tag-bg: #2a3236;
     --peligro: #e0796d;
+    --quitar-bg: #3a201d;
   }
   #escenario-select, #catalogo-buscar { background: #1e2529; color: var(--text); }
-  .toolbar-botones button.peligro:hover { background: #3a201d; }
-  .catalogo-card.sobre { background: #3a201d; }
+  .toolbar-botones button.peligro:hover { background: var(--quitar-bg); }
+  .chip.seleccionado { color: #10201a; }
 }

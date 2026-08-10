@@ -33,27 +33,39 @@
     <p class="guardado-aviso" id="guardado-aviso"></p>
   </section>
 
-  <section class="card resumen-card" id="resumen">
-    <h2>Resumen de material</h2>
-    <div id="resumen-contenido"></div>
-  </section>
+  <div class="layout">
 
-  <section class="card catalogo-card no-print">
-    <div class="catalogo-header">
-      <h2>Catálogo maestro <span class="tag">arrastra a una entrada</span></h2>
+    <aside class="panel-catalogo no-print" id="panel-catalogo">
+      <div class="panel-cab">
+        <h2>Catálogo maestro</h2>
+        <button type="button" id="btn-plegar" title="Plegar / desplegar">▾</button>
+      </div>
       <input type="search" id="catalogo-buscar" placeholder="Buscar material…" autocomplete="off">
-    </div>
-    <p class="caja-desc">
-      Todo el material disponible. Arrastra cualquier ítem a una entrada de
-      las cajas de abajo. Se puede usar el mismo ítem varias veces si hace
-      falta; para quitarlo, arrástralo fuera o pulsa la ✕.
-    </p>
-    <div id="catalogo-contenido"></div>
-  </section>
+      <p class="panel-ayuda">
+        Pulsa un ítem para <b>seleccionarlo</b> y luego pulsa la entrada donde
+        va. También puedes arrastrarlo. Para quitarlo de una entrada: la ✕ o
+        arrástralo aquí.
+      </p>
+      <div id="catalogo-contenido"></div>
+    </aside>
 
-  <section id="cajas-contenido"></section>
+    <div class="columna-principal">
+      <section class="card resumen-card" id="resumen">
+        <h2>Resumen de material</h2>
+        <div id="resumen-contenido"></div>
+      </section>
+
+      <section id="cajas-contenido"></section>
+    </div>
+
+  </div>
 
 </main>
+
+<div class="barra-seleccion no-print" id="barra-seleccion" hidden>
+  <span class="bs-texto">Colocando <b id="bs-nombre"></b> — pulsa una entrada</span>
+  <button type="button" id="bs-cancelar">Cancelar (Esc)</button>
+</div>
 
 <script src="data/surgeries.js"></script>
 <script src="app.js"></script>
