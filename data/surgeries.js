@@ -112,6 +112,7 @@ window.SURGERIES_DATA = {
         { "id": "c6", "nombre": "C6", "color": "amarillo", "material": "Electrodo sacacorchos", "nota": "Vías corticobulbares (pares craneales) — combinación principal junto a C5; admite otras con distintas referencias" },
         { "id": "cz_menos1", "nombre": "Cz-1", "material": "Electrodo sacacorchos" },
         { "id": "cz_mas6", "nombre": "Cz+6cm", "material": "Electrodo sacacorchos" },
+        { "id": "mapping", "nombre": "Mapping", "material": "Sonda de mapeo cortical", "nota": "Mapeo cortical con técnica de Penfield" },
         {
           "id": "conmutador",
           "nombre": "Conmutador",
@@ -256,6 +257,89 @@ window.SURGERIES_DATA = {
   ],
 
   /* ------------------------------------------------------------------ *
+   * TÉCNICAS
+   * Cada escenario marca las que se van a usar. Solo son informativas
+   * (no calculan material por sí solas), pero ayudan a decidir qué
+   * montar y quedan impresas en el resumen.
+   * ------------------------------------------------------------------ */
+  "tecnicas": [
+    {
+      "grupo": "Técnicas de monitorización",
+      "items": [
+        { "id": "t_pess", "nombre": "t-PESS", "descripcion": "PESS transcraneales" },
+        { "id": "t_pem", "nombre": "t-PEM", "descripcion": "Potenciales evocados motores transcraneales" },
+        { "id": "c_pem", "nombre": "c-PEM", "descripcion": "PEM por estímulo directo cortical" },
+        { "id": "c_pess", "nombre": "c-PESS", "descripcion": "PESS corticales" },
+        { "id": "pem_corticobulbares", "nombre": "PEM córtico-bulbares", "descripcion": "Vías corticobulbares (pares craneales)" },
+        { "id": "onda_d", "nombre": "Onda D", "descripcion": "Registro epidural de la onda D" },
+        { "id": "br", "nombre": "Blink Reflex (BR)", "descripcion": "Reflejo del parpadeo" },
+        { "id": "rbc", "nombre": "RBC", "descripcion": "Reflejo bulbo-cavernoso" },
+        { "id": "peatc", "nombre": "PEATC", "descripcion": "Potenciales evocados auditivos de tronco cerebral" },
+        { "id": "emg", "nombre": "EMG", "descripcion": "Electromiografía" },
+        { "id": "eeg", "nombre": "EEG", "descripcion": "Electroencefalografía" },
+        { "id": "ecog", "nombre": "ECoG", "descripcion": "Electrocorticografía" },
+        { "id": "pev", "nombre": "PEV", "descripcion": "Potenciales evocados visuales — en estudio" },
+        { "id": "reflejo_h", "nombre": "Reflejo H", "descripcion": "Reflejo H por estímulo en hueco poplíteo" }
+      ]
+    },
+    {
+      "grupo": "Técnicas de mapeo",
+      "items": [
+        { "id": "mapeo_cortical", "nombre": "Mapeo cortical", "descripcion": "Técnica de Penfield" },
+        { "id": "mapeo_subcortical", "nombre": "Mapeo subcortical" },
+        { "id": "phase_reversal", "nombre": "Phase-Reversal", "descripcion": "Inversión de fase de los PESS" },
+        { "id": "mapeo_lenguaje", "nombre": "Mapeo del lenguaje" },
+        { "id": "mapeo_iv_ventriculo", "nombre": "Mapeo del IV ventrículo", "descripcion": "Núcleos del suelo del IV ventrículo" },
+        { "id": "mapeo_columnas_dorsales", "nombre": "Mapeo de columnas dorsales" },
+        { "id": "mapeo_raices_tornillos", "nombre": "Mapeo de raíces y tornillos", "descripcion": "Raíces y tornillos pediculares" },
+        { "id": "mapeo_nervio_periferico", "nombre": "Mapeo de nervio periférico" }
+      ]
+    }
+  ],
+
+  /* ------------------------------------------------------------------ *
+   * PERFILES POR PROCEDIMIENTO
+   * Combinaciones habituales de técnicas. Al aplicar un perfil se marcan
+   * sus técnicas en el escenario activo; el material no se toca.
+   * ------------------------------------------------------------------ */
+  "perfiles_procedimiento": [
+    {
+      "id": "supratentorial",
+      "nombre": "Cirugía supratentorial",
+      "tecnicas": ["t_pem", "c_pem", "t_pess", "c_pess", "mapeo_cortical", "mapeo_subcortical", "mapeo_lenguaje", "eeg", "ecog", "br"],
+      "nota": "Mapeo motor (cortical y subcortical) o del lenguaje. Los PEV están en estudio."
+    },
+    {
+      "id": "troncoencefalo",
+      "nombre": "Cirugía de troncoencéfalo",
+      "tecnicas": ["t_pem", "pem_corticobulbares", "t_pess", "eeg", "peatc", "br", "mapeo_iv_ventriculo"],
+      "nota": "Incluye mapeo motor de los nervios y de los núcleos del suelo del IV ventrículo."
+    },
+    {
+      "id": "medula_espinal",
+      "nombre": "Cirugía de médula espinal",
+      "tecnicas": ["t_pem", "onda_d", "t_pess", "mapeo_columnas_dorsales", "eeg"]
+    },
+    {
+      "id": "columna",
+      "nombre": "Cirugía de columna",
+      "tecnicas": ["t_pem", "t_pess", "mapeo_raices_tornillos", "eeg"]
+    },
+    {
+      "id": "vascular",
+      "nombre": "Procesos vasculares",
+      "tecnicas": ["t_pem", "c_pem", "t_pess", "c_pess", "eeg", "ecog"],
+      "nota": "No exclusiva de neurocirugía: también radiología intervencionista y cirugía vascular. Las técnicas concretas dependen de la localización (aneurismas cerebrales o aórticos, malformaciones cerebrales o espinales...). PEM y PESS pueden asociarse a pruebas de provocación con anestésicos, sobre todo en embolización."
+    },
+    {
+      "id": "raices_nervio_periferico",
+      "nombre": "Cirugía de raíces y nervio periférico",
+      "tecnicas": ["t_pem", "t_pess", "mapeo_raices_tornillos", "mapeo_nervio_periferico"],
+      "nota": "El mapeo puede ser de raíces, plexo, nervio periférico o tornillos pediculares."
+    }
+  ],
+
+  /* ------------------------------------------------------------------ *
    * ESCENARIOS (presets de cirugía)
    * asignaciones: { claveCaja: { "idEntrada": "idMaterial" } }
    * idEntrada: "3" (canal), "6:anodal" / "8:catodal" (TES MEP),
@@ -264,7 +348,7 @@ window.SURGERIES_DATA = {
   "escenarios": {
     "artrodesis_descompresion": {
       "nombre": "Artrodesis + descompresión",
-      "modalidades": ["PESS", "PEM", "EMG libre", "EMG estimulado", "Reflejo H"],
+      "tecnicas": ["t_pess", "t_pem", "emg", "mapeo_raices_tornillos", "reflejo_h"],
       "asignaciones": {
         "caja_estimulo": {
           "1": "l_mediano",
@@ -307,7 +391,7 @@ window.SURGERIES_DATA = {
     },
     "tumor_supratentorial_grid": {
       "nombre": "Tumor supratentorial con GRID",
-      "modalidades": ["SEP", "MEP", "Phase Reversal", "DCS", "ECoG", "ECG"],
+      "tecnicas": ["t_pess", "c_pess", "t_pem", "c_pem", "phase_reversal", "mapeo_cortical", "mapeo_subcortical", "ecog", "eeg"],
       "asignaciones": {
         "caja_estimulo": {
           "1": "l_mediano",

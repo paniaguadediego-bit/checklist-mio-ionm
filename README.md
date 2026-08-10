@@ -62,13 +62,28 @@ con sus entradas y conectores. Para quitar material de una entrada: pulsa la
 ✕ del chip o arrástralo de vuelta al panel del catálogo. Para moverlo:
 arrástralo a otra entrada, aunque sea de otra caja.
 
-### 3. Escenarios (presets)
+### 3. Técnicas y perfiles
+
+La tarjeta **Técnicas** lista las técnicas de monitorización y de mapeo.
+Se marcan pulsándolas y salen en el resumen. Son informativas: no calculan
+material por sí solas, pero dejan constancia de qué se va a hacer.
+
+El desplegable **Aplicar perfil** trae las combinaciones habituales por tipo
+de procedimiento (supratentorial, troncoencéfalo, médula espinal, columna,
+procesos vasculares, raíces y nervio periférico). Al elegir uno se marcan
+sus técnicas de golpe — **el material colocado no se toca** — y su nota
+aclaratoria aparece en los avisos del resumen.
+
+Ambas listas se editan en `data/surgeries.js`, en los bloques `tecnicas` y
+`perfiles_procedimiento`.
+
+### 4. Escenarios (presets)
 
 Cada escenario guarda **qué material va en qué entrada de qué caja**. La
 barra de herramientas permite crear, duplicar, renombrar, vaciar y borrar
 escenarios.
 
-### 4. Resumen de material
+### 5. Resumen de material
 
 Se recalcula solo con cada cambio y es el objetivo de la herramienta:
 

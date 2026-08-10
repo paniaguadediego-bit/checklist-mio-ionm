@@ -4,7 +4,15 @@
   var DATA = window.SURGERIES_DATA || {};
   var CAJAS = DATA.cajas_material || {};
   var CATALOGO = DATA.catalogo_material || [];
+  var TECNICAS = DATA.tecnicas || [];
+  var PERFILES = DATA.perfiles_procedimiento || [];
   var STORAGE_KEY = "mio_ionm_escenarios_v1";
+
+  // Índice de técnicas: id -> técnica
+  var TECS = {};
+  TECNICAS.forEach(function (g) {
+    (g.items || []).forEach(function (t) { TECS[t.id] = t; });
+  });
 
   /* ---------------------------------------------------------------- *
    * Índice del catálogo: id -> item (con su categoría)
@@ -93,6 +101,23 @@
     if (i === -1) arr.push(itemId); else arr.splice(i, 1);
     guardarEstado();
     renderCatalogo();
+    renderResumen();
+  }
+
+  // Técnicas marcadas en el escenario
+  function tecnicasDe() {
+    var esc = escenarioActual();
+    if (!esc) return [];
+    if (!esc.tecnicas) esc.tecnicas = [];
+    return esc.tecnicas;
+  }
+
+  function alternarTecnica(id) {
+    var arr = tecnicasDe();
+    var i = arr.indexOf(id);
+    if (i === -1) arr.push(id); else arr.splice(i, 1);
+    guardarEstado();
+    renderTecnicas();
     renderResumen();
   }
 
@@ -396,6 +421,64 @@
   }
 
   /* ---------------------------------------------------------------- *
+   * Render: técnicas y perfiles
+   * ---------------------------------------------------------------- */
+  function renderTecnicas() {
+    var cont = document.getElementById("tecnicas-contenido");
+    cont.innerHTML = "";
+    if (!escenarioActual()) return;
+    var activas = tecnicasDe();
+
+    TECNICAS.forEach(function (grupo) {
+      var bloque = document.createElement("div");
+      bloque.className = "tecnicas-grupo";
+      var h = document.createElement("h4");
+      h.textContent = grupo.grupo;
+      bloque.appendChild(h);
+
+      var fila = document.createElement("div");
+      fila.className = "chip-fila";
+      (grupo.items || []).forEach(function (t) {
+        var chip = document.createElement("span");
+        chip.className = "chip chip-extra" + (activas.indexOf(t.id) !== -1 ? " activo" : "");
+        chip.textContent = t.nombre;
+        if (t.descripcion) chip.title = t.descripcion;
+        chip.addEventListener("click", function () { alternarTecnica(t.id); });
+        fila.appendChild(chip);
+      });
+      bloque.appendChild(fila);
+      cont.appendChild(bloque);
+    });
+  }
+
+  function renderPerfilSelect() {
+    var sel = document.getElementById("perfil-select");
+    sel.innerHTML = "";
+    var vacio = document.createElement("option");
+    vacio.value = "";
+    vacio.textContent = "— elegir —";
+    sel.appendChild(vacio);
+    PERFILES.forEach(function (p) {
+      var o = document.createElement("option");
+      o.value = p.id;
+      o.textContent = p.nombre;
+      sel.appendChild(o);
+    });
+  }
+
+  document.getElementById("perfil-select").addEventListener("change", function (e) {
+    var perfil = PERFILES.filter(function (p) { return p.id === e.target.value; })[0];
+    e.target.value = "";
+    if (!perfil || !escenarioActual()) return;
+    if (!confirm("¿Marcar las técnicas de “" + perfil.nombre + "”?\nSustituye las técnicas marcadas ahora mismo. El material colocado no se toca.")) return;
+    escenarioActual().tecnicas = perfil.tecnicas.slice();
+    if (perfil.nota) escenarioActual().nota_perfil = perfil.nombre + ": " + perfil.nota;
+    guardarEstado();
+    renderTecnicas();
+    renderResumen();
+  });
+
+  /* ---------------------------------------------------------------- *
    * Render: cajas físicas
    * ---------------------------------------------------------------- */
   function crearConector(clase) {
@@ -591,10 +674,14 @@
     titulo.innerHTML = "<strong>" + esc.nombre + "</strong>";
     cont.appendChild(titulo);
 
-    if (esc.modalidades && esc.modalidades.length) {
+    // Técnicas marcadas (o modalidades sueltas de escenarios antiguos)
+    var etiquetasTec = tecnicasDe().map(function (id) {
+      return TECS[id] ? TECS[id].nombre : id;
+    }).concat(esc.modalidades || []);
+    if (etiquetasTec.length) {
       var mods = document.createElement("div");
       mods.className = "modalidades";
-      esc.modalidades.forEach(function (m) {
+      etiquetasTec.forEach(function (m) {
         var c = document.createElement("span");
         c.className = "modalidad-chip";
         c.textContent = m;
@@ -740,6 +827,7 @@
     cajasUsadas.forEach(function (c) {
       if (c.usadas === c.total) avisos.push("La caja “" + c.nombre + "” está completa — no quedan entradas libres.");
     });
+    if (esc.nota_perfil) avisos.push(esc.nota_perfil);
     if (esc.notas) avisos.push(esc.notas);
     if (esc.pendiente) avisos.push("Pendiente de confirmar: " + esc.pendiente);
 
@@ -792,6 +880,7 @@
 
   function renderTodo() {
     renderSelect();
+    renderTecnicas();
     renderResumen();
     renderCatalogo();
     renderCajas();
@@ -914,6 +1003,7 @@
    * Arranque
    * ---------------------------------------------------------------- */
   cargarEstado();
+  renderPerfilSelect();
   renderTodo();
   avisoGuardado("Los cambios se guardan solos en este navegador.");
 })();
