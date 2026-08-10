@@ -1,7 +1,12 @@
 # Checklist de material MIO/IONM
 
-Herramienta interna, sin backend ni build step, para generar el checklist de
-material necesario según el tipo de cirugía monitorizada.
+Herramienta interna, sin backend ni build step, para montar el escenario de
+cada cirugía monitorizada y saber exactamente qué material hace falta.
+
+**Flujo de uso previsto:** el día antes de la cirugía abres la herramienta,
+eliges (o creas) el escenario del tipo de cirugía, ajustas las entradas de
+las cajas arrastrando material, y el **Resumen de material** te dice qué
+tienes que preparar y si te sobran o faltan entradas y cajas.
 
 ## Cómo abrir la herramienta
 
@@ -10,161 +15,154 @@ conexión a internet (no hace ninguna petición de red).
 
 > **Nota técnica:** los datos no están en un `.json` puro porque Chrome/Edge
 > bloquean `fetch()` de archivos locales cuando abres una página con doble
-> clic (protocolo `file://`). Para evitarlo, los datos viven en
+> clic (protocolo `file://`). Por eso viven en
 > [`data/surgeries.js`](data/surgeries.js), que es JSON válido envuelto en
-> `window.SURGERIES_DATA = { ... };` y se carga con una etiqueta
-> `<script>` normal. Se edita exactamente igual que un JSON.
+> `window.SURGERIES_DATA = { ... };`. Se edita exactamente igual que un JSON.
 
 ## Estructura del proyecto
 
-- `index.html` — interfaz (selector, checklist, checkboxes de opciones)
+- `index.html` — interfaz
 - `style.css` — estilos
-- `app.js` — lógica: lee `window.SURGERIES_DATA` y renderiza todo dinámicamente
-- `data/surgeries.js` — **el único archivo que necesitas tocar** para añadir
-  o modificar cirugías
+- `app.js` — lógica: catálogo, cajas, arrastrar y soltar, resumen
+- `data/surgeries.js` — **el único archivo que necesitas tocar**, con tres
+  bloques: `cajas_material`, `catalogo_material` y `escenarios`
 
-## Las cajas del INOMED
+## Cómo funciona
 
-El array `"cajas_material"` (arriba del todo en `data/surgeries.js`) es el
-catálogo fijo de las 7 cajas físicas del equipo INOMED:
-caja de estímulo, TES MEP, registro corticales/Erb/CvAnterior, registro
-muscular etiqueta 1 (MMSS), etiqueta 2 (MMII), y las etiquetas 3 y 4 (poco
-usadas). Cada una tiene un `"nombre"` y una `"descripcion"` de uso que se
-muestran en la tarjeta correspondiente.
+### 1. Catálogo maestro
 
-Cada cirugía referencia estas mismas claves (`"caja_estimulo"`, `"tes_mep"`,
-`"registro_cortical"`, `"registro_muscular_mmss"`, `"registro_muscular_mmii"`,
-`"caja_etiqueta_3"`, `"caja_etiqueta_4"`) dentro de su propio `"cajas"`,
-incluyendo solo las que usa. Si en el futuro hace falta una caja que no está
-en el catálogo, puedes usar cualquier otra clave libre — se mostrará con un
-título genérico sin descripción.
+`catalogo_material` es la lista de **todo** el material que se puede colocar
+en una entrada: electrodos corticales, músculos, estimulaciones periféricas,
+GRID, tierras... Aparece agrupado por categorías en la parte de arriba, con
+buscador. Arrastra cualquier ítem a una entrada de cualquier caja.
 
-Cada entrada del catálogo admite además `"canales"` (número de entradas) y
-`"conector"`, con cuatro tipos posibles:
+Un mismo ítem se puede usar tantas veces como haga falta (el catálogo es una
+fuente infinita, no se "gasta").
 
-- `"par"` — una sola entrada roja+negra por número (agujas trenzadas/
-  pareadas: registro muscular, estímulo). Un ítem ocupa las dos a la vez.
-- `"individual"` — un único círculo por número, en una sola columna.
-- `"individual_2col"` — como `"individual"` pero repartido en 2 columnas
-  de `canales / 2` (p. ej. REF-AEP: 1-8 a la izquierda, 9-16 a la derecha).
-- `"anodal_catodal"` — 2 columnas independientes que comparten numeración
-  (TES MEP): izquierda = anodal/rojo, derecha = catodal/negro. Cada lado
-  se puede arrastrar por separado, no van ligados como en `"par"`.
+### 2. Cajas físicas
 
-Además puede llevar `"especiales"`: un array de conectores fijos fuera de
-la numeración normal (p. ej. Ref, GND, PEATC de REF-AEP, o el DNS de la
-caja de estímulo), cada uno con `"clave"`, `"nombre"`, `"conector"`
-(`"individual"` o `"par"`) y opcionalmente `"color"` (p. ej. `"amarillo"`
-para PEATC) y `"nota"` (texto aclaratorio, p. ej. "Habitualmente Fz").
+`cajas_material` describe las cajas reales del INOMED. Cada caja se dibuja
+con sus entradas y conectores. Para quitar material de una entrada: pulsa la
+✕ del chip o arrástralo de vuelta al catálogo. Para moverlo: arrástralo a
+otra entrada, aunque sea de otra caja.
 
-Estos valores son una aproximación a partir de fotos reales del equipo —
-ajústalos si no cuadran. Si una caja no especifica `"canales"`/`"conector"`,
-se usan 8 canales tipo `"par"` por defecto.
+### 3. Escenarios (presets)
 
-### Ítem "conmutador" (TES MEP)
+Cada escenario guarda **qué material va en qué entrada de qué caja**. La
+barra de herramientas permite crear, duplicar, renombrar, vaciar y borrar
+escenarios.
 
-Un ítem puede llevar `"conmutador": true` cuando representa una sola
-entrada física que se subdivide por software entre varias combinaciones
-(el canal 6 anodal de TES MEP, que alterna entre C1/C2/C3/C4/Cz-1/Cz+6).
-En ese caso `"sitios"` define las opciones del desplegable que aparece
-junto al chip en la caja física, en vez de generar un chip por sitio.
+### 4. Resumen de material
 
-## Vista de caja física (arrastrar y soltar)
+Se recalcula solo con cada cambio y es el objetivo de la herramienta:
 
-Cada tarjeta de caja incluye, debajo del listado de material, un dibujo de
-la caja física (forma vertical, cabecera "kΩ", entradas numeradas, placa
-con el nombre abajo) con el material de esa caja como chips sueltos debajo
-("Material sin colocar"). Puedes arrastrar cualquier chip a una entrada
-para ver cómo quedaría la caja montada, mover uno de una entrada a otra, o
-devolverlo al grupo de "sin colocar".
+- **Material a preparar** — recuento por tipo (agujas subdérmicas, agujas
+  trenzadas, pegatinas, sacacorchos...)
+- **Cajas necesarias** — cuáles, con entradas usadas / totales y el detalle
+  de qué va en cada entrada
+- **Avisos** — cajas completas sin entradas libres, notas del escenario y
+  cosas pendientes de confirmar
 
-Esto es **solo una ayuda visual de la sesión actual**: no se guarda en
-ningún sitio ni se sincroniza con git. Al recargar la página vuelve a
-empezar con todo sin colocar. Los datos que sí son fijos (qué material
-lleva cada cirugía, en qué caja) siguen viviendo en `data/surgeries.js`
-como siempre.
+El botón **Imprimir resumen** saca solo esta sección en papel.
 
-## Cómo añadir una cirugía nueva
+## Dónde se guarda todo
 
-Abre `data/surgeries.js` y añade un objeto nuevo dentro de `"cirugias"`.
-No hace falta tocar `app.js`: el desplegable y las cajas se generan solas
-a partir de las claves que pongas.
+Los cambios que hagas en la web se guardan **automáticamente en ese
+navegador y ese ordenador** (localStorage). No tocan `data/surgeries.js` ni
+viajan por git.
+
+Para que un preset sea permanente y esté disponible en otro ordenador:
+
+1. Pulsa **Exportar JSON**.
+2. Copia el resultado y pégalo en `data/surgeries.js`, dentro de
+   `"escenarios"`.
+3. `git commit` + `git push`.
+
+**Restablecer todo** borra lo guardado en el navegador y vuelve a los
+escenarios del archivo.
+
+## Añadir material nuevo al catálogo
+
+Dentro de `catalogo_material`, en la categoría que corresponda (o crea una
+nueva), añade un objeto:
 
 ```json
-"nombre_clave_cirugia": {
+{ "id": "l_gluteo", "nombre": "L.Glúteo", "material": "Agujas trenzadas (par)", "nota": "Glúteo izquierdo" }
+```
+
+- `id` — identificador único, sin espacios. Es lo que se guarda en los presets.
+- `nombre` — lo que se ve en el chip.
+- `material` — **lo que se cuenta en el resumen**. Reutiliza los textos ya
+  existentes (`"Aguja subdérmica"`, `"Agujas trenzadas (par)"`,
+  `"Pegatinas (par)"`, `"Electrodo sacacorchos"`...) para que se sumen juntos.
+- `color` *(opcional)* — `rojo`, `azul`, `verde` o `amarillo`. Código del
+  INOMED: C1/C5 verde, C2/C6 amarillo, C3 y C3' rojo, C4 y C4' azul.
+- `nota` *(opcional)* — texto que sale al pasar el ratón.
+- `conmutador` + `opciones` *(opcional)* — para un ítem que ocupa una sola
+  entrada pero se subdivide por software (el canal 6 anodal de TES MEP).
+  Genera un desplegable dentro del chip.
+
+## Añadir o ajustar una caja
+
+Dentro de `cajas_material`:
+
+```json
+"mi_caja": {
+  "nombre": "Nombre visible",
+  "descripcion": "Para qué se usa",
+  "canales": 8,
+  "numeracion_inicio": 1,
+  "conector": "par",
+  "especiales": [
+    { "clave": "gnd", "nombre": "GND", "conector": "individual", "color": "verde" }
+  ]
+}
+```
+
+Tipos de `conector`:
+
+- `"par"` — una entrada roja+negra por número (agujas trenzadas/pareadas).
+- `"individual"` — un círculo por número, una sola columna.
+- `"individual_2col"` — individual repartido en 2 columnas (REF-AEP: 1-8 y 9-16).
+- `"anodal_catodal"` — 2 columnas **independientes** con numeración compartida
+  (TES MEP): izquierda anodal/roja, derecha catodal/negra.
+
+`numeracion_inicio` sirve para que la caja 2 empiece en 9 en vez de en 1, como
+en el equipo real. `especiales` son entradas fuera de la numeración (Ref, GND,
+PEATC, DNS...), con `clave`, `nombre`, `conector` y opcionalmente `color` y
+`nota`.
+
+Los valores de `canales`/`conector` son aproximados a partir de fotos del
+equipo — ajústalos si no cuadran.
+
+## Añadir un escenario a mano en el JSON
+
+```json
+"clave_escenario": {
   "nombre": "Nombre visible de la cirugía",
   "modalidades": ["PESS", "PEM"],
-  "cajas": {
-    "caja_estimulo": [
-      { "item": "Nombre del ítem", "material": "Tipo de material", "cantidad": 2 }
-    ],
-    "registro_cortical": [
-      { "item": "Otro ítem", "cantidad_pares": 3, "detalle": "Texto opcional" }
-    ]
-  }
+  "asignaciones": {
+    "registro_muscular_mmii": { "9": "l_ta", "10": "l_ah", "gnd": "tierra" },
+    "tes_mep": { "6:anodal": "conmutador", "8:catodal": "grid8" }
+  },
+  "notas": "Texto que aparece en los avisos del resumen",
+  "pendiente": "Algo sin confirmar; se muestra destacado"
 }
 ```
 
-Puntos importantes:
-
-- `"cajas"` puede tener **cualquier número de cajas**; lo normal es usar las
-  claves del catálogo `"cajas_material"`, pero admite cualquier nombre libre.
-  Cada una se renderiza como una tarjeta independiente, en el orden del
-  catálogo.
-- Cada ítem admite estos campos, todos opcionales salvo `"item"`:
-  - `"material"` — tipo de material (aguja, pegatina, etc.)
-  - `"cantidad"` / `"cantidad_pares"` / `"cantidad_paquetes"` — usa el que
-    corresponda; se muestra como etiqueta de cantidad
-  - `"detalle"` — texto libre con aclaraciones
-  - `"sitios"` — lista de ubicaciones/electrodos, se muestran como chips.
-    Cada sitio puede ser un texto simple (`"Fz"`) o un objeto con color
-    real del electrodo: `{ "nombre": "C3", "color": "rojo" }`. Colores
-    admitidos: `rojo`, `azul`, `verde`, `amarillo`. Código de color del
-    INOMED: C1/C5 verde, C2/C6 amarillo, C3 y C3' rojo, C4 y C4' azul.
-- Si tienes material que aún no has repartido entre cajas, ponlo en un array
-  `"sin_asignar"` al mismo nivel que `"cajas"` — aparece en una tarjeta
-  aparte llamada "Sin asignar todavía".
-- Si algo está pendiente de confirmar (y no quieres inventar un valor),
-  añade un campo `"pendiente"` (texto) al mismo nivel que `"cajas"` — se
-  muestra como aviso destacado en la parte superior del checklist.
-
-## Cómo añadir una opción/variante (tipo "sonda Raabe")
-
-Dentro de una cirugía, añade un bloque `"opciones"`:
-
-```json
-"opciones": {
-  "clave_opcion": {
-    "etiqueta": "¿Se usa tal cosa?",
-    "descripcion": "Texto opcional de aclaración",
-    "items_extra": [
-      { "item": "Ítem extra", "cantidad": 1, "caja": "tes_mep" }
-    ]
-  }
-}
-```
-
-Cada opción aparece como un checkbox encima del checklist. Al marcarlo, sus
-`"items_extra"` se insertan sin recargar la página; al desmarcarlo,
-desaparecen. Si un ítem extra lleva `"caja"`, se añade dentro de esa caja
-(con un fondo distinto para diferenciarlo). Si no lleva `"caja"`, aparece en
-una tarjeta aparte "Material añadido por opciones".
-
-## Material base
-
-La sección "Material base" (`"material_base"` en el JSON) se muestra siempre,
-independientemente de la cirugía elegida. Tiene su propio array `"items"`
-(vacío de momento) y una lista `"cajas"` puramente descriptiva.
+Formato de las claves de entrada: `"3"` para un canal normal,
+`"6:anodal"` / `"8:catodal"` en TES MEP, y la `clave` del especial
+(`"ref"`, `"gnd"`, `"peatc"`, `"dns"`, `"extra_par"`).
 
 ## Retomar el proyecto desde otro ordenador
 
 Clonar por primera vez:
 
 ```bash
-git clone <url-del-repo>
+git clone https://github.com/paniaguadediego-bit/checklist-mio-ionm.git
 ```
 
-Antes de empezar a trabajar (traer cambios de otra sesión):
+Antes de empezar a trabajar:
 
 ```bash
 git pull

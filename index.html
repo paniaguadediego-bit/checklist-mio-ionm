@@ -9,27 +9,50 @@
 <body>
 <header>
   <h1>Checklist de material — MIO/IONM</h1>
-  <p class="subtitle">Selecciona el tipo de cirugía para ver el material necesario</p>
+  <p class="subtitle">Monta el escenario de la cirugía y obtén el material necesario</p>
 </header>
 
 <main>
-  <section class="card base-card" id="material-base">
-    <h2>Material base <span class="tag">común a todas las cirugías</span></h2>
-    <p class="descripcion" id="base-descripcion"></p>
-    <div class="cajas-nombres" id="base-cajas"></div>
-    <ul class="item-list" id="base-items"></ul>
+
+  <section class="toolbar no-print">
+    <div class="toolbar-fila">
+      <label for="escenario-select">Escenario de cirugía</label>
+      <select id="escenario-select"></select>
+    </div>
+    <div class="toolbar-botones">
+      <button type="button" id="btn-nuevo">+ Nuevo</button>
+      <button type="button" id="btn-duplicar">Duplicar</button>
+      <button type="button" id="btn-renombrar">Renombrar</button>
+      <button type="button" id="btn-vaciar">Vaciar</button>
+      <button type="button" id="btn-borrar" class="peligro">Borrar</button>
+      <span class="toolbar-sep"></span>
+      <button type="button" id="btn-exportar">Exportar JSON</button>
+      <button type="button" id="btn-imprimir">Imprimir resumen</button>
+      <button type="button" id="btn-restablecer" class="peligro">Restablecer todo</button>
+    </div>
+    <p class="guardado-aviso" id="guardado-aviso"></p>
   </section>
 
-  <section class="selector-card">
-    <label for="cirugia-select">Tipo de cirugía</label>
-    <select id="cirugia-select">
-      <option value="">— Selecciona una cirugía —</option>
-    </select>
+  <section class="card resumen-card" id="resumen">
+    <h2>Resumen de material</h2>
+    <div id="resumen-contenido"></div>
   </section>
 
-  <section id="opciones-container"></section>
+  <section class="card catalogo-card no-print">
+    <div class="catalogo-header">
+      <h2>Catálogo maestro <span class="tag">arrastra a una entrada</span></h2>
+      <input type="search" id="catalogo-buscar" placeholder="Buscar material…" autocomplete="off">
+    </div>
+    <p class="caja-desc">
+      Todo el material disponible. Arrastra cualquier ítem a una entrada de
+      las cajas de abajo. Se puede usar el mismo ítem varias veces si hace
+      falta; para quitarlo, arrástralo fuera o pulsa la ✕.
+    </p>
+    <div id="catalogo-contenido"></div>
+  </section>
 
-  <section id="checklist-container"></section>
+  <section id="cajas-contenido"></section>
+
 </main>
 
 <script src="data/surgeries.js"></script>

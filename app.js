@@ -1,602 +1,778 @@
 (function () {
   "use strict";
 
-  var DATA = window.SURGERIES_DATA || { material_base: { cajas: [], items: [] }, cirugias: {} };
+  var DATA = window.SURGERIES_DATA || {};
+  var CAJAS = DATA.cajas_material || {};
+  var CATALOGO = DATA.catalogo_material || [];
+  var STORAGE_KEY = "mio_ionm_escenarios_v1";
 
-  var selectEl = document.getElementById("cirugia-select");
-  var opcionesContainer = document.getElementById("opciones-container");
-  var checklistContainer = document.getElementById("checklist-container");
-
-  var estadoOpciones = {}; // { [cirugiaId]: { [opcionKey]: bool } }
-
-  function cantidadLabel(item) {
-    if (item.cantidad !== undefined) return item.cantidad + " ud.";
-    if (item.cantidad_pares !== undefined) return item.cantidad_pares + (item.cantidad_pares === 1 ? " par" : " pares");
-    if (item.cantidad_paquetes !== undefined) return item.cantidad_paquetes + (item.cantidad_paquetes === 1 ? " paquete" : " paquetes");
-    return "";
-  }
-
-  function renderItemLi(item, extraClass) {
-    var li = document.createElement("li");
-    if (extraClass) li.className = extraClass;
-
-    var nombreRow = document.createElement("div");
-    nombreRow.className = "item-nombre";
-
-    var nombreSpan = document.createElement("span");
-    nombreSpan.textContent = item.item;
-    nombreRow.appendChild(nombreSpan);
-
-    var cantidadTxt = cantidadLabel(item);
-    if (cantidadTxt) {
-      var cantidadSpan = document.createElement("span");
-      cantidadSpan.className = "item-cantidad";
-      cantidadSpan.textContent = cantidadTxt;
-      nombreRow.appendChild(cantidadSpan);
-    }
-    li.appendChild(nombreRow);
-
-    var materialBits = [];
-    if (item.material) materialBits.push(item.material);
-    if (item.tipo) materialBits.push("Tipo: " + item.tipo);
-    if (materialBits.length) {
-      var materialDiv = document.createElement("div");
-      materialDiv.className = "item-material";
-      materialDiv.textContent = materialBits.join(" · ");
-      li.appendChild(materialDiv);
-    }
-
-    if (item.detalle) {
-      var detalleDiv = document.createElement("div");
-      detalleDiv.className = "item-detalle";
-      detalleDiv.textContent = item.detalle;
-      li.appendChild(detalleDiv);
-    }
-
-    if (item.sitios && item.sitios.length) {
-      var sitiosDiv = document.createElement("div");
-      sitiosDiv.className = "item-sitios";
-      item.sitios.forEach(function (sitio) {
-        var esObjeto = typeof sitio === "object" && sitio !== null;
-        var nombre = esObjeto ? sitio.nombre : sitio;
-        var color = esObjeto ? sitio.color : null;
-        var chip = document.createElement("span");
-        chip.className = "sitio-chip";
-        if (color) {
-          var dot = document.createElement("span");
-          dot.className = "color-dot color-" + color;
-          chip.appendChild(dot);
-        }
-        chip.appendChild(document.createTextNode(nombre));
-        sitiosDiv.appendChild(chip);
-      });
-      li.appendChild(sitiosDiv);
-    }
-
-    return li;
-  }
-
-  function renderItemList(items, extraClass) {
-    var ul = document.createElement("ul");
-    ul.className = "item-list";
-    if (!items || !items.length) {
-      var hint = document.createElement("li");
-      hint.className = "empty-hint";
-      hint.textContent = "Sin ítems definidos todavía.";
-      ul.appendChild(hint);
-      return ul;
-    }
-    items.forEach(function (item) {
-      ul.appendChild(renderItemLi(item, extraClass));
+  /* ---------------------------------------------------------------- *
+   * Índice del catálogo: id -> item (con su categoría)
+   * ---------------------------------------------------------------- */
+  var ITEMS = {};
+  CATALOGO.forEach(function (grupo) {
+    (grupo.items || []).forEach(function (item) {
+      ITEMS[item.id] = Object.assign({}, item, { categoria: grupo.categoria });
     });
-    return ul;
+  });
+
+  /* ---------------------------------------------------------------- *
+   * Estado
+   * ---------------------------------------------------------------- */
+  var escenarios = {};
+  var activo = null;
+
+  function clonar(obj) {
+    return JSON.parse(JSON.stringify(obj));
   }
 
-  function humanizeCajaName(key) {
-    return key.replace(/_/g, " ");
+  function cargarEstado() {
+    escenarios = clonar(DATA.escenarios || {});
+    var guardado = null;
+    try {
+      guardado = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+    } catch (e) {
+      guardado = null;
+    }
+    if (guardado && guardado.escenarios) {
+      // Lo guardado manda: incluye ediciones de los presets de fábrica
+      Object.keys(guardado.escenarios).forEach(function (id) {
+        escenarios[id] = guardado.escenarios[id];
+      });
+      // Respeta los borrados del usuario sobre presets de fábrica
+      (guardado.borrados || []).forEach(function (id) {
+        delete escenarios[id];
+      });
+      activo = guardado.activo;
+    }
+    if (!activo || !escenarios[activo]) {
+      activo = Object.keys(escenarios)[0] || null;
+    }
   }
 
-  function cajaInfo(key) {
-    var catalogo = DATA.cajas_material || {};
-    var info = catalogo[key] || { nombre: "Caja " + humanizeCajaName(key), descripcion: "" };
-    if (!info.canales) info.canales = 8;
-    if (!info.conector) info.conector = "par";
-    if (!info.especiales) info.especiales = [];
-    return info;
+  var borrados = [];
+
+  function guardarEstado() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        escenarios: escenarios,
+        activo: activo,
+        borrados: borrados
+      }));
+      avisoGuardado("Guardado en este navegador · " + new Date().toLocaleTimeString("es-ES"));
+    } catch (e) {
+      avisoGuardado("No se ha podido guardar: " + e.message, true);
+    }
   }
 
-  function construirUnidades(items, cajaKey) {
+  function avisoGuardado(texto, esError) {
+    var el = document.getElementById("guardado-aviso");
+    el.textContent = texto;
+    el.className = "guardado-aviso" + (esError ? " error" : "");
+  }
+
+  function escenarioActual() {
+    return escenarios[activo] || null;
+  }
+
+  function asignacionesDe(cajaKey) {
+    var esc = escenarioActual();
+    if (!esc) return {};
+    if (!esc.asignaciones) esc.asignaciones = {};
+    if (!esc.asignaciones[cajaKey]) esc.asignaciones[cajaKey] = {};
+    return esc.asignaciones[cajaKey];
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Definición de entradas de una caja
+   * ---------------------------------------------------------------- */
+  function infoCaja(key) {
+    var info = CAJAS[key] || { nombre: key, descripcion: "" };
+    return {
+      nombre: info.nombre || key,
+      descripcion: info.descripcion || "",
+      canales: info.canales || 8,
+      conector: info.conector || "par",
+      inicio: info.numeracion_inicio || 1,
+      especiales: info.especiales || []
+    };
+  }
+
+  // Devuelve todas las entradas de una caja como lista plana de descriptores
+  function entradasDe(key) {
+    var info = infoCaja(key);
     var out = [];
-    var contador = 0;
-    (items || []).forEach(function (item) {
-      if (item.conmutador) {
-        contador++;
-        var opciones = (item.sitios || []).map(function (sitio) {
-          var esObjeto = typeof sitio === "object" && sitio !== null;
-          return { nombre: esObjeto ? sitio.nombre : sitio, color: esObjeto ? sitio.color : null };
-        });
-        out.push({ id: cajaKey + "-u" + contador, label: item.item, tipo: "conmutador", opciones: opciones });
-      } else if (item.sitios && item.sitios.length) {
-        item.sitios.forEach(function (sitio) {
-          var esObjeto = typeof sitio === "object" && sitio !== null;
-          var nombre = esObjeto ? sitio.nombre : sitio;
-          var color = esObjeto ? sitio.color : null;
-          contador++;
-          out.push({ id: cajaKey + "-u" + contador, label: nombre, color: color });
-        });
+    var i, n;
+    for (i = 0; i < info.canales; i++) {
+      n = info.inicio + i;
+      if (info.conector === "anodal_catodal") {
+        out.push({ id: n + ":anodal", etiqueta: n, polo: "anodal", conector: "rojo" });
+        out.push({ id: n + ":catodal", etiqueta: n, polo: "catodal", conector: "negro" });
+      } else if (info.conector === "par") {
+        out.push({ id: String(n), etiqueta: n, conector: "par" });
       } else {
-        var cantidad = item.cantidad || item.cantidad_pares || item.cantidad_paquetes || 1;
-        for (var i = 1; i <= cantidad; i++) {
-          contador++;
-          var label = cantidad > 1 ? item.item + " (" + i + "/" + cantidad + ")" : item.item;
-          out.push({ id: cajaKey + "-u" + contador, label: label, color: null });
-        }
+        out.push({ id: String(n), etiqueta: n, conector: "individual" });
       }
+    }
+    info.especiales.forEach(function (esp) {
+      out.push({
+        id: esp.clave,
+        etiqueta: esp.nombre,
+        conector: esp.conector === "par" ? "par" : (esp.color || "individual"),
+        nota: esp.nota,
+        especial: true
+      });
     });
     return out;
   }
 
-  function crearChipUnidad(unidad) {
+  /* ---------------------------------------------------------------- *
+   * Chips
+   * ---------------------------------------------------------------- */
+  function crearChip(item, opciones) {
+    opciones = opciones || {};
     var chip = document.createElement("span");
-    chip.className = "pool-chip";
+    chip.className = "chip" + (opciones.colocado ? " chip-colocado" : "");
     chip.draggable = true;
-    chip.dataset.unidadId = unidad.id;
+    chip.dataset.itemId = item.id;
+    if (opciones.cajaKey) chip.dataset.origenCaja = opciones.cajaKey;
+    if (opciones.entradaId) chip.dataset.origenEntrada = opciones.entradaId;
+    if (item.nota) chip.title = item.nota;
 
-    if (unidad.tipo === "conmutador") {
-      chip.classList.add("chip-conmutador");
-      chip.appendChild(document.createTextNode(unidad.label + " "));
-      var select = document.createElement("select");
-      unidad.opciones.forEach(function (op) {
-        var opt = document.createElement("option");
-        opt.textContent = op.color ? op.nombre + " (" + op.color + ")" : op.nombre;
-        select.appendChild(opt);
-      });
-      select.addEventListener("mousedown", function (e) { e.stopPropagation(); });
-      select.addEventListener("click", function (e) { e.stopPropagation(); });
-      chip.appendChild(select);
-      return chip;
-    }
-
-    if (unidad.color) {
+    if (item.color) {
       var dot = document.createElement("span");
-      dot.className = "color-dot color-" + unidad.color;
+      dot.className = "color-dot color-" + item.color;
       chip.appendChild(dot);
     }
-    chip.appendChild(document.createTextNode(unidad.label));
+    chip.appendChild(document.createTextNode(item.nombre));
+
+    if (item.conmutador && opciones.colocado) {
+      var sel = document.createElement("select");
+      sel.className = "chip-select";
+      (item.opciones || []).forEach(function (op) {
+        var o = document.createElement("option");
+        o.textContent = op;
+        sel.appendChild(o);
+      });
+      var esc = escenarioActual();
+      var guardadoSel = esc && esc.conmutador && esc.conmutador[opciones.cajaKey + "/" + opciones.entradaId];
+      if (guardadoSel) sel.value = guardadoSel;
+      ["mousedown", "click", "dragstart"].forEach(function (ev) {
+        sel.addEventListener(ev, function (e) { e.stopPropagation(); });
+      });
+      sel.addEventListener("change", function () {
+        var e2 = escenarioActual();
+        if (!e2.conmutador) e2.conmutador = {};
+        e2.conmutador[opciones.cajaKey + "/" + opciones.entradaId] = sel.value;
+        guardarEstado();
+        renderResumen();
+      });
+      chip.appendChild(sel);
+    }
+
+    if (opciones.colocado) {
+      var quitar = document.createElement("button");
+      quitar.type = "button";
+      quitar.className = "chip-quitar";
+      quitar.textContent = "✕";
+      quitar.title = "Quitar de esta entrada";
+      quitar.addEventListener("click", function (e) {
+        e.stopPropagation();
+        delete asignacionesDe(opciones.cajaKey)[opciones.entradaId];
+        guardarEstado();
+        renderCajas();
+        renderResumen();
+      });
+      chip.appendChild(quitar);
+    }
+
     return chip;
   }
 
-  function wireDragDrop(container) {
-    var draggedEl = null;
+  /* ---------------------------------------------------------------- *
+   * Drag & drop (delegado en document)
+   * ---------------------------------------------------------------- */
+  var arrastrando = null;
 
-    container.addEventListener("dragstart", function (e) {
-      var chip = e.target.closest(".pool-chip");
-      if (!chip) return;
-      draggedEl = chip;
-      chip.classList.add("dragging");
-      e.dataTransfer.effectAllowed = "move";
-      e.dataTransfer.setData("text/plain", chip.dataset.unidadId || "x");
+  document.addEventListener("dragstart", function (e) {
+    var chip = e.target.closest && e.target.closest(".chip");
+    if (!chip) return;
+    arrastrando = {
+      itemId: chip.dataset.itemId,
+      origenCaja: chip.dataset.origenCaja || null,
+      origenEntrada: chip.dataset.origenEntrada || null
+    };
+    chip.classList.add("arrastrando");
+    e.dataTransfer.effectAllowed = "copyMove";
+    e.dataTransfer.setData("text/plain", chip.dataset.itemId);
+  });
+
+  document.addEventListener("dragend", function (e) {
+    var chip = e.target.closest && e.target.closest(".chip");
+    if (chip) chip.classList.remove("arrastrando");
+    document.querySelectorAll(".sobre").forEach(function (el) {
+      el.classList.remove("sobre");
     });
+    arrastrando = null;
+  });
 
-    container.addEventListener("dragend", function () {
-      if (draggedEl) draggedEl.classList.remove("dragging");
-      draggedEl = null;
-      container.querySelectorAll(".dragover").forEach(function (el) {
-        el.classList.remove("dragover");
-      });
-    });
-
-    container.addEventListener("dragover", function (e) {
-      var target = e.target.closest(".canal-slot, .material-pool");
-      if (!target) return;
+  document.addEventListener("dragover", function (e) {
+    var slot = e.target.closest && e.target.closest(".slot");
+    if (slot) {
       e.preventDefault();
-      target.classList.add("dragover");
-    });
-
-    container.addEventListener("dragleave", function (e) {
-      var target = e.target.closest(".canal-slot, .material-pool");
-      if (target) target.classList.remove("dragover");
-    });
-
-    container.addEventListener("drop", function (e) {
-      var target = e.target.closest(".canal-slot, .material-pool");
-      if (!target || !draggedEl) return;
+      e.dataTransfer.dropEffect = "move";
+      slot.classList.add("sobre");
+      return;
+    }
+    // Soltar sobre el catálogo = quitar de la caja
+    var cat = e.target.closest && e.target.closest(".catalogo-card");
+    if (cat && arrastrando && arrastrando.origenCaja) {
       e.preventDefault();
-      target.classList.remove("dragover");
+      cat.classList.add("sobre");
+    }
+  });
 
-      if (target.classList.contains("canal-slot")) {
-        var ocupante = target.querySelector(".pool-chip");
-        if (ocupante && ocupante !== draggedEl) {
-          var pool = container.querySelector(".material-pool");
-          pool.appendChild(ocupante);
-        }
+  document.addEventListener("dragleave", function (e) {
+    var el = e.target.closest && e.target.closest(".slot, .catalogo-card");
+    if (el) el.classList.remove("sobre");
+  });
+
+  document.addEventListener("drop", function (e) {
+    if (!arrastrando) return;
+
+    var slot = e.target.closest && e.target.closest(".slot");
+    if (slot) {
+      e.preventDefault();
+      slot.classList.remove("sobre");
+      var destinoCaja = slot.dataset.caja;
+      var destinoEntrada = slot.dataset.entrada;
+
+      // Mover dentro/entre cajas: liberar el origen
+      if (arrastrando.origenCaja) {
+        delete asignacionesDe(arrastrando.origenCaja)[arrastrando.origenEntrada];
       }
-      target.appendChild(draggedEl);
+      asignacionesDe(destinoCaja)[destinoEntrada] = arrastrando.itemId;
+      guardarEstado();
+      renderCajas();
+      renderResumen();
+      return;
+    }
+
+    var cat = e.target.closest && e.target.closest(".catalogo-card");
+    if (cat && arrastrando.origenCaja) {
+      e.preventDefault();
+      cat.classList.remove("sobre");
+      delete asignacionesDe(arrastrando.origenCaja)[arrastrando.origenEntrada];
+      guardarEstado();
+      renderCajas();
+      renderResumen();
+    }
+  });
+
+  /* ---------------------------------------------------------------- *
+   * Render: catálogo maestro
+   * ---------------------------------------------------------------- */
+  function renderCatalogo() {
+    var cont = document.getElementById("catalogo-contenido");
+    var filtro = (document.getElementById("catalogo-buscar").value || "").toLowerCase().trim();
+    cont.innerHTML = "";
+
+    CATALOGO.forEach(function (grupo) {
+      var items = (grupo.items || []).filter(function (it) {
+        if (!filtro) return true;
+        return (it.nombre + " " + (it.nota || "") + " " + grupo.categoria).toLowerCase().indexOf(filtro) !== -1;
+      });
+      if (!items.length) return;
+
+      var bloque = document.createElement("div");
+      bloque.className = "catalogo-grupo";
+      var h = document.createElement("h4");
+      h.textContent = grupo.categoria;
+      bloque.appendChild(h);
+      var fila = document.createElement("div");
+      fila.className = "chip-fila";
+      items.forEach(function (it) {
+        fila.appendChild(crearChip(ITEMS[it.id], {}));
+      });
+      bloque.appendChild(fila);
+      cont.appendChild(bloque);
     });
+
+    if (!cont.children.length) {
+      var vacio = document.createElement("p");
+      vacio.className = "empty-hint";
+      vacio.textContent = "Ningún material coincide con la búsqueda.";
+      cont.appendChild(vacio);
+    }
   }
 
-  function crearSlot(datasetInfo) {
-    var slot = document.createElement("div");
-    slot.className = "canal-slot";
-    Object.keys(datasetInfo || {}).forEach(function (k) {
-      slot.dataset[k] = datasetInfo[k];
-    });
-    return slot;
-  }
-
+  /* ---------------------------------------------------------------- *
+   * Render: cajas físicas
+   * ---------------------------------------------------------------- */
   function crearConector(clase) {
     var c = document.createElement("span");
     c.className = "conector " + clase;
     return c;
   }
 
-  function crearFilaSimple(etiqueta, conectorClase) {
+  function crearSlot(cajaKey, entrada) {
+    var slot = document.createElement("div");
+    slot.className = "slot";
+    slot.dataset.caja = cajaKey;
+    slot.dataset.entrada = entrada.id;
+    var itemId = asignacionesDe(cajaKey)[entrada.id];
+    if (itemId && ITEMS[itemId]) {
+      slot.appendChild(crearChip(ITEMS[itemId], {
+        colocado: true,
+        cajaKey: cajaKey,
+        entradaId: entrada.id
+      }));
+    } else if (itemId) {
+      slot.appendChild(document.createTextNode("? " + itemId));
+    }
+    return slot;
+  }
+
+  function crearFila(cajaKey, entrada) {
     var row = document.createElement("div");
     row.className = "canal-row";
-    var num = document.createElement("span");
-    num.className = "canal-num";
-    num.textContent = etiqueta;
-    row.appendChild(num);
-    var conectores = document.createElement("span");
-    conectores.className = "canal-conectores";
-    conectores.appendChild(crearConector(conectorClase));
-    row.appendChild(conectores);
-    var slot = crearSlot({ canal: etiqueta });
-    row.appendChild(slot);
-    return row;
-  }
-
-  function crearFilaPar(etiqueta) {
-    var row = document.createElement("div");
-    row.className = "canal-row";
-    var num = document.createElement("span");
-    num.className = "canal-num";
-    num.textContent = etiqueta;
-    row.appendChild(num);
-    var conectores = document.createElement("span");
-    conectores.className = "canal-conectores";
-    conectores.appendChild(crearConector("rojo"));
-    conectores.appendChild(crearConector("negro"));
-    row.appendChild(conectores);
-    var slot = crearSlot({ canal: etiqueta });
-    row.appendChild(slot);
-    return row;
-  }
-
-  function crearFilaAnodalCatodal(numero) {
-    var row = document.createElement("div");
-    row.className = "canal-row canal-row-doble";
 
     var num = document.createElement("span");
     num.className = "canal-num";
-    num.textContent = numero;
+    num.textContent = entrada.etiqueta;
     row.appendChild(num);
 
-    var mitadA = document.createElement("div");
-    mitadA.className = "canal-mitad";
-    mitadA.appendChild(crearConector("rojo"));
-    mitadA.appendChild(crearSlot({ canal: numero, polo: "anodal" }));
-    row.appendChild(mitadA);
+    var cons = document.createElement("span");
+    cons.className = "canal-conectores";
+    if (entrada.conector === "par") {
+      cons.appendChild(crearConector("rojo"));
+      cons.appendChild(crearConector("negro"));
+    } else {
+      cons.appendChild(crearConector(entrada.conector));
+    }
+    row.appendChild(cons);
 
-    var mitadC = document.createElement("div");
-    mitadC.className = "canal-mitad";
-    mitadC.appendChild(crearConector("negro"));
-    mitadC.appendChild(crearSlot({ canal: numero, polo: "catodal" }));
-    row.appendChild(mitadC);
+    row.appendChild(crearSlot(cajaKey, entrada));
 
+    if (entrada.nota) {
+      var nota = document.createElement("span");
+      nota.className = "canal-nota";
+      nota.textContent = entrada.nota;
+      row.appendChild(nota);
+    }
     return row;
   }
 
-  function renderCajaFisica(cajaKey, itemsBase, itemsExtra) {
-    var info = cajaInfo(cajaKey);
+  function renderCajaFisica(cajaKey) {
+    var info = infoCaja(cajaKey);
+    var entradas = entradasDe(cajaKey);
+    var numeradas = entradas.filter(function (e) { return !e.especial; });
+    var especiales = entradas.filter(function (e) { return e.especial; });
 
-    var wrap = document.createElement("div");
-    wrap.className = "caja-fisica-wrap";
+    var card = document.createElement("div");
+    card.className = "card caja-card";
 
-    var header = document.createElement("div");
-    header.className = "caja-fisica-header";
-    header.textContent = "Vista de caja física — arrastra el material a su entrada";
-    wrap.appendChild(header);
+    var h3 = document.createElement("h3");
+    h3.textContent = info.nombre;
+    card.appendChild(h3);
+
+    var usadas = entradas.filter(function (e) {
+      return !!asignacionesDe(cajaKey)[e.id];
+    }).length;
+    var contador = document.createElement("span");
+    contador.className = "caja-contador" + (usadas === 0 ? " vacia" : "");
+    contador.textContent = usadas + " / " + entradas.length + " entradas";
+    card.appendChild(contador);
+
+    if (info.descripcion) {
+      var d = document.createElement("p");
+      d.className = "caja-desc";
+      d.textContent = info.descripcion;
+      card.appendChild(d);
+    }
 
     var box = document.createElement("div");
     box.className = "caja-fisica";
     if (info.conector === "anodal_catodal" || info.conector === "individual_2col") {
-      box.classList.add("caja-fisica-ancha");
+      box.classList.add("ancha");
     }
 
     var tab = document.createElement("div");
-    tab.className = "caja-fisica-tab";
+    tab.className = "caja-tab";
     tab.textContent = "kΩ";
     box.appendChild(tab);
 
-    var canalesWrap = document.createElement("div");
-    canalesWrap.className = "canales-wrap";
-    var i;
+    var wrap = document.createElement("div");
+    wrap.className = "canales-wrap";
 
     if (info.conector === "anodal_catodal") {
-      canalesWrap.classList.add("anodal-catodal-header");
-      var cabecera = document.createElement("div");
-      cabecera.className = "canal-row canal-row-doble canal-cabecera";
-      var espaciador = document.createElement("span");
-      espaciador.className = "canal-num";
-      cabecera.appendChild(espaciador);
-      var etA = document.createElement("div");
-      etA.className = "canal-mitad-titulo";
-      etA.textContent = "Anodal (rojo)";
-      cabecera.appendChild(etA);
-      var etC = document.createElement("div");
-      etC.className = "canal-mitad-titulo";
-      etC.textContent = "Catodal (negro)";
-      cabecera.appendChild(etC);
-      canalesWrap.appendChild(cabecera);
-      for (i = 1; i <= info.canales; i++) {
-        canalesWrap.appendChild(crearFilaAnodalCatodal(i));
+      var cab = document.createElement("div");
+      cab.className = "canal-row cabecera";
+      var sp = document.createElement("span");
+      sp.className = "canal-num";
+      cab.appendChild(sp);
+      ["Anodal (rojo)", "Catodal (negro)"].forEach(function (t) {
+        var e = document.createElement("div");
+        e.className = "mitad-titulo";
+        e.textContent = t;
+        cab.appendChild(e);
+      });
+      wrap.appendChild(cab);
+
+      for (var i = 0; i < numeradas.length; i += 2) {
+        var anodal = numeradas[i];
+        var catodal = numeradas[i + 1];
+        var row = document.createElement("div");
+        row.className = "canal-row doble";
+        var n = document.createElement("span");
+        n.className = "canal-num";
+        n.textContent = anodal.etiqueta;
+        row.appendChild(n);
+        [anodal, catodal].forEach(function (ent) {
+          var mitad = document.createElement("div");
+          mitad.className = "canal-mitad";
+          mitad.appendChild(crearConector(ent.conector));
+          mitad.appendChild(crearSlot(cajaKey, ent));
+          row.appendChild(mitad);
+        });
+        wrap.appendChild(row);
       }
     } else if (info.conector === "individual_2col") {
-      canalesWrap.classList.add("dos-columnas");
-      var mitad = Math.ceil(info.canales / 2);
-      var colIzq = document.createElement("div");
-      colIzq.className = "columna-canales";
-      var colDer = document.createElement("div");
-      colDer.className = "columna-canales";
-      for (i = 1; i <= mitad; i++) {
-        colIzq.appendChild(crearFilaSimple(i, "individual"));
-      }
-      for (i = mitad + 1; i <= info.canales; i++) {
-        colDer.appendChild(crearFilaSimple(i, "individual"));
-      }
-      canalesWrap.appendChild(colIzq);
-      canalesWrap.appendChild(colDer);
-    } else {
-      for (i = 1; i <= info.canales; i++) {
-        canalesWrap.appendChild(info.conector === "par" ? crearFilaPar(i) : crearFilaSimple(i, "individual"));
-      }
-    }
-    box.appendChild(canalesWrap);
-
-    if (info.especiales && info.especiales.length) {
-      var especialesWrap = document.createElement("div");
-      especialesWrap.className = "canales-especiales";
-      info.especiales.forEach(function (esp) {
-        var row = esp.conector === "par" ? crearFilaPar(esp.nombre) : crearFilaSimple(esp.nombre, esp.color ? esp.color : "individual");
-        row.querySelector(".canal-slot").dataset.canal = esp.clave;
-        if (esp.nota) {
-          var nota = document.createElement("span");
-          nota.className = "canal-especial-nota";
-          nota.textContent = esp.nota;
-          row.appendChild(nota);
-        }
-        especialesWrap.appendChild(row);
+      wrap.classList.add("dos-columnas");
+      var mitadN = Math.ceil(numeradas.length / 2);
+      [numeradas.slice(0, mitadN), numeradas.slice(mitadN)].forEach(function (grupo) {
+        var col = document.createElement("div");
+        col.className = "columna";
+        grupo.forEach(function (ent) { col.appendChild(crearFila(cajaKey, ent)); });
+        wrap.appendChild(col);
       });
-      box.appendChild(especialesWrap);
+    } else {
+      numeradas.forEach(function (ent) { wrap.appendChild(crearFila(cajaKey, ent)); });
+    }
+    box.appendChild(wrap);
+
+    if (especiales.length) {
+      var esp = document.createElement("div");
+      esp.className = "canales-especiales";
+      especiales.forEach(function (ent) { esp.appendChild(crearFila(cajaKey, ent)); });
+      box.appendChild(esp);
     }
 
     var plate = document.createElement("div");
-    plate.className = "caja-fisica-plate";
+    plate.className = "caja-plate";
     plate.textContent = info.nombre;
     box.appendChild(plate);
 
-    wrap.appendChild(box);
-
-    var poolHeader = document.createElement("div");
-    poolHeader.className = "material-pool-header";
-    poolHeader.textContent = "Material sin colocar";
-    wrap.appendChild(poolHeader);
-
-    var pool = document.createElement("div");
-    pool.className = "material-pool";
-    wrap.appendChild(pool);
-
-    var unidades = construirUnidades((itemsBase || []).concat(itemsExtra || []), cajaKey);
-    unidades.forEach(function (u) {
-      pool.appendChild(crearChipUnidad(u));
-    });
-
-    wireDragDrop(wrap);
-
-    return wrap;
+    card.appendChild(box);
+    return card;
   }
 
-  function renderMaterialBase() {
-    var base = DATA.material_base || {};
-    document.getElementById("base-descripcion").textContent = base.descripcion || "";
-
-    var cajasDiv = document.getElementById("base-cajas");
-    cajasDiv.innerHTML = "";
-    (base.cajas || []).forEach(function (caja) {
-      var chip = document.createElement("span");
-      chip.className = "caja-chip";
-      chip.textContent = caja;
-      cajasDiv.appendChild(chip);
-    });
-
-    var itemsUl = document.getElementById("base-items");
-    itemsUl.replaceWith(renderItemList(base.items, null));
-    // renderItemList creates a new <ul class="item-list">; give it the expected id back
-    var newUl = document.querySelector("#material-base .item-list");
-    newUl.id = "base-items";
-  }
-
-  function populateSelect() {
-    Object.keys(DATA.cirugias || {}).forEach(function (id) {
-      var cirugia = DATA.cirugias[id];
-      var opt = document.createElement("option");
-      opt.value = id;
-      opt.textContent = cirugia.nombre || id;
-      selectEl.appendChild(opt);
-    });
-  }
-
-  function itemsExtraActivos(cirugia, cirugiaId) {
-    var extra = [];
-    if (!cirugia.opciones) return extra;
-    var estado = estadoOpciones[cirugiaId] || {};
-    Object.keys(cirugia.opciones).forEach(function (key) {
-      if (estado[key]) {
-        extra = extra.concat(cirugia.opciones[key].items_extra || []);
-      }
-    });
-    return extra;
-  }
-
-  function renderOpciones(cirugia, cirugiaId) {
-    opcionesContainer.innerHTML = "";
-    if (!cirugia.opciones) return;
-
-    if (!estadoOpciones[cirugiaId]) estadoOpciones[cirugiaId] = {};
-
-    Object.keys(cirugia.opciones).forEach(function (key) {
-      var opcion = cirugia.opciones[key];
-      var wrapper = document.createElement("label");
-      wrapper.className = "opcion-checkbox";
-
-      var checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.checked = !!estadoOpciones[cirugiaId][key];
-      checkbox.addEventListener("change", function () {
-        estadoOpciones[cirugiaId][key] = checkbox.checked;
-        renderChecklist(cirugiaId);
-      });
-
-      var textDiv = document.createElement("div");
-      textDiv.className = "opcion-text";
-      var strong = document.createElement("strong");
-      strong.textContent = opcion.etiqueta;
-      textDiv.appendChild(strong);
-      if (opcion.descripcion) {
-        var small = document.createElement("small");
-        small.textContent = opcion.descripcion;
-        textDiv.appendChild(small);
-      }
-
-      wrapper.appendChild(checkbox);
-      wrapper.appendChild(textDiv);
-      opcionesContainer.appendChild(wrapper);
-    });
-  }
-
-  function ordenCajas(cirugia, cajaKeysConExtras) {
-    var catalogoKeys = Object.keys(DATA.cajas_material || {});
-    var presentes = Object.keys(cirugia.cajas || {}).concat(cajaKeysConExtras);
-    var vistos = {};
-    var enCatalogo = catalogoKeys.filter(function (k) {
-      var ok = presentes.indexOf(k) !== -1 && !vistos[k];
-      if (ok) vistos[k] = true;
-      return ok;
-    });
-    var fueraDeCatalogo = presentes.filter(function (k) {
-      var ok = catalogoKeys.indexOf(k) === -1 && !vistos[k];
-      if (ok) vistos[k] = true;
-      return ok;
-    });
-    return enCatalogo.concat(fueraDeCatalogo);
-  }
-
-  function renderChecklist(cirugiaId) {
-    checklistContainer.innerHTML = "";
-    var cirugia = (DATA.cirugias || {})[cirugiaId];
-    if (!cirugia) return;
-
-    var header = document.createElement("div");
-    header.className = "cirugia-header";
-    var h2 = document.createElement("h2");
-    h2.textContent = cirugia.nombre;
-    header.appendChild(h2);
-    if (cirugia.modalidades && cirugia.modalidades.length) {
-      var modDiv = document.createElement("div");
-      modDiv.className = "modalidades";
-      cirugia.modalidades.forEach(function (m) {
-        var chip = document.createElement("span");
-        chip.className = "modalidad-chip";
-        chip.textContent = m;
-        modDiv.appendChild(chip);
-      });
-      header.appendChild(modDiv);
-    }
-    checklistContainer.appendChild(header);
-
-    if (cirugia.pendiente) {
-      var pend = document.createElement("div");
-      pend.className = "pendiente-nota";
-      pend.innerHTML = "<strong>Pendiente de confirmar:</strong>";
-      pend.appendChild(document.createTextNode(cirugia.pendiente));
-      checklistContainer.appendChild(pend);
-    }
+  function renderCajas() {
+    var cont = document.getElementById("cajas-contenido");
+    cont.innerHTML = "";
+    if (!escenarioActual()) return;
 
     var grid = document.createElement("div");
     grid.className = "cajas-grid";
-
-    var cajas = cirugia.cajas || {};
-    var extraActivos = itemsExtraActivos(cirugia, cirugiaId);
-    var extrasConCaja = extraActivos.filter(function (i) { return !!i.caja; });
-    var extrasSinCaja = extraActivos.filter(function (i) { return !i.caja; });
-    var cajaKeysConExtras = extrasConCaja.map(function (i) { return i.caja; });
-
-    ordenCajas(cirugia, cajaKeysConExtras).forEach(function (cajaKey) {
-      var itemsBase = cajas[cajaKey] || [];
-      var itemsExtraDeCaja = extrasConCaja.filter(function (i) { return i.caja === cajaKey; });
-      if (!itemsBase.length && !itemsExtraDeCaja.length) return;
-
-      var info = cajaInfo(cajaKey);
-      var cajaCard = document.createElement("div");
-      cajaCard.className = "card caja-card";
-      var h3 = document.createElement("h3");
-      h3.textContent = info.nombre;
-      cajaCard.appendChild(h3);
-      if (info.descripcion) {
-        var desc = document.createElement("p");
-        desc.className = "caja-desc";
-        desc.textContent = info.descripcion;
-        cajaCard.appendChild(desc);
-      }
-
-      var ul = renderItemList(itemsBase, null);
-      itemsExtraDeCaja.forEach(function (item) {
-        ul.appendChild(renderItemLi(item, "item-extra"));
-      });
-      // quita el mensaje "sin ítems" si al final sí hay contenido de opciones
-      if (itemsBase.length === 0 && itemsExtraDeCaja.length > 0) {
-        var hint = ul.querySelector(".empty-hint");
-        if (hint) hint.remove();
-      }
-      cajaCard.appendChild(ul);
-      cajaCard.appendChild(renderCajaFisica(cajaKey, itemsBase, itemsExtraDeCaja));
-      grid.appendChild(cajaCard);
+    Object.keys(CAJAS).forEach(function (key) {
+      grid.appendChild(renderCajaFisica(key));
     });
-
-    if (extrasSinCaja.length) {
-      var extraCard = document.createElement("div");
-      extraCard.className = "card caja-card";
-      var h3e = document.createElement("h3");
-      h3e.textContent = "Material añadido por opciones";
-      extraCard.appendChild(h3e);
-      extraCard.appendChild(renderItemList(extrasSinCaja, "item-extra"));
-      grid.appendChild(extraCard);
-    }
-
-    if (cirugia.sin_asignar && cirugia.sin_asignar.length) {
-      var sinAsigCard = document.createElement("div");
-      sinAsigCard.className = "card caja-card sin-asignar";
-      var h3s = document.createElement("h3");
-      h3s.textContent = "Sin asignar todavía";
-      sinAsigCard.appendChild(h3s);
-      sinAsigCard.appendChild(renderItemList(cirugia.sin_asignar, null));
-      grid.appendChild(sinAsigCard);
-    }
-
-    checklistContainer.appendChild(grid);
+    cont.appendChild(grid);
   }
 
-  selectEl.addEventListener("change", function () {
-    var cirugiaId = selectEl.value;
-    opcionesContainer.innerHTML = "";
-    checklistContainer.innerHTML = "";
-    if (!cirugiaId) return;
-    var cirugia = DATA.cirugias[cirugiaId];
-    renderOpciones(cirugia, cirugiaId);
-    renderChecklist(cirugiaId);
+  /* ---------------------------------------------------------------- *
+   * Render: resumen de material  (el objetivo de la herramienta)
+   * ---------------------------------------------------------------- */
+  function renderResumen() {
+    var cont = document.getElementById("resumen-contenido");
+    cont.innerHTML = "";
+    var esc = escenarioActual();
+    if (!esc) {
+      cont.innerHTML = '<p class="empty-hint">No hay ningún escenario. Crea uno con “+ Nuevo”.</p>';
+      return;
+    }
+
+    var titulo = document.createElement("div");
+    titulo.className = "resumen-titulo";
+    titulo.innerHTML = "<strong>" + esc.nombre + "</strong>";
+    cont.appendChild(titulo);
+
+    if (esc.modalidades && esc.modalidades.length) {
+      var mods = document.createElement("div");
+      mods.className = "modalidades";
+      esc.modalidades.forEach(function (m) {
+        var c = document.createElement("span");
+        c.className = "modalidad-chip";
+        c.textContent = m;
+        mods.appendChild(c);
+      });
+      cont.appendChild(mods);
+    }
+
+    // Recuento
+    var totalMaterial = {};
+    var cajasUsadas = [];
+    var totalEntradas = 0;
+
+    Object.keys(CAJAS).forEach(function (cajaKey) {
+      var entradas = entradasDe(cajaKey);
+      var asign = asignacionesDe(cajaKey);
+      var detalle = [];
+      entradas.forEach(function (ent) {
+        var itemId = asign[ent.id];
+        if (!itemId) return;
+        var item = ITEMS[itemId];
+        if (!item) return;
+        var etiqueta = ent.polo ? ent.etiqueta + " " + ent.polo : ent.etiqueta;
+        var nombre = item.nombre;
+        if (item.conmutador) {
+          var sel = esc.conmutador && esc.conmutador[cajaKey + "/" + ent.id];
+          if (sel) nombre += " → " + sel;
+        }
+        detalle.push({ entrada: etiqueta, nombre: nombre, color: item.color });
+        totalMaterial[item.material] = (totalMaterial[item.material] || 0) + 1;
+        totalEntradas++;
+      });
+      if (detalle.length) {
+        cajasUsadas.push({
+          key: cajaKey,
+          nombre: infoCaja(cajaKey).nombre,
+          usadas: detalle.length,
+          total: entradas.length,
+          detalle: detalle
+        });
+      }
+    });
+
+    if (!totalEntradas) {
+      cont.insertAdjacentHTML("beforeend",
+        '<p class="empty-hint">Escenario vacío. Arrastra material del catálogo a las entradas de las cajas.</p>');
+      return;
+    }
+
+    // Bloque: material total
+    var secMat = document.createElement("div");
+    secMat.className = "resumen-bloque";
+    secMat.innerHTML = "<h3>Material a preparar</h3>";
+    var tablaMat = document.createElement("table");
+    tablaMat.className = "tabla-resumen";
+    tablaMat.innerHTML = "<thead><tr><th>Material</th><th>Cantidad</th></tr></thead>";
+    var tbodyMat = document.createElement("tbody");
+    Object.keys(totalMaterial).sort().forEach(function (mat) {
+      var tr = document.createElement("tr");
+      var td1 = document.createElement("td");
+      td1.textContent = mat;
+      var td2 = document.createElement("td");
+      td2.className = "num";
+      td2.textContent = totalMaterial[mat];
+      tr.appendChild(td1);
+      tr.appendChild(td2);
+      tbodyMat.appendChild(tr);
+    });
+    tablaMat.appendChild(tbodyMat);
+    secMat.appendChild(tablaMat);
+    cont.appendChild(secMat);
+
+    // Bloque: cajas necesarias
+    var secCajas = document.createElement("div");
+    secCajas.className = "resumen-bloque";
+    secCajas.innerHTML = "<h3>Cajas necesarias (" + cajasUsadas.length + ")</h3>";
+    cajasUsadas.forEach(function (c) {
+      var bloque = document.createElement("div");
+      bloque.className = "resumen-caja";
+
+      var cab = document.createElement("div");
+      cab.className = "resumen-caja-cab";
+      var nom = document.createElement("span");
+      nom.className = "resumen-caja-nombre";
+      nom.textContent = c.nombre;
+      var cnt = document.createElement("span");
+      cnt.className = "resumen-caja-cnt" + (c.usadas === c.total ? " llena" : "");
+      cnt.textContent = c.usadas + "/" + c.total + " entradas";
+      cab.appendChild(nom);
+      cab.appendChild(cnt);
+      bloque.appendChild(cab);
+
+      var lista = document.createElement("div");
+      lista.className = "resumen-entradas";
+      c.detalle.forEach(function (d) {
+        var el = document.createElement("span");
+        el.className = "resumen-entrada";
+        el.innerHTML = '<span class="re-num">' + d.entrada + "</span> ";
+        if (d.color) {
+          var dot = document.createElement("span");
+          dot.className = "color-dot color-" + d.color;
+          el.appendChild(dot);
+        }
+        el.appendChild(document.createTextNode(d.nombre));
+        lista.appendChild(el);
+      });
+      bloque.appendChild(lista);
+      secCajas.appendChild(bloque);
+    });
+    cont.appendChild(secCajas);
+
+    // Avisos
+    var avisos = [];
+    cajasUsadas.forEach(function (c) {
+      if (c.usadas === c.total) avisos.push("La caja “" + c.nombre + "” está completa — no quedan entradas libres.");
+    });
+    if (esc.notas) avisos.push(esc.notas);
+    if (esc.pendiente) avisos.push("Pendiente de confirmar: " + esc.pendiente);
+
+    if (avisos.length) {
+      var secAv = document.createElement("div");
+      secAv.className = "resumen-bloque";
+      secAv.innerHTML = "<h3>Avisos</h3>";
+      var ul = document.createElement("ul");
+      ul.className = "avisos";
+      avisos.forEach(function (a) {
+        var li = document.createElement("li");
+        li.textContent = a;
+        ul.appendChild(li);
+      });
+      secAv.appendChild(ul);
+      cont.appendChild(secAv);
+    }
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Selector de escenarios y acciones
+   * ---------------------------------------------------------------- */
+  function renderSelect() {
+    var sel = document.getElementById("escenario-select");
+    sel.innerHTML = "";
+    Object.keys(escenarios).forEach(function (id) {
+      var opt = document.createElement("option");
+      opt.value = id;
+      opt.textContent = escenarios[id].nombre || id;
+      if (id === activo) opt.selected = true;
+      sel.appendChild(opt);
+    });
+    if (!Object.keys(escenarios).length) {
+      var vacio = document.createElement("option");
+      vacio.textContent = "— sin escenarios —";
+      sel.appendChild(vacio);
+    }
+  }
+
+  function idDesdeNombre(nombre) {
+    var base = nombre.toLowerCase()
+      .normalize("NFD").replace(/[̀-ͯ]/g, "")
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "") || "escenario";
+    var id = base;
+    var n = 2;
+    while (escenarios[id]) { id = base + "_" + n; n++; }
+    return id;
+  }
+
+  function renderTodo() {
+    renderSelect();
+    renderResumen();
+    renderCatalogo();
+    renderCajas();
+  }
+
+  document.getElementById("escenario-select").addEventListener("change", function (e) {
+    activo = e.target.value;
+    guardarEstado();
+    renderTodo();
   });
 
-  renderMaterialBase();
-  populateSelect();
+  document.getElementById("btn-nuevo").addEventListener("click", function () {
+    var nombre = prompt("Nombre del nuevo escenario de cirugía:");
+    if (!nombre) return;
+    var id = idDesdeNombre(nombre);
+    escenarios[id] = { nombre: nombre, modalidades: [], asignaciones: {} };
+    activo = id;
+    guardarEstado();
+    renderTodo();
+  });
+
+  document.getElementById("btn-duplicar").addEventListener("click", function () {
+    var esc = escenarioActual();
+    if (!esc) return;
+    var nombre = prompt("Nombre de la copia:", esc.nombre + " (copia)");
+    if (!nombre) return;
+    var id = idDesdeNombre(nombre);
+    escenarios[id] = clonar(esc);
+    escenarios[id].nombre = nombre;
+    activo = id;
+    guardarEstado();
+    renderTodo();
+  });
+
+  document.getElementById("btn-renombrar").addEventListener("click", function () {
+    var esc = escenarioActual();
+    if (!esc) return;
+    var nombre = prompt("Nuevo nombre:", esc.nombre);
+    if (!nombre) return;
+    esc.nombre = nombre;
+    guardarEstado();
+    renderTodo();
+  });
+
+  document.getElementById("btn-vaciar").addEventListener("click", function () {
+    var esc = escenarioActual();
+    if (!esc) return;
+    if (!confirm("¿Vaciar todas las entradas de “" + esc.nombre + "”?\nEl escenario se conserva, pero se queda sin material colocado.")) return;
+    esc.asignaciones = {};
+    esc.conmutador = {};
+    guardarEstado();
+    renderTodo();
+  });
+
+  document.getElementById("btn-borrar").addEventListener("click", function () {
+    var esc = escenarioActual();
+    if (!esc) return;
+    if (!confirm("¿Borrar el escenario “" + esc.nombre + "”?\nEsta acción no se puede deshacer.")) return;
+    delete escenarios[activo];
+    if (borrados.indexOf(activo) === -1) borrados.push(activo);
+    activo = Object.keys(escenarios)[0] || null;
+    guardarEstado();
+    renderTodo();
+  });
+
+  document.getElementById("btn-restablecer").addEventListener("click", function () {
+    if (!confirm("¿Restablecer todo?\nSe perderán los escenarios creados y las ediciones, volviendo a los presets del archivo data/surgeries.js.")) return;
+    localStorage.removeItem(STORAGE_KEY);
+    borrados = [];
+    cargarEstado();
+    renderTodo();
+    avisoGuardado("Restablecido a los presets del archivo.");
+  });
+
+  document.getElementById("btn-exportar").addEventListener("click", function () {
+    var esc = escenarioActual();
+    if (!esc) return;
+    var salida = {};
+    salida[activo] = esc;
+    var texto = JSON.stringify(salida, null, 2);
+    var w = window.open("", "_blank", "width=700,height=600");
+    if (!w) {
+      prompt("Copia este JSON y pégalo en data/surgeries.js dentro de \"escenarios\":", texto);
+      return;
+    }
+    w.document.write(
+      "<title>Exportar escenario</title>" +
+      '<p style="font:14px sans-serif">Copia esto y pégalo en <b>data/surgeries.js</b>, dentro de <b>"escenarios"</b>, para que el preset sea permanente y viaje por git.</p>' +
+      '<textarea style="width:100%;height:80%;font:12px monospace">' +
+      texto.replace(/</g, "&lt;") + "</textarea>"
+    );
+    w.document.close();
+  });
+
+  document.getElementById("btn-imprimir").addEventListener("click", function () {
+    window.print();
+  });
+
+  document.getElementById("catalogo-buscar").addEventListener("input", renderCatalogo);
+
+  /* ---------------------------------------------------------------- *
+   * Arranque
+   * ---------------------------------------------------------------- */
+  cargarEstado();
+  renderTodo();
+  avisoGuardado("Los cambios se guardan solos en este navegador.");
 })();
