@@ -165,10 +165,10 @@ window.SURGERIES_DATA = {
         { "id": "r_ooc", "nombre": "R.OOc", "material": "Aguja trenzada (par)", "nota": "Orbicular de los párpados derecho — VII par; registro del Blink Reflex" },
         { "id": "l_ment", "nombre": "L.Ment", "material": "Aguja trenzada (par)", "nota": "Mentoniano izquierdo — VII par craneal" },
         { "id": "r_ment", "nombre": "R.Ment", "material": "Aguja trenzada (par)", "nota": "Mentoniano derecho — VII par craneal" },
-        { "id": "l_crico", "nombre": "L.Crico", "material": "Aguja trenzada (par)", "nota": "Cricotiroideo izquierdo — X par; registro del reflejo trigémino-cervical" },
-        { "id": "r_crico", "nombre": "R.Crico", "material": "Aguja trenzada (par)", "nota": "Cricotiroideo derecho — X par; registro del reflejo trigémino-cervical" },
-        { "id": "l_vocal", "nombre": "L.Vocal", "material": "Sensor de tubo orotraqueal", "nota": "Cuerda vocal izquierda — X par; sensor bilateral en tubo orotraqueal; registro del reflejo trigémino-vocal" },
-        { "id": "r_vocal", "nombre": "R.Vocal", "material": "Sensor de tubo orotraqueal", "nota": "Cuerda vocal derecha — X par; sensor bilateral en tubo orotraqueal; registro del reflejo trigémino-vocal" },
+        { "id": "l_crico", "nombre": "L.Crico", "material": "Aguja trenzada (par)", "nota": "Cricotiroideo izquierdo — X par; va junto a las cuerdas vocales en el mismo montaje; registro del reflejo trigémino-cervical. Sin confirmar: el crico evaluaría la parte motora y las cuerdas la sensitiva" },
+        { "id": "r_crico", "nombre": "R.Crico", "material": "Aguja trenzada (par)", "nota": "Cricotiroideo derecho — X par; va junto a las cuerdas vocales en el mismo montaje; registro del reflejo trigémino-cervical. Sin confirmar: el crico evaluaría la parte motora y las cuerdas la sensitiva" },
+        { "id": "vocal_1", "nombre": "Vocal 1", "material": "Sensor de tubo orotraqueal", "media_unidad": true, "nota": "Cuerdas vocales — X par. Un único sensor de tubo orotraqueal con 2 entradas (Vocal 1 + Vocal 2 = 1 sensor). No se puede saber qué lado es cada una: depende de cómo quede colocado el tubo. Registro del reflejo trigémino-vocal" },
+        { "id": "vocal_2", "nombre": "Vocal 2", "material": "Sensor de tubo orotraqueal", "media_unidad": true, "nota": "Cuerdas vocales — X par. Un único sensor de tubo orotraqueal con 2 entradas (Vocal 1 + Vocal 2 = 1 sensor). No se puede saber qué lado es cada una: depende de cómo quede colocado el tubo. Registro del reflejo trigémino-vocal" },
         { "id": "l_stcm", "nombre": "L.STCM", "material": "Aguja trenzada (par)", "nota": "Esternocleidomastoideo izquierdo — XI par; registro del reflejo trigémino-cervical" },
         { "id": "r_stcm", "nombre": "R.STCM", "material": "Aguja trenzada (par)", "nota": "Esternocleidomastoideo derecho — XI par; registro del reflejo trigémino-cervical" }
       ]
@@ -202,12 +202,12 @@ window.SURGERIES_DATA = {
     {
       "categoria": "Estimulación trigeminal (reflejos)",
       "items": [
-        { "id": "l_v1", "nombre": "L.V1", "material": "Pegatinas (par)", "nota": "Rama oftálmica izquierda del V par — Blink Reflex (registro en orbiculares oculi)" },
-        { "id": "r_v1", "nombre": "R.V1", "material": "Pegatinas (par)", "nota": "Rama oftálmica derecha del V par — Blink Reflex (registro en orbiculares oculi)" },
-        { "id": "l_v2", "nombre": "L.V2", "material": "Pegatinas (par)", "nota": "Rama maxilar izquierda del V par — reflejo trigémino-cervical (registro en STCM y cricotiroideo)" },
-        { "id": "r_v2", "nombre": "R.V2", "material": "Pegatinas (par)", "nota": "Rama maxilar derecha del V par — reflejo trigémino-cervical (registro en STCM y cricotiroideo)" },
-        { "id": "l_v3", "nombre": "L.V3", "material": "Pegatinas (par)", "nota": "Rama mandibular izquierda del V par — reflejo trigémino-vocal (registro en cuerdas vocales)" },
-        { "id": "r_v3", "nombre": "R.V3", "material": "Pegatinas (par)", "nota": "Rama mandibular derecha del V par — reflejo trigémino-vocal (registro en cuerdas vocales)" }
+        { "id": "l_v1", "nombre": "L.V1", "material": "Aguja trenzada (par)", "nota": "Rama oftálmica izquierda del V par — Blink Reflex (registro en orbiculares oculi)" },
+        { "id": "r_v1", "nombre": "R.V1", "material": "Aguja trenzada (par)", "nota": "Rama oftálmica derecha del V par — Blink Reflex (registro en orbiculares oculi)" },
+        { "id": "l_v2", "nombre": "L.V2", "material": "Aguja trenzada (par)", "nota": "Rama maxilar izquierda del V par — reflejo trigémino-cervical (registro en STCM y cricotiroideo)" },
+        { "id": "r_v2", "nombre": "R.V2", "material": "Aguja trenzada (par)", "nota": "Rama maxilar derecha del V par — reflejo trigémino-cervical (registro en STCM y cricotiroideo)" },
+        { "id": "l_v3", "nombre": "L.V3", "material": "Aguja trenzada (par)", "nota": "Rama mandibular izquierda del V par — reflejo trigémino-vocal (registro en cuerdas vocales)" },
+        { "id": "r_v3", "nombre": "R.V3", "material": "Aguja trenzada (par)", "nota": "Rama mandibular derecha del V par — reflejo trigémino-vocal (registro en cuerdas vocales)" }
       ]
     },
     {
