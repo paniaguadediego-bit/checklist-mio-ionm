@@ -45,13 +45,12 @@ window.SURGERIES_DATA = {
     },
     "registro_cortical": {
       "nombre": "REF-AEP — Registro cortical, Erb, CvAnterior",
-      "descripcion": "16 entradas individuales en dos columnas de 8, más Ref (habitualmente Fz), GND y la entrada de PEATC (amarilla) si se usan potenciales auditivos.",
+      "descripcion": "16 entradas individuales en dos columnas de 8, más Ref (habitualmente Fz) y GND. Los auditivos se registran con A1 y A2 en dos de las entradas numeradas; el conector amarillo de la caja es solo la conexión de los PEATC, no una entrada asignable.",
       "canales": 16,
       "conector": "individual_2col",
       "especiales": [
         { "clave": "ref", "nombre": "Ref", "conector": "individual", "nota": "Habitualmente Fz" },
-        { "clave": "gnd", "nombre": "GND", "conector": "individual", "color": "verde" },
-        { "clave": "peatc", "nombre": "PEATC", "conector": "individual", "color": "amarillo" }
+        { "clave": "gnd", "nombre": "GND", "conector": "individual", "color": "verde" }
       ]
     },
     "registro_muscular_mmss": {
@@ -159,18 +158,18 @@ window.SURGERIES_DATA = {
     {
       "categoria": "Músculos craneales (pares craneales)",
       "items": [
-        { "id": "l_mass", "nombre": "L.Mass", "material": "Aguja trenzada (par)", "nota": "Maseterino izquierdo — V par craneal" },
-        { "id": "r_mass", "nombre": "R.Mass", "material": "Aguja trenzada (par)", "nota": "Maseterino derecho — V par craneal" },
-        { "id": "l_ooc", "nombre": "L.OOc", "material": "Aguja trenzada (par)", "nota": "Orbicular de los párpados izquierdo — VII par; registro del Blink Reflex" },
-        { "id": "r_ooc", "nombre": "R.OOc", "material": "Aguja trenzada (par)", "nota": "Orbicular de los párpados derecho — VII par; registro del Blink Reflex" },
-        { "id": "l_ment", "nombre": "L.Ment", "material": "Aguja trenzada (par)", "nota": "Mentoniano izquierdo — VII par craneal" },
-        { "id": "r_ment", "nombre": "R.Ment", "material": "Aguja trenzada (par)", "nota": "Mentoniano derecho — VII par craneal" },
-        { "id": "l_crico", "nombre": "L.Crico", "material": "Aguja trenzada (par)", "nota": "Cricotiroideo izquierdo — X par; va junto a las cuerdas vocales en el mismo montaje; registro del reflejo trigémino-cervical. Sin confirmar: el crico evaluaría la parte motora y las cuerdas la sensitiva" },
-        { "id": "r_crico", "nombre": "R.Crico", "material": "Aguja trenzada (par)", "nota": "Cricotiroideo derecho — X par; va junto a las cuerdas vocales en el mismo montaje; registro del reflejo trigémino-cervical. Sin confirmar: el crico evaluaría la parte motora y las cuerdas la sensitiva" },
+        { "id": "l_mass", "nombre": "L.Mass", "material": "Electrodo Hook Wire", "nota": "Maseterino izquierdo — V par craneal" },
+        { "id": "r_mass", "nombre": "R.Mass", "material": "Electrodo Hook Wire", "nota": "Maseterino derecho — V par craneal" },
+        { "id": "l_ooc", "nombre": "L.OOc", "material": "Electrodo Hook Wire", "nota": "Orbicular de los párpados izquierdo — VII par; registro del Blink Reflex" },
+        { "id": "r_ooc", "nombre": "R.OOc", "material": "Electrodo Hook Wire", "nota": "Orbicular de los párpados derecho — VII par; registro del Blink Reflex" },
+        { "id": "l_ment", "nombre": "L.Ment", "material": "Electrodo Hook Wire", "nota": "Mentoniano izquierdo — VII par craneal" },
+        { "id": "r_ment", "nombre": "R.Ment", "material": "Electrodo Hook Wire", "nota": "Mentoniano derecho — VII par craneal" },
+        { "id": "l_crico", "nombre": "L.Crico", "material": "Electrodo Hook Wire", "nota": "Cricotiroideo izquierdo — X par; va junto a las cuerdas vocales en el mismo montaje; registro del reflejo trigémino-cervical. Sin confirmar: el crico evaluaría la parte motora y las cuerdas la sensitiva" },
+        { "id": "r_crico", "nombre": "R.Crico", "material": "Electrodo Hook Wire", "nota": "Cricotiroideo derecho — X par; va junto a las cuerdas vocales en el mismo montaje; registro del reflejo trigémino-cervical. Sin confirmar: el crico evaluaría la parte motora y las cuerdas la sensitiva" },
         { "id": "vocal_1", "nombre": "Vocal 1", "material": "Sensor de tubo orotraqueal", "media_unidad": true, "nota": "Cuerdas vocales — X par. Un único sensor de tubo orotraqueal con 2 entradas (Vocal 1 + Vocal 2 = 1 sensor). No se puede saber qué lado es cada una: depende de cómo quede colocado el tubo. Registro del reflejo trigémino-vocal" },
         { "id": "vocal_2", "nombre": "Vocal 2", "material": "Sensor de tubo orotraqueal", "media_unidad": true, "nota": "Cuerdas vocales — X par. Un único sensor de tubo orotraqueal con 2 entradas (Vocal 1 + Vocal 2 = 1 sensor). No se puede saber qué lado es cada una: depende de cómo quede colocado el tubo. Registro del reflejo trigémino-vocal" },
-        { "id": "l_stcm", "nombre": "L.STCM", "material": "Aguja trenzada (par)", "nota": "Esternocleidomastoideo izquierdo — XI par; registro del reflejo trigémino-cervical" },
-        { "id": "r_stcm", "nombre": "R.STCM", "material": "Aguja trenzada (par)", "nota": "Esternocleidomastoideo derecho — XI par; registro del reflejo trigémino-cervical" }
+        { "id": "l_stcm", "nombre": "L.STCM", "material": "Electrodo Hook Wire", "nota": "Esternocleidomastoideo izquierdo — XI par; registro del reflejo trigémino-cervical" },
+        { "id": "r_stcm", "nombre": "R.STCM", "material": "Electrodo Hook Wire", "nota": "Esternocleidomastoideo derecho — XI par; registro del reflejo trigémino-cervical" }
       ]
     },
     {
@@ -227,10 +226,16 @@ window.SURGERIES_DATA = {
       ]
     },
     {
+      "categoria": "Potenciales auditivos (PEATC)",
+      "items": [
+        { "id": "a1", "nombre": "A1", "material": "Aguja subdérmica", "nota": "Registro auditivo del lado izquierdo (lóbulo/mastoides). Va en una de las entradas numeradas de REF-AEP" },
+        { "id": "a2", "nombre": "A2", "material": "Aguja subdérmica", "nota": "Registro auditivo del lado derecho (lóbulo/mastoides). Va en una de las entradas numeradas de REF-AEP" }
+      ]
+    },
+    {
       "categoria": "Tierras y referencias",
       "items": [
-        { "id": "tierra", "nombre": "Tierra", "material": "Aguja subdérmica", "nota": "Una por caja de registro" },
-        { "id": "peatc", "nombre": "PEATC", "material": "Auriculares PEATC", "color": "amarillo", "nota": "Potenciales auditivos de tronco" }
+        { "id": "tierra", "nombre": "Tierra", "material": "Aguja subdérmica", "nota": "Una por caja de registro" }
       ]
     }
   ],
