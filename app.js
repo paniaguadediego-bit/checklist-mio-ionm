@@ -598,7 +598,11 @@
   function leerRemoto() {
     return fetch(urlContenido() + "?ref=HEAD", { headers: cabeceras(), cache: "no-store" })
       .then(function (resp) {
-        if (resp.status === 404) return { existe: false, sha: null, contenido: null };
+        // 404 = el archivo no existe todavía; 409 = el repositorio está recién
+        // creado y aún no tiene ningún commit. En ambos casos hay que crearlo.
+        if (resp.status === 404 || resp.status === 409) {
+          return { existe: false, sha: null, contenido: null };
+        }
         if (!resp.ok) throw new Error(errorLegible(resp));
         return resp.json().then(function (json) {
           return { existe: true, sha: json.sha, contenido: JSON.parse(deBase64(json.content)) };
