@@ -24,9 +24,11 @@
     <button type="button" id="btn-vaciar">Vaciar</button>
     <button type="button" id="btn-borrar" class="peligro">Borrar</button>
     <span class="barra-flex"></span>
-    <button type="button" id="btn-exportar">Exportar</button>
+    <button type="button" id="btn-exportar">Exportar copia</button>
+    <button type="button" id="btn-importar">Importar copia</button>
     <button type="button" id="btn-imprimir">Imprimir</button>
     <button type="button" id="btn-restablecer" class="peligro">Restablecer</button>
+    <input type="file" id="fichero-importar" accept=".json,application/json" hidden>
     <span class="guardado-aviso" id="guardado-aviso"></span>
   </section>
 
@@ -35,12 +37,13 @@
     <aside class="panel-catalogo no-print" id="panel-catalogo">
       <div class="panel-cab">
         <h2>Catálogo</h2>
+        <button type="button" id="btn-nuevo-material" title="Añadir material nuevo al catálogo">+</button>
         <button type="button" id="btn-plegar" title="Plegar / desplegar">▾</button>
       </div>
       <input type="search" id="catalogo-buscar" placeholder="Buscar material…" autocomplete="off">
       <p class="panel-ayuda">
         Pulsa un ítem y luego la entrada donde va. También puedes arrastrarlo.
-        Para quitarlo: ✕ o arrástralo aquí.
+        Para quitarlo: ✕ o arrástralo aquí. Con <b>+</b> añades material propio.
       </p>
       <div id="catalogo-contenido"></div>
     </aside>
@@ -77,6 +80,53 @@
   <span>Colocando <b id="bs-nombre"></b> — pulsa una entrada</span>
   <button type="button" id="bs-cancelar">Cancelar</button>
 </div>
+
+<dialog id="dlg-material" class="no-print">
+  <h3 id="dlg-titulo">Material nuevo</h3>
+  <div class="campo">
+    <label for="mat-nombre">Nombre <span class="req">*</span></label>
+    <input id="mat-nombre" maxlength="40" placeholder="p. ej. L.Frontalis">
+  </div>
+  <div class="campo">
+    <label for="mat-categoria">Categoría <span class="req">*</span></label>
+    <input id="mat-categoria" list="lista-categorias" placeholder="p. ej. Músculos craneales (pares craneales)">
+    <datalist id="lista-categorias"></datalist>
+  </div>
+  <div class="campo">
+    <label for="mat-material">Tipo de material <span class="req">*</span></label>
+    <input id="mat-material" list="lista-materiales" placeholder="p. ej. Electrodo Hook Wire">
+    <datalist id="lista-materiales"></datalist>
+    <small>Es lo que se suma en el recuento del resumen. Reutiliza un tipo existente para que se cuenten juntos.</small>
+  </div>
+  <div class="campo campo-fila">
+    <span>
+      <label for="mat-color">Color</label>
+      <select id="mat-color">
+        <option value="">Sin color</option>
+        <option value="rojo">Rojo</option>
+        <option value="negro">Negro</option>
+        <option value="azul">Azul</option>
+        <option value="verde">Verde</option>
+        <option value="amarillo">Amarillo</option>
+      </select>
+    </span>
+    <label class="check">
+      <input type="checkbox" id="mat-sinentrada">
+      No ocupa entrada
+    </label>
+  </div>
+  <div class="campo">
+    <label for="mat-nota">Nota</label>
+    <textarea id="mat-nota" rows="2" placeholder="Para qué se usa, aclaraciones…"></textarea>
+  </div>
+  <p class="dlg-error" id="mat-error" hidden></p>
+  <div class="dlg-botones">
+    <button type="button" id="mat-borrar" class="peligro">Borrar</button>
+    <span class="barra-flex"></span>
+    <button type="button" id="mat-cancelar">Cancelar</button>
+    <button type="button" id="mat-guardar" class="primario">Guardar</button>
+  </div>
+</dialog>
 
 <script src="data/surgeries.js"></script>
 <script src="app.js"></script>

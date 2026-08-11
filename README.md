@@ -107,26 +107,62 @@ Se recalcula solo con cada cambio y es el objetivo de la herramienta:
 
 El botón **Imprimir resumen** saca solo esta sección en papel.
 
-## Dónde se guarda todo
+## Añadir material propio desde la interfaz
 
-Los cambios que hagas en la web se guardan **automáticamente en ese
-navegador y ese ordenador** (localStorage). No tocan `data/surgeries.js` ni
-viajan por git.
+El botón **+** de la cabecera del catálogo abre un formulario para crear
+material nuevo sin tocar ningún archivo: nombre, categoría, tipo de
+material, color, nota y si ocupa entrada o no. La categoría y el tipo de
+material tienen sugerencias de los ya existentes — conviene reutilizarlas
+para que el recuento los sume juntos.
 
-Para que un preset sea permanente y esté disponible en otro ordenador:
+El material propio se distingue por el borde verde y lleva un lápiz (✎)
+para editarlo o borrarlo. Al borrarlo, avisa de en cuántas entradas está
+colocado y lo quita también de ahí.
 
-1. Pulsa **Exportar JSON**.
-2. Copia el resultado y pégalo en `data/surgeries.js`, dentro de
-   `"escenarios"`.
-3. `git commit` + `git push`.
+Ejemplo: añades `L.Frontalis` en la categoría *Músculos craneales*, tipo
+`Electrodo Hook Wire`, y lo colocas en la caja que quieras; el resumen
+sumará ese hook wire al total.
 
-**Restablecer todo** borra lo guardado en el navegador y vuelve a los
-escenarios del archivo.
+## Uso desde el móvil
 
-## Añadir material nuevo al catálogo
+La interfaz es táctil. Lo cómodo en el móvil es **pulsar y colocar**:
+tocas el material, el catálogo se pliega solo para dejar ver las cajas, y
+tocas la entrada de destino. Arrastrar no funciona bien en pantallas
+táctiles, así que ese es el flujo recomendado.
 
-Dentro de `catalogo_material`, en la categoría que corresponda (o crea una
-nueva), añade un objeto:
+Para abrirlo desde el móvil hace falta que la herramienta esté publicada
+en algún sitio (ver la sección de sincronización).
+
+## Dónde se guarda todo, y cómo pasarlo de un dispositivo a otro
+
+Los cambios se guardan **automáticamente en ese navegador y ese
+dispositivo** (localStorage). No tocan `data/surgeries.js` ni viajan solos
+por git. El navegador del móvil y el del ordenador son almacenes distintos.
+
+Para pasar tu trabajo de uno a otro:
+
+1. **Exportar copia** descarga un `.json` con **todo**: escenarios, material
+   propio y qué va en cada entrada.
+2. Pasa ese archivo al otro dispositivo (correo, nube, cable…).
+3. **Importar copia** allí. Avisa de cuántos escenarios y materiales trae, y
+   sustituye lo que hubiera en ese navegador.
+
+Ese mismo archivo sirve de copia de seguridad: si el navegador borra los
+datos del sitio, se recupera importándolo.
+
+Si además quieres que un preset venga de fábrica en el repositorio, pega su
+bloque en `data/surgeries.js` dentro de `"escenarios"` y haz `git commit` +
+`git push`.
+
+**Restablecer** borra lo guardado en el navegador y vuelve a los escenarios
+y al catálogo del archivo.
+
+## Añadir material al catálogo editando el archivo
+
+Se puede hacer desde la interfaz con el botón **+** (ver arriba); esto es
+para material que quieras que venga de fábrica en el repositorio. Dentro de
+`catalogo_material`, en la categoría que corresponda (o crea una nueva),
+añade un objeto:
 
 ```json
 { "id": "l_gluteo", "nombre": "L.Glúteo", "material": "Agujas trenzadas (par)", "nota": "Glúteo izquierdo" }

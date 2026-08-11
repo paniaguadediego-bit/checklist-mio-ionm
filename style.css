@@ -625,6 +625,141 @@ body.modo-quirofano .cajas-grid {
 }
 body.modo-quirofano .resumen-card { position: sticky; top: calc(var(--header-h) + 0.4rem); z-index: 10; }
 
+/* ------------------------ Material propio y diálogo -------------------- */
+.chip-propio { border-style: solid; border-color: var(--accent); }
+
+.chip-editar {
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  font-size: 0.66rem;
+  line-height: 1;
+  padding: 0 0 0 0.1rem;
+  cursor: pointer;
+}
+.chip-editar:hover { color: var(--text); }
+
+#btn-nuevo-material {
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1;
+  border: 1px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 0.08rem 0.4rem;
+  margin-left: auto;
+  margin-right: 0.3rem;
+}
+#btn-nuevo-material:hover { background: var(--accent); color: #fff; }
+
+dialog {
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 1rem 1.1rem;
+  max-width: 420px;
+  width: calc(100% - 1.5rem);
+  background: var(--card-bg);
+  color: var(--text);
+}
+dialog::backdrop { background: rgba(10, 16, 20, 0.55); }
+
+dialog h3 {
+  margin: 0 0 0.7rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.campo { margin-bottom: 0.6rem; display: flex; flex-direction: column; gap: 0.18rem; }
+.campo label { font-size: 0.76rem; font-weight: 600; }
+.campo small { font-size: 0.68rem; color: var(--text-muted); line-height: 1.3; }
+.campo .req { color: var(--peligro); }
+
+.campo input[type="text"],
+.campo input:not([type]),
+.campo input[type="search"],
+.campo select,
+.campo textarea {
+  font: inherit;
+  font-size: 0.84rem;
+  padding: 0.3rem 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #fff;
+  color: var(--text);
+  width: 100%;
+}
+.campo textarea { resize: vertical; }
+
+.campo-fila { flex-direction: row; align-items: flex-end; gap: 0.9rem; }
+.campo-fila > span { display: flex; flex-direction: column; gap: 0.18rem; }
+.campo-fila select { width: auto; }
+.check {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 400 !important;
+  font-size: 0.78rem !important;
+  padding-bottom: 0.3rem;
+}
+.check input { width: auto; }
+
+.dlg-error {
+  margin: 0 0 0.5rem;
+  font-size: 0.76rem;
+  color: var(--peligro);
+}
+.dlg-error[hidden] { display: none; }
+
+.dlg-botones { display: flex; align-items: center; gap: 0.35rem; margin-top: 0.4rem; }
+.dlg-botones button {
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.dlg-botones button:hover { background: var(--accent-soft); }
+.dlg-botones button.primario {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+.dlg-botones button.peligro { color: var(--peligro); border-color: var(--border); }
+.dlg-botones button.peligro:hover { background: var(--quitar-bg); border-color: var(--peligro); }
+.dlg-botones button[hidden] { display: none; }
+
+/* ---------------------- Táctil / pantallas pequeñas -------------------- */
+@media (pointer: coarse) {
+  .chip { padding: 0.28rem 0.5rem; font-size: 0.78rem; }
+  .slot { min-height: 1.7rem; }
+  .chip-quitar, .chip-editar { padding: 0.1rem 0.25rem; font-size: 0.8rem; }
+  .toolbar button, .btn-modo { padding: 0.4rem 0.7rem; }
+  .barra-seleccion { font-size: 0.85rem; padding: 0.5rem 0.9rem; bottom: 0.5rem; }
+  .barra-seleccion button { padding: 0.25rem 0.7rem; }
+}
+
+@media (max-width: 620px) {
+  main { padding: 0.5rem 0.45rem 3rem; }
+  .cajas-grid { grid-template-columns: 1fr; }
+  body.modo-quirofano .cajas-grid { grid-template-columns: 1fr; }
+  .toolbar { gap: 0.25rem; }
+  /* El hueco flexible robaba ancho al selector: en móvil se anula */
+  .barra-sup .barra-flex { display: none; }
+  .barra-sup #escenario-select { min-width: 0; flex: 1; max-width: none; }
+  .marca { font-size: 0.78rem; }
+  .btn-modo { font-size: 0.7rem; padding: 0.3rem 0.45rem; }
+}
+
 /* ------------------------------ Impresión ------------------------------ */
 @media print {
   .no-print, .barra-sup { display: none !important; }
@@ -665,4 +800,5 @@ body.modo-quirofano .resumen-card { position: sticky; top: calc(var(--header-h) 
   }
   #escenario-select, #catalogo-buscar, #perfil-select { background: #1b2226; color: var(--text); }
   .caja-plate { background: #c8d2d8; }
+  .campo input, .campo select, .campo textarea { background: #131a1d; color: var(--text); }
 }

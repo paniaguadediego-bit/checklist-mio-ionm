@@ -3,7 +3,7 @@
 
   var DATA = window.SURGERIES_DATA || {};
   var CAJAS = DATA.cajas_material || {};
-  var CATALOGO = DATA.catalogo_material || [];
+  var CATALOGO_BASE = DATA.catalogo_material || [];
   var TECNICAS = DATA.tecnicas || [];
   var PERFILES = DATA.perfiles_procedimiento || [];
   var STORAGE_KEY = "mio_ionm_escenarios_v1";
@@ -15,18 +15,62 @@
   });
 
   /* ---------------------------------------------------------------- *
-   * Índice del catálogo: id -> item (con su categoría)
+   * Catálogo = material de fábrica (data/surgeries.js) + material propio
+   * que el usuario añade desde la interfaz.
    * ---------------------------------------------------------------- */
-  var ITEMS = {};
-  CATALOGO.forEach(function (grupo) {
-    (grupo.items || []).forEach(function (item) {
-      ITEMS[item.id] = Object.assign({}, item, {
-        categoria: grupo.categoria,
-        // Material que se prepara pero no se conecta a ninguna entrada
-        sin_entrada: !!(item.sin_entrada || grupo.sin_entrada)
+  var catalogoUsuario = [];   // [{id, nombre, categoria, material, color, nota, sin_entrada}]
+  var CATALOGO = [];          // agrupado, listo para pintar
+  var ITEMS = {};             // id -> item
+
+  function reconstruirCatalogo() {
+    ITEMS = {};
+    CATALOGO = [];
+
+    CATALOGO_BASE.forEach(function (grupo) {
+      var items = (grupo.items || []).map(function (item) {
+        var completo = Object.assign({}, item, {
+          categoria: grupo.categoria,
+          // Material que se prepara pero no se conecta a ninguna entrada
+          sin_entrada: !!(item.sin_entrada || grupo.sin_entrada)
+        });
+        ITEMS[item.id] = completo;
+        return completo;
       });
+      CATALOGO.push({ categoria: grupo.categoria, items: items });
     });
-  });
+
+    catalogoUsuario.forEach(function (item) {
+      var completo = Object.assign({}, item, { propio: true });
+      ITEMS[item.id] = completo;
+      var grupo = CATALOGO.filter(function (g) { return g.categoria === item.categoria; })[0];
+      if (!grupo) {
+        grupo = { categoria: item.categoria, items: [] };
+        CATALOGO.push(grupo);
+      }
+      grupo.items.push(completo);
+    });
+  }
+
+  function categoriasExistentes() {
+    return CATALOGO.map(function (g) { return g.categoria; });
+  }
+
+  function materialesExistentes() {
+    var vistos = {};
+    Object.keys(ITEMS).forEach(function (id) {
+      if (ITEMS[id].material) vistos[ITEMS[id].material] = true;
+    });
+    return Object.keys(vistos).sort();
+  }
+
+  function idLibre(nombre) {
+    var base = "u_" + (nombre || "material").toLowerCase()
+      .normalize("NFD").replace(/[̀-ͯ]/g, "")
+      .replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+    var id = base, n = 2;
+    while (ITEMS[id]) { id = base + "_" + n; n++; }
+    return id;
+  }
 
   /* ---------------------------------------------------------------- *
    * Estado
@@ -40,12 +84,17 @@
 
   function cargarEstado() {
     escenarios = clonar(DATA.escenarios || {});
+    catalogoUsuario = [];
     var guardado = null;
     try {
       guardado = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
     } catch (e) {
       guardado = null;
     }
+    if (guardado && Array.isArray(guardado.catalogo_usuario)) {
+      catalogoUsuario = guardado.catalogo_usuario;
+    }
+    reconstruirCatalogo();
     if (guardado && guardado.escenarios) {
       // Lo guardado manda: incluye ediciones de los presets de fábrica
       Object.keys(guardado.escenarios).forEach(function (id) {
@@ -69,7 +118,8 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         escenarios: escenarios,
         activo: activo,
-        borrados: borrados
+        borrados: borrados,
+        catalogo_usuario: catalogoUsuario
       }));
       avisoGuardado("Guardado en este navegador · " + new Date().toLocaleTimeString("es-ES"));
     } catch (e) {
@@ -195,6 +245,11 @@
     if (seleccionado) {
       document.querySelectorAll('#catalogo-contenido .chip[data-item-id="' + seleccionado + '"]')
         .forEach(function (c) { c.classList.add("seleccionado"); });
+      // En móvil el catálogo ocupa media pantalla: se pliega para dejar ver las cajas
+      if (window.matchMedia("(max-width: 900px)").matches) {
+        document.getElementById("panel-catalogo").classList.add("plegado");
+        document.getElementById("btn-plegar").textContent = "▸";
+      }
     }
   }
 
@@ -224,6 +279,21 @@
       chip.appendChild(dot);
     }
     chip.appendChild(document.createTextNode(item.nombre));
+
+    // Material propio: lápiz para editarlo (solo en el catálogo)
+    if (item.propio && !opciones.colocado) {
+      chip.classList.add("chip-propio");
+      var lapiz = document.createElement("button");
+      lapiz.type = "button";
+      lapiz.className = "chip-editar";
+      lapiz.textContent = "✎";
+      lapiz.title = "Editar este material";
+      lapiz.addEventListener("click", function (e) {
+        e.stopPropagation();
+        abrirEditorMaterial(item.id);
+      });
+      chip.appendChild(lapiz);
+    }
 
     if (item.sin_entrada) {
       // No se arrastra ni se coloca: se activa o desactiva para el escenario
@@ -420,6 +490,130 @@
       cont.appendChild(vacio);
     }
   }
+
+  /* ---------------------------------------------------------------- *
+   * Editor de material propio
+   * ---------------------------------------------------------------- */
+  var dlg = document.getElementById("dlg-material");
+  var editandoId = null;
+
+  function rellenarDatalists() {
+    var dlCat = document.getElementById("lista-categorias");
+    dlCat.innerHTML = "";
+    categoriasExistentes().forEach(function (c) {
+      var o = document.createElement("option");
+      o.value = c;
+      dlCat.appendChild(o);
+    });
+    var dlMat = document.getElementById("lista-materiales");
+    dlMat.innerHTML = "";
+    materialesExistentes().forEach(function (m) {
+      var o = document.createElement("option");
+      o.value = m;
+      dlMat.appendChild(o);
+    });
+  }
+
+  function abrirEditorMaterial(id) {
+    editandoId = id || null;
+    var item = id ? ITEMS[id] : null;
+    rellenarDatalists();
+    document.getElementById("dlg-titulo").textContent = item ? "Editar material" : "Material nuevo";
+    document.getElementById("mat-nombre").value = item ? item.nombre : "";
+    document.getElementById("mat-categoria").value = item ? item.categoria : "";
+    document.getElementById("mat-material").value = item ? (item.material || "") : "";
+    document.getElementById("mat-color").value = item ? (item.color || "") : "";
+    document.getElementById("mat-nota").value = item ? (item.nota || "") : "";
+    document.getElementById("mat-sinentrada").checked = item ? !!item.sin_entrada : false;
+    document.getElementById("mat-borrar").hidden = !item;
+    document.getElementById("mat-error").hidden = true;
+    dlg.showModal();
+    document.getElementById("mat-nombre").focus();
+  }
+
+  function guardarMaterial() {
+    var nombre = document.getElementById("mat-nombre").value.trim();
+    var categoria = document.getElementById("mat-categoria").value.trim();
+    var material = document.getElementById("mat-material").value.trim();
+    var err = document.getElementById("mat-error");
+
+    if (!nombre || !categoria || !material) {
+      err.textContent = "Nombre, categoría y tipo de material son obligatorios.";
+      err.hidden = false;
+      return;
+    }
+
+    var datos = {
+      nombre: nombre,
+      categoria: categoria,
+      material: material,
+      color: document.getElementById("mat-color").value || undefined,
+      nota: document.getElementById("mat-nota").value.trim() || undefined,
+      sin_entrada: document.getElementById("mat-sinentrada").checked || undefined
+    };
+
+    if (editandoId) {
+      var existente = catalogoUsuario.filter(function (i) { return i.id === editandoId; })[0];
+      if (existente) Object.assign(existente, datos);
+    } else {
+      datos.id = idLibre(nombre);
+      catalogoUsuario.push(datos);
+    }
+
+    reconstruirCatalogo();
+    guardarEstado();
+    renderCatalogo();
+    renderCajas();
+    renderResumen();
+    dlg.close();
+  }
+
+  function borrarMaterial() {
+    if (!editandoId) return;
+    var item = ITEMS[editandoId];
+    // ¿Está colocado en algún escenario?
+    var usos = 0;
+    Object.keys(escenarios).forEach(function (eid) {
+      var asig = escenarios[eid].asignaciones || {};
+      Object.keys(asig).forEach(function (caja) {
+        Object.keys(asig[caja]).forEach(function (ent) {
+          if (asig[caja][ent] === editandoId) usos++;
+        });
+      });
+      if ((escenarios[eid].extras || []).indexOf(editandoId) !== -1) usos++;
+    });
+
+    var msg = "¿Borrar “" + item.nombre + "” del catálogo?";
+    if (usos) msg += "\n\nEstá colocado en " + usos + " entrada(s) de tus escenarios; también se quitará de ahí.";
+    if (!confirm(msg)) return;
+
+    catalogoUsuario = catalogoUsuario.filter(function (i) { return i.id !== editandoId; });
+    Object.keys(escenarios).forEach(function (eid) {
+      var asig = escenarios[eid].asignaciones || {};
+      Object.keys(asig).forEach(function (caja) {
+        Object.keys(asig[caja]).forEach(function (ent) {
+          if (asig[caja][ent] === editandoId) delete asig[caja][ent];
+        });
+      });
+      if (escenarios[eid].extras) {
+        escenarios[eid].extras = escenarios[eid].extras.filter(function (x) { return x !== editandoId; });
+      }
+    });
+
+    reconstruirCatalogo();
+    guardarEstado();
+    renderCatalogo();
+    renderCajas();
+    renderResumen();
+    dlg.close();
+  }
+
+  document.getElementById("btn-nuevo-material").addEventListener("click", function () {
+    abrirEditorMaterial(null);
+  });
+  document.getElementById("mat-guardar").addEventListener("click", guardarMaterial);
+  document.getElementById("mat-borrar").addEventListener("click", borrarMaterial);
+  document.getElementById("mat-cancelar").addEventListener("click", function () { dlg.close(); });
 
   /* ---------------------------------------------------------------- *
    * Render: técnicas y perfiles
@@ -973,24 +1167,68 @@
     avisoGuardado("Restablecido a los presets del archivo.");
   });
 
+  // Copia de seguridad completa: escenarios + catálogo propio, en un .json
   document.getElementById("btn-exportar").addEventListener("click", function () {
-    var esc = escenarioActual();
-    if (!esc) return;
-    var salida = {};
-    salida[activo] = esc;
-    var texto = JSON.stringify(salida, null, 2);
-    var w = window.open("", "_blank", "width=700,height=600");
-    if (!w) {
-      prompt("Copia este JSON y pégalo en data/surgeries.js dentro de \"escenarios\":", texto);
-      return;
-    }
-    w.document.write(
-      "<title>Exportar escenario</title>" +
-      '<p style="font:14px sans-serif">Copia esto y pégalo en <b>data/surgeries.js</b>, dentro de <b>"escenarios"</b>, para que el preset sea permanente y viaje por git.</p>' +
-      '<textarea style="width:100%;height:80%;font:12px monospace">' +
-      texto.replace(/</g, "&lt;") + "</textarea>"
-    );
-    w.document.close();
+    var copia = {
+      formato: "mio-ionm",
+      version: 1,
+      fecha: new Date().toISOString(),
+      escenarios: escenarios,
+      catalogo_usuario: catalogoUsuario,
+      borrados: borrados,
+      activo: activo
+    };
+    var blob = new Blob([JSON.stringify(copia, null, 2)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "mio-ionm-" + new Date().toISOString().slice(0, 10) + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    avisoGuardado("Copia exportada. Guárdala o pásala al otro dispositivo.");
+  });
+
+  document.getElementById("btn-importar").addEventListener("click", function () {
+    document.getElementById("fichero-importar").click();
+  });
+
+  document.getElementById("fichero-importar").addEventListener("change", function (e) {
+    var fichero = e.target.files && e.target.files[0];
+    if (!fichero) return;
+    var lector = new FileReader();
+    lector.onload = function () {
+      var copia;
+      try {
+        copia = JSON.parse(lector.result);
+      } catch (err) {
+        alert("El archivo no es un JSON válido.");
+        return;
+      }
+      if (!copia || copia.formato !== "mio-ionm") {
+        alert("Este archivo no parece una copia de la herramienta.");
+        return;
+      }
+      var nEsc = Object.keys(copia.escenarios || {}).length;
+      var nMat = (copia.catalogo_usuario || []).length;
+      if (!confirm(
+        "Importar copia del " + (copia.fecha || "").slice(0, 10) + ":\n" +
+        "· " + nEsc + " escenario(s)\n· " + nMat + " material(es) propios\n\n" +
+        "Sustituye lo que tengas ahora en este navegador. ¿Continuar?"
+      )) return;
+
+      escenarios = copia.escenarios || {};
+      catalogoUsuario = copia.catalogo_usuario || [];
+      borrados = copia.borrados || [];
+      activo = copia.activo && escenarios[copia.activo] ? copia.activo : Object.keys(escenarios)[0] || null;
+      reconstruirCatalogo();
+      guardarEstado();
+      renderTodo();
+      avisoGuardado("Copia importada correctamente.");
+    };
+    lector.readAsText(fichero);
+    e.target.value = "";
   });
 
   document.getElementById("btn-imprimir").addEventListener("click", function () {
