@@ -492,6 +492,238 @@
   }
 
   /* ---------------------------------------------------------------- *
+   * Sincronización con GitHub
+   *
+   * El estado vive en localStorage y la herramienta funciona sin conexión.
+   * Subir y bajar son acciones manuales contra un repositorio privado de
+   * datos (nunca el del código, que se publica). Si el archivo remoto ha
+   * cambiado desde la última vez, se avisa en lugar de pisarlo.
+   * ---------------------------------------------------------------- */
+  var SYNC_KEY = "mio_ionm_sync_v1";
+  var RUTA_REMOTA = "estado.json";
+  var sync = { repo: "", token: "", sha: null, fecha: null };
+
+  function cargarSync() {
+    try {
+      var g = JSON.parse(localStorage.getItem(SYNC_KEY) || "null");
+      if (g) sync = Object.assign(sync, g);
+    } catch (e) { /* configuración ausente o ilegible */ }
+  }
+
+  function guardarSync() {
+    try { localStorage.setItem(SYNC_KEY, JSON.stringify(sync)); } catch (e) { /* sin persistencia */ }
+  }
+
+  function pintarEstadoSync() {
+    var el = document.getElementById("sync-estado");
+    if (!sync.repo || !sync.token) {
+      el.textContent = "Sin conectar";
+    } else if (sync.fecha) {
+      el.textContent = "Sinc. " + new Date(sync.fecha).toLocaleString("es-ES", {
+        day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit"
+      });
+    } else {
+      el.textContent = "Conectado";
+    }
+  }
+
+  function mensajeSync(texto, esError) {
+    var err = document.getElementById("sync-error");
+    var ok = document.getElementById("sync-ok");
+    err.hidden = true; ok.hidden = true;
+    if (!texto) return;
+    var destino = esError ? err : ok;
+    destino.textContent = texto;
+    destino.hidden = false;
+  }
+
+  // btoa/atob no admiten caracteres no ASCII: hay acentos en los nombres
+  function aBase64(texto) {
+    var bytes = new TextEncoder().encode(texto);
+    var bin = "";
+    bytes.forEach(function (b) { bin += String.fromCharCode(b); });
+    return btoa(bin);
+  }
+
+  function deBase64(b64) {
+    var bin = atob(b64.replace(/\s/g, ""));
+    var bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+
+  function urlContenido() {
+    return "https://api.github.com/repos/" + sync.repo + "/contents/" + RUTA_REMOTA;
+  }
+
+  function cabeceras() {
+    return {
+      "Authorization": "Bearer " + sync.token,
+      "Accept": "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28"
+    };
+  }
+
+  function errorLegible(resp) {
+    if (resp.status === 401) return "Token no válido o caducado.";
+    if (resp.status === 403) return "El token no tiene permiso de escritura sobre ese repositorio.";
+    if (resp.status === 404) return "No se encuentra el repositorio. Revisa el nombre y que el token lo incluya.";
+    if (resp.status === 409) return "Conflicto: el archivo remoto ha cambiado.";
+    return "GitHub respondió " + resp.status + ".";
+  }
+
+  function estadoActual() {
+    return {
+      formato: "mio-ionm",
+      version: 1,
+      fecha: new Date().toISOString(),
+      escenarios: escenarios,
+      catalogo_usuario: catalogoUsuario,
+      borrados: borrados,
+      activo: activo
+    };
+  }
+
+  function aplicarEstado(copia) {
+    escenarios = copia.escenarios || {};
+    catalogoUsuario = copia.catalogo_usuario || [];
+    borrados = copia.borrados || [];
+    activo = copia.activo && escenarios[copia.activo] ? copia.activo : Object.keys(escenarios)[0] || null;
+    reconstruirCatalogo();
+    guardarEstado();
+    renderTodo();
+  }
+
+  // Lee el archivo remoto. Devuelve {existe, contenido, sha} o lanza error.
+  function leerRemoto() {
+    return fetch(urlContenido() + "?ref=HEAD", { headers: cabeceras(), cache: "no-store" })
+      .then(function (resp) {
+        if (resp.status === 404) return { existe: false, sha: null, contenido: null };
+        if (!resp.ok) throw new Error(errorLegible(resp));
+        return resp.json().then(function (json) {
+          return { existe: true, sha: json.sha, contenido: JSON.parse(deBase64(json.content)) };
+        });
+      });
+  }
+
+  function subir(forzar) {
+    if (!sync.repo || !sync.token) return;
+    mensajeSync("Subiendo…");
+    leerRemoto()
+      .then(function (remoto) {
+        // Si en el repositorio hay algo más nuevo que lo que bajamos, avisamos
+        if (remoto.existe && sync.sha && remoto.sha !== sync.sha && !forzar) {
+          var f = remoto.contenido && remoto.contenido.fecha
+            ? new Date(remoto.contenido.fecha).toLocaleString("es-ES") : "fecha desconocida";
+          if (!confirm(
+            "En GitHub hay una versión más reciente (" + f + ") que no tienes en este dispositivo.\n\n" +
+            "Si subes ahora, la sustituyes y pierdes esos cambios.\n" +
+            "Cancela y pulsa «Bajar» si prefieres traértela primero.\n\n¿Subir de todas formas?"
+          )) {
+            mensajeSync("Subida cancelada. Pulsa «Bajar» para traer la versión de GitHub.", true);
+            return null;
+          }
+        }
+        var cuerpo = {
+          message: "Actualizar escenarios MIO/IONM",
+          content: aBase64(JSON.stringify(estadoActual(), null, 2))
+        };
+        if (remoto.sha) cuerpo.sha = remoto.sha;
+        return fetch(urlContenido(), {
+          method: "PUT",
+          headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()),
+          body: JSON.stringify(cuerpo)
+        });
+      })
+      .then(function (resp) {
+        if (!resp) return;
+        if (!resp.ok) throw new Error(errorLegible(resp));
+        return resp.json().then(function (json) {
+          sync.sha = json.content.sha;
+          sync.fecha = new Date().toISOString();
+          guardarSync();
+          pintarEstadoSync();
+          mensajeSync("Subido correctamente.");
+        });
+      })
+      .catch(function (e) { mensajeSync(e.message || "No se ha podido subir.", true); });
+  }
+
+  function bajar() {
+    if (!sync.repo || !sync.token) return;
+    mensajeSync("Bajando…");
+    leerRemoto()
+      .then(function (remoto) {
+        if (!remoto.existe) {
+          mensajeSync("Todavía no hay nada guardado en ese repositorio. Pulsa «Subir» para crearlo.", true);
+          return;
+        }
+        var copia = remoto.contenido;
+        if (!copia || copia.formato !== "mio-ionm") throw new Error("El archivo remoto no tiene el formato esperado.");
+        var nEsc = Object.keys(copia.escenarios || {}).length;
+        if (!confirm(
+          "Traer de GitHub la versión del " +
+          new Date(copia.fecha).toLocaleString("es-ES") + ":\n" +
+          "· " + nEsc + " escenario(s)\n" +
+          "· " + (copia.catalogo_usuario || []).length + " material(es) propios\n\n" +
+          "Sustituye lo que tengas en este dispositivo. ¿Continuar?"
+        )) { mensajeSync("Descarga cancelada."); return; }
+        aplicarEstado(copia);
+        sync.sha = remoto.sha;
+        sync.fecha = new Date().toISOString();
+        guardarSync();
+        pintarEstadoSync();
+        mensajeSync("Descargado correctamente.");
+      })
+      .catch(function (e) { mensajeSync(e.message || "No se ha podido bajar.", true); });
+  }
+
+  var dlgSync = document.getElementById("dlg-sync");
+
+  document.getElementById("btn-sync").addEventListener("click", function () {
+    document.getElementById("sync-repo").value = sync.repo || "";
+    document.getElementById("sync-token").value = sync.token || "";
+    mensajeSync(null);
+    dlgSync.showModal();
+  });
+
+  function leerCamposSync() {
+    var repo = document.getElementById("sync-repo").value.trim().replace(/^https?:\/\/github\.com\//, "").replace(/\.git$/, "").replace(/\/$/, "");
+    var token = document.getElementById("sync-token").value.trim();
+    if (!repo || !token) {
+      mensajeSync("Hacen falta el repositorio y el token.", true);
+      return false;
+    }
+    if (!/^[^/\s]+\/[^/\s]+$/.test(repo)) {
+      mensajeSync("El repositorio debe tener el formato usuario/repositorio.", true);
+      return false;
+    }
+    if (repo !== sync.repo) sync.sha = null;  // repo distinto: la referencia anterior no vale
+    sync.repo = repo;
+    sync.token = token;
+    guardarSync();
+    pintarEstadoSync();
+    return true;
+  }
+
+  document.getElementById("sync-subir").addEventListener("click", function () {
+    if (leerCamposSync()) subir(false);
+  });
+  document.getElementById("sync-bajar").addEventListener("click", function () {
+    if (leerCamposSync()) bajar();
+  });
+  document.getElementById("sync-cerrar").addEventListener("click", function () { dlgSync.close(); });
+  document.getElementById("sync-olvidar").addEventListener("click", function () {
+    if (!confirm("¿Olvidar el token y el repositorio en este dispositivo?\nTus escenarios no se borran, y lo guardado en GitHub tampoco.")) return;
+    sync = { repo: "", token: "", sha: null, fecha: null };
+    try { localStorage.removeItem(SYNC_KEY); } catch (e) { /* nada que borrar */ }
+    document.getElementById("sync-repo").value = "";
+    document.getElementById("sync-token").value = "";
+    pintarEstadoSync();
+    mensajeSync("Desconectado de GitHub.");
+  });
+
+  /* ---------------------------------------------------------------- *
    * Editor de material propio
    * ---------------------------------------------------------------- */
   var dlg = document.getElementById("dlg-material");
@@ -1274,6 +1506,8 @@
    * Arranque
    * ---------------------------------------------------------------- */
   cargarEstado();
+  cargarSync();
+  pintarEstadoSync();
   renderPerfilSelect();
   renderTodo();
   try {

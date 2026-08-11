@@ -12,6 +12,7 @@
   <span class="marca">MIO<span class="marca-sep">/</span>IONM</span>
   <select id="escenario-select" aria-label="Escenario de cirugía"></select>
   <span class="barra-flex"></span>
+  <button type="button" id="btn-sync" class="btn-modo" title="Sincronizar con GitHub">☁ <span id="sync-estado">Sin conectar</span></button>
   <button type="button" id="btn-quirofano" class="btn-modo" title="Oculta el catálogo y las técnicas para dejar solo el montaje y el resumen">Modo quirófano</button>
 </header>
 
@@ -80,6 +81,54 @@
   <span>Colocando <b id="bs-nombre"></b> — pulsa una entrada</span>
   <button type="button" id="bs-cancelar">Cancelar</button>
 </div>
+
+<dialog id="dlg-sync" class="no-print">
+  <h3>Sincronizar con GitHub</h3>
+  <p class="dlg-intro">
+    Guarda tus escenarios y tu material propio en un repositorio privado de
+    GitHub, para tenerlos en el móvil y en el ordenador. La herramienta sigue
+    funcionando en local; subir y bajar es siempre manual.
+  </p>
+
+  <details class="dlg-ayuda">
+    <summary>Cómo preparar esto la primera vez</summary>
+    <ol>
+      <li>Crea un repositorio <b>privado</b> nuevo y vacío en GitHub, solo para
+        los datos (p. ej. <code>checklist-mio-datos</code>). No uses el del
+        código: la web publicada lo dejaría a la vista.</li>
+      <li>Ve a <b>Settings → Developer settings → Personal access tokens →
+        Fine-grained tokens → Generate new token</b>.</li>
+      <li>En <b>Repository access</b> elige <i>Only select repositories</i> y
+        marca solo ese repositorio de datos.</li>
+      <li>En <b>Permissions → Repository permissions</b>, pon
+        <b>Contents: Read and write</b>. Nada más.</li>
+      <li>Genera el token, cópialo y pégalo abajo. Se guarda solo en este
+        navegador; puedes revocarlo desde GitHub cuando quieras.</li>
+    </ol>
+  </details>
+
+  <div class="campo">
+    <label for="sync-repo">Repositorio de datos <span class="req">*</span></label>
+    <input id="sync-repo" placeholder="usuario/checklist-mio-datos" autocomplete="off">
+    <small>Con el formato <code>usuario/repositorio</code>.</small>
+  </div>
+  <div class="campo">
+    <label for="sync-token">Token <span class="req">*</span></label>
+    <input id="sync-token" type="password" placeholder="github_pat_…" autocomplete="off">
+    <small>Se guarda solo en este navegador y nunca sale de él salvo hacia GitHub.</small>
+  </div>
+
+  <p class="dlg-error" id="sync-error" hidden></p>
+  <p class="dlg-ok" id="sync-ok" hidden></p>
+
+  <div class="dlg-botones">
+    <button type="button" id="sync-olvidar" class="peligro">Desconectar</button>
+    <span class="barra-flex"></span>
+    <button type="button" id="sync-cerrar">Cerrar</button>
+    <button type="button" id="sync-bajar">Bajar</button>
+    <button type="button" id="sync-subir" class="primario">Subir</button>
+  </div>
+</dialog>
 
 <dialog id="dlg-material" class="no-print">
   <h3 id="dlg-titulo">Material nuevo</h3>

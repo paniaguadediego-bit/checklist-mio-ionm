@@ -130,8 +130,16 @@ tocas el material, el catálogo se pliega solo para dejar ver las cajas, y
 tocas la entrada de destino. Arrastrar no funciona bien en pantallas
 táctiles, así que ese es el flujo recomendado.
 
-Para abrirlo desde el móvil hace falta que la herramienta esté publicada
-en algún sitio (ver la sección de sincronización).
+Para abrirlo desde el móvil hace falta publicar la web. Con **Cloudflare
+Pages** es gratis y el repositorio sigue privado: en
+[dash.cloudflare.com](https://dash.cloudflare.com) → *Workers & Pages* →
+*Create* → *Pages* → *Connect to Git*, eliges este repositorio y dejas el
+**build command vacío** y el **output directory** en `/`. Cada `git push`
+actualiza la web sola.
+
+> Ojo: la web publicada es **pública** aunque el repositorio sea privado.
+> Por eso los datos de sincronización no van aquí, sino en un repositorio
+> aparte (ver abajo).
 
 ## Dónde se guarda todo, y cómo pasarlo de un dispositivo a otro
 
@@ -149,6 +157,34 @@ Para pasar tu trabajo de uno a otro:
 
 Ese mismo archivo sirve de copia de seguridad: si el navegador borra los
 datos del sitio, se recupera importándolo.
+
+### Sincronización automática con GitHub
+
+El botón **☁** de la barra superior guarda y recupera todo desde un
+repositorio privado de GitHub, sin tener que mover archivos a mano. Es
+gratis: los repos privados, los tokens y la API de GitHub no cuestan nada.
+
+Preparación, una sola vez:
+
+1. Crea un repositorio **privado y vacío** solo para los datos, por ejemplo
+   `checklist-mio-datos`. **No uses el del código**: la web publicada
+   dejaría los escenarios a la vista, y así el token tampoco puede tocar el
+   código.
+2. En GitHub: *Settings → Developer settings → Personal access tokens →
+   Fine-grained tokens → Generate new token*.
+3. En *Repository access*, **Only select repositories** → solo el de datos.
+4. En *Permissions → Repository permissions*, **Contents: Read and write**.
+   Nada más.
+5. Pega el token y `usuario/repositorio` en el diálogo del botón ☁.
+
+Uso: **Subir** guarda el estado actual, **Bajar** trae el del repositorio.
+Nunca es automático, así que durante una cirugía no dependes de la red. Si
+otro dispositivo ha subido algo más reciente, avisa antes de sobrescribir y
+te sugiere bajar primero.
+
+El token se guarda solo en ese navegador. **Desconectar** lo borra del
+dispositivo (no toca ni tus escenarios ni lo guardado en GitHub), y siempre
+puedes revocarlo desde GitHub.
 
 Si además quieres que un preset venga de fábrica en el repositorio, pega su
 bloque en `data/surgeries.js` dentro de `"escenarios"` y haz `git commit` +
