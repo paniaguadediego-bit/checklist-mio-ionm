@@ -19,7 +19,16 @@
   --panel-tenue: #8ba1af;
   --header-h: 44px;
   --r: 5px;
+  /* Fondo de los campos rellenables. Es una variable y no un #fff suelto
+     porque en modo oscuro tiene que cambiar: un blanco fijo con la letra
+     clara encima deja el campo ilegible. */
+  --campo-bg: #ffffff;
 }
+
+/* Le dice al navegador que la página entiende los dos modos, para que los
+   controles nativos -calendario, flechas del número, lista del desplegable-
+   se pinten acordes y no salgan claros sobre fondo oscuro. */
+:root { color-scheme: light dark; }
 
 * { box-sizing: border-box; }
 
@@ -220,7 +229,7 @@ main {
   border-radius: var(--r);
   font: inherit;
   font-size: 0.8rem;
-  background: #fff;
+  background: var(--campo-bg);
   color: var(--text);
 }
 
@@ -355,7 +364,7 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
   padding: 0.15rem 0.3rem;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #fff;
+  background: var(--campo-bg);
   color: var(--text);
 }
 .tecnicas-grupo { margin-top: 0.4rem; }
@@ -752,7 +761,7 @@ body.modo-quirofano .resumen-card { position: sticky; top: calc(var(--header-h) 
   padding: 0.25rem 0.3rem;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #fff;
+  background: var(--campo-bg);
   color: var(--text);
 }
 .campo-fila > span > input[type="color"] { padding: 0.1rem; height: 1.85rem; width: 2.8rem; }
@@ -793,9 +802,15 @@ dialog h3 {
 .campo small { font-size: 0.68rem; color: var(--text-muted); line-height: 1.3; }
 .campo .req { color: var(--peligro); }
 
+/* Todos los tipos que se usan de verdad. Antes solo estaban text/search y
+   los de fecha, hora y número se quedaban con el estilo del navegador. */
 .campo input[type="text"],
-.campo input:not([type]),
+.campo input[type="date"],
+.campo input[type="time"],
+.campo input[type="number"],
+.campo input[type="password"],
 .campo input[type="search"],
+.campo input:not([type]),
 .campo select,
 .campo textarea {
   font: inherit;
@@ -803,7 +818,7 @@ dialog h3 {
   padding: 0.3rem 0.4rem;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #fff;
+  background: var(--campo-bg);
   color: var(--text);
   width: 100%;
 }
@@ -916,7 +931,7 @@ dialog h3 {
   padding: 0.3rem 0.35rem;
   border: 1px solid var(--border);
   border-radius: 4px;
-  background: #fff;
+  background: var(--campo-bg);
   color: var(--text);
 }
 
@@ -982,7 +997,8 @@ dialog h3 {
   gap: 0.5rem;
   font-size: 0.78rem;
 }
-.caso-material-fila input { width: 4.5rem; text-align: right; }
+/* Con .campo delante para ganarle al ancho del 100% de los campos normales */
+.campo .caso-material-fila input { width: 4.5rem; text-align: right; }
 
 /* ------------------------- Diálogo de catálogos ------------------------ */
 #dlg-catalogos { max-width: 560px; }
@@ -1180,8 +1196,10 @@ dialog h3 {
     --quitar-bg: #33201d;
     --panel: #10171b;
     --panel-borde: #2b3940;
+    /* Los campos rellenables se oscurecen aquí, en un solo sitio. No hace
+       falta repetir selectores por tipo: todos leen la misma variable. */
+    --campo-bg: #131a1d;
   }
   #escenario-select, #catalogo-buscar, #perfil-select { background: #1b2226; color: var(--text); }
   .caja-plate { background: #c8d2d8; }
-  .campo input, .campo select, .campo textarea { background: #131a1d; color: var(--text); }
 }
