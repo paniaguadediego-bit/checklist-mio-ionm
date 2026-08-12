@@ -238,6 +238,135 @@
     color_turquesa:      { es: "Turquesa", en: "Teal" },
     color_gris:          { es: "Gris", en: "Grey" },
 
+    /* --- Casos --- */
+    btn_casos:           { es: "Casos", en: "Cases" },
+    btn_casos_tit:       { es: "Registrar y consultar casos", en: "Record and review cases" },
+    dlg_casos_titulo:    { es: "Mis casos", en: "My cases" },
+    casos_guardar_montaje:{ es: "Guardar este montaje como caso", en: "Save this montage as a case" },
+    casos_guardar_ay:    { es: "Crea el caso con las técnicas, el material, las cajas y los avisos que ya ha calculado la herramienta. No hay que teclear nada.",
+                           en: "Creates the case with the techniques, material, boxes and warnings the tool has already worked out. Nothing to type." },
+    casos_nuevo_cero:    { es: "Caso nuevo desde cero", en: "New case from scratch" },
+    casos_nuevo_cero_ay: { es: "Para registrar una cirugía pasada que no pasó por el checklist.",
+                           en: "To record a past surgery that never went through the checklist." },
+    casos_filtro_estado: { es: "Estado", en: "Status" },
+    casos_filtro_todos:  { es: "Todos", en: "All" },
+    casos_filtro_desde:  { es: "Desde", en: "From" },
+    casos_filtro_hasta:  { es: "Hasta", en: "To" },
+    casos_vacio:         { es: "Todavía no hay ningún caso.", en: "No cases yet." },
+    casos_sin_filtro:    { es: "Ningún caso con esos filtros.", en: "No cases match those filters." },
+    casos_n:             { es: "{n} caso(s)", en: "{n} case(s)" },
+    casos_sin_subir:     { es: "{n} sin subir", en: "{n} not uploaded" },
+    caso_estado_preparado: { es: "Preparado", en: "Prepared" },
+    caso_estado_cerrado: { es: "Cerrado", en: "Closed" },
+    caso_sin_intervencion: { es: "— sin intervención —", en: "— no procedure —" },
+    caso_pendiente_subir: { es: "Guardado aquí, pendiente de subir", en: "Saved here, waiting to upload" },
+
+    /* --- Ficha del caso --- */
+    dlg_caso_titulo:     { es: "Caso {id}", en: "Case {id}" },
+    caso_cerrar_titulo:  { es: "Cierre rápido", en: "Quick close" },
+    caso_ampliar:        { es: "Ampliar (opcional)", en: "More detail (optional)" },
+    caso_g_traza:        { es: "Trazabilidad", en: "Traceability" },
+    caso_g_paciente:     { es: "Paciente", en: "Patient" },
+    caso_g_cirugia:      { es: "Cirugía", en: "Surgery" },
+    caso_g_tecnicas:     { es: "Técnicas", en: "Techniques" },
+    caso_g_material:     { es: "Material", en: "Material" },
+    caso_g_anestesia:    { es: "Anestesia", en: "Anaesthesia" },
+    caso_g_desarrollo:   { es: "Desarrollo", en: "Course" },
+    caso_g_incidencias:  { es: "Incidencias técnicas", en: "Technical incidents" },
+    caso_g_formacion:    { es: "Formación", en: "Training" },
+    caso_volver:         { es: "Volver a la lista", en: "Back to the list" },
+    caso_btn_cerrar_caso:{ es: "Cerrar caso", en: "Close case" },
+    caso_reabrir:        { es: "Marcar como preparado", en: "Mark as prepared" },
+    caso_guardado:       { es: "Caso guardado.", en: "Case saved." },
+    caso_falta_fecha:    { es: "La fecha es obligatoria.", en: "The date is required." },
+    caso_montaje_res:    { es: "{cajas} caja(s) · {canales} entradas ocupadas", en: "{cajas} box(es) · {canales} inputs used" },
+    caso_sin_montaje:    { es: "Sin montaje guardado (caso registrado a mano).",
+                           en: "No montage saved (case recorded by hand)." },
+    caso_material_real_ay: { es: "Viene relleno con lo previsto. Cambia solo lo que gastaste de más o de menos.",
+                             en: "Pre-filled with what was planned. Change only what you used more or less of." },
+    caso_editado_veces:  { es: "Editado {n} vez/veces tras el cierre · última: {fecha}",
+                           en: "Edited {n} time(s) after closing · last: {fecha}" },
+    caso_creado_en:      { es: "Archivo creado {fecha}", en: "File created {fecha}" },
+
+    /* Etiquetas de los campos del caso */
+    caso_fecha:          { es: "Fecha de la cirugía", en: "Date of surgery" },
+    caso_fecha_ay:       { es: "La que cuenta para las estadísticas. Se puede cambiar siempre, también en un caso ya cerrado.",
+                           en: "The one that counts for statistics. Always editable, even on a closed case." },
+    caso_edad:           { es: "Edad", en: "Age" },
+    caso_sexo:           { es: "Sexo", en: "Sex" },
+    caso_servicio_id:    { es: "Servicio", en: "Specialty" },
+    caso_intervencion_id:{ es: "Intervención", en: "Procedure" },
+    caso_tecnicas_realizadas: { es: "Técnicas realizadas", en: "Techniques performed" },
+    caso_tecnicas_ay:    { es: "Vienen marcadas las que planificaste. Marca o desmarca lo que cambió.",
+                           en: "The ones you planned come pre-selected. Tick or untick what changed." },
+    caso_alerta:         { es: "Hubo alerta", en: "There was an alert" },
+    caso_rol:            { es: "Mi papel", en: "My role" },
+    caso_notas:          { es: "Notas", en: "Notes" },
+    caso_ID_Caso:        { es: "Identificador", en: "Identifier" },
+    caso_estado:         { es: "Estado", en: "Status" },
+    caso_centro:         { es: "Centro", en: "Hospital" },
+    caso_hora_inicio:    { es: "Hora de inicio", en: "Start time" },
+    caso_hora_fin:       { es: "Hora de fin", en: "End time" },
+    caso_escenario_nombre: { es: "Escenario usado", en: "Scenario used" },
+    caso_antecedentes_relevantes: { es: "Antecedentes relevantes", en: "Relevant history" },
+    caso_region_nivel:   { es: "Región / nivel", en: "Region / level" },
+    caso_diagnostico:    { es: "Diagnóstico", en: "Diagnosis" },
+    caso_posicion:       { es: "Posición", en: "Position" },
+    caso_pares_craneales_cuales: { es: "Pares craneales monitorizados", en: "Cranial nerves monitored" },
+    caso_cambios_respecto_al_plan: { es: "Cambios respecto al plan", en: "Changes from the plan" },
+    caso_material_real:  { es: "Material realmente usado", en: "Material actually used" },
+    caso_tipo_anestesia: { es: "Tipo de anestesia", en: "Type of anaesthesia" },
+    caso_relajante_nm:   { es: "Relajante neuromuscular", en: "Neuromuscular blocker" },
+    caso_relajante_cual: { es: "¿Cuál?", en: "Which one?" },
+    caso_tof_monitorizado: { es: "TOF monitorizado", en: "TOF monitored" },
+    caso_incidencias_anestesicas: { es: "Incidencias anestésicas", en: "Anaesthetic incidents" },
+    caso_basales_obtenidas: { es: "Basales obtenidas", en: "Baselines obtained" },
+    caso_tipo_alerta:    { es: "Tipo de alerta", en: "Type of alert" },
+    caso_criterio_alarma:{ es: "Criterio de alarma", en: "Alarm criterion" },
+    caso_aviso_cirujano: { es: "Se avisó al cirujano", en: "The surgeon was warned" },
+    caso_medida_correctora: { es: "Medida correctora", en: "Corrective action" },
+    caso_recuperacion_senal: { es: "Recuperación de la señal", en: "Signal recovery" },
+    caso_deficit_postoperatorio: { es: "Déficit postoperatorio", en: "Postoperative deficit" },
+    caso_concordancia:   { es: "Concordancia", en: "Concordance" },
+    caso_incidencias_tecnicas: { es: "Incidencias técnicas", en: "Technical incidents" },
+    caso_equipo:         { es: "Equipo", en: "Equipment" },
+    caso_supervisor:     { es: "Supervisor", en: "Supervisor" },
+    caso_dificultad_1a5: { es: "Dificultad (1 a 5)", en: "Difficulty (1 to 5)" },
+    caso_aprendizaje_clave: { es: "Aprendizaje clave", en: "Key learning" },
+    caso_caso_destacado: { es: "Caso destacado", en: "Notable case" },
+
+    /* Valores de los desplegables del caso */
+    opc_vacio:           { es: "— sin especificar —", en: "— not specified —" },
+    opc_sexo_mujer:      { es: "Mujer", en: "Female" },
+    opc_sexo_hombre:     { es: "Hombre", en: "Male" },
+    opc_sexo_otro:       { es: "Otro", en: "Other" },
+    opc_rol_observo:     { es: "Observo", en: "Observing" },
+    opc_rol_supervisado: { es: "Con supervisión", en: "Supervised" },
+    opc_rol_autonomo:    { es: "Autónomo", en: "Independent" },
+    opc_estado_preparado:{ es: "Preparado", en: "Prepared" },
+    opc_estado_cerrado:  { es: "Cerrado", en: "Closed" },
+    opc_sino_si:         { es: "Sí", en: "Yes" },
+    opc_sino_no:         { es: "No", en: "No" },
+    opc_basales_si:      { es: "Sí", en: "Yes" },
+    opc_basales_no:      { es: "No", en: "No" },
+    opc_basales_parciales: { es: "Parciales", en: "Partial" },
+    opc_anestesia_tiva:  { es: "TIVA", en: "TIVA" },
+    opc_anestesia_balanceada: { es: "Balanceada", en: "Balanced" },
+    opc_anestesia_otra:  { es: "Otra", en: "Other" },
+    opc_recuperacion_completa: { es: "Completa", en: "Complete" },
+    opc_recuperacion_parcial: { es: "Parcial", en: "Partial" },
+    opc_recuperacion_no: { es: "No hubo", en: "None" },
+    opc_recuperacion_na: { es: "No procede", en: "Not applicable" },
+    opc_concordancia_VP: { es: "VP — verdadero positivo", en: "TP — true positive" },
+    opc_concordancia_FP: { es: "FP — falso positivo", en: "FP — false positive" },
+    opc_concordancia_VN: { es: "VN — verdadero negativo", en: "TN — true negative" },
+    opc_concordancia_FN: { es: "FN — falso negativo", en: "FN — false negative" },
+    opc_dificultad_1:    { es: "1 — muy fácil", en: "1 — very easy" },
+    opc_dificultad_2:    { es: "2", en: "2" },
+    opc_dificultad_3:    { es: "3", en: "3" },
+    opc_dificultad_4:    { es: "4", en: "4" },
+    opc_dificultad_5:    { es: "5 — muy difícil", en: "5 — very hard" },
+
     /* --- Diálogo de catálogos --- */
     btn_catalogos:       { es: "Catálogos", en: "Catalogues" },
     btn_catalogos_tit:   { es: "Editar técnicas, intervenciones, servicios y perfiles",
@@ -1368,7 +1497,7 @@
     } else if (ultimoFallo) {
       el.textContent = T("sync_sin_subir");
       estado = "error";
-    } else if (sync.pendiente) {
+    } else if (sync.pendiente || casosPendientes().length) {
       el.textContent = T(enQuirofano() ? "sync_en_pausa" : "sync_guardando");
       estado = "aviso";
     } else if (sync.fecha) {
@@ -1535,6 +1664,14 @@
     if (!syncActivo()) return;
     sync.pendiente = true;
     guardarSync();
+    programarEnvio();
+  }
+
+  /* Arranca la cuenta atrás sin marcar estado.json como pendiente. Lo usan
+     los casos, que son archivos aparte y no tienen por qué obligar a
+     reescribir el estado entero. */
+  function programarEnvio() {
+    if (!syncActivo()) return;
     pintarEstadoSync();
     if (temporizador) clearTimeout(temporizador);
     // En quirófano no se toca la red: se sube al salir del modo
@@ -1546,18 +1683,24 @@
   }
 
   function subirAuto() {
-    if (!syncActivo() || subiendo || conflicto || !sync.pendiente) return;
+    if (!syncActivo() || subiendo) return;
+    if (!sync.pendiente && !casosPendientes().length) return;
     if (navigator.onLine === false) { pintarEstadoSync(); return; }
     subiendo = true;
     pintarEstadoSync();
-    leerRemoto()
-      .then(function (remoto) {
-        if (remoto.existe && sync.sha && remoto.sha !== sync.sha) {
-          conflicto = true;
-          return null;   // hay que decidir a mano cuál se queda
-        }
-        return enviarEstado(remoto.sha);
-      })
+    // Un conflicto en estado.json no debe dejar los casos sin subir: son
+    // archivos independientes y cada uno se resuelve por su cuenta.
+    var cadena = (sync.pendiente && !conflicto)
+      ? leerRemoto().then(function (remoto) {
+          if (remoto.existe && sync.sha && remoto.sha !== sync.sha) {
+            conflicto = true;
+            return null;   // hay que decidir a mano cuál se queda
+          }
+          return enviarEstado(remoto.sha);
+        })
+      : Promise.resolve();
+    cadena
+      .then(function () { return subirCasosPendientes(); })
       .catch(function (e) { ultimoFallo = e.message || T("sync_error_subir"); })
       .then(function () {
         subiendo = false;
@@ -1565,10 +1708,13 @@
       });
   }
 
-  // Al abrir: si no hay nada local sin subir, se trae lo último sin preguntar
+  // Al abrir: si no hay nada local sin subir, se trae lo último sin preguntar.
+  // Los casos se traen siempre, porque son archivos aparte: aunque haya
+  // cambios locales de escenarios sin subir, hay que ver los casos que se
+  // prepararon en el otro dispositivo.
   function bajarAuto() {
     if (!syncActivo() || navigator.onLine === false) return;
-    if (sync.pendiente) { subirAuto(); return; }
+    if (sync.pendiente) { subirAuto(); bajarCasos(); return; }
     subiendo = true;
     pintarEstadoSync();
     leerRemoto()
@@ -1589,18 +1735,20 @@
       .then(function () {
         subiendo = false;
         pintarEstadoSync();
+        return bajarCasos();
       });
   }
 
   // Al volver la conexión se reintenta lo que quedó pendiente
   window.addEventListener("online", function () {
     ultimoFallo = null;
-    if (sync.pendiente) subirAuto();
+    if (sync.pendiente || casosPendientes().length) subirAuto();
+    bajarCasos();
   });
 
   // Cerrar la pestaña con algo sin subir: avisa antes de perderlo de vista
   window.addEventListener("beforeunload", function (e) {
-    if (syncActivo() && sync.pendiente && !enQuirofano()) {
+    if (syncActivo() && (sync.pendiente || casosPendientes().length) && !enQuirofano()) {
       e.preventDefault();
       e.returnValue = "";
     }
@@ -1690,6 +1838,269 @@
     pintarEstadoSync();
     mensajeSync(T("sync_desconectado"));
   });
+
+  /* ---------------------------------------------------------------- *
+   * Casos: modelo y almacenamiento
+   *
+   * Un archivo JSON por caso en casos/ del repositorio de datos. NO van
+   * dentro de estado.json a propósito: dos dispositivos escribiendo el
+   * mismo archivo se pisan, y aquí cada caso es un archivo con su nombre
+   * derivado de un UUID, así que no pueden chocar.
+   *
+   * La clave real es caso_uid. ID_Caso (AAAA-NNN) es solo para nombrar el
+   * caso en voz alta; si alguna vez se repitiera, no rompe nada.
+   *
+   * Tres fechas distintas y no se confunden:
+   *   fecha       cuándo fue la cirugía. Editable siempre. Es la que cuenta.
+   *   guardado_en cuándo se creó el archivo. Lo pone la app.
+   *   editado_en  array con cada edición posterior. Lo pone la app.
+   * ---------------------------------------------------------------- */
+  var CASOS_KEY = "mio_ionm_casos_v1";
+  var VERSION_ESQUEMA = 1;
+  var CENTRO_KEY = "mio_ionm_centro";
+
+  var casos = {};        // caso_uid -> caso
+  var casosSha = {};     // caso_uid -> sha del archivo en GitHub
+  var casosSinSubir = {};// caso_uid -> true mientras no se haya subido
+
+  function casosPendientes() {
+    return Object.keys(casosSinSubir);
+  }
+
+  function uuid() {
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    // Reserva para navegadores sin randomUUID
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+      var r = Math.random() * 16 | 0;
+      return (c === "x" ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+  }
+
+  function hoyISO() {
+    var d = new Date();
+    return d.getFullYear() + "-" + dosDigitos(d.getMonth() + 1) + "-" + dosDigitos(d.getDate());
+  }
+
+  function dosDigitos(n) { return (n < 10 ? "0" : "") + n; }
+
+  function cargarCasos() {
+    casos = {}; casosSha = {}; casosSinSubir = {};
+    try {
+      var g = JSON.parse(localStorage.getItem(CASOS_KEY) || "null");
+      if (g) {
+        casos = g.casos || {};
+        casosSha = g.sha || {};
+        casosSinSubir = g.sin_subir || {};
+      }
+    } catch (e) { /* sin casos guardados o ilegibles */ }
+  }
+
+  function guardarCasos() {
+    try {
+      localStorage.setItem(CASOS_KEY, JSON.stringify({
+        casos: casos, sha: casosSha, sin_subir: casosSinSubir
+      }));
+    } catch (e) {
+      avisoGuardado(T("guardado_error", { error: e.message }), true);
+    }
+  }
+
+  /* Guarda un caso en local y lo deja listo para subir. En quirófano se
+     queda esperando, igual que el resto: durante la cirugía no se toca la
+     red. Al salir del modo se manda. */
+  function guardarCaso(caso, esNuevo) {
+    if (!esNuevo) caso.editado_en = (caso.editado_en || []).concat(new Date().toISOString());
+    casos[caso.caso_uid] = caso;
+    casosSinSubir[caso.caso_uid] = true;
+    guardarCasos();
+    programarEnvio();
+    pintarEstadoSync();
+  }
+
+  // Correlativo AAAA-NNN a partir del año de la fecha de la cirugía, tomando
+  // el máximo de lo que ya se conoce (que tras bajar es todo el repositorio).
+  function siguienteIdCaso(fecha) {
+    var anio = (fecha || "").slice(0, 4) || String(new Date().getFullYear());
+    var max = 0;
+    Object.keys(casos).forEach(function (uid) {
+      var m = /^(\d{4})-(\d+)$/.exec(casos[uid].ID_Caso || "");
+      if (m && m[1] === anio) max = Math.max(max, parseInt(m[2], 10));
+    });
+    var n = String(max + 1);
+    while (n.length < 3) n = "0" + n;
+    return anio + "-" + n;
+  }
+
+  function centroPorDefecto() {
+    try { return localStorage.getItem(CENTRO_KEY) || ""; } catch (e) { return ""; }
+  }
+
+  function recordarCentro(valor) {
+    try { localStorage.setItem(CENTRO_KEY, valor || ""); } catch (e) { /* sin persistencia */ }
+  }
+
+  function casoVacio() {
+    var fecha = hoyISO();
+    return {
+      caso_uid: uuid(),
+      ID_Caso: siguienteIdCaso(fecha),
+      estado: "preparado",
+      fecha: fecha,
+      centro: centroPorDefecto(),
+      hora_inicio: "", hora_fin: "",
+      escenario_nombre: "", perfil: "",
+      edad: "", sexo: "", antecedentes_relevantes: "",
+      intervencion_id: "", servicio_id: "", region_nivel: "", diagnostico: "", posicion: "",
+      tecnicas_realizadas: [], pares_craneales_cuales: "", cambios_respecto_al_plan: "",
+      material_previsto: {}, material_real: {},
+      montaje: [], n_cajas: 0, n_canales_ocupados: 0, avisos_preparacion: [],
+      tipo_anestesia: "", relajante_nm: "", relajante_cual: "", tof_monitorizado: "",
+      incidencias_anestesicas: "",
+      basales_obtenidas: "", alerta: false, tipo_alerta: "", criterio_alarma: "",
+      aviso_cirujano: false, medida_correctora: "", recuperacion_senal: "",
+      deficit_postoperatorio: "", concordancia: "",
+      incidencias_tecnicas: "", equipo: "",
+      rol: "", supervisor: "", dificultad_1a5: "", aprendizaje_clave: "", caso_destacado: false,
+      notas: "",
+      version_esquema: VERSION_ESQUEMA,
+      guardado_en: new Date().toISOString(),
+      editado_en: []
+    };
+  }
+
+  /* Caso a partir del escenario montado. Todo lo que la herramienta ya sabe
+     -técnicas, material, cajas, montaje y avisos- entra solo: no se teclea
+     nada de esto. */
+  function casoDesdeEscenario() {
+    var esc = escenarioActual();
+    var caso = casoVacio();
+    if (!esc) return caso;
+    var res = calcularResumen(esc);
+    caso.escenario_nombre = campo(esc, "nombre");
+    caso.perfil = esc.nota_perfil_id || "";
+    caso.tecnicas_realizadas = res.tecnicas.slice();
+    caso.material_previsto = materialRedondeado(res.material);
+    caso.material_real = materialRedondeado(res.material);
+    caso.n_cajas = res.cajas.length;
+    caso.n_canales_ocupados = res.entradas;
+    caso.avisos_preparacion = res.avisos.slice();
+    // Instantánea del montaje: se guarda tal cual estaba, con los textos ya
+    // resueltos, para que un caso antiguo se siga leyendo aunque el catálogo
+    // de material cambie después.
+    caso.montaje = res.cajas.map(function (c) {
+      return {
+        caja: c.key, nombre: c.nombre, usadas: c.usadas, total: c.total,
+        entradas: c.detalle.map(function (d) {
+          return { entrada: d.entrada, item: d.item, nombre: d.nombre, tipo: d.tipo };
+        })
+      };
+    });
+    // La intervención se propone por el nombre del escenario, si coincide
+    var porNombre = INTERVENCIONES.filter(function (i) {
+      return (campo(i, "nombre") || "").toLowerCase() === (caso.escenario_nombre || "").toLowerCase();
+    })[0];
+    if (porNombre) {
+      caso.intervencion_id = porNombre.id;
+      caso.servicio_id = porNombre.servicio || "";
+    }
+    return caso;
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Casos: sincronización
+   *
+   * Reutiliza el token, las cabeceras y la pausa de quirófano del
+   * mecanismo que ya existía. Lo único distinto es que cada caso es su
+   * propio archivo, así que se suben y bajan de uno en uno.
+   * ---------------------------------------------------------------- */
+  function rutaCaso(uid) { return "casos/" + uid + ".json"; }
+
+  function urlCaso(uid) {
+    return "https://api.github.com/repos/" + sync.repo + "/contents/" + rutaCaso(uid);
+  }
+
+  function subirCaso(uid, reintento) {
+    var caso = casos[uid];
+    if (!caso) { delete casosSinSubir[uid]; return Promise.resolve(); }
+    var cuerpo = {
+      message: "Caso " + (caso.ID_Caso || uid),
+      content: aBase64(JSON.stringify(caso, null, 2))
+    };
+    if (casosSha[uid]) cuerpo.sha = casosSha[uid];
+    return fetch(urlCaso(uid), {
+      method: "PUT",
+      headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()),
+      body: JSON.stringify(cuerpo)
+    }).then(function (resp) {
+      // 409/422: el archivo cambió desde otro dispositivo. Se relee el sha y
+      // se reintenta una vez: lo que acabas de escribir aquí es lo más nuevo.
+      if ((resp.status === 409 || resp.status === 422) && !reintento) {
+        return fetch(urlCaso(uid), { headers: cabeceras(), cache: "no-store" })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (json) {
+            casosSha[uid] = json ? json.sha : null;
+            return subirCaso(uid, true);
+          });
+      }
+      if (!resp.ok) throw new Error(errorLegible(resp));
+      return resp.json().then(function (json) {
+        casosSha[uid] = json.content.sha;
+        delete casosSinSubir[uid];
+        guardarCasos();
+      });
+    });
+  }
+
+  // De uno en uno, para no lanzar veinte peticiones a la vez si vuelve la red
+  // con varios casos acumulados.
+  function subirCasosPendientes() {
+    if (!syncActivo()) return Promise.resolve();
+    return casosPendientes().reduce(function (cadena, uid) {
+      return cadena.then(function () { return subirCaso(uid); });
+    }, Promise.resolve());
+  }
+
+  /* Trae los casos del repositorio. Solo descarga los que han cambiado: el
+     listado ya da el sha de cada archivo. Un caso con cambios locales sin
+     subir no se pisa, que para eso está pendiente de subida. */
+  function bajarCasos() {
+    if (!syncActivo() || navigator.onLine === false) return Promise.resolve();
+    var url = "https://api.github.com/repos/" + sync.repo + "/contents/casos";
+    return fetch(url, { headers: cabeceras(), cache: "no-store" })
+      .then(function (resp) {
+        if (resp.status === 404) return [];   // todavía no hay ningún caso
+        if (!resp.ok) throw new Error(errorLegible(resp));
+        return resp.json();
+      })
+      .then(function (listado) {
+        var quedan = (listado || []).filter(function (f) {
+          if (f.type !== "file" || !/\.json$/.test(f.name)) return false;
+          var uid = f.name.replace(/\.json$/, "");
+          if (casosSinSubir[uid]) return false;
+          return casosSha[uid] !== f.sha;
+        });
+        return quedan.reduce(function (cadena, f) {
+          return cadena.then(function () {
+            return fetch(f.url, { headers: cabeceras(), cache: "no-store" })
+              .then(function (r) { return r.ok ? r.json() : null; })
+              .then(function (json) {
+                if (!json || !json.content) return;
+                var caso = JSON.parse(deBase64(json.content));
+                if (!caso || !caso.caso_uid) return;
+                casos[caso.caso_uid] = caso;
+                casosSha[caso.caso_uid] = json.sha;
+              });
+          });
+        }, Promise.resolve()).then(function () {
+          if (quedan.length) {
+            guardarCasos();
+            if (dlgCasos && dlgCasos.open) renderListaCasos();
+          }
+        });
+      })
+      .catch(function (e) { ultimoFallo = e.message || T("sync_error_bajar"); })
+      .then(function () { pintarEstadoSync(); });
+  }
 
   /* ---------------------------------------------------------------- *
    * Editor de material propio
@@ -2111,6 +2522,451 @@
     }
     sel.value = hex;
     refrescarPreviaEtiqueta();
+  });
+
+  /* ---------------------------------------------------------------- *
+   * Casos: interfaz
+   *
+   * Dos ventanas: el listado ("Mis casos") y la ficha. La ficha enseña
+   * arriba el cierre rápido -lo que se rellena siempre- y esconde el resto
+   * en un bloque plegado, para poder cerrar un caso desde el móvil sin
+   * bajar por una pantalla infinita.
+   * ---------------------------------------------------------------- */
+  var dlgCasos = document.getElementById("dlg-casos");
+  var dlgCaso = document.getElementById("dlg-caso");
+  var casoAbierto = null;      // copia de trabajo del caso que se edita
+  var casoEsNuevo = false;
+  var camposCaso = {};         // clave -> control del formulario
+
+  var OPCIONES = {
+    sexo: ["mujer", "hombre", "otro"],
+    rol: ["observo", "supervisado", "autonomo"],
+    estado: ["preparado", "cerrado"],
+    sino: ["si", "no"],
+    basales: ["si", "no", "parciales"],
+    anestesia: ["tiva", "balanceada", "otra"],
+    recuperacion: ["completa", "parcial", "no", "na"],
+    concordancia: ["VP", "FP", "VN", "FN"],
+    dificultad: ["1", "2", "3", "4", "5"]
+  };
+
+  // Cierre rápido: lo que se rellena siempre. Objetivo, menos de 3 minutos.
+  var CAMPOS_RAPIDO = [
+    { c: "fecha", t: "date", ay: "caso_fecha_ay" },
+    { c: "edad", t: "num" },
+    { c: "sexo", t: "sel", o: "sexo" },
+    { c: "servicio_id", t: "cat", cat: "servicios" },
+    { c: "intervencion_id", t: "cat", cat: "intervenciones" },
+    { c: "tecnicas_realizadas", t: "tecnicas", ay: "caso_tecnicas_ay" },
+    { c: "alerta", t: "check" },
+    { c: "rol", t: "sel", o: "rol" },
+    { c: "notas", t: "area" }
+  ];
+
+  var CAMPOS_AMPLIAR = [
+    { g: "traza", c: "ID_Caso", t: "ro" },
+    { g: "traza", c: "estado", t: "sel", o: "estado" },
+    { g: "traza", c: "centro", t: "text" },
+    { g: "traza", c: "hora_inicio", t: "time" },
+    { g: "traza", c: "hora_fin", t: "time" },
+    { g: "traza", c: "escenario_nombre", t: "ro" },
+    { g: "paciente", c: "antecedentes_relevantes", t: "area" },
+    { g: "cirugia", c: "region_nivel", t: "text" },
+    { g: "cirugia", c: "diagnostico", t: "text" },
+    { g: "cirugia", c: "posicion", t: "text" },
+    { g: "tecnicas", c: "pares_craneales_cuales", t: "text" },
+    { g: "tecnicas", c: "cambios_respecto_al_plan", t: "area" },
+    { g: "material", c: "material_real", t: "material", ay: "caso_material_real_ay" },
+    { g: "anestesia", c: "tipo_anestesia", t: "sel", o: "anestesia" },
+    { g: "anestesia", c: "relajante_nm", t: "sel", o: "sino" },
+    { g: "anestesia", c: "relajante_cual", t: "text" },
+    { g: "anestesia", c: "tof_monitorizado", t: "sel", o: "sino" },
+    { g: "anestesia", c: "incidencias_anestesicas", t: "area" },
+    { g: "desarrollo", c: "basales_obtenidas", t: "sel", o: "basales" },
+    { g: "desarrollo", c: "tipo_alerta", t: "text" },
+    { g: "desarrollo", c: "criterio_alarma", t: "text" },
+    { g: "desarrollo", c: "aviso_cirujano", t: "check" },
+    { g: "desarrollo", c: "medida_correctora", t: "area" },
+    { g: "desarrollo", c: "recuperacion_senal", t: "sel", o: "recuperacion" },
+    { g: "desarrollo", c: "deficit_postoperatorio", t: "text" },
+    { g: "desarrollo", c: "concordancia", t: "sel", o: "concordancia" },
+    { g: "incidencias", c: "incidencias_tecnicas", t: "area" },
+    { g: "incidencias", c: "equipo", t: "text" },
+    { g: "formacion", c: "supervisor", t: "text" },
+    { g: "formacion", c: "dificultad_1a5", t: "sel", o: "dificultad" },
+    { g: "formacion", c: "aprendizaje_clave", t: "area" },
+    { g: "formacion", c: "caso_destacado", t: "check" }
+  ];
+
+  function opcionTexto(grupo, valor) {
+    var clave = "opc_" + grupo + "_" + valor;
+    var t = T(clave);
+    return t === clave ? valor : t;
+  }
+
+  /* Construye un campo del formulario y deja el control en camposCaso.
+     Devuelve el bloque .campo listo para colgar. */
+  function campoCaso(def, valor) {
+    var div = document.createElement("div");
+    div.className = "campo";
+    var control;
+
+    if (def.t === "check") {
+      var lab = document.createElement("label");
+      lab.className = "check";
+      control = document.createElement("input");
+      control.type = "checkbox";
+      control.id = "caso-f-" + def.c;
+      control.checked = !!valor;
+      lab.appendChild(control);
+      var sp = document.createElement("span");
+      sp.textContent = T("caso_" + def.c);
+      lab.appendChild(sp);
+      div.appendChild(lab);
+      camposCaso[def.c] = control;
+      return div;
+    }
+
+    var lab2 = document.createElement("label");
+    lab2.textContent = T("caso_" + def.c);
+    lab2.setAttribute("for", "caso-f-" + def.c);
+    div.appendChild(lab2);
+
+    if (def.t === "tecnicas") {
+      // Mismos chips que en la tarjeta de técnicas: una sola forma de marcar
+      var elegidas = (valor || []).slice();
+      camposCaso[def.c] = elegidas;
+      var fila = document.createElement("div");
+      fila.className = "chip-fila";
+      // Se ofrecen las activas, más las que ya tuviera el caso aunque estén
+      // desactivadas: si no, no habría manera de quitarlas.
+      TECNICAS.filter(function (t) {
+        return t.activa !== false || elegidas.indexOf(t.id) !== -1;
+      }).forEach(function (t) {
+        var chip = document.createElement("span");
+        chip.className = "chip chip-extra" + (elegidas.indexOf(t.id) !== -1 ? " activo" : "") +
+          (t.activa === false ? " desactivada" : "");
+        chip.textContent = campo(t, "etiqueta");
+        chip.addEventListener("click", function () {
+          var i = elegidas.indexOf(t.id);
+          if (i === -1) elegidas.push(t.id); else elegidas.splice(i, 1);
+          chip.classList.toggle("activo", i === -1);
+        });
+        fila.appendChild(chip);
+      });
+      div.appendChild(fila);
+      if (def.ay) div.appendChild(ayudaCampo(def.ay));
+      return div;
+    }
+
+    if (def.t === "material") {
+      // Mapa tipo -> cantidad, con una casilla por tipo
+      var mapa = Object.assign({}, valor || {});
+      camposCaso[def.c] = mapa;
+      var tabla = document.createElement("div");
+      tabla.className = "caso-material";
+      var tipos = Object.keys(mapa).sort();
+      if (!tipos.length) {
+        var nada = document.createElement("span");
+        nada.className = "caso-ro";
+        nada.textContent = T("caso_sin_montaje");
+        tabla.appendChild(nada);
+      }
+      tipos.forEach(function (tipo) {
+        var f = document.createElement("label");
+        f.className = "caso-material-fila";
+        var n = document.createElement("span");
+        n.textContent = tipo;
+        var inp = document.createElement("input");
+        inp.type = "number";
+        inp.min = "0";
+        inp.value = mapa[tipo];
+        inp.addEventListener("input", function () {
+          mapa[tipo] = inp.value === "" ? 0 : Number(inp.value);
+        });
+        f.appendChild(n);
+        f.appendChild(inp);
+        tabla.appendChild(f);
+      });
+      div.appendChild(tabla);
+      if (def.ay) div.appendChild(ayudaCampo(def.ay));
+      return div;
+    }
+
+    if (def.t === "ro") {
+      control = document.createElement("span");
+      control.className = "caso-ro";
+      control.textContent = valor || "—";
+      control.id = "caso-f-" + def.c;
+      div.appendChild(control);
+      return div;   // no se edita: no entra en camposCaso
+    }
+
+    if (def.t === "sel" || def.t === "cat") {
+      control = document.createElement("select");
+      var vacia = document.createElement("option");
+      vacia.value = "";
+      vacia.textContent = T("opc_vacio");
+      control.appendChild(vacia);
+      var lista = def.t === "cat"
+        ? (def.cat === "servicios" ? SERVICIOS : INTERVENCIONES)
+        : null;
+      if (lista) {
+        // Se ofrece lo activo, más lo que ya tuviera el caso aunque esté
+        // desactivado, para no perder el dato al abrir un caso antiguo.
+        lista.filter(function (e) {
+          return e.activa !== false || e.id === valor;
+        }).forEach(function (e) {
+          var o = document.createElement("option");
+          o.value = e.id;
+          o.textContent = campo(e, "nombre");
+          control.appendChild(o);
+        });
+      } else {
+        OPCIONES[def.o].forEach(function (v) {
+          var o = document.createElement("option");
+          o.value = v;
+          o.textContent = opcionTexto(def.o, v);
+          control.appendChild(o);
+        });
+      }
+      control.value = valor == null ? "" : String(valor);
+    } else if (def.t === "area") {
+      control = document.createElement("textarea");
+      control.rows = 2;
+      control.value = valor || "";
+    } else {
+      control = document.createElement("input");
+      control.type = def.t === "num" ? "number" : (def.t === "date" ? "date" : (def.t === "time" ? "time" : "text"));
+      if (def.t === "num") control.min = "0";
+      control.value = valor == null ? "" : valor;
+    }
+
+    control.id = "caso-f-" + def.c;
+    div.appendChild(control);
+    if (def.ay) div.appendChild(ayudaCampo(def.ay));
+    camposCaso[def.c] = control;
+    return div;
+  }
+
+  function ayudaCampo(clave) {
+    var s = document.createElement("small");
+    s.textContent = T(clave);
+    return s;
+  }
+
+  function renderFichaCaso() {
+    camposCaso = {};
+    var c = casoAbierto;
+    document.getElementById("caso-titulo").textContent =
+      T("dlg_caso_titulo", { id: c.ID_Caso || "" });
+
+    var rapido = document.getElementById("caso-rapido");
+    rapido.innerHTML = "";
+    CAMPOS_RAPIDO.forEach(function (def) {
+      rapido.appendChild(campoCaso(def, c[def.c]));
+    });
+
+    var ampliar = document.getElementById("caso-ampliar-campos");
+    ampliar.innerHTML = "";
+    var grupoActual = null;
+    CAMPOS_AMPLIAR.forEach(function (def) {
+      if (def.g !== grupoActual) {
+        grupoActual = def.g;
+        var h = document.createElement("h4");
+        h.textContent = T("caso_g_" + def.g);
+        ampliar.appendChild(h);
+        if (def.g === "material") {
+          var res = document.createElement("p");
+          res.className = "caso-resumen-linea";
+          res.textContent = c.n_cajas
+            ? T("caso_montaje_res", { cajas: c.n_cajas, canales: c.n_canales_ocupados })
+            : T("caso_sin_montaje");
+          ampliar.appendChild(res);
+        }
+      }
+      ampliar.appendChild(campoCaso(def, c[def.c]));
+    });
+
+    // Pie: cuándo se creó el archivo y cuántas veces se ha tocado después
+    var pie = document.getElementById("caso-meta");
+    var partes = [T("caso_creado_en", {
+      fecha: new Date(c.guardado_en).toLocaleString(localeActual())
+    })];
+    if ((c.editado_en || []).length) {
+      partes.push(T("caso_editado_veces", {
+        n: c.editado_en.length,
+        fecha: new Date(c.editado_en[c.editado_en.length - 1]).toLocaleString(localeActual())
+      }));
+    }
+    pie.textContent = partes.join(" · ");
+
+    document.getElementById("caso-btn-cerrar-caso").textContent =
+      T(c.estado === "cerrado" ? "caso_reabrir" : "caso_btn_cerrar_caso");
+    document.getElementById("caso-error").hidden = true;
+  }
+
+  function leerFichaCaso() {
+    var c = casoAbierto;
+    CAMPOS_RAPIDO.concat(CAMPOS_AMPLIAR).forEach(function (def) {
+      var control = camposCaso[def.c];
+      if (control === undefined) return;
+      if (def.t === "tecnicas") { c[def.c] = control.slice(); return; }
+      if (def.t === "material") { c[def.c] = Object.assign({}, control); return; }
+      if (def.t === "check") { c[def.c] = control.checked; return; }
+      // Los numéricos se guardan como número, no como texto: en el Sheet hay
+      // que poder sumarlos y sacar medias sin convertir nada.
+      if (def.t === "num" || def.c === "dificultad_1a5") {
+        c[def.c] = control.value === "" ? "" : Number(control.value);
+        return;
+      }
+      c[def.c] = control.value;
+    });
+    return c;
+  }
+
+  function abrirCaso(uid) {
+    casoEsNuevo = false;
+    casoAbierto = clonar(casos[uid]);
+    if (dlgCasos.open) dlgCasos.close();
+    renderFichaCaso();
+    dlgCaso.showModal();
+  }
+
+  function abrirCasoNuevo(caso) {
+    casoEsNuevo = true;
+    casoAbierto = caso;
+    if (dlgCasos.open) dlgCasos.close();
+    renderFichaCaso();
+    dlgCaso.showModal();
+  }
+
+  function guardarFicha(cerrar) {
+    var c = leerFichaCaso();
+    if (!c.fecha) {
+      var err = document.getElementById("caso-error");
+      err.textContent = T("caso_falta_fecha");
+      err.hidden = false;
+      return false;
+    }
+    if (cerrar) c.estado = c.estado === "cerrado" ? "preparado" : "cerrado";
+    recordarCentro(c.centro);
+    guardarCaso(c, casoEsNuevo);
+    casoEsNuevo = false;
+    casoAbierto = clonar(casos[c.caso_uid]);
+    avisoGuardado(T("caso_guardado"));
+    return true;
+  }
+
+  function renderListaCasos() {
+    var cont = document.getElementById("casos-lista");
+    cont.innerHTML = "";
+    var fEstado = document.getElementById("casos-estado").value;
+    var fDesde = document.getElementById("casos-desde").value;
+    var fHasta = document.getElementById("casos-hasta").value;
+
+    var lista = Object.keys(casos).map(function (uid) { return casos[uid]; })
+      .filter(function (c) {
+        if (fEstado && c.estado !== fEstado) return false;
+        if (fDesde && (c.fecha || "") < fDesde) return false;
+        if (fHasta && (c.fecha || "") > fHasta) return false;
+        return true;
+      })
+      // Por fecha de cirugía, lo más reciente primero
+      .sort(function (a, b) { return (b.fecha || "").localeCompare(a.fecha || ""); });
+
+    var total = Object.keys(casos).length;
+    var sinSubir = casosPendientes().length;
+    document.getElementById("casos-cuenta").textContent =
+      T("casos_n", { n: total }) + (sinSubir ? " · " + T("casos_sin_subir", { n: sinSubir }) : "");
+
+    if (!lista.length) {
+      var vacio = document.createElement("p");
+      vacio.className = "empty-hint";
+      vacio.textContent = total ? T("casos_sin_filtro") : T("casos_vacio");
+      cont.appendChild(vacio);
+      return;
+    }
+
+    lista.forEach(function (c) {
+      var fila = document.createElement("button");
+      fila.type = "button";
+      fila.className = "caso-fila estado-" + c.estado;
+      fila.addEventListener("click", function () { abrirCaso(c.caso_uid); });
+
+      var cab = document.createElement("span");
+      cab.className = "caso-fila-cab";
+      var id = document.createElement("b");
+      id.textContent = c.ID_Caso || "—";
+      var fecha = document.createElement("span");
+      fecha.className = "caso-fila-fecha";
+      fecha.textContent = c.fecha || "";
+      cab.appendChild(id);
+      cab.appendChild(fecha);
+      fila.appendChild(cab);
+
+      var det = document.createElement("span");
+      det.className = "caso-fila-det";
+      var interv = INTERV[c.intervencion_id];
+      det.textContent = interv ? campo(interv, "nombre")
+        : (c.escenario_nombre || T("caso_sin_intervencion"));
+      fila.appendChild(det);
+
+      var pie = document.createElement("span");
+      pie.className = "caso-fila-pie";
+      var et = document.createElement("span");
+      et.className = "caso-etiqueta";
+      et.textContent = T("caso_estado_" + c.estado);
+      pie.appendChild(et);
+      if (c.alerta) {
+        var al = document.createElement("span");
+        al.className = "caso-etiqueta alerta";
+        al.textContent = T("caso_alerta");
+        pie.appendChild(al);
+      }
+      if (casosSinSubir[c.caso_uid]) {
+        var sub = document.createElement("span");
+        sub.className = "caso-etiqueta sin-subir";
+        sub.textContent = T("caso_pendiente_subir");
+        pie.appendChild(sub);
+      }
+      fila.appendChild(pie);
+
+      cont.appendChild(fila);
+    });
+  }
+
+  function abrirListaCasos() {
+    document.getElementById("casos-guardar-montaje").disabled = !escenarioActual();
+    renderListaCasos();
+    dlgCasos.showModal();
+  }
+
+  document.getElementById("btn-casos").addEventListener("click", abrirListaCasos);
+  document.getElementById("casos-cerrar").addEventListener("click", function () { dlgCasos.close(); });
+  ["casos-estado", "casos-desde", "casos-hasta"].forEach(function (id) {
+    document.getElementById(id).addEventListener("change", renderListaCasos);
+  });
+
+  document.getElementById("casos-guardar-montaje").addEventListener("click", function () {
+    abrirCasoNuevo(casoDesdeEscenario());
+  });
+  document.getElementById("casos-nuevo-cero").addEventListener("click", function () {
+    // Retrospectivo: nace cerrado y sin material ni montaje, porque no hubo
+    var c = casoVacio();
+    c.estado = "cerrado";
+    abrirCasoNuevo(c);
+  });
+
+  document.getElementById("caso-volver").addEventListener("click", function () {
+    dlgCaso.close();
+    abrirListaCasos();
+  });
+  document.getElementById("caso-guardar").addEventListener("click", function () {
+    if (guardarFicha(false)) { renderFichaCaso(); }
+  });
+  document.getElementById("caso-btn-cerrar-caso").addEventListener("click", function () {
+    if (guardarFicha(true)) { dlgCaso.close(); abrirListaCasos(); }
   });
 
   /* ---------------------------------------------------------------- *
@@ -2725,6 +3581,97 @@
   /* ---------------------------------------------------------------- *
    * Render: resumen de material  (el objetivo de la herramienta)
    * ---------------------------------------------------------------- */
+  /* Calcula el resumen y lo devuelve como dato, sin tocar el DOM.
+   *
+   * Lo usan dos sitios: renderResumen() para pintarlo y el registro de casos
+   * para guardarlo. Así lo que queda archivado en un caso es exactamente lo
+   * mismo que ves en pantalla, porque sale del mismo cálculo y no de una
+   * copia paralela que acabaría separándose.
+   *
+   * Lee el escenario que se le pasa sin modificarlo: al contrario que
+   * asignacionesDe(), no crea entradas vacías por el camino.
+   */
+  function calcularResumen(esc) {
+    var res = { tecnicas: [], material: {}, estilos: {}, cajas: [],
+                extras: [], entradas: 0, avisos: [] };
+    if (!esc) return res;
+
+    res.tecnicas = (esc.tecnicas || []).slice();
+
+    Object.keys(CAJAS).forEach(function (cajaKey) {
+      var entradas = entradasDe(cajaKey);
+      var asign = (esc.asignaciones || {})[cajaKey] || {};
+      var detalle = [];
+      entradas.forEach(function (ent) {
+        var itemId = asign[ent.id];
+        if (!itemId) return;
+        var item = ITEMS[itemId];
+        if (!item) return;
+        var rotuloEntrada = ent.polo ? ent.etiqueta + " " + ent.polo : ent.etiqueta;
+        var nombre = campo(item, "nombre");
+        if (item.conmutador) {
+          var sel = esc.conmutador && esc.conmutador[cajaKey + "/" + ent.id];
+          if (sel) nombre += " → " + sel;
+        }
+        var override = (esc.etiquetas || {})[cajaKey + "/" + ent.id] || null;
+        var tipo = nombreEtiquetaDe(item, override);
+        var estilo = estiloDe(item, override);
+        if (!res.estilos[tipo]) res.estilos[tipo] = estilo;
+        detalle.push({
+          entrada: rotuloEntrada, nombre: nombre, color: item.color,
+          tipo: tipo, estilo: estilo, item: item.id
+        });
+        // media_unidad: dos entradas que salen del mismo paquete (Erb1 + Erb2)
+        res.material[tipo] = (res.material[tipo] || 0) + (item.media_unidad ? 0.5 : 1);
+        res.entradas++;
+      });
+      if (detalle.length) {
+        res.cajas.push({
+          key: cajaKey,
+          nombre: infoCaja(cajaKey).nombre,
+          usadas: detalle.length,
+          total: entradas.length,
+          detalle: detalle
+        });
+      }
+    });
+
+    res.extras = (esc.extras || []).map(function (id) { return ITEMS[id]; }).filter(Boolean);
+    res.extras.forEach(function (item) {
+      var tipo = nombreEtiquetaDe(item, null);
+      if (!res.estilos[tipo]) res.estilos[tipo] = estiloDe(item, null);
+      res.material[tipo] = (res.material[tipo] || 0) + 1;
+    });
+
+    res.cajas.forEach(function (c) {
+      if (c.usadas === c.total) res.avisos.push(T("aviso_caja_llena", { caja: c.nombre }));
+    });
+    // El perfil se guarda por id para poder traducir su nota; nota_perfil es
+    // el texto suelto que guardaban los escenarios anteriores.
+    if (esc.nota_perfil_id) {
+      var perfilNota = PERF[esc.nota_perfil_id];
+      if (perfilNota && campo(perfilNota, "nota")) {
+        res.avisos.push(campo(perfilNota, "nombre") + ": " + campo(perfilNota, "nota"));
+      }
+    } else if (esc.nota_perfil) {
+      res.avisos.push(esc.nota_perfil);
+    }
+    if (campo(esc, "notas")) res.avisos.push(campo(esc, "notas"));
+    if (campo(esc, "pendiente")) res.avisos.push(T("aviso_pendiente", { texto: campo(esc, "pendiente") }));
+
+    return res;
+  }
+
+  // Media unidad suelta se redondea hacia arriba: hay que abrir el paquete
+  // igual. Es lo que se ve en pantalla y lo que se guarda en el caso.
+  function materialRedondeado(material) {
+    var out = {};
+    Object.keys(material).sort().forEach(function (tipo) {
+      out[tipo] = Math.ceil(material[tipo]);
+    });
+    return out;
+  }
+
   function renderResumen() {
     var cont = document.getElementById("resumen-contenido");
     cont.innerHTML = "";
@@ -2734,6 +3681,7 @@
       cont.firstChild.textContent = T("resumen_sin_esc");
       return;
     }
+    var resumen = calcularResumen(esc);
 
     var titulo = document.createElement("div");
     titulo.className = "resumen-titulo";
@@ -2757,58 +3705,12 @@
       cont.appendChild(mods);
     }
 
-    // Recuento
-    var totalMaterial = {};
-    var estiloPorTipo = {};   // nombre de etiqueta -> estilo, para el distintivo
-    var cajasUsadas = [];
-    var totalEntradas = 0;
+    var totalMaterial = resumen.material;
+    var estiloPorTipo = resumen.estilos;
+    var cajasUsadas = resumen.cajas;
+    var extras = resumen.extras;
 
-    Object.keys(CAJAS).forEach(function (cajaKey) {
-      var entradas = entradasDe(cajaKey);
-      var asign = asignacionesDe(cajaKey);
-      var detalle = [];
-      entradas.forEach(function (ent) {
-        var itemId = asign[ent.id];
-        if (!itemId) return;
-        var item = ITEMS[itemId];
-        if (!item) return;
-        var rotuloEntrada = ent.polo ? ent.etiqueta + " " + ent.polo : ent.etiqueta;
-        var nombre = campo(item, "nombre");
-        if (item.conmutador) {
-          var sel = esc.conmutador && esc.conmutador[cajaKey + "/" + ent.id];
-          if (sel) nombre += " → " + sel;
-        }
-        var override = etiquetaColocada(cajaKey, ent.id);
-        var tipo = nombreEtiquetaDe(item, override);
-        var estilo = estiloDe(item, override);
-        if (!estiloPorTipo[tipo]) estiloPorTipo[tipo] = estilo;
-        detalle.push({
-          entrada: rotuloEntrada, nombre: nombre, color: item.color,
-          tipo: tipo, estilo: estilo
-        });
-        // media_unidad: dos entradas que salen del mismo paquete (Erb1 + Erb2)
-        totalMaterial[tipo] = (totalMaterial[tipo] || 0) + (item.media_unidad ? 0.5 : 1);
-        totalEntradas++;
-      });
-      if (detalle.length) {
-        cajasUsadas.push({
-          key: cajaKey,
-          nombre: infoCaja(cajaKey).nombre,
-          usadas: detalle.length,
-          total: entradas.length,
-          detalle: detalle
-        });
-      }
-    });
-
-    var extras = extrasDe().map(function (id) { return ITEMS[id]; }).filter(Boolean);
-    extras.forEach(function (item) {
-      var tipo = nombreEtiquetaDe(item, null);
-      if (!estiloPorTipo[tipo]) estiloPorTipo[tipo] = estiloDe(item, null);
-      totalMaterial[tipo] = (totalMaterial[tipo] || 0) + 1;
-    });
-
-    if (!totalEntradas && !extras.length) {
+    if (!resumen.entradas && !extras.length) {
       var vacio = document.createElement("p");
       vacio.className = "empty-hint";
       vacio.textContent = T("resumen_vacio");
@@ -2921,24 +3823,7 @@
       colIzq.appendChild(secEx);
     }
 
-    // Avisos
-    var avisos = [];
-    cajasUsadas.forEach(function (c) {
-      if (c.usadas === c.total) avisos.push(T("aviso_caja_llena", { caja: c.nombre }));
-    });
-    // El perfil se guarda por id para poder traducir su nota; nota_perfil es
-    // el texto suelto que guardaban los escenarios anteriores.
-    if (esc.nota_perfil_id) {
-      var perfilNota = PERF[esc.nota_perfil_id];
-      if (perfilNota && campo(perfilNota, "nota")) {
-        avisos.push(campo(perfilNota, "nombre") + ": " + campo(perfilNota, "nota"));
-      }
-    } else if (esc.nota_perfil) {
-      avisos.push(esc.nota_perfil);
-    }
-    if (campo(esc, "notas")) avisos.push(campo(esc, "notas"));
-    if (campo(esc, "pendiente")) avisos.push(T("aviso_pendiente", { texto: campo(esc, "pendiente") }));
-
+    var avisos = resumen.avisos;
     if (avisos.length) {
       var secAv = document.createElement("div");
       secAv.className = "resumen-bloque";
@@ -3147,8 +4032,9 @@
     try { localStorage.setItem(MODO_KEY, activo ? "1" : "0"); } catch (e) { /* sin persistencia */ }
     if (activo) seleccionar(null);
     // La subida automática se pausa en quirófano para no depender de la red
-    // durante la cirugía; al salir se manda lo que se haya acumulado.
-    if (!activo && sync.pendiente) programarSubida();
+    // durante la cirugía; al salir se manda lo que se haya acumulado, tanto
+    // el estado como los casos guardados mientras tanto.
+    if (!activo && (sync.pendiente || casosPendientes().length)) programarEnvio();
     pintarEstadoSync();
   }
 
@@ -3183,6 +4069,7 @@
   aplicarTextos();
 
   cargarEstado();
+  cargarCasos();
   cargarSync();
   pintarEstadoSync();
   renderPerfilSelect();

@@ -228,19 +228,57 @@ La herramienta de preparación está terminada y en uso. En marcha está la
 1. ~~Catálogos editables desde la interfaz~~ — **hecho**. Técnicas,
    servicios, intervenciones y perfiles se editan en el diálogo Catálogos; los
    escenarios ya se editaban desde la barra de herramientas.
-2. Registro de cada caso como un archivo JSON en `casos/` del repo de datos,
-   con `caso_uid` (UUID del cliente) como clave real. **Pendiente.**
+2. ~~Registro de cada caso como un archivo JSON en `casos/`~~ — **hecho**.
 3. Volcado a un Google Sheet mediante Apps Script, **reconstruyendo la hoja
    entera** en cada actualización, que alimenta un dashboard en Looker Studio.
    **Pendiente.**
 
-Antes de la fase 2 hay que **partir `renderResumen()` en dos**: una función que
-calcule y devuelva el resumen como dato, y el render actual consumiéndola. Hoy
-calcula y pinta en el mismo bucle, así que no hay forma de guardar en el caso el
-material previsto, las cajas, el montaje y los avisos sin duplicar la lógica.
-
 El Apps Script leerá los catálogos de `estado.json` (no de archivos sueltos) y
 los casos de `casos/*.json`.
+
+## Casos
+
+Un archivo JSON por caso en `casos/<caso_uid>.json` del repositorio de datos.
+**No van dentro de `estado.json` a propósito**: ese archivo se sincroniza
+entero y dos dispositivos escribiéndolo se pisan. Con un archivo por caso y el
+nombre derivado de un UUID, dos dispositivos no pueden chocar.
+
+- `caso_uid` — UUID del cliente. Es la clave real.
+- `ID_Caso` — correlativo `AAAA-NNN` por año de `fecha`, solo para nombrar el
+  caso en voz alta. Se asigna al crearlo tomando el máximo conocido. Si dos
+  dispositivos sin conexión generan el mismo, no rompe nada: el Apps Script
+  avisa.
+- `estado` — `preparado` | `cerrado`.
+- `tecnicas_realizadas` — ids de técnica, nunca etiquetas.
+
+**Tres fechas y no se confunden:**
+
+| Campo | Qué es | Quién lo pone |
+|---|---|---|
+| `fecha` | Cuándo fue la cirugía. **Es la que cuenta para las estadísticas.** | El usuario, siempre editable |
+| `guardado_en` | Cuándo se creó el archivo | La app, una vez |
+| `editado_en` | Array con cada edición posterior | La app, en cada guardado |
+
+Un caso de hace un mes registrado hoy no se confunde con uno de hoy. El Apps
+Script debe agrupar por `fecha`, nunca por `guardado_en`.
+
+`material_previsto`, `material_real`, `montaje`, `n_cajas`,
+`n_canales_ocupados` y `avisos_preparacion` salen de `calcularResumen()`: lo
+que se archiva es exactamente lo que se ve en pantalla, calculado una sola vez
+y en un solo sitio. El montaje se guarda como **instantánea con los textos ya
+resueltos**, para que un caso antiguo se siga leyendo aunque el catálogo de
+material cambie después.
+
+Almacenamiento local: `mio_ionm_casos_v1` con `{ casos, sha, sin_subir }`.
+`sin_subir` sobrevive al cierre del navegador, así que un caso guardado sin
+conexión sube en cuanto vuelve la red o al salir del Modo quirófano.
+
+Sincronización: `subirCaso()` sube uno con su `sha`; si el archivo cambió desde
+otro dispositivo relee el `sha` y reintenta una vez (gana lo que acabas de
+escribir aquí). `bajarCasos()` lista `casos/` y **solo descarga los que han
+cambiado**, comparando el `sha` del listado; nunca pisa un caso con cambios
+locales sin subir. Un conflicto en `estado.json` **no** bloquea la subida de
+casos: son archivos independientes.
 
 Arquitectura: App (GitHub Pages) → repo privado de datos (fuente de verdad) →
 Apps Script con disparador diario → Google Sheet → Looker Studio.

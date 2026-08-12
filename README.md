@@ -204,6 +204,48 @@ etiqueta `Electrodo Hook Wire`, y lo colocas donde quieras; el resumen sumará
 ese hook wire al total. Otro: `R.Delt` con la etiqueta *Aguja trenzada (par)*
 y borde punteado para distinguirlo del resto del grupo.
 
+## Registrar casos
+
+El botón **Casos** de la barra superior abre tus casos. Está siempre a mano,
+también en Modo quirófano.
+
+**Al preparar**, con el montaje hecho, pulsa *Guardar este montaje como caso*.
+El caso nace con las técnicas planificadas, el material a preparar, las cajas,
+el montaje entero y los avisos: **nada de eso se teclea**, la herramienta ya lo
+había calculado. Queda en estado *Preparado*.
+
+**Al cerrar**, abre el caso desde la lista. Arriba está el **cierre rápido**:
+fecha, edad, sexo, servicio, intervención, técnicas realizadas (ya vienen
+marcadas las que planificaste, solo ajustas), si hubo alerta, tu papel y notas.
+Con eso basta, y es cuestión de un par de minutos desde el móvil. Debajo,
+plegado, está **Ampliar** con lo demás: anestesia, material realmente usado
+(precargado con el previsto), desarrollo, incidencias y formación. Se rellena
+solo si quieres.
+
+Pulsa *Cerrar caso* y pasa a *Cerrado*.
+
+**Un caso preparado en el ordenador se cierra en el móvil**, o al revés: los
+casos viajan por la misma sincronización que el resto, cada uno en su propio
+archivo. No hay que exportar ni importar nada.
+
+### Casos de días pasados y correcciones
+
+- **Caso nuevo desde cero** registra una cirugía que nunca pasó por el
+  checklist. Nace ya cerrado y sin material ni montaje, porque no los hubo.
+- **La fecha se puede cambiar siempre**, también en un caso ya cerrado hace
+  meses. Es la fecha de la cirugía y es la que cuenta para las estadísticas.
+- La herramienta guarda por su cuenta *cuándo se creó el archivo* y *cuándo lo
+  has tocado después*, sin que puedas editarlos. Así un caso de hace un mes
+  registrado hoy no se confunde con uno de hoy.
+- Cualquier caso cerrado se sigue pudiendo abrir y corregir, sin límite de
+  tiempo.
+
+### Qué NO se guarda
+
+Ningún dato que identifique al paciente. Ni nombre, ni apellidos, ni NHC, ni
+fecha de nacimiento. Solo el identificador del caso, edad, sexo y antecedentes
+relevantes.
+
 ## Uso desde el móvil
 
 La interfaz es táctil. Lo cómodo en el móvil es **pulsar y colocar**:

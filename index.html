@@ -13,6 +13,7 @@
   <select id="escenario-select" data-i18n-aria="escenario_aria"></select>
   <span class="barra-flex"></span>
   <button type="button" id="btn-idioma" class="btn-modo" title="Switch to English">EN</button>
+  <button type="button" id="btn-casos" class="btn-modo" data-i18n-title="btn_casos_tit" data-i18n="btn_casos"></button>
   <button type="button" id="btn-sync" class="btn-modo" data-i18n-title="sync_titulo">☁ <span id="sync-estado"></span></button>
   <button type="button" id="btn-quirofano" class="btn-modo" data-i18n-title="quirofano_titulo" data-i18n="quirofano_entrar"></button>
 </header>
@@ -228,6 +229,66 @@
     <button type="button" id="et-cerrar" data-i18n="cerrar"></button>
     <button type="button" id="et-nueva" data-i18n="et_btn_nueva"></button>
     <button type="button" id="et-guardar" class="primario" data-i18n="guardar"></button>
+  </div>
+</dialog>
+
+<dialog id="dlg-casos" class="no-print">
+  <h3 data-i18n="dlg_casos_titulo"></h3>
+
+  <div class="casos-acciones">
+    <button type="button" id="casos-guardar-montaje" class="primario" data-i18n="casos_guardar_montaje"></button>
+    <small data-i18n="casos_guardar_ay"></small>
+    <button type="button" id="casos-nuevo-cero" data-i18n="casos_nuevo_cero"></button>
+    <small data-i18n="casos_nuevo_cero_ay"></small>
+  </div>
+
+  <div class="casos-filtros">
+    <span>
+      <label for="casos-estado" data-i18n="casos_filtro_estado"></label>
+      <select id="casos-estado">
+        <option value="" data-i18n="casos_filtro_todos"></option>
+        <option value="preparado" data-i18n="caso_estado_preparado"></option>
+        <option value="cerrado" data-i18n="caso_estado_cerrado"></option>
+      </select>
+    </span>
+    <span>
+      <label for="casos-desde" data-i18n="casos_filtro_desde"></label>
+      <input type="date" id="casos-desde">
+    </span>
+    <span>
+      <label for="casos-hasta" data-i18n="casos_filtro_hasta"></label>
+      <input type="date" id="casos-hasta">
+    </span>
+  </div>
+
+  <div id="casos-lista" class="casos-lista"></div>
+  <p class="cat-version" id="casos-cuenta"></p>
+
+  <div class="dlg-botones">
+    <span class="barra-flex"></span>
+    <button type="button" id="casos-cerrar" data-i18n="cerrar"></button>
+  </div>
+</dialog>
+
+<dialog id="dlg-caso" class="no-print">
+  <h3 id="caso-titulo"></h3>
+
+  <h4 data-i18n="caso_cerrar_titulo"></h4>
+  <div id="caso-rapido"></div>
+
+  <details class="dlg-ayuda caso-ampliar">
+    <summary data-i18n="caso_ampliar"></summary>
+    <div id="caso-ampliar-campos"></div>
+  </details>
+
+  <p class="caso-meta" id="caso-meta"></p>
+  <p class="dlg-error" id="caso-error" hidden></p>
+
+  <div class="dlg-botones">
+    <button type="button" id="caso-volver" data-i18n="caso_volver"></button>
+    <span class="barra-flex"></span>
+    <button type="button" id="caso-btn-cerrar-caso"></button>
+    <button type="button" id="caso-guardar" class="primario" data-i18n="guardar"></button>
   </div>
 </dialog>
 
