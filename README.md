@@ -161,19 +161,26 @@ tocas el material, el catálogo se pliega solo para dejar ver las cajas, y
 tocas la entrada de destino. Arrastrar no funciona bien en pantallas
 táctiles, así que ese es el flujo recomendado.
 
-La web está publicada con **GitHub Pages**, así que se abre desde cualquier
-sitio con solo la dirección:
+Para abrirla desde el móvil hay que publicar la web. **Todavía no está
+publicada**: el repositorio sigue siendo privado. Las dos opciones gratuitas:
 
-**https://paniaguadediego-bit.github.io/checklist-mio-ionm/**
+- **GitHub Pages** — sin cuentas nuevas, pero obliga a hacer **público** el
+  repositorio del código. Se activa en *Settings → Pages → Source: Deploy from
+  a branch → main / (root)*. La URL sería
+  `https://paniaguadediego-bit.github.io/checklist-mio-ionm/`.
+- **Cloudflare Pages** — el repositorio **sigue privado**. Hay que crear una
+  cuenta gratis en [dash.cloudflare.com](https://dash.cloudflare.com) y allí:
+  *Workers & Pages → Create → Pages → Connect to Git*, eliges el repositorio,
+  dejas el **build command vacío** y el **output directory** en `/`.
 
-Cada `git push` a `main` la actualiza sola en un par de minutos. Merece la
-pena guardarla en la pantalla de inicio del móvil (en Chrome, *⋮ → Añadir a
-pantalla de inicio*): se abre como una app y a pantalla completa.
+Con cualquiera de las dos, cada `git push` a `main` actualiza la web sola. Una
+vez publicada, merece la pena guardarla en la pantalla de inicio del móvil (en
+Chrome, *⋮ → Añadir a pantalla de inicio*): se abre como una app.
 
-> Ojo: la web publicada es **pública**, y por eso el repositorio del código
-> también lo es. No contiene ningún dato de paciente ni ningún token. Tus
-> escenarios **no viajan aquí**: viven en tu navegador y se sincronizan con
-> un repositorio de datos **privado** aparte (ver abajo).
+> Ojo: la web publicada es **pública** en los dos casos, aunque con Cloudflare
+> el repositorio no lo sea. Tus escenarios **no viajan ahí**: viven en tu
+> navegador y se sincronizan con un repositorio de datos **privado** aparte
+> (ver abajo).
 
 ## Dónde se guarda todo, y cómo pasarlo de un dispositivo a otro
 
@@ -202,8 +209,8 @@ y la API de GitHub no cuestan nada.
 Preparación, una sola vez y en un solo dispositivo:
 
 1. Crea un repositorio **privado y vacío** solo para los datos, por ejemplo
-   `checklist-mio-datos`. **No uses el del código**: es público, dejaría los
-   escenarios a la vista, y así el token tampoco puede tocar el código.
+   `checklist-mio-datos`. **No uses el del código**: si algún día lo publicas
+   dejaría los escenarios a la vista, y así el token tampoco puede tocarlo.
 2. En GitHub: *Settings → Developer settings → Personal access tokens →
    Fine-grained tokens → Generate new token*.
 3. En *Repository access*, **Only select repositories** → solo el de datos.
