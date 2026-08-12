@@ -218,6 +218,18 @@ archivos separados, con nombre derivado de un identificador único.
   concatenando datos. Hay nombres con acentos y comillas.
 - Comprobar sintaxis antes de dar nada por bueno: `node --check app.js`.
 
+## Al desplegar: subir el `?v=` de index.html
+
+GitHub Pages manda `Cache-Control: max-age=600` en **cada archivo por
+separado**. Sin versionar, el navegador puede quedarse con el `index.html`
+nuevo y el `app.js` viejo: la página se dibuja con botones que no responden,
+porque el código que los escucha no ha llegado. Pasó al publicar la fase 2.
+
+Por eso `index.html` carga sus archivos con `?v=AAAAMMDD`. **Cada vez que
+cambie `app.js`, `style.css` o algo de `data/`, hay que subir ese número** en
+las cuatro etiquetas (`style.css`, `data/surgeries.js`, `data/i18n-en.js`,
+`app.js`). Es lo único manual del despliegue; el resto lo hace `git push`.
+
 ---
 
 ## Estado del proyecto
