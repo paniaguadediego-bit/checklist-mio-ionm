@@ -277,6 +277,20 @@ propiedades, pensado para cargarse con `<script>`— así que el script lo
 el propio navegador, en vez de intentar limpiar los comentarios con una
 expresión regular frágil.
 
+`data/surgeries.js` se lee por **`raw.githubusercontent.com`**
+(`leerArchivoPublicoRaw_()`), no por la Contents API. Se probó así al
+instalar en un Sheet real y dio `403 API rate limit exceeded`: la Contents
+API sin autenticar tiene un cupo de 60 peticiones/hora que **comparten todos
+los scripts de Apps Script del mundo que salen por la misma IP de Google**,
+así que se agota casi sin usarlo. El token de solo lectura tampoco sirve
+aquí, porque está circunscrito al repositorio de datos, no al del código.
+`raw.githubusercontent.com` es un reparto de contenido aparte, con cupo
+propio y mucho más alto. La rama se lee de la Script Property opcional
+`REPO_CODIGO_RAMA` (por defecto `main`). El resto de lecturas —`estado.json`
+y los casos— siguen por la Contents API autenticada, que no tiene este
+problema porque el límite autenticado (5000/hora) es propio de cada token,
+no compartido.
+
 Las columnas `TEC_<etiqueta>` se generan a partir del catálogo de técnicas
 **fusionado y en su orden**, incluidas las desactivadas — una técnica
 desactivada no debe perder su columna, porque casos antiguos siguen

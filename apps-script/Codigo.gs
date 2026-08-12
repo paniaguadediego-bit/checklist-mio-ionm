@@ -38,9 +38,10 @@ function obtenerConfig_() {
   var token = p.getProperty("GITHUB_TOKEN");
   var repoDatos = p.getProperty("REPO_DATOS");
   var repoCodigo = p.getProperty("REPO_CODIGO") || "paniaguadediego-bit/checklist-mio-ionm";
+  var ramaCodigo = p.getProperty("REPO_CODIGO_RAMA") || "main";
   if (!token) throw new Error("Falta la Script Property GITHUB_TOKEN. Ve a Configuración del proyecto → Script Properties.");
   if (!repoDatos) throw new Error("Falta la Script Property REPO_DATOS (formato usuario/repositorio).");
-  return { token: token, repoDatos: repoDatos, repoCodigo: repoCodigo };
+  return { token: token, repoDatos: repoDatos, repoCodigo: repoCodigo, ramaCodigo: ramaCodigo };
 }
 
 /* ------------------------------------------------------------------ *
@@ -58,9 +59,7 @@ function decodificarBase64Utf8_(b64) {
   return Utilities.newBlob(bytes).getDataAsString("UTF-8");
 }
 
-// GET de un archivo vía Contents API. token null = repositorio público, sin
-// autenticar (así se lee data/surgeries.js sin gastar el token de solo
-// lectura en nada que no sea el repositorio de datos).
+// GET de un archivo del repositorio PRIVADO vía Contents API, autenticado.
 function leerArchivo_(repo, ruta, token) {
   var url = "https://api.github.com/repos/" + repo + "/contents/" + ruta;
   var resp = UrlFetchApp.fetch(url, { headers: cabecerasGitHub_(token), muteHttpExceptions: true });
@@ -69,6 +68,25 @@ function leerArchivo_(repo, ruta, token) {
   if (code !== 200) throw new Error("GitHub respondió " + code + " leyendo " + ruta + ": " + resp.getContentText());
   var json = JSON.parse(resp.getContentText());
   return decodificarBase64Utf8_(json.content);
+}
+
+/* GET de un archivo del repositorio PÚBLICO vía raw.githubusercontent.com,
+   sin pasar por la API ni por el token.
+   Esto no es una elección arbitraria: la API de contenidos SIN autenticar
+   tiene un límite de 60 peticiones/hora que comparten TODOS los scripts de
+   Apps Script que salen por la misma IP de Google -no solo los tuyos-, así
+   que se agota con muy poco uso y da "403 API rate limit exceeded" sin
+   avisar. El token de solo lectura tampoco vale aquí: está circunscrito
+   solo al repositorio de datos, no al del código. raw.githubusercontent.com
+   es un reparto de contenido aparte, con un límite mucho más alto y no
+   compartido por ese motivo. */
+function leerArchivoPublicoRaw_(repo, rama, ruta) {
+  var url = "https://raw.githubusercontent.com/" + repo + "/" + rama + "/" + ruta;
+  var resp = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
+  var code = resp.getResponseCode();
+  if (code === 404) return null;
+  if (code !== 200) throw new Error("GitHub respondió " + code + " leyendo " + ruta + " de " + repo + ": " + resp.getContentText());
+  return resp.getContentText();
 }
 
 // Lista el contenido de una carpeta. Devuelve [] si la carpeta no existe
@@ -428,7 +446,7 @@ function reconstruirTodo() {
 
   // --- Fase 1: reunir todo en memoria. Si algo falla aquí, no se ha
   // tocado ninguna hoja: el Sheet se queda con el contenido anterior. ---
-  var textoSurgeries = leerArchivo_(cfg.repoCodigo, "data/surgeries.js", null);
+  var textoSurgeries = leerArchivoPublicoRaw_(cfg.repoCodigo, cfg.ramaCodigo, "data/surgeries.js");
   if (!textoSurgeries) throw new Error("No se encuentra data/surgeries.js en " + cfg.repoCodigo);
   var baseData = evaluarSurgeriesJs_(textoSurgeries);
 

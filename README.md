@@ -476,6 +476,15 @@ A partir de aquí funciona solo, una vez al día. Para forzarlo a mano sin
 entrar al editor: recarga el Sheet y usa el menú **MIO/IONM → Reconstruir
 ahora** que aparece arriba.
 
+**Si sale «API rate limit exceeded» leyendo `data/surgeries.js`:** ese error
+no es cosa tuya — la lectura del repositorio público, sin autenticar, usa un
+cupo de 60 peticiones/hora que **comparten todos los scripts de Apps Script
+del mundo que salen por la misma IP de Google**, así que se agota con muy
+poco. Si ves esto, asegúrate de tener la versión del código de este
+repositorio: lee ese archivo por `raw.githubusercontent.com` en vez de por
+la API, que tiene un cupo aparte y mucho más alto. Si aun así te sale,
+espera unos minutos y pulsa *Reconstruir ahora* de nuevo.
+
 **Cuando añadas una técnica nueva** desde el catálogo de la app, no hace
 falta hacer nada aquí: en la siguiente reconstrucción (al día siguiente, o
 al momento si pulsas *Reconstruir ahora*) su columna `TEC_<etiqueta>`
