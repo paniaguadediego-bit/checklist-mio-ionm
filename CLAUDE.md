@@ -234,17 +234,23 @@ las cuatro etiquetas (`style.css`, `data/surgeries.js`, `data/i18n-en.js`,
 
 ## Estado del proyecto
 
-La herramienta de preparación está terminada y en uso. En marcha está la
-**Fase 2.0**, que amplía sin tocar lo existente:
+La herramienta de preparación está terminada y en uso. La **Fase 2.0**
+está prácticamente cerrada:
 
 1. ~~Catálogos editables desde la interfaz~~ — **hecho**. Técnicas,
    servicios, intervenciones y perfiles se editan en el diálogo Catálogos; los
    escenarios ya se editaban desde la barra de herramientas.
 2. ~~Registro de cada caso como un archivo JSON en `casos/`~~ — **hecho**.
 3. ~~Volcado a un Google Sheet mediante Apps Script~~ — **hecho**. Código en
-   [`apps-script/Codigo.gs`](apps-script/Codigo.gs), instrucciones de
-   instalación en el README. Falta que el usuario lo instale y lo compruebe
-   con casos reales; falta la Fase 4 (Looker Studio).
+   [`apps-script/Codigo.gs`](apps-script/Codigo.gs), instalado y probado por
+   el usuario en un Sheet real.
+4. ~~Instrucciones de Looker Studio~~ — **hecho**. Configuración exacta de
+   cada gráfico en el README, sección *El dashboard: Looker Studio*. No
+   instalable por Claude: el usuario lo monta a mano siguiendo esas
+   instrucciones.
+
+Pendiente: que el usuario monte el informe de Looker y confirme que los
+gráficos salen bien con casos reales.
 
 ## Google Sheet (Apps Script)
 
@@ -310,6 +316,15 @@ preparado sin cerrar, técnica sin catálogo).
 Fase 3: sin ella, "material consumido acumulado" (criterio de la Fase 4) no
 tiene de dónde sumar, porque `material_previsto`/`material_real` son mapas de
 clave variable que no caben en una columna de `Casos`.
+
+**Los nombres de columna que aparecen en más de una hoja tienen que
+coincidir letra por letra** (`Fecha`, `ID_Caso`, `servicio`): un filtro de
+Looker Studio solo cruza de una fuente de datos a otra cuando el campo se
+llama exactamente igual en las dos. `Tecnicas_long` usaba `Servicio` con
+mayúscula mientras `Casos` usa `servicio`; se corrigió al escribir las
+instrucciones de la Fase 4, porque si no el filtro por servicio del
+dashboard no habría alcanzado al gráfico de técnicas más usadas. Si algún
+día se añade una columna compartida nueva, hay que vigilar esto.
 
 ### Formato de las hojas
 

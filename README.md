@@ -496,6 +496,150 @@ La hoja **Meta** avisa, sin romper nada, de: correlativos `ID_Caso`
 duplicados, casos en estado *preparado* que llevan tiempo sin cerrarse, e
 ids de técnica usados en algún caso que ya no existen en el catálogo.
 
+## El dashboard: Looker Studio
+
+Looker Studio se conecta directamente al Google Sheet de la fase anterior.
+No hay nada que instalar ni ningún token nuevo — es la misma cuenta de
+Google, y Looker vuelve a leer el Sheet cada vez que abres el informe (o
+cuando pulsas el botón de actualizar).
+
+### 0. Conectar las tres hojas
+
+Cada tabla del Sheet (`Casos`, `Tecnicas_long`, `Material_long`) se conecta
+como una **fuente de datos separada**, aunque las tres vivan en el mismo
+documento — es así como funciona el conector de Hojas de cálculo de Looker
+Studio.
+
+1. Entra en [lookerstudio.google.com](https://lookerstudio.google.com) con
+   la misma cuenta de Google del Sheet.
+2. **Crear → Fuente de datos → Hojas de cálculo de Google.**
+3. Elige tu Sheet y, dentro, la pestaña **`Casos`**. **Conectar.**
+4. Comprueba el campo **`Fecha`**: en la lista de campos que aparece, su
+   tipo debe salir como **Fecha**. Si sale como *Texto*, haz clic en el
+   campo y cambia el tipo a *Fecha* a mano — a veces Looker no lo detecta
+   bien la primera vez, y todos los gráficos por mes dependen de que este
+   campo sea de tipo fecha de verdad.
+5. **Crear informe** (o, si ya tienes uno, añade esta fuente a él).
+6. Repite los pasos 2-4 dos veces más, una para la pestaña **`Tecnicas_long`**
+   y otra para **`Material_long`**. Al final tendrás tres fuentes de datos
+   en el mismo informe.
+
+### 1. Total de casos, casos por mes, casos por servicio
+
+Los tres usan la fuente **`Casos`**.
+
+- **Total de casos** — inserta un **Marcador** (Scorecard). Métrica:
+  **Recuento de registros**.
+- **Casos por mes** — **Gráfico de columnas**. Dimensión: **Fecha**; haz
+  clic en el campo dentro del gráfico y cambia su granularidad a
+  **Año y mes**. Métrica: **Recuento de registros**. Ordena por la propia
+  Fecha, ascendente.
+- **Casos por servicio** — **Gráfico de columnas**. Dimensión: **servicio**.
+  Métrica: **Recuento de registros**. Ordena por la métrica, descendente,
+  para ver primero el servicio con más casos.
+
+### 2. Técnicas más usadas y su evolución mensual
+
+Los dos usan la fuente **`Tecnicas_long`** — está en formato largo (una fila
+por técnica realmente marcada en cada caso), que es justo lo que necesita
+Looker para contar y agrupar sin que tengas que tocar nada.
+
+- **Técnicas más usadas** — **Gráfico de barras** (horizontal, se lee mejor
+  con muchas categorías). Dimensión: **Tecnica**. Métrica: **Recuento de
+  registros**. Ordena por la métrica, descendente.
+- **Evolución mensual** — **Gráfico de series temporales**. Dimensión de
+  tiempo: **Fecha** (granularidad Año y mes). Métrica: **Recuento de
+  registros**. Campo de desglose (*Breakdown dimension*): **Tecnica**.
+
+  Con 22 técnicas o más, una línea por cada una es ilegible de un vistazo.
+  Te recomiendo añadir, junto a este gráfico, un **Control de filtro**
+  (desplegable de selección múltiple) sobre el campo **Tecnica**, para poder
+  elegir tú a mano las 3 o 4 que quieras comparar cada vez, en vez de verlas
+  todas encima unas de otras.
+
+### 3. Tasa de alertas y concordancia VP/FP/VN/FN
+
+Los dos usan la fuente **`Casos`**.
+
+- **Tasa de alertas** — **Marcador**. Métrica: **alerta**, pero cambia su
+  **agregación por defecto de Suma a Media** (clic en el campo de la
+  métrica dentro del gráfico → *Tipo de agregación* → *Media*). Como
+  `alerta` ya es `1`/`0` por caso, la media de esa columna **es** la tasa de
+  alertas directamente — un 0,18 significa 18 % de los casos con alerta. En
+  el estilo del marcador, pon el formato de número en **Porcentaje**.
+- **Concordancia VP/FP/VN/FN** — **Gráfico circular** (donut). Dimensión:
+  **concordancia**. Métrica: **Recuento de registros**. Añade un filtro al
+  propio gráfico (*Añadir un filtro* en el panel derecho) con la condición
+  **concordancia — No es nulo**, para que los casos sin ese dato relleno no
+  aparezcan como una porción más.
+
+### 4. Evolución de mi rol
+
+Fuente **`Casos`**. **Gráfico de columnas apiladas.** Dimensión: **Fecha**
+(granularidad Año y mes). Campo de desglose: **rol**. Métrica: **Recuento
+de registros**. Cada barra mensual se reparte entre *observo*,
+*supervisado* y *autonomo* según lo que marcaste en cada caso de ese mes —
+así se ve, mes a mes, cómo se va corriendo el peso hacia la autonomía.
+
+*(Opcional, solo si te importa que el orden dentro de cada barra sea
+siempre observo → supervisado → autónomo y no el alfabético que pone Looker
+por defecto: crea un **Campo calculado** en la fuente `Casos` llamado
+`Orden_rol` con la fórmula
+`CASE WHEN rol="observo" THEN 1 WHEN rol="supervisado" THEN 2 WHEN rol="autonomo" THEN 3 END`,
+y ordena el desglose del gráfico por ese campo. No afecta a los datos, solo
+al orden visual.)*
+
+### 5. Material consumido acumulado
+
+Fuente **`Material_long`**. **Gráfico de barras** (horizontal). Dimensión:
+**Tipo**. Métrica: **Cantidad_real**, con agregación **Suma**. Ordena por
+la métrica, descendente. Si quieres comparar lo previsto contra lo
+realmente gastado, añade una segunda métrica **Cantidad_prevista** (también
+en Suma): salen las dos barras una junto a la otra por tipo de material.
+
+### 6. Filtros por fecha y por servicio
+
+Estos dos van sueltos en la parte de arriba del informe, no dentro de un
+gráfico concreto, para que afecten a todos a la vez:
+
+1. **Insertar → Control → Control de intervalo de fechas.** No importa qué
+   fuente de datos elijas al crearlo (usa `Casos`, por ejemplo): como las
+   tres fuentes tienen un campo llamado exactamente **Fecha**, el filtro
+   alcanza a los gráficos de las tres.
+2. **Insertar → Control → Control de filtro**, tipo *Lista desplegable*.
+   Campo: **servicio**. Por el mismo motivo —el campo se llama igual en
+   `Casos` y en `Tecnicas_long`— este filtro alcanza también al gráfico de
+   técnicas más usadas.
+
+   `Material_long` **no tiene** columna de servicio —por diseño: el gasto de
+   material se cuenta por caso y por tipo, no por servicio—, así que este
+   filtro concreto no toca el gráfico de material consumido. No es un fallo,
+   es que esa hoja no distingue por servicio.
+
+### Cuando añadas una técnica nueva
+
+**No hace falta tocar nada en Looker** para los gráficos de arriba: viven
+sobre `Tecnicas_long`, que guarda las técnicas como texto en una columna
+(`Tecnica`), no como columnas separadas. Una técnica nueva es, sencillamente,
+un valor de texto más que puede aparecer en esa columna, y Looker lo recoge
+solo la próxima vez que refresque los datos.
+
+Donde sí hace falta un paso manual es si algún día quieres montar **un
+gráfico nuevo que use directamente una columna `TEC_<etiqueta>` de la hoja
+`Casos`** (por ejemplo, un marcador para el uso de una sola técnica muy
+concreta). Esas columnas se generan solas en el Sheet, pero Looker Studio
+memorizó la lista de columnas que había el día que conectaste la fuente, y
+no vigila el Sheet para ver si han aparecido nuevas. Para que las vea:
+
+1. **Recursos → Gestionar las fuentes de datos** (o el icono de fuentes de
+   la barra lateral).
+2. Elige la fuente **`Casos`** → **Editar**.
+3. Pulsa **Actualizar campos** (el icono de refrescar junto a la lista de
+   campos, arriba a la derecha del editor de campos).
+4. Guarda. La columna `TEC_<etiqueta>` nueva ya aparece en la lista, lista
+   para usarla en cualquier gráfico. Los gráficos que ya tenías no cambian
+   solos: hay que añadirla tú a mano al gráfico en el que quieras usarla.
+
 ## Retomar el proyecto desde otro ordenador
 
 Clonar por primera vez:

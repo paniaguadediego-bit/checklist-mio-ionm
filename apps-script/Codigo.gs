@@ -328,7 +328,10 @@ function construirTecnicasLong_(casos, cat) {
     return compararColumna_(a[1], b[1]) || compararColumna_(a[0], b[0]) || compararColumna_(a[3], b[3]);
   });
   return {
-    cabecera: ["ID_Caso", "Fecha", "Servicio", "Tecnica"],
+    // Mismo nombre "servicio" que en Casos -no "Servicio"-: un filtro de
+    // Looker Studio solo cruza de una fuente de datos a otra si el campo se
+    // llama exactamente igual en las dos.
+    cabecera: ["ID_Caso", "Fecha", "servicio", "Tecnica"],
     filas: filas,
     idsDesconocidos: idsDesconocidos
   };
