@@ -311,6 +311,24 @@ Fase 3: sin ella, "material consumido acumulado" (criterio de la Fase 4) no
 tiene de dónde sumar, porque `material_previsto`/`material_real` son mapas de
 clave variable que no caben en una columna de `Casos`.
 
+### Formato de las hojas
+
+El formato se aplica **dentro del script** (`formatearTabla_()`,
+`formatearListas_()`, `formatearMeta_()`), no a mano en el Sheet: como las
+hojas se reescriben enteras en cada pasada, un formato puesto a mano
+desaparecería en la siguiente reconstrucción.
+
+El franjeado (`Banding`, alternancia de color por fila) es un objeto aparte
+de las celdas —`clearContents()` no lo toca—, así que `escribirHoja_()`
+llama primero a `quitarFormatoAnterior_()` para retirar el de la pasada
+anterior. Sin eso, la segunda ejecución seguida intentaría aplicar un
+franjeado sobre un rango que ya lo tiene. Probado explícitamente: dos
+`reconstruirTodo()` sobre el mismo Sheet dejan un único franjeado, no dos.
+
+`Listas` tiene el franjeado por bloque (uno por catálogo), no de un tirón
+sobre toda la hoja, para que no salte por encima de la columna en blanco que
+separa los tres bloques.
+
 ## Casos
 
 Un archivo JSON por caso en `casos/<caso_uid>.json` del repositorio de datos.

@@ -383,7 +383,19 @@ function construirListas_(cat) {
     });
     filas.push(fila);
   }
-  return { titulos: bloques.map(function (b) { return b.titulo; }), filas: filas };
+
+  // Posición de cada bloque (columna donde empieza, cuántas columnas ocupa,
+  // cuántas filas de datos tiene de verdad -sin contar el relleno vacío
+  // hasta anchoMax-), para poder aplicar el franjeado a cada bloque por
+  // separado y no a la hoja entera de un tirón.
+  var colActual = 1;
+  var bloquesInfo = bloques.map(function (b) {
+    var info = { titulo: b.titulo, columnas: b.cabecera.length, filas: b.filas.length, inicioCol: colActual };
+    colActual += b.cabecera.length + 1;
+    return info;
+  });
+
+  return { filas: filas, bloques: bloquesInfo };
 }
 
 function construirMeta_(casos, malformados, tecnicasDesconocidas) {
@@ -424,17 +436,74 @@ function construirMeta_(casos, malformados, tecnicasDesconocidas) {
 }
 
 /* ------------------------------------------------------------------ *
- * Escritura en el Sheet
+ * Escritura y formato en el Sheet
+ *
+ * El formato se aplica aquí, en el propio script, y no a mano en el Sheet:
+ * como las hojas se reescriben ENTERAS en cada pasada, cualquier formato
+ * puesto a mano desaparecería en la siguiente reconstrucción. El franjeado
+ * (Banding) es un objeto aparte de las celdas -clearContents() no lo
+ * toca-, así que hay que quitar el de la vez anterior antes de poner uno
+ * nuevo, o la segunda ejecución seguida chocaría con el que ya existe.
  * ------------------------------------------------------------------ */
+
+var TEMA_FRANJAS = SpreadsheetApp.BandingTheme.TEAL;
+var GRIS_SEPARADOR = "#f1f3f4";
+
+function quitarFormatoAnterior_(hoja) {
+  hoja.getBandings().forEach(function (b) { b.remove(); });
+}
 
 function escribirHoja_(ss, nombre, filas) {
   var hoja = ss.getSheetByName(nombre) || ss.insertSheet(nombre);
+  quitarFormatoAnterior_(hoja);
   hoja.clearContents();
+  hoja.clearFormats();
   if (filas.length && filas[0].length) {
     hoja.getRange(1, 1, filas.length, filas[0].length).setValues(filas);
     hoja.setFrozenRows(1);
+  } else {
+    hoja.setFrozenRows(0);
   }
   return hoja;
+}
+
+// Cabecera en negrita + franjas alternas por fila, para las hojas con una
+// sola tabla de ancho uniforme (Casos, Tecnicas_long, Material_long).
+function formatearTabla_(hoja, numFilas, numCols) {
+  if (!numFilas || !numCols) return;
+  hoja.getRange(1, 1, numFilas, numCols).applyRowBanding(TEMA_FRANJAS, true, false);
+  hoja.getRange(1, 1, 1, numCols).setFontWeight("bold");
+  hoja.autoResizeColumns(1, numCols);
+}
+
+// Listas tiene tres bloques uno al lado del otro: el franjeado se aplica a
+// cada bloque por separado, para que no salte por encima de la columna en
+// blanco que los separa ni se alargue sobre las filas vacías de relleno.
+function formatearListas_(hoja, bloquesInfo) {
+  bloquesInfo.forEach(function (b) {
+    if (!b.filas) return;
+    hoja.getRange(1, b.inicioCol, b.filas + 1, b.columnas).applyRowBanding(TEMA_FRANJAS, true, false);
+    hoja.getRange(1, b.inicioCol, 1, b.columnas).setFontWeight("bold");
+  });
+  var colFinal = bloquesInfo.length
+    ? bloquesInfo[bloquesInfo.length - 1].inicioCol + bloquesInfo[bloquesInfo.length - 1].columnas - 1
+    : 0;
+  if (colFinal) hoja.autoResizeColumns(1, colFinal);
+}
+
+// Meta es clave/valor, no una tabla: la columna de etiquetas va en negrita,
+// y la fila "Avisos" lleva un fondo suave para separar el resumen de arriba
+// de la lista de avisos de abajo.
+function formatearMeta_(hoja, filasMeta) {
+  if (!filasMeta.length) return;
+  hoja.getRange(1, 1, filasMeta.length, 1).setFontWeight("bold");
+  for (var i = 0; i < filasMeta.length; i++) {
+    if (filasMeta[i][0] === "Avisos") {
+      hoja.getRange(i + 1, 1, 1, 2).setBackground(GRIS_SEPARADOR);
+      break;
+    }
+  }
+  hoja.autoResizeColumns(1, 2);
 }
 
 /* ------------------------------------------------------------------ *
@@ -465,14 +534,24 @@ function reconstruirTodo() {
 
   // --- Fase 2: todo ha ido bien. Ahora sí se reescriben las hojas. ---
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  escribirHoja_(ss, HOJAS.CASOS, [hojaCasos.cabecera].concat(hojaCasos.filas));
-  escribirHoja_(ss, HOJAS.TECNICAS_LONG, [hojaTecLong.cabecera].concat(hojaTecLong.filas));
-  escribirHoja_(ss, HOJAS.MATERIAL_LONG, [hojaMatLong.cabecera].concat(hojaMatLong.filas));
-  escribirHoja_(ss, HOJAS.LISTAS, hojaListas.filas);
+
+  var hCasos = escribirHoja_(ss, HOJAS.CASOS, [hojaCasos.cabecera].concat(hojaCasos.filas));
+  formatearTabla_(hCasos, hojaCasos.filas.length + 1, hojaCasos.cabecera.length);
+
+  var hTecLong = escribirHoja_(ss, HOJAS.TECNICAS_LONG, [hojaTecLong.cabecera].concat(hojaTecLong.filas));
+  formatearTabla_(hTecLong, hojaTecLong.filas.length + 1, hojaTecLong.cabecera.length);
+
+  var hMatLong = escribirHoja_(ss, HOJAS.MATERIAL_LONG, [hojaMatLong.cabecera].concat(hojaMatLong.filas));
+  formatearTabla_(hMatLong, hojaMatLong.filas.length + 1, hojaMatLong.cabecera.length);
+
+  var hListas = escribirHoja_(ss, HOJAS.LISTAS, hojaListas.filas);
+  formatearListas_(hListas, hojaListas.bloques);
+
   // Meta se escribe la última: si algo de lo anterior fallara a mitad de
   // esta segunda fase, "Última sincronización" no queda mintiendo sobre
   // un Sheet a medio escribir.
-  escribirHoja_(ss, HOJAS.META, filasMeta);
+  var hMeta = escribirHoja_(ss, HOJAS.META, filasMeta);
+  formatearMeta_(hMeta, filasMeta);
 
   return { casos: descarga.casos.length, malformados: descarga.malformados.length };
 }
