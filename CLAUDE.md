@@ -241,12 +241,61 @@ La herramienta de preparación está terminada y en uso. En marcha está la
    servicios, intervenciones y perfiles se editan en el diálogo Catálogos; los
    escenarios ya se editaban desde la barra de herramientas.
 2. ~~Registro de cada caso como un archivo JSON en `casos/`~~ — **hecho**.
-3. Volcado a un Google Sheet mediante Apps Script, **reconstruyendo la hoja
-   entera** en cada actualización, que alimenta un dashboard en Looker Studio.
-   **Pendiente.**
+3. ~~Volcado a un Google Sheet mediante Apps Script~~ — **hecho**. Código en
+   [`apps-script/Codigo.gs`](apps-script/Codigo.gs), instrucciones de
+   instalación en el README. Falta que el usuario lo instale y lo compruebe
+   con casos reales; falta la Fase 4 (Looker Studio).
 
-El Apps Script leerá los catálogos de `estado.json` (no de archivos sueltos) y
-los casos de `casos/*.json`.
+## Google Sheet (Apps Script)
+
+`apps-script/Codigo.gs` es un script de Google Apps independiente: no forma
+parte de la web y no se sirve por GitHub Pages, pero vive en este mismo
+repositorio porque es la fuente de verdad de su código (el usuario lo pega a
+mano en el editor de Apps Script; ver README para la instalación).
+
+Reconstruye **enteras** cinco hojas en cada pasada — `Casos`, `Tecnicas_long`,
+`Material_long`, `Listas`, `Meta` — nunca fila a fila. Dos fases:
+
+1. **Reunir todo en memoria**: catálogos fusionados (mismo algoritmo que
+   `fusionarCatalogo()` de `app.js`, reimplementado porque Apps Script no
+   puede importar el archivo del navegador) + casos descargados en lote con
+   `UrlFetchApp.fetchAll()`. Si algo falla aquí —sobre todo un fallo de red o
+   de la API al listar o descargar—, se lanza un error y **no se toca ninguna
+   hoja**: el Sheet se queda con la reconstrucción anterior.
+2. **Escribir las hojas**, solo si la fase 1 terminó entera y sin errores.
+   `Meta` se escribe la última, para que su "última sincronización" nunca
+   describa una reconstrucción a medias.
+
+Un caso individual con el JSON roto o sin `caso_uid` **no aborta la
+reconstrucción**: se descarta y queda anotado en `Meta` como "Caso no leído".
+Es la distinción entre un problema de red (aborta) y un problema del dato
+(avisa y sigue) que pedía la especificación.
+
+`data/surgeries.js` no es JSON puro —lleva comentarios de bloque entre las
+propiedades, pensado para cargarse con `<script>`— así que el script lo
+**evalúa como el código JS que es** (`evaluarSurgeriesJs_()`), igual que hace
+el propio navegador, en vez de intentar limpiar los comentarios con una
+expresión regular frágil.
+
+Las columnas `TEC_<etiqueta>` se generan a partir del catálogo de técnicas
+**fusionado y en su orden**, incluidas las desactivadas — una técnica
+desactivada no debe perder su columna, porque casos antiguos siguen
+refiriéndose a ella por id.
+
+Probado con un arnés de Node (`vm` + simulación de `UrlFetchApp`,
+`PropertiesService`, `SpreadsheetApp`) que ejecuta el archivo real, no una
+reimplementación aparte. 21 pruebas cubren: fusión y renombrado de catálogo,
+columnas de técnica desactivada, booleanos como `1`/`0` numéricos, fechas
+como objetos `Date` reales (no texto) para que Looker las reconozca como
+fecha, orden determinista, idempotencia (dos ejecuciones seguidas dan el
+mismo resultado salvo la marca de tiempo), carpeta `casos/` vacía, fallo de
+red que no toca el Sheet, y los tres avisos de `Meta` (correlativo duplicado,
+preparado sin cerrar, técnica sin catálogo).
+
+`Material_long` es una hoja añadida sobre la especificación mínima de la
+Fase 3: sin ella, "material consumido acumulado" (criterio de la Fase 4) no
+tiene de dónde sumar, porque `material_previsto`/`material_real` son mapas de
+clave variable que no caben en una columna de `Casos`.
 
 ## Casos
 

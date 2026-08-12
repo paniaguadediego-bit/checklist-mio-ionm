@@ -428,6 +428,65 @@ un tipo físico distinto del habitual del ítem. La clave es
 `"caja/entrada"` y el valor, el `id` de la etiqueta:
 `{ "registro_cortical/1": "aguja_subdermica" }`.
 
+## El dashboard: Google Sheet actualizado solo
+
+El repositorio de datos es la fuente de verdad; el Google Sheet es
+**desechable y se reconstruye entero cada vez**, nunca fila a fila. De ahí
+sale gratis que una técnica nueva cree su columna sola, que renombrar una
+técnica se propague a todo el histórico, y que no existan duplicados.
+
+El código vive en [`apps-script/Codigo.gs`](apps-script/Codigo.gs). Se instala
+una sola vez, en un Google Sheet tuyo:
+
+1. **Crea un Google Sheet nuevo y vacío.** El nombre da igual.
+2. **Extensiones → Apps Script.** Se abre un editor en una pestaña nueva.
+3. Borra el contenido de `Código.gs` que trae por defecto y pega ahí todo el
+   contenido de [`apps-script/Codigo.gs`](apps-script/Codigo.gs). Guarda
+   (el icono del disquete, o Ctrl/Cmd+S).
+4. **Un segundo token de GitHub**, distinto del que usa la app — ese token
+   solo puede leer, y solo el repositorio de datos:
+   - En GitHub: *Settings → Developer settings → Personal access tokens →
+     Fine-grained tokens → Generate new token*.
+   - *Repository access* → **Only select repositories** → el repositorio de
+     datos (`checklist-mio-datos`).
+   - *Permissions → Repository permissions* → **Contents: Read-only**. Nada
+     más.
+   - Genera el token y cópialo.
+5. En el editor de Apps Script: el icono de engranaje **Configuración del
+   proyecto** (barra lateral izquierda) → **Script Properties** → **Add
+   script property**, y añade dos:
+   - `GITHUB_TOKEN` — el token que acabas de crear.
+   - `REPO_DATOS` — `paniaguadediego-bit/checklist-mio-datos`.
+   
+   (Hay una tercera, `REPO_CODIGO`, para el repositorio público de la app;
+   no hace falta tocarla, ya trae el valor correcto por defecto.)
+6. Arriba del editor, en el desplegable de funciones, elige
+   **`crearDisparadorDiario`** y pulsa **▶ Ejecutar**. La primera vez Google
+   pedirá autorizar el script — es tu propio script corriendo con tu propia
+   cuenta, no una app externa pidiendo tus datos; pulsa *Avanzado* → *Ir a
+   [nombre del proyecto] (no seguro)* → *Permitir*. Ese aviso lo da Google
+   con cualquier script propio la primera vez, no es una señal de alarma.
+   Esto deja el disparador diario instalado; no hace falta repetirlo.
+7. Elige ahora **`reconstruirTodo`** en el mismo desplegable y pulsa
+   **▶ Ejecutar**, para la primera reconstrucción. Al terminar, vuelve a la
+   pestaña del Sheet: deberían haber aparecido las hojas `Casos`,
+   `Tecnicas_long`, `Material_long`, `Listas` y `Meta`.
+
+A partir de aquí funciona solo, una vez al día. Para forzarlo a mano sin
+entrar al editor: recarga el Sheet y usa el menú **MIO/IONM → Reconstruir
+ahora** que aparece arriba.
+
+**Cuando añadas una técnica nueva** desde el catálogo de la app, no hace
+falta hacer nada aquí: en la siguiente reconstrucción (al día siguiente, o
+al momento si pulsas *Reconstruir ahora*) su columna `TEC_<etiqueta>`
+aparece sola. Igual si la renombras: el histórico entero se actualiza solo,
+porque la columna se genera resolviendo el id contra el catálogo actual, no
+guardando el nombre de cuando se creó el caso.
+
+La hoja **Meta** avisa, sin romper nada, de: correlativos `ID_Caso`
+duplicados, casos en estado *preparado* que llevan tiempo sin cerrarse, e
+ids de técnica usados en algún caso que ya no existen en el catálogo.
+
 ## Retomar el proyecto desde otro ordenador
 
 Clonar por primera vez:
