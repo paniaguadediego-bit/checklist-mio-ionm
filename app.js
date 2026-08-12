@@ -2227,8 +2227,10 @@
     });
 
     if (!totalEntradas && !extras.length) {
-      cont.insertAdjacentHTML("beforeend",
-        '<p class="empty-hint">Escenario vacío. Arrastra material del catálogo a las entradas de las cajas.</p>');
+      var vacio = document.createElement("p");
+      vacio.className = "empty-hint";
+      vacio.textContent = T("resumen_vacio");
+      cont.appendChild(vacio);
       return;
     }
 
@@ -2441,7 +2443,7 @@
   document.getElementById("btn-renombrar").addEventListener("click", function () {
     var esc = escenarioActual();
     if (!esc) return;
-    var nombre = prompt("Nuevo nombre:", esc.nombre);
+    var nombre = prompt(T("esc_renombrar"), campo(esc, "nombre"));
     if (!nombre) return;
     esc.nombre = nombre;
     guardarEstado();
@@ -2480,17 +2482,12 @@
     avisoGuardado(T("restablecido"));
   });
 
-  // Copia de seguridad completa: escenarios + catálogo propio, en un .json
+  // Copia de seguridad completa. Usa el mismo objeto que se sube a GitHub
+  // (estadoActual), para que el .json exportado y el remoto sean idénticos:
+  // si aquí se armara la copia a mano, sería fácil olvidar un bloque nuevo y
+  // la copia perdería datos en silencio.
   document.getElementById("btn-exportar").addEventListener("click", function () {
-    var copia = {
-      formato: "mio-ionm",
-      version: 1,
-      fecha: new Date().toISOString(),
-      escenarios: escenarios,
-      catalogo_usuario: catalogoUsuario,
-      borrados: borrados,
-      activo: activo
-    };
+    var copia = estadoActual();
     var blob = new Blob([JSON.stringify(copia, null, 2)], { type: "application/json" });
     var url = URL.createObjectURL(blob);
     var a = document.createElement("a");
