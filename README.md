@@ -24,9 +24,10 @@ conexión a internet (no hace ninguna petición de red).
 - `index.html` — interfaz
 - `style.css` — estilos
 - `app.js` — lógica: catálogo, etiquetas, cajas, arrastrar y soltar, resumen
-- `data/surgeries.js` — **el archivo que normalmente vas a tocar**, con los
-  bloques `cajas_material`, `etiquetas`, `catalogo_material`, `tecnicas`,
-  `perfiles_procedimiento` y `escenarios`
+- `data/surgeries.js` — los datos de fábrica: `cajas_material`, `etiquetas`,
+  `catalogo_material`, `tecnicas`, `servicios`, `intervenciones`,
+  `perfiles_procedimiento` y `escenarios`. Casi todo esto ya se edita desde
+  la propia web; este archivo es lo que viene de serie
 - `data/i18n-en.js` — la traducción al inglés de todo lo anterior
 
 ## Idioma
@@ -133,8 +134,38 @@ procesos vasculares, raíces y nervio periférico). Al elegir uno se marcan
 sus técnicas de golpe — **el material colocado no se toca** — y su nota
 aclaratoria aparece en los avisos del resumen.
 
-Ambas listas se editan en `data/surgeries.js`, en los bloques `tecnicas` y
-`perfiles_procedimiento`.
+Ambas listas se editan desde la interfaz, en el botón **Catálogos** (ver
+abajo). También se pueden dejar de fábrica en `data/surgeries.js`.
+
+## Catálogos: técnicas, servicios, intervenciones y perfiles
+
+El botón **Catálogos** de la barra de herramientas abre una ventana con cuatro
+pestañas. En todas funciona igual: **▲▼** para reordenar, el nombre para
+editarlo, y **☑** para activar o desactivar.
+
+- **Técnicas** — las 22 de partida (14 de monitorización + 8 de mapeo) y las
+  que añadas. Lo que ves y cambias es la *etiqueta*; por dentro cada técnica
+  tiene un identificador fijo que no cambia nunca. Por eso **renombrar una
+  técnica actualiza también los casos que ya la usaban**, en vez de dejarlos
+  colgando.
+- **Servicios** — Neurocirugía, COT, ORL, Vascular, Endocrino, Maxilofacial y
+  Urología, más los que quieras.
+- **Intervenciones** — el tipo de cirugía, con su **código del hospital**.
+  El código puede quedarse vacío: cuando lo rellenes se aplicará solo a todos
+  los casos anteriores de ese tipo, sin tocarlos uno a uno.
+- **Perfiles** — las combinaciones de técnicas del desplegable *Aplicar
+  perfil*. Se pueden crear, editar y borrar.
+
+**Desactivar no borra.** Una técnica desactivada deja de ofrecerse para casos
+nuevos, pero sigue existiendo: los casos y escenarios que ya la tenían la
+conservan, y se sigue viendo (tachada) para poder quitarla si hace falta. Por
+eso técnicas, servicios e intervenciones no tienen botón de borrar: borrarlos
+dejaría casos antiguos apuntando a algo inexistente.
+
+Los escenarios se siguen editando desde la propia barra de herramientas
+(*Nuevo*, *Duplicar*, *Renombrar*, *Vaciar*, *Borrar*).
+
+Todo esto se guarda y se sincroniza igual que tus escenarios y tu material.
 
 ### 5. Escenarios (presets)
 

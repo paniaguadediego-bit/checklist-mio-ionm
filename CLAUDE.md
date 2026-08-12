@@ -141,7 +141,7 @@ importa.
 
 Datos de fábrica en `data/surgeries.js`: `cajas_material`, `etiquetas`,
 `catalogo_material`, `tecnicas` (14 de monitorización + 8 de mapeo),
-`perfiles_procedimiento` y `escenarios`.
+`servicios`, `intervenciones`, `perfiles_procedimiento` y `escenarios`.
 
 ### Patrón de datos editables
 
@@ -152,7 +152,35 @@ catálogo nuevo debe seguirlo también:
 > al arrancar. Un elemento propio con el `id` de uno de fábrica lo **sustituye
 > en su sitio**.
 
-Ver `reconstruirEtiquetas()` y `reconstruirCatalogo()` como referencia.
+Ver `reconstruirEtiquetas()` y `reconstruirCatalogo()` como referencia, y
+`fusionarCatalogo()` para la versión genérica que usan los cuatro catálogos
+editables.
+
+### Catálogos editables
+
+`tecnicas`, `servicios`, `intervenciones` y `perfiles` se editan desde el
+diálogo **Catálogos** (botón en la barra de herramientas). Su estado vive en
+`catalogos` y se guarda dentro de `estado.json`:
+
+```
+catalogos: {
+  <nombre>: { version, actualizado_en, propios[], orden[], borrados[] }
+}
+```
+
+- `propios` — elementos creados o editados por el usuario, por `id`.
+- `orden` — ids en el orden fijado a mano. Lo que no esté va detrás, en el
+  orden de fábrica: una técnica nueva aparece al final, nunca desaparece.
+- `borrados` — solo se usa en perfiles. Técnicas, servicios e intervenciones
+  **no se borran**, se desactivan (`activa: false`), porque un caso guardado
+  puede referirse a ellos.
+- `version` sube y `actualizado_en` se sella en cada cambio (`tocarCatalogo`).
+
+Cuidado con el nombre **`etiqueta`**: en una técnica es su texto visible; en el
+material es el tipo físico (aguja, sacacorchos…). No tienen nada que ver.
+
+Al cambiar un texto que venía de fábrica, `fijarTexto()` borra sus traducciones
+`_en`: ya no describen lo que hay. Es la misma regla que con los escenarios.
 
 ### Sincronización: cómo funciona de verdad
 
@@ -197,14 +225,22 @@ archivos separados, con nombre derivado de un identificador único.
 La herramienta de preparación está terminada y en uso. En marcha está la
 **Fase 2.0**, que amplía sin tocar lo existente:
 
-1. Catálogos editables desde la interfaz: técnicas, intervenciones, servicios,
-   escenarios y perfiles. Estructura de técnica: `{ id, etiqueta, grupo, activa }`.
-   Desactivar no borra: deja de ofrecerse en casos nuevos pero sigue existiendo
-   en el histórico.
+1. ~~Catálogos editables desde la interfaz~~ — **hecho**. Técnicas,
+   servicios, intervenciones y perfiles se editan en el diálogo Catálogos; los
+   escenarios ya se editaban desde la barra de herramientas.
 2. Registro de cada caso como un archivo JSON en `casos/` del repo de datos,
-   con `caso_uid` (UUID del cliente) como clave real.
+   con `caso_uid` (UUID del cliente) como clave real. **Pendiente.**
 3. Volcado a un Google Sheet mediante Apps Script, **reconstruyendo la hoja
    entera** en cada actualización, que alimenta un dashboard en Looker Studio.
+   **Pendiente.**
+
+Antes de la fase 2 hay que **partir `renderResumen()` en dos**: una función que
+calcule y devuelva el resumen como dato, y el render actual consumiéndola. Hoy
+calcula y pinta en el mismo bucle, así que no hay forma de guardar en el caso el
+material previsto, las cajas, el montaje y los avisos sin duplicar la lógica.
+
+El Apps Script leerá los catálogos de `estado.json` (no de archivos sueltos) y
+los casos de `casos/*.json`.
 
 Arquitectura: App (GitHub Pages) → repo privado de datos (fuente de verdad) →
 Apps Script con disparador diario → Google Sheet → Looker Studio.

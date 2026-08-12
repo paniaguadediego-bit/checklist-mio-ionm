@@ -5,15 +5,11 @@
   var CAJAS = DATA.cajas_material || {};
   var CATALOGO_BASE = DATA.catalogo_material || [];
   var ETIQUETAS_BASE = DATA.etiquetas || [];
-  var TECNICAS = DATA.tecnicas || [];
-  var PERFILES = DATA.perfiles_procedimiento || [];
+  var TECNICAS_BASE = DATA.tecnicas || [];
+  var SERVICIOS_BASE = DATA.servicios || [];
+  var INTERVENCIONES_BASE = DATA.intervenciones || [];
+  var PERFILES_BASE = DATA.perfiles_procedimiento || [];
   var STORAGE_KEY = "mio_ionm_escenarios_v1";
-
-  // Índice de técnicas: id -> técnica
-  var TECS = {};
-  TECNICAS.forEach(function (g) {
-    (g.items || []).forEach(function (t) { TECS[t.id] = t; });
-  });
 
   /* ---------------------------------------------------------------- *
    * Idioma
@@ -118,6 +114,10 @@
 
     /* --- Técnicas --- */
     tecnicas_titulo:     { es: "Técnicas", en: "Techniques" },
+    grupo_monitorizacion:{ es: "Técnicas de monitorización", en: "Monitoring techniques" },
+    grupo_mapeo:         { es: "Técnicas de mapeo", en: "Mapping techniques" },
+    tec_desactivada:     { es: "Desactivada: ya no se ofrece para casos nuevos, pero sigue marcada aquí",
+                           en: "Deactivated: no longer offered for new cases, but still selected here" },
     perfil_label:        { es: "Perfil", en: "Profile" },
     perfil_elegir:       { es: "— elegir —", en: "— choose —" },
     perfil_confirmar:    { es: "¿Marcar las técnicas de “{perfil}”?\nSustituye las técnicas marcadas ahora mismo. El material colocado no se toca.",
@@ -238,6 +238,63 @@
     color_turquesa:      { es: "Turquesa", en: "Teal" },
     color_gris:          { es: "Gris", en: "Grey" },
 
+    /* --- Diálogo de catálogos --- */
+    btn_catalogos:       { es: "Catálogos", en: "Catalogues" },
+    btn_catalogos_tit:   { es: "Editar técnicas, intervenciones, servicios y perfiles",
+                           en: "Edit techniques, procedures, specialties and profiles" },
+    dlg_cat_titulo:      { es: "Catálogos", en: "Catalogues" },
+    tab_tecnicas:        { es: "Técnicas", en: "Techniques" },
+    tab_intervenciones:  { es: "Intervenciones", en: "Procedures" },
+    tab_servicios:       { es: "Servicios", en: "Specialties" },
+    tab_perfiles:        { es: "Perfiles", en: "Profiles" },
+    cat_intro_tecnicas:  { es: "Lo que ves y puedes cambiar es la <b>etiqueta</b>. Por dentro cada técnica tiene un identificador fijo que no cambia nunca, así que renombrarla actualiza también los casos ya guardados. <b>Desactivar no borra</b>: deja de ofrecerse para casos nuevos, pero sigue existiendo en el histórico.",
+                           en: "What you see and can change is the <b>label</b>. Internally each technique has a fixed identifier that never changes, so renaming it also updates cases already saved. <b>Deactivating does not delete</b>: it stops being offered for new cases, but remains in the history." },
+    cat_intro_interv:    { es: "El <b>código</b> puede quedarse vacío hasta que tengas la codificación del hospital. Cuando lo rellenes, se aplica solo a todos los casos anteriores de ese tipo.",
+                           en: "The <b>code</b> can stay empty until you have the hospital coding. Once filled in, it applies by itself to all previous cases of that type." },
+    cat_intro_serv:      { es: "Servicios quirúrgicos con los que trabajas. Los casos guardan el identificador, no el nombre, así que puedes renombrarlos sin perder nada.",
+                           en: "Surgical specialties you work with. Cases store the identifier, not the name, so you can rename them without losing anything." },
+    cat_intro_perfiles:  { es: "Combinaciones habituales de técnicas. Al aplicar un perfil se marcan sus técnicas de golpe; el material colocado no se toca.",
+                           en: "Common combinations of techniques. Applying a profile selects its techniques at once; placed material is untouched." },
+    cat_sin_elementos:   { es: "Todavía no hay nada aquí. Usa «Nuevo» para añadir el primero.",
+                           en: "Nothing here yet. Use “New” to add the first one." },
+    cat_subir:           { es: "Subir", en: "Move up" },
+    cat_bajar:           { es: "Bajar", en: "Move down" },
+    cat_activar:         { es: "Desactivada — pulsa para volver a ofrecerla",
+                           en: "Deactivated — tap to offer it again" },
+    cat_desactivar:      { es: "Activa — pulsa para dejar de ofrecerla en casos nuevos",
+                           en: "Active — tap to stop offering it for new cases" },
+    cat_editar_tit:      { es: "Pulsa para editarlo", en: "Tap to edit" },
+    cat_n_tecnicas:      { es: "{n} técnicas", en: "{n} techniques" },
+    cat_sin_servicio:    { es: "— sin servicio —", en: "— no specialty —" },
+    cat_version:         { es: "Versión {version} · actualizado {fecha}", en: "Version {version} · updated {fecha}" },
+    cat_nunca:           { es: "nunca", en: "never" },
+    cat_nueva_tecnicas:  { es: "Técnica nueva", en: "New technique" },
+    cat_nueva_servicios: { es: "Servicio nuevo", en: "New specialty" },
+    cat_nueva_intervenciones: { es: "Intervención nueva", en: "New procedure" },
+    cat_nueva_perfiles:  { es: "Perfil nuevo", en: "New profile" },
+    cat_editar_tecnicas: { es: "Editar técnica", en: "Edit technique" },
+    cat_editar_servicios:{ es: "Editar servicio", en: "Edit specialty" },
+    cat_editar_intervenciones: { es: "Editar intervención", en: "Edit procedure" },
+    cat_editar_perfiles: { es: "Editar perfil", en: "Edit profile" },
+    cat_campo_etiqueta:  { es: "Etiqueta (lo que ves)", en: "Label (what you see)" },
+    cat_campo_grupo:     { es: "Grupo", en: "Group" },
+    cat_campo_desc:      { es: "Descripción", en: "Description" },
+    cat_campo_desc_ay:   { es: "Sale al pasar el ratón por el chip.", en: "Shown when hovering over the chip." },
+    cat_campo_activa:    { es: "Se ofrece para casos nuevos", en: "Offered for new cases" },
+    cat_campo_codigo:    { es: "Código del hospital", en: "Hospital code" },
+    cat_campo_codigo_ay: { es: "Déjalo vacío si todavía no lo tienes.", en: "Leave it empty if you do not have it yet." },
+    cat_campo_servicio:  { es: "Servicio", en: "Specialty" },
+    cat_campo_nota:      { es: "Nota", en: "Note" },
+    cat_campo_nota_ay:   { es: "Aparece en los avisos del resumen al aplicar el perfil.",
+                           en: "Appears in the summary warnings when the profile is applied." },
+    cat_campo_tecnicas:  { es: "Técnicas del perfil", en: "Techniques in the profile" },
+    cat_falta_nombre:    { es: "Hace falta un nombre.", en: "A name is required." },
+    cat_repetido:        { es: "Ya existe algo llamado «{nombre}» en esta lista.",
+                           en: "Something called “{nombre}” already exists in this list." },
+    cat_borrar_perfil:   { es: "¿Borrar el perfil “{nombre}”?\nLos escenarios que lo usaron no se tocan.",
+                           en: "Delete the profile “{nombre}”?\nScenarios that used it are untouched." },
+    cat_desactivada_tag: { es: "desactivada", en: "deactivated" },
+
     /* --- Diálogo de sincronización --- */
     dlg_sync_titulo:     { es: "Sincronizar con GitHub", en: "Sync with GitHub" },
     dlg_sync_intro:      { es: "Guarda tus escenarios, etiquetas y material propio en un repositorio privado de GitHub, para tenerlos en el móvil y en el ordenador. Una vez conectado <b>se sincroniza solo</b>: baja lo último al abrir y sube unos segundos después de cada cambio. En <b>Modo quirófano</b> la subida se pausa —no depende de la red durante la cirugía— y se manda al salir. Sin conexión sigue funcionando y reintenta cuando vuelve. Los botones de abajo fuerzan una subida o bajada a mano.",
@@ -296,13 +353,16 @@
           fusionar(it, (tr.items || {})[it.id]);
         });
       });
-      TECNICAS.forEach(function (g) {
-        if ((tr.grupos_tecnicas || {})[g.grupo]) g["grupo" + suf] = tr.grupos_tecnicas[g.grupo];
-        (g.items || []).forEach(function (t) {
-          fusionar(t, (tr.tecnicas || {})[t.id]);
-        });
+      TECNICAS_BASE.forEach(function (t) {
+        fusionar(t, (tr.tecnicas || {})[t.id]);
       });
-      PERFILES.forEach(function (p) {
+      SERVICIOS_BASE.forEach(function (s) {
+        fusionar(s, (tr.servicios || {})[s.id]);
+      });
+      INTERVENCIONES_BASE.forEach(function (i) {
+        fusionar(i, (tr.intervenciones || {})[i.id]);
+      });
+      PERFILES_BASE.forEach(function (p) {
         fusionar(p, (tr.perfiles || {})[p.id]);
       });
       Object.keys(DATA.escenarios || {}).forEach(function (k) {
@@ -570,6 +630,155 @@
   }
 
   /* ---------------------------------------------------------------- *
+   * Catálogos editables: técnicas, servicios, intervenciones y perfiles
+   *
+   * Mismo patrón que las etiquetas y el material propio: lista de fábrica
+   * (data/surgeries.js) + lista del usuario + orden propio, fusionadas por
+   * id al arrancar. Un elemento propio con el id de uno de fábrica lo
+   * sustituye en su sitio.
+   *
+   * Lo que se guarda en los escenarios y en los casos es el "id", nunca el
+   * texto visible. Por eso renombrar una técnica se propaga sola a todo el
+   * histórico en vez de dejar huérfano lo guardado antes.
+   *
+   * Ojo con el nombre "etiqueta": en una técnica es su texto visible, y no
+   * tiene nada que ver con las etiquetas de material (tipos físicos).
+   * ---------------------------------------------------------------- */
+  var CATALOGOS = ["tecnicas", "servicios", "intervenciones", "perfiles"];
+  var GRUPOS_TECNICA = ["monitorizacion", "mapeo"];
+
+  // nombre -> { version, actualizado_en, propios[], orden[], borrados[] }
+  var catalogos = {};
+
+  var TECNICAS = [], TECS = {};
+  var SERVICIOS = [], SERV = {};
+  var INTERVENCIONES = [], INTERV = {};
+  var PERFILES = [], PERF = {};
+
+  function reiniciarCatalogos() {
+    catalogos = {};
+    CATALOGOS.forEach(function (n) {
+      catalogos[n] = { version: 1, actualizado_en: null, propios: [], orden: [], borrados: [] };
+    });
+  }
+
+  function fusionarCatalogo(base, meta) {
+    var lista = [], indice = {};
+    base.forEach(function (e) {
+      if (meta.borrados.indexOf(e.id) !== -1) return;
+      var copia = Object.assign({}, e);
+      indice[copia.id] = copia;
+      lista.push(copia);
+    });
+    meta.propios.forEach(function (e) {
+      if (meta.borrados.indexOf(e.id) !== -1) return;
+      var copia = Object.assign({}, e, { propio: true });
+      var previo = indice[copia.id];
+      if (previo) lista[lista.indexOf(previo)] = copia;
+      else lista.push(copia);
+      indice[copia.id] = copia;
+    });
+    // El orden que hayas fijado manda. Lo que no esté en él va detrás, en el
+    // orden de fábrica: así una técnica nueva aparece al final en lugar de
+    // colarse en un sitio raro o desaparecer.
+    if (meta.orden.length) {
+      var posBase = {};
+      lista.forEach(function (e, i) { posBase[e.id] = i; });
+      lista.sort(function (a, b) {
+        var ia = meta.orden.indexOf(a.id), ib = meta.orden.indexOf(b.id);
+        if (ia === -1) ia = meta.orden.length + posBase[a.id];
+        if (ib === -1) ib = meta.orden.length + posBase[b.id];
+        return ia - ib;
+      });
+    }
+    return { lista: lista, indice: indice };
+  }
+
+  function reconstruirCatalogos() {
+    var t = fusionarCatalogo(TECNICAS_BASE, catalogos.tecnicas);
+    TECNICAS = t.lista; TECS = t.indice;
+    var s = fusionarCatalogo(SERVICIOS_BASE, catalogos.servicios);
+    SERVICIOS = s.lista; SERV = s.indice;
+    var i = fusionarCatalogo(INTERVENCIONES_BASE, catalogos.intervenciones);
+    INTERVENCIONES = i.lista; INTERV = i.indice;
+    var p = fusionarCatalogo(PERFILES_BASE, catalogos.perfiles);
+    PERFILES = p.lista; PERF = p.indice;
+  }
+
+  // Lo desactivado deja de ofrecerse para casos nuevos, pero sigue existiendo
+  // y sigue resolviéndose por id en todo lo guardado antes.
+  function activos(lista) {
+    return lista.filter(function (e) { return e.activa !== false; });
+  }
+
+  function tocarCatalogo(nombre) {
+    var c = catalogos[nombre];
+    c.version = (c.version || 1) + 1;
+    c.actualizado_en = new Date().toISOString();
+  }
+
+  function aplicarCatalogosGuardados(guardados) {
+    CATALOGOS.forEach(function (n) {
+      var g = guardados && guardados[n];
+      if (!g) return;
+      catalogos[n] = {
+        version: g.version || 1,
+        actualizado_en: g.actualizado_en || null,
+        propios: Array.isArray(g.propios) ? g.propios : [],
+        orden: Array.isArray(g.orden) ? g.orden : [],
+        borrados: Array.isArray(g.borrados) ? g.borrados : []
+      };
+    });
+  }
+
+  function idLibreEn(indice, prefijo, nombre) {
+    var base = prefijo + normalizar(nombre || "nuevo");
+    var id = base, n = 2;
+    while (indice[id]) { id = base + "_" + n; n++; }
+    return id;
+  }
+
+  /* Al cambiar un texto que venía de fábrica se olvidan sus traducciones: ya
+     no describen lo que hay. Es lo mismo que hace traducirEscenarios() cuando
+     renombras un escenario de fábrica. */
+  function fijarTexto(obj, clave, valor) {
+    if ((obj[clave] || "") === (valor || "")) return;
+    obj[clave] = valor;
+    IDIOMAS.forEach(function (l) { delete obj[clave + "_" + l]; });
+  }
+
+  /* Guarda un elemento en la capa del usuario. Si venía de fábrica, la copia
+     editada pasa a sustituirlo por id sin tocar data/surgeries.js. */
+  function guardarEnCatalogo(nombre, elemento) {
+    var meta = catalogos[nombre];
+    // "propio" lo pone la fusión para pintar, no es un dato: se quita antes
+    // de mezclar, o acabaría guardado y viajando al repositorio.
+    delete elemento.propio;
+    var previo = meta.propios.filter(function (e) { return e.id === elemento.id; })[0];
+    if (previo) Object.assign(previo, elemento);
+    else meta.propios.push(elemento);
+    tocarCatalogo(nombre);
+    reconstruirCatalogos();
+  }
+
+  function moverEnCatalogo(nombre, id, paso) {
+    var meta = catalogos[nombre];
+    var lista = { tecnicas: TECNICAS, servicios: SERVICIOS,
+                  intervenciones: INTERVENCIONES, perfiles: PERFILES }[nombre];
+    // El orden se fija por primera vez con el que se está viendo, para que
+    // mover un elemento no reordene de golpe todo lo demás.
+    var ids = lista.map(function (e) { return e.id; });
+    var i = ids.indexOf(id);
+    var j = i + paso;
+    if (i === -1 || j < 0 || j >= ids.length) return false;
+    ids.splice(j, 0, ids.splice(i, 1)[0]);
+    meta.orden = ids;
+    tocarCatalogo(nombre);
+    reconstruirCatalogos();
+    return true;
+  }
+
+  /* ---------------------------------------------------------------- *
    * Estado
    * ---------------------------------------------------------------- */
   var escenarios = {};
@@ -584,6 +793,7 @@
     catalogoUsuario = [];
     etiquetasUsuario = [];
     etiquetasBorradas = [];
+    reiniciarCatalogos();
     var guardado = null;
     try {
       guardado = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
@@ -599,9 +809,11 @@
     if (guardado && Array.isArray(guardado.catalogo_usuario)) {
       catalogoUsuario = guardado.catalogo_usuario;
     }
+    if (guardado && guardado.catalogos) aplicarCatalogosGuardados(guardado.catalogos);
     reconstruirEtiquetas();
     migrarMaterialALaEtiqueta();
     reconstruirCatalogo();
+    reconstruirCatalogos();
     if (guardado && guardado.escenarios) {
       // Lo guardado manda: incluye ediciones de los presets de fábrica
       Object.keys(guardado.escenarios).forEach(function (id) {
@@ -655,7 +867,8 @@
         borrados: borrados,
         catalogo_usuario: catalogoUsuario,
         etiquetas_usuario: etiquetasUsuario,
-        etiquetas_borradas: etiquetasBorradas
+        etiquetas_borradas: etiquetasBorradas,
+        catalogos: catalogos
       }));
       avisoGuardado(T("guardado_en", { hora: new Date().toLocaleTimeString(localeActual()) }));
       programarSubida();
@@ -1223,6 +1436,7 @@
       catalogo_usuario: catalogoUsuario,
       etiquetas_usuario: etiquetasUsuario,
       etiquetas_borradas: etiquetasBorradas,
+      catalogos: catalogos,
       borrados: borrados,
       activo: activo
     };
@@ -1235,9 +1449,14 @@
     etiquetasBorradas = copia.etiquetas_borradas || [];
     borrados = copia.borrados || [];
     activo = copia.activo && escenarios[copia.activo] ? copia.activo : Object.keys(escenarios)[0] || null;
+    // Una copia anterior a los catálogos editables no trae el bloque: se
+    // queda con los de fábrica en lugar de dejarlo todo vacío.
+    reiniciarCatalogos();
+    aplicarCatalogosGuardados(copia.catalogos);
     reconstruirEtiquetas();
     migrarMaterialALaEtiqueta();   // copias de la versión 1, sin etiquetas
     reconstruirCatalogo();
+    reconstruirCatalogos();
     traducirEscenarios();
     guardarEstado();
     renderTodo();
@@ -1895,29 +2114,388 @@
   });
 
   /* ---------------------------------------------------------------- *
+   * Diálogo de catálogos
+   *
+   * Una sola ventana con pestañas en vez de cuatro botones en la barra:
+   * en el móvil la barra ya va justa, y las cuatro listas se manejan igual.
+   * Reordenar va con flechas y no arrastrando, que en pantalla táctil es
+   * poco fiable.
+   * ---------------------------------------------------------------- */
+  var dlgCat = document.getElementById("dlg-catalogos");
+  var catPestana = "tecnicas";
+  var catEditando = null;    // id que se está editando, o null si es nuevo
+  var catCampos = {};        // clave -> elemento del formulario
+  var PREFIJO_ID = { tecnicas: "t_", servicios: "s_", intervenciones: "i_", perfiles: "p_" };
+
+  function catLista() {
+    return { tecnicas: TECNICAS, servicios: SERVICIOS,
+             intervenciones: INTERVENCIONES, perfiles: PERFILES }[catPestana];
+  }
+
+  function catIndice() {
+    return { tecnicas: TECS, servicios: SERV,
+             intervenciones: INTERV, perfiles: PERF }[catPestana];
+  }
+
+  // Las técnicas llaman "etiqueta" a su texto visible; el resto, "nombre".
+  function catClaveTexto() {
+    return catPestana === "tecnicas" ? "etiqueta" : "nombre";
+  }
+
+  function catError(texto) {
+    var el = document.getElementById("cat-error");
+    el.textContent = texto || "";
+    el.hidden = !texto;
+  }
+
+  function renderCatPestanas() {
+    var cont = document.getElementById("cat-pestanas");
+    cont.innerHTML = "";
+    CATALOGOS.forEach(function (n) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "pestana" + (n === catPestana ? " activa" : "");
+      b.textContent = T("tab_" + n);
+      b.addEventListener("click", function () {
+        catPestana = n;
+        catEditando = null;
+        renderDlgCatalogos();
+      });
+      cont.appendChild(b);
+    });
+  }
+
+  function renderCatLista() {
+    var cont = document.getElementById("cat-lista");
+    cont.innerHTML = "";
+    var lista = catLista();
+    var clave = catClaveTexto();
+
+    if (!lista.length) {
+      var vacio = document.createElement("p");
+      vacio.className = "empty-hint";
+      vacio.textContent = T("cat_sin_elementos");
+      cont.appendChild(vacio);
+      return;
+    }
+
+    lista.forEach(function (e, i) {
+      var fila = document.createElement("div");
+      fila.className = "cat-fila" +
+        (e.id === catEditando ? " editando" : "") +
+        (e.activa === false ? " desactivada" : "");
+
+      var mover = document.createElement("span");
+      mover.className = "cat-mover";
+      [["▲", -1, i === 0, "cat_subir"], ["▼", 1, i === lista.length - 1, "cat_bajar"]]
+        .forEach(function (def) {
+          var b = document.createElement("button");
+          b.type = "button";
+          b.textContent = def[0];
+          b.title = T(def[3]);
+          b.disabled = def[2];
+          b.addEventListener("click", function () { moverCat(e.id, def[1]); });
+          mover.appendChild(b);
+        });
+      fila.appendChild(mover);
+
+      var texto = document.createElement("button");
+      texto.type = "button";
+      texto.className = "cat-nombre";
+      texto.title = T("cat_editar_tit");
+      texto.textContent = campo(e, clave) || e.id;
+      texto.addEventListener("click", function () {
+        catEditando = e.id;
+        catError(null);
+        renderDlgCatalogos();
+      });
+      fila.appendChild(texto);
+
+      var extra = document.createElement("span");
+      extra.className = "cat-extra";
+      if (catPestana === "tecnicas") {
+        extra.textContent = T("grupo_" + e.grupo);
+      } else if (catPestana === "intervenciones") {
+        extra.textContent = [e.codigo, SERV[e.servicio] ? campo(SERV[e.servicio], "nombre") : ""]
+          .filter(Boolean).join(" · ");
+      } else if (catPestana === "perfiles") {
+        extra.textContent = T("cat_n_tecnicas", { n: (e.tecnicas || []).length });
+      }
+      fila.appendChild(extra);
+
+      var estado = document.createElement("button");
+      estado.type = "button";
+      estado.className = "cat-activa";
+      estado.textContent = e.activa === false ? "☐" : "☑";
+      estado.title = T(e.activa === false ? "cat_activar" : "cat_desactivar");
+      estado.addEventListener("click", function () { alternarActivaCat(e.id); });
+      fila.appendChild(estado);
+
+      cont.appendChild(fila);
+    });
+  }
+
+  /* Constructores de campos del formulario. Devuelven el .campo ya montado y
+     dejan el control en catCampos para leerlo al guardar. */
+  function catCampo(clave, etiqueta, control, ayuda) {
+    var div = document.createElement("div");
+    div.className = "campo";
+    var lab = document.createElement("label");
+    lab.textContent = etiqueta;
+    lab.setAttribute("for", "cat-f-" + clave);
+    control.id = "cat-f-" + clave;
+    div.appendChild(lab);
+    div.appendChild(control);
+    if (ayuda) {
+      var small = document.createElement("small");
+      small.textContent = ayuda;
+      div.appendChild(small);
+    }
+    catCampos[clave] = control;
+    return div;
+  }
+
+  function catInput(valor, maxlength) {
+    var el = document.createElement("input");
+    el.type = "text";
+    el.value = valor || "";
+    if (maxlength) el.maxLength = maxlength;
+    return el;
+  }
+
+  function catSelect(opciones, valor) {
+    var el = document.createElement("select");
+    opciones.forEach(function (o) {
+      var op = document.createElement("option");
+      op.value = o.valor;
+      op.textContent = o.texto;
+      el.appendChild(op);
+    });
+    el.value = valor || "";
+    return el;
+  }
+
+  function renderCatForm() {
+    var cont = document.getElementById("cat-form");
+    cont.innerHTML = "";
+    catCampos = {};
+    var actual = catEditando ? catIndice()[catEditando] : null;
+    if (catEditando && !actual) { catEditando = null; }
+
+    document.getElementById("cat-form-titulo").textContent =
+      T((catEditando ? "cat_editar_" : "cat_nueva_") + catPestana);
+    document.getElementById("cat-borrar").hidden = !(catPestana === "perfiles" && catEditando);
+
+    var clave = catClaveTexto();
+    cont.appendChild(catCampo("texto",
+      T(catPestana === "tecnicas" ? "cat_campo_etiqueta" : "campo_nombre"),
+      catInput(actual ? campo(actual, clave) : "", 60)));
+
+    if (catPestana === "tecnicas") {
+      cont.appendChild(catCampo("grupo", T("cat_campo_grupo"),
+        catSelect(GRUPOS_TECNICA.map(function (g) {
+          return { valor: g, texto: T("grupo_" + g) };
+        }), actual ? actual.grupo : "monitorizacion")));
+      cont.appendChild(catCampo("descripcion", T("cat_campo_desc"),
+        catInput(actual ? campo(actual, "descripcion") : "", 120), T("cat_campo_desc_ay")));
+    }
+
+    if (catPestana === "intervenciones") {
+      cont.appendChild(catCampo("codigo", T("cat_campo_codigo"),
+        catInput(actual ? actual.codigo : "", 30), T("cat_campo_codigo_ay")));
+      var ops = [{ valor: "", texto: T("cat_sin_servicio") }].concat(
+        activos(SERVICIOS).map(function (s) {
+          return { valor: s.id, texto: campo(s, "nombre") };
+        }));
+      cont.appendChild(catCampo("servicio", T("cat_campo_servicio"),
+        catSelect(ops, actual ? actual.servicio : "")));
+    }
+
+    if (catPestana === "perfiles") {
+      cont.appendChild(catCampo("nota", T("cat_campo_nota"),
+        catInput(actual ? campo(actual, "nota") : "", 300), T("cat_campo_nota_ay")));
+
+      // Las técnicas del perfil se marcan con los mismos chips que en la
+      // tarjeta de técnicas, para no aprender dos formas de hacer lo mismo.
+      var elegidas = actual && actual.tecnicas ? actual.tecnicas.slice() : [];
+      catCampos.tecnicas = elegidas;
+      var bloque = document.createElement("div");
+      bloque.className = "campo";
+      var lab = document.createElement("label");
+      lab.textContent = T("cat_campo_tecnicas");
+      bloque.appendChild(lab);
+      var fila = document.createElement("div");
+      fila.className = "chip-fila";
+      activos(TECNICAS).forEach(function (t) {
+        var chip = document.createElement("span");
+        chip.className = "chip chip-extra" + (elegidas.indexOf(t.id) !== -1 ? " activo" : "");
+        chip.textContent = campo(t, "etiqueta");
+        chip.addEventListener("click", function () {
+          var i = elegidas.indexOf(t.id);
+          if (i === -1) elegidas.push(t.id); else elegidas.splice(i, 1);
+          chip.classList.toggle("activo", i === -1);
+        });
+        fila.appendChild(chip);
+      });
+      bloque.appendChild(fila);
+      cont.appendChild(bloque);
+    }
+
+    var check = document.createElement("input");
+    check.type = "checkbox";
+    check.checked = !actual || actual.activa !== false;
+    var lblAct = document.createElement("label");
+    lblAct.className = "check";
+    lblAct.appendChild(check);
+    var span = document.createElement("span");
+    span.textContent = T("cat_campo_activa");
+    lblAct.appendChild(span);
+    var envoltorio = document.createElement("div");
+    envoltorio.className = "campo";
+    envoltorio.appendChild(lblAct);
+    catCampos.activa = check;
+    cont.appendChild(envoltorio);
+  }
+
+  function renderCatVersion() {
+    var c = catalogos[catPestana];
+    var fecha = c.actualizado_en
+      ? new Date(c.actualizado_en).toLocaleString(localeActual(), {
+          day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit"
+        })
+      : T("cat_nunca");
+    document.getElementById("cat-version").textContent =
+      T("cat_version", { version: c.version, fecha: fecha });
+  }
+
+  function renderDlgCatalogos() {
+    renderCatPestanas();
+    var intros = { tecnicas: "cat_intro_tecnicas", intervenciones: "cat_intro_interv",
+                   servicios: "cat_intro_serv", perfiles: "cat_intro_perfiles" };
+    document.getElementById("cat-intro").innerHTML = T(intros[catPestana]);
+    renderCatLista();
+    renderCatVersion();
+    renderCatForm();
+  }
+
+  // Tras cualquier cambio de catálogo hay que repintar la app entera: las
+  // técnicas de la tarjeta, el desplegable de perfiles y el resumen.
+  function trasCambiarCatalogo() {
+    guardarEstado();
+    renderDlgCatalogos();
+    renderTodo();
+  }
+
+  function moverCat(id, paso) {
+    if (!moverEnCatalogo(catPestana, id, paso)) return;
+    trasCambiarCatalogo();
+  }
+
+  function alternarActivaCat(id) {
+    var e = clonar(catIndice()[id]);
+    e.activa = e.activa === false;
+    guardarEnCatalogo(catPestana, e);
+    trasCambiarCatalogo();
+  }
+
+  function guardarCat() {
+    var clave = catClaveTexto();
+    var texto = (catCampos.texto.value || "").trim();
+    if (!texto) { catError(T("cat_falta_nombre")); return; }
+
+    var repetido = catLista().filter(function (e) {
+      return e.id !== catEditando &&
+        (campo(e, clave) || "").trim().toLowerCase() === texto.toLowerCase();
+    })[0];
+    if (repetido) { catError(T("cat_repetido", { nombre: texto })); return; }
+
+    var indice = catIndice();
+    var dato = catEditando ? clonar(indice[catEditando]) : {};
+    if (!catEditando) dato.id = idLibreEn(indice, PREFIJO_ID[catPestana], texto);
+    fijarTexto(dato, clave, texto);
+    dato.activa = catCampos.activa.checked;
+
+    if (catPestana === "tecnicas") {
+      dato.grupo = catCampos.grupo.value;
+      fijarTexto(dato, "descripcion", (catCampos.descripcion.value || "").trim());
+    } else if (catPestana === "intervenciones") {
+      dato.codigo = (catCampos.codigo.value || "").trim();
+      dato.servicio = catCampos.servicio.value;
+    } else if (catPestana === "perfiles") {
+      fijarTexto(dato, "nota", (catCampos.nota.value || "").trim());
+      dato.tecnicas = catCampos.tecnicas.slice();
+    }
+
+    guardarEnCatalogo(catPestana, dato);
+    catEditando = dato.id;
+    catError(null);
+    trasCambiarCatalogo();
+  }
+
+  function borrarCat() {
+    if (catPestana !== "perfiles" || !catEditando) return;
+    var p = PERF[catEditando];
+    if (!p || !confirm(T("cat_borrar_perfil", { nombre: campo(p, "nombre") }))) return;
+    var meta = catalogos.perfiles;
+    meta.propios = meta.propios.filter(function (e) { return e.id !== catEditando; });
+    if (meta.borrados.indexOf(catEditando) === -1) meta.borrados.push(catEditando);
+    tocarCatalogo("perfiles");
+    reconstruirCatalogos();
+    catEditando = null;
+    trasCambiarCatalogo();
+  }
+
+  document.getElementById("btn-catalogos").addEventListener("click", function () {
+    catEditando = null;
+    catError(null);
+    renderDlgCatalogos();
+    dlgCat.showModal();
+  });
+  document.getElementById("cat-cerrar").addEventListener("click", function () { dlgCat.close(); });
+  document.getElementById("cat-nueva").addEventListener("click", function () {
+    catEditando = null;
+    catError(null);
+    renderCatForm();
+    renderCatLista();
+  });
+  document.getElementById("cat-guardar").addEventListener("click", guardarCat);
+  document.getElementById("cat-borrar").addEventListener("click", borrarCat);
+
+  /* ---------------------------------------------------------------- *
    * Render: técnicas y perfiles
    * ---------------------------------------------------------------- */
   function renderTecnicas() {
     var cont = document.getElementById("tecnicas-contenido");
     cont.innerHTML = "";
     if (!escenarioActual()) return;
-    var activas = tecnicasDe();
+    var marcadas = tecnicasDe();
 
-    TECNICAS.forEach(function (grupo) {
+    GRUPOS_TECNICA.forEach(function (grupo) {
+      // Una técnica desactivada no se ofrece para casos nuevos, pero si está
+      // marcada en este escenario sigue viéndose: si no, no habría manera de
+      // desmarcarla y quedaría atrapada.
+      var items = TECNICAS.filter(function (t) {
+        return t.grupo === grupo && (t.activa !== false || marcadas.indexOf(t.id) !== -1);
+      });
+      if (!items.length) return;
+
       var bloque = document.createElement("div");
       bloque.className = "tecnicas-grupo";
       var h = document.createElement("div");
       h.className = "grupo-titulo";
-      h.textContent = campo(grupo, "grupo");
+      h.textContent = T("grupo_" + grupo);
       bloque.appendChild(h);
 
       var fila = document.createElement("div");
       fila.className = "chip-fila";
-      (grupo.items || []).forEach(function (t) {
+      items.forEach(function (t) {
         var chip = document.createElement("span");
-        chip.className = "chip chip-extra" + (activas.indexOf(t.id) !== -1 ? " activo" : "");
-        chip.textContent = campo(t, "nombre");
+        chip.className = "chip chip-extra" +
+          (marcadas.indexOf(t.id) !== -1 ? " activo" : "") +
+          (t.activa === false ? " desactivada" : "");
+        chip.textContent = campo(t, "etiqueta");
         var desc = campo(t, "descripcion");
+        if (t.activa === false) desc = T("tec_desactivada") + (desc ? " · " + desc : "");
         if (desc) chip.title = desc;
         chip.addEventListener("click", function () { alternarTecnica(t.id); });
         fila.appendChild(chip);
@@ -1934,7 +2512,7 @@
     vacio.value = "";
     vacio.textContent = T("perfil_elegir");
     sel.appendChild(vacio);
-    PERFILES.forEach(function (p) {
+    activos(PERFILES).forEach(function (p) {
       var o = document.createElement("option");
       o.value = p.id;
       o.textContent = campo(p, "nombre");
@@ -1943,12 +2521,16 @@
   }
 
   document.getElementById("perfil-select").addEventListener("change", function (e) {
-    var perfil = PERFILES.filter(function (p) { return p.id === e.target.value; })[0];
+    var perfil = PERF[e.target.value];
     e.target.value = "";
     if (!perfil || !escenarioActual()) return;
     if (!confirm(T("perfil_confirmar", { perfil: campo(perfil, "nombre") }))) return;
-    escenarioActual().tecnicas = perfil.tecnicas.slice();
-    if (campo(perfil, "nota")) escenarioActual().nota_perfil_id = perfil.id;
+    escenarioActual().tecnicas = (perfil.tecnicas || []).slice();
+    // Siempre se apunta el perfil aplicado, tenga nota o no: si solo se
+    // guardara cuando la hay, aplicar un perfil sin nota dejaría en los
+    // avisos la nota del perfil anterior.
+    escenarioActual().nota_perfil_id = perfil.id;
+    delete escenarioActual().nota_perfil;
     guardarEstado();
     renderTecnicas();
     renderResumen();
@@ -2161,7 +2743,7 @@
 
     // Técnicas marcadas (o modalidades sueltas de escenarios antiguos)
     var etiquetasTec = tecnicasDe().map(function (id) {
-      return TECS[id] ? campo(TECS[id], "nombre") : id;
+      return TECS[id] ? campo(TECS[id], "etiqueta") : id;
     }).concat(esc.modalidades || []);
     if (etiquetasTec.length) {
       var mods = document.createElement("div");
@@ -2347,8 +2929,10 @@
     // El perfil se guarda por id para poder traducir su nota; nota_perfil es
     // el texto suelto que guardaban los escenarios anteriores.
     if (esc.nota_perfil_id) {
-      var perfilNota = PERFILES.filter(function (p) { return p.id === esc.nota_perfil_id; })[0];
-      if (perfilNota) avisos.push(campo(perfilNota, "nombre") + ": " + campo(perfilNota, "nota"));
+      var perfilNota = PERF[esc.nota_perfil_id];
+      if (perfilNota && campo(perfilNota, "nota")) {
+        avisos.push(campo(perfilNota, "nombre") + ": " + campo(perfilNota, "nota"));
+      }
     } else if (esc.nota_perfil) {
       avisos.push(esc.nota_perfil);
     }
@@ -2405,6 +2989,7 @@
 
   function renderTodo() {
     renderSelect();
+    renderPerfilSelect();
     renderTecnicas();
     renderResumen();
     renderCatalogo();

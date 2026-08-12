@@ -25,6 +25,7 @@
     <button type="button" id="btn-renombrar" data-i18n="btn_renombrar"></button>
     <button type="button" id="btn-vaciar" data-i18n="btn_vaciar"></button>
     <button type="button" id="btn-borrar" class="peligro" data-i18n="btn_borrar"></button>
+    <button type="button" id="btn-catalogos" data-i18n="btn_catalogos" data-i18n-title="btn_catalogos_tit"></button>
     <span class="barra-flex"></span>
     <button type="button" id="btn-exportar" data-i18n="btn_exportar"></button>
     <button type="button" id="btn-importar" data-i18n="btn_importar"></button>
@@ -227,6 +228,32 @@
     <button type="button" id="et-cerrar" data-i18n="cerrar"></button>
     <button type="button" id="et-nueva" data-i18n="et_btn_nueva"></button>
     <button type="button" id="et-guardar" class="primario" data-i18n="guardar"></button>
+  </div>
+</dialog>
+
+<dialog id="dlg-catalogos" class="no-print">
+  <h3 data-i18n="dlg_cat_titulo"></h3>
+
+  <div class="pestanas" id="cat-pestanas"></div>
+
+  <p class="dlg-intro" id="cat-intro"></p>
+
+  <div id="cat-lista" class="cat-lista"></div>
+  <p class="cat-version" id="cat-version"></p>
+
+  <hr class="dlg-sep">
+
+  <h4 id="cat-form-titulo"></h4>
+  <div id="cat-form"></div>
+
+  <p class="dlg-error" id="cat-error" hidden></p>
+
+  <div class="dlg-botones">
+    <button type="button" id="cat-borrar" class="peligro" hidden data-i18n="btn_borrar"></button>
+    <span class="barra-flex"></span>
+    <button type="button" id="cat-cerrar" data-i18n="cerrar"></button>
+    <button type="button" id="cat-nueva" data-i18n="et_btn_nueva"></button>
+    <button type="button" id="cat-guardar" class="primario" data-i18n="guardar"></button>
   </div>
 </dialog>
 

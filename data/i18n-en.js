@@ -154,36 +154,49 @@ window.SURGERIES_I18N.en = {
     "gafas_vep": { "nombre": "VEP goggles", "nota": "Visual stimulation for visual evoked potentials (O1/O2). They use no input" }
   },
 
-  /* Grupos de técnicas: texto en castellano -> inglés */
-  "grupos_tecnicas": {
-    "Técnicas de monitorización": "Monitoring techniques",
-    "Técnicas de mapeo": "Mapping techniques"
-  },
-
-  /* Técnicas: id -> { nombre, descripcion } */
+  /* Técnicas: id -> { etiqueta, descripcion }
+     "etiqueta" es el texto visible. Las técnicas que añadas tú no pasan por
+     aquí: se quedan como las escribas, igual que tus escenarios. */
   "tecnicas": {
-    "t_pess": { "nombre": "t-SSEP", "descripcion": "Transcranial SSEP" },
-    "t_pem": { "nombre": "t-MEP", "descripcion": "Transcranial motor evoked potentials" },
-    "c_pem": { "nombre": "c-MEP", "descripcion": "MEP by direct cortical stimulation" },
-    "c_pess": { "nombre": "c-SSEP", "descripcion": "Cortical SSEP" },
-    "pem_corticobulbares": { "nombre": "Corticobulbar MEP", "descripcion": "Corticobulbar tracts (cranial nerves)" },
-    "onda_d": { "nombre": "D wave", "descripcion": "Epidural D-wave recording" },
-    "br": { "nombre": "Blink Reflex (BR)", "descripcion": "Blink reflex" },
-    "rbc": { "nombre": "BCR", "descripcion": "Bulbocavernosus reflex" },
-    "peatc": { "nombre": "BAEP", "descripcion": "Brainstem auditory evoked potentials" },
+    "t_pess": { "etiqueta": "t-SSEP", "descripcion": "Transcranial SSEP" },
+    "t_pem": { "etiqueta": "t-MEP", "descripcion": "Transcranial motor evoked potentials" },
+    "c_pem": { "etiqueta": "c-MEP", "descripcion": "MEP by direct cortical stimulation" },
+    "c_pess": { "etiqueta": "c-SSEP", "descripcion": "Cortical SSEP" },
+    "pem_corticobulbares": { "etiqueta": "Corticobulbar MEP", "descripcion": "Corticobulbar tracts (cranial nerves)" },
+    "onda_d": { "etiqueta": "D wave", "descripcion": "Epidural D-wave recording" },
+    "br": { "etiqueta": "Blink Reflex (BR)", "descripcion": "Blink reflex" },
+    "rbc": { "etiqueta": "BCR", "descripcion": "Bulbocavernosus reflex" },
+    "peatc": { "etiqueta": "BAEP", "descripcion": "Brainstem auditory evoked potentials" },
     "emg": { "descripcion": "Electromyography" },
     "eeg": { "descripcion": "Electroencephalography" },
     "ecog": { "descripcion": "Electrocorticography" },
-    "pev": { "nombre": "VEP", "descripcion": "Visual evoked potentials — under study" },
-    "reflejo_h": { "nombre": "H reflex", "descripcion": "H reflex by popliteal fossa stimulation" },
-    "mapeo_cortical": { "nombre": "Cortical mapping", "descripcion": "Penfield technique" },
-    "mapeo_subcortical": { "nombre": "Subcortical mapping" },
-    "phase_reversal": { "nombre": "Phase reversal", "descripcion": "SSEP phase inversion" },
-    "mapeo_lenguaje": { "nombre": "Language mapping" },
-    "mapeo_iv_ventriculo": { "nombre": "Fourth ventricle mapping", "descripcion": "Nuclei of the floor of the fourth ventricle" },
-    "mapeo_columnas_dorsales": { "nombre": "Dorsal column mapping" },
-    "mapeo_raices_tornillos": { "nombre": "Root and screw mapping", "descripcion": "Nerve roots and pedicle screws" },
-    "mapeo_nervio_periferico": { "nombre": "Peripheral nerve mapping" }
+    "pev": { "etiqueta": "VEP", "descripcion": "Visual evoked potentials — under study" },
+    "reflejo_h": { "etiqueta": "H reflex", "descripcion": "H reflex by popliteal fossa stimulation" },
+    "mapeo_cortical": { "etiqueta": "Cortical mapping", "descripcion": "Penfield technique" },
+    "mapeo_subcortical": { "etiqueta": "Subcortical mapping" },
+    "phase_reversal": { "etiqueta": "Phase reversal", "descripcion": "SSEP phase inversion" },
+    "mapeo_lenguaje": { "etiqueta": "Language mapping" },
+    "mapeo_iv_ventriculo": { "etiqueta": "Fourth ventricle mapping", "descripcion": "Nuclei of the floor of the fourth ventricle" },
+    "mapeo_columnas_dorsales": { "etiqueta": "Dorsal column mapping" },
+    "mapeo_raices_tornillos": { "etiqueta": "Root and screw mapping", "descripcion": "Nerve roots and pedicle screws" },
+    "mapeo_nervio_periferico": { "etiqueta": "Peripheral nerve mapping" }
+  },
+
+  /* Servicios quirúrgicos: id -> { nombre } */
+  "servicios": {
+    "neurocirugia": { "nombre": "Neurosurgery" },
+    "cot": { "nombre": "Orthopaedics" },
+    "orl": { "nombre": "ENT" },
+    "vascular": { "nombre": "Vascular" },
+    "endocrino": { "nombre": "Endocrine" },
+    "maxilofacial": { "nombre": "Maxillofacial" },
+    "urologia": { "nombre": "Urology" }
+  },
+
+  /* Intervenciones: id -> { nombre } */
+  "intervenciones": {
+    "artrodesis_descompresion": { "nombre": "Fusion + decompression" },
+    "tumor_supratentorial_grid": { "nombre": "Supratentorial tumour with GRID" }
   },
 
   /* Perfiles por procedimiento: id -> { nombre, nota } */

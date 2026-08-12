@@ -866,6 +866,116 @@ dialog h3 {
 
 #dlg-sync { max-width: 470px; }
 
+/* ------------------------- Diálogo de catálogos ------------------------ */
+#dlg-catalogos { max-width: 560px; }
+
+.pestanas {
+  display: flex;
+  gap: 0.2rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.7rem;
+  overflow-x: auto;
+}
+.pestana {
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.6rem;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.pestana:hover { color: var(--text); }
+.pestana.activa {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+
+.cat-lista {
+  max-height: 34vh;
+  overflow-y: auto;
+  border: 1px solid var(--border-soft);
+  border-radius: 5px;
+}
+.cat-fila {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.3rem;
+  border-bottom: 1px solid var(--border-soft);
+}
+.cat-fila:last-child { border-bottom: none; }
+.cat-fila.editando { background: var(--accent-soft); }
+/* Desactivada: se ve, pero se nota que ya no se ofrece */
+.cat-fila.desactivada .cat-nombre { opacity: 0.5; text-decoration: line-through; }
+
+.cat-mover { display: flex; flex-direction: column; gap: 1px; }
+.cat-mover button {
+  font: inherit;
+  font-size: 0.55rem;
+  line-height: 1;
+  padding: 0.12rem 0.25rem;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  border-radius: 3px;
+  cursor: pointer;
+}
+.cat-mover button:hover:not(:disabled) { background: var(--accent-soft); border-color: var(--accent); }
+.cat-mover button:disabled { opacity: 0.25; cursor: default; }
+
+.cat-nombre {
+  font: inherit;
+  font-size: 0.82rem;
+  flex: 1 1 auto;
+  text-align: left;
+  border: none;
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+  padding: 0.3rem 0.15rem;
+}
+.cat-nombre:hover { color: var(--accent); }
+
+.cat-extra {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-align: right;
+  max-width: 45%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cat-activa {
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0.25rem 0.2rem;
+  color: var(--accent);
+}
+.cat-fila.desactivada .cat-activa { color: var(--text-muted); }
+
+.cat-version {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin: 0.3rem 0 0;
+  text-align: right;
+}
+
+#dlg-catalogos .chip-fila { max-height: 22vh; overflow-y: auto; }
+#dlg-catalogos h4 { margin: 0 0 0.5rem; font-size: 0.8rem; }
+
+/* Técnica desactivada que sigue marcada en un escenario: se puede quitar,
+   pero se ve que ya no es de las que se ofrecen. */
+.chip-extra.desactivada { opacity: 0.55; border-style: dashed; }
+
 .dlg-botones { display: flex; align-items: center; gap: 0.35rem; margin-top: 0.4rem; }
 .dlg-botones button {
   font: inherit;
@@ -896,6 +1006,11 @@ dialog h3 {
   .toolbar button, .btn-modo { padding: 0.4rem 0.7rem; }
   .barra-seleccion { font-size: 0.85rem; padding: 0.5rem 0.9rem; bottom: 0.5rem; }
   .barra-seleccion button { padding: 0.25rem 0.7rem; }
+  /* Objetivos táctiles del diálogo de catálogos: se usa desde el móvil */
+  .pestana { padding: 0.55rem 0.7rem; }
+  .cat-nombre { padding: 0.5rem 0.15rem; }
+  .cat-mover button { padding: 0.22rem 0.4rem; font-size: 0.6rem; }
+  .cat-activa { padding: 0.4rem 0.35rem; font-size: 1.05rem; }
 }
 
 @media (max-width: 620px) {

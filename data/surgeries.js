@@ -17,14 +17,20 @@
  *                         estímulos, tierras...). Aquí se añade material
  *                         nuevo para futuras cirugías.
  *   - tecnicas          : técnicas de monitorización y de mapeo.
+ *   - servicios         : servicios quirúrgicos.
+ *   - intervenciones    : tipos de cirugía, con su código de hospital.
  *   - perfiles_procedimiento : combinaciones habituales de técnicas.
  *   - escenarios        : presets de cirugía. Cada uno guarda qué material
  *                         va en qué entrada de qué caja.
  *
- * Los escenarios que crees o edites desde la web se guardan en el navegador
- * y NO tocan este archivo. Para que un preset sea permanente y viaje por
- * git a otro ordenador, usa el botón "Exportar" y pega el resultado aquí,
- * dentro de "escenarios".
+ * Los cinco últimos bloques son SIEMBRA de fábrica: desde la web se pueden
+ * añadir, renombrar y reordenar sus elementos, y lo que cambies se guarda
+ * en el navegador (y se sincroniza) sin tocar este archivo. Para que algo
+ * venga de serie en el repositorio, edítalo aquí.
+ *
+ * Regla que no se rompe: lo que se guarda en escenarios y casos son los
+ * "id", nunca los textos visibles. Así renombrar cualquier cosa se propaga
+ * al histórico entero en vez de dejarlo huérfano.
  */
 window.SURGERIES_DATA = {
 
@@ -301,38 +307,55 @@ window.SURGERIES_DATA = {
    * montar y quedan impresas en el resumen.
    * ------------------------------------------------------------------ */
   "tecnicas": [
-    {
-      "grupo": "Técnicas de monitorización",
-      "items": [
-        { "id": "t_pess", "nombre": "t-PESS", "descripcion": "PESS transcraneales" },
-        { "id": "t_pem", "nombre": "t-PEM", "descripcion": "Potenciales evocados motores transcraneales" },
-        { "id": "c_pem", "nombre": "c-PEM", "descripcion": "PEM por estímulo directo cortical" },
-        { "id": "c_pess", "nombre": "c-PESS", "descripcion": "PESS corticales" },
-        { "id": "pem_corticobulbares", "nombre": "PEM córtico-bulbares", "descripcion": "Vías corticobulbares (pares craneales)" },
-        { "id": "onda_d", "nombre": "Onda D", "descripcion": "Registro epidural de la onda D" },
-        { "id": "br", "nombre": "Blink Reflex (BR)", "descripcion": "Reflejo del parpadeo" },
-        { "id": "rbc", "nombre": "RBC", "descripcion": "Reflejo bulbo-cavernoso" },
-        { "id": "peatc", "nombre": "PEATC", "descripcion": "Potenciales evocados auditivos de tronco cerebral" },
-        { "id": "emg", "nombre": "EMG", "descripcion": "Electromiografía" },
-        { "id": "eeg", "nombre": "EEG", "descripcion": "Electroencefalografía" },
-        { "id": "ecog", "nombre": "ECoG", "descripcion": "Electrocorticografía" },
-        { "id": "pev", "nombre": "PEV", "descripcion": "Potenciales evocados visuales — en estudio" },
-        { "id": "reflejo_h", "nombre": "Reflejo H", "descripcion": "Reflejo H por estímulo en hueco poplíteo" }
-      ]
-    },
-    {
-      "grupo": "Técnicas de mapeo",
-      "items": [
-        { "id": "mapeo_cortical", "nombre": "Mapeo cortical", "descripcion": "Técnica de Penfield" },
-        { "id": "mapeo_subcortical", "nombre": "Mapeo subcortical" },
-        { "id": "phase_reversal", "nombre": "Phase-Reversal", "descripcion": "Inversión de fase de los PESS" },
-        { "id": "mapeo_lenguaje", "nombre": "Mapeo del lenguaje" },
-        { "id": "mapeo_iv_ventriculo", "nombre": "Mapeo del IV ventrículo", "descripcion": "Núcleos del suelo del IV ventrículo" },
-        { "id": "mapeo_columnas_dorsales", "nombre": "Mapeo de columnas dorsales" },
-        { "id": "mapeo_raices_tornillos", "nombre": "Mapeo de raíces y tornillos", "descripcion": "Raíces y tornillos pediculares" },
-        { "id": "mapeo_nervio_periferico", "nombre": "Mapeo de nervio periférico" }
-      ]
-    }
+    { "id": "t_pess", "etiqueta": "t-PESS", "grupo": "monitorizacion", "activa": true, "descripcion": "PESS transcraneales" },
+    { "id": "t_pem", "etiqueta": "t-PEM", "grupo": "monitorizacion", "activa": true, "descripcion": "Potenciales evocados motores transcraneales" },
+    { "id": "c_pem", "etiqueta": "c-PEM", "grupo": "monitorizacion", "activa": true, "descripcion": "PEM por estímulo directo cortical" },
+    { "id": "c_pess", "etiqueta": "c-PESS", "grupo": "monitorizacion", "activa": true, "descripcion": "PESS corticales" },
+    { "id": "pem_corticobulbares", "etiqueta": "PEM córtico-bulbares", "grupo": "monitorizacion", "activa": true, "descripcion": "Vías corticobulbares (pares craneales)" },
+    { "id": "onda_d", "etiqueta": "Onda D", "grupo": "monitorizacion", "activa": true, "descripcion": "Registro epidural de la onda D" },
+    { "id": "br", "etiqueta": "Blink Reflex (BR)", "grupo": "monitorizacion", "activa": true, "descripcion": "Reflejo del parpadeo" },
+    { "id": "rbc", "etiqueta": "RBC", "grupo": "monitorizacion", "activa": true, "descripcion": "Reflejo bulbo-cavernoso" },
+    { "id": "peatc", "etiqueta": "PEATC", "grupo": "monitorizacion", "activa": true, "descripcion": "Potenciales evocados auditivos de tronco cerebral" },
+    { "id": "emg", "etiqueta": "EMG", "grupo": "monitorizacion", "activa": true, "descripcion": "Electromiografía" },
+    { "id": "eeg", "etiqueta": "EEG", "grupo": "monitorizacion", "activa": true, "descripcion": "Electroencefalografía" },
+    { "id": "ecog", "etiqueta": "ECoG", "grupo": "monitorizacion", "activa": true, "descripcion": "Electrocorticografía" },
+    { "id": "pev", "etiqueta": "PEV", "grupo": "monitorizacion", "activa": true, "descripcion": "Potenciales evocados visuales — en estudio" },
+    { "id": "reflejo_h", "etiqueta": "Reflejo H", "grupo": "monitorizacion", "activa": true, "descripcion": "Reflejo H por estímulo en hueco poplíteo" },
+
+    { "id": "mapeo_cortical", "etiqueta": "Mapeo cortical", "grupo": "mapeo", "activa": true, "descripcion": "Técnica de Penfield" },
+    { "id": "mapeo_subcortical", "etiqueta": "Mapeo subcortical", "grupo": "mapeo", "activa": true },
+    { "id": "phase_reversal", "etiqueta": "Phase-Reversal", "grupo": "mapeo", "activa": true, "descripcion": "Inversión de fase de los PESS" },
+    { "id": "mapeo_lenguaje", "etiqueta": "Mapeo del lenguaje", "grupo": "mapeo", "activa": true },
+    { "id": "mapeo_iv_ventriculo", "etiqueta": "Mapeo del IV ventrículo", "grupo": "mapeo", "activa": true, "descripcion": "Núcleos del suelo del IV ventrículo" },
+    { "id": "mapeo_columnas_dorsales", "etiqueta": "Mapeo de columnas dorsales", "grupo": "mapeo", "activa": true },
+    { "id": "mapeo_raices_tornillos", "etiqueta": "Mapeo de raíces y tornillos", "grupo": "mapeo", "activa": true, "descripcion": "Raíces y tornillos pediculares" },
+    { "id": "mapeo_nervio_periferico", "etiqueta": "Mapeo de nervio periférico", "grupo": "mapeo", "activa": true }
+  ],
+
+  /* ------------------------------------------------------------------ *
+   * SERVICIOS QUIRÚRGICOS
+   * Catálogo editable. Los casos guardan el "id", nunca el nombre, para
+   * poder renombrar un servicio sin dejar huérfano ningún caso anterior.
+   * ------------------------------------------------------------------ */
+  "servicios": [
+    { "id": "neurocirugia",  "nombre": "Neurocirugía",  "activa": true },
+    { "id": "cot",           "nombre": "COT",           "activa": true },
+    { "id": "orl",           "nombre": "ORL",           "activa": true },
+    { "id": "vascular",      "nombre": "Vascular",      "activa": true },
+    { "id": "endocrino",     "nombre": "Endocrino",     "activa": true },
+    { "id": "maxilofacial",  "nombre": "Maxilofacial",  "activa": true },
+    { "id": "urologia",      "nombre": "Urología",      "activa": true }
+  ],
+
+  /* ------------------------------------------------------------------ *
+   * INTERVENCIONES
+   * Sembradas con los escenarios que ya existían. "codigo" queda vacío
+   * hasta tener la codificación del hospital: al rellenarlo se propaga
+   * solo a todo el histórico, porque los casos guardan el id.
+   * ------------------------------------------------------------------ */
+  "intervenciones": [
+    { "id": "artrodesis_descompresion", "nombre": "Artrodesis + descompresión", "codigo": "", "servicio": "neurocirugia", "activa": true },
+    { "id": "tumor_supratentorial_grid", "nombre": "Tumor supratentorial con GRID", "codigo": "", "servicio": "neurocirugia", "activa": true }
   ],
 
   /* ------------------------------------------------------------------ *
@@ -343,34 +366,40 @@ window.SURGERIES_DATA = {
   "perfiles_procedimiento": [
     {
       "id": "supratentorial",
+      "activa": true,
       "nombre": "Cirugía supratentorial",
       "tecnicas": ["t_pem", "c_pem", "t_pess", "c_pess", "mapeo_cortical", "mapeo_subcortical", "mapeo_lenguaje", "eeg", "ecog", "br"],
       "nota": "Mapeo motor (cortical y subcortical) o del lenguaje. Los PEV están en estudio."
     },
     {
       "id": "troncoencefalo",
+      "activa": true,
       "nombre": "Cirugía de troncoencéfalo",
       "tecnicas": ["t_pem", "pem_corticobulbares", "t_pess", "eeg", "peatc", "br", "mapeo_iv_ventriculo"],
       "nota": "Incluye mapeo motor de los nervios y de los núcleos del suelo del IV ventrículo."
     },
     {
       "id": "medula_espinal",
+      "activa": true,
       "nombre": "Cirugía de médula espinal",
       "tecnicas": ["t_pem", "onda_d", "t_pess", "mapeo_columnas_dorsales", "eeg"]
     },
     {
       "id": "columna",
+      "activa": true,
       "nombre": "Cirugía de columna",
       "tecnicas": ["t_pem", "t_pess", "mapeo_raices_tornillos", "eeg"]
     },
     {
       "id": "vascular",
+      "activa": true,
       "nombre": "Procesos vasculares",
       "tecnicas": ["t_pem", "c_pem", "t_pess", "c_pess", "eeg", "ecog"],
       "nota": "No exclusiva de neurocirugía: también radiología intervencionista y cirugía vascular. Las técnicas concretas dependen de la localización (aneurismas cerebrales o aórticos, malformaciones cerebrales o espinales...). PEM y PESS pueden asociarse a pruebas de provocación con anestésicos, sobre todo en embolización."
     },
     {
       "id": "raices_nervio_periferico",
+      "activa": true,
       "nombre": "Cirugía de raíces y nervio periférico",
       "tecnicas": ["t_pem", "t_pess", "mapeo_raices_tornillos", "mapeo_nervio_periferico"],
       "nota": "El mapeo puede ser de raíces, plexo, nervio periférico o tornillos pediculares."
