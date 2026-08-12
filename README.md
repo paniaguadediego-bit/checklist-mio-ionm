@@ -24,9 +24,28 @@ conexión a internet (no hace ninguna petición de red).
 - `index.html` — interfaz
 - `style.css` — estilos
 - `app.js` — lógica: catálogo, etiquetas, cajas, arrastrar y soltar, resumen
-- `data/surgeries.js` — **el único archivo que necesitas tocar**, con los
+- `data/surgeries.js` — **el archivo que normalmente vas a tocar**, con los
   bloques `cajas_material`, `etiquetas`, `catalogo_material`, `tecnicas`,
   `perfiles_procedimiento` y `escenarios`
+- `data/i18n-en.js` — la traducción al inglés de todo lo anterior
+
+## Idioma
+
+El botón **EN / ES** de la barra superior cambia entre castellano e inglés al
+instante, sin recargar ni perder nada. Se recuerda en ese navegador, y en la
+primera visita se propone el del sistema.
+
+Cambia toda la interfaz y también los datos: nombres y descripciones de las
+cajas, etiquetas, categorías del catálogo, notas de los ítems, técnicas,
+perfiles y los escenarios de fábrica. **Lo que escribes tú se queda como lo
+escribiste** —tus escenarios, tus etiquetas y tu material propio— porque no
+hay forma de traducirlo solo.
+
+El inglés vive en [`data/i18n-en.js`](data/i18n-en.js), separado de
+`data/surgeries.js` para que este siga siendo el archivo de trabajo. Allí solo
+hay texto, localizado por el `id` de cada cosa; lo que no esté traducido se
+queda en castellano. Para añadir otro idioma, ese mismo archivo explica los
+cuatro pasos.
 
 ## Modo quirófano
 

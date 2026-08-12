@@ -10,25 +10,26 @@
 
 <header class="barra-sup">
   <span class="marca">MIO<span class="marca-sep">/</span>IONM</span>
-  <select id="escenario-select" aria-label="Escenario de cirugía"></select>
+  <select id="escenario-select" data-i18n-aria="escenario_aria"></select>
   <span class="barra-flex"></span>
-  <button type="button" id="btn-sync" class="btn-modo" title="Sincronizar con GitHub">☁ <span id="sync-estado">Sin conectar</span></button>
-  <button type="button" id="btn-quirofano" class="btn-modo" title="Oculta el catálogo y las técnicas para dejar solo el montaje y el resumen">Modo quirófano</button>
+  <button type="button" id="btn-idioma" class="btn-modo" title="Switch to English">EN</button>
+  <button type="button" id="btn-sync" class="btn-modo" data-i18n-title="sync_titulo">☁ <span id="sync-estado"></span></button>
+  <button type="button" id="btn-quirofano" class="btn-modo" data-i18n-title="quirofano_titulo" data-i18n="quirofano_entrar"></button>
 </header>
 
 <main>
 
   <section class="toolbar no-print">
-    <button type="button" id="btn-nuevo">Nuevo</button>
-    <button type="button" id="btn-duplicar">Duplicar</button>
-    <button type="button" id="btn-renombrar">Renombrar</button>
-    <button type="button" id="btn-vaciar">Vaciar</button>
-    <button type="button" id="btn-borrar" class="peligro">Borrar</button>
+    <button type="button" id="btn-nuevo" data-i18n="btn_nuevo"></button>
+    <button type="button" id="btn-duplicar" data-i18n="btn_duplicar"></button>
+    <button type="button" id="btn-renombrar" data-i18n="btn_renombrar"></button>
+    <button type="button" id="btn-vaciar" data-i18n="btn_vaciar"></button>
+    <button type="button" id="btn-borrar" class="peligro" data-i18n="btn_borrar"></button>
     <span class="barra-flex"></span>
-    <button type="button" id="btn-exportar">Exportar copia</button>
-    <button type="button" id="btn-importar">Importar copia</button>
-    <button type="button" id="btn-imprimir">Imprimir</button>
-    <button type="button" id="btn-restablecer" class="peligro">Restablecer</button>
+    <button type="button" id="btn-exportar" data-i18n="btn_exportar"></button>
+    <button type="button" id="btn-importar" data-i18n="btn_importar"></button>
+    <button type="button" id="btn-imprimir" data-i18n="btn_imprimir"></button>
+    <button type="button" id="btn-restablecer" class="peligro" data-i18n="btn_restablecer"></button>
     <input type="file" id="fichero-importar" accept=".json,application/json" hidden>
     <span class="guardado-aviso" id="guardado-aviso"></span>
   </section>
@@ -37,17 +38,13 @@
 
     <aside class="panel-catalogo no-print" id="panel-catalogo">
       <div class="panel-cab">
-        <h2>Catálogo</h2>
-        <button type="button" id="btn-etiquetas" title="Gestionar etiquetas (tipos físicos de material)">Etiquetas</button>
-        <button type="button" id="btn-nuevo-material" title="Añadir material nuevo al catálogo">+</button>
-        <button type="button" id="btn-plegar" title="Plegar / desplegar">▾</button>
+        <h2 data-i18n="catalogo_titulo"></h2>
+        <button type="button" id="btn-etiquetas" data-i18n-title="btn_etiquetas_tit" data-i18n="btn_etiquetas"></button>
+        <button type="button" id="btn-nuevo-material" data-i18n-title="btn_nuevo_mat_tit">+</button>
+        <button type="button" id="btn-plegar" data-i18n-title="btn_plegar_tit">▾</button>
       </div>
-      <input type="search" id="catalogo-buscar" placeholder="Buscar material o tipo…" autocomplete="off">
-      <p class="panel-ayuda">
-        Pulsa un ítem y luego la entrada donde va. También puedes arrastrarlo.
-        Para quitarlo: ✕ o arrástralo aquí. Con <b>+</b> añades material propio
-        y en <b>Etiquetas</b> defines los tipos físicos.
-      </p>
+      <input type="search" id="catalogo-buscar" data-i18n-ph="catalogo_buscar" autocomplete="off">
+      <p class="panel-ayuda" data-i18n-html="catalogo_ayuda"></p>
       <div id="catalogo-contenido"></div>
     </aside>
 
@@ -55,9 +52,9 @@
 
       <section class="card tecnicas-card no-print" id="tecnicas">
         <div class="card-cab">
-          <h2>Técnicas</h2>
+          <h2 data-i18n="tecnicas_titulo"></h2>
           <label class="perfil-label">
-            Perfil
+            <span data-i18n="perfil_label"></span>
             <select id="perfil-select"></select>
           </label>
         </div>
@@ -66,7 +63,7 @@
 
       <section class="card resumen-card" id="resumen">
         <div class="card-cab">
-          <h2>Resumen de material</h2>
+          <h2 data-i18n="resumen_titulo"></h2>
         </div>
         <div id="resumen-contenido"></div>
       </section>
@@ -80,193 +77,161 @@
 </main>
 
 <div class="barra-seleccion no-print" id="barra-seleccion" hidden>
-  <span>Colocando <b id="bs-nombre"></b> — pulsa una entrada</span>
-  <button type="button" id="bs-cancelar">Cancelar</button>
+  <span><span data-i18n="colocando"></span> <b id="bs-nombre"></b> <span data-i18n="colocando_ayuda"></span></span>
+  <button type="button" id="bs-cancelar" data-i18n="cancelar"></button>
 </div>
 
 <dialog id="dlg-sync" class="no-print">
-  <h3>Sincronizar con GitHub</h3>
-  <p class="dlg-intro">
-    Guarda tus escenarios, etiquetas y material propio en un repositorio
-    privado de GitHub, para tenerlos en el móvil y en el ordenador. Una vez
-    conectado <b>se sincroniza solo</b>: baja lo último al abrir y sube unos
-    segundos después de cada cambio. En <b>Modo quirófano</b> la subida se
-    pausa —no depende de la red durante la cirugía— y se manda al salir.
-    Sin conexión sigue funcionando y reintenta cuando vuelve.
-    Los botones de abajo fuerzan una subida o bajada a mano.
-  </p>
+  <h3 data-i18n="dlg_sync_titulo"></h3>
+  <p class="dlg-intro" data-i18n-html="dlg_sync_intro"></p>
 
   <details class="dlg-ayuda">
-    <summary>Cómo preparar esto la primera vez</summary>
+    <summary data-i18n="dlg_sync_ayuda"></summary>
     <ol>
-      <li>Crea un repositorio <b>privado</b> nuevo y vacío en GitHub, solo para
-        los datos (p. ej. <code>checklist-mio-datos</code>). No uses el del
-        código: la web publicada lo dejaría a la vista.</li>
-      <li>Ve a <b>Settings → Developer settings → Personal access tokens →
-        Fine-grained tokens → Generate new token</b>.</li>
-      <li>En <b>Repository access</b> elige <i>Only select repositories</i> y
-        marca solo ese repositorio de datos.</li>
-      <li>En <b>Permissions → Repository permissions</b>, pon
-        <b>Contents: Read and write</b>. Nada más.</li>
-      <li>Genera el token, cópialo y pégalo abajo. Se guarda solo en este
-        navegador; puedes revocarlo desde GitHub cuando quieras.</li>
+      <li data-i18n-html="sync_paso1"></li>
+      <li data-i18n-html="sync_paso2"></li>
+      <li data-i18n-html="sync_paso3"></li>
+      <li data-i18n-html="sync_paso4"></li>
+      <li data-i18n-html="sync_paso5"></li>
     </ol>
   </details>
 
   <div class="campo">
-    <label for="sync-repo">Repositorio de datos <span class="req">*</span></label>
+    <label for="sync-repo"><span data-i18n="campo_repo"></span> <span class="req">*</span></label>
     <input id="sync-repo" placeholder="usuario/checklist-mio-datos" autocomplete="off">
-    <small>Con el formato <code>usuario/repositorio</code>.</small>
+    <small data-i18n-html="campo_repo_ayuda"></small>
   </div>
   <div class="campo">
-    <label for="sync-token">Token <span class="req">*</span></label>
+    <label for="sync-token"><span data-i18n="campo_token"></span> <span class="req">*</span></label>
     <input id="sync-token" type="password" placeholder="github_pat_…" autocomplete="off">
-    <small>Se guarda solo en este navegador y nunca sale de él salvo hacia GitHub.</small>
+    <small data-i18n="campo_token_ayuda"></small>
   </div>
 
   <p class="dlg-error" id="sync-error" hidden></p>
   <p class="dlg-ok" id="sync-ok" hidden></p>
 
   <div class="dlg-botones">
-    <button type="button" id="sync-olvidar" class="peligro">Desconectar</button>
+    <button type="button" id="sync-olvidar" class="peligro" data-i18n="btn_desconectar"></button>
     <span class="barra-flex"></span>
-    <button type="button" id="sync-cerrar">Cerrar</button>
-    <button type="button" id="sync-bajar">Bajar</button>
-    <button type="button" id="sync-subir" class="primario">Subir</button>
+    <button type="button" id="sync-cerrar" data-i18n="cerrar"></button>
+    <button type="button" id="sync-bajar" data-i18n="btn_bajar"></button>
+    <button type="button" id="sync-subir" class="primario" data-i18n="btn_subir"></button>
   </div>
 </dialog>
 
 <dialog id="dlg-material" class="no-print">
-  <h3 id="dlg-titulo">Material nuevo</h3>
+  <h3 id="dlg-titulo" data-i18n="dlg_mat_nuevo"></h3>
   <div class="campo">
-    <label for="mat-nombre">Nombre <span class="req">*</span></label>
-    <input id="mat-nombre" maxlength="40" placeholder="p. ej. L.Frontalis">
+    <label for="mat-nombre"><span data-i18n="campo_nombre"></span> <span class="req">*</span></label>
+    <input id="mat-nombre" maxlength="40" data-i18n-ph="mat_ph_nombre">
   </div>
   <div class="campo">
-    <label for="mat-categoria">Categoría <span class="req">*</span></label>
-    <input id="mat-categoria" list="lista-categorias" placeholder="p. ej. Músculos craneales (pares craneales)">
+    <label for="mat-categoria"><span data-i18n="campo_categoria"></span> <span class="req">*</span></label>
+    <input id="mat-categoria" list="lista-categorias" data-i18n-ph="mat_ph_categoria">
     <datalist id="lista-categorias"></datalist>
   </div>
   <div class="campo">
-    <label for="mat-etiqueta">Etiqueta (tipo físico) <span class="req">*</span></label>
+    <label for="mat-etiqueta"><span data-i18n="campo_etiqueta"></span> <span class="req">*</span></label>
     <span class="campo-con-boton">
       <select id="mat-etiqueta"></select>
-      <button type="button" id="mat-nueva-etiqueta" title="Crear o editar etiquetas">Gestionar…</button>
+      <button type="button" id="mat-nueva-etiqueta" data-i18n-title="campo_gestionar_t" data-i18n="campo_gestionar"></button>
     </span>
-    <small>Es lo que se suma en el recuento del resumen y lo que da el aspecto al chip.</small>
+    <small data-i18n="campo_etiqueta_ay"></small>
   </div>
 
   <fieldset class="campo-estilo">
-    <legend>Aspecto — deja «Como la etiqueta» para heredarlo</legend>
+    <legend data-i18n="grupo_aspecto"></legend>
     <div class="campo-fila">
       <span>
-        <label for="mat-borde">Borde</label>
-        <select id="mat-borde">
-          <option value="">Como la etiqueta</option>
-          <option value="solido">Sólido</option>
-          <option value="punteado">Punteado</option>
-          <option value="discontinuo">Discontinuo</option>
-          <option value="doble">Doble</option>
-          <option value="grueso">Grueso</option>
-          <option value="ninguno">Sin borde</option>
-        </select>
+        <label for="mat-borde" data-i18n="campo_borde"></label>
+        <select id="mat-borde" class="select-borde"></select>
       </span>
       <span>
-        <label for="mat-color">Color del borde</label>
+        <label for="mat-color" data-i18n="campo_color_borde"></label>
         <select id="mat-color" class="select-color"></select>
       </span>
       <span>
-        <label for="mat-fondo">Fondo</label>
+        <label for="mat-fondo" data-i18n="campo_fondo"></label>
         <select id="mat-fondo" class="select-color"></select>
       </span>
     </div>
     <div class="vista-previa">
-      <span class="vp-label">Así se verá:</span>
-      <span class="chip" id="mat-previa">Ejemplo</span>
+      <span class="vp-label" data-i18n="vista_previa"></span>
+      <span class="chip" id="mat-previa"></span>
     </div>
   </fieldset>
 
   <div class="campo">
     <label class="check">
       <input type="checkbox" id="mat-sinentrada">
-      No ocupa entrada
+      <span data-i18n="campo_sin_entrada"></span>
     </label>
   </div>
   <div class="campo">
-    <label for="mat-nota">Nota</label>
-    <textarea id="mat-nota" rows="2" placeholder="Para qué se usa, aclaraciones…"></textarea>
+    <label for="mat-nota" data-i18n="campo_nota"></label>
+    <textarea id="mat-nota" rows="2" data-i18n-ph="campo_nota_ph"></textarea>
   </div>
   <p class="dlg-error" id="mat-error" hidden></p>
   <div class="dlg-botones">
-    <button type="button" id="mat-borrar" class="peligro">Borrar</button>
+    <button type="button" id="mat-borrar" class="peligro" data-i18n="btn_borrar"></button>
     <span class="barra-flex"></span>
-    <button type="button" id="mat-cancelar">Cancelar</button>
-    <button type="button" id="mat-guardar" class="primario">Guardar</button>
+    <button type="button" id="mat-cancelar" data-i18n="cancelar"></button>
+    <button type="button" id="mat-guardar" class="primario" data-i18n="guardar"></button>
   </div>
 </dialog>
 
 <dialog id="dlg-etiquetas" class="no-print">
-  <h3>Etiquetas — tipos físicos de material</h3>
-  <p class="dlg-intro">
-    Una etiqueta es de qué está hecho el ítem: aguja trenzada, sacacorchos,
-    pegatina… Decide <b>qué se cuenta</b> en el resumen y <b>cómo se ve</b> el
-    chip. Pulsa una para editarla, o rellena el formulario para crear otra.
-  </p>
+  <h3 data-i18n="dlg_et_titulo"></h3>
+  <p class="dlg-intro" data-i18n-html="dlg_et_intro"></p>
 
   <div id="etiquetas-lista" class="etiquetas-lista"></div>
 
   <hr class="dlg-sep">
 
-  <h4 id="et-titulo">Etiqueta nueva</h4>
+  <h4 id="et-titulo" data-i18n="et_nueva"></h4>
   <div class="campo">
-    <label for="et-nombre">Nombre <span class="req">*</span></label>
-    <input id="et-nombre" maxlength="40" placeholder="p. ej. Electrodo de copa">
-    <small>Es el texto que aparece en «Material a preparar».</small>
+    <label for="et-nombre"><span data-i18n="campo_nombre"></span> <span class="req">*</span></label>
+    <input id="et-nombre" maxlength="40" data-i18n-ph="et_ph_nombre">
+    <small data-i18n="et_nombre_ayuda"></small>
   </div>
   <div class="campo-fila">
     <span>
-      <label for="et-borde">Borde</label>
-      <select id="et-borde">
-        <option value="solido">Sólido</option>
-        <option value="punteado">Punteado</option>
-        <option value="discontinuo">Discontinuo</option>
-        <option value="doble">Doble</option>
-        <option value="grueso">Grueso</option>
-        <option value="ninguno">Sin borde</option>
-      </select>
+      <label for="et-borde" data-i18n="campo_borde"></label>
+      <select id="et-borde" class="select-borde"></select>
     </span>
     <span>
-      <label for="et-color">Color del borde</label>
+      <label for="et-color" data-i18n="campo_color_borde"></label>
       <select id="et-color" class="select-color"></select>
     </span>
     <span>
-      <label for="et-fondo">Fondo</label>
+      <label for="et-fondo" data-i18n="campo_fondo"></label>
       <select id="et-fondo" class="select-color"></select>
     </span>
   </div>
   <div class="campo-fila">
     <span>
-      <label for="et-color-libre">Color a medida</label>
+      <label for="et-color-libre" data-i18n="campo_color_medida"></label>
       <input id="et-color-libre" type="color" value="#8896a2">
     </span>
     <span class="vista-previa">
-      <span class="vp-label">Así se verá:</span>
-      <span class="chip" id="et-previa">Ejemplo</span>
+      <span class="vp-label" data-i18n="vista_previa"></span>
+      <span class="chip" id="et-previa"></span>
     </span>
   </div>
 
   <p class="dlg-error" id="et-error" hidden></p>
 
   <div class="dlg-botones">
-    <button type="button" id="et-borrar" class="peligro" hidden>Borrar</button>
+    <button type="button" id="et-borrar" class="peligro" hidden data-i18n="btn_borrar"></button>
     <span class="barra-flex"></span>
-    <button type="button" id="et-cerrar">Cerrar</button>
-    <button type="button" id="et-nueva">Nueva</button>
-    <button type="button" id="et-guardar" class="primario">Guardar</button>
+    <button type="button" id="et-cerrar" data-i18n="cerrar"></button>
+    <button type="button" id="et-nueva" data-i18n="et_btn_nueva"></button>
+    <button type="button" id="et-guardar" class="primario" data-i18n="guardar"></button>
   </div>
 </dialog>
 
 <script src="data/surgeries.js"></script>
+<script src="data/i18n-en.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
