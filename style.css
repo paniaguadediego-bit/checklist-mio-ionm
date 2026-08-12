@@ -256,17 +256,19 @@ main {
 .chip-extra { cursor: pointer; border-style: dashed; }
 .chip-extra::before { content: "☐"; font-size: 0.76rem; line-height: 1; }
 .chip-extra.activo {
-  background: var(--accent-soft);
-  border-color: var(--accent);
-  border-style: solid;
+  background: var(--accent-soft) !important;
+  border-color: var(--accent) !important;
+  border-style: solid !important;
   color: var(--accent);
   font-weight: 600;
 }
 .chip-extra.activo::before { content: "☑"; }
 
+/* Gana al estilo de la etiqueta, que va en el atributo style del chip */
 .chip.seleccionado {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  border-style: solid !important;
   color: #fff;
   box-shadow: 0 0 0 2px var(--accent-soft);
 }
@@ -654,6 +656,118 @@ body.modo-quirofano .resumen-card { position: sticky; top: calc(var(--header-h) 
   margin-right: 0.3rem;
 }
 #btn-nuevo-material:hover { background: var(--accent); color: #fff; }
+
+/* Estado de la sincronización en el botón ☁ de la barra superior */
+#btn-sync[data-estado="aviso"] { border-color: var(--aviso-border); color: #ffd89a; }
+#btn-sync[data-estado="error"] { border-color: #e0736a; color: #ffb3ac; }
+
+#btn-etiquetas {
+  font: inherit;
+  font-size: 0.66rem;
+  font-weight: 600;
+  line-height: 1;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 0.22rem 0.4rem;
+  margin-left: auto;
+}
+#btn-etiquetas:hover { background: var(--accent-soft); border-color: var(--accent); }
+/* Con dos botones, el que empuja hacia la derecha es el primero */
+#btn-nuevo-material { margin-left: 0.25rem; }
+
+/* --------------------------------- Etiquetas --------------------------- */
+/* Distintivo del tipo físico en la tabla «Material a preparar» */
+.muestra-etiqueta {
+  display: inline-block;
+  width: 0.85rem;
+  height: 0.62rem;
+  border-radius: 2px;
+  margin-right: 0.35rem;
+  vertical-align: -0.05rem;
+  flex: 0 0 auto;
+}
+
+/* Selector de tipo físico dentro de un chip colocado */
+.chip-etiqueta {
+  max-width: 4.6rem;
+  font-size: 0.6rem;
+  opacity: 0.75;
+}
+.chip-etiqueta:hover, .chip-etiqueta:focus { opacity: 1; }
+
+#dlg-etiquetas { max-width: 520px; }
+
+.etiquetas-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  max-height: 32vh;
+  overflow-y: auto;
+  padding: 0.15rem;
+}
+.chip-etiqueta-lista {
+  font: inherit;
+  font-size: 0.72rem;
+  cursor: pointer;
+  color: var(--text);
+}
+.chip-etiqueta-lista.editando {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+.etiqueta-usos {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  background: rgba(0, 0, 0, 0.07);
+  border-radius: 6px;
+  padding: 0 0.25rem;
+  margin-left: 0.15rem;
+}
+
+.dlg-sep { border: none; border-top: 1px solid var(--border-soft); margin: 0.9rem 0 0.7rem; }
+#dlg-etiquetas h4 { margin: 0 0 0.5rem; font-size: 0.8rem; }
+
+.campo-con-boton { display: flex; gap: 0.3rem; align-items: stretch; }
+.campo-con-boton select { flex: 1 1 auto; }
+.campo-con-boton button {
+  font: inherit;
+  font-size: 0.85rem;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 0 0.45rem;
+}
+.campo-con-boton button:hover { background: var(--accent-soft); border-color: var(--accent); }
+
+/* La fila de tres desplegables se usa suelta, fuera de un .campo */
+.campo-fila { display: flex; margin-bottom: 0.6rem; }
+.campo-fila > span > label { font-size: 0.76rem; font-weight: 600; }
+.campo-fila > span > select,
+.campo-fila > span > input[type="color"] {
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.3rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #fff;
+  color: var(--text);
+}
+.campo-fila > span > input[type="color"] { padding: 0.1rem; height: 1.85rem; width: 2.8rem; }
+
+.campo-estilo {
+  border: 1px solid var(--border-soft);
+  border-radius: 5px;
+  padding: 0.5rem 0.6rem 0.2rem;
+  margin: 0 0 0.7rem;
+}
+.campo-estilo legend { font-size: 0.7rem; color: var(--text-muted); padding: 0 0.3rem; }
+
+.vista-previa { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.5rem; }
+.vp-label { font-size: 0.7rem; color: var(--text-muted); }
+.vista-previa .chip { cursor: default; }
 
 dialog {
   border: 1px solid var(--border);

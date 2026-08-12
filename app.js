@@ -4,6 +4,7 @@
   var DATA = window.SURGERIES_DATA || {};
   var CAJAS = DATA.cajas_material || {};
   var CATALOGO_BASE = DATA.catalogo_material || [];
+  var ETIQUETAS_BASE = DATA.etiquetas || [];
   var TECNICAS = DATA.tecnicas || [];
   var PERFILES = DATA.perfiles_procedimiento || [];
   var STORAGE_KEY = "mio_ionm_escenarios_v1";
@@ -13,6 +14,110 @@
   TECNICAS.forEach(function (g) {
     (g.items || []).forEach(function (t) { TECS[t.id] = t; });
   });
+
+  /* ---------------------------------------------------------------- *
+   * Etiquetas = tipos físicos de material (aguja trenzada, sacacorchos,
+   * pegatina...). Deciden qué se cuenta en el resumen y cómo se ve el chip.
+   *
+   * Las de fábrica viven en data/surgeries.js. El usuario puede crear las
+   * suyas, y también editar o borrar las de fábrica: una etiqueta propia
+   * con el mismo id sustituye a la de fábrica, y etiquetasBorradas guarda
+   * las que ha quitado.
+   * ---------------------------------------------------------------- */
+  var PALETA = {
+    rojo: "#cc2f24", azul: "#2565c4", verde: "#248a3c", amarillo: "#d3a800",
+    negro: "#14171a", naranja: "#d2691e", morado: "#7b3fa0",
+    turquesa: "#0d8f8f", gris: "#8896a2"
+  };
+  var BORDES = {
+    solido: "solid", punteado: "dotted", discontinuo: "dashed",
+    doble: "double", grueso: "solid", ninguno: "none"
+  };
+
+  var etiquetasUsuario = [];    // [{id, nombre, borde, color, fondo}]
+  var etiquetasBorradas = [];   // ids de etiquetas de fábrica que el usuario ha quitado
+  var ETIQUETAS = [];           // lista final, ordenada
+  var ETQ = {};                 // id -> etiqueta
+
+  function reconstruirEtiquetas() {
+    ETIQUETAS = [];
+    ETQ = {};
+    ETIQUETAS_BASE.forEach(function (e) {
+      if (etiquetasBorradas.indexOf(e.id) !== -1) return;
+      var copia = Object.assign({}, e);
+      ETQ[copia.id] = copia;
+      ETIQUETAS.push(copia);
+    });
+    etiquetasUsuario.forEach(function (e) {
+      var copia = Object.assign({}, e, { propia: true });
+      var previa = ETQ[copia.id];
+      if (previa) {
+        // Reedición de una etiqueta de fábrica: ocupa su mismo sitio
+        ETIQUETAS[ETIQUETAS.indexOf(previa)] = copia;
+      } else {
+        ETIQUETAS.push(copia);
+      }
+      ETQ[copia.id] = copia;
+    });
+  }
+
+  function etiquetaPorNombre(nombre) {
+    if (!nombre) return null;
+    var buscado = nombre.trim().toLowerCase();
+    for (var i = 0; i < ETIQUETAS.length; i++) {
+      if (ETIQUETAS[i].nombre.trim().toLowerCase() === buscado) return ETIQUETAS[i];
+    }
+    return null;
+  }
+
+  function idLibreEtiqueta(nombre) {
+    var base = "e_" + normalizar(nombre || "etiqueta");
+    var id = base, n = 2;
+    while (ETQ[id]) { id = base + "_" + n; n++; }
+    return id;
+  }
+
+  // Etiqueta efectiva de un ítem: el override de la colocación manda sobre
+  // la del ítem. "material" es el campo antiguo (texto suelto) de copias
+  // exportadas antes de que existieran las etiquetas.
+  function etiquetaDe(item, override) {
+    if (!item) return null;
+    if (override && ETQ[override]) return ETQ[override];
+    if (item.etiqueta && ETQ[item.etiqueta]) return ETQ[item.etiqueta];
+    return etiquetaPorNombre(item.material);
+  }
+
+  function nombreEtiquetaDe(item, override) {
+    var et = etiquetaDe(item, override);
+    return et ? et.nombre : (item && item.material) || "Sin etiqueta";
+  }
+
+  // El ítem puede sobreescribir cualquiera de las tres señas de la etiqueta
+  function estiloDe(item, override) {
+    var et = etiquetaDe(item, override) || {};
+    return {
+      borde: item.borde || et.borde || "solido",
+      color: item.color || et.color || null,
+      fondo: item.fondo || et.fondo || "ninguno"
+    };
+  }
+
+  function colorHex(valor) {
+    if (!valor || valor === "ninguno") return null;
+    if (PALETA[valor]) return PALETA[valor];
+    return /^#[0-9a-f]{3,8}$/i.test(valor) ? valor : null;
+  }
+
+  function aplicarEstilo(el, estilo) {
+    el.style.borderStyle = BORDES[estilo.borde] || "solid";
+    el.style.borderWidth = (estilo.borde === "grueso" || estilo.borde === "doble") ? "3px" : "1px";
+    var borde = colorHex(estilo.color);
+    if (borde) el.style.borderColor = borde;
+    var fondo = colorHex(estilo.fondo);
+    // Tinte suave: el mismo color con alfa, para que se lea igual sobre el
+    // panel claro del catálogo y sobre el fondo oscuro de las cajas.
+    if (fondo) el.style.backgroundColor = fondo + "2e";
+  }
 
   /* ---------------------------------------------------------------- *
    * Catálogo = material de fábrica (data/surgeries.js) + material propio
@@ -41,13 +146,25 @@
 
     catalogoUsuario.forEach(function (item) {
       var completo = Object.assign({}, item, { propio: true });
+      var previo = ITEMS[item.id];
       ITEMS[item.id] = completo;
       var grupo = CATALOGO.filter(function (g) { return g.categoria === item.categoria; })[0];
       if (!grupo) {
         grupo = { categoria: item.categoria, items: [] };
         CATALOGO.push(grupo);
       }
-      grupo.items.push(completo);
+      // Un ítem propio con el id de uno de fábrica lo sustituye en su sitio,
+      // para poder retocar el material que viene de serie sin duplicarlo.
+      var i = previo ? grupo.items.indexOf(previo) : -1;
+      if (i !== -1) grupo.items[i] = completo;
+      else grupo.items.push(completo);
+      // Si además cambió de categoría, hay que sacarlo de la anterior
+      if (previo && i === -1) {
+        CATALOGO.forEach(function (g) {
+          var j = g.items.indexOf(previo);
+          if (j !== -1) g.items.splice(j, 1);
+        });
+      }
     });
   }
 
@@ -55,18 +172,14 @@
     return CATALOGO.map(function (g) { return g.categoria; });
   }
 
-  function materialesExistentes() {
-    var vistos = {};
-    Object.keys(ITEMS).forEach(function (id) {
-      if (ITEMS[id].material) vistos[ITEMS[id].material] = true;
-    });
-    return Object.keys(vistos).sort();
+  function normalizar(texto) {
+    return (texto || "").toLowerCase()
+      .normalize("NFD").replace(/[̀-ͯ]/g, "")
+      .replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "") || "x";
   }
 
   function idLibre(nombre) {
-    var base = "u_" + (nombre || "material").toLowerCase()
-      .normalize("NFD").replace(/[̀-ͯ]/g, "")
-      .replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+    var base = "u_" + normalizar(nombre || "material");
     var id = base, n = 2;
     while (ITEMS[id]) { id = base + "_" + n; n++; }
     return id;
@@ -85,15 +198,25 @@
   function cargarEstado() {
     escenarios = clonar(DATA.escenarios || {});
     catalogoUsuario = [];
+    etiquetasUsuario = [];
+    etiquetasBorradas = [];
     var guardado = null;
     try {
       guardado = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
     } catch (e) {
       guardado = null;
     }
+    if (guardado && Array.isArray(guardado.etiquetas_usuario)) {
+      etiquetasUsuario = guardado.etiquetas_usuario;
+    }
+    if (guardado && Array.isArray(guardado.etiquetas_borradas)) {
+      etiquetasBorradas = guardado.etiquetas_borradas;
+    }
     if (guardado && Array.isArray(guardado.catalogo_usuario)) {
       catalogoUsuario = guardado.catalogo_usuario;
     }
+    reconstruirEtiquetas();
+    migrarMaterialALaEtiqueta();
     reconstruirCatalogo();
     if (guardado && guardado.escenarios) {
       // Lo guardado manda: incluye ediciones de los presets de fábrica
@@ -113,15 +236,44 @@
 
   var borrados = [];
 
+  // Copias hechas antes de que existieran las etiquetas guardaban el tipo
+  // físico como texto suelto en "material". Se convierte a etiqueta: si el
+  // texto coincide con una existente se reutiliza, y si no se crea una nueva
+  // para no perder el recuento.
+  function migrarMaterialALaEtiqueta() {
+    var nuevas = false;
+    catalogoUsuario.forEach(function (item) {
+      if (item.etiqueta || !item.material) return;
+      var et = etiquetaPorNombre(item.material);
+      if (!et) {
+        et = {
+          id: idLibreEtiqueta(item.material),
+          nombre: item.material,
+          borde: "solido", color: "gris", fondo: "ninguno"
+        };
+        etiquetasUsuario.push(et);
+        ETQ[et.id] = et;
+        ETIQUETAS.push(et);
+        nuevas = true;
+      }
+      item.etiqueta = et.id;
+      delete item.material;
+    });
+    if (nuevas) reconstruirEtiquetas();
+  }
+
   function guardarEstado() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         escenarios: escenarios,
         activo: activo,
         borrados: borrados,
-        catalogo_usuario: catalogoUsuario
+        catalogo_usuario: catalogoUsuario,
+        etiquetas_usuario: etiquetasUsuario,
+        etiquetas_borradas: etiquetasBorradas
       }));
       avisoGuardado("Guardado en este navegador · " + new Date().toLocaleTimeString("es-ES"));
+      programarSubida();
     } catch (e) {
       avisoGuardado("No se ha podido guardar: " + e.message, true);
     }
@@ -169,6 +321,35 @@
     guardarEstado();
     renderTecnicas();
     renderResumen();
+  }
+
+  /* Etiqueta elegida para UNA colocación concreta. Vive en el escenario,
+     igual que el conmutador, así que el mismo A1 puede ir con sacacorchos
+     en una cirugía y con aguja en otra sin duplicarlo en el catálogo. */
+  function claveEntrada(cajaKey, entradaId) {
+    return cajaKey + "/" + entradaId;
+  }
+
+  function etiquetaColocada(cajaKey, entradaId) {
+    var esc = escenarioActual();
+    if (!esc || !esc.etiquetas) return null;
+    return esc.etiquetas[claveEntrada(cajaKey, entradaId)] || null;
+  }
+
+  function fijarEtiquetaColocada(cajaKey, entradaId, etiquetaId, itemId) {
+    var esc = escenarioActual();
+    if (!esc) return;
+    if (!esc.etiquetas) esc.etiquetas = {};
+    var clave = claveEntrada(cajaKey, entradaId);
+    var item = ITEMS[itemId];
+    // Si vuelve a la etiqueta propia del ítem no hace falta guardar nada
+    if (item && item.etiqueta === etiquetaId) delete esc.etiquetas[clave];
+    else esc.etiquetas[clave] = etiquetaId;
+  }
+
+  function olvidarEtiquetaColocada(cajaKey, entradaId) {
+    var esc = escenarioActual();
+    if (esc && esc.etiquetas) delete esc.etiquetas[claveEntrada(cajaKey, entradaId)];
   }
 
   function asignacionesDe(cajaKey) {
@@ -255,6 +436,8 @@
 
   function colocar(cajaKey, entradaId, itemId) {
     asignacionesDe(cajaKey)[entradaId] = itemId;
+    // La etiqueta que hubiera elegida era del material anterior
+    olvidarEtiquetaColocada(cajaKey, entradaId);
     guardarEstado();
     renderCajas();
     renderResumen();
@@ -271,7 +454,16 @@
     chip.dataset.itemId = item.id;
     if (opciones.cajaKey) chip.dataset.origenCaja = opciones.cajaKey;
     if (opciones.entradaId) chip.dataset.origenEntrada = opciones.entradaId;
-    if (item.nota) chip.title = item.nota;
+
+    // Aspecto según el tipo físico (etiqueta), con el override de la
+    // colocación si lo hay: borde, color de borde y tinte de fondo.
+    var override = opciones.colocado
+      ? etiquetaColocada(opciones.cajaKey, opciones.entradaId) : null;
+    var etiqueta = etiquetaDe(item, override);
+    aplicarEstilo(chip, estiloDe(item, override));
+
+    var rotulo = etiqueta ? etiqueta.nombre : "sin etiqueta";
+    chip.title = (item.nota ? item.nota + "\n" : "") + "Tipo: " + rotulo;
 
     if (item.color) {
       var dot = document.createElement("span");
@@ -336,6 +528,29 @@
     }
 
     if (opciones.colocado) {
+      // Selector de tipo físico para ESTA colocación: el mismo A1 puede ir
+      // con sacacorchos en una cirugía y con aguja en otra.
+      var selEt = document.createElement("select");
+      selEt.className = "chip-select chip-etiqueta";
+      selEt.title = "Tipo físico de material en esta entrada";
+      ETIQUETAS.forEach(function (et) {
+        var o = document.createElement("option");
+        o.value = et.id;
+        o.textContent = et.nombre;
+        selEt.appendChild(o);
+      });
+      if (etiqueta) selEt.value = etiqueta.id;
+      ["mousedown", "click", "dragstart"].forEach(function (ev) {
+        selEt.addEventListener(ev, function (e) { e.stopPropagation(); });
+      });
+      selEt.addEventListener("change", function () {
+        fijarEtiquetaColocada(opciones.cajaKey, opciones.entradaId, selEt.value, item.id);
+        guardarEstado();
+        renderCajas();
+        renderResumen();
+      });
+      chip.appendChild(selEt);
+
       var quitar = document.createElement("button");
       quitar.type = "button";
       quitar.className = "chip-quitar";
@@ -344,6 +559,7 @@
       quitar.addEventListener("click", function (e) {
         e.stopPropagation();
         delete asignacionesDe(opciones.cajaKey)[opciones.entradaId];
+        olvidarEtiquetaColocada(opciones.cajaKey, opciones.entradaId);
         guardarEstado();
         renderCajas();
         renderResumen();
@@ -431,11 +647,18 @@
       var destinoCaja = slot.dataset.caja;
       var destinoEntrada = slot.dataset.entrada;
 
-      // Mover dentro/entre cajas: liberar el origen
+      // Mover dentro/entre cajas: liberar el origen y llevarse su etiqueta
+      var etiquetaViajera = null;
       if (arrastrando.origenCaja) {
+        etiquetaViajera = etiquetaColocada(arrastrando.origenCaja, arrastrando.origenEntrada);
         delete asignacionesDe(arrastrando.origenCaja)[arrastrando.origenEntrada];
+        olvidarEtiquetaColocada(arrastrando.origenCaja, arrastrando.origenEntrada);
       }
       asignacionesDe(destinoCaja)[destinoEntrada] = arrastrando.itemId;
+      olvidarEtiquetaColocada(destinoCaja, destinoEntrada);
+      if (etiquetaViajera) {
+        fijarEtiquetaColocada(destinoCaja, destinoEntrada, etiquetaViajera, arrastrando.itemId);
+      }
       guardarEstado();
       renderCajas();
       renderResumen();
@@ -447,6 +670,7 @@
       e.preventDefault();
       cat.classList.remove("sobre");
       delete asignacionesDe(arrastrando.origenCaja)[arrastrando.origenEntrada];
+      olvidarEtiquetaColocada(arrastrando.origenCaja, arrastrando.origenEntrada);
       guardarEstado();
       renderCajas();
       renderResumen();
@@ -501,7 +725,23 @@
    * ---------------------------------------------------------------- */
   var SYNC_KEY = "mio_ionm_sync_v1";
   var RUTA_REMOTA = "estado.json";
-  var sync = { repo: "", token: "", sha: null, fecha: null };
+  // pendiente: hay cambios locales sin subir. Sobrevive al cierre del
+  // navegador para no bajar encima de ellos al abrir en otro sitio.
+  var sync = { repo: "", token: "", sha: null, fecha: null, pendiente: false };
+
+  var RETARDO_SUBIDA = 4000;   // margen para no subir en cada tecleo
+  var temporizador = null;
+  var subiendo = false;
+  var conflicto = false;       // el remoto cambió desde otro dispositivo
+  var ultimoFallo = null;
+
+  function syncActivo() {
+    return !!(sync.repo && sync.token);
+  }
+
+  function enQuirofano() {
+    return document.body.classList.contains("modo-quirofano");
+  }
 
   function cargarSync() {
     try {
@@ -516,8 +756,22 @@
 
   function pintarEstadoSync() {
     var el = document.getElementById("sync-estado");
-    if (!sync.repo || !sync.token) {
+    var btn = document.getElementById("btn-sync");
+    var estado = "ok";
+    if (!syncActivo()) {
       el.textContent = "Sin conectar";
+      estado = "off";
+    } else if (conflicto) {
+      el.textContent = "Conflicto";
+      estado = "error";
+    } else if (subiendo) {
+      el.textContent = "Sincronizando…";
+    } else if (ultimoFallo) {
+      el.textContent = "Sin subir";
+      estado = "error";
+    } else if (sync.pendiente) {
+      el.textContent = enQuirofano() ? "En pausa" : "Guardando…";
+      estado = "aviso";
     } else if (sync.fecha) {
       el.textContent = "Sinc. " + new Date(sync.fecha).toLocaleString("es-ES", {
         day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit"
@@ -525,6 +779,10 @@
     } else {
       el.textContent = "Conectado";
     }
+    btn.dataset.estado = estado;
+    btn.title = ultimoFallo || (conflicto
+      ? "En GitHub hay una versión más reciente. Abre para resolverlo."
+      : "Sincronizar con GitHub");
   }
 
   function mensajeSync(texto, esError) {
@@ -575,10 +833,12 @@
   function estadoActual() {
     return {
       formato: "mio-ionm",
-      version: 1,
+      version: 2,
       fecha: new Date().toISOString(),
       escenarios: escenarios,
       catalogo_usuario: catalogoUsuario,
+      etiquetas_usuario: etiquetasUsuario,
+      etiquetas_borradas: etiquetasBorradas,
       borrados: borrados,
       activo: activo
     };
@@ -587,8 +847,12 @@
   function aplicarEstado(copia) {
     escenarios = copia.escenarios || {};
     catalogoUsuario = copia.catalogo_usuario || [];
+    etiquetasUsuario = copia.etiquetas_usuario || [];
+    etiquetasBorradas = copia.etiquetas_borradas || [];
     borrados = copia.borrados || [];
     activo = copia.activo && escenarios[copia.activo] ? copia.activo : Object.keys(escenarios)[0] || null;
+    reconstruirEtiquetas();
+    migrarMaterialALaEtiqueta();   // copias de la versión 1, sin etiquetas
     reconstruirCatalogo();
     guardarEstado();
     renderTodo();
@@ -610,8 +874,34 @@
       });
   }
 
+  // Escribe el estado en el repositorio. shaRemoto identifica la versión
+  // sobre la que escribimos (GitHub la exige para no pisar a ciegas).
+  function enviarEstado(shaRemoto) {
+    var cuerpo = {
+      message: "Actualizar escenarios MIO/IONM",
+      content: aBase64(JSON.stringify(estadoActual(), null, 2))
+    };
+    if (shaRemoto) cuerpo.sha = shaRemoto;
+    return fetch(urlContenido(), {
+      method: "PUT",
+      headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()),
+      body: JSON.stringify(cuerpo)
+    }).then(function (resp) {
+      if (!resp.ok) throw new Error(errorLegible(resp));
+      return resp.json();
+    }).then(function (json) {
+      sync.sha = json.content.sha;
+      sync.fecha = new Date().toISOString();
+      sync.pendiente = false;
+      conflicto = false;
+      ultimoFallo = null;
+      guardarSync();
+      pintarEstadoSync();
+    });
+  }
+
   function subir(forzar) {
-    if (!sync.repo || !sync.token) return;
+    if (!syncActivo()) return;
     mensajeSync("Subiendo…");
     leerRemoto()
       .then(function (remoto) {
@@ -628,30 +918,92 @@
             return null;
           }
         }
-        var cuerpo = {
-          message: "Actualizar escenarios MIO/IONM",
-          content: aBase64(JSON.stringify(estadoActual(), null, 2))
-        };
-        if (remoto.sha) cuerpo.sha = remoto.sha;
-        return fetch(urlContenido(), {
-          method: "PUT",
-          headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()),
-          body: JSON.stringify(cuerpo)
-        });
-      })
-      .then(function (resp) {
-        if (!resp) return;
-        if (!resp.ok) throw new Error(errorLegible(resp));
-        return resp.json().then(function (json) {
-          sync.sha = json.content.sha;
-          sync.fecha = new Date().toISOString();
-          guardarSync();
-          pintarEstadoSync();
+        return enviarEstado(remoto.sha).then(function () {
           mensajeSync("Subido correctamente.");
         });
       })
       .catch(function (e) { mensajeSync(e.message || "No se ha podido subir.", true); });
   }
+
+  /* -------- Automático --------------------------------------------- *
+   * Guardar deja una marca de "pendiente" y arranca una cuenta atrás.
+   * Nunca se pisa lo remoto a la brava: si ha cambiado desde otro
+   * dispositivo se marca conflicto y se deja en manos del usuario.
+   * ------------------------------------------------------------------ */
+  function programarSubida() {
+    if (!syncActivo()) return;
+    sync.pendiente = true;
+    guardarSync();
+    pintarEstadoSync();
+    if (temporizador) clearTimeout(temporizador);
+    // En quirófano no se toca la red: se sube al salir del modo
+    if (enQuirofano()) return;
+    temporizador = setTimeout(function () {
+      temporizador = null;
+      subirAuto();
+    }, RETARDO_SUBIDA);
+  }
+
+  function subirAuto() {
+    if (!syncActivo() || subiendo || conflicto || !sync.pendiente) return;
+    if (navigator.onLine === false) { pintarEstadoSync(); return; }
+    subiendo = true;
+    pintarEstadoSync();
+    leerRemoto()
+      .then(function (remoto) {
+        if (remoto.existe && sync.sha && remoto.sha !== sync.sha) {
+          conflicto = true;
+          return null;   // hay que decidir a mano cuál se queda
+        }
+        return enviarEstado(remoto.sha);
+      })
+      .catch(function (e) { ultimoFallo = e.message || "No se ha podido subir."; })
+      .then(function () {
+        subiendo = false;
+        pintarEstadoSync();
+      });
+  }
+
+  // Al abrir: si no hay nada local sin subir, se trae lo último sin preguntar
+  function bajarAuto() {
+    if (!syncActivo() || navigator.onLine === false) return;
+    if (sync.pendiente) { subirAuto(); return; }
+    subiendo = true;
+    pintarEstadoSync();
+    leerRemoto()
+      .then(function (remoto) {
+        if (!remoto.existe || remoto.sha === sync.sha) return;
+        var copia = remoto.contenido;
+        if (!copia || copia.formato !== "mio-ionm") return;
+        aplicarEstado(copia);
+        sync.sha = remoto.sha;
+        sync.fecha = new Date().toISOString();
+        // aplicarEstado guarda, y guardar deja pendiente: no lo está
+        sync.pendiente = false;
+        if (temporizador) { clearTimeout(temporizador); temporizador = null; }
+        guardarSync();
+        avisoGuardado("Traído de GitHub · " + new Date().toLocaleTimeString("es-ES"));
+      })
+      .catch(function (e) { ultimoFallo = e.message || "No se ha podido bajar."; })
+      .then(function () {
+        subiendo = false;
+        pintarEstadoSync();
+      });
+  }
+
+  // Al volver la conexión se reintenta lo que quedó pendiente
+  window.addEventListener("online", function () {
+    ultimoFallo = null;
+    if (sync.pendiente) subirAuto();
+  });
+
+  // Cerrar la pestaña con algo sin subir: avisa antes de perderlo de vista
+  window.addEventListener("beforeunload", function (e) {
+    if (syncActivo() && sync.pendiente && !enQuirofano()) {
+      e.preventDefault();
+      e.returnValue = "";
+    }
+  });
 
   function bajar() {
     if (!sync.repo || !sync.token) return;
@@ -675,6 +1027,11 @@
         aplicarEstado(copia);
         sync.sha = remoto.sha;
         sync.fecha = new Date().toISOString();
+        // Lo local queda sustituido: ya no hay nada pendiente ni en conflicto
+        sync.pendiente = false;
+        conflicto = false;
+        ultimoFallo = null;
+        if (temporizador) { clearTimeout(temporizador); temporizador = null; }
         guardarSync();
         pintarEstadoSync();
         mensajeSync("Descargado correctamente.");
@@ -702,9 +1059,15 @@
       mensajeSync("El repositorio debe tener el formato usuario/repositorio.", true);
       return false;
     }
-    if (repo !== sync.repo) sync.sha = null;  // repo distinto: la referencia anterior no vale
+    if (repo !== sync.repo) {
+      // Repo distinto: la referencia anterior no vale y hay que subirlo entero
+      sync.sha = null;
+      conflicto = false;
+      sync.pendiente = true;
+    }
     sync.repo = repo;
     sync.token = token;
+    ultimoFallo = null;
     guardarSync();
     pintarEstadoSync();
     return true;
@@ -719,7 +1082,10 @@
   document.getElementById("sync-cerrar").addEventListener("click", function () { dlgSync.close(); });
   document.getElementById("sync-olvidar").addEventListener("click", function () {
     if (!confirm("¿Olvidar el token y el repositorio en este dispositivo?\nTus escenarios no se borran, y lo guardado en GitHub tampoco.")) return;
-    sync = { repo: "", token: "", sha: null, fecha: null };
+    sync = { repo: "", token: "", sha: null, fecha: null, pendiente: false };
+    conflicto = false;
+    ultimoFallo = null;
+    if (temporizador) { clearTimeout(temporizador); temporizador = null; }
     try { localStorage.removeItem(SYNC_KEY); } catch (e) { /* nada que borrar */ }
     document.getElementById("sync-repo").value = "";
     document.getElementById("sync-token").value = "";
@@ -741,28 +1107,79 @@
       o.value = c;
       dlCat.appendChild(o);
     });
-    var dlMat = document.getElementById("lista-materiales");
-    dlMat.innerHTML = "";
-    materialesExistentes().forEach(function (m) {
+  }
+
+  // Desplegable de colores con el nombre en castellano, más "sin color"
+  function rellenarSelectColor(sel, textoVacio) {
+    var previo = sel.value;
+    sel.innerHTML = "";
+    var vacio = document.createElement("option");
+    vacio.value = "";
+    vacio.textContent = textoVacio;
+    sel.appendChild(vacio);
+    Object.keys(PALETA).forEach(function (nombre) {
       var o = document.createElement("option");
-      o.value = m;
-      dlMat.appendChild(o);
+      o.value = nombre;
+      o.textContent = nombre.charAt(0).toUpperCase() + nombre.slice(1);
+      sel.appendChild(o);
     });
+    var ninguno = document.createElement("option");
+    ninguno.value = "ninguno";
+    ninguno.textContent = "Sin fondo";
+    if (sel.id === "mat-fondo" || sel.id === "et-fondo") sel.appendChild(ninguno);
+    // Un color a medida guardado como hex sigue siendo una opción válida
+    if (previo && !sel.querySelector('option[value="' + previo + '"]')) {
+      var libre = document.createElement("option");
+      libre.value = previo;
+      libre.textContent = previo;
+      sel.appendChild(libre);
+    }
+    sel.value = previo;
+  }
+
+  function rellenarSelectEtiquetas(sel, valor) {
+    sel.innerHTML = "";
+    ETIQUETAS.forEach(function (et) {
+      var o = document.createElement("option");
+      o.value = et.id;
+      o.textContent = et.nombre;
+      sel.appendChild(o);
+    });
+    if (valor && ETQ[valor]) sel.value = valor;
+  }
+
+  // Chip de ejemplo que se repinta al tocar cualquier desplegable
+  function refrescarPreviaMaterial() {
+    var previa = document.getElementById("mat-previa");
+    previa.removeAttribute("style");
+    previa.textContent = document.getElementById("mat-nombre").value.trim() || "Ejemplo";
+    aplicarEstilo(previa, estiloDe({
+      etiqueta: document.getElementById("mat-etiqueta").value,
+      borde: document.getElementById("mat-borde").value || undefined,
+      color: document.getElementById("mat-color").value || undefined,
+      fondo: document.getElementById("mat-fondo").value || undefined
+    }, null));
   }
 
   function abrirEditorMaterial(id) {
     editandoId = id || null;
     var item = id ? ITEMS[id] : null;
     rellenarDatalists();
+    rellenarSelectColor(document.getElementById("mat-color"), "Como la etiqueta");
+    rellenarSelectColor(document.getElementById("mat-fondo"), "Como la etiqueta");
+    var etActual = item ? (etiquetaDe(item, null) || {}).id : (ETIQUETAS[0] || {}).id;
+    rellenarSelectEtiquetas(document.getElementById("mat-etiqueta"), etActual);
     document.getElementById("dlg-titulo").textContent = item ? "Editar material" : "Material nuevo";
     document.getElementById("mat-nombre").value = item ? item.nombre : "";
     document.getElementById("mat-categoria").value = item ? item.categoria : "";
-    document.getElementById("mat-material").value = item ? (item.material || "") : "";
+    document.getElementById("mat-borde").value = item ? (item.borde || "") : "";
     document.getElementById("mat-color").value = item ? (item.color || "") : "";
+    document.getElementById("mat-fondo").value = item ? (item.fondo || "") : "";
     document.getElementById("mat-nota").value = item ? (item.nota || "") : "";
     document.getElementById("mat-sinentrada").checked = item ? !!item.sin_entrada : false;
     document.getElementById("mat-borrar").hidden = !item;
     document.getElementById("mat-error").hidden = true;
+    refrescarPreviaMaterial();
     dlg.showModal();
     document.getElementById("mat-nombre").focus();
   }
@@ -770,11 +1187,11 @@
   function guardarMaterial() {
     var nombre = document.getElementById("mat-nombre").value.trim();
     var categoria = document.getElementById("mat-categoria").value.trim();
-    var material = document.getElementById("mat-material").value.trim();
+    var etiqueta = document.getElementById("mat-etiqueta").value;
     var err = document.getElementById("mat-error");
 
-    if (!nombre || !categoria || !material) {
-      err.textContent = "Nombre, categoría y tipo de material son obligatorios.";
+    if (!nombre || !categoria || !etiqueta) {
+      err.textContent = "Nombre, categoría y etiqueta son obligatorios.";
       err.hidden = false;
       return;
     }
@@ -782,8 +1199,10 @@
     var datos = {
       nombre: nombre,
       categoria: categoria,
-      material: material,
+      etiqueta: etiqueta,
+      borde: document.getElementById("mat-borde").value || undefined,
       color: document.getElementById("mat-color").value || undefined,
+      fondo: document.getElementById("mat-fondo").value || undefined,
       nota: document.getElementById("mat-nota").value.trim() || undefined,
       sin_entrada: document.getElementById("mat-sinentrada").checked || undefined
     };
@@ -828,7 +1247,10 @@
       var asig = escenarios[eid].asignaciones || {};
       Object.keys(asig).forEach(function (caja) {
         Object.keys(asig[caja]).forEach(function (ent) {
-          if (asig[caja][ent] === editandoId) delete asig[caja][ent];
+          if (asig[caja][ent] !== editandoId) return;
+          delete asig[caja][ent];
+          // La etiqueta elegida para esa entrada se queda sin dueño
+          if (escenarios[eid].etiquetas) delete escenarios[eid].etiquetas[caja + "/" + ent];
         });
       });
       if (escenarios[eid].extras) {
@@ -850,6 +1272,226 @@
   document.getElementById("mat-guardar").addEventListener("click", guardarMaterial);
   document.getElementById("mat-borrar").addEventListener("click", borrarMaterial);
   document.getElementById("mat-cancelar").addEventListener("click", function () { dlg.close(); });
+  ["mat-etiqueta", "mat-borde", "mat-color", "mat-fondo"].forEach(function (id) {
+    document.getElementById(id).addEventListener("change", refrescarPreviaMaterial);
+  });
+  document.getElementById("mat-nombre").addEventListener("input", refrescarPreviaMaterial);
+  document.getElementById("mat-nueva-etiqueta").addEventListener("click", function () {
+    abrirGestorEtiquetas(null);
+  });
+
+  /* ---------------------------------------------------------------- *
+   * Gestor de etiquetas
+   *
+   * Se pueden crear nuevas, editar cualquiera (también las de fábrica: la
+   * versión editada se guarda con el mismo id y la sustituye) y borrarlas.
+   * Al borrar una hay que reasignar el material que la usaba, así que se
+   * pregunta a dónde va antes de quitarla.
+   * ---------------------------------------------------------------- */
+  var dlgEt = document.getElementById("dlg-etiquetas");
+  var editandoEtiqueta = null;
+
+  function itemsConEtiqueta(etId) {
+    return Object.keys(ITEMS).filter(function (id) {
+      var et = etiquetaDe(ITEMS[id], null);
+      return et && et.id === etId;
+    });
+  }
+
+  function usosEnEscenarios(etId) {
+    var n = 0;
+    Object.keys(escenarios).forEach(function (eid) {
+      var mapa = escenarios[eid].etiquetas || {};
+      Object.keys(mapa).forEach(function (k) { if (mapa[k] === etId) n++; });
+    });
+    return n;
+  }
+
+  function refrescarPreviaEtiqueta() {
+    var previa = document.getElementById("et-previa");
+    previa.removeAttribute("style");
+    previa.textContent = document.getElementById("et-nombre").value.trim() || "Ejemplo";
+    aplicarEstilo(previa, {
+      borde: document.getElementById("et-borde").value,
+      color: document.getElementById("et-color").value,
+      fondo: document.getElementById("et-fondo").value
+    });
+  }
+
+  function renderListaEtiquetas() {
+    var cont = document.getElementById("etiquetas-lista");
+    cont.innerHTML = "";
+    ETIQUETAS.forEach(function (et) {
+      var chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip chip-etiqueta-lista" + (editandoEtiqueta === et.id ? " editando" : "");
+      chip.textContent = et.nombre;
+      aplicarEstilo(chip, { borde: et.borde, color: et.color, fondo: et.fondo });
+      var usos = itemsConEtiqueta(et.id).length;
+      chip.title = usos + " material(es) del catálogo usan esta etiqueta" +
+        (et.propia ? "" : " · de fábrica");
+      var cuenta = document.createElement("span");
+      cuenta.className = "etiqueta-usos";
+      cuenta.textContent = usos;
+      chip.appendChild(cuenta);
+      chip.addEventListener("click", function () { cargarEtiquetaEnFormulario(et.id); });
+      cont.appendChild(chip);
+    });
+  }
+
+  function cargarEtiquetaEnFormulario(id) {
+    editandoEtiqueta = id || null;
+    var et = id ? ETQ[id] : null;
+    rellenarSelectColor(document.getElementById("et-color"), "Sin color");
+    rellenarSelectColor(document.getElementById("et-fondo"), "Sin fondo");
+    document.getElementById("et-titulo").textContent = et
+      ? "Editar «" + et.nombre + "»" + (et.propia ? "" : " (de fábrica)")
+      : "Etiqueta nueva";
+    document.getElementById("et-nombre").value = et ? et.nombre : "";
+    document.getElementById("et-borde").value = et ? (et.borde || "solido") : "solido";
+    document.getElementById("et-color").value = et ? (et.color || "") : "gris";
+    document.getElementById("et-fondo").value = et ? (et.fondo || "") : "ninguno";
+    document.getElementById("et-borrar").hidden = !et;
+    document.getElementById("et-error").hidden = true;
+    refrescarPreviaEtiqueta();
+    renderListaEtiquetas();
+  }
+
+  function abrirGestorEtiquetas(id) {
+    cargarEtiquetaEnFormulario(id);
+    if (!dlgEt.open) dlgEt.showModal();
+    document.getElementById("et-nombre").focus();
+  }
+
+  function guardarEtiqueta() {
+    var nombre = document.getElementById("et-nombre").value.trim();
+    var err = document.getElementById("et-error");
+    if (!nombre) {
+      err.textContent = "La etiqueta necesita un nombre.";
+      err.hidden = false;
+      return;
+    }
+    // Dos etiquetas con el mismo nombre se sumarían juntas en el resumen
+    var choque = etiquetaPorNombre(nombre);
+    if (choque && choque.id !== editandoEtiqueta) {
+      err.textContent = "Ya existe una etiqueta llamada «" + choque.nombre + "».";
+      err.hidden = false;
+      return;
+    }
+
+    var datos = {
+      id: editandoEtiqueta || idLibreEtiqueta(nombre),
+      nombre: nombre,
+      borde: document.getElementById("et-borde").value,
+      color: document.getElementById("et-color").value,
+      fondo: document.getElementById("et-fondo").value
+    };
+
+    var existente = etiquetasUsuario.filter(function (e) { return e.id === datos.id; })[0];
+    if (existente) Object.assign(existente, datos);
+    else etiquetasUsuario.push(datos);
+    // Si estaba borrada y se vuelve a guardar, deja de estarlo
+    etiquetasBorradas = etiquetasBorradas.filter(function (x) { return x !== datos.id; });
+
+    reconstruirEtiquetas();
+    reconstruirCatalogo();
+    guardarEstado();
+    renderTodo();
+    cargarEtiquetaEnFormulario(datos.id);
+  }
+
+  function borrarEtiqueta() {
+    if (!editandoEtiqueta) return;
+    var et = ETQ[editandoEtiqueta];
+    if (!et) return;
+    if (ETIQUETAS.length < 2) {
+      var err = document.getElementById("et-error");
+      err.textContent = "Tiene que quedar al menos una etiqueta.";
+      err.hidden = false;
+      return;
+    }
+
+    var afectados = itemsConEtiqueta(et.id);
+    var enEscenarios = usosEnEscenarios(et.id);
+    var destino = ETIQUETAS.filter(function (e) { return e.id !== et.id; })[0];
+
+    var msg = "¿Borrar la etiqueta “" + et.nombre + "”?";
+    if (afectados.length || enEscenarios) {
+      msg += "\n\n" + afectados.length + " material(es) del catálogo y " + enEscenarios +
+        " colocación(es) pasarán a “" + destino.nombre + "”.";
+    }
+    if (!et.propia) msg += "\n\nEs una etiqueta de fábrica: volverá si pulsas «Restablecer».";
+    if (!confirm(msg)) return;
+
+    // Reasignar el material propio que la usaba
+    catalogoUsuario.forEach(function (item) {
+      if (item.etiqueta === et.id) item.etiqueta = destino.id;
+    });
+    // Y las colocaciones que la habían elegido a mano
+    Object.keys(escenarios).forEach(function (eid) {
+      var mapa = escenarios[eid].etiquetas;
+      if (!mapa) return;
+      Object.keys(mapa).forEach(function (k) {
+        if (mapa[k] === et.id) mapa[k] = destino.id;
+      });
+    });
+    // El material de fábrica no se puede reescribir: se le fija el destino
+    // como override permanente creando una entrada propia mínima.
+    afectados.forEach(function (itemId) {
+      var item = ITEMS[itemId];
+      if (item.propio || item.etiqueta !== et.id) return;
+      var copia = Object.assign({}, item, { etiqueta: destino.id });
+      delete copia.propio;
+      catalogoUsuario.push(copia);
+    });
+
+    etiquetasUsuario = etiquetasUsuario.filter(function (e) { return e.id !== et.id; });
+    if (ETIQUETAS_BASE.some(function (e) { return e.id === et.id; })) {
+      etiquetasBorradas.push(et.id);
+    }
+
+    reconstruirEtiquetas();
+    reconstruirCatalogo();
+    guardarEstado();
+    renderTodo();
+    cargarEtiquetaEnFormulario(null);
+  }
+
+  document.getElementById("btn-etiquetas").addEventListener("click", function () {
+    abrirGestorEtiquetas(null);
+  });
+  document.getElementById("et-guardar").addEventListener("click", guardarEtiqueta);
+  document.getElementById("et-borrar").addEventListener("click", borrarEtiqueta);
+  document.getElementById("et-nueva").addEventListener("click", function () {
+    cargarEtiquetaEnFormulario(null);
+    document.getElementById("et-nombre").focus();
+  });
+  document.getElementById("et-cerrar").addEventListener("click", function () {
+    dlgEt.close();
+    // El editor de material puede haberse quedado abierto detrás
+    if (dlg.open) {
+      rellenarSelectEtiquetas(document.getElementById("mat-etiqueta"),
+        document.getElementById("mat-etiqueta").value);
+      refrescarPreviaMaterial();
+    }
+  });
+  ["et-borde", "et-color", "et-fondo"].forEach(function (id) {
+    document.getElementById(id).addEventListener("change", refrescarPreviaEtiqueta);
+  });
+  document.getElementById("et-nombre").addEventListener("input", refrescarPreviaEtiqueta);
+  // Color a medida: se añade como opción y queda elegido en «color del borde»
+  document.getElementById("et-color-libre").addEventListener("input", function () {
+    var sel = document.getElementById("et-color");
+    var hex = this.value;
+    if (!sel.querySelector('option[value="' + hex + '"]')) {
+      var o = document.createElement("option");
+      o.value = hex;
+      o.textContent = hex;
+      sel.appendChild(o);
+    }
+    sel.value = hex;
+    refrescarPreviaEtiqueta();
+  });
 
   /* ---------------------------------------------------------------- *
    * Render: técnicas y perfiles
@@ -1131,6 +1773,7 @@
 
     // Recuento
     var totalMaterial = {};
+    var estiloPorTipo = {};   // nombre de etiqueta -> estilo, para el distintivo
     var cajasUsadas = [];
     var totalEntradas = 0;
 
@@ -1143,15 +1786,22 @@
         if (!itemId) return;
         var item = ITEMS[itemId];
         if (!item) return;
-        var etiqueta = ent.polo ? ent.etiqueta + " " + ent.polo : ent.etiqueta;
+        var rotuloEntrada = ent.polo ? ent.etiqueta + " " + ent.polo : ent.etiqueta;
         var nombre = item.nombre;
         if (item.conmutador) {
           var sel = esc.conmutador && esc.conmutador[cajaKey + "/" + ent.id];
           if (sel) nombre += " → " + sel;
         }
-        detalle.push({ entrada: etiqueta, nombre: nombre, color: item.color });
+        var override = etiquetaColocada(cajaKey, ent.id);
+        var tipo = nombreEtiquetaDe(item, override);
+        var estilo = estiloDe(item, override);
+        if (!estiloPorTipo[tipo]) estiloPorTipo[tipo] = estilo;
+        detalle.push({
+          entrada: rotuloEntrada, nombre: nombre, color: item.color,
+          tipo: tipo, estilo: estilo
+        });
         // media_unidad: dos entradas que salen del mismo paquete (Erb1 + Erb2)
-        totalMaterial[item.material] = (totalMaterial[item.material] || 0) + (item.media_unidad ? 0.5 : 1);
+        totalMaterial[tipo] = (totalMaterial[tipo] || 0) + (item.media_unidad ? 0.5 : 1);
         totalEntradas++;
       });
       if (detalle.length) {
@@ -1167,7 +1817,9 @@
 
     var extras = extrasDe().map(function (id) { return ITEMS[id]; }).filter(Boolean);
     extras.forEach(function (item) {
-      totalMaterial[item.material] = (totalMaterial[item.material] || 0) + 1;
+      var tipo = nombreEtiquetaDe(item, null);
+      if (!estiloPorTipo[tipo]) estiloPorTipo[tipo] = estiloDe(item, null);
+      totalMaterial[tipo] = (totalMaterial[tipo] || 0) + 1;
     });
 
     if (!totalEntradas && !extras.length) {
@@ -1195,7 +1847,14 @@
     Object.keys(totalMaterial).sort().forEach(function (mat) {
       var tr = document.createElement("tr");
       var td1 = document.createElement("td");
-      td1.textContent = mat;
+      // Distintivo con el mismo borde/color que llevan los chips de ese tipo
+      if (estiloPorTipo[mat]) {
+        var muestra = document.createElement("span");
+        muestra.className = "muestra-etiqueta";
+        aplicarEstilo(muestra, estiloPorTipo[mat]);
+        td1.appendChild(muestra);
+      }
+      td1.appendChild(document.createTextNode(mat));
       var td2 = document.createElement("td");
       td2.className = "num";
       // Media unidad suelta: se redondea hacia arriba (hay que abrir el paquete igual)
@@ -1237,6 +1896,8 @@
       c.detalle.forEach(function (d) {
         var el = document.createElement("span");
         el.className = "resumen-entrada";
+        if (d.estilo) aplicarEstilo(el, d.estilo);
+        el.title = "Tipo: " + d.tipo;
         el.innerHTML = '<span class="re-num">' + d.entrada + "</span> ";
         if (d.color) {
           var dot = document.createElement("span");
@@ -1494,6 +2155,10 @@
     btn.textContent = activo ? "Salir del modo quirófano" : "Modo quirófano";
     try { localStorage.setItem(MODO_KEY, activo ? "1" : "0"); } catch (e) { /* sin persistencia */ }
     if (activo) seleccionar(null);
+    // La subida automática se pausa en quirófano para no depender de la red
+    // durante la cirugía; al salir se manda lo que se haya acumulado.
+    if (!activo && sync.pendiente) programarSubida();
+    pintarEstadoSync();
   }
 
   document.getElementById("btn-quirofano").addEventListener("click", function () {
@@ -1519,5 +2184,10 @@
   } catch (e) {
     aplicarModoQuirofano(false);
   }
-  avisoGuardado("Los cambios se guardan solos en este navegador.");
+  avisoGuardado(syncActivo()
+    ? "Los cambios se guardan solos y se suben a GitHub."
+    : "Los cambios se guardan solos en este navegador.");
+  // Traer lo último de GitHub al abrir, sin preguntar si no hay nada local
+  // sin subir. Si lo hay, sube en vez de bajar.
+  bajarAuto();
 })();

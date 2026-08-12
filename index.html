@@ -38,13 +38,15 @@
     <aside class="panel-catalogo no-print" id="panel-catalogo">
       <div class="panel-cab">
         <h2>Catálogo</h2>
+        <button type="button" id="btn-etiquetas" title="Gestionar etiquetas (tipos físicos de material)">Etiquetas</button>
         <button type="button" id="btn-nuevo-material" title="Añadir material nuevo al catálogo">+</button>
         <button type="button" id="btn-plegar" title="Plegar / desplegar">▾</button>
       </div>
-      <input type="search" id="catalogo-buscar" placeholder="Buscar material…" autocomplete="off">
+      <input type="search" id="catalogo-buscar" placeholder="Buscar material o tipo…" autocomplete="off">
       <p class="panel-ayuda">
         Pulsa un ítem y luego la entrada donde va. También puedes arrastrarlo.
-        Para quitarlo: ✕ o arrástralo aquí. Con <b>+</b> añades material propio.
+        Para quitarlo: ✕ o arrástralo aquí. Con <b>+</b> añades material propio
+        y en <b>Etiquetas</b> defines los tipos físicos.
       </p>
       <div id="catalogo-contenido"></div>
     </aside>
@@ -85,9 +87,13 @@
 <dialog id="dlg-sync" class="no-print">
   <h3>Sincronizar con GitHub</h3>
   <p class="dlg-intro">
-    Guarda tus escenarios y tu material propio en un repositorio privado de
-    GitHub, para tenerlos en el móvil y en el ordenador. La herramienta sigue
-    funcionando en local; subir y bajar es siempre manual.
+    Guarda tus escenarios, etiquetas y material propio en un repositorio
+    privado de GitHub, para tenerlos en el móvil y en el ordenador. Una vez
+    conectado <b>se sincroniza solo</b>: baja lo último al abrir y sube unos
+    segundos después de cada cambio. En <b>Modo quirófano</b> la subida se
+    pausa —no depende de la red durante la cirugía— y se manda al salir.
+    Sin conexión sigue funcionando y reintenta cuando vuelve.
+    Los botones de abajo fuerzan una subida o bajada a mano.
   </p>
 
   <details class="dlg-ayuda">
@@ -142,23 +148,45 @@
     <datalist id="lista-categorias"></datalist>
   </div>
   <div class="campo">
-    <label for="mat-material">Tipo de material <span class="req">*</span></label>
-    <input id="mat-material" list="lista-materiales" placeholder="p. ej. Electrodo Hook Wire">
-    <datalist id="lista-materiales"></datalist>
-    <small>Es lo que se suma en el recuento del resumen. Reutiliza un tipo existente para que se cuenten juntos.</small>
-  </div>
-  <div class="campo campo-fila">
-    <span>
-      <label for="mat-color">Color</label>
-      <select id="mat-color">
-        <option value="">Sin color</option>
-        <option value="rojo">Rojo</option>
-        <option value="negro">Negro</option>
-        <option value="azul">Azul</option>
-        <option value="verde">Verde</option>
-        <option value="amarillo">Amarillo</option>
-      </select>
+    <label for="mat-etiqueta">Etiqueta (tipo físico) <span class="req">*</span></label>
+    <span class="campo-con-boton">
+      <select id="mat-etiqueta"></select>
+      <button type="button" id="mat-nueva-etiqueta" title="Crear o editar etiquetas">Gestionar…</button>
     </span>
+    <small>Es lo que se suma en el recuento del resumen y lo que da el aspecto al chip.</small>
+  </div>
+
+  <fieldset class="campo-estilo">
+    <legend>Aspecto — deja «Como la etiqueta» para heredarlo</legend>
+    <div class="campo-fila">
+      <span>
+        <label for="mat-borde">Borde</label>
+        <select id="mat-borde">
+          <option value="">Como la etiqueta</option>
+          <option value="solido">Sólido</option>
+          <option value="punteado">Punteado</option>
+          <option value="discontinuo">Discontinuo</option>
+          <option value="doble">Doble</option>
+          <option value="grueso">Grueso</option>
+          <option value="ninguno">Sin borde</option>
+        </select>
+      </span>
+      <span>
+        <label for="mat-color">Color del borde</label>
+        <select id="mat-color" class="select-color"></select>
+      </span>
+      <span>
+        <label for="mat-fondo">Fondo</label>
+        <select id="mat-fondo" class="select-color"></select>
+      </span>
+    </div>
+    <div class="vista-previa">
+      <span class="vp-label">Así se verá:</span>
+      <span class="chip" id="mat-previa">Ejemplo</span>
+    </div>
+  </fieldset>
+
+  <div class="campo">
     <label class="check">
       <input type="checkbox" id="mat-sinentrada">
       No ocupa entrada
@@ -174,6 +202,67 @@
     <span class="barra-flex"></span>
     <button type="button" id="mat-cancelar">Cancelar</button>
     <button type="button" id="mat-guardar" class="primario">Guardar</button>
+  </div>
+</dialog>
+
+<dialog id="dlg-etiquetas" class="no-print">
+  <h3>Etiquetas — tipos físicos de material</h3>
+  <p class="dlg-intro">
+    Una etiqueta es de qué está hecho el ítem: aguja trenzada, sacacorchos,
+    pegatina… Decide <b>qué se cuenta</b> en el resumen y <b>cómo se ve</b> el
+    chip. Pulsa una para editarla, o rellena el formulario para crear otra.
+  </p>
+
+  <div id="etiquetas-lista" class="etiquetas-lista"></div>
+
+  <hr class="dlg-sep">
+
+  <h4 id="et-titulo">Etiqueta nueva</h4>
+  <div class="campo">
+    <label for="et-nombre">Nombre <span class="req">*</span></label>
+    <input id="et-nombre" maxlength="40" placeholder="p. ej. Electrodo de copa">
+    <small>Es el texto que aparece en «Material a preparar».</small>
+  </div>
+  <div class="campo-fila">
+    <span>
+      <label for="et-borde">Borde</label>
+      <select id="et-borde">
+        <option value="solido">Sólido</option>
+        <option value="punteado">Punteado</option>
+        <option value="discontinuo">Discontinuo</option>
+        <option value="doble">Doble</option>
+        <option value="grueso">Grueso</option>
+        <option value="ninguno">Sin borde</option>
+      </select>
+    </span>
+    <span>
+      <label for="et-color">Color del borde</label>
+      <select id="et-color" class="select-color"></select>
+    </span>
+    <span>
+      <label for="et-fondo">Fondo</label>
+      <select id="et-fondo" class="select-color"></select>
+    </span>
+  </div>
+  <div class="campo-fila">
+    <span>
+      <label for="et-color-libre">Color a medida</label>
+      <input id="et-color-libre" type="color" value="#8896a2">
+    </span>
+    <span class="vista-previa">
+      <span class="vp-label">Así se verá:</span>
+      <span class="chip" id="et-previa">Ejemplo</span>
+    </span>
+  </div>
+
+  <p class="dlg-error" id="et-error" hidden></p>
+
+  <div class="dlg-botones">
+    <button type="button" id="et-borrar" class="peligro" hidden>Borrar</button>
+    <span class="barra-flex"></span>
+    <button type="button" id="et-cerrar">Cerrar</button>
+    <button type="button" id="et-nueva">Nueva</button>
+    <button type="button" id="et-guardar" class="primario">Guardar</button>
   </div>
 </dialog>
 

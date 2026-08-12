@@ -23,9 +23,10 @@ conexión a internet (no hace ninguna petición de red).
 
 - `index.html` — interfaz
 - `style.css` — estilos
-- `app.js` — lógica: catálogo, cajas, arrastrar y soltar, resumen
-- `data/surgeries.js` — **el único archivo que necesitas tocar**, con tres
-  bloques: `cajas_material`, `catalogo_material` y `escenarios`
+- `app.js` — lógica: catálogo, etiquetas, cajas, arrastrar y soltar, resumen
+- `data/surgeries.js` — **el único archivo que necesitas tocar**, con los
+  bloques `cajas_material`, `etiquetas`, `catalogo_material`, `tecnicas`,
+  `perfiles_procedimiento` y `escenarios`
 
 ## Modo quirófano
 
@@ -66,14 +67,42 @@ para activarlos (☑) y aparecen en el resumen; pulsas otra vez para
 quitarlos. En el JSON se marcan con `"sin_entrada": true`, en el ítem o en
 la categoría entera.
 
-### 2. Cajas físicas
+### 2. Etiquetas (tipos físicos)
+
+Una **etiqueta** es de qué está hecho el ítem: aguja trenzada, sacacorchos,
+pegatina, hook wire… Hace dos cosas a la vez:
+
+- **Es lo que se cuenta** en «Material a preparar». Dos ítems con la misma
+  etiqueta se suman juntos.
+- **Es lo que se ve**: cada etiqueta tiene forma de borde (sólido, punteado,
+  discontinuo, doble, grueso), color de borde y tinte de fondo, así que
+  reconoces el tipo de material de un vistazo sin leer el nombre.
+
+El botón **Etiquetas** de la cabecera del catálogo abre el gestor: crear
+nuevas, editar cualquiera —también las de fábrica— y borrarlas. Cada etiqueta
+muestra cuántos materiales la usan. Al borrar una, el material que la tenía
+se reasigna a otra en vez de quedarse huérfano; se avisa antes.
+
+**Un mismo ítem con distinto material según la cirugía.** Un A1 (mastoides)
+puede ir con sacacorchos en un caso y con aguja en otro. No hace falta
+duplicarlo: el ítem lleva su etiqueta habitual, y **una vez colocado en una
+entrada, el desplegable del chip cambia el tipo solo para ese escenario**. El
+recuento se ajusta solo. Si mueves el chip a otra entrada, se lleva su tipo.
+
+**Excepciones por ítem.** En el editor de material (botón **+**), el bloque
+*Aspecto* deja sobreescribir borde, color o fondo para un ítem concreto
+dejando el resto heredado de la etiqueta. Así, con pegatinas de estímulo
+puedes tener `L.Mediano` con borde rojo y `R.Mediano` con borde negro,
+aunque las dos cuenten como «Pegatinas (par)».
+
+### 3. Cajas físicas
 
 `cajas_material` describe las cajas reales del INOMED. Cada caja se dibuja
 con sus entradas y conectores. Para quitar material de una entrada: pulsa la
 ✕ del chip o arrástralo de vuelta al panel del catálogo. Para moverlo:
 arrástralo a otra entrada, aunque sea de otra caja.
 
-### 3. Técnicas y perfiles
+### 4. Técnicas y perfiles
 
 La tarjeta **Técnicas** lista las técnicas de monitorización y de mapeo.
 Se marcan pulsándolas y salen en el resumen. Son informativas: no calculan
@@ -88,13 +117,13 @@ aclaratoria aparece en los avisos del resumen.
 Ambas listas se editan en `data/surgeries.js`, en los bloques `tecnicas` y
 `perfiles_procedimiento`.
 
-### 4. Escenarios (presets)
+### 5. Escenarios (presets)
 
 Cada escenario guarda **qué material va en qué entrada de qué caja**. La
 barra de herramientas permite crear, duplicar, renombrar, vaciar y borrar
 escenarios.
 
-### 5. Resumen de material
+### 6. Resumen de material
 
 Se recalcula solo con cada cambio y es el objetivo de la herramienta:
 
@@ -110,18 +139,20 @@ El botón **Imprimir resumen** saca solo esta sección en papel.
 ## Añadir material propio desde la interfaz
 
 El botón **+** de la cabecera del catálogo abre un formulario para crear
-material nuevo sin tocar ningún archivo: nombre, categoría, tipo de
-material, color, nota y si ocupa entrada o no. La categoría y el tipo de
-material tienen sugerencias de los ya existentes — conviene reutilizarlas
-para que el recuento los sume juntos.
+material nuevo sin tocar ningún archivo: nombre, categoría, **etiqueta**,
+excepciones de aspecto, nota y si ocupa entrada o no. La categoría tiene
+sugerencias de las existentes — conviene reutilizarlas. Si te falta un tipo
+físico, **Gestionar…** abre el gestor de etiquetas sin cerrar el formulario.
 
-El material propio se distingue por el borde verde y lleva un lápiz (✎)
-para editarlo o borrarlo. Al borrarlo, avisa de en cuántas entradas está
-colocado y lo quita también de ahí.
+El material propio lleva un lápiz (✎) para editarlo o borrarlo. Al borrarlo,
+avisa de en cuántas entradas está colocado y lo quita también de ahí. Un ítem
+propio con el mismo `id` que uno de fábrica lo **sustituye** en su sitio, así
+que también puedes retocar el material que viene de serie.
 
-Ejemplo: añades `L.Frontalis` en la categoría *Músculos craneales*, tipo
-`Electrodo Hook Wire`, y lo colocas en la caja que quieras; el resumen
-sumará ese hook wire al total.
+Ejemplo: añades `L.Frontalis` en la categoría *Músculos craneales* con la
+etiqueta `Electrodo Hook Wire`, y lo colocas donde quieras; el resumen sumará
+ese hook wire al total. Otro: `R.Delt` con la etiqueta *Aguja trenzada (par)*
+y borde punteado para distinguirlo del resto del grupo.
 
 ## Uso desde el móvil
 
@@ -130,27 +161,31 @@ tocas el material, el catálogo se pliega solo para dejar ver las cajas, y
 tocas la entrada de destino. Arrastrar no funciona bien en pantallas
 táctiles, así que ese es el flujo recomendado.
 
-Para abrirlo desde el móvil hace falta publicar la web. Con **Cloudflare
-Pages** es gratis y el repositorio sigue privado: en
-[dash.cloudflare.com](https://dash.cloudflare.com) → *Workers & Pages* →
-*Create* → *Pages* → *Connect to Git*, eliges este repositorio y dejas el
-**build command vacío** y el **output directory** en `/`. Cada `git push`
-actualiza la web sola.
+La web está publicada con **GitHub Pages**, así que se abre desde cualquier
+sitio con solo la dirección:
 
-> Ojo: la web publicada es **pública** aunque el repositorio sea privado.
-> Por eso los datos de sincronización no van aquí, sino en un repositorio
-> aparte (ver abajo).
+**https://paniaguadediego-bit.github.io/checklist-mio-ionm/**
+
+Cada `git push` a `main` la actualiza sola en un par de minutos. Merece la
+pena guardarla en la pantalla de inicio del móvil (en Chrome, *⋮ → Añadir a
+pantalla de inicio*): se abre como una app y a pantalla completa.
+
+> Ojo: la web publicada es **pública**, y por eso el repositorio del código
+> también lo es. No contiene ningún dato de paciente ni ningún token. Tus
+> escenarios **no viajan aquí**: viven en tu navegador y se sincronizan con
+> un repositorio de datos **privado** aparte (ver abajo).
 
 ## Dónde se guarda todo, y cómo pasarlo de un dispositivo a otro
 
 Los cambios se guardan **automáticamente en ese navegador y ese
-dispositivo** (localStorage). No tocan `data/surgeries.js` ni viajan solos
-por git. El navegador del móvil y el del ordenador son almacenes distintos.
+dispositivo** (localStorage). No tocan `data/surgeries.js`. Si conectas la
+sincronización (siguiente apartado), además viajan solos entre dispositivos;
+si no, el navegador del móvil y el del ordenador son almacenes distintos.
 
-Para pasar tu trabajo de uno a otro:
+Para pasar tu trabajo de uno a otro a mano:
 
-1. **Exportar copia** descarga un `.json` con **todo**: escenarios, material
-   propio y qué va en cada entrada.
+1. **Exportar copia** descarga un `.json` con **todo**: escenarios, etiquetas,
+   material propio y qué va en cada entrada.
 2. Pasa ese archivo al otro dispositivo (correo, nube, cable…).
 3. **Importar copia** allí. Avisa de cuántos escenarios y materiales trae, y
    sustituye lo que hubiera en ese navegador.
@@ -160,16 +195,15 @@ datos del sitio, se recupera importándolo.
 
 ### Sincronización automática con GitHub
 
-El botón **☁** de la barra superior guarda y recupera todo desde un
-repositorio privado de GitHub, sin tener que mover archivos a mano. Es
-gratis: los repos privados, los tokens y la API de GitHub no cuestan nada.
+El botón **☁** de la barra superior conecta la herramienta con un repositorio
+privado de GitHub que hace de nube. Es gratis: los repos privados, los tokens
+y la API de GitHub no cuestan nada.
 
-Preparación, una sola vez:
+Preparación, una sola vez y en un solo dispositivo:
 
 1. Crea un repositorio **privado y vacío** solo para los datos, por ejemplo
-   `checklist-mio-datos`. **No uses el del código**: la web publicada
-   dejaría los escenarios a la vista, y así el token tampoco puede tocar el
-   código.
+   `checklist-mio-datos`. **No uses el del código**: es público, dejaría los
+   escenarios a la vista, y así el token tampoco puede tocar el código.
 2. En GitHub: *Settings → Developer settings → Personal access tokens →
    Fine-grained tokens → Generate new token*.
 3. En *Repository access*, **Only select repositories** → solo el de datos.
@@ -177,10 +211,23 @@ Preparación, una sola vez:
    Nada más.
 5. Pega el token y `usuario/repositorio` en el diálogo del botón ☁.
 
-Uso: **Subir** guarda el estado actual, **Bajar** trae el del repositorio.
-Nunca es automático, así que durante una cirugía no dependes de la red. Si
-otro dispositivo ha subido algo más reciente, avisa antes de sobrescribir y
-te sugiere bajar primero.
+Repite el paso 5 con el mismo token en el móvil, y los dos quedan conectados.
+
+**A partir de ahí funciona solo:**
+
+- Al abrir la web **baja** lo último que haya en el repositorio.
+- Unos segundos después de cada cambio, lo **sube**.
+- En **Modo quirófano** la subida se **pausa**: durante la cirugía no se toca
+  la red. Al salir del modo, se manda todo lo acumulado.
+- **Sin conexión** sigue funcionando con normalidad y reintenta cuando vuelve.
+- Si has tocado algo en el móvil sin subirlo y abres el ordenador, **no se
+  pisa nada**: sube lo tuyo en vez de bajar.
+- Si dos dispositivos han cambiado cosas distintas, avisa de **Conflicto** y
+  decides tú con **Subir** o **Bajar** desde el diálogo. Nunca sobrescribe sin
+  preguntar.
+
+El estado se ve en el propio botón: *Sin conectar*, *Guardando…*, *En pausa*,
+*Sinc. 12/08 19:30*, *Sin subir* o *Conflicto*.
 
 El token se guarda solo en ese navegador. **Desconectar** lo borra del
 dispositivo (no toca ni tus escenarios ni lo guardado en GitHub), y siempre
@@ -201,20 +248,35 @@ para material que quieras que venga de fábrica en el repositorio. Dentro de
 añade un objeto:
 
 ```json
-{ "id": "l_gluteo", "nombre": "L.Glúteo", "material": "Agujas trenzadas (par)", "nota": "Glúteo izquierdo" }
+{ "id": "l_gluteo", "nombre": "L.Glúteo", "etiqueta": "aguja_trenzada", "nota": "Glúteo izquierdo" }
 ```
 
 - `id` — identificador único, sin espacios. Es lo que se guarda en los presets.
 - `nombre` — lo que se ve en el chip.
-- `material` — **lo que se cuenta en el resumen**. Reutiliza los textos ya
-  existentes (`"Aguja subdérmica"`, `"Agujas trenzadas (par)"`,
-  `"Pegatinas (par)"`, `"Electrodo sacacorchos"`...) para que se sumen juntos.
-- `color` *(opcional)* — `rojo`, `azul`, `verde` o `amarillo`. Código del
-  INOMED: C1/C5 verde, C2/C6 amarillo, C3 y C3' rojo, C4 y C4' azul.
+- `etiqueta` — el `id` de una etiqueta del bloque `etiquetas`. Es **lo que se
+  cuenta en el resumen** y de dónde saca el chip su aspecto.
+- `color` *(opcional)* — sobreescribe el color del borde que pone la etiqueta.
+  `rojo`, `azul`, `verde`, `amarillo`, `negro`, `naranja`, `morado`,
+  `turquesa`, `gris` o un hex `#c04a2b`. Código del INOMED: C1/C5 verde,
+  C2/C6 amarillo, C3 y C3' rojo, C4 y C4' azul.
+- `borde` / `fondo` *(opcionales)* — igual, para la forma del borde y el tinte.
 - `nota` *(opcional)* — texto que sale al pasar el ratón.
 - `conmutador` + `opciones` *(opcional)* — para un ítem que ocupa una sola
   entrada pero se subdivide por software (el canal 6 anodal de TES MEP).
   Genera un desplegable dentro del chip.
+
+## Añadir una etiqueta editando el archivo
+
+Se hace desde la interfaz con el botón **Etiquetas**; esto es para las que
+quieras de fábrica. Dentro de `etiquetas`:
+
+```json
+{ "id": "electrodo_copa", "nombre": "Electrodo de copa", "borde": "punteado", "color": "naranja", "fondo": "amarillo" }
+```
+
+- `borde` — `solido`, `punteado`, `discontinuo`, `doble`, `grueso` o `ninguno`.
+- `color` — color del borde, del juego de arriba o un hex.
+- `fondo` — tinte suave de fondo, o `ninguno`.
 
 ## Añadir o ajustar una caja
 
@@ -259,6 +321,7 @@ equipo — ajústalos si no cuadran.
     "registro_muscular_mmii": { "9": "l_ta", "10": "l_ah", "gnd": "tierra" },
     "tes_mep": { "6:anodal": "conmutador", "8:catodal": "grid8" }
   },
+  "etiquetas": { "registro_cortical/1": "aguja_subdermica" },
   "notas": "Texto que aparece en los avisos del resumen",
   "pendiente": "Algo sin confirmar; se muestra destacado"
 }
@@ -267,6 +330,11 @@ equipo — ajústalos si no cuadran.
 Formato de las claves de entrada: `"3"` para un canal normal,
 `"6:anodal"` / `"8:catodal"` en TES MEP, y la `clave` del especial
 (`"ref"`, `"gnd"`, `"peatc"`, `"dns"`, `"extra_par"`).
+
+`etiquetas` es opcional y solo hace falta cuando una colocación concreta lleva
+un tipo físico distinto del habitual del ítem. La clave es
+`"caja/entrada"` y el valor, el `id` de la etiqueta:
+`{ "registro_cortical/1": "aguja_subdermica" }`.
 
 ## Retomar el proyecto desde otro ordenador
 

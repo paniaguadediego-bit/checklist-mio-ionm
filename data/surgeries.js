@@ -7,12 +7,17 @@
  * Por eso el JSON va envuelto en una variable global y se carga con una
  * simple etiqueta <script>, que sí funciona sin servidor.
  *
- * Tres bloques:
+ * Bloques:
  *   - cajas_material    : catálogo de las cajas físicas y sus entradas.
+ *   - etiquetas         : tipos físicos de material (aguja trenzada,
+ *                         sacacorchos, pegatina...). Definen lo que se cuenta
+ *                         en el resumen y el aspecto del chip.
  *   - catalogo_material : catálogo maestro de TODO el material que se puede
  *                         colocar en una entrada (músculos, electrodos,
  *                         estímulos, tierras...). Aquí se añade material
  *                         nuevo para futuras cirugías.
+ *   - tecnicas          : técnicas de monitorización y de mapeo.
+ *   - perfiles_procedimiento : combinaciones habituales de técnicas.
  *   - escenarios        : presets de cirugía. Cada uno guarda qué material
  *                         va en qué entrada de qué caja.
  *
@@ -97,28 +102,60 @@ window.SURGERIES_DATA = {
   },
 
   /* ------------------------------------------------------------------ *
+   * ETIQUETAS (tipos físicos de material)
+   *
+   * Una etiqueta es "de qué está hecho" el ítem: aguja trenzada,
+   * sacacorchos, pegatina... Es lo que se suma en el recuento del resumen
+   * y lo que da el aspecto al chip, para reconocerlo de un vistazo.
+   *
+   *   borde  : solido | punteado | discontinuo | doble | grueso | ninguno
+   *   color  : rojo | azul | verde | amarillo | negro | naranja | morado |
+   *            turquesa | gris, o un hex tipo "#c04a2b"
+   *   fondo  : el mismo juego de colores (tinte suave) o "ninguno"
+   *
+   * Un ítem puede sobreescribir cualquiera de los tres, y al colocarlo en
+   * una entrada se le puede cambiar la etiqueta solo para ese escenario
+   * (un A1 con sacacorchos en una cirugía y con aguja en otra).
+   * ------------------------------------------------------------------ */
+  "etiquetas": [
+    { "id": "aguja_subdermica",     "nombre": "Aguja subdérmica",          "borde": "punteado",    "color": "azul",     "fondo": "azul" },
+    { "id": "aguja_trenzada",       "nombre": "Aguja trenzada (par)",      "borde": "discontinuo", "color": "azul",     "fondo": "azul" },
+    { "id": "electrodo_sacacorchos","nombre": "Electrodo sacacorchos",     "borde": "solido",      "color": "morado",   "fondo": "morado" },
+    { "id": "hook_wire",            "nombre": "Electrodo Hook Wire",       "borde": "doble",       "color": "naranja",  "fondo": "naranja" },
+    { "id": "pegatinas",            "nombre": "Pegatinas (par)",           "borde": "solido",      "color": "verde",    "fondo": "verde" },
+    { "id": "electrodo_grid",       "nombre": "Electrodo de grid",         "borde": "grueso",      "color": "rojo",     "fondo": "rojo" },
+    { "id": "sensor_tubo",          "nombre": "Sensor de tubo orotraqueal","borde": "doble",       "color": "turquesa", "fondo": "turquesa" },
+    { "id": "sonda_mapeo",          "nombre": "Sonda de mapeo cortical",   "borde": "grueso",      "color": "amarillo", "fondo": "amarillo" },
+    { "id": "sonda_raabe",          "nombre": "Sonda Raabe",               "borde": "grueso",      "color": "negro",    "fondo": "ninguno" },
+    { "id": "auriculares",          "nombre": "Auriculares PEATC",         "borde": "punteado",    "color": "gris",     "fondo": "ninguno" },
+    { "id": "gafas",                "nombre": "Gafas de estimulación VEP", "borde": "punteado",    "color": "gris",     "fondo": "ninguno" },
+    { "id": "conmutador_sw",        "nombre": "Conmutador",                "borde": "solido",      "color": "gris",     "fondo": "ninguno" },
+    { "id": "sin_determinar",       "nombre": "Sin determinar",            "borde": "punteado",    "color": "rojo",     "fondo": "ninguno" }
+  ],
+
+  /* ------------------------------------------------------------------ *
    * CATÁLOGO MAESTRO DE MATERIAL
    * Añade aquí músculos / estímulos nuevos para futuras cirugías.
-   * "material" es lo que se cuenta en el resumen final.
+   * "etiqueta" es el tipo físico: lo que se cuenta en el resumen final.
    * ------------------------------------------------------------------ */
   "catalogo_material": [
     {
       "categoria": "Electrodos corticales — estimulación (TES)",
       "items": [
-        { "id": "c1", "nombre": "C1", "color": "verde", "material": "Electrodo sacacorchos" },
-        { "id": "c2", "nombre": "C2", "color": "amarillo", "material": "Electrodo sacacorchos" },
-        { "id": "c3", "nombre": "C3", "color": "rojo", "material": "Electrodo sacacorchos" },
-        { "id": "c4", "nombre": "C4", "color": "azul", "material": "Electrodo sacacorchos" },
-        { "id": "c5", "nombre": "C5", "color": "verde", "material": "Electrodo sacacorchos", "nota": "Vías corticobulbares (pares craneales) — combinación principal junto a C6; admite otras con distintas referencias" },
-        { "id": "c6", "nombre": "C6", "color": "amarillo", "material": "Electrodo sacacorchos", "nota": "Vías corticobulbares (pares craneales) — combinación principal junto a C5; admite otras con distintas referencias" },
-        { "id": "cz_menos1", "nombre": "Cz-1", "material": "Electrodo sacacorchos" },
-        { "id": "cz_mas6", "nombre": "Cz+6cm", "material": "Electrodo sacacorchos" },
-        { "id": "mapping", "nombre": "Mapping", "material": "Sonda de mapeo cortical", "nota": "Mapeo cortical con técnica de Penfield" },
-        { "id": "raabe_estim", "nombre": "Raabe (estímulo)", "color": "negro", "material": "Sonda Raabe", "nota": "Estimulador cortical tipo aspiración — cátodo, columna catodal (negra) de TES MEP, habitualmente el canal 12. Su ánodo de referencia es Ref.Raabe" },
+        { "id": "c1", "nombre": "C1", "color": "verde", "etiqueta": "electrodo_sacacorchos" },
+        { "id": "c2", "nombre": "C2", "color": "amarillo", "etiqueta": "electrodo_sacacorchos" },
+        { "id": "c3", "nombre": "C3", "color": "rojo", "etiqueta": "electrodo_sacacorchos" },
+        { "id": "c4", "nombre": "C4", "color": "azul", "etiqueta": "electrodo_sacacorchos" },
+        { "id": "c5", "nombre": "C5", "color": "verde", "etiqueta": "electrodo_sacacorchos", "nota": "Vías corticobulbares (pares craneales) — combinación principal junto a C6; admite otras con distintas referencias" },
+        { "id": "c6", "nombre": "C6", "color": "amarillo", "etiqueta": "electrodo_sacacorchos", "nota": "Vías corticobulbares (pares craneales) — combinación principal junto a C5; admite otras con distintas referencias" },
+        { "id": "cz_menos1", "nombre": "Cz-1", "etiqueta": "electrodo_sacacorchos" },
+        { "id": "cz_mas6", "nombre": "Cz+6cm", "etiqueta": "electrodo_sacacorchos" },
+        { "id": "mapping", "nombre": "Mapping", "etiqueta": "sonda_mapeo", "nota": "Mapeo cortical con técnica de Penfield" },
+        { "id": "raabe_estim", "nombre": "Raabe (estímulo)", "color": "negro", "etiqueta": "sonda_raabe", "nota": "Estimulador cortical tipo aspiración — cátodo, columna catodal (negra) de TES MEP, habitualmente el canal 12. Su ánodo de referencia es Ref.Raabe" },
         {
           "id": "conmutador",
           "nombre": "Conmutador",
-          "material": "Conmutador",
+          "etiqueta": "conmutador_sw",
           "conmutador": true,
           "opciones": ["C1", "C2", "C3", "C4", "Cz-1", "Cz+6"],
           "nota": "Ocupa una sola entrada anodal (habitualmente la 6) y se subdivide entre las combinaciones"
@@ -128,131 +165,131 @@ window.SURGERIES_DATA = {
     {
       "categoria": "Electrodos corticales — registro",
       "items": [
-        { "id": "cz_prima", "nombre": "Cz'", "material": "Electrodo sacacorchos" },
-        { "id": "c3_prima", "nombre": "C3'", "color": "rojo", "material": "Electrodo sacacorchos" },
-        { "id": "c4_prima", "nombre": "C4'", "color": "azul", "material": "Electrodo sacacorchos" },
-        { "id": "fz", "nombre": "Fz", "material": "Electrodo sacacorchos", "nota": "Referencia habitual" },
-        { "id": "cv2", "nombre": "Cv2", "material": "Electrodo sacacorchos" },
-        { "id": "cz_doble_prima", "nombre": "Cz''", "material": "Electrodo sacacorchos", "nota": "Alternativa a Ref.Raabe (ánodo de referencia)" },
-        { "id": "ref_raabe", "nombre": "Ref.Raabe", "color": "rojo", "material": "Electrodo sacacorchos", "nota": "Referencia del estimulador Raabe — ánodo (entrada roja)" }
+        { "id": "cz_prima", "nombre": "Cz'", "etiqueta": "electrodo_sacacorchos" },
+        { "id": "c3_prima", "nombre": "C3'", "color": "rojo", "etiqueta": "electrodo_sacacorchos" },
+        { "id": "c4_prima", "nombre": "C4'", "color": "azul", "etiqueta": "electrodo_sacacorchos" },
+        { "id": "fz", "nombre": "Fz", "etiqueta": "electrodo_sacacorchos", "nota": "Referencia habitual" },
+        { "id": "cv2", "nombre": "Cv2", "etiqueta": "electrodo_sacacorchos" },
+        { "id": "cz_doble_prima", "nombre": "Cz''", "etiqueta": "electrodo_sacacorchos", "nota": "Alternativa a Ref.Raabe (ánodo de referencia)" },
+        { "id": "ref_raabe", "nombre": "Ref.Raabe", "color": "rojo", "etiqueta": "electrodo_sacacorchos", "nota": "Referencia del estimulador Raabe — ánodo (entrada roja)" }
       ]
     },
     {
       "categoria": "Registro cervical / plexo",
       "items": [
-        { "id": "cvant", "nombre": "CvAnt", "color": "amarillo", "material": "Aguja subdérmica", "nota": "Registro cervical anterior, monopolar" },
-        { "id": "erb1", "nombre": "Erb1", "color": "rojo", "material": "Aguja trenzada (par)", "media_unidad": true, "nota": "Punto de Erb — aguja roja del par trenzado (Erb1 + Erb2 = 1 paquete)" },
-        { "id": "erb2", "nombre": "Erb2", "color": "negro", "material": "Aguja trenzada (par)", "media_unidad": true, "nota": "Punto de Erb — aguja negra del par trenzado (Erb1 + Erb2 = 1 paquete)" }
+        { "id": "cvant", "nombre": "CvAnt", "color": "amarillo", "etiqueta": "aguja_subdermica", "nota": "Registro cervical anterior, monopolar" },
+        { "id": "erb1", "nombre": "Erb1", "color": "rojo", "etiqueta": "aguja_trenzada", "media_unidad": true, "nota": "Punto de Erb — aguja roja del par trenzado (Erb1 + Erb2 = 1 paquete)" },
+        { "id": "erb2", "nombre": "Erb2", "color": "negro", "etiqueta": "aguja_trenzada", "media_unidad": true, "nota": "Punto de Erb — aguja negra del par trenzado (Erb1 + Erb2 = 1 paquete)" }
       ]
     },
     {
       "categoria": "Músculos MMSS",
       "items": [
-        { "id": "l_apb", "nombre": "L.APB", "material": "Aguja trenzada (par)", "nota": "Abductor pollicis brevis izquierdo" },
-        { "id": "r_apb", "nombre": "R.APB", "material": "Aguja trenzada (par)", "nota": "Abductor pollicis brevis derecho" },
-        { "id": "l_fdio", "nombre": "L.Fdio", "material": "Aguja trenzada (par)", "nota": "1er interóseo dorsal izquierdo" },
-        { "id": "r_fdio", "nombre": "R.Fdio", "material": "Aguja trenzada (par)", "nota": "1er interóseo dorsal derecho" },
-        { "id": "l_ext", "nombre": "L.E", "material": "Aguja trenzada (par)", "nota": "Extensor izquierdo" },
-        { "id": "r_ext", "nombre": "R.E", "material": "Aguja trenzada (par)", "nota": "Extensor derecho" },
-        { "id": "l_bcps", "nombre": "L.B", "material": "Aguja trenzada (par)", "nota": "Bíceps izquierdo" },
-        { "id": "r_bcps", "nombre": "R.B", "material": "Aguja trenzada (par)", "nota": "Bíceps derecho" }
+        { "id": "l_apb", "nombre": "L.APB", "etiqueta": "aguja_trenzada", "nota": "Abductor pollicis brevis izquierdo" },
+        { "id": "r_apb", "nombre": "R.APB", "etiqueta": "aguja_trenzada", "nota": "Abductor pollicis brevis derecho" },
+        { "id": "l_fdio", "nombre": "L.Fdio", "etiqueta": "aguja_trenzada", "nota": "1er interóseo dorsal izquierdo" },
+        { "id": "r_fdio", "nombre": "R.Fdio", "etiqueta": "aguja_trenzada", "nota": "1er interóseo dorsal derecho" },
+        { "id": "l_ext", "nombre": "L.E", "etiqueta": "aguja_trenzada", "nota": "Extensor izquierdo" },
+        { "id": "r_ext", "nombre": "R.E", "etiqueta": "aguja_trenzada", "nota": "Extensor derecho" },
+        { "id": "l_bcps", "nombre": "L.B", "etiqueta": "aguja_trenzada", "nota": "Bíceps izquierdo" },
+        { "id": "r_bcps", "nombre": "R.B", "etiqueta": "aguja_trenzada", "nota": "Bíceps derecho" }
       ]
     },
     {
       "categoria": "Músculos craneales (pares craneales)",
       "items": [
-        { "id": "l_mass", "nombre": "L.Mass", "material": "Electrodo Hook Wire", "nota": "Maseterino izquierdo — V par craneal" },
-        { "id": "r_mass", "nombre": "R.Mass", "material": "Electrodo Hook Wire", "nota": "Maseterino derecho — V par craneal" },
-        { "id": "l_ooc", "nombre": "L.OOc", "material": "Electrodo Hook Wire", "nota": "Orbicular de los párpados izquierdo — VII par; registro del Blink Reflex" },
-        { "id": "r_ooc", "nombre": "R.OOc", "material": "Electrodo Hook Wire", "nota": "Orbicular de los párpados derecho — VII par; registro del Blink Reflex" },
-        { "id": "l_ment", "nombre": "L.Ment", "material": "Electrodo Hook Wire", "nota": "Mentoniano izquierdo — VII par craneal" },
-        { "id": "r_ment", "nombre": "R.Ment", "material": "Electrodo Hook Wire", "nota": "Mentoniano derecho — VII par craneal" },
-        { "id": "l_crico", "nombre": "L.Crico", "material": "Electrodo Hook Wire", "nota": "Cricotiroideo izquierdo — X par; va junto a las cuerdas vocales en el mismo montaje; registro del reflejo trigémino-cervical. Sin confirmar: el crico evaluaría la parte motora y las cuerdas la sensitiva" },
-        { "id": "r_crico", "nombre": "R.Crico", "material": "Electrodo Hook Wire", "nota": "Cricotiroideo derecho — X par; va junto a las cuerdas vocales en el mismo montaje; registro del reflejo trigémino-cervical. Sin confirmar: el crico evaluaría la parte motora y las cuerdas la sensitiva" },
-        { "id": "vocal_1", "nombre": "Vocal 1", "material": "Sensor de tubo orotraqueal", "media_unidad": true, "nota": "Cuerdas vocales — X par. Un único sensor de tubo orotraqueal con 2 entradas (Vocal 1 + Vocal 2 = 1 sensor). No se puede saber qué lado es cada una: depende de cómo quede colocado el tubo. Registro del reflejo trigémino-vocal" },
-        { "id": "vocal_2", "nombre": "Vocal 2", "material": "Sensor de tubo orotraqueal", "media_unidad": true, "nota": "Cuerdas vocales — X par. Un único sensor de tubo orotraqueal con 2 entradas (Vocal 1 + Vocal 2 = 1 sensor). No se puede saber qué lado es cada una: depende de cómo quede colocado el tubo. Registro del reflejo trigémino-vocal" },
-        { "id": "l_stcm", "nombre": "L.STCM", "material": "Electrodo Hook Wire", "nota": "Esternocleidomastoideo izquierdo — XI par; registro del reflejo trigémino-cervical" },
-        { "id": "r_stcm", "nombre": "R.STCM", "material": "Electrodo Hook Wire", "nota": "Esternocleidomastoideo derecho — XI par; registro del reflejo trigémino-cervical" }
+        { "id": "l_mass", "nombre": "L.Mass", "etiqueta": "hook_wire", "nota": "Maseterino izquierdo — V par craneal" },
+        { "id": "r_mass", "nombre": "R.Mass", "etiqueta": "hook_wire", "nota": "Maseterino derecho — V par craneal" },
+        { "id": "l_ooc", "nombre": "L.OOc", "etiqueta": "hook_wire", "nota": "Orbicular de los párpados izquierdo — VII par; registro del Blink Reflex" },
+        { "id": "r_ooc", "nombre": "R.OOc", "etiqueta": "hook_wire", "nota": "Orbicular de los párpados derecho — VII par; registro del Blink Reflex" },
+        { "id": "l_ment", "nombre": "L.Ment", "etiqueta": "hook_wire", "nota": "Mentoniano izquierdo — VII par craneal" },
+        { "id": "r_ment", "nombre": "R.Ment", "etiqueta": "hook_wire", "nota": "Mentoniano derecho — VII par craneal" },
+        { "id": "l_crico", "nombre": "L.Crico", "etiqueta": "hook_wire", "nota": "Cricotiroideo izquierdo — X par; va junto a las cuerdas vocales en el mismo montaje; registro del reflejo trigémino-cervical. Sin confirmar: el crico evaluaría la parte motora y las cuerdas la sensitiva" },
+        { "id": "r_crico", "nombre": "R.Crico", "etiqueta": "hook_wire", "nota": "Cricotiroideo derecho — X par; va junto a las cuerdas vocales en el mismo montaje; registro del reflejo trigémino-cervical. Sin confirmar: el crico evaluaría la parte motora y las cuerdas la sensitiva" },
+        { "id": "vocal_1", "nombre": "Vocal 1", "etiqueta": "sensor_tubo", "media_unidad": true, "nota": "Cuerdas vocales — X par. Un único sensor de tubo orotraqueal con 2 entradas (Vocal 1 + Vocal 2 = 1 sensor). No se puede saber qué lado es cada una: depende de cómo quede colocado el tubo. Registro del reflejo trigémino-vocal" },
+        { "id": "vocal_2", "nombre": "Vocal 2", "etiqueta": "sensor_tubo", "media_unidad": true, "nota": "Cuerdas vocales — X par. Un único sensor de tubo orotraqueal con 2 entradas (Vocal 1 + Vocal 2 = 1 sensor). No se puede saber qué lado es cada una: depende de cómo quede colocado el tubo. Registro del reflejo trigémino-vocal" },
+        { "id": "l_stcm", "nombre": "L.STCM", "etiqueta": "hook_wire", "nota": "Esternocleidomastoideo izquierdo — XI par; registro del reflejo trigémino-cervical" },
+        { "id": "r_stcm", "nombre": "R.STCM", "etiqueta": "hook_wire", "nota": "Esternocleidomastoideo derecho — XI par; registro del reflejo trigémino-cervical" }
       ]
     },
     {
       "categoria": "Músculos MMII",
       "items": [
-        { "id": "l_q", "nombre": "L.Q", "material": "Aguja trenzada (par)", "nota": "Cuádriceps izquierdo" },
-        { "id": "r_q", "nombre": "R.Q", "material": "Aguja trenzada (par)", "nota": "Cuádriceps derecho" },
-        { "id": "l_ta", "nombre": "L.Ta", "material": "Aguja trenzada (par)", "nota": "Tibial anterior izquierdo" },
-        { "id": "r_ta", "nombre": "R.Ta", "material": "Aguja trenzada (par)", "nota": "Tibial anterior derecho" },
-        { "id": "l_ah", "nombre": "L.Ah", "material": "Aguja trenzada (par)", "nota": "Abductor hallucis izquierdo" },
-        { "id": "r_ah", "nombre": "R.Ah", "material": "Aguja trenzada (par)", "nota": "Abductor hallucis derecho" },
-        { "id": "l_g", "nombre": "L.G", "material": "Aguja trenzada (par)", "nota": "Gastrocnemio medial izquierdo" },
-        { "id": "r_g", "nombre": "R.G", "material": "Aguja trenzada (par)", "nota": "Gastrocnemio medial derecho" }
+        { "id": "l_q", "nombre": "L.Q", "etiqueta": "aguja_trenzada", "nota": "Cuádriceps izquierdo" },
+        { "id": "r_q", "nombre": "R.Q", "etiqueta": "aguja_trenzada", "nota": "Cuádriceps derecho" },
+        { "id": "l_ta", "nombre": "L.Ta", "etiqueta": "aguja_trenzada", "nota": "Tibial anterior izquierdo" },
+        { "id": "r_ta", "nombre": "R.Ta", "etiqueta": "aguja_trenzada", "nota": "Tibial anterior derecho" },
+        { "id": "l_ah", "nombre": "L.Ah", "etiqueta": "aguja_trenzada", "nota": "Abductor hallucis izquierdo" },
+        { "id": "r_ah", "nombre": "R.Ah", "etiqueta": "aguja_trenzada", "nota": "Abductor hallucis derecho" },
+        { "id": "l_g", "nombre": "L.G", "etiqueta": "aguja_trenzada", "nota": "Gastrocnemio medial izquierdo" },
+        { "id": "r_g", "nombre": "R.G", "etiqueta": "aguja_trenzada", "nota": "Gastrocnemio medial derecho" }
       ]
     },
     {
       "categoria": "Estimulación periférica",
       "items": [
-        { "id": "l_mediano", "nombre": "L.Mediano", "material": "Pegatinas (par)" },
-        { "id": "r_mediano", "nombre": "R.Mediano", "material": "Pegatinas (par)" },
-        { "id": "l_cubital", "nombre": "L.Cubital", "material": "Pegatinas (par)" },
-        { "id": "r_cubital", "nombre": "R.Cubital", "material": "Pegatinas (par)" },
-        { "id": "l_ptn", "nombre": "L.Tibial post.", "material": "Pegatinas (par)" },
-        { "id": "r_ptn", "nombre": "R.Tibial post.", "material": "Pegatinas (par)" },
-        { "id": "l_popliteo", "nombre": "L.Poplíteo (H)", "material": "Pegatinas (par)", "nota": "Hueco poplíteo — reflejo H" },
-        { "id": "r_popliteo", "nombre": "R.Poplíteo (H)", "material": "Pegatinas (par)", "nota": "Hueco poplíteo — reflejo H" }
+        { "id": "l_mediano", "nombre": "L.Mediano", "etiqueta": "pegatinas" },
+        { "id": "r_mediano", "nombre": "R.Mediano", "etiqueta": "pegatinas" },
+        { "id": "l_cubital", "nombre": "L.Cubital", "etiqueta": "pegatinas" },
+        { "id": "r_cubital", "nombre": "R.Cubital", "etiqueta": "pegatinas" },
+        { "id": "l_ptn", "nombre": "L.Tibial post.", "etiqueta": "pegatinas" },
+        { "id": "r_ptn", "nombre": "R.Tibial post.", "etiqueta": "pegatinas" },
+        { "id": "l_popliteo", "nombre": "L.Poplíteo (H)", "etiqueta": "pegatinas", "nota": "Hueco poplíteo — reflejo H" },
+        { "id": "r_popliteo", "nombre": "R.Poplíteo (H)", "etiqueta": "pegatinas", "nota": "Hueco poplíteo — reflejo H" }
       ]
     },
     {
       "categoria": "Estimulación trigeminal (reflejos)",
       "items": [
-        { "id": "l_v1", "nombre": "L.V1", "material": "Aguja trenzada (par)", "nota": "Rama oftálmica izquierda del V par — Blink Reflex (registro en orbiculares oculi)" },
-        { "id": "r_v1", "nombre": "R.V1", "material": "Aguja trenzada (par)", "nota": "Rama oftálmica derecha del V par — Blink Reflex (registro en orbiculares oculi)" },
-        { "id": "l_v2", "nombre": "L.V2", "material": "Aguja trenzada (par)", "nota": "Rama maxilar izquierda del V par — reflejo trigémino-cervical (registro en STCM y cricotiroideo)" },
-        { "id": "r_v2", "nombre": "R.V2", "material": "Aguja trenzada (par)", "nota": "Rama maxilar derecha del V par — reflejo trigémino-cervical (registro en STCM y cricotiroideo)" },
-        { "id": "l_v3", "nombre": "L.V3", "material": "Aguja trenzada (par)", "nota": "Rama mandibular izquierda del V par — reflejo trigémino-vocal (registro en cuerdas vocales)" },
-        { "id": "r_v3", "nombre": "R.V3", "material": "Aguja trenzada (par)", "nota": "Rama mandibular derecha del V par — reflejo trigémino-vocal (registro en cuerdas vocales)" }
+        { "id": "l_v1", "nombre": "L.V1", "etiqueta": "aguja_trenzada", "nota": "Rama oftálmica izquierda del V par — Blink Reflex (registro en orbiculares oculi)" },
+        { "id": "r_v1", "nombre": "R.V1", "etiqueta": "aguja_trenzada", "nota": "Rama oftálmica derecha del V par — Blink Reflex (registro en orbiculares oculi)" },
+        { "id": "l_v2", "nombre": "L.V2", "etiqueta": "aguja_trenzada", "nota": "Rama maxilar izquierda del V par — reflejo trigémino-cervical (registro en STCM y cricotiroideo)" },
+        { "id": "r_v2", "nombre": "R.V2", "etiqueta": "aguja_trenzada", "nota": "Rama maxilar derecha del V par — reflejo trigémino-cervical (registro en STCM y cricotiroideo)" },
+        { "id": "l_v3", "nombre": "L.V3", "etiqueta": "aguja_trenzada", "nota": "Rama mandibular izquierda del V par — reflejo trigémino-vocal (registro en cuerdas vocales)" },
+        { "id": "r_v3", "nombre": "R.V3", "etiqueta": "aguja_trenzada", "nota": "Rama mandibular derecha del V par — reflejo trigémino-vocal (registro en cuerdas vocales)" }
       ]
     },
     {
       "categoria": "GRID / estimulación directa",
       "items": [
-        { "id": "grid1", "nombre": "GRID 1", "material": "Electrodo de grid" },
-        { "id": "grid2", "nombre": "GRID 2", "material": "Electrodo de grid" },
-        { "id": "grid3", "nombre": "GRID 3", "material": "Electrodo de grid" },
-        { "id": "grid4", "nombre": "GRID 4", "material": "Electrodo de grid" },
-        { "id": "grid5", "nombre": "GRID 5", "material": "Electrodo de grid" },
-        { "id": "grid6", "nombre": "GRID 6", "material": "Electrodo de grid" },
-        { "id": "grid7", "nombre": "GRID 7", "material": "Electrodo de grid" },
-        { "id": "grid8", "nombre": "GRID 8", "material": "Electrodo de grid" },
-        { "id": "dcs_v2", "nombre": "DCS / V2", "material": "Sin determinar", "nota": "Aparece rotulado en el canal 8 anodal de la caja real — función sin confirmar" },
-        { "id": "hc", "nombre": "HC", "material": "Sin determinar", "nota": "Aparece rotulado en el canal 11 de la caja real — función sin confirmar" }
+        { "id": "grid1", "nombre": "GRID 1", "etiqueta": "electrodo_grid" },
+        { "id": "grid2", "nombre": "GRID 2", "etiqueta": "electrodo_grid" },
+        { "id": "grid3", "nombre": "GRID 3", "etiqueta": "electrodo_grid" },
+        { "id": "grid4", "nombre": "GRID 4", "etiqueta": "electrodo_grid" },
+        { "id": "grid5", "nombre": "GRID 5", "etiqueta": "electrodo_grid" },
+        { "id": "grid6", "nombre": "GRID 6", "etiqueta": "electrodo_grid" },
+        { "id": "grid7", "nombre": "GRID 7", "etiqueta": "electrodo_grid" },
+        { "id": "grid8", "nombre": "GRID 8", "etiqueta": "electrodo_grid" },
+        { "id": "dcs_v2", "nombre": "DCS / V2", "etiqueta": "sin_determinar", "nota": "Aparece rotulado en el canal 8 anodal de la caja real — función sin confirmar" },
+        { "id": "hc", "nombre": "HC", "etiqueta": "sin_determinar", "nota": "Aparece rotulado en el canal 11 de la caja real — función sin confirmar" }
       ]
     },
     {
       "categoria": "Potenciales auditivos (PEATC)",
       "items": [
-        { "id": "a1", "nombre": "A1", "material": "Electrodo sacacorchos", "nota": "Registro auditivo del lado izquierdo. Va en una de las entradas numeradas de REF-AEP" },
-        { "id": "a2", "nombre": "A2", "material": "Electrodo sacacorchos", "nota": "Registro auditivo del lado derecho. Va en una de las entradas numeradas de REF-AEP" }
+        { "id": "a1", "nombre": "A1", "etiqueta": "electrodo_sacacorchos", "nota": "Registro auditivo del lado izquierdo. Va en una de las entradas numeradas de REF-AEP" },
+        { "id": "a2", "nombre": "A2", "etiqueta": "electrodo_sacacorchos", "nota": "Registro auditivo del lado derecho. Va en una de las entradas numeradas de REF-AEP" }
       ]
     },
     {
       "categoria": "Potenciales visuales (VEP)",
       "items": [
-        { "id": "o1", "nombre": "O1", "material": "Electrodo sacacorchos", "nota": "Registro visual occipital izquierdo. Va en una de las entradas numeradas de REF-AEP" },
-        { "id": "o2", "nombre": "O2", "material": "Electrodo sacacorchos", "nota": "Registro visual occipital derecho. Va en una de las entradas numeradas de REF-AEP" }
+        { "id": "o1", "nombre": "O1", "etiqueta": "electrodo_sacacorchos", "nota": "Registro visual occipital izquierdo. Va en una de las entradas numeradas de REF-AEP" },
+        { "id": "o2", "nombre": "O2", "etiqueta": "electrodo_sacacorchos", "nota": "Registro visual occipital derecho. Va en una de las entradas numeradas de REF-AEP" }
       ]
     },
     {
       "categoria": "Tierras y referencias",
       "items": [
-        { "id": "tierra", "nombre": "Tierra", "material": "Aguja subdérmica", "nota": "Una por caja de registro" }
+        { "id": "tierra", "nombre": "Tierra", "etiqueta": "aguja_subdermica", "nota": "Una por caja de registro" }
       ]
     },
     {
       "categoria": "Material extra (no ocupa entrada)",
       "sin_entrada": true,
       "items": [
-        { "id": "auriculares_peatc", "nombre": "Auriculares PEATC", "material": "Auriculares PEATC", "nota": "Estimulación auditiva para los PEATC (A1/A2). Se conectan al conector amarillo de REF-AEP, no ocupan entrada" },
-        { "id": "gafas_vep", "nombre": "Gafas VEP", "material": "Gafas de estimulación VEP", "nota": "Estimulación visual para los potenciales visuales (O1/O2). No ocupan entrada" }
+        { "id": "auriculares_peatc", "nombre": "Auriculares PEATC", "etiqueta": "auriculares", "nota": "Estimulación auditiva para los PEATC (A1/A2). Se conectan al conector amarillo de REF-AEP, no ocupan entrada" },
+        { "id": "gafas_vep", "nombre": "Gafas VEP", "etiqueta": "gafas", "nota": "Estimulación visual para los potenciales visuales (O1/O2). No ocupan entrada" }
       ]
     }
   ],
