@@ -420,6 +420,18 @@ cambiado**, comparando el `sha` del listado; nunca pisa un caso con cambios
 locales sin subir. Un conflicto en `estado.json` **no** bloquea la subida de
 casos: son archivos independientes.
 
+`bajarCasos()` también hace el camino contrario: si un caso que este
+dispositivo tiene guardado con `sha` confirmado **ya no aparece** en el
+listado remoto, se quita también en local. Sin esto, un caso borrado a mano
+en GitHub —o desde otro dispositivo antes de que este bajara nunca— se
+quedaría fantasma en este navegador para siempre, porque bajar solo sabía
+añadir o actualizar, nunca detectar una ausencia. Solo se retira un caso con
+`sha` conocido: uno recién creado en este dispositivo y aún sin subir no
+tiene `sha`, así que nunca se toca por error. Pasó de verdad: se borraron
+tres casos de prueba directamente contra la API de GitHub —por fuera de la
+app, para una limpieza rápida— y siguieron saliendo en el navegador del
+usuario hasta que se corrigió esto.
+
 **Borrar un caso** (`borrarCaso()`) sigue el mismo patrón que "sin_subir",
 pero al revés: `casosBorrados` guarda `caso_uid → sha` para los casos que
 **sí llegaron a existir en GitHub** (si nunca se subió, no hay nada que

@@ -2134,7 +2134,14 @@
 
   /* Trae los casos del repositorio. Solo descarga los que han cambiado: el
      listado ya da el sha de cada archivo. Un caso con cambios locales sin
-     subir no se pisa, que para eso está pendiente de subida. */
+     subir no se pisa, que para eso está pendiente de subida.
+
+     También limpia el caso contrario: uno que este dispositivo tiene
+     guardado, con su sha confirmado de una sincronización anterior, pero
+     que ya no aparece en el listado remoto -porque se borró desde otro
+     dispositivo, o a mano en GitHub, fuera de la app-. Sin esto, ese caso
+     se quedaría fantasma en este navegador para siempre: "bajar" solo
+     añadía o actualizaba, nunca quitaba lo que había dejado de existir. */
   function bajarCasos() {
     if (!syncActivo() || navigator.onLine === false) return Promise.resolve();
     var url = "https://api.github.com/repos/" + sync.repo + "/contents/casos";
@@ -2145,6 +2152,24 @@
         return resp.json();
       })
       .then(function (listado) {
+        var presentes = {};
+        (listado || []).forEach(function (f) {
+          if (f.type === "file" && /\.json$/.test(f.name)) {
+            presentes[f.name.replace(/\.json$/, "")] = true;
+          }
+        });
+        // Solo se retira un caso con sha confirmado -es decir, que en algún
+        // momento se supo que existía en GitHub-. Uno recién creado en este
+        // dispositivo y aún sin subir no tiene sha, así que nunca se toca
+        // aquí por error.
+        var yaNoExisten = Object.keys(casos).filter(function (uid) {
+          return casosSha[uid] && !presentes[uid] && !casosSinSubir[uid] && !casosBorrados[uid];
+        });
+        yaNoExisten.forEach(function (uid) {
+          delete casos[uid];
+          delete casosSha[uid];
+        });
+
         var quedan = (listado || []).filter(function (f) {
           if (f.type !== "file" || !/\.json$/.test(f.name)) return false;
           var uid = f.name.replace(/\.json$/, "");
@@ -2168,7 +2193,7 @@
               });
           });
         }, Promise.resolve()).then(function () {
-          if (quedan.length) {
+          if (quedan.length || yaNoExisten.length) {
             guardarCasos();
             if (dlgCasos && dlgCasos.open) renderListaCasos();
           }
