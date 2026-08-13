@@ -215,9 +215,11 @@ el montaje entero y los avisos: **nada de eso se teclea**, la herramienta ya lo
 había calculado. Queda en estado *Preparado*.
 
 **Al cerrar**, abre el caso desde la lista. Arriba está el **cierre rápido**:
-fecha, edad, sexo, servicio, intervención, técnicas realizadas (ya vienen
-marcadas las que planificaste, solo ajustas), si hubo alerta, tu papel y notas.
-Con eso basta, y es cuestión de un par de minutos desde el móvil. Debajo,
+fecha, **nombre del caso** (opcional, para reconocerlo tú de un vistazo —
+nunca el nombre del paciente), edad, sexo, servicio, intervención, técnicas
+realizadas (ya vienen marcadas las que planificaste, solo ajustas), si hubo
+alerta, tu papel y notas. Con eso basta, y es cuestión de un par de minutos
+desde el móvil. Debajo,
 plegado, está **Ampliar** con lo demás: anestesia, material realmente usado
 (precargado con el previsto), desarrollo, incidencias y formación. Se rellena
 solo si quieres.

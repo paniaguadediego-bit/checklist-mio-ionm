@@ -318,6 +318,16 @@ Las columnas `TEC_<etiqueta>` se generan a partir del catálogo de técnicas
 desactivada no debe perder su columna, porque casos antiguos siguen
 refiriéndose a ella por id.
 
+Los `filas.sort()` de `construirFilasCasos_()`, `construirTecnicasLong_()` y
+`construirMaterialLong_()` **buscan la columna por su nombre**
+(`cabecera.indexOf("Fecha")`), nunca por un índice fijo (`a[3]`). Un índice
+fijo se rompe en silencio —sin ningún error, solo un orden mal— el día que se
+inserte una columna nueva en medio de la cabecera. Pasó de verdad al añadir
+`nombre_caso`: el índice de `Fecha` cambió de 3 a 4 y las filas dejaron de
+salir en orden cronológico, sin que nada avisara —lo detectó el arnés de
+pruebas, no un error. Cualquier columna nueva que se
+añada a una cabecera debe seguir este patrón, no un índice literal.
+
 Probado con un arnés de Node (`vm` + simulación de `UrlFetchApp`,
 `PropertiesService`, `SpreadsheetApp`) que ejecuta el archivo real, no una
 reimplementación aparte. 21 pruebas cubren: fusión y renombrado de catálogo,
@@ -371,7 +381,13 @@ nombre derivado de un UUID, dos dispositivos no pueden chocar.
 - `ID_Caso` — correlativo `AAAA-NNN` por año de `fecha`, solo para nombrar el
   caso en voz alta. Se asigna al crearlo tomando el máximo conocido. Si dos
   dispositivos sin conexión generan el mismo, no rompe nada: el Apps Script
-  avisa.
+  avisa. **No es editable** — es el correlativo, no una etiqueta.
+- `nombre_caso` — texto libre, opcional, editable en cualquier momento.
+  Para que el usuario reconozca el caso de un vistazo en la lista y en el
+  Sheet; no sustituye a `ID_Caso`, que sigue siendo la clave de numeración
+  y la que usa `Meta` para avisar de correlativos duplicados. Lleva una
+  ayuda visible en el formulario recordando que no debe ser un dato de
+  paciente — es un campo de texto libre más, sujeto a la regla 1.
 - `estado` — `preparado` | `cerrado`.
 - `tecnicas_realizadas` — ids de técnica, nunca etiquetas.
 

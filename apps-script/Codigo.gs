@@ -261,7 +261,7 @@ function compararColumna_(a, b) {
 
 function construirFilasCasos_(casos, cat, columnasTec) {
   var cabecera = [
-    "caso_uid", "ID_Caso", "estado", "Fecha", "centro", "hora_inicio", "hora_fin",
+    "caso_uid", "ID_Caso", "nombre_caso", "estado", "Fecha", "centro", "hora_inicio", "hora_fin",
     "escenario_nombre", "perfil",
     "edad", "sexo", "antecedentes_relevantes",
     "intervencion", "codigo_intervencion", "servicio", "region_nivel", "diagnostico", "posicion",
@@ -283,7 +283,7 @@ function construirFilasCasos_(casos, cat, columnasTec) {
     (c.tecnicas_realizadas || []).forEach(function (id) { marcadas[id] = true; });
 
     var base = [
-      c.caso_uid, c.ID_Caso, c.estado, aFecha_(c.fecha), c.centro, c.hora_inicio, c.hora_fin,
+      c.caso_uid, c.ID_Caso, c.nombre_caso, c.estado, aFecha_(c.fecha), c.centro, c.hora_inicio, c.hora_fin,
       c.escenario_nombre, c.perfil,
       c.edad, c.sexo, c.antecedentes_relevantes,
       interv ? interv.nombre : "", interv ? (interv.codigo || "") : "", serv ? serv.nombre : "",
@@ -305,15 +305,25 @@ function construirFilasCasos_(casos, cat, columnasTec) {
   });
 
   // Orden determinista: el mismo contenido produce siempre el mismo Sheet,
-  // ejecutarlo diez veces seguidas no reordena ni una fila.
+  // ejecutarlo diez veces seguidas no reordena ni una fila. Se busca la
+  // columna por su NOMBRE, no por un índice fijo (0, 1, 3...): un índice
+  // fijo se rompe en silencio -sin ningún error- el día que se añada una
+  // columna en medio de la cabecera. Ya pasó una vez con "nombre_caso".
+  var iFecha = cabecera.indexOf("Fecha"), iIdCaso = cabecera.indexOf("ID_Caso");
   filas.sort(function (a, b) {
-    return compararColumna_(a[3], b[3]) || compararColumna_(a[1], b[1]);
+    return compararColumna_(a[iFecha], b[iFecha]) || compararColumna_(a[iIdCaso], b[iIdCaso]);
   });
 
   return { cabecera: cabecera, filas: filas };
 }
 
 function construirTecnicasLong_(casos, cat) {
+  // Mismo nombre "servicio" que en Casos -no "Servicio"-: un filtro de
+  // Looker Studio solo cruza de una fuente de datos a otra si el campo se
+  // llama exactamente igual en las dos.
+  var cabecera = ["ID_Caso", "Fecha", "servicio", "Tecnica"];
+  var iFecha = cabecera.indexOf("Fecha"), iIdCaso = cabecera.indexOf("ID_Caso"), iTec = cabecera.indexOf("Tecnica");
+
   var filas = [];
   var idsDesconocidos = {};
   casos.forEach(function (c) {
@@ -324,17 +334,11 @@ function construirTecnicasLong_(casos, cat) {
       filas.push([c.ID_Caso, aFecha_(c.fecha), serv ? serv.nombre : "", nombre]);
     });
   });
+  // Igual que en Casos: se busca la columna por nombre, no por índice fijo.
   filas.sort(function (a, b) {
-    return compararColumna_(a[1], b[1]) || compararColumna_(a[0], b[0]) || compararColumna_(a[3], b[3]);
+    return compararColumna_(a[iFecha], b[iFecha]) || compararColumna_(a[iIdCaso], b[iIdCaso]) || compararColumna_(a[iTec], b[iTec]);
   });
-  return {
-    // Mismo nombre "servicio" que en Casos -no "Servicio"-: un filtro de
-    // Looker Studio solo cruza de una fuente de datos a otra si el campo se
-    // llama exactamente igual en las dos.
-    cabecera: ["ID_Caso", "Fecha", "servicio", "Tecnica"],
-    filas: filas,
-    idsDesconocidos: idsDesconocidos
-  };
+  return { cabecera: cabecera, filas: filas, idsDesconocidos: idsDesconocidos };
 }
 
 // Hoja añadida sobre la especificación mínima: sin ella, "material consumido
@@ -342,6 +346,9 @@ function construirTecnicasLong_(casos, cat) {
 // material_previsto/material_real son mapas de clave variable y Looker no
 // puede sumar dentro de un mapa incrustado en una celda.
 function construirMaterialLong_(casos) {
+  var cabecera = ["ID_Caso", "Fecha", "Tipo", "Cantidad_prevista", "Cantidad_real"];
+  var iFecha = cabecera.indexOf("Fecha"), iIdCaso = cabecera.indexOf("ID_Caso"), iTipo = cabecera.indexOf("Tipo");
+
   var filas = [];
   casos.forEach(function (c) {
     var tipos = {};
@@ -356,9 +363,9 @@ function construirMaterialLong_(casos) {
     });
   });
   filas.sort(function (a, b) {
-    return compararColumna_(a[1], b[1]) || compararColumna_(a[0], b[0]) || compararColumna_(a[2], b[2]);
+    return compararColumna_(a[iFecha], b[iFecha]) || compararColumna_(a[iIdCaso], b[iIdCaso]) || compararColumna_(a[iTipo], b[iTipo]);
   });
-  return { cabecera: ["ID_Caso", "Fecha", "Tipo", "Cantidad_prevista", "Cantidad_real"], filas: filas };
+  return { cabecera: cabecera, filas: filas };
 }
 
 function construirListas_(cat) {

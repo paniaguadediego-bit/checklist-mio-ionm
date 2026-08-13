@@ -292,6 +292,9 @@
     caso_fecha:          { es: "Fecha de la cirugía", en: "Date of surgery" },
     caso_fecha_ay:       { es: "La que cuenta para las estadísticas. Se puede cambiar siempre, también en un caso ya cerrado.",
                            en: "The one that counts for statistics. Always editable, even on a closed case." },
+    caso_nombre_caso:    { es: "Nombre del caso", en: "Case name" },
+    caso_nombre_caso_ay: { es: "Para reconocerlo tú de un vistazo en la lista — nunca el nombre del paciente.",
+                           en: "So you can recognise it at a glance in the list — never the patient's name." },
     caso_edad:           { es: "Edad", en: "Age" },
     caso_sexo:           { es: "Sexo", en: "Sex" },
     caso_servicio_id:    { es: "Servicio", en: "Specialty" },
@@ -1949,6 +1952,7 @@
     return {
       caso_uid: uuid(),
       ID_Caso: siguienteIdCaso(fecha),
+      nombre_caso: "",
       estado: "preparado",
       fecha: fecha,
       centro: centroPorDefecto(),
@@ -2560,6 +2564,7 @@
   // Cierre rápido: lo que se rellena siempre. Objetivo, menos de 3 minutos.
   var CAMPOS_RAPIDO = [
     { c: "fecha", t: "date", ay: "caso_fecha_ay" },
+    { c: "nombre_caso", t: "text", ay: "caso_nombre_caso_ay" },
     { c: "edad", t: "num" },
     { c: "sexo", t: "sel", o: "sexo" },
     { c: "servicio_id", t: "cat", cat: "servicios" },
@@ -2768,7 +2773,7 @@
     camposCaso = {};
     var c = casoAbierto;
     document.getElementById("caso-titulo").textContent =
-      T("dlg_caso_titulo", { id: c.ID_Caso || "" });
+      T("dlg_caso_titulo", { id: c.ID_Caso || "" }) + (c.nombre_caso ? " — " + c.nombre_caso : "");
 
     var rapido = document.getElementById("caso-rapido");
     rapido.innerHTML = "";
@@ -2916,9 +2921,11 @@
 
       var det = document.createElement("span");
       det.className = "caso-fila-det";
+      // El nombre que le hayas puesto manda sobre la intervención resuelta:
+      // es justo lo que pediste para reconocer el caso de un vistazo.
       var interv = INTERV[c.intervencion_id];
-      det.textContent = interv ? campo(interv, "nombre")
-        : (c.escenario_nombre || T("caso_sin_intervencion"));
+      det.textContent = c.nombre_caso || (interv ? campo(interv, "nombre")
+        : (c.escenario_nombre || T("caso_sin_intervencion")));
       fila.appendChild(det);
 
       var pie = document.createElement("span");
