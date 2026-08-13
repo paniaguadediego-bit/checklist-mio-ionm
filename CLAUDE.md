@@ -234,23 +234,39 @@ las cuatro etiquetas (`style.css`, `data/surgeries.js`, `data/i18n-en.js`,
 
 ## Estado del proyecto
 
-La herramienta de preparación está terminada y en uso. La **Fase 2.0**
-está prácticamente cerrada:
+La herramienta de preparación está terminada y en uso. De la **Fase 2.0**:
 
 1. ~~Catálogos editables desde la interfaz~~ — **hecho**. Técnicas,
    servicios, intervenciones y perfiles se editan en el diálogo Catálogos; los
    escenarios ya se editaban desde la barra de herramientas.
 2. ~~Registro de cada caso como un archivo JSON en `casos/`~~ — **hecho**.
-3. ~~Volcado a un Google Sheet mediante Apps Script~~ — **hecho**. Código en
-   [`apps-script/Codigo.gs`](apps-script/Codigo.gs), instalado y probado por
-   el usuario en un Sheet real.
-4. ~~Instrucciones de Looker Studio~~ — **hecho**. Configuración exacta de
-   cada gráfico en el README, sección *El dashboard: Looker Studio*. No
-   instalable por Claude: el usuario lo monta a mano siguiendo esas
-   instrucciones.
+   Probado por el usuario de verdad: caso preparado en un dispositivo y
+   cerrado en otro, caso retrospectivo, fecha corregida en un caso ya
+   cerrado.
+3. ~~Volcado a un Google Sheet mediante Apps Script~~ — **hecho y
+   confirmado en producción**. Instalado por el usuario en un Sheet real
+   (Apps Script propio, no de Claude), con `crearDisparadorDiario()` activo.
+   El objetivo central de esta fase —una base de datos que se construye
+   sola desde la herramienta, sin tocarla a mano— está cumplido y en uso.
+4. **Instrucciones de Looker Studio — a medias, en pausa por decisión del
+   usuario.** Las tres fuentes de datos (`Casos`, `Tecnicas_long`,
+   `Material_long`) están conectadas y detectando bien los campos. Está
+   confirmado el truco de agregación (cambiar Suma por Media en campos como
+   `edad` o `alerta`: sumados directamente no significan nada — sumar
+   edades de pacientes distintos, por ejemplo). Quedan por montar, del todo
+   o en parte, los 6 grupos de gráficos que están
+   detallados en el README (`El dashboard: Looker Studio`). El usuario
+   quiere explorar por su cuenta qué más se le puede sacar a Looker antes de
+   seguir; no asumir que están todos hechos sin preguntar.
 
-Pendiente: que el usuario monte el informe de Looker y confirme que los
-gráficos salen bien con casos reales.
+Hay un caso de prueba (`2026-002`, registrado para poder probar la conexión
+de Looker Studio) en el repositorio de datos. No confundirlo con un caso
+real; se puede borrar cuando el usuario lo pida, igual que se hizo con el
+primero.
+
+Pendiente, sin urgencia: verificar en vivo con datos reales (no solo con el
+arnés de pruebas) que añadir/renombrar una técnica actualiza el Sheet solo, y
+que rellenar el `código` de una intervención se propaga a los casos previos.
 
 ## Google Sheet (Apps Script)
 
