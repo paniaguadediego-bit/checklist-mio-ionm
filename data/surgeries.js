@@ -162,9 +162,7 @@ window.SURGERIES_DATA = {
           "id": "conmutador",
           "nombre": "Conmutador",
           "etiqueta": "conmutador_sw",
-          "conmutador": true,
-          "opciones": ["C1", "C2", "C3", "C4", "Cz-1", "Cz+6"],
-          "nota": "Ocupa una sola entrada anodal (habitualmente la 6) y se subdivide entre las combinaciones"
+          "nota": "Ocupa una sola entrada anodal (habitualmente la 6)"
         }
       ]
     },

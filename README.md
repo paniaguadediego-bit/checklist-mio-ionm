@@ -103,11 +103,11 @@ nuevas, editar cualquiera —también las de fábrica— y borrarlas. Cada etiqu
 muestra cuántos materiales la usan. Al borrar una, el material que la tenía
 se reasigna a otra en vez de quedarse huérfano; se avisa antes.
 
-**Un mismo ítem con distinto material según la cirugía.** Un A1 (mastoides)
-puede ir con sacacorchos en un caso y con aguja en otro. No hace falta
-duplicarlo: el ítem lleva su etiqueta habitual, y **una vez colocado en una
-entrada, el desplegable del chip cambia el tipo solo para ese escenario**. El
-recuento se ajusta solo. Si mueves el chip a otra entrada, se lleva su tipo.
+**Cada ítem tiene un tipo físico fijo**, el de su etiqueta habitual — no se
+cambia por colocación. Si un mismo material (un A1, por ejemplo) necesita ir
+con sacacorchos en una cirugía y con aguja en otra, la forma de hacerlo es
+tener dos ítems en el catálogo, uno para cada tipo, no cambiar el tipo de uno
+sobre la marcha.
 
 **Excepciones por ítem.** En el editor de material (botón **+**), el bloque
 *Aspecto* deja sobreescribir borde, color o fondo para un ítem concreto
@@ -126,7 +126,8 @@ arrástralo a otra entrada, aunque sea de otra caja.
 
 La tarjeta **Técnicas** lista las técnicas de monitorización y de mapeo.
 Se marcan pulsándolas y salen en el resumen. Son informativas: no calculan
-material por sí solas, pero dejan constancia de qué se va a hacer.
+material por sí solas, pero dejan constancia de qué se va a hacer. Pulsando
+el título se pliega, para dejar más sitio a las cajas.
 
 El desplegable **Aplicar perfil** trae las combinaciones habituales por tipo
 de procedimiento (supratentorial, troncoencéfalo, médula espinal, columna,
@@ -184,7 +185,12 @@ Se recalcula solo con cada cambio y es el objetivo de la herramienta:
 - **Avisos** — cajas completas sin entradas libres, notas del escenario y
   cosas pendientes de confirmar
 
-El botón **Imprimir resumen** saca solo esta sección en papel.
+El botón **Imprimir resumen** saca solo esta sección en papel — sale entera
+aunque la tengas plegada en pantalla en ese momento.
+
+Va **el último**, debajo de las cajas: es el resumen de lo que se ha ido
+colocando arriba. Igual que la tarjeta de Técnicas, se pliega pulsando el
+título.
 
 ## Añadir material propio desde la interfaz
 
@@ -259,8 +265,10 @@ relevantes.
 
 La interfaz es táctil. Lo cómodo en el móvil es **pulsar y colocar**:
 tocas el material, el catálogo se pliega solo para dejar ver las cajas, y
-tocas la entrada de destino. Arrastrar no funciona bien en pantallas
-táctiles, así que ese es el flujo recomendado.
+tocas la entrada de destino. En cuanto lo colocas, se suelta la selección y
+el catálogo se despliega solo otra vez, listo para el siguiente ítem —un
+material colocado no puede estar a la vez en otra entrada. Arrastrar no
+funciona bien en pantallas táctiles, así que ese es el flujo recomendado.
 
 La web está publicada con **GitHub Pages**:
 
@@ -362,9 +370,6 @@ añade un objeto:
   C2/C6 amarillo, C3 y C3' rojo, C4 y C4' azul.
 - `borde` / `fondo` *(opcionales)* — igual, para la forma del borde y el tinte.
 - `nota` *(opcional)* — texto que sale al pasar el ratón.
-- `conmutador` + `opciones` *(opcional)* — para un ítem que ocupa una sola
-  entrada pero se subdivide por software (el canal 6 anodal de TES MEP).
-  Genera un desplegable dentro del chip.
 
 ## Añadir una etiqueta editando el archivo
 

@@ -171,7 +171,35 @@ main {
   gap: 0.7rem;
   align-items: start;
 }
-.columna-principal { min-width: 0; }
+/* display:flex (no grid) para poder usar "order" y ponerlo distinto en Modo
+   quirófano sin tener que reordenar el propio HTML. */
+.columna-principal { min-width: 0; display: flex; flex-direction: column; }
+
+#cajas-contenido { margin-bottom: 0.7rem; }
+
+/* Técnicas y resumen son <details>: el título hace de <summary>. Se quita
+   la flechita nativa del navegador y se pone una propia (▾/▸), coherente
+   con la que ya usa el catálogo para plegarse.
+   .card-cab trae "justify-content: space-between" para repartir 2
+   elementos (título y, en técnicas, el selector de perfil); con la flecha
+   como tercer elemento eso la dejaría descolocada en el medio en vez de al
+   final. Se cambia a flex-start y se empuja solo la flecha con margin-left:
+   auto, así el título y el selector de perfil quedan juntos a la izquierda
+   pase lo que pase, y la flecha siempre pegada al borde derecho. */
+.card > summary.card-cab {
+  cursor: pointer;
+  list-style: none;
+  justify-content: flex-start;
+}
+.card > summary.card-cab::-webkit-details-marker { display: none; }
+.card > summary.card-cab::after {
+  content: "▾";
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  margin-left: auto;
+}
+.card:not([open]) > summary.card-cab::after { content: "▸"; }
+.card:not([open]) > summary.card-cab { margin-bottom: 0; }
 
 .panel-catalogo {
   position: sticky;
@@ -293,16 +321,6 @@ main {
   cursor: pointer;
 }
 .chip-quitar:hover { color: var(--peligro); }
-
-.chip-select {
-  font: inherit;
-  font-size: 0.66rem;
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  background: var(--card-bg);
-  color: var(--text);
-  max-width: 5.5rem;
-}
 
 .color-dot {
   width: 0.5rem;
@@ -594,7 +612,6 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
   line-height: 1.2;
 }
 .slot .chip-quitar { color: #9db1bf; }
-.slot .chip-select { background: #24343e; color: var(--panel-texto); border-color: var(--panel-borde); }
 
 .canal-nota {
   font-size: 0.54rem;
@@ -635,6 +652,11 @@ body.modo-quirofano .cajas-grid {
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
 }
 body.modo-quirofano .resumen-card { position: sticky; top: calc(var(--header-h) + 0.4rem); z-index: 10; }
+/* Fuera de quirófano el resumen va el último (orden natural del HTML). En
+   quirófano, con las técnicas ocultas, se pone primero -sticky arriba- para
+   verlo de un vistazo mientras se consultan las cajas debajo, como siempre
+   ha sido en este modo. */
+body.modo-quirofano #resumen { order: -1; }
 
 /* ------------------------ Material propio y diálogo -------------------- */
 .chip-propio { border-style: solid; border-color: var(--accent); }
@@ -698,14 +720,6 @@ body.modo-quirofano .resumen-card { position: sticky; top: calc(var(--header-h) 
   vertical-align: -0.05rem;
   flex: 0 0 auto;
 }
-
-/* Selector de tipo físico dentro de un chip colocado */
-.chip-etiqueta {
-  max-width: 4.6rem;
-  font-size: 0.6rem;
-  opacity: 0.75;
-}
-.chip-etiqueta:hover, .chip-etiqueta:focus { opacity: 1; }
 
 #dlg-etiquetas { max-width: 520px; }
 

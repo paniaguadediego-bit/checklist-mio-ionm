@@ -13,7 +13,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260813c">
+<link rel="stylesheet" href="style.css?v=20260813d">
 </head>
 <body>
 
@@ -61,25 +61,25 @@
 
     <div class="columna-principal">
 
-      <section class="card tecnicas-card no-print" id="tecnicas">
-        <div class="card-cab">
+      <details class="card tecnicas-card no-print" id="tecnicas" open>
+        <summary class="card-cab">
           <h2 data-i18n="tecnicas_titulo"></h2>
           <label class="perfil-label">
             <span data-i18n="perfil_label"></span>
             <select id="perfil-select"></select>
           </label>
-        </div>
+        </summary>
         <div id="tecnicas-contenido"></div>
-      </section>
-
-      <section class="card resumen-card" id="resumen">
-        <div class="card-cab">
-          <h2 data-i18n="resumen_titulo"></h2>
-        </div>
-        <div id="resumen-contenido"></div>
-      </section>
+      </details>
 
       <section id="cajas-contenido"></section>
+
+      <details class="card resumen-card" id="resumen" open>
+        <summary class="card-cab">
+          <h2 data-i18n="resumen_titulo"></h2>
+        </summary>
+        <div id="resumen-contenido"></div>
+      </details>
 
     </div>
 
@@ -328,8 +328,8 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260813c"></script>
-<script src="data/i18n-en.js?v=20260813c"></script>
-<script src="app.js?v=20260813c"></script>
+<script src="data/surgeries.js?v=20260813d"></script>
+<script src="data/i18n-en.js?v=20260813d"></script>
+<script src="app.js?v=20260813d"></script>
 </body>
 </html>

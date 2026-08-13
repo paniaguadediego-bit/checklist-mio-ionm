@@ -107,7 +107,6 @@
     chip_sin_etiqueta:   { es: "sin etiqueta", en: "no label" },
     chip_editar_tit:     { es: "Editar este material", en: "Edit this material" },
     chip_quitar_tit:     { es: "Quitar de esta entrada", en: "Remove from this input" },
-    chip_etiqueta_tit:   { es: "Tipo físico de material en esta entrada", en: "Physical material type in this input" },
     colocando:           { es: "Colocando", en: "Placing" },
     colocando_ayuda:     { es: "— pulsa una entrada", en: "— tap an input" },
     cancelar:            { es: "Cancelar", en: "Cancel" },
@@ -1180,6 +1179,16 @@
     guardarEstado();
     renderCajas();
     renderResumen();
+    // Un ítem colocado no puede estar también en otra entrada: se
+    // deselecciona solo en vez de quedarse listo para colocarlo otra vez.
+    seleccionar(null);
+    // En móvil, seleccionar() plegó el catálogo para dejar ver las cajas;
+    // al terminar esta colocación se vuelve a desplegar solo, para elegir
+    // el siguiente ítem sin tener que desplegarlo a mano cada vez.
+    if (window.matchMedia("(max-width: 900px)").matches) {
+      document.getElementById("panel-catalogo").classList.remove("plegado");
+      document.getElementById("btn-plegar").textContent = "▾";
+    }
   }
 
   /* ---------------------------------------------------------------- *
@@ -1236,30 +1245,6 @@
       return chip;
     }
 
-    if (item.conmutador && opciones.colocado) {
-      var sel = document.createElement("select");
-      sel.className = "chip-select";
-      (item.opciones || []).forEach(function (op) {
-        var o = document.createElement("option");
-        o.textContent = op;
-        sel.appendChild(o);
-      });
-      var esc = escenarioActual();
-      var guardadoSel = esc && esc.conmutador && esc.conmutador[opciones.cajaKey + "/" + opciones.entradaId];
-      if (guardadoSel) sel.value = guardadoSel;
-      ["mousedown", "click", "dragstart"].forEach(function (ev) {
-        sel.addEventListener(ev, function (e) { e.stopPropagation(); });
-      });
-      sel.addEventListener("change", function () {
-        var e2 = escenarioActual();
-        if (!e2.conmutador) e2.conmutador = {};
-        e2.conmutador[opciones.cajaKey + "/" + opciones.entradaId] = sel.value;
-        guardarEstado();
-        renderResumen();
-      });
-      chip.appendChild(sel);
-    }
-
     if (!opciones.colocado) {
       // Chip del catálogo: al pulsarlo queda seleccionado para colocar
       chip.addEventListener("click", function () {
@@ -1268,29 +1253,11 @@
     }
 
     if (opciones.colocado) {
-      // Selector de tipo físico para ESTA colocación: el mismo A1 puede ir
-      // con sacacorchos en una cirugía y con aguja en otra.
-      var selEt = document.createElement("select");
-      selEt.className = "chip-select chip-etiqueta";
-      selEt.title = T("chip_etiqueta_tit");
-      ETIQUETAS.forEach(function (et) {
-        var o = document.createElement("option");
-        o.value = et.id;
-        o.textContent = campo(et, "nombre");
-        selEt.appendChild(o);
-      });
-      if (etiqueta) selEt.value = etiqueta.id;
-      ["mousedown", "click", "dragstart"].forEach(function (ev) {
-        selEt.addEventListener(ev, function (e) { e.stopPropagation(); });
-      });
-      selEt.addEventListener("change", function () {
-        fijarEtiquetaColocada(opciones.cajaKey, opciones.entradaId, selEt.value, item.id);
-        guardarEstado();
-        renderCajas();
-        renderResumen();
-      });
-      chip.appendChild(selEt);
-
+      // Ya no se puede cambiar el tipo físico por colocación desde aquí
+      // -no queda sitio en la caja, y el usuario prefiere el tipo fijo del
+      // catálogo-. etiquetaColocada()/fijarEtiquetaColocada() se quedan para
+      // seguir leyendo overrides de escenarios guardados antes de este
+      // cambio, pero nada vuelve a escribir uno nuevo.
       var quitar = document.createElement("button");
       quitar.type = "button";
       quitar.className = "chip-quitar";
@@ -3496,6 +3463,14 @@
     });
   }
 
+  // El selector de perfil vive dentro del <summary> de la tarjeta de
+  // técnicas: sin esto, cualquier clic para abrirlo también plegaría o
+  // desplegaría la tarjeta entera, porque un <summary> reacciona a
+  // cualquier clic dentro de él.
+  ["mousedown", "click"].forEach(function (ev) {
+    document.getElementById("perfil-select").addEventListener(ev, function (e) { e.stopPropagation(); });
+  });
+
   document.getElementById("perfil-select").addEventListener("change", function (e) {
     var perfil = PERF[e.target.value];
     e.target.value = "";
@@ -3528,7 +3503,7 @@
     slot.dataset.entrada = entrada.id;
     slot.addEventListener("click", function (e) {
       if (!seleccionado) return;
-      if (e.target.closest(".chip-quitar, .chip-select")) return;
+      if (e.target.closest(".chip-quitar")) return;
       colocar(cajaKey, entrada.id, seleccionado);
     });
     var itemId = asignacionesDe(cajaKey)[entrada.id];
@@ -3729,10 +3704,6 @@
         if (!item) return;
         var rotuloEntrada = ent.polo ? ent.etiqueta + " " + ent.polo : ent.etiqueta;
         var nombre = campo(item, "nombre");
-        if (item.conmutador) {
-          var sel = esc.conmutador && esc.conmutador[cajaKey + "/" + ent.id];
-          if (sel) nombre += " → " + sel;
-        }
         var override = (esc.etiquetas || {})[cajaKey + "/" + ent.id] || null;
         var tipo = nombreEtiquetaDe(item, override);
         var estilo = estiloDe(item, override);
@@ -4128,6 +4099,21 @@
     window.print();
   });
 
+  // El resumen es un <details> plegable: si estuviera cerrado al imprimir
+  // (con el botón o con Ctrl/Cmd+P), no saldría nada en el papel. Se abre a
+  // la fuerza justo antes de imprimir y se devuelve a como estaba después.
+  var resumenAbiertoAntesDeImprimir = null;
+  window.addEventListener("beforeprint", function () {
+    var det = document.getElementById("resumen");
+    resumenAbiertoAntesDeImprimir = det.open;
+    det.open = true;
+  });
+  window.addEventListener("afterprint", function () {
+    if (resumenAbiertoAntesDeImprimir !== null) {
+      document.getElementById("resumen").open = resumenAbiertoAntesDeImprimir;
+    }
+  });
+
   document.getElementById("catalogo-buscar").addEventListener("input", function () {
     renderCatalogo();
     seleccionar(seleccionado); // mantiene el resaltado tras filtrar
@@ -4150,7 +4136,13 @@
     btn.classList.toggle("activo", activo);
     btn.textContent = T(activo ? "quirofano_salir" : "quirofano_entrar");
     try { localStorage.setItem(MODO_KEY, activo ? "1" : "0"); } catch (e) { /* sin persistencia */ }
-    if (activo) seleccionar(null);
+    if (activo) {
+      seleccionar(null);
+      // El resumen es lo que se consulta durante la cirugía: si se hubiera
+      // quedado plegado de antes, entrar en quirófano no puede dejarlo
+      // escondido.
+      document.getElementById("resumen").open = true;
+    }
     // La subida automática se pausa en quirófano para no depender de la red
     // durante la cirugía; al salir se manda lo que se haya acumulado, tanto
     // el estado como los casos guardados o borrados mientras tanto.

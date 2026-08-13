@@ -98,7 +98,7 @@ window.SURGERIES_I18N.en = {
     "c6": { "nota": "Corticobulbar tracts (cranial nerves) — main combination together with C5; other combinations with different references are possible" },
     "mapping": { "nota": "Cortical mapping with the Penfield technique" },
     "raabe_estim": { "nombre": "Raabe (stimulus)", "nota": "Suction-type cortical stimulator — cathode, cathodal (black) column of TES MEP, usually channel 12. Its reference anode is Ref.Raabe" },
-    "conmutador": { "nombre": "Switch", "nota": "Occupies a single anodal input (usually 6) and subdivides between the combinations" },
+    "conmutador": { "nombre": "Switch", "nota": "Occupies a single anodal input (usually 6)" },
     "fz": { "nota": "Usual reference" },
     "cz_doble_prima": { "nota": "Alternative to Ref.Raabe (reference anode)" },
     "ref_raabe": { "nota": "Reference for the Raabe stimulator — anode (red input)" },
