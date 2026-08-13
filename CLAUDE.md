@@ -55,11 +55,11 @@ red de seguridad de abajo se apoya en el **historial de git del repo de datos**.
 
 - Repositorio: `paniaguadediego-bit/checklist-mio-datos` (**privado**).
 - Un único archivo en la raíz: `estado.json`.
-- Lo escribe `estadoActual()` ([app.js:1217](app.js:1217)) y tiene esta forma:
+- Lo escribe `estadoActual()` ([app.js:1571](app.js:1571)) y tiene esta forma:
 
 ```
 { formato: "mio-ionm", version: 2, fecha, escenarios, catalogo_usuario,
-  etiquetas_usuario, etiquetas_borradas, borrados, activo }
+  etiquetas_usuario, etiquetas_borradas, catalogos, borrados, activo }
 ```
 
 - Se sube en base64 por la Contents API de GitHub. El token es *fine-grained*,
@@ -104,7 +104,7 @@ vez en cuando mantiene la copia al día.
 ### Si el navegador borró los datos del sitio
 
 No hace falta hacer nada especial: al abrir la web con la sincronización
-configurada, `bajarAuto()` ([app.js:1350](app.js:1350)) se trae la última versión
+configurada, `bajarAuto()` ([app.js:1728](app.js:1728)) se trae la última versión
 del repositorio. Si además hubieras perdido el token, se vuelve a generar en
 GitHub y se pega en el diálogo ☁.
 
@@ -125,19 +125,24 @@ que se sube a GitHub, así que sirve de restauración completa.
 
 ## Mapa del código
 
-Todo el JavaScript vive en un único IIFE en `app.js` (~2600 líneas). No hay
+Todo el JavaScript vive en un único IIFE en `app.js` (~4200 líneas). No hay
 módulos. Las funciones son declaraciones, así que el orden de definición no
-importa.
+importa. **Los números de línea de esta tabla se desactualizan con cada
+cambio grande** — si no cuadran con lo que hay, es más fiable un
+`grep -n "function nombreDeLaFuncion"` que fiarse del número a ciegas.
 
 | Zona | Función clave | Línea |
 |---|---|---|
-| Idioma | `volcarTraducciones()`, `campo()` | [269](app.js:269), [348](app.js:348) |
-| Etiquetas (tipos físicos) | `reconstruirEtiquetas()` | [422](app.js:422) |
-| Catálogo de material | `reconstruirCatalogo()` | [511](app.js:511) |
-| Carga y guardado del estado | `cargarEstado()`, `guardarEstado()` | [582](app.js:582), [650](app.js:650) |
-| Entradas de una caja | `entradasDe()` | [764](app.js:764) |
-| Sincronización | `estadoActual()`, `aplicarEstado()`, `programarSubida()`, `subirAuto()`, `bajarAuto()` | [1217](app.js:1217)–[1374](app.js:1350) |
-| Cálculo del resumen | `renderResumen()` | [2146](app.js:2146) |
+| Idioma | `volcarTraducciones()`, `campo()` | [467](app.js:467), [549](app.js:549) |
+| Etiquetas (tipos físicos) | `reconstruirEtiquetas()` | [623](app.js:623) |
+| Catálogo de material | `reconstruirCatalogo()` | [712](app.js:712) |
+| Catálogos editables (técnicas/servicios/intervenciones/perfiles) | `fusionarCatalogo()`, `reconstruirCatalogos()` | ver `grep` |
+| Carga y guardado del estado | `cargarEstado()`, `guardarEstado()` | [932](app.js:932), [1003](app.js:1003) |
+| Entradas de una caja | `entradasDe()` | [1118](app.js:1118) |
+| Sincronización de escenarios/catálogos | `estadoActual()`, `aplicarEstado()`, `programarSubida()`, `subirAuto()`, `bajarAuto()` | [1571](app.js:1571)–[1728](app.js:1728) |
+| Casos: modelo y ficha | `casoVacio()`, `guardarCaso()`, `borrarCaso()`, `renderFichaCaso()` | [1979](app.js:1979), [1948](app.js:1948), [1935](app.js:1935), [2864](app.js:2864) |
+| Casos: sincronización | `subirCaso()`, `bajarCasos()`, `borrarCasosPendientes()` | ver `grep` |
+| Cálculo del resumen | `calcularResumen()` (dato) → `renderResumen()` (pintado) | [3714](app.js:3714), [3795](app.js:3795) |
 
 Datos de fábrica en `data/surgeries.js`: `cajas_material`, `etiquetas`,
 `catalogo_material`, `tecnicas` (14 de monitorización + 8 de mapeo),
@@ -229,6 +234,9 @@ Por eso `index.html` carga sus archivos con `?v=AAAAMMDD`. **Cada vez que
 cambie `app.js`, `style.css` o algo de `data/`, hay que subir ese número** en
 las cuatro etiquetas (`style.css`, `data/surgeries.js`, `data/i18n-en.js`,
 `app.js`). Es lo único manual del despliegue; el resto lo hace `git push`.
+Si hay más de un despliegue el mismo día, se añade una letra al final
+(`20260813`, `20260813b`, `20260813c`...) — solo tiene que ser una URL
+distinta a la anterior, no importa el formato exacto.
 
 ---
 
@@ -259,10 +267,22 @@ La herramienta de preparación está terminada y en uso. De la **Fase 2.0**:
    quiere explorar por su cuenta qué más se le puede sacar a Looker antes de
    seguir; no asumir que están todos hechos sin preguntar.
 
-Hay un caso de prueba (`2026-002`, registrado para poder probar la conexión
-de Looker Studio) en el repositorio de datos. No confundirlo con un caso
-real; se puede borrar cuando el usuario lo pida, igual que se hizo con el
-primero.
+El repositorio de datos está **limpio de casos de prueba**: los tres que
+había (`2026-002`, `2026-003`, `2026-004`, ninguno con contenido real) se
+borraron a mano contra la API. Sigue recuperables en el historial de git si
+hiciera falta.
+
+Dos ampliaciones sobre la especificación original de la Fase 2.0, pedidas
+por el usuario después de tenerla en uso:
+
+- **`nombre_caso`** — campo de texto libre y opcional en el cierre rápido,
+  para renombrar un caso a mano sin tocar el `ID_Caso` (que sigue siendo el
+  correlativo automático, no editable). Ver `## Casos` más abajo.
+- **Borrar caso** — botón en la ficha, con cola de borrado remoto igual que
+  la de subida (`casosBorrados`). Ver `## Casos` más abajo. Al implementarlo
+  se descubrió y arregló un hueco real en `bajarCasos()`: no detectaba
+  cuando un caso había dejado de existir en GitHub, así que uno borrado por
+  fuera de la app se quedaba fantasma en el navegador. Ya corregido.
 
 Pendiente, sin urgencia: verificar en vivo con datos reales (no solo con el
 arnés de pruebas) que añadir/renombrar una técnica actualiza el Sheet solo, y
