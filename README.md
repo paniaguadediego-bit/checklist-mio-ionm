@@ -241,6 +241,13 @@ archivo. No hay que exportar ni importar nada.
   registrado hoy no se confunde con uno de hoy.
 - Cualquier caso cerrado se sigue pudiendo abrir y corregir, sin límite de
   tiempo.
+- **Borrar caso**, abajo a la izquierda dentro de la ficha, quita un caso de
+  en medio para siempre — un caso de prueba, uno duplicado, uno que no
+  debiste registrar. Pide confirmación porque no se puede deshacer desde la
+  propia herramienta. (El repositorio de datos sí guarda historial de git,
+  así que en el peor de los casos sigue siendo recuperable a mano, igual que
+  con el resto de tus datos — ver *Red de seguridad* en `CLAUDE.md`.) El
+  botón solo aparece en un caso que ya guardaste al menos una vez.
 
 ### Qué NO se guarda
 

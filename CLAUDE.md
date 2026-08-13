@@ -420,6 +420,20 @@ cambiado**, comparando el `sha` del listado; nunca pisa un caso con cambios
 locales sin subir. Un conflicto en `estado.json` **no** bloquea la subida de
 casos: son archivos independientes.
 
+**Borrar un caso** (`borrarCaso()`) sigue el mismo patrón que "sin_subir",
+pero al revés: `casosBorrados` guarda `caso_uid → sha` para los casos que
+**sí llegaron a existir en GitHub** (si nunca se subió, no hay nada que
+borrar allí y basta con quitarlo en local). `borrarCasosPendientes()` los
+vacía con `DELETE` en cuanto hay conexión, reintentando una vez si el `sha`
+cambió mientras tanto — el borrado gana siempre, sea cual sea el contenido
+de en medio. `bajarCasos()` ignora cualquier `uid` que esté en
+`casosBorrados`, o un caso que acabas de borrar reaparecería solo si el
+listado remoto todavía no se había enterado. El botón solo aparece en un
+caso que ya se guardó al menos una vez (uno recién creado sin guardar no
+existe todavía en `casos`, no hay nada que borrar). No hay deshacer desde la
+app, pero el borrado en GitHub es un commit más: recuperable del historial,
+igual que `estado.json`.
+
 Arquitectura: App (GitHub Pages) → repo privado de datos (fuente de verdad) →
 Apps Script con disparador diario → Google Sheet → Looker Studio.
 

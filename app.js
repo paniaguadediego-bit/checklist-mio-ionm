@@ -277,6 +277,10 @@
     caso_volver:         { es: "Volver a la lista", en: "Back to the list" },
     caso_btn_cerrar_caso:{ es: "Cerrar caso", en: "Close case" },
     caso_reabrir:        { es: "Marcar como preparado", en: "Mark as prepared" },
+    caso_borrar:         { es: "Borrar caso", en: "Delete case" },
+    caso_borrar_conf:    { es: "¿Borrar el caso “{caso}”?\nSe borra también del repositorio en cuanto haya conexión. No se puede deshacer desde la app, aunque queda recuperable en el historial de git.",
+                           en: "Delete the case “{caso}”?\nAlso deleted from the repository as soon as there is a connection. This cannot be undone from the app, though it stays recoverable in the git history." },
+    caso_borrado:        { es: "Caso borrado.", en: "Case deleted." },
     caso_guardado:       { es: "Caso guardado.", en: "Case saved." },
     caso_falta_fecha:    { es: "La fecha es obligatoria.", en: "The date is required." },
     caso_montaje_res:    { es: "{cajas} caja(s) · {canales} entradas ocupadas", en: "{cajas} box(es) · {canales} inputs used" },
@@ -1505,7 +1509,7 @@
     } else if (ultimoFallo) {
       el.textContent = T("sync_sin_subir");
       estado = "error";
-    } else if (sync.pendiente || casosPendientes().length) {
+    } else if (sync.pendiente || casosPendientes().length || borradosPendientes().length) {
       el.textContent = T(enQuirofano() ? "sync_en_pausa" : "sync_guardando");
       estado = "aviso";
     } else if (sync.fecha) {
@@ -1692,7 +1696,7 @@
 
   function subirAuto() {
     if (!syncActivo() || subiendo) return;
-    if (!sync.pendiente && !casosPendientes().length) return;
+    if (!sync.pendiente && !casosPendientes().length && !borradosPendientes().length) return;
     if (navigator.onLine === false) { pintarEstadoSync(); return; }
     subiendo = true;
     pintarEstadoSync();
@@ -1709,6 +1713,7 @@
       : Promise.resolve();
     cadena
       .then(function () { return subirCasosPendientes(); })
+      .then(function () { return borrarCasosPendientes(); })
       .catch(function (e) { ultimoFallo = e.message || T("sync_error_subir"); })
       .then(function () {
         subiendo = false;
@@ -1750,13 +1755,13 @@
   // Al volver la conexión se reintenta lo que quedó pendiente
   window.addEventListener("online", function () {
     ultimoFallo = null;
-    if (sync.pendiente || casosPendientes().length) subirAuto();
+    if (sync.pendiente || casosPendientes().length || borradosPendientes().length) subirAuto();
     bajarCasos();
   });
 
   // Cerrar la pestaña con algo sin subir: avisa antes de perderlo de vista
   window.addEventListener("beforeunload", function (e) {
-    if (syncActivo() && (sync.pendiente || casosPendientes().length) && !enQuirofano()) {
+    if (syncActivo() && (sync.pendiente || casosPendientes().length || borradosPendientes().length) && !enQuirofano()) {
       e.preventDefault();
       e.returnValue = "";
     }
@@ -1870,9 +1875,17 @@
   var casos = {};        // caso_uid -> caso
   var casosSha = {};     // caso_uid -> sha del archivo en GitHub
   var casosSinSubir = {};// caso_uid -> true mientras no se haya subido
+  // caso_uid -> sha con el que había que borrarlo en GitHub. Solo lleva
+  // entrada los casos que SÍ llegaron a subirse alguna vez: uno que nunca
+  // salió de este dispositivo no deja nada que borrar en el repositorio.
+  var casosBorrados = {};
 
   function casosPendientes() {
     return Object.keys(casosSinSubir);
+  }
+
+  function borradosPendientes() {
+    return Object.keys(casosBorrados);
   }
 
   function uuid() {
@@ -1892,13 +1905,14 @@
   function dosDigitos(n) { return (n < 10 ? "0" : "") + n; }
 
   function cargarCasos() {
-    casos = {}; casosSha = {}; casosSinSubir = {};
+    casos = {}; casosSha = {}; casosSinSubir = {}; casosBorrados = {};
     try {
       var g = JSON.parse(localStorage.getItem(CASOS_KEY) || "null");
       if (g) {
         casos = g.casos || {};
         casosSha = g.sha || {};
         casosSinSubir = g.sin_subir || {};
+        casosBorrados = g.borrados || {};
       }
     } catch (e) { /* sin casos guardados o ilegibles */ }
   }
@@ -1906,11 +1920,26 @@
   function guardarCasos() {
     try {
       localStorage.setItem(CASOS_KEY, JSON.stringify({
-        casos: casos, sha: casosSha, sin_subir: casosSinSubir
+        casos: casos, sha: casosSha, sin_subir: casosSinSubir, borrados: casosBorrados
       }));
     } catch (e) {
       avisoGuardado(T("guardado_error", { error: e.message }), true);
     }
+  }
+
+  // Quita un caso de en medio. Si nunca llegó a subirse, con borrarlo aquí
+  // basta. Si sí llegó a existir en GitHub, se apunta para borrarlo allí en
+  // cuanto haya conexión -igual que "sin_subir" hace con las subidas-, para
+  // que no reaparezca solo si otro dispositivo sincroniza antes de que el
+  // borrado llegue al repositorio.
+  function borrarCaso(uid) {
+    delete casos[uid];
+    delete casosSinSubir[uid];
+    if (casosSha[uid]) casosBorrados[uid] = casosSha[uid];
+    delete casosSha[uid];
+    guardarCasos();
+    programarEnvio();
+    pintarEstadoSync();
   }
 
   /* Guarda un caso en local y lo deja listo para subir. En quirófano se
@@ -2069,6 +2098,40 @@
     }, Promise.resolve());
   }
 
+  function eliminarCasoRemoto_(uid, sha, reintento) {
+    return fetch(urlCaso(uid), {
+      method: "DELETE",
+      headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()),
+      body: JSON.stringify({ message: "Borrar caso " + uid, sha: sha })
+    }).then(function (resp) {
+      if (resp.status === 404) return;   // ya no estaba: nada que hacer
+      // El sha cambió desde que se decidió borrarlo (otro dispositivo lo
+      // tocó primero). Se relee y se reintenta una vez: el borrado sigue
+      // siendo lo que quieres, gane lo que gane el contenido de en medio.
+      if ((resp.status === 409 || resp.status === 422) && !reintento) {
+        return fetch(urlCaso(uid), { headers: cabeceras(), cache: "no-store" })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (json) {
+            if (!json) return;   // ya no existe
+            return eliminarCasoRemoto_(uid, json.sha, true);
+          });
+      }
+      if (!resp.ok) throw new Error(errorLegible(resp));
+    });
+  }
+
+  function borrarCasosPendientes() {
+    if (!syncActivo()) return Promise.resolve();
+    return borradosPendientes().reduce(function (cadena, uid) {
+      return cadena.then(function () {
+        return eliminarCasoRemoto_(uid, casosBorrados[uid]).then(function () {
+          delete casosBorrados[uid];
+          guardarCasos();
+        });
+      });
+    }, Promise.resolve());
+  }
+
   /* Trae los casos del repositorio. Solo descarga los que han cambiado: el
      listado ya da el sha de cada archivo. Un caso con cambios locales sin
      subir no se pisa, que para eso está pendiente de subida. */
@@ -2086,6 +2149,10 @@
           if (f.type !== "file" || !/\.json$/.test(f.name)) return false;
           var uid = f.name.replace(/\.json$/, "");
           if (casosSinSubir[uid]) return false;
+          // Pendiente de borrar en este dispositivo: no se vuelve a bajar
+          // aunque el listado remoto todavía lo tenga -el borrado no ha
+          // llegado allí todavía-, o reaparecería solo.
+          if (casosBorrados[uid]) return false;
           return casosSha[uid] !== f.sha;
         });
         return quedan.reduce(function (cadena, f) {
@@ -2817,6 +2884,9 @@
 
     document.getElementById("caso-btn-cerrar-caso").textContent =
       T(c.estado === "cerrado" ? "caso_reabrir" : "caso_btn_cerrar_caso");
+    // Un caso que todavía no se ha guardado ni una vez no existe en "casos":
+    // no hay nada que borrar hasta el primer "Guardar".
+    document.getElementById("caso-borrar").hidden = casoEsNuevo;
     document.getElementById("caso-error").hidden = true;
   }
 
@@ -2976,6 +3046,15 @@
 
   document.getElementById("caso-volver").addEventListener("click", function () {
     dlgCaso.close();
+    abrirListaCasos();
+  });
+  document.getElementById("caso-borrar").addEventListener("click", function () {
+    var c = casoAbierto;
+    var etiqueta = (c.ID_Caso || "") + (c.nombre_caso ? " — " + c.nombre_caso : "");
+    if (!confirm(T("caso_borrar_conf", { caso: etiqueta }))) return;
+    borrarCaso(c.caso_uid);
+    dlgCaso.close();
+    avisoGuardado(T("caso_borrado"));
     abrirListaCasos();
   });
   document.getElementById("caso-guardar").addEventListener("click", function () {
@@ -4049,8 +4128,8 @@
     if (activo) seleccionar(null);
     // La subida automática se pausa en quirófano para no depender de la red
     // durante la cirugía; al salir se manda lo que se haya acumulado, tanto
-    // el estado como los casos guardados mientras tanto.
-    if (!activo && (sync.pendiente || casosPendientes().length)) programarEnvio();
+    // el estado como los casos guardados o borrados mientras tanto.
+    if (!activo && (sync.pendiente || casosPendientes().length || borradosPendientes().length)) programarEnvio();
     pintarEstadoSync();
   }
 
