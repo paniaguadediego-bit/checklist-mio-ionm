@@ -55,7 +55,7 @@ red de seguridad de abajo se apoya en el **historial de git del repo de datos**.
 
 - Repositorio: `paniaguadediego-bit/checklist-mio-datos` (**privado**).
 - Un único archivo en la raíz: `estado.json`.
-- Lo escribe `estadoActual()` ([app.js:1571](app.js:1571)) y tiene esta forma:
+- Lo escribe `estadoActual()` ([app.js:1538](app.js:1538)) y tiene esta forma:
 
 ```
 { formato: "mio-ionm", version: 2, fecha, escenarios, catalogo_usuario,
@@ -104,7 +104,7 @@ vez en cuando mantiene la copia al día.
 ### Si el navegador borró los datos del sitio
 
 No hace falta hacer nada especial: al abrir la web con la sincronización
-configurada, `bajarAuto()` ([app.js:1728](app.js:1728)) se trae la última versión
+configurada, `bajarAuto()` ([app.js:1695](app.js:1695)) se trae la última versión
 del repositorio. Si además hubieras perdido el token, se vuelve a generar en
 GitHub y se pega en el diálogo ☁.
 
@@ -133,16 +133,17 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 
 | Zona | Función clave | Línea |
 |---|---|---|
-| Idioma | `volcarTraducciones()`, `campo()` | [467](app.js:467), [549](app.js:549) |
-| Etiquetas (tipos físicos) | `reconstruirEtiquetas()` | [623](app.js:623) |
-| Catálogo de material | `reconstruirCatalogo()` | [712](app.js:712) |
+| Idioma | `volcarTraducciones()`, `campo()` | [466](app.js:466), [548](app.js:548) |
+| Etiquetas (tipos físicos) | `reconstruirEtiquetas()` | [622](app.js:622) |
+| Catálogo de material | `reconstruirCatalogo()` | [711](app.js:711) |
 | Catálogos editables (técnicas/servicios/intervenciones/perfiles) | `fusionarCatalogo()`, `reconstruirCatalogos()` | ver `grep` |
-| Carga y guardado del estado | `cargarEstado()`, `guardarEstado()` | [932](app.js:932), [1003](app.js:1003) |
-| Entradas de una caja | `entradasDe()` | [1118](app.js:1118) |
-| Sincronización de escenarios/catálogos | `estadoActual()`, `aplicarEstado()`, `programarSubida()`, `subirAuto()`, `bajarAuto()` | [1571](app.js:1571)–[1728](app.js:1728) |
-| Casos: modelo y ficha | `casoVacio()`, `guardarCaso()`, `borrarCaso()`, `renderFichaCaso()` | [1979](app.js:1979), [1948](app.js:1948), [1935](app.js:1935), [2864](app.js:2864) |
+| Carga y guardado del estado | `cargarEstado()`, `guardarEstado()` | [931](app.js:931), [1002](app.js:1002) |
+| Entradas de una caja | `entradasDe()` | [1117](app.js:1117) |
+| Selección y colocación (pulsar y colocar) | `seleccionar()`, `colocar()` | ver `grep` |
+| Sincronización de escenarios/catálogos | `estadoActual()`, `aplicarEstado()`, `programarSubida()`, `subirAuto()`, `bajarAuto()` | [1538](app.js:1538)–[1695](app.js:1695) |
+| Casos: modelo y ficha | `borrarCaso()`, `guardarCaso()`, `casoVacio()`, `renderFichaCaso()` | [1902](app.js:1902), [1915](app.js:1915), [1946](app.js:1946), [2831](app.js:2831) |
 | Casos: sincronización | `subirCaso()`, `bajarCasos()`, `borrarCasosPendientes()` | ver `grep` |
-| Cálculo del resumen | `calcularResumen()` (dato) → `renderResumen()` (pintado) | [3714](app.js:3714), [3795](app.js:3795) |
+| Cálculo del resumen | `calcularResumen()` (dato) → `renderResumen()` (pintado) | [3689](app.js:3689), [3766](app.js:3766) |
 
 Datos de fábrica en `data/surgeries.js`: `cajas_material`, `etiquetas`,
 `catalogo_material`, `tecnicas` (14 de monitorización + 8 de mapeo),
@@ -283,6 +284,27 @@ por el usuario después de tenerla en uso:
   se descubrió y arregló un hueco real en `bajarCasos()`: no detectaba
   cuando un caso había dejado de existir en GitHub, así que uno borrado por
   fuera de la app se quedaba fantasma en el navegador. Ya corregido.
+
+Retoques de interfaz pedidos tras usar la herramienta de verdad en varias
+cirugías (confirmados por el usuario, "todo funciona"):
+
+- El **conmutador** ya no tiene el desplegable C1/C2/C3/C4/Cz-1/Cz+6: es un
+  chip fijo, sin `opciones` ni `item.conmutador` en el dato. Tampoco se
+  puede ya **cambiar el tipo físico por colocación** desde la caja —eso
+  liberó el sitio que el desplegable del conmutador invadía en la columna
+  Catodal de TES MEP—; `etiquetaColocada()` sigue leyendo overrides ya
+  guardados en escenarios de antes de este cambio, solo se quitó la forma
+  de crear uno nuevo.
+- `colocar()` deselecciona el ítem solo tras colocarlo (antes se quedaba
+  listo para repetir, pensado para pares, pero molestaba para todo lo
+  demás) y, en móvil, vuelve a desplegar el catálogo solo para el
+  siguiente ítem.
+- Las tarjetas de Técnicas y Resumen son `<details>` plegables. El resumen
+  pasa a ir el último, debajo de las cajas —antes iba en medio—. En Modo
+  quirófano se mantiene primero y `sticky` vía CSS `order` (`.columna-principal`
+  es flex column, no grid), sin depender del orden del HTML; forzado
+  abierto tanto al entrar en quirófano como al imprimir, por si se hubiera
+  quedado plegado.
 
 Pendiente, sin urgencia: verificar en vivo con datos reales (no solo con el
 arnés de pruebas) que añadir/renombrar una técnica actualiza el Sheet solo, y
