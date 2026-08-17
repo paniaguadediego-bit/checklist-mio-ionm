@@ -9,6 +9,14 @@
   var SERVICIOS_BASE = DATA.servicios || [];
   var INTERVENCIONES_BASE = DATA.intervenciones || [];
   var PERFILES_BASE = DATA.perfiles_procedimiento || [];
+  // Los tipos de cirugía. Es una lista cerrada y corta a propósito: sirve para
+  // agrupar los montajes, no para describir la intervención (eso es el
+  // catálogo de intervenciones, que sí lleva el código del hospital).
+  var ESCENARIOS_BASE = DATA.escenarios_tipo || [];
+  // Quién usa la herramienta. Va VACÍO de fábrica y se rellena desde la app:
+  // los nombres de personas reales no se escriben en este repositorio, que es
+  // público. Creados desde la interfaz viven en estado.json, que es privado.
+  var USUARIOS_BASE = [];
   var STORAGE_KEY = "mio_ionm_escenarios_v1";
 
   /* ---------------------------------------------------------------- *
@@ -419,6 +427,17 @@
     tab_intervenciones:  { es: "Intervenciones", en: "Procedures" },
     tab_servicios:       { es: "Servicios", en: "Specialties" },
     tab_perfiles:        { es: "Perfiles", en: "Profiles" },
+    tab_escenarios:      { es: "Escenarios", en: "Scenarios" },
+    tab_usuarios:        { es: "Usuarios", en: "Users" },
+    cat_intro_escenarios: { es: "El <b>tipo de cirugía</b>, para agrupar los montajes. Es una lista corta a propósito: describir la intervención concreta es cosa de la pestaña <b>Intervenciones</b>, que lleva el código del hospital.",
+                           en: "The <b>type of surgery</b>, used to group montages. It is deliberately a short list: describing the specific procedure belongs in the <b>Procedures</b> tab, which carries the hospital code." },
+    cat_intro_usuarios:  { es: "Quién usa la herramienta. Sirve para <b>firmar los montajes</b>: cada uno lleva el nombre de quien lo creó, y solo su autor puede editarlo o borrarlo. No es una contraseña ni protege nada — cualquiera puede cambiar de perfil desde la barra de arriba. Estos nombres viven en tu repositorio de datos privado, nunca en el del código.",
+                           en: "Who uses the tool. It is used to <b>sign montages</b>: each one carries the name of whoever created it, and only its author can edit or delete it. It is not a password and protects nothing — anyone can switch profile from the top bar. These names live in your private data repository, never in the code one." },
+    perfil_usuario_aria: { es: "Quién eres", en: "Who you are" },
+    perfil_usuario_sin:  { es: "— quién eres —", en: "— who are you —" },
+    perfil_usuario_nuevo: { es: "+ Añadir usuario…", en: "+ Add user…" },
+    perfil_usuario_pide:  { es: "¿Cómo te llamas? Aparecerá como autor de los montajes que crees.",
+                           en: "What is your name? It will appear as the author of the montages you create." },
     cat_intro_tecnicas:  { es: "Lo que ves y puedes cambiar es la <b>etiqueta</b>. Por dentro cada técnica tiene un identificador fijo que no cambia nunca, así que renombrarla actualiza también los casos ya guardados. <b>Desactivar no borra</b>: deja de ofrecerse para casos nuevos, pero sigue existiendo en el histórico.",
                            en: "What you see and can change is the <b>label</b>. Internally each technique has a fixed identifier that never changes, so renaming it also updates cases already saved. <b>Deactivating does not delete</b>: it stops being offered for new cases, but remains in the history." },
     cat_intro_interv:    { es: "El <b>código</b> puede quedarse vacío hasta que tengas la codificación del hospital. Cuando lo rellenes, se aplica solo a todos los casos anteriores de ese tipo.",
@@ -816,7 +835,7 @@
    * Ojo con el nombre "etiqueta": en una técnica es su texto visible, y no
    * tiene nada que ver con las etiquetas de material (tipos físicos).
    * ---------------------------------------------------------------- */
-  var CATALOGOS = ["tecnicas", "servicios", "intervenciones", "perfiles"];
+  var CATALOGOS = ["tecnicas", "servicios", "intervenciones", "perfiles", "escenarios", "usuarios"];
   var GRUPOS_TECNICA = ["monitorizacion", "mapeo"];
 
   // nombre -> { version, actualizado_en, propios[], orden[], borrados[] }
@@ -826,6 +845,8 @@
   var SERVICIOS = [], SERV = {};
   var INTERVENCIONES = [], INTERV = {};
   var PERFILES = [], PERF = {};
+  var ESCENARIOS_TIPO = [], ESCT = {};
+  var USUARIOS = [], USRS = {};
 
   function reiniciarCatalogos() {
     catalogos = {};
@@ -875,6 +896,10 @@
     INTERVENCIONES = i.lista; INTERV = i.indice;
     var p = fusionarCatalogo(PERFILES_BASE, catalogos.perfiles);
     PERFILES = p.lista; PERF = p.indice;
+    var e = fusionarCatalogo(ESCENARIOS_BASE, catalogos.escenarios);
+    ESCENARIOS_TIPO = e.lista; ESCT = e.indice;
+    var u = fusionarCatalogo(USUARIOS_BASE, catalogos.usuarios);
+    USUARIOS = u.lista; USRS = u.indice;
   }
 
   // Lo desactivado deja de ofrecerse para casos nuevos, pero sigue existiendo
@@ -936,7 +961,8 @@
   function moverEnCatalogo(nombre, id, paso) {
     var meta = catalogos[nombre];
     var lista = { tecnicas: TECNICAS, servicios: SERVICIOS,
-                  intervenciones: INTERVENCIONES, perfiles: PERFILES }[nombre];
+                  intervenciones: INTERVENCIONES, perfiles: PERFILES,
+                  escenarios: ESCENARIOS_TIPO, usuarios: USUARIOS }[nombre];
     // El orden se fija por primera vez con el que se está viendo, para que
     // mover un elemento no reordene de golpe todo lo demás.
     var ids = lista.map(function (e) { return e.id; });
@@ -3298,16 +3324,19 @@
   var catPestana = "tecnicas";
   var catEditando = null;    // id que se está editando, o null si es nuevo
   var catCampos = {};        // clave -> elemento del formulario
-  var PREFIJO_ID = { tecnicas: "t_", servicios: "s_", intervenciones: "i_", perfiles: "p_" };
+  var PREFIJO_ID = { tecnicas: "t_", servicios: "s_", intervenciones: "i_", perfiles: "p_",
+                     escenarios: "esc_", usuarios: "u_" };
 
   function catLista() {
     return { tecnicas: TECNICAS, servicios: SERVICIOS,
-             intervenciones: INTERVENCIONES, perfiles: PERFILES }[catPestana];
+             intervenciones: INTERVENCIONES, perfiles: PERFILES,
+             escenarios: ESCENARIOS_TIPO, usuarios: USUARIOS }[catPestana];
   }
 
   function catIndice() {
     return { tecnicas: TECS, servicios: SERV,
-             intervenciones: INTERV, perfiles: PERF }[catPestana];
+             intervenciones: INTERV, perfiles: PERF,
+             escenarios: ESCT, usuarios: USRS }[catPestana];
   }
 
   // Las técnicas llaman "etiqueta" a su texto visible; el resto, "nombre".
@@ -3544,7 +3573,8 @@
   function renderDlgCatalogos() {
     renderCatPestanas();
     var intros = { tecnicas: "cat_intro_tecnicas", intervenciones: "cat_intro_interv",
-                   servicios: "cat_intro_serv", perfiles: "cat_intro_perfiles" };
+                   servicios: "cat_intro_serv", perfiles: "cat_intro_perfiles",
+                   escenarios: "cat_intro_escenarios", usuarios: "cat_intro_usuarios" };
     document.getElementById("cat-intro").innerHTML = T(intros[catPestana]);
     renderCatLista();
     renderCatVersion();
@@ -3687,6 +3717,93 @@
       cont.appendChild(bloque);
     });
   }
+
+  /* ---------------------------------------------------------------- *
+   * Perfil de usuario
+   *
+   * Quién está usando la herramienta. Sirve para firmar los montajes: cada
+   * uno lleva su autor y solo él puede editarlo o borrarlo desde la interfaz.
+   *
+   * NO es seguridad y no lo pretende: cualquiera puede elegir otro perfil
+   * aquí mismo, y el token de GitHub es el mismo para todos, así que a nivel
+   * de repositorio cualquiera puede escribir cualquier cosa. Sin backend
+   * -regla 4 de CLAUDE.md- no hay forma de autenticar a nadie. Es atribución
+   * y un candado blando entre compañeros, y así se explica en la interfaz.
+   *
+   * El perfil elegido vive en localStorage, no en estado.json: es de este
+   * dispositivo, no del equipo. Si viajara en la sincronización, abrir la app
+   * en el móvil de Javier te cambiaría el perfil a ti.
+   * ---------------------------------------------------------------- */
+  var PERFIL_KEY = "mio_ionm_perfil_v1";
+  var perfilUsuario = null;
+
+  function cargarPerfilUsuario() {
+    try { perfilUsuario = localStorage.getItem(PERFIL_KEY) || null; }
+    catch (e) { perfilUsuario = null; }
+  }
+
+  function fijarPerfilUsuario(id) {
+    perfilUsuario = id || null;
+    try {
+      if (perfilUsuario) localStorage.setItem(PERFIL_KEY, perfilUsuario);
+      else localStorage.removeItem(PERFIL_KEY);
+    } catch (e) { /* sin persistencia */ }
+  }
+
+  // El usuario activo, o null si todavía no ha dicho quién es
+  function usuarioActual() {
+    return perfilUsuario && USRS[perfilUsuario] ? USRS[perfilUsuario] : null;
+  }
+
+  function nombreUsuario(id) {
+    return USRS[id] ? campo(USRS[id], "nombre") : "";
+  }
+
+  function renderPerfilUsuario() {
+    var sel = document.getElementById("perfil-usuario");
+    sel.innerHTML = "";
+    var vacio = document.createElement("option");
+    vacio.value = "";
+    vacio.textContent = T("perfil_usuario_sin");
+    sel.appendChild(vacio);
+    // Se ofrece lo activo, más el tuyo aunque lo hayan desactivado: si no,
+    // desactivar a alguien le dejaría el selector en blanco sin explicación.
+    USUARIOS.filter(function (u) {
+      return u.activa !== false || u.id === perfilUsuario;
+    }).forEach(function (u) {
+      var o = document.createElement("option");
+      o.value = u.id;
+      o.textContent = campo(u, "nombre");
+      sel.appendChild(o);
+    });
+    var nuevo = document.createElement("option");
+    nuevo.value = "__nuevo__";
+    nuevo.textContent = T("perfil_usuario_nuevo");
+    sel.appendChild(nuevo);
+    sel.value = usuarioActual() ? perfilUsuario : "";
+  }
+
+  document.getElementById("perfil-usuario").addEventListener("change", function (e) {
+    if (e.target.value !== "__nuevo__") {
+      fijarPerfilUsuario(e.target.value);
+      renderPerfilUsuario();
+      renderTodo();
+      return;
+    }
+    // Crear un usuario desde aquí, sin tener que ir al diálogo de Catálogos:
+    // es lo primero que hace falta al abrir la herramienta por primera vez.
+    var nombre = (prompt(T("perfil_usuario_pide")) || "").trim();
+    if (!nombre) { renderPerfilUsuario(); return; }
+    var yaEsta = USUARIOS.filter(function (u) {
+      return (campo(u, "nombre") || "").toLowerCase() === nombre.toLowerCase();
+    })[0];
+    var id = yaEsta ? yaEsta.id : idLibreEn(USRS, "u_", nombre);
+    if (!yaEsta) guardarEnCatalogo("usuarios", { id: id, nombre: nombre, activa: true });
+    fijarPerfilUsuario(id);
+    guardarEstado();
+    renderPerfilUsuario();
+    renderTodo();
+  });
 
   function renderPerfilSelect() {
     var sel = document.getElementById("perfil-select");
@@ -4333,6 +4450,9 @@
 
   function renderTodo() {
     renderSelect();
+    // La lista de usuarios puede haber cambiado al bajar de GitHub: si Javier
+    // se dio de alta en su móvil, aquí tiene que aparecer sin recargar.
+    renderPerfilUsuario();
     renderPerfilSelect();
     renderTecnicas();
     renderResumen();
@@ -4549,7 +4669,9 @@
   cargarEstado();
   cargarCasos();
   cargarSync();
+  cargarPerfilUsuario();
   pintarEstadoSync();
+  renderPerfilUsuario();
   renderPerfilSelect();
   renderTodo();
   try {

@@ -66,7 +66,8 @@ body {
 
 .barra-flex { flex: 1; }
 
-.barra-sup #escenario-select {
+.barra-sup #escenario-select,
+.barra-sup #perfil-usuario {
   min-width: 200px;
   max-width: 340px;
   padding: 0.22rem 0.45rem;
@@ -77,6 +78,8 @@ body {
   border: 1px solid var(--panel-borde);
   border-radius: var(--r);
 }
+/* Quién eres: más estrecho que el escenario, es un nombre corto */
+.barra-sup #perfil-usuario { min-width: 130px; max-width: 190px; }
 
 .btn-modo {
   font: inherit;
@@ -1251,7 +1254,7 @@ dialog h3 {
   .toolbar { gap: 0.25rem; }
   /* El hueco flexible robaba ancho al selector: en móvil se anula */
   .barra-sup .barra-flex { display: none; }
-  .barra-sup #escenario-select { min-width: 0; flex: 1; max-width: none; }
+  .barra-sup #escenario-select, .barra-sup #perfil-usuario { min-width: 0; flex: 1; max-width: none; }
   .marca { font-size: 0.78rem; }
   .btn-modo { font-size: 0.7rem; padding: 0.3rem 0.45rem; }
 }
@@ -1297,6 +1300,6 @@ dialog h3 {
        falta repetir selectores por tipo: todos leen la misma variable. */
     --campo-bg: #131a1d;
   }
-  #escenario-select, #catalogo-buscar, #perfil-select { background: #1b2226; color: var(--text); }
+  #escenario-select, #perfil-usuario, #catalogo-buscar, #perfil-select { background: #1b2226; color: var(--text); }
   .caja-plate { background: #c8d2d8; }
 }

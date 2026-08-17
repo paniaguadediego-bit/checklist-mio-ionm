@@ -608,6 +608,22 @@ window.SURGERIES_DATA = {
   ],
 
   /* ------------------------------------------------------------------ *
+   * TIPOS DE CIRUGÍA (ESCENARIOS)
+   * Lista corta y cerrada que agrupa los montajes personales. No describe
+   * la intervención concreta —de eso se encarga "intervenciones", que lleva
+   * el código del hospital—, sino el tipo de escenario que se monta.
+   * Catálogo editable: se amplía desde el diálogo Catálogos.
+   * ------------------------------------------------------------------ */
+  "escenarios_tipo": [
+    { "id": "esc_tumor_st",    "nombre": "Tumor ST",      "activa": true, "descripcion": "Tumor supratentorial" },
+    { "id": "esc_tumor_it",    "nombre": "Tumor IT",      "activa": true, "descripcion": "Tumor infratentorial" },
+    { "id": "esc_tumor_med",   "nombre": "Tumor Medular", "activa": true },
+    { "id": "esc_awake",       "nombre": "Awake surgery", "activa": true, "descripcion": "Cirugía con paciente despierto" },
+    { "id": "esc_ecc",         "nombre": "ECC",           "activa": true, "descripcion": "Estenosis del canal cervical" },
+    { "id": "esc_ecl",         "nombre": "ECL",           "activa": true, "descripcion": "Estenosis del canal lumbar" }
+  ],
+
+  /* ------------------------------------------------------------------ *
    * SERVICIOS QUIRÚRGICOS
    * Catálogo editable. Los casos guardan el "id", nunca el nombre, para
    * poder renombrar un servicio sin dejar huérfano ningún caso anterior.
