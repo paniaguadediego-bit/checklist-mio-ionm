@@ -249,7 +249,8 @@ main {
 .panel-catalogo.plegado .panel-ayuda,
 .panel-catalogo.plegado #catalogo-contenido { display: none; }
 
-#catalogo-buscar {
+#catalogo-buscar,
+#elegir-buscar {
   width: 100%;
   margin-top: 0.35rem;
   padding: 0.25rem 0.45rem;
@@ -300,6 +301,30 @@ main {
   font-weight: 600;
 }
 .chip-extra.activo::before { content: "☑"; }
+
+/* Recomendada por el perfil elegido. Es una sugerencia, no una marca: tiene
+   que verse a la vez que el check y sin parecerse a él, así que se señala con
+   un halo alrededor en vez de tocar el fondo o el borde -de eso ya se ocupa
+   .activo, y las dos clases conviven en el mismo chip cuando el usuario marca
+   una técnica que además estaba recomendada-. */
+.chip-extra.recomendada {
+  box-shadow: 0 0 0 2px var(--accent-soft), 0 0 0 3px var(--accent);
+}
+/* Selector de material abierto desde una entrada. Scroll propio y alto
+   acotado: el catálogo entero no cabe en la pantalla de un móvil, y el
+   diálogo tiene que dejar ver siempre a qué entrada va lo que elijas. */
+.elegir-contenido {
+  max-height: 55vh;
+  overflow-y: auto;
+  margin-top: 0.5rem;
+}
+
+.chip-extra.recomendada::after {
+  content: "★";
+  font-size: 0.62rem;
+  line-height: 1;
+  opacity: 0.75;
+}
 
 /* Gana al estilo de la etiqueta, que va en el atributo style del chip */
 .chip.seleccionado {
@@ -599,6 +624,8 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
   display: flex;
   align-items: center;
   padding: 0.05rem 0.18rem;
+  /* La entrada también es punto de partida: pulsarla abre el catálogo */
+  cursor: pointer;
 }
 .slot.sobre { border-color: #5ac896; border-style: solid; background: rgba(90,200,150,0.22); }
 

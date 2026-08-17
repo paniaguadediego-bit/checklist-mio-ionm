@@ -107,6 +107,13 @@
     chip_sin_etiqueta:   { es: "sin etiqueta", en: "no label" },
     chip_editar_tit:     { es: "Editar este material", en: "Edit this material" },
     chip_quitar_tit:     { es: "Quitar de esta entrada", en: "Remove from this input" },
+    dlg_elegir_titulo:   { es: "Elegir material", en: "Choose material" },
+    elegir_destino:      { es: "Va a la entrada {entrada} de {caja}.", en: "Goes to input {entrada} of {caja}." },
+    elegir_ocupada:      { es: "Ahora hay {item}: lo que elijas lo sustituye.",
+                           en: "Currently {item}: whatever you pick replaces it." },
+    elegir_quitar:       { es: "Dejar la entrada vacía", en: "Leave the input empty" },
+    slot_elegir_tit:     { es: "Pulsa para elegir material para esta entrada",
+                           en: "Tap to choose material for this input" },
     colocando:           { es: "Colocando", en: "Placing" },
     colocando_ayuda:     { es: "— pulsa una entrada", en: "— tap an input" },
     cancelar:            { es: "Cancelar", en: "Cancel" },
@@ -118,9 +125,9 @@
     tec_desactivada:     { es: "Desactivada: ya no se ofrece para casos nuevos, pero sigue marcada aquí",
                            en: "Deactivated: no longer offered for new cases, but still selected here" },
     perfil_label:        { es: "Perfil", en: "Profile" },
-    perfil_elegir:       { es: "— elegir —", en: "— choose —" },
-    perfil_confirmar:    { es: "¿Marcar las técnicas de “{perfil}”?\nSustituye las técnicas marcadas ahora mismo. El material colocado no se toca.",
-                           en: "Apply the techniques of “{perfil}”?\nThis replaces the currently selected techniques. Placed material is untouched." },
+    perfil_elegir:       { es: "— sin resaltar —", en: "— no highlight —" },
+    tec_recomendada:     { es: "Recomendada en “{perfil}”. Decides tú si se marca.",
+                           en: "Recommended in “{perfil}”. You decide whether to select it." },
 
     /* --- Resumen --- */
     resumen_titulo:      { es: "Resumen de material", en: "Material summary" },
@@ -318,6 +325,13 @@
     caso_region_nivel:   { es: "Región / nivel", en: "Region / level" },
     caso_diagnostico:    { es: "Diagnóstico", en: "Diagnosis" },
     caso_posicion:       { es: "Posición", en: "Position" },
+    caso_posicion_detalle: { es: "Detalle de la posición", en: "Position detail" },
+    caso_posicion_detalle_ay: { es: "Lo que no cabe en el desplegable: colocación de los brazos, cabezal, almohadillados, o en qué momento se volteó.",
+                           en: "Whatever the dropdown does not cover: arm placement, head holder, padding, or when the patient was turned." },
+    opc_posicion_supino: { es: "Supino", en: "Supine" },
+    opc_posicion_prono:  { es: "Prono", en: "Prone" },
+    opc_posicion_sedestacion: { es: "Sedestación", en: "Sitting" },
+    opc_posicion_volteo: { es: "Volteo", en: "Turned during surgery" },
     caso_pares_craneales_cuales: { es: "Pares craneales monitorizados", en: "Cranial nerves monitored" },
     caso_cambios_respecto_al_plan: { es: "Cambios respecto al plan", en: "Changes from the plan" },
     caso_material_real:  { es: "Material realmente usado", en: "Material actually used" },
@@ -1146,6 +1160,24 @@
    * ---------------------------------------------------------------- */
   var seleccionado = null;
 
+  /* Plegar y desplegar el catálogo conservando por dónde ibas.
+     El contenedor con scroll es el panel entero, y al plegarlo
+     #catalogo-contenido pasa a display:none: el navegador fuerza entonces
+     scrollTop a 0, así que al desplegarlo otra vez el catálogo aparecía por
+     el principio. En móvil eso pasa en cada colocación -seleccionar pliega,
+     colocar despliega-, y obligaba a volver a bajar hasta el músculo que
+     estabas usando cada vez. */
+  var scrollCatalogo = 0;
+
+  function plegarCatalogo(plegar) {
+    var panel = document.getElementById("panel-catalogo");
+    if (plegar === panel.classList.contains("plegado")) return;
+    if (plegar) scrollCatalogo = panel.scrollTop;
+    panel.classList.toggle("plegado", plegar);
+    document.getElementById("btn-plegar").textContent = plegar ? "▸" : "▾";
+    if (!plegar) panel.scrollTop = scrollCatalogo;
+  }
+
   function seleccionar(itemId) {
     seleccionado = itemId;
     var barra = document.getElementById("barra-seleccion");
@@ -1165,10 +1197,7 @@
       document.querySelectorAll('#catalogo-contenido .chip[data-item-id="' + seleccionado + '"]')
         .forEach(function (c) { c.classList.add("seleccionado"); });
       // En móvil el catálogo ocupa media pantalla: se pliega para dejar ver las cajas
-      if (window.matchMedia("(max-width: 900px)").matches) {
-        document.getElementById("panel-catalogo").classList.add("plegado");
-        document.getElementById("btn-plegar").textContent = "▸";
-      }
+      if (window.matchMedia("(max-width: 900px)").matches) plegarCatalogo(true);
     }
   }
 
@@ -1183,12 +1212,9 @@
     // deselecciona solo en vez de quedarse listo para colocarlo otra vez.
     seleccionar(null);
     // En móvil, seleccionar() plegó el catálogo para dejar ver las cajas;
-    // al terminar esta colocación se vuelve a desplegar solo, para elegir
-    // el siguiente ítem sin tener que desplegarlo a mano cada vez.
-    if (window.matchMedia("(max-width: 900px)").matches) {
-      document.getElementById("panel-catalogo").classList.remove("plegado");
-      document.getElementById("btn-plegar").textContent = "▾";
-    }
+    // al terminar esta colocación se vuelve a desplegar solo, por donde
+    // ibas, para elegir el siguiente ítem sin tener que buscarlo otra vez.
+    if (window.matchMedia("(max-width: 900px)").matches) plegarCatalogo(false);
   }
 
   /* ---------------------------------------------------------------- *
@@ -1221,8 +1247,10 @@
     }
     chip.appendChild(document.createTextNode(campo(item, "nombre")));
 
-    // Material propio: lápiz para editarlo (solo en el catálogo)
-    if (item.propio && !opciones.colocado) {
+    // Material propio: lápiz para editarlo (solo en el catálogo). En el
+    // selector que se abre desde una entrada no sale: allí has ido a elegir
+    // material, y abrir el editor encima del propio selector desorienta.
+    if (item.propio && !opciones.colocado && !opciones.alElegir) {
       chip.classList.add("chip-propio");
       var lapiz = document.createElement("button");
       lapiz.type = "button";
@@ -1246,8 +1274,11 @@
     }
 
     if (!opciones.colocado) {
-      // Chip del catálogo: al pulsarlo queda seleccionado para colocar
+      // Chip del catálogo: al pulsarlo queda seleccionado para colocar. En el
+      // selector abierto desde una entrada el destino ya se sabe, así que el
+      // chip coloca directamente en vez de dejar nada seleccionado.
       chip.addEventListener("click", function () {
+        if (opciones.alElegir) { opciones.alElegir(item.id); return; }
         seleccionar(seleccionado === item.id ? null : item.id);
       });
     }
@@ -1387,13 +1418,19 @@
   /* ---------------------------------------------------------------- *
    * Render: catálogo maestro
    * ---------------------------------------------------------------- */
-  function renderCatalogo() {
-    var cont = document.getElementById("catalogo-contenido");
-    var filtro = (document.getElementById("catalogo-buscar").value || "").toLowerCase().trim();
+  /* Pinta el catálogo agrupado por categorías dentro del contenedor que se
+     le pase. Lo usan el panel lateral de siempre y el selector que se abre
+     desde una entrada de caja; lo único que cambia entre los dos es qué hace
+     un chip al pulsarlo y si se ofrece el material que no ocupa entrada. */
+  function pintarCatalogoEn(cont, filtro, opciones) {
+    opciones = opciones || {};
     cont.innerHTML = "";
 
     CATALOGO.forEach(function (grupo) {
       var items = (grupo.items || []).filter(function (it) {
+        // Los auriculares o las gafas no van a ninguna entrada: en el
+        // selector de una entrada concreta solo estorban.
+        if (opciones.soloConEntrada && ITEMS[it.id] && ITEMS[it.id].sin_entrada) return false;
         if (!filtro) return true;
         return (campo(it, "nombre") + " " + campo(it, "nota") + " " + campo(grupo, "categoria") + " " + nombreEtiquetaDe(it, null)).toLowerCase().indexOf(filtro) !== -1;
       });
@@ -1408,7 +1445,7 @@
       var fila = document.createElement("div");
       fila.className = "chip-fila";
       items.forEach(function (it) {
-        fila.appendChild(crearChip(ITEMS[it.id], {}));
+        fila.appendChild(crearChip(ITEMS[it.id], { alElegir: opciones.alElegir }));
       });
       bloque.appendChild(fila);
       cont.appendChild(bloque);
@@ -1421,6 +1458,71 @@
       cont.appendChild(vacio);
     }
   }
+
+  function renderCatalogo() {
+    pintarCatalogoEn(
+      document.getElementById("catalogo-contenido"),
+      (document.getElementById("catalogo-buscar").value || "").toLowerCase().trim(),
+      {}
+    );
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Elegir material desde una entrada
+   *
+   * El flujo de siempre va al revés: eliges material en el catálogo y luego
+   * dónde va. Este empieza por la entrada, que es como se piensa cuando ya
+   * tienes la caja delante y ves qué canal queda libre, y abre el catálogo
+   * encima sabiendo de antemano el destino.
+   * ---------------------------------------------------------------- */
+  var dlgElegir = document.getElementById("dlg-elegir");
+  var elegirCaja = null;
+  var elegirEntrada = null;
+
+  function renderElegir() {
+    pintarCatalogoEn(
+      document.getElementById("elegir-contenido"),
+      (document.getElementById("elegir-buscar").value || "").toLowerCase().trim(),
+      { soloConEntrada: true, alElegir: function (itemId) {
+        colocar(elegirCaja, elegirEntrada, itemId);
+        dlgElegir.close();
+      } }
+    );
+  }
+
+  function abrirElegir(cajaKey, entrada) {
+    elegirCaja = cajaKey;
+    elegirEntrada = entrada.id;
+    var ocupada = asignacionesDe(cajaKey)[entrada.id];
+    var texto = T("elegir_destino", {
+      entrada: entrada.etiqueta,
+      caja: infoCaja(cajaKey).nombre
+    });
+    // Si la entrada ya tiene algo, se avisa: elegir aquí sustituye, no añade
+    if (ocupada && ITEMS[ocupada]) {
+      texto += " " + T("elegir_ocupada", { item: campo(ITEMS[ocupada], "nombre") });
+    }
+    document.getElementById("elegir-destino").textContent = texto;
+    document.getElementById("elegir-quitar").hidden = !ocupada;
+    document.getElementById("elegir-buscar").value = "";
+    renderElegir();
+    dlgElegir.showModal();
+  }
+
+  document.getElementById("elegir-buscar").addEventListener("input", renderElegir);
+
+  document.getElementById("elegir-cerrar").addEventListener("click", function () {
+    dlgElegir.close();
+  });
+
+  document.getElementById("elegir-quitar").addEventListener("click", function () {
+    delete asignacionesDe(elegirCaja)[elegirEntrada];
+    olvidarEtiquetaColocada(elegirCaja, elegirEntrada);
+    guardarEstado();
+    renderCajas();
+    renderResumen();
+    dlgElegir.close();
+  });
 
   /* ---------------------------------------------------------------- *
    * Sincronización con GitHub
@@ -1976,7 +2078,8 @@
       hora_inicio: "", hora_fin: "",
       escenario_nombre: "", perfil: "",
       edad: "", sexo: "", antecedentes_relevantes: "",
-      intervencion_id: "", servicio_id: "", region_nivel: "", diagnostico: "", posicion: "",
+      intervencion_id: "", servicio_id: "", region_nivel: "", diagnostico: "",
+      posicion: "", posicion_detalle: "",
       tecnicas_realizadas: [], pares_craneales_cuales: "", cambios_respecto_al_plan: "",
       material_previsto: {}, material_real: {},
       montaje: [], n_cajas: 0, n_canales_ocupados: 0, avisos_preparacion: [],
@@ -2636,6 +2739,10 @@
     // desplazarse hasta el final del desplegable en el caso típico.
     relajante: ["induccion", "si", "no"],
     anestesia: ["tiva", "balanceada", "otra"],
+    // Supino primero, que es lo más frecuente. "Volteo" es su propia opción
+    // porque no es una postura más: la cirugía empieza en una y sigue en
+    // otra, y eso cambia el montaje a mitad.
+    posicion: ["supino", "prono", "sedestacion", "volteo"],
     recuperacion: ["completa", "parcial", "no", "na"],
     concordancia: ["VP", "FP", "VN", "FN"],
     dificultad: ["1", "2", "3", "4", "5"]
@@ -2665,7 +2772,8 @@
     { g: "paciente", c: "antecedentes_relevantes", t: "area" },
     { g: "cirugia", c: "region_nivel", t: "text" },
     { g: "cirugia", c: "diagnostico", t: "text" },
-    { g: "cirugia", c: "posicion", t: "text" },
+    { g: "cirugia", c: "posicion", t: "sel", o: "posicion" },
+    { g: "cirugia", c: "posicion_detalle", t: "area", ay: "caso_posicion_detalle_ay" },
     { g: "tecnicas", c: "pares_craneales_cuales", t: "text" },
     { g: "tecnicas", c: "cambios_respecto_al_plan", t: "area" },
     { g: "material", c: "material_real", t: "material", ay: "caso_material_real_ay" },
@@ -2823,6 +2931,16 @@
           o.textContent = opcionTexto(def.o, v);
           control.appendChild(o);
         });
+        // Un valor guardado que no está entre las opciones se ofrece igual,
+        // en vez de dejar el desplegable en blanco y borrarlo al guardar. Pasa
+        // con los campos que nacieron como texto libre y luego se cerraron a
+        // una lista: "posicion" venía escrito a mano en los casos de antes.
+        if (valor && OPCIONES[def.o].indexOf(String(valor)) === -1) {
+          var propio = document.createElement("option");
+          propio.value = String(valor);
+          propio.textContent = String(valor);
+          control.appendChild(propio);
+        }
       }
       control.value = valor == null ? "" : String(valor);
     } else if (def.t === "area") {
@@ -3433,6 +3551,11 @@
     cont.innerHTML = "";
     if (!escenarioActual()) return;
     var marcadas = tecnicasDe();
+    // El perfil solo recomienda: resalta las técnicas habituales de ese tipo
+    // de procedimiento, pero no marca ninguna. Quién monitoriza qué lo decide
+    // el usuario en cada cirugía, así que el check es siempre suyo.
+    var perfilSel = PERF[escenarioActual().nota_perfil_id];
+    var recomendadas = perfilSel ? (perfilSel.tecnicas || []) : [];
 
     GRUPOS_TECNICA.forEach(function (grupo) {
       // Una técnica desactivada no se ofrece para casos nuevos, pero si está
@@ -3453,13 +3576,18 @@
       var fila = document.createElement("div");
       fila.className = "chip-fila";
       items.forEach(function (t) {
+        var esRecomendada = recomendadas.indexOf(t.id) !== -1;
         var chip = document.createElement("span");
         chip.className = "chip chip-extra" +
           (marcadas.indexOf(t.id) !== -1 ? " activo" : "") +
+          (esRecomendada ? " recomendada" : "") +
           (t.activa === false ? " desactivada" : "");
         chip.textContent = campo(t, "etiqueta");
         var desc = campo(t, "descripcion");
         if (t.activa === false) desc = T("tec_desactivada") + (desc ? " · " + desc : "");
+        if (esRecomendada) {
+          desc = T("tec_recomendada", { perfil: campo(perfilSel, "nombre") }) + (desc ? " · " + desc : "");
+        }
         if (desc) chip.title = desc;
         chip.addEventListener("click", function () { alternarTecnica(t.id); });
         fila.appendChild(chip);
@@ -3482,6 +3610,10 @@
       o.textContent = campo(p, "nombre");
       sel.appendChild(o);
     });
+    // El perfil se queda a la vista: ahora no es una acción que se dispara y
+    // se olvida, sino el resaltado que está puesto en este escenario.
+    var esc = escenarioActual();
+    sel.value = (esc && PERF[esc.nota_perfil_id]) ? esc.nota_perfil_id : "";
   }
 
   // El selector de perfil vive dentro del <summary> de la tarjeta de
@@ -3492,17 +3624,22 @@
     document.getElementById("perfil-select").addEventListener(ev, function (e) { e.stopPropagation(); });
   });
 
+  /* Elegir un perfil solo cambia qué técnicas salen resaltadas como
+     recomendadas. No marca ninguna, no desmarca ninguna y no toca el
+     material: por eso tampoco pregunta nada. Cambiar de perfil, o volver a
+     "sin resaltar", es un gesto sin consecuencias que se puede deshacer
+     eligiendo otro. Lo que se monitoriza de verdad son los checks, y esos
+     los pone el usuario a mano en cada cirugía. */
   document.getElementById("perfil-select").addEventListener("change", function (e) {
+    var esc = escenarioActual();
+    if (!esc) return;
     var perfil = PERF[e.target.value];
-    e.target.value = "";
-    if (!perfil || !escenarioActual()) return;
-    if (!confirm(T("perfil_confirmar", { perfil: campo(perfil, "nombre") }))) return;
-    escenarioActual().tecnicas = (perfil.tecnicas || []).slice();
-    // Siempre se apunta el perfil aplicado, tenga nota o no: si solo se
-    // guardara cuando la hay, aplicar un perfil sin nota dejaría en los
-    // avisos la nota del perfil anterior.
-    escenarioActual().nota_perfil_id = perfil.id;
-    delete escenarioActual().nota_perfil;
+    // Siempre se apunta el perfil elegido, tenga nota o no: si solo se
+    // guardara cuando la hay, elegir uno sin nota dejaría en los avisos la
+    // nota del perfil anterior.
+    if (perfil) esc.nota_perfil_id = perfil.id;
+    else delete esc.nota_perfil_id;
+    delete esc.nota_perfil;
     guardarEstado();
     renderTecnicas();
     renderResumen();
@@ -3522,10 +3659,14 @@
     slot.className = "slot";
     slot.dataset.caja = cajaKey;
     slot.dataset.entrada = entrada.id;
+    slot.title = T("slot_elegir_tit");
     slot.addEventListener("click", function (e) {
-      if (!seleccionado) return;
       if (e.target.closest(".chip-quitar")) return;
-      colocar(cajaKey, entrada.id, seleccionado);
+      if (seleccionado) { colocar(cajaKey, entrada.id, seleccionado); return; }
+      // Sin nada seleccionado la entrada deja de ser solo un destino y pasa a
+      // ser el punto de partida: abre el catálogo sabiendo ya dónde va lo que
+      // elijas. Antes, pulsar aquí sin haber elegido antes no hacía nada.
+      abrirElegir(cajaKey, entrada);
     });
     var itemId = asignacionesDe(cajaKey)[entrada.id];
     if (itemId && ITEMS[itemId]) {
@@ -4176,9 +4317,7 @@
   });
 
   document.getElementById("btn-plegar").addEventListener("click", function () {
-    var panel = document.getElementById("panel-catalogo");
-    panel.classList.toggle("plegado");
-    this.textContent = panel.classList.contains("plegado") ? "▸" : "▾";
+    plegarCatalogo(!document.getElementById("panel-catalogo").classList.contains("plegado"));
   });
 
   document.getElementById("btn-idioma").addEventListener("click", function () {

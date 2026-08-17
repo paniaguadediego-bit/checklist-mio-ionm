@@ -13,7 +13,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260817">
+<link rel="stylesheet" href="style.css?v=20260817b">
 </head>
 <body>
 
@@ -241,6 +241,18 @@
   </div>
 </dialog>
 
+<dialog id="dlg-elegir" class="no-print">
+  <h3 data-i18n="dlg_elegir_titulo"></h3>
+  <p class="dlg-intro" id="elegir-destino"></p>
+  <input id="elegir-buscar" type="search" data-i18n-ph="catalogo_buscar" autocomplete="off">
+  <div id="elegir-contenido" class="elegir-contenido"></div>
+  <div class="dlg-botones">
+    <button type="button" id="elegir-quitar" class="peligro" hidden data-i18n="elegir_quitar"></button>
+    <span class="barra-flex"></span>
+    <button type="button" id="elegir-cerrar" data-i18n="cerrar"></button>
+  </div>
+</dialog>
+
 <dialog id="dlg-casos" class="no-print">
   <h3 data-i18n="dlg_casos_titulo"></h3>
 
@@ -328,8 +340,8 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260817"></script>
-<script src="data/i18n-en.js?v=20260817"></script>
-<script src="app.js?v=20260817"></script>
+<script src="data/surgeries.js?v=20260817b"></script>
+<script src="data/i18n-en.js?v=20260817b"></script>
+<script src="app.js?v=20260817b"></script>
 </body>
 </html>
