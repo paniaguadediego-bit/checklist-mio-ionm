@@ -1440,6 +1440,31 @@
      le pase. Lo usan el panel lateral de siempre y el selector que se abre
      desde una entrada de caja; lo único que cambia entre los dos es qué hace
      un chip al pulsarlo y si se ofrece el material que no ocupa entrada. */
+  /* Qué categorías del catálogo quedan desplegadas. Se recuerda por nombre y
+     no por índice: así añadir o reordenar categorías no cambia cuáles estaban
+     abiertas. De partida están todas plegadas — con 20 categorías es más
+     rápido abrir la que quieres que desplazarse por las otras 19. */
+  var CATS_KEY = "mio_ionm_cats_abiertas_v1";
+  var catsAbiertas = null;
+
+  function cargarCategorias() {
+    if (catsAbiertas) return catsAbiertas;
+    try {
+      catsAbiertas = JSON.parse(localStorage.getItem(CATS_KEY) || "{}") || {};
+    } catch (e) { catsAbiertas = {}; }
+    return catsAbiertas;
+  }
+
+  function categoriaAbierta(nombre) {
+    return !!cargarCategorias()[nombre];
+  }
+
+  function recordarCategoria(nombre, abierta) {
+    var g = cargarCategorias();
+    if (abierta) g[nombre] = 1; else delete g[nombre];
+    try { localStorage.setItem(CATS_KEY, JSON.stringify(g)); } catch (e) { /* sin persistencia */ }
+  }
+
   function pintarCatalogoEn(cont, filtro, opciones) {
     opciones = opciones || {};
     cont.innerHTML = "";
@@ -1454,12 +1479,29 @@
       });
       if (!items.length) return;
 
-      var bloque = document.createElement("div");
+      // Cada categoría es un bloque plegable. Con 20 categorías y más de 250
+      // ítems, la lista entera abierta obliga a un scroll larguísimo para
+      // llegar a cualquier cosa, sobre todo en el móvil: 20 títulos caben de
+      // un vistazo y llevan a lo que buscas en un toque.
+      var nombreCat = campo(grupo, "categoria");
+      var bloque = document.createElement("details");
       bloque.className = "catalogo-grupo";
-      var h = document.createElement("div");
+      // Buscando se abre todo lo que tenga resultados: si no, la búsqueda
+      // encontraría cosas que siguen sin verse.
+      bloque.open = filtro ? true : categoriaAbierta(nombreCat);
+      bloque.addEventListener("toggle", function () {
+        if (!filtro) recordarCategoria(nombreCat, bloque.open);
+      });
+
+      var h = document.createElement("summary");
       h.className = "grupo-titulo";
-      h.textContent = campo(grupo, "categoria");
+      h.appendChild(document.createTextNode(nombreCat));
+      var cuenta = document.createElement("span");
+      cuenta.className = "grupo-cuenta";
+      cuenta.textContent = items.length;
+      h.appendChild(cuenta);
       bloque.appendChild(h);
+
       var fila = document.createElement("div");
       fila.className = "chip-fila";
       items.forEach(function (it) {

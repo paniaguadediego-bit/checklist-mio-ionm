@@ -270,6 +270,32 @@ main {
   letter-spacing: 0.05em;
   color: var(--text-muted);
   font-weight: 700;
+  /* Es un <summary>: cabecera plegable, no solo un rótulo */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.18rem 0;
+  list-style: none;
+}
+.grupo-titulo::-webkit-details-marker { display: none; }
+/* Flecha propia: el triángulo del navegador no hereda el color del tema */
+.grupo-titulo::before {
+  content: "▸";
+  font-size: 0.7rem;
+  line-height: 1;
+  transition: transform 0.12s;
+}
+.catalogo-grupo[open] > .grupo-titulo::before { transform: rotate(90deg); }
+.grupo-titulo:hover { color: var(--accent); }
+/* Cuántos ítems hay dentro, para no tener que abrir a ciegas */
+.grupo-cuenta {
+  margin-left: auto;
+  font-size: 0.6rem;
+  padding: 0.05rem 0.28rem;
+  border-radius: 999px;
+  background: var(--border);
+  color: var(--text-muted);
 }
 
 .chip-fila { display: flex; flex-wrap: wrap; gap: 0.2rem; }
