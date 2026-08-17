@@ -438,6 +438,12 @@
     perfil_usuario_nuevo: { es: "+ Añadir usuario…", en: "+ Add user…" },
     perfil_usuario_pide:  { es: "¿Cómo te llamas? Aparecerá como autor de los montajes que crees.",
                            en: "What is your name? It will appear as the author of the montages you create." },
+    montaje_sin_autor:   { es: "de fábrica", en: "factory" },
+    montaje_autor_ido:   { es: "otro usuario", en: "another user" },
+    montaje_no_es_tuyo:  { es: "Este montaje es de {autor}, así que no puedes cambiarlo.\n\nUsa «Duplicar» para hacerte una copia tuya y trabajar sobre ella.",
+                           en: "This montage belongs to {autor}, so you cannot change it.\n\nUse “Duplicate” to make your own copy and work on that." },
+    montaje_de:          { es: "{nombre} · {autor}", en: "{nombre} · {autor}" },
+    montaje_sin_escenario: { es: "Sin escenario", en: "No scenario" },
     cat_intro_tecnicas:  { es: "Lo que ves y puedes cambiar es la <b>etiqueta</b>. Por dentro cada técnica tiene un identificador fijo que no cambia nunca, así que renombrarla actualiza también los casos ya guardados. <b>Desactivar no borra</b>: deja de ofrecerse para casos nuevos, pero sigue existiendo en el histórico.",
                            en: "What you see and can change is the <b>label</b>. Internally each technique has a fixed identifier that never changes, so renaming it also updates cases already saved. <b>Deactivating does not delete</b>: it stops being offered for new cases, but remains in the history." },
     cat_intro_interv:    { es: "El <b>código</b> puede quedarse vacío hasta que tengas la codificación del hospital. Cuando lo rellenes, se aplica solo a todos los casos anteriores de ese tipo.",
@@ -571,7 +577,7 @@
     Object.keys(todos).forEach(function (lang) {
       var tr = (todos[lang] || {}).escenarios || {};
       Object.keys(tr).forEach(function (k) {
-        var esc = escenarios[k];
+        var esc = montajes[k];
         var fabrica = (DATA.escenarios || {})[k];
         if (!esc || !fabrica) return;
         var suyo = esc.nombre !== fabrica.nombre;
@@ -979,15 +985,107 @@
   /* ---------------------------------------------------------------- *
    * Estado
    * ---------------------------------------------------------------- */
-  var escenarios = {};
+  /* Los MONTAJES: qué material va en qué entrada de qué caja, con sus
+     técnicas. Antes se llamaban "escenarios" y eran lo único que había; ahora
+     un escenario es el tipo de cirugía (Tumor ST, ECC...) y los montajes van
+     dentro de él, firmados por quien los hizo.
+
+     Ojo al leer el resto del archivo: `catalogos.escenarios` son los tipos de
+     cirugía y `DATA.escenarios` son los presets de fábrica que se convierten
+     en montajes al arrancar. Son tres cosas distintas con nombres parecidos.
+
+     Cada montaje se guarda en su propio archivo del repositorio de datos
+     (montajes/<uid>.json), igual que los casos y por el mismo motivo:
+     estado.json se sube entero y sin fusión, así que dos personas guardando
+     montajes a la vez se obligarían a elegir cuál de las dos versiones
+     enteras se pierde. Con un archivo por montaje eso no puede pasar. */
+  var montajes = {};
   var activo = null;
+  var MONTAJES_KEY = "mio_ionm_montajes_v1";
+  var montajesSha = {};        // uid -> sha del archivo en GitHub
+  var montajesSinSubir = {};   // uid -> true mientras no haya subido
+  var montajesBorrados = {};   // uid -> sha con el que hay que borrarlo allí
 
   function clonar(obj) {
     return JSON.parse(JSON.stringify(obj));
   }
 
+  function montajesPendientes() { return Object.keys(montajesSinSubir); }
+  function montajesBorradosPend() { return Object.keys(montajesBorrados); }
+
+  /* Un preset de fábrica se convierte en montaje con un uid derivado de su
+     clave, no aleatorio. Es lo que evita que dos dispositivos que arrancan
+     por su cuenta creen dos montajes distintos del mismo preset: los dos
+     calculan "fab_tumor_it" y acaban en el mismo archivo. */
+  function uidDeFabrica(clave) { return "fab_" + clave; }
+
+  function montajeDesdePreset(clave, preset) {
+    var m = clonar(preset);
+    m.montaje_uid = uidDeFabrica(clave);
+    m.escenario_id = m.escenario_id || escenarioPorNombre(campo(preset, "nombre"));
+    // Sin autor: los de fábrica no son de nadie, así que cualquiera los edita
+    m.autor_id = "";
+    m.de_fabrica = true;
+    m.creado_en = m.creado_en || new Date().toISOString();
+    m.editado_en = m.editado_en || [];
+    return m;
+  }
+
+  /* Empareja un preset con su tipo de cirugía por el nombre. Es solo una
+     propuesta para no dejarlos todos sueltos: si no encuentra nada, el
+     montaje se queda sin escenario y se elige a mano. */
+  function escenarioPorNombre(nombre) {
+    var n = (nombre || "").toLowerCase();
+    if (!n) return "";
+    // Se prueba también contra la descripción: el nombre corto es una sigla
+    // ("Tumor ST") que casi nunca aparece literal en el nombre del montaje,
+    // pero la descripción ("Tumor supratentorial") sí.
+    var hallado = ESCENARIOS_TIPO.filter(function (e) {
+      return [campo(e, "nombre"), campo(e, "descripcion")].some(function (txt) {
+        var t = (txt || "").toLowerCase();
+        return t && (n === t || n.indexOf(t) !== -1 || t.indexOf(n) !== -1);
+      });
+    })[0];
+    return hallado ? hallado.id : "";
+  }
+
+  function cargarMontajes() {
+    montajes = {}; montajesSha = {}; montajesSinSubir = {}; montajesBorrados = {};
+    var g = null;
+    try { g = JSON.parse(localStorage.getItem(MONTAJES_KEY) || "null"); } catch (e) { g = null; }
+    if (g) {
+      montajes = g.montajes || {};
+      montajesSha = g.sha || {};
+      montajesSinSubir = g.sin_subir || {};
+      montajesBorrados = g.borrados || {};
+      activo = g.activo || null;
+    }
+  }
+
+  function guardarMontajes() {
+    try {
+      localStorage.setItem(MONTAJES_KEY, JSON.stringify({
+        montajes: montajes, sha: montajesSha, sin_subir: montajesSinSubir,
+        borrados: montajesBorrados, activo: activo
+      }));
+    } catch (e) {
+      avisoGuardado(T("guardado_error", { error: e.message }), true);
+    }
+  }
+
+  /* Guarda un montaje y lo deja listo para subir. Igual que los casos: en
+     quirófano se queda esperando y se manda al salir del modo. */
+  function guardarMontaje(m, esNuevo) {
+    if (!esNuevo) m.editado_en = (m.editado_en || []).concat(new Date().toISOString());
+    montajes[m.montaje_uid] = m;
+    montajesSinSubir[m.montaje_uid] = true;
+    guardarMontajes();
+    programarEnvio();
+    pintarEstadoSync();
+  }
+
   function cargarEstado() {
-    escenarios = clonar(DATA.escenarios || {});
+    montajes = {};
     catalogoUsuario = [];
     etiquetasUsuario = [];
     etiquetasBorradas = [];
@@ -1012,20 +1110,71 @@
     migrarMaterialALaEtiqueta();
     reconstruirCatalogo();
     reconstruirCatalogos();
-    if (guardado && guardado.escenarios) {
-      // Lo guardado manda: incluye ediciones de los presets de fábrica
-      Object.keys(guardado.escenarios).forEach(function (id) {
-        escenarios[id] = guardado.escenarios[id];
+    // Los montajes ya no viven aquí: tienen su propio almacén y su propio
+    // archivo por montaje. Lo que quede en `guardado.escenarios` es de la
+    // versión anterior y lo recoge sembrarMontajes().
+    legadoEscenarios = (guardado && guardado.escenarios) || null;
+    legadoBorrados = (guardado && guardado.borrados) || [];
+    legadoActivo = (guardado && guardado.activo) || null;
+  }
+
+  // Restos de la versión en la que el escenario era el montaje. Se guardan
+  // aparte para que sembrarMontajes() los convierta una sola vez.
+  var legadoEscenarios = null;
+  var legadoBorrados = [];
+  var legadoActivo = null;
+
+  /* Deja el almacén de montajes en condiciones al arrancar:
+
+     1. Convierte los escenarios de la versión anterior, si los hay. El uid se
+        deriva de la clave ("mig_tumor_it"), nunca es aleatorio: así dos
+        dispositivos que migren por su cuenta producen el mismo archivo en vez
+        de dos montajes duplicados del mismo escenario.
+     2. Siembra los presets de fábrica que no estén ya, con el mismo criterio.
+
+     Nada de esto pisa un montaje existente: si ya está, se deja como está.
+     Es lo que permite que la función se ejecute en cada arranque sin
+     deshacer lo que el usuario haya editado después.
+
+     Lo sembrado NO se marca para subir. Si se marcara, este dispositivo
+     subiría su copia recién sembrada por encima de la que otro pudiera haber
+     editado ya: bajarMontajes() respeta lo que está pendiente de subir, así
+     que la copia vieja ganaría a la nueva. Sin la marca, al bajar se
+     sustituye por la buena; y lo que de verdad sea nuevo aquí lo detecta
+     marcarMontajesNuevos() cuando se comprueba que no existe en el
+     repositorio. */
+  function sembrarMontajes() {
+    var nuevos = 0;
+
+    if (legadoEscenarios) {
+      Object.keys(legadoEscenarios).forEach(function (clave) {
+        if (legadoBorrados.indexOf(clave) !== -1) return;
+        var uid = "mig_" + clave;
+        if (montajes[uid]) return;
+        var m = clonar(legadoEscenarios[clave]);
+        m.montaje_uid = uid;
+        m.escenario_id = m.escenario_id || escenarioPorNombre(campo(m, "nombre"));
+        m.autor_id = m.autor_id || "";
+        m.creado_en = new Date().toISOString();
+        m.editado_en = [];
+        montajes[uid] = m;
+        nuevos++;
       });
-      // Respeta los borrados del usuario sobre presets de fábrica
-      (guardado.borrados || []).forEach(function (id) {
-        delete escenarios[id];
-      });
-      activo = guardado.activo;
+      if (legadoActivo && montajes["mig_" + legadoActivo]) activo = "mig_" + legadoActivo;
     }
-    if (!activo || !escenarios[activo]) {
-      activo = Object.keys(escenarios)[0] || null;
-    }
+
+    Object.keys(DATA.escenarios || {}).forEach(function (clave) {
+      var uid = uidDeFabrica(clave);
+      // Si ya se migró ese mismo preset desde la versión anterior, no se
+      // vuelve a sembrar: sería el mismo montaje dos veces.
+      if (montajes[uid] || montajes["mig_" + clave]) return;
+      if (legadoBorrados.indexOf(clave) !== -1) return;
+      montajes[uid] = montajeDesdePreset(clave, DATA.escenarios[clave]);
+      nuevos++;
+    });
+
+    if (!activo || !montajes[activo]) activo = Object.keys(montajes)[0] || null;
+    if (nuevos) guardarMontajes();
     traducirEscenarios();
   }
 
@@ -1060,8 +1209,11 @@
   function guardarEstado() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        escenarios: escenarios,
-        activo: activo,
+        // Los montajes ya no van aquí, pero el bloque de la versión anterior
+        // se conserva intacto como red de seguridad: si algo saliera mal en
+        // la conversión, los escenarios originales siguen estando.
+        escenarios: legadoEscenarios || {},
+        activo: legadoActivo,
         borrados: borrados,
         catalogo_usuario: catalogoUsuario,
         etiquetas_usuario: etiquetasUsuario,
@@ -1082,7 +1234,15 @@
   }
 
   function escenarioActual() {
-    return escenarios[activo] || null;
+    return montajes[activo] || null;
+  }
+
+  /* Guarda el montaje activo. Lo que se cambia en las cajas, en las técnicas
+     o en el material extra es del montaje, así que va a su propio archivo y
+     no tiene por qué reescribir estado.json entero. */
+  function guardarMontajeActivo() {
+    var m = escenarioActual();
+    if (m) guardarMontaje(m);
   }
 
   // Material extra del escenario (no ocupa entrada de ninguna caja)
@@ -1097,7 +1257,7 @@
     var arr = extrasDe();
     var i = arr.indexOf(itemId);
     if (i === -1) arr.push(itemId); else arr.splice(i, 1);
-    guardarEstado();
+    guardarMontajeActivo();
     renderCatalogo();
     renderResumen();
   }
@@ -1114,7 +1274,7 @@
     var arr = tecnicasDe();
     var i = arr.indexOf(id);
     if (i === -1) arr.push(id); else arr.splice(i, 1);
-    guardarEstado();
+    guardarMontajeActivo();
     renderTecnicas();
     renderResumen();
   }
@@ -1249,7 +1409,7 @@
     asignacionesDe(cajaKey)[entradaId] = itemId;
     // La etiqueta que hubiera elegida era del material anterior
     olvidarEtiquetaColocada(cajaKey, entradaId);
-    guardarEstado();
+    guardarMontajeActivo();
     renderCajas();
     renderResumen();
     // Un ítem colocado no puede estar también en otra entrada: se
@@ -1342,7 +1502,7 @@
         e.stopPropagation();
         delete asignacionesDe(opciones.cajaKey)[opciones.entradaId];
         olvidarEtiquetaColocada(opciones.cajaKey, opciones.entradaId);
-        guardarEstado();
+        guardarMontajeActivo();
         renderCajas();
         renderResumen();
       });
@@ -1441,7 +1601,7 @@
       if (etiquetaViajera) {
         fijarEtiquetaColocada(destinoCaja, destinoEntrada, etiquetaViajera, arrastrando.itemId);
       }
-      guardarEstado();
+      guardarMontajeActivo();
       renderCajas();
       renderResumen();
       return;
@@ -1453,7 +1613,7 @@
       cat.classList.remove("sobre");
       delete asignacionesDe(arrastrando.origenCaja)[arrastrando.origenEntrada];
       olvidarEtiquetaColocada(arrastrando.origenCaja, arrastrando.origenEntrada);
-      guardarEstado();
+      guardarMontajeActivo();
       renderCajas();
       renderResumen();
     }
@@ -1604,7 +1764,7 @@
   document.getElementById("elegir-quitar").addEventListener("click", function () {
     delete asignacionesDe(elegirCaja)[elegirEntrada];
     olvidarEtiquetaColocada(elegirCaja, elegirEntrada);
-    guardarEstado();
+    guardarMontajeActivo();
     renderCajas();
     renderResumen();
     dlgElegir.close();
@@ -1664,7 +1824,7 @@
     } else if (ultimoFallo) {
       el.textContent = T("sync_sin_subir");
       estado = "error";
-    } else if (sync.pendiente || casosPendientes().length || borradosPendientes().length) {
+    } else if (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length) {
       el.textContent = T(enQuirofano() ? "sync_en_pausa" : "sync_guardando");
       estado = "aviso";
     } else if (sync.fecha) {
@@ -1726,25 +1886,33 @@
   function estadoActual() {
     return {
       formato: "mio-ionm",
-      version: 2,
+      // version 3: los montajes salen de aquí y pasan a montajes/<uid>.json.
+      // El bloque "escenarios" se sigue escribiendo con lo que hubiera en la
+      // versión 2, sin tocarlo, como copia de seguridad de la conversión.
+      version: 3,
       fecha: new Date().toISOString(),
-      escenarios: escenarios,
+      escenarios: legadoEscenarios || {},
       catalogo_usuario: catalogoUsuario,
       etiquetas_usuario: etiquetasUsuario,
       etiquetas_borradas: etiquetasBorradas,
       catalogos: catalogos,
       borrados: borrados,
-      activo: activo
+      activo: legadoActivo
     };
   }
 
   function aplicarEstado(copia) {
-    escenarios = copia.escenarios || {};
+    // Los montajes no vienen en esta copia: viajan en sus propios archivos.
+    // Si la copia es de la versión 2 se guarda su bloque de escenarios para
+    // que sembrarMontajes() lo convierta.
+    if (copia.escenarios && Object.keys(copia.escenarios).length) {
+      legadoEscenarios = copia.escenarios;
+      legadoActivo = copia.activo || null;
+    }
     catalogoUsuario = copia.catalogo_usuario || [];
     etiquetasUsuario = copia.etiquetas_usuario || [];
     etiquetasBorradas = copia.etiquetas_borradas || [];
     borrados = copia.borrados || [];
-    activo = copia.activo && escenarios[copia.activo] ? copia.activo : Object.keys(escenarios)[0] || null;
     // Una copia anterior a los catálogos editables no trae el bloque: se
     // queda con los de fábrica en lugar de dejarlo todo vacío.
     reiniciarCatalogos();
@@ -1753,7 +1921,8 @@
     migrarMaterialALaEtiqueta();   // copias de la versión 1, sin etiquetas
     reconstruirCatalogo();
     reconstruirCatalogos();
-    traducirEscenarios();
+    // Por si la copia traía escenarios de la versión 2 que aquí no estaban
+    sembrarMontajes();
     guardarEstado();
     renderTodo();
   }
@@ -1851,7 +2020,8 @@
 
   function subirAuto() {
     if (!syncActivo() || subiendo) return;
-    if (!sync.pendiente && !casosPendientes().length && !borradosPendientes().length) return;
+    if (!sync.pendiente && !casosPendientes().length && !borradosPendientes().length &&
+        !montajesPendientes().length && !montajesBorradosPend().length) return;
     if (navigator.onLine === false) { pintarEstadoSync(); return; }
     subiendo = true;
     pintarEstadoSync();
@@ -1869,6 +2039,8 @@
     cadena
       .then(function () { return subirCasosPendientes(); })
       .then(function () { return borrarCasosPendientes(); })
+      .then(function () { return subirMontajesPendientes(); })
+      .then(function () { return borrarMontajesPendientes(); })
       .catch(function (e) { ultimoFallo = e.message || T("sync_error_subir"); })
       .then(function () {
         subiendo = false;
@@ -1882,7 +2054,7 @@
   // prepararon en el otro dispositivo.
   function bajarAuto() {
     if (!syncActivo() || navigator.onLine === false) return;
-    if (sync.pendiente) { subirAuto(); bajarCasos(); return; }
+    if (sync.pendiente) { subirAuto(); bajarCasos(); bajarMontajes(); return; }
     subiendo = true;
     pintarEstadoSync();
     leerRemoto()
@@ -1905,6 +2077,7 @@
         pintarEstadoSync();
         return bajarCasos();
       })
+      .then(function () { return bajarMontajes(); })
       .then(function () {
         // Un caso guardado en quirófano -o sin conexión- se queda marcado en
         // `casosSinSubir`, que es una marca aparte: `sync.pendiente` es solo
@@ -1920,8 +2093,9 @@
   // Al volver la conexión se reintenta lo que quedó pendiente
   window.addEventListener("online", function () {
     ultimoFallo = null;
-    if (sync.pendiente || casosPendientes().length || borradosPendientes().length) subirAuto();
+    if (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length) subirAuto();
     bajarCasos();
+    bajarMontajes();
   });
 
   // Al volver la pestaña a primer plano, también. En el móvil el navegador
@@ -1932,12 +2106,12 @@
   document.addEventListener("visibilitychange", function () {
     if (document.visibilityState !== "visible") return;
     if (!syncActivo() || enQuirofano()) return;
-    if (sync.pendiente || casosPendientes().length || borradosPendientes().length) subirAuto();
+    if (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length) subirAuto();
   });
 
   // Cerrar la pestaña con algo sin subir: avisa antes de perderlo de vista
   window.addEventListener("beforeunload", function (e) {
-    if (syncActivo() && (sync.pendiente || casosPendientes().length || borradosPendientes().length) && !enQuirofano()) {
+    if (syncActivo() && (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length) && !enQuirofano()) {
       e.preventDefault();
       e.returnValue = "";
     }
@@ -2390,6 +2564,162 @@
   }
 
   /* ---------------------------------------------------------------- *
+   * Sincronización de montajes
+   *
+   * Un archivo por montaje, misma mecánica que los casos: se sube el que ha
+   * cambiado, se baja solo lo que trae sha distinto, y lo que está pendiente
+   * de subir no se pisa nunca al bajar.
+   * ---------------------------------------------------------------- */
+  function rutaMontaje(uid) { return "montajes/" + uid + ".json"; }
+
+  function urlMontaje(uid) {
+    return "https://api.github.com/repos/" + sync.repo + "/contents/" + rutaMontaje(uid);
+  }
+
+  function subirMontaje(uid, reintento) {
+    var m = montajes[uid];
+    if (!m) { delete montajesSinSubir[uid]; return Promise.resolve(); }
+    var cuerpo = {
+      message: "Montaje " + (campo(m, "nombre") || uid),
+      content: aBase64(JSON.stringify(m, null, 2))
+    };
+    if (montajesSha[uid]) cuerpo.sha = montajesSha[uid];
+    return fetch(urlMontaje(uid), {
+      method: "PUT",
+      headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()),
+      body: JSON.stringify(cuerpo)
+    }).then(function (resp) {
+      if ((resp.status === 409 || resp.status === 422) && !reintento) {
+        return fetch(urlMontaje(uid), { headers: cabeceras(), cache: "no-store" })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (json) {
+            montajesSha[uid] = json ? json.sha : null;
+            return subirMontaje(uid, true);
+          });
+      }
+      if (!resp.ok) throw new Error(errorLegible(resp));
+      return resp.json().then(function (json) {
+        montajesSha[uid] = json.content.sha;
+        delete montajesSinSubir[uid];
+        guardarMontajes();
+      });
+    });
+  }
+
+  function subirMontajesPendientes() {
+    if (!syncActivo()) return Promise.resolve();
+    return montajesPendientes().reduce(function (cadena, uid) {
+      return cadena.then(function () { return subirMontaje(uid); });
+    }, Promise.resolve());
+  }
+
+  function eliminarMontajeRemoto_(uid, sha, reintento) {
+    return fetch(urlMontaje(uid), {
+      method: "DELETE",
+      headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()),
+      body: JSON.stringify({ message: "Borrar montaje " + uid, sha: sha })
+    }).then(function (resp) {
+      if (resp.status === 404) return;
+      if ((resp.status === 409 || resp.status === 422) && !reintento) {
+        return fetch(urlMontaje(uid), { headers: cabeceras(), cache: "no-store" })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (json) {
+            if (!json) return;
+            return eliminarMontajeRemoto_(uid, json.sha, true);
+          });
+      }
+      if (!resp.ok) throw new Error(errorLegible(resp));
+    });
+  }
+
+  function borrarMontajesPendientes() {
+    if (!syncActivo()) return Promise.resolve();
+    return montajesBorradosPend().reduce(function (cadena, uid) {
+      return cadena.then(function () {
+        return eliminarMontajeRemoto_(uid, montajesBorrados[uid]).then(function () {
+          delete montajesBorrados[uid];
+          guardarMontajes();
+        });
+      });
+    }, Promise.resolve());
+  }
+
+  /* Un montaje que existe aquí, no tiene sha (nunca subió) y tampoco está en
+     el repositorio es genuinamente nuevo de este dispositivo: se marca para
+     subir. Es lo que hace que lo sembrado al arrancar acabe llegando al
+     repositorio sin arriesgarse a pisar lo que otro haya editado. */
+  function marcarMontajesNuevos(presentes) {
+    var marcados = 0;
+    Object.keys(montajes).forEach(function (uid) {
+      if (montajesSha[uid] || presentes[uid] || montajesBorrados[uid]) return;
+      if (montajesSinSubir[uid]) return;
+      montajesSinSubir[uid] = true;
+      marcados++;
+    });
+    return marcados;
+  }
+
+  function bajarMontajes() {
+    if (!syncActivo() || navigator.onLine === false) return Promise.resolve();
+    var url = "https://api.github.com/repos/" + sync.repo + "/contents/montajes";
+    return fetch(url, { headers: cabeceras(), cache: "no-store" })
+      .then(function (resp) {
+        if (resp.status === 404) return [];   // todavía no hay ninguno
+        if (!resp.ok) throw new Error(errorLegible(resp));
+        return resp.json();
+      })
+      .then(function (listado) {
+        var presentes = {};
+        (listado || []).forEach(function (f) {
+          if (f.type === "file" && /\.json$/.test(f.name)) {
+            presentes[f.name.replace(/\.json$/, "")] = true;
+          }
+        });
+        // Lo que dejó de existir allí se retira también aquí, igual que con
+        // los casos: solo si tenía sha, o sea si alguna vez se supo que
+        // estaba en GitHub.
+        var yaNoExisten = Object.keys(montajes).filter(function (uid) {
+          return montajesSha[uid] && !presentes[uid] &&
+                 !montajesSinSubir[uid] && !montajesBorrados[uid];
+        });
+        yaNoExisten.forEach(function (uid) {
+          delete montajes[uid];
+          delete montajesSha[uid];
+        });
+
+        var quedan = (listado || []).filter(function (f) {
+          if (f.type !== "file" || !/\.json$/.test(f.name)) return false;
+          var uid = f.name.replace(/\.json$/, "");
+          if (montajesSinSubir[uid] || montajesBorrados[uid]) return false;
+          return montajesSha[uid] !== f.sha;
+        });
+        return quedan.reduce(function (cadena, f) {
+          return cadena.then(function () {
+            return fetch(f.url, { headers: cabeceras(), cache: "no-store" })
+              .then(function (r) { return r.ok ? r.json() : null; })
+              .then(function (json) {
+                if (!json || !json.content) return;
+                var m = JSON.parse(deBase64(json.content));
+                if (!m || !m.montaje_uid) return;
+                montajes[m.montaje_uid] = m;
+                montajesSha[m.montaje_uid] = json.sha;
+              });
+          });
+        }, Promise.resolve()).then(function () {
+          var nuevos = marcarMontajesNuevos(presentes);
+          if (quedan.length || yaNoExisten.length || nuevos) {
+            if (!activo || !montajes[activo]) activo = Object.keys(montajes)[0] || null;
+            traducirEscenarios();
+            guardarMontajes();
+            renderTodo();
+          }
+        });
+      })
+      .catch(function (e) { ultimoFallo = e.message || T("sync_error_bajar"); })
+      .then(function () { pintarEstadoSync(); });
+  }
+
+  /* ---------------------------------------------------------------- *
    * Editor de material propio
    * ---------------------------------------------------------------- */
   var dlg = document.getElementById("dlg-material");
@@ -2544,14 +2874,14 @@
     var item = ITEMS[editandoId];
     // ¿Está colocado en algún escenario?
     var usos = 0;
-    Object.keys(escenarios).forEach(function (eid) {
-      var asig = escenarios[eid].asignaciones || {};
+    Object.keys(montajes).forEach(function (eid) {
+      var asig = montajes[eid].asignaciones || {};
       Object.keys(asig).forEach(function (caja) {
         Object.keys(asig[caja]).forEach(function (ent) {
           if (asig[caja][ent] === editandoId) usos++;
         });
       });
-      if ((escenarios[eid].extras || []).indexOf(editandoId) !== -1) usos++;
+      if ((montajes[eid].extras || []).indexOf(editandoId) !== -1) usos++;
     });
 
     var msg = T("mat_borrar_conf", { nombre: campo(item, "nombre") });
@@ -2559,19 +2889,26 @@
     if (!confirm(msg)) return;
 
     catalogoUsuario = catalogoUsuario.filter(function (i) { return i.id !== editandoId; });
-    Object.keys(escenarios).forEach(function (eid) {
-      var asig = escenarios[eid].asignaciones || {};
+    // Quitarlo del catálogo lo quita de TODOS los montajes donde estuviera,
+    // no solo del activo, así que hay que marcar para subir cada uno que se
+    // haya tocado: cada montaje es un archivo aparte del repositorio.
+    Object.keys(montajes).forEach(function (eid) {
+      var tocado = false;
+      var asig = montajes[eid].asignaciones || {};
       Object.keys(asig).forEach(function (caja) {
         Object.keys(asig[caja]).forEach(function (ent) {
           if (asig[caja][ent] !== editandoId) return;
           delete asig[caja][ent];
           // La etiqueta elegida para esa entrada se queda sin dueño
-          if (escenarios[eid].etiquetas) delete escenarios[eid].etiquetas[caja + "/" + ent];
+          if (montajes[eid].etiquetas) delete montajes[eid].etiquetas[caja + "/" + ent];
+          tocado = true;
         });
       });
-      if (escenarios[eid].extras) {
-        escenarios[eid].extras = escenarios[eid].extras.filter(function (x) { return x !== editandoId; });
+      if (montajes[eid].extras && montajes[eid].extras.indexOf(editandoId) !== -1) {
+        montajes[eid].extras = montajes[eid].extras.filter(function (x) { return x !== editandoId; });
+        tocado = true;
       }
+      if (tocado) guardarMontaje(montajes[eid]);
     });
 
     reconstruirCatalogo();
@@ -2616,8 +2953,8 @@
 
   function usosEnEscenarios(etId) {
     var n = 0;
-    Object.keys(escenarios).forEach(function (eid) {
-      var mapa = escenarios[eid].etiquetas || {};
+    Object.keys(montajes).forEach(function (eid) {
+      var mapa = montajes[eid].etiquetas || {};
       Object.keys(mapa).forEach(function (k) { if (mapa[k] === etId) n++; });
     });
     return n;
@@ -2768,8 +3105,8 @@
       if (item.etiqueta === et.id) item.etiqueta = destino.id;
     });
     // Y las colocaciones que la habían elegido a mano
-    Object.keys(escenarios).forEach(function (eid) {
-      var mapa = escenarios[eid].etiquetas;
+    Object.keys(montajes).forEach(function (eid) {
+      var mapa = montajes[eid].etiquetas;
       if (!mapa) return;
       Object.keys(mapa).forEach(function (k) {
         if (mapa[k] === et.id) mapa[k] = destino.id;
@@ -3848,7 +4185,7 @@
     if (perfil) esc.nota_perfil_id = perfil.id;
     else delete esc.nota_perfil_id;
     delete esc.nota_perfil;
-    guardarEstado();
+    guardarMontajeActivo();
     renderTecnicas();
     renderResumen();
   });
@@ -4423,29 +4760,75 @@
   function renderSelect() {
     var sel = document.getElementById("escenario-select");
     sel.innerHTML = "";
-    Object.keys(escenarios).forEach(function (id) {
-      var opt = document.createElement("option");
-      opt.value = id;
-      opt.textContent = campo(escenarios[id], "nombre") || id;
-      if (id === activo) opt.selected = true;
-      sel.appendChild(opt);
+    // Agrupados por tipo de cirugía, y con el autor al lado del nombre: los
+    // montajes se comparten entre todos, así que hay que ver de un vistazo
+    // cuál es el tuyo antes de abrirlo.
+    var porEscenario = {};
+    Object.keys(montajes).forEach(function (id) {
+      var eid = montajes[id].escenario_id || "";
+      (porEscenario[eid] = porEscenario[eid] || []).push(id);
     });
-    if (!Object.keys(escenarios).length) {
+    var orden = ESCENARIOS_TIPO.map(function (e) { return e.id; }).concat([""]);
+    orden.forEach(function (eid) {
+      var ids = porEscenario[eid];
+      if (!ids || !ids.length) return;
+      var grupo = document.createElement("optgroup");
+      grupo.label = eid && ESCT[eid] ? campo(ESCT[eid], "nombre") : T("montaje_sin_escenario");
+      ids.forEach(function (id) {
+        var opt = document.createElement("option");
+        opt.value = id;
+        opt.textContent = T("montaje_de", {
+          nombre: campo(montajes[id], "nombre") || id,
+          autor: autorDe(montajes[id])
+        });
+        if (id === activo) opt.selected = true;
+        grupo.appendChild(opt);
+      });
+      sel.appendChild(grupo);
+    });
+    if (!Object.keys(montajes).length) {
       var vacio = document.createElement("option");
       vacio.textContent = T("sin_escenarios");
       sel.appendChild(vacio);
     }
   }
 
-  function idDesdeNombre(nombre) {
-    var base = nombre.toLowerCase()
-      .normalize("NFD").replace(/[̀-ͯ]/g, "")
-      .replace(/[^a-z0-9]+/g, "_")
-      .replace(/^_+|_+$/g, "") || "escenario";
-    var id = base;
-    var n = 2;
-    while (escenarios[id]) { id = base + "_" + n; n++; }
-    return id;
+  /* Un montaje nuevo se identifica por UUID, no por un id derivado del
+     nombre. Es lo que permite que dos personas creen a la vez un montaje
+     llamado igual sin acabar escribiendo en el mismo archivo del
+     repositorio: el nombre es una etiqueta, el uid es la identidad. */
+  function montajeNuevo(nombre) {
+    var yo = usuarioActual();
+    return {
+      montaje_uid: uuid(),
+      nombre: nombre,
+      escenario_id: "",
+      autor_id: yo ? yo.id : "",
+      modalidades: [],
+      tecnicas: [],
+      asignaciones: {},
+      extras: [],
+      etiquetas: {},
+      conmutador: {},
+      creado_en: new Date().toISOString(),
+      editado_en: []
+    };
+  }
+
+  /* Quién puede editar o borrar un montaje. Sin autor -los de fábrica- lo
+     puede tocar cualquiera. Con autor, solo él. NO es seguridad: cambiando de
+     perfil arriba se pasa el candado. Es para no pisarse entre compañeros sin
+     querer, no para impedir nada. */
+  function puedoEditar(m) {
+    if (!m) return false;
+    if (!m.autor_id) return true;
+    var yo = usuarioActual();
+    return !!yo && yo.id === m.autor_id;
+  }
+
+  function autorDe(m) {
+    if (!m) return "";
+    return m.autor_id ? nombreUsuario(m.autor_id) || T("montaje_autor_ido") : T("montaje_sin_autor");
   }
 
   function renderTodo() {
@@ -4462,63 +4845,84 @@
 
   document.getElementById("escenario-select").addEventListener("change", function (e) {
     activo = e.target.value;
-    guardarEstado();
+    guardarMontajes();
     renderTodo();
   });
+
+  // Avisa y corta si el montaje activo no es tuyo. El aviso explica de quién
+  // es, en vez de dejar un botón que no responde y no dice por qué.
+  function exigeSerAutor(m) {
+    if (puedoEditar(m)) return true;
+    alert(T("montaje_no_es_tuyo", { autor: autorDe(m) }));
+    return false;
+  }
 
   document.getElementById("btn-nuevo").addEventListener("click", function () {
     var nombre = prompt(T("esc_nuevo_prompt"), T("esc_nuevo_def"));
     if (!nombre) return;
-    var id = idDesdeNombre(nombre);
-    escenarios[id] = { nombre: nombre, modalidades: [], asignaciones: {} };
-    activo = id;
-    guardarEstado();
+    var m = montajeNuevo(nombre);
+    activo = m.montaje_uid;
+    guardarMontaje(m, true);
     renderTodo();
   });
 
+  // Duplicar sí funciona sobre el montaje de otro: es la forma de partir del
+  // suyo para hacerte el tuyo. La copia nace a tu nombre, no al suyo.
   document.getElementById("btn-duplicar").addEventListener("click", function () {
     var esc = escenarioActual();
     if (!esc) return;
     var nombre = prompt(T("esc_duplicar_prompt"), campo(esc, "nombre") + T("esc_copia_sufijo"));
     if (!nombre) return;
-    var id = idDesdeNombre(nombre);
-    escenarios[id] = clonar(esc);
-    escenarios[id].nombre = nombre;
-    activo = id;
-    guardarEstado();
+    var yo = usuarioActual();
+    var m = clonar(esc);
+    m.montaje_uid = uuid();
+    m.nombre = nombre;
+    delete m.nombre_en;          // el nombre nuevo lo has escrito tú
+    delete m.de_fabrica;
+    m.autor_id = yo ? yo.id : "";
+    m.creado_en = new Date().toISOString();
+    m.editado_en = [];
+    activo = m.montaje_uid;
+    guardarMontaje(m, true);
     renderTodo();
   });
 
   document.getElementById("btn-renombrar").addEventListener("click", function () {
     var esc = escenarioActual();
-    if (!esc) return;
+    if (!esc || !exigeSerAutor(esc)) return;
     var nombre = prompt(T("esc_renombrar"), campo(esc, "nombre"));
     if (!nombre) return;
     esc.nombre = nombre;
-    guardarEstado();
+    delete esc.nombre_en;
+    guardarMontaje(esc);
     renderTodo();
   });
 
   document.getElementById("btn-vaciar").addEventListener("click", function () {
     var esc = escenarioActual();
-    if (!esc) return;
+    if (!esc || !exigeSerAutor(esc)) return;
     if (!confirm(T("esc_vaciar_conf", { nombre: campo(esc, "nombre") }))) return;
     esc.asignaciones = {};
     esc.conmutador = {};
     esc.etiquetas = {};
     esc.extras = [];
-    guardarEstado();
+    guardarMontaje(esc);
     renderTodo();
   });
 
   document.getElementById("btn-borrar").addEventListener("click", function () {
     var esc = escenarioActual();
-    if (!esc) return;
+    if (!esc || !exigeSerAutor(esc)) return;
     if (!confirm(T("esc_borrar_conf", { nombre: campo(esc, "nombre") }))) return;
-    delete escenarios[activo];
-    if (borrados.indexOf(activo) === -1) borrados.push(activo);
-    activo = Object.keys(escenarios)[0] || null;
-    guardarEstado();
+    var uid = activo;
+    delete montajes[uid];
+    delete montajesSinSubir[uid];
+    // Solo hay que borrarlo en GitHub si llegó a existir allí
+    if (montajesSha[uid]) montajesBorrados[uid] = montajesSha[uid];
+    delete montajesSha[uid];
+    activo = Object.keys(montajes)[0] || null;
+    guardarMontajes();
+    programarEnvio();
     renderTodo();
   });
 
@@ -4634,7 +5038,7 @@
     // La subida automática se pausa en quirófano para no depender de la red
     // durante la cirugía; al salir se manda lo que se haya acumulado, tanto
     // el estado como los casos guardados o borrados mientras tanto.
-    if (!activo && (sync.pendiente || casosPendientes().length || borradosPendientes().length)) programarEnvio();
+    if (!activo && (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length)) programarEnvio();
     pintarEstadoSync();
   }
 
@@ -4667,6 +5071,11 @@
   aplicarTextos();
 
   cargarEstado();
+  cargarMontajes();
+  // Después de cargarEstado(), que es quien deja el legado de la versión 2
+  // listo para convertir, y después de los catálogos, que sembrarMontajes()
+  // consulta para emparejar cada montaje con su tipo de cirugía.
+  sembrarMontajes();
   cargarCasos();
   cargarSync();
   cargarPerfilUsuario();
