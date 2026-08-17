@@ -13,7 +13,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260817b">
+<link rel="stylesheet" href="style.css?v=20260817c">
 </head>
 <body>
 
@@ -221,6 +221,20 @@
   </div>
   <div class="campo-fila">
     <span>
+      <label for="et-precio" data-i18n="campo_precio"></label>
+      <input id="et-precio" type="number" min="0" step="0.01" placeholder="—">
+    </span>
+    <span>
+      <label class="check">
+        <input type="checkbox" id="et-fungible" checked>
+        <span data-i18n="campo_fungible"></span>
+      </label>
+    </span>
+  </div>
+  <p class="campo-ayuda" data-i18n="campo_precio_ay"></p>
+
+  <div class="campo-fila">
+    <span>
       <label for="et-color-libre" data-i18n="campo_color_medida"></label>
       <input id="et-color-libre" type="color" value="#8896a2">
     </span>
@@ -340,8 +354,8 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260817b"></script>
-<script src="data/i18n-en.js?v=20260817b"></script>
-<script src="app.js?v=20260817b"></script>
+<script src="data/surgeries.js?v=20260817c"></script>
+<script src="data/i18n-en.js?v=20260817c"></script>
+<script src="app.js?v=20260817c"></script>
 </body>
 </html>

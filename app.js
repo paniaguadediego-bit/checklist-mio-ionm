@@ -136,6 +136,18 @@
     resumen_vacio:       { es: "Escenario vacío. Arrastra material del catálogo a las entradas de las cajas.",
                            en: "Empty scenario. Drag material from the catalogue onto the box inputs." },
     resumen_material:    { es: "Material a preparar", en: "Material to prepare" },
+    resumen_coste:       { es: "Coste del material", en: "Material cost" },
+    coste_tipo:          { es: "Tipo", en: "Type" },
+    coste_cantidad:      { es: "Cantidad", en: "Quantity" },
+    coste_unitario:      { es: "Unitario", en: "Unit price" },
+    coste_importe:       { es: "Importe", en: "Amount" },
+    coste_total:         { es: "Total de la intervención", en: "Surgery total" },
+    coste_reutilizable_nota: { es: "No incluye el material reutilizable (sondas, gafas, auriculares): se prepara, pero no se gasta.",
+                           en: "Excludes reusable material (probes, goggles, headphones): it is prepared, but not consumed." },
+    coste_sin_datos:     { es: "Todavía no hay ningún precio puesto. Se ponen en el botón «Etiquetas», uno por tipo de material.",
+                           en: "No prices set yet. Set them in the “Labels” button, one per material type." },
+    coste_sin_precio:    { es: "Falta el precio de: {tipos}. Ese material no entra en el total.",
+                           en: "Missing price for: {tipos}. That material is not included in the total." },
     resumen_cajas:       { es: "Cajas necesarias ({n})", en: "Boxes needed ({n})" },
     resumen_extra:       { es: "Material extra (no ocupa entrada)", en: "Extra material (no input used)" },
     resumen_avisos:      { es: "Avisos", en: "Warnings" },
@@ -191,6 +203,12 @@
     vista_previa:        { es: "Así se verá:", en: "Preview:" },
     ejemplo:             { es: "Ejemplo", en: "Example" },
     campo_sin_entrada:   { es: "No ocupa entrada", en: "Uses no input" },
+    campo_precio:        { es: "Precio por unidad (€)", en: "Unit price (€)" },
+    campo_fungible:      { es: "Se gasta (fungible)", en: "Consumable" },
+    campo_precio_ay:     { es: "Déjalo en blanco si todavía no sabes el precio: en blanco es «sin dato», no cero. Desmarca «se gasta» en lo reutilizable (sondas, gafas, auriculares): sale en el material a preparar, pero no suma al coste.",
+                           en: "Leave blank if you do not know the price yet: blank means “no data”, not zero. Untick “consumable” for reusable items (probes, goggles, headphones): they still appear in the material list, but add nothing to the cost." },
+    et_precio_malo:      { es: "El precio tiene que ser un número de 0 en adelante, o quedarse en blanco.",
+                           en: "The price must be a number from 0 upwards, or left blank." },
     campo_nota:          { es: "Nota", en: "Note" },
     campo_nota_ph:       { es: "Para qué se usa, aclaraciones…", en: "What it is used for, clarifications…" },
     mat_ph_nombre:       { es: "p. ej. L.Frontalis", en: "e.g. L.Frontalis" },
@@ -2083,6 +2101,7 @@
       tecnicas_realizadas: [], pares_craneales_cuales: "", cambios_respecto_al_plan: "",
       material_previsto: {}, material_real: {},
       montaje: [], n_cajas: 0, n_canales_ocupados: 0, avisos_preparacion: [],
+      coste_material: 0, coste_completo: false,
       tipo_anestesia: "", tipo_anestesia_detalle: "", relajante_nm: "", relajante_cual: "",
       tof_monitorizado: "", incidencias_anestesicas: "",
       basales_obtenidas: "", alerta: false, tipo_alerta: "", criterio_alarma: "",
@@ -2124,6 +2143,14 @@
         })
       };
     });
+    // Coste del fungible en el momento de preparar. Se archiva el número, no
+    // el precio de cada tipo: los precios cambian con el tiempo y un caso de
+    // hace un año tiene que seguir diciendo lo que costó entonces.
+    // "completo" avisa de si algún material se quedó fuera por no tener
+    // precio, para no leer un total a medias como si fuera el definitivo.
+    caso.coste_material = res.coste ? Math.round(res.coste.total * 100) / 100 : 0;
+    caso.coste_completo = !!(res.coste && !res.coste.sinPrecio.length);
+
     // La intervención se propone por el nombre del escenario, si coincide
     var porNombre = INTERVENCIONES.filter(function (i) {
       return (campo(i, "nombre") || "").toLowerCase() === (caso.escenario_nombre || "").toLowerCase();
@@ -2572,6 +2599,11 @@
     document.getElementById("et-borde").value = et ? (et.borde || "solido") : "solido";
     document.getElementById("et-color").value = et ? (et.color || "") : "gris";
     document.getElementById("et-fondo").value = et ? (et.fondo || "") : "ninguno";
+    // Sin precio se deja en blanco, no en 0: "todavía no lo sé" y "es gratis"
+    // no son lo mismo, y el resumen los distingue.
+    document.getElementById("et-precio").value =
+      et && typeof et.precio === "number" ? et.precio : "";
+    document.getElementById("et-fungible").checked = et ? et.fungible !== false : true;
     document.getElementById("et-borrar").hidden = !et;
     document.getElementById("et-error").hidden = true;
     refrescarPreviaEtiqueta();
@@ -2600,17 +2632,34 @@
       return;
     }
 
+    var precioTxt = document.getElementById("et-precio").value.trim();
+    var precio = precioTxt === "" ? null : parseFloat(precioTxt.replace(",", "."));
+    if (precio !== null && (isNaN(precio) || precio < 0)) {
+      err.textContent = T("et_precio_malo");
+      err.hidden = false;
+      return;
+    }
+
     var datos = {
       id: editandoEtiqueta || idLibreEtiqueta(nombre),
       nombre: nombre,
       borde: document.getElementById("et-borde").value,
       color: document.getElementById("et-color").value,
-      fondo: document.getElementById("et-fondo").value
+      fondo: document.getElementById("et-fondo").value,
+      fungible: document.getElementById("et-fungible").checked
     };
+    // Sin precio no se guarda la clave, para que se distinga de un 0 real
+    if (precio !== null) datos.precio = precio;
 
     var existente = etiquetasUsuario.filter(function (e) { return e.id === datos.id; })[0];
-    if (existente) Object.assign(existente, datos);
-    else etiquetasUsuario.push(datos);
+    if (existente) {
+      Object.assign(existente, datos);
+      // Vaciar el precio tiene que poder deshacer uno puesto antes, y
+      // Object.assign no quita una clave que ya no viene: se quita a mano.
+      if (precio === null) delete existente.precio;
+    } else {
+      etiquetasUsuario.push(datos);
+    }
     // Si estaba borrada y se vuelve a guardar, deja de estarlo
     etiquetasBorradas = etiquetasBorradas.filter(function (x) { return x !== datos.id; });
 
@@ -3848,9 +3897,115 @@
    * Lee el escenario que se le pasa sin modificarlo: al contrario que
    * asignacionesDe(), no crea entradas vacías por el camino.
    */
+  /* Cuánto cuesta el material fungible de este montaje.
+     Solo suma lo que se gasta y se tira: las sondas, las gafas o los
+     auriculares se preparan igual, pero son reutilizables y meterlos en el
+     coste de una cirugía concreta lo falsearía.
+     La cantidad es la misma que sale en "Material a preparar", redondeada
+     hacia arriba: media unidad suelta (un Erb1 sin su Erb2) obliga a abrir el
+     paquete entero, y lo que se factura es el paquete.
+     Los tipos sin precio se cuentan aparte en vez de contarse como 0, para
+     que un total incompleto no se lea como un total. */
+  function enEuros(n) {
+    return n.toLocaleString(localeActual(), { style: "currency", currency: "EUR" });
+  }
+
+  /* El apartado económico del resumen: unitario x cantidad, importe por línea
+     y total de la intervención. Si falta algún precio se dice cuál falta, en
+     vez de dar un total que parece completo y no lo es. */
+  function bloqueCoste(coste) {
+    var sec = document.createElement("div");
+    sec.className = "resumen-bloque";
+    var h = document.createElement("h3");
+    h.textContent = T("resumen_coste");
+    sec.appendChild(h);
+
+    if (!coste || !coste.hayPrecios) {
+      var p = document.createElement("p");
+      p.className = "empty-hint";
+      p.textContent = T("coste_sin_datos");
+      sec.appendChild(p);
+      return sec;
+    }
+
+    var tabla = document.createElement("table");
+    tabla.className = "tabla-resumen tabla-coste";
+    var thead = document.createElement("thead");
+    var trh = document.createElement("tr");
+    [T("coste_tipo"), T("coste_cantidad"), T("coste_unitario"), T("coste_importe")]
+      .forEach(function (txt, i) {
+        var th = document.createElement("th");
+        th.textContent = txt;
+        if (i) th.className = "num";
+        trh.appendChild(th);
+      });
+    thead.appendChild(trh);
+    tabla.appendChild(thead);
+
+    var tbody = document.createElement("tbody");
+    coste.lineas.forEach(function (l) {
+      var tr = document.createElement("tr");
+      [l.tipo, String(l.cantidad), enEuros(l.precio), enEuros(l.importe)]
+        .forEach(function (txt, i) {
+          var td = document.createElement("td");
+          td.textContent = txt;
+          if (i) td.className = "num";
+          tr.appendChild(td);
+        });
+      tbody.appendChild(tr);
+    });
+    tabla.appendChild(tbody);
+
+    var tfoot = document.createElement("tfoot");
+    var trt = document.createElement("tr");
+    var tdT = document.createElement("td");
+    tdT.textContent = T("coste_total");
+    var tdVacio1 = document.createElement("td");
+    var tdVacio2 = document.createElement("td");
+    var tdTotal = document.createElement("td");
+    tdTotal.className = "num";
+    tdTotal.textContent = enEuros(coste.total);
+    [tdT, tdVacio1, tdVacio2, tdTotal].forEach(function (td) { trt.appendChild(td); });
+    tfoot.appendChild(trt);
+    tabla.appendChild(tfoot);
+    sec.appendChild(tabla);
+
+    var nota = document.createElement("p");
+    nota.className = "coste-nota";
+    nota.textContent = T("coste_reutilizable_nota");
+    sec.appendChild(nota);
+
+    if (coste.sinPrecio.length) {
+      var falta = document.createElement("p");
+      falta.className = "coste-falta";
+      falta.textContent = T("coste_sin_precio", { tipos: coste.sinPrecio.join(", ") });
+      sec.appendChild(falta);
+    }
+    return sec;
+  }
+
+  function calcularCoste(res) {
+    var coste = { lineas: [], total: 0, sinPrecio: [], hayPrecios: false };
+    Object.keys(res.material).forEach(function (tipo) {
+      var et = ETQ[res.tipoEtiqueta[tipo]];
+      if (et && et.fungible === false) return;   // reutilizable: no se gasta
+      var cantidad = Math.ceil(res.material[tipo]);
+      var precio = et && typeof et.precio === "number" && et.precio >= 0 ? et.precio : null;
+      if (precio === null) { coste.sinPrecio.push(tipo); return; }
+      coste.hayPrecios = true;
+      coste.total += precio * cantidad;
+      coste.lineas.push({ tipo: tipo, cantidad: cantidad, precio: precio, importe: precio * cantidad });
+    });
+    coste.lineas.sort(function (a, b) { return b.importe - a.importe; });
+    return coste;
+  }
+
   function calcularResumen(esc) {
-    var res = { tecnicas: [], material: {}, estilos: {}, cajas: [],
-                extras: [], entradas: 0, avisos: [] };
+    // tipoEtiqueta: nombre visible del tipo -> id de su etiqueta. El recuento
+    // se agrupa por el nombre traducido, pero el precio y si es fungible viven
+    // en la etiqueta, así que hace falta el puente entre los dos.
+    var res = { tecnicas: [], material: {}, estilos: {}, tipoEtiqueta: {}, cajas: [],
+                extras: [], entradas: 0, avisos: [], coste: null };
     if (!esc) return res;
 
     res.tecnicas = (esc.tecnicas || []).slice();
@@ -3870,6 +4025,8 @@
         var tipo = nombreEtiquetaDe(item, override);
         var estilo = estiloDe(item, override);
         if (!res.estilos[tipo]) res.estilos[tipo] = estilo;
+        var etDe = etiquetaDe(item, override);
+        if (etDe && !res.tipoEtiqueta[tipo]) res.tipoEtiqueta[tipo] = etDe.id;
         detalle.push({
           entrada: rotuloEntrada, nombre: nombre, color: item.color,
           tipo: tipo, estilo: estilo, item: item.id
@@ -3893,8 +4050,12 @@
     res.extras.forEach(function (item) {
       var tipo = nombreEtiquetaDe(item, null);
       if (!res.estilos[tipo]) res.estilos[tipo] = estiloDe(item, null);
+      var etEx = etiquetaDe(item, null);
+      if (etEx && !res.tipoEtiqueta[tipo]) res.tipoEtiqueta[tipo] = etEx.id;
       res.material[tipo] = (res.material[tipo] || 0) + 1;
     });
+
+    res.coste = calcularCoste(res);
 
     res.cajas.forEach(function (c) {
       if (c.usadas === c.total) res.avisos.push(T("aviso_caja_llena", { caja: c.nombre }));
@@ -4014,6 +4175,9 @@
     tablaMat.appendChild(tbodyMat);
     secMat.appendChild(tablaMat);
     colIzq.appendChild(secMat);
+
+    // Bloque: coste del material fungible
+    colIzq.appendChild(bloqueCoste(resumen.coste));
 
     // Bloque: cajas necesarias
     var secCajas = document.createElement("div");

@@ -123,19 +123,53 @@ window.SURGERIES_DATA = {
    * una entrada se le puede cambiar la etiqueta solo para ese escenario
    * (un A1 con sacacorchos en una cirugía y con aguja en otra).
    * ------------------------------------------------------------------ */
+  /* "fungible": true  -> se gasta y se tira; entra en el coste de la cirugía.
+     "fungible": false -> material reutilizable (sondas, gafas, auriculares).
+                          Sale en el material a preparar, pero no suma importe.
+     "precio"          -> euros por unidad. Se deja SIN rellenar a propósito:
+                          los precios reales los pone el usuario desde el
+                          gestor de etiquetas. Un precio inventado en una
+                          herramienta que informa del coste de una cirugía es
+                          peor que no tener el dato.
+     Una etiqueta sin "fungible" se trata como fungible sin precio conocido. */
   "etiquetas": [
-    { "id": "aguja_subdermica",     "nombre": "Aguja subdérmica",          "borde": "punteado",    "color": "azul",     "fondo": "azul" },
-    { "id": "aguja_trenzada",       "nombre": "Aguja trenzada (par)",      "borde": "discontinuo", "color": "azul",     "fondo": "azul" },
-    { "id": "electrodo_sacacorchos","nombre": "Electrodo sacacorchos",     "borde": "solido",      "color": "morado",   "fondo": "morado" },
-    { "id": "hook_wire",            "nombre": "Electrodo Hook Wire",       "borde": "doble",       "color": "naranja",  "fondo": "naranja" },
-    { "id": "pegatinas",            "nombre": "Pegatinas (par)",           "borde": "solido",      "color": "verde",    "fondo": "verde" },
-    { "id": "electrodo_grid",       "nombre": "Electrodo de grid",         "borde": "grueso",      "color": "rojo",     "fondo": "rojo" },
-    { "id": "sensor_tubo",          "nombre": "Sensor de tubo orotraqueal","borde": "doble",       "color": "turquesa", "fondo": "turquesa" },
-    { "id": "sonda_mapeo",          "nombre": "Sonda de mapeo cortical",   "borde": "grueso",      "color": "amarillo", "fondo": "amarillo" },
-    { "id": "sonda_raabe",          "nombre": "Sonda Raabe",               "borde": "grueso",      "color": "negro",    "fondo": "ninguno" },
-    { "id": "auriculares",          "nombre": "Auriculares PEATC",         "borde": "punteado",    "color": "gris",     "fondo": "ninguno" },
-    { "id": "gafas",                "nombre": "Gafas de estimulación VEP", "borde": "punteado",    "color": "gris",     "fondo": "ninguno" },
-    { "id": "conmutador_sw",        "nombre": "Conmutador",                "borde": "solido",      "color": "gris",     "fondo": "ninguno" },
+    { "id": "aguja_subdermica",     "nombre": "Aguja subdérmica",          "borde": "punteado",    "color": "azul",     "fondo": "azul",      "fungible": true },
+    { "id": "aguja_trenzada",       "nombre": "Aguja trenzada (par)",      "borde": "discontinuo", "color": "azul",     "fondo": "azul",      "fungible": true },
+    { "id": "aguja_monopolar",      "nombre": "Aguja monopolar",           "borde": "punteado",    "color": "turquesa", "fondo": "turquesa",  "fungible": true },
+    { "id": "electrodo_sacacorchos","nombre": "Electrodo sacacorchos",     "borde": "solido",      "color": "morado",   "fondo": "morado",    "fungible": true },
+    { "id": "hook_wire",            "nombre": "Electrodo Hook Wire",       "borde": "doble",       "color": "naranja",  "fondo": "naranja",   "fungible": true },
+    { "id": "pegatinas",            "nombre": "Pegatinas (par)",           "borde": "solido",      "color": "verde",    "fondo": "verde",     "fungible": true },
+    { "id": "adhesivo_eng",         "nombre": "Electrodo adhesivo de ENG", "borde": "solido",      "color": "turquesa", "fondo": "verde",     "fungible": true },
+    { "id": "electrodo_grid",       "nombre": "Electrodo de grid",         "borde": "grueso",      "color": "rojo",     "fondo": "rojo",      "fungible": true },
+    { "id": "electrodo_epidural",   "nombre": "Electrodo epidural",        "borde": "doble",       "color": "morado",   "fondo": "morado",    "fungible": true },
+    { "id": "sensor_tubo",          "nombre": "Sensor de tubo orotraqueal","borde": "doble",       "color": "turquesa", "fondo": "turquesa",  "fungible": true },
+    { "id": "gancho_j",             "nombre": "Electrodo gancho / J / Delta", "borde": "doble",    "color": "amarillo", "fondo": "amarillo",  "fungible": true },
+    { "id": "manta_4_8",            "nombre": "Manta de 4/6/8 electrodos", "borde": "grueso",      "color": "verde",    "fondo": "verde",     "fungible": true },
+    { "id": "manta_10",             "nombre": "Manta de >10 electrodos",   "borde": "grueso",      "color": "turquesa", "fondo": "turquesa",  "fungible": true },
+    { "id": "electrodo_profundo",   "nombre": "Electrodo profundo",        "borde": "grueso",      "color": "morado",   "fondo": "morado",    "fungible": true },
+    { "id": "bloqueo_mandibular",   "nombre": "Bloqueo mandibular",        "borde": "solido",      "color": "naranja",  "fondo": "ninguno",   "fungible": true },
+    { "id": "proteccion_ocular",    "nombre": "Protección ocular",         "borde": "solido",      "color": "amarillo", "fondo": "ninguno",   "fungible": true },
+    { "id": "tren_de_4",            "nombre": "Tren de 4 (TOF)",           "borde": "punteado",    "color": "verde",    "fondo": "ninguno",   "fungible": true },
+
+    /* Reutilizable: se prepara, pero no se gasta y no suma al coste */
+    { "id": "sonda_mapeo",          "nombre": "Sonda de mapeo cortical",   "borde": "grueso",      "color": "amarillo", "fondo": "amarillo",  "fungible": false },
+    { "id": "sonda_raabe",          "nombre": "Sonda Raabe",               "borde": "grueso",      "color": "negro",    "fondo": "ninguno",   "fungible": false },
+    { "id": "sonda_mono_esferica",  "nombre": "Sonda monopolar esférica",  "borde": "grueso",      "color": "gris",     "fondo": "ninguno",   "fungible": false },
+    { "id": "sonda_mono_recta",     "nombre": "Sonda monopolar recta",     "borde": "grueso",      "color": "gris",     "fondo": "ninguno",   "fungible": false },
+    { "id": "sonda_bip_concentrica","nombre": "Sonda bipolar concéntrica", "borde": "grueso",      "color": "negro",    "fondo": "ninguno",   "fungible": false },
+    { "id": "sonda_bip_rectas",     "nombre": "Sonda bipolar de puntas rectas separadas", "borde": "grueso", "color": "negro", "fondo": "ninguno", "fungible": false },
+    { "id": "sonda_bip_esfericas",  "nombre": "Sonda bipolar de puntas esféricas separadas", "borde": "grueso", "color": "negro", "fondo": "ninguno", "fungible": false },
+    { "id": "sonda_bip_gancho",     "nombre": "Sonda bipolar de gancho",   "borde": "grueso",      "color": "naranja",  "fondo": "ninguno",   "fungible": false },
+    { "id": "sonda_tripolar",       "nombre": "Sonda tripolar",            "borde": "grueso",      "color": "morado",   "fondo": "ninguno",   "fungible": false },
+    { "id": "sonda_aspiracion",     "nombre": "Sonda de aspiración electrificada", "borde": "grueso", "color": "rojo",  "fondo": "ninguno",   "fungible": false },
+    { "id": "pinza_estimulacion",   "nombre": "Pinza de estimulación",     "borde": "grueso",      "color": "amarillo", "fondo": "ninguno",   "fungible": false },
+    { "id": "sonda_laparoscopica",  "nombre": "Sonda bipolar laparoscópica", "borde": "grueso",    "color": "turquesa", "fondo": "ninguno",   "fungible": false },
+    { "id": "auriculares",          "nombre": "Auriculares PEATC",         "borde": "punteado",    "color": "gris",     "fondo": "ninguno",   "fungible": false },
+    { "id": "gafas",                "nombre": "Gafas de estimulación VEP", "borde": "punteado",    "color": "gris",     "fondo": "ninguno",   "fungible": false },
+    { "id": "discos_visuales",      "nombre": "Discos visuales",           "borde": "punteado",    "color": "morado",   "fondo": "ninguno",   "fungible": false },
+    { "id": "bipolar_barra",        "nombre": "Bipolar barra / superficie ENG", "borde": "punteado", "color": "verde",  "fondo": "ninguno",   "fungible": false },
+    { "id": "conmutador_sw",        "nombre": "Conmutador",                "borde": "solido",      "color": "gris",     "fondo": "ninguno",   "fungible": false },
+
     { "id": "sin_determinar",       "nombre": "Sin determinar",            "borde": "punteado",    "color": "rojo",     "fondo": "ninguno" }
   ],
 

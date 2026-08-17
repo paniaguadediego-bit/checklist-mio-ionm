@@ -319,6 +319,36 @@ main {
   margin-top: 0.5rem;
 }
 
+/* Apartado económico del resumen */
+.tabla-coste th {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 700;
+  text-align: left;
+  padding-bottom: 0.2rem;
+}
+.tabla-coste th.num, .tabla-coste td.num { text-align: right; }
+.tabla-coste tfoot td {
+  border-top: 1px solid var(--border);
+  padding-top: 0.25rem;
+  font-weight: 700;
+}
+.coste-nota, .coste-falta {
+  font-size: 0.68rem;
+  line-height: 1.35;
+  margin: 0.35rem 0 0;
+  color: var(--text-muted);
+}
+.coste-falta { color: var(--peligro); }
+.campo-ayuda {
+  font-size: 0.68rem;
+  line-height: 1.35;
+  color: var(--text-muted);
+  margin: 0.2rem 0 0.4rem;
+}
+
 .chip-extra.recomendada::after {
   content: "★";
   font-size: 0.62rem;
