@@ -1716,6 +1716,16 @@
         subiendo = false;
         pintarEstadoSync();
         return bajarCasos();
+      })
+      .then(function () {
+        // Un caso guardado en quirófano -o sin conexión- se queda marcado en
+        // `casosSinSubir`, que es una marca aparte: `sync.pendiente` es solo
+        // de estado.json. Sin esta llamada, al reabrir la app se bajaba pero
+        // no se subía nunca, y el caso se quedaba encallado en ese navegador
+        // hasta que por casualidad se tocara un escenario. Pasó de verdad:
+        // dos casos preparados en el móvil no llegaron nunca al repositorio.
+        // subirAuto() ya se planta solo si no hay nada que mandar.
+        subirAuto();
       });
   }
 
@@ -1724,6 +1734,17 @@
     ultimoFallo = null;
     if (sync.pendiente || casosPendientes().length || borradosPendientes().length) subirAuto();
     bajarCasos();
+  });
+
+  // Al volver la pestaña a primer plano, también. En el móvil el navegador
+  // suspende o descarta la pestaña en cuanto cambias de app o bloqueas la
+  // pantalla, así que la cuenta atrás de 4 s de programarEnvio() muchas veces
+  // no llega a dispararse: lo guardado justo antes de guardar el teléfono en
+  // el bolsillo se quedaba sin subir. En quirófano se respeta la pausa.
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState !== "visible") return;
+    if (!syncActivo() || enQuirofano()) return;
+    if (sync.pendiente || casosPendientes().length || borradosPendientes().length) subirAuto();
   });
 
   // Cerrar la pestaña con algo sin subir: avisa antes de perderlo de vista
