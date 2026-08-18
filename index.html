@@ -13,14 +13,14 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260817f">
+<link rel="stylesheet" href="style.css?v=20260817g">
 </head>
 <body>
 
 <header class="barra-sup">
   <span class="marca">MIO<span class="marca-sep">/</span>IONM</span>
   <select id="perfil-usuario" data-i18n-aria="perfil_usuario_aria" data-i18n-title="perfil_usuario_aria"></select>
-  <select id="escenario-select" data-i18n-aria="escenario_aria"></select>
+  <span class="montaje-actual" id="montaje-actual"></span>
   <span class="barra-flex"></span>
   <button type="button" id="btn-idioma" class="btn-modo" title="Switch to English">EN</button>
   <button type="button" id="btn-casos" class="btn-modo" data-i18n-title="btn_casos_tit" data-i18n="btn_casos"></button>
@@ -31,11 +31,6 @@
 <main>
 
   <section class="toolbar no-print">
-    <button type="button" id="btn-nuevo" data-i18n="btn_nuevo"></button>
-    <button type="button" id="btn-duplicar" data-i18n="btn_duplicar"></button>
-    <button type="button" id="btn-renombrar" data-i18n="btn_renombrar"></button>
-    <button type="button" id="btn-vaciar" data-i18n="btn_vaciar"></button>
-    <button type="button" id="btn-borrar" class="peligro" data-i18n="btn_borrar"></button>
     <button type="button" id="btn-catalogos" data-i18n="btn_catalogos" data-i18n-title="btn_catalogos_tit"></button>
     <span class="barra-flex"></span>
     <button type="button" id="btn-exportar" data-i18n="btn_exportar"></button>
@@ -46,9 +41,56 @@
     <span class="guardado-aviso" id="guardado-aviso"></span>
   </section>
 
-  <div class="layout">
+  <!--
+    Las seis ventanas van en el orden en que se trabaja: primero qué cirugía
+    es, luego de qué montaje partes, qué técnicas vas a hacer, qué material
+    hay, dónde va y qué sale de todo ello. Cada una se pliega sola, que con
+    seis apiladas es lo que las hace manejables.
+  -->
+  <div class="columna-principal">
 
-    <aside class="panel-catalogo no-print" id="panel-catalogo">
+    <details class="card no-print" id="escenario" open>
+      <summary class="card-cab">
+        <h2 data-i18n="escenario_titulo"></h2>
+        <span class="card-pista" id="escenario-pista"></span>
+      </summary>
+      <div id="escenario-contenido" class="escenario-chips"></div>
+    </details>
+
+    <details class="card" id="montajes" open>
+      <summary class="card-cab">
+        <h2 data-i18n="montajes_titulo"></h2>
+        <span class="card-pista" id="montajes-pista"></span>
+      </summary>
+      <div class="montajes-acciones no-print">
+        <button type="button" id="btn-nuevo" data-i18n="btn_nuevo"></button>
+        <button type="button" id="btn-duplicar" data-i18n="btn_duplicar"></button>
+        <button type="button" id="btn-renombrar" data-i18n="btn_renombrar"></button>
+        <button type="button" id="btn-vaciar" data-i18n="btn_vaciar"></button>
+        <button type="button" id="btn-borrar" class="peligro" data-i18n="btn_borrar"></button>
+        <span class="barra-flex"></span>
+        <label class="montaje-esc-label">
+          <span data-i18n="montaje_asignar_esc"></span>
+          <select id="montaje-escenario"></select>
+        </label>
+      </div>
+      <div id="montajes-lista"></div>
+    </details>
+
+    <details class="card tecnicas-card no-print" id="tecnicas" open>
+      <summary class="card-cab">
+        <h2 data-i18n="tecnicas_titulo"></h2>
+        <label class="perfil-label">
+          <span data-i18n="perfil_label"></span>
+          <select id="perfil-select"></select>
+        </label>
+      </summary>
+      <div id="tecnicas-contenido"></div>
+    </details>
+
+    <!-- Conserva la clase panel-catalogo: es a lo que apunta el soltar
+         material encima para quitarlo de una entrada. -->
+    <div class="card panel-catalogo no-print" id="panel-catalogo">
       <div class="panel-cab">
         <h2 data-i18n="catalogo_titulo"></h2>
         <button type="button" id="btn-etiquetas" data-i18n-title="btn_etiquetas_tit" data-i18n="btn_etiquetas"></button>
@@ -58,31 +100,16 @@
       <input type="search" id="catalogo-buscar" data-i18n-ph="catalogo_buscar" autocomplete="off">
       <p class="panel-ayuda" data-i18n-html="catalogo_ayuda"></p>
       <div id="catalogo-contenido"></div>
-    </aside>
-
-    <div class="columna-principal">
-
-      <details class="card tecnicas-card no-print" id="tecnicas" open>
-        <summary class="card-cab">
-          <h2 data-i18n="tecnicas_titulo"></h2>
-          <label class="perfil-label">
-            <span data-i18n="perfil_label"></span>
-            <select id="perfil-select"></select>
-          </label>
-        </summary>
-        <div id="tecnicas-contenido"></div>
-      </details>
-
-      <section id="cajas-contenido"></section>
-
-      <details class="card resumen-card" id="resumen" open>
-        <summary class="card-cab">
-          <h2 data-i18n="resumen_titulo"></h2>
-        </summary>
-        <div id="resumen-contenido"></div>
-      </details>
-
     </div>
+
+    <section id="cajas-contenido"></section>
+
+    <details class="card resumen-card" id="resumen" open>
+      <summary class="card-cab">
+        <h2 data-i18n="resumen_titulo"></h2>
+      </summary>
+      <div id="resumen-contenido"></div>
+    </details>
 
   </div>
 
@@ -355,8 +382,8 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260817f"></script>
-<script src="data/i18n-en.js?v=20260817f"></script>
-<script src="app.js?v=20260817f"></script>
+<script src="data/surgeries.js?v=20260817g"></script>
+<script src="data/i18n-en.js?v=20260817g"></script>
+<script src="app.js?v=20260817g"></script>
 </body>
 </html>

@@ -44,9 +44,24 @@ Hay **tres capas**, y conviene no confundirlas:
 
 | Capa | Qué contiene | Se pierde si… |
 |---|---|---|
-| `data/surgeries.js` | Lo de fábrica: cajas, etiquetas, catálogo, técnicas, perfiles y 2 escenarios base | Nunca: está en git |
-| `localStorage` del navegador | **Tu trabajo**: escenarios, etiquetas y material propios | Borras los datos del sitio, cambias de navegador o de dispositivo |
-| Repo privado `checklist-mio-datos` | Copia sincronizada de todo lo anterior | Nunca: cada sincronización es un commit |
+| `data/surgeries.js` | Lo de fábrica: cajas, etiquetas, catálogo, técnicas, perfiles, tipos de escenario y 2 presets de montaje | Nunca: está en git |
+| `localStorage` del navegador | **Tu trabajo**: montajes, etiquetas y material propios | Borras los datos del sitio, cambias de navegador o de dispositivo |
+| Repo privado `checklist-mio-datos` | Copia sincronizada: `estado.json`, `casos/` y `montajes/` | Nunca: cada sincronización es un commit |
+
+### Escenario, montaje y caso: tres cosas distintas
+
+Se parecen y conviene no confundirlas al leer el código:
+
+- **Escenario** (`catalogos.escenarios`, `ESCENARIOS_TIPO`) — el *tipo de
+  cirugía*: Tumor ST, Tumor IT, Tumor Medular, Awake surgery, ECC, ECL. Es un
+  catálogo editable corto, y solo sirve para agrupar montajes.
+- **Montaje** (`montajes`, un archivo por montaje) — qué material va en qué
+  entrada de qué caja, con sus técnicas. Es lo que antes se llamaba
+  "escenario". Lleva autor.
+- **Caso** (`casos/`) — una cirugía que ocurrió de verdad, con sus datos.
+
+Cuidado además con `DATA.escenarios`: son los presets de fábrica de la versión
+anterior, que al arrancar se convierten en montajes (`fab_<clave>`).
 
 La capa frágil es la del medio. Por eso existe la sincronización, y por eso la
 red de seguridad de abajo se apoya en el **historial de git del repo de datos**.
@@ -54,7 +69,16 @@ red de seguridad de abajo se apoya en el **historial de git del repo de datos**.
 ### El repositorio de datos
 
 - Repositorio: `paniaguadediego-bit/checklist-mio-datos` (**privado**).
-- Un único archivo en la raíz: `estado.json`.
+- `estado.json` en la raíz, más `casos/<uid>.json` y `montajes/<uid>.json`.
+
+**Por qué los montajes están en archivos sueltos y no en `estado.json`:**
+`estado.json` se sube entero y **sin fusión de ningún tipo**. Con un solo
+usuario eso se aguanta; con dos, cada vez que ambos guardan un montaje la app
+detecta el conflicto por `sha` y obliga a elegir entre *Subir* (se pierde lo
+del otro) o *Bajar* (se pierde lo tuyo) — y se pierde el archivo **entero**,
+no solo el montaje en disputa. Con un archivo por montaje eso no puede pasar.
+Es la misma razón por la que los casos ya estaban así. **Cualquier dato nuevo
+que dos personas puedan escribir a la vez va en su propio archivo.**
 - Lo escribe `estadoActual()` ([app.js:1538](app.js:1538)) y tiene esta forma:
 
 ```

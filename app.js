@@ -138,7 +138,7 @@
                            en: "Recommended in “{perfil}”. You decide whether to select it." },
 
     /* --- Resumen --- */
-    resumen_titulo:      { es: "Resumen de material", en: "Material summary" },
+    resumen_titulo:      { es: "Resumen de técnicas y material", en: "Techniques and material summary" },
     resumen_sin_esc:     { es: "No hay ningún escenario. Crea uno con “+ Nuevo”.",
                            en: "There are no scenarios. Create one with “New”." },
     resumen_vacio:       { es: "Escenario vacío. Arrastra material del catálogo a las entradas de las cajas.",
@@ -444,6 +444,16 @@
                            en: "This montage belongs to {autor}, so you cannot change it.\n\nUse “Duplicate” to make your own copy and work on that." },
     montaje_de:          { es: "{nombre} · {autor}", en: "{nombre} · {autor}" },
     montaje_sin_escenario: { es: "Sin escenario", en: "No scenario" },
+    escenario_titulo:    { es: "Escenario", en: "Scenario" },
+    escenario_todos:     { es: "Todos", en: "All" },
+    escenario_pista:     { es: "{nombre}", en: "{nombre}" },
+    escenario_ninguno:   { es: "Sin elegir", en: "None chosen" },
+    montajes_titulo:     { es: "Montajes personales", en: "Personal montages" },
+    montajes_vacio:      { es: "Todavía no hay ningún montaje de este escenario. Crea uno con «Nuevo», o duplica el de un compañero.",
+                           en: "There are no montages for this scenario yet. Create one with “New”, or duplicate a colleague’s." },
+    montajes_cuenta:     { es: "{n} de {total}", en: "{n} of {total}" },
+    montaje_asignar_esc: { es: "Escenario de este montaje", en: "Scenario for this montage" },
+    montaje_tuyo:        { es: "tuyo", en: "yours" },
     cat_intro_tecnicas:  { es: "Lo que ves y puedes cambiar es la <b>etiqueta</b>. Por dentro cada técnica tiene un identificador fijo que no cambia nunca, así que renombrarla actualiza también los casos ya guardados. <b>Desactivar no borra</b>: deja de ofrecerse para casos nuevos, pero sigue existiendo en el histórico.",
                            en: "What you see and can change is the <b>label</b>. Internally each technique has a fixed identifier that never changes, so renaming it also updates cases already saved. <b>Deactivating does not delete</b>: it stops being offered for new cases, but remains in the history." },
     cat_intro_interv:    { es: "El <b>código</b> puede quedarse vacío hasta que tengas la codificación del hospital. Cuando lo rellenes, se aplica solo a todos los casos anteriores de ese tipo.",
@@ -4757,41 +4767,142 @@
   /* ---------------------------------------------------------------- *
    * Selector de escenarios y acciones
    * ---------------------------------------------------------------- */
+  /* Qué escenario se está mirando en la primera ventana. Es solo un filtro de
+     la lista de montajes: no se guarda en el montaje ni viaja a ningún sitio.
+     "" significa todos. */
+  var escenarioFiltro = "";
+
   function renderSelect() {
-    var sel = document.getElementById("escenario-select");
-    sel.innerHTML = "";
-    // Agrupados por tipo de cirugía, y con el autor al lado del nombre: los
-    // montajes se comparten entre todos, así que hay que ver de un vistazo
-    // cuál es el tuyo antes de abrirlo.
-    var porEscenario = {};
-    Object.keys(montajes).forEach(function (id) {
-      var eid = montajes[id].escenario_id || "";
-      (porEscenario[eid] = porEscenario[eid] || []).push(id);
-    });
-    var orden = ESCENARIOS_TIPO.map(function (e) { return e.id; }).concat([""]);
-    orden.forEach(function (eid) {
-      var ids = porEscenario[eid];
-      if (!ids || !ids.length) return;
-      var grupo = document.createElement("optgroup");
-      grupo.label = eid && ESCT[eid] ? campo(ESCT[eid], "nombre") : T("montaje_sin_escenario");
-      ids.forEach(function (id) {
-        var opt = document.createElement("option");
-        opt.value = id;
-        opt.textContent = T("montaje_de", {
-          nombre: campo(montajes[id], "nombre") || id,
-          autor: autorDe(montajes[id])
-        });
-        if (id === activo) opt.selected = true;
-        grupo.appendChild(opt);
-      });
-      sel.appendChild(grupo);
-    });
-    if (!Object.keys(montajes).length) {
-      var vacio = document.createElement("option");
-      vacio.textContent = T("sin_escenarios");
-      sel.appendChild(vacio);
-    }
+    renderEscenarios();
+    renderMontajes();
+    renderMontajeActual();
   }
+
+  // Ventana 1: el tipo de cirugía. Chips y no desplegable porque son pocos,
+  // se ven todos a la vez y se pulsan bien con guantes.
+  function renderEscenarios() {
+    var cont = document.getElementById("escenario-contenido");
+    cont.innerHTML = "";
+    var opciones = [{ id: "", nombre: T("escenario_todos") }]
+      .concat(activos(ESCENARIOS_TIPO).map(function (e) {
+        return { id: e.id, nombre: campo(e, "nombre"), desc: campo(e, "descripcion") };
+      }));
+    opciones.forEach(function (o) {
+      var chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip chip-escenario" + (o.id === escenarioFiltro ? " activo" : "");
+      chip.textContent = o.nombre;
+      if (o.desc) chip.title = o.desc;
+      // Cuántos montajes hay de ese escenario, para no tener que entrar a mirar
+      var n = Object.keys(montajes).filter(function (uid) {
+        return !o.id || (montajes[uid].escenario_id || "") === o.id;
+      }).length;
+      var cuenta = document.createElement("span");
+      cuenta.className = "chip-cuenta";
+      cuenta.textContent = n;
+      chip.appendChild(cuenta);
+      chip.addEventListener("click", function () {
+        escenarioFiltro = o.id;
+        renderEscenarios();
+        renderMontajes();
+      });
+      cont.appendChild(chip);
+    });
+    var esc = escenarioActual();
+    var eid = esc && esc.escenario_id;
+    document.getElementById("escenario-pista").textContent =
+      eid && ESCT[eid] ? campo(ESCT[eid], "nombre") : T("escenario_ninguno");
+  }
+
+  // Ventana 2: los montajes de ese escenario, con su autor debajo del nombre.
+  function renderMontajes() {
+    var cont = document.getElementById("montajes-lista");
+    cont.innerHTML = "";
+    var uids = Object.keys(montajes).filter(function (uid) {
+      return !escenarioFiltro || (montajes[uid].escenario_id || "") === escenarioFiltro;
+    });
+    // Los tuyos primero: es lo que buscas el 90% de las veces
+    var yo = usuarioActual();
+    uids.sort(function (a, b) {
+      var ma = yo && montajes[a].autor_id === yo.id ? 0 : 1;
+      var mb = yo && montajes[b].autor_id === yo.id ? 0 : 1;
+      if (ma !== mb) return ma - mb;
+      return (campo(montajes[a], "nombre") || "").localeCompare(campo(montajes[b], "nombre") || "");
+    });
+
+    document.getElementById("montajes-pista").textContent =
+      T("montajes_cuenta", { n: uids.length, total: Object.keys(montajes).length });
+
+    if (!uids.length) {
+      var vacio = document.createElement("p");
+      vacio.className = "empty-hint";
+      vacio.textContent = T("montajes_vacio");
+      cont.appendChild(vacio);
+      return;
+    }
+
+    uids.forEach(function (uid) {
+      var m = montajes[uid];
+      var fila = document.createElement("button");
+      fila.type = "button";
+      fila.className = "montaje-fila" + (uid === activo ? " activo" : "") +
+        (puedoEditar(m) ? " mio" : "");
+      var nom = document.createElement("span");
+      nom.className = "montaje-nombre";
+      nom.textContent = campo(m, "nombre") || uid;
+      var sub = document.createElement("span");
+      sub.className = "montaje-autor";
+      // El subtítulo es el autor, que es lo que pedía el usuario: con montajes
+      // compartidos hay que saber de quién es antes de abrirlo.
+      sub.textContent = autorDe(m) + (yo && m.autor_id === yo.id ? " · " + T("montaje_tuyo") : "");
+      fila.appendChild(nom);
+      fila.appendChild(sub);
+      fila.addEventListener("click", function () {
+        activo = uid;
+        guardarMontajes();
+        renderTodo();
+      });
+      cont.appendChild(fila);
+    });
+  }
+
+  // El montaje abierto, siempre visible arriba aunque plegues las ventanas
+  function renderMontajeActual() {
+    var esc = escenarioActual();
+    document.getElementById("montaje-actual").textContent =
+      esc ? campo(esc, "nombre") : T("sin_escenarios");
+    renderEscenarioDeMontaje();
+  }
+
+  // A qué tipo de cirugía pertenece el montaje abierto. Va aquí y no en la
+  // ventana de Escenario porque allí los chips filtran la lista; mezclar
+  // "mirar los de columna" con "este montaje es de columna" en el mismo gesto
+  // se presta a cambiar sin querer el escenario de un montaje ajeno.
+  function renderEscenarioDeMontaje() {
+    var sel = document.getElementById("montaje-escenario");
+    var esc = escenarioActual();
+    sel.innerHTML = "";
+    var vacio = document.createElement("option");
+    vacio.value = "";
+    vacio.textContent = T("montaje_sin_escenario");
+    sel.appendChild(vacio);
+    activos(ESCENARIOS_TIPO).forEach(function (e) {
+      var o = document.createElement("option");
+      o.value = e.id;
+      o.textContent = campo(e, "nombre");
+      sel.appendChild(o);
+    });
+    sel.value = esc && esc.escenario_id ? esc.escenario_id : "";
+    sel.disabled = !esc || !puedoEditar(esc);
+  }
+
+  document.getElementById("montaje-escenario").addEventListener("change", function (e) {
+    var esc = escenarioActual();
+    if (!esc || !exigeSerAutor(esc)) { renderEscenarioDeMontaje(); return; }
+    esc.escenario_id = e.target.value;
+    guardarMontaje(esc);
+    renderTodo();
+  });
 
   /* Un montaje nuevo se identifica por UUID, no por un id derivado del
      nombre. Es lo que permite que dos personas creen a la vez un montaje
@@ -4802,7 +4913,9 @@
     return {
       montaje_uid: uuid(),
       nombre: nombre,
-      escenario_id: "",
+      // Hereda el escenario que estés mirando: si estás en "ECL" y creas uno,
+      // lo lógico es que sea de ECL y no que nazca suelto.
+      escenario_id: escenarioFiltro || "",
       autor_id: yo ? yo.id : "",
       modalidades: [],
       tecnicas: [],
@@ -4843,11 +4956,6 @@
     renderCajas();
   }
 
-  document.getElementById("escenario-select").addEventListener("change", function (e) {
-    activo = e.target.value;
-    guardarMontajes();
-    renderTodo();
-  });
 
   // Avisa y corta si el montaje activo no es tuyo. El aviso explica de quién
   // es, en vez de dejar un botón que no responde y no dice por qué.

@@ -168,15 +168,101 @@ main {
 .guardado-aviso.error { color: var(--peligro); }
 
 /* -------------------------------- Layout ------------------------------- */
-.layout {
-  display: grid;
-  grid-template-columns: 260px minmax(0, 1fr);
-  gap: 0.7rem;
-  align-items: start;
-}
 /* display:flex (no grid) para poder usar "order" y ponerlo distinto en Modo
    quirófano sin tener que reordenar el propio HTML. */
 .columna-principal { min-width: 0; display: flex; flex-direction: column; }
+
+/* --- Ventana 1: escenario --- */
+.escenario-chips { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.chip-escenario {
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border: 1px dashed var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.chip-escenario.activo {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  border-style: solid;
+  color: var(--accent);
+  font-weight: 600;
+}
+.chip-cuenta {
+  font-size: 0.68rem;
+  opacity: 0.7;
+  border-left: 1px solid currentColor;
+  padding-left: 0.35rem;
+}
+
+/* Pista en la cabecera de la tarjeta: dice lo esencial con la tarjeta
+   plegada, que con seis apiladas es como se va a usar la mayor parte del rato */
+.card-pista {
+  margin-left: auto;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* --- Ventana 2: montajes --- */
+.montajes-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.montaje-esc-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+#montaje-escenario { font: inherit; font-size: 0.78rem; }
+
+#montajes-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 0.35rem;
+}
+.montaje-fila {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--card-bg);
+  color: var(--text);
+}
+.montaje-fila.activo { border-color: var(--accent); background: var(--accent-soft); }
+/* Los que puedes editar llevan una marca lateral: con montajes de varios
+   autores a la vista, saber cuáles son tuyos antes de pulsar ahorra el aviso */
+.montaje-fila.mio { border-left: 3px solid var(--accent); }
+.montaje-nombre { font-weight: 600; font-size: 0.86rem; }
+.montaje-autor { font-size: 0.68rem; color: var(--text-muted); }
+
+/* El montaje abierto, en la barra de arriba */
+.montaje-actual {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--panel-texto);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
+}
 
 #cajas-contenido { margin-bottom: 0.7rem; }
 
@@ -204,10 +290,11 @@ main {
 .card:not([open]) > summary.card-cab::after { content: "▸"; }
 .card:not([open]) > summary.card-cab { margin-bottom: 0; }
 
+/* El catálogo ya no es panel lateral fijo: es la cuarta ventana, en el flujo.
+   Conserva scroll propio y alto acotado para no empujar las cajas fuera de la
+   pantalla, y es ese scroll el que plegarCatalogo() guarda y restaura. */
 .panel-catalogo {
-  position: sticky;
-  top: calc(var(--header-h) + 0.5rem);
-  max-height: calc(100vh - var(--header-h) - 1rem);
+  max-height: 50vh;
   overflow-y: auto;
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -733,7 +820,11 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
 
 /* --------------------------- Modo quirófano ---------------------------- */
 body.modo-quirofano .no-print { display: none !important; }
-body.modo-quirofano .layout { grid-template-columns: 1fr; }
+/* Escenario, técnicas y catálogo llevan .no-print y desaparecen solos. La
+   ventana de Montajes se queda: el README promete que durante la cirugía se
+   puede seguir cambiando de montaje. Lo que sí se va son sus botones de
+   edición, que llevan .no-print por dentro. */
+body.modo-quirofano #montajes { order: 1; }
 body.modo-quirofano .cajas-grid {
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
 }
@@ -1264,8 +1355,10 @@ dialog h3 {
   .no-print, .barra-sup { display: none !important; }
   body { background: #fff; font-size: 11pt; }
   main { max-width: none; padding: 0; }
-  .layout { display: block; }
+  .columna-principal { display: block; }
   .card { border: none; padding: 0; }
+  /* La ventana de Montajes es navegación, no parte del resumen impreso */
+  #escenario, #montajes { display: none !important; }
   .resumen-card { border-left: none; }
   #cajas-contenido { display: none; }
   .avisos li { background: none; border-left: 2px solid #888; color: #000; }
@@ -1273,8 +1366,8 @@ dialog h3 {
 
 /* Pantallas estrechas */
 @media (max-width: 900px) {
-  .layout { grid-template-columns: 1fr; }
-  .panel-catalogo { top: var(--header-h); max-height: 40vh; z-index: 5; }
+  .panel-catalogo { max-height: 40vh; }
+  #montajes-lista { grid-template-columns: 1fr; }
 }
 
 /* -------------------------------- Oscuro ------------------------------- */
