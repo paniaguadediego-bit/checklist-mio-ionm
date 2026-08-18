@@ -158,16 +158,16 @@ window.SURGERIES_I18N.en = {
      "etiqueta" es el texto visible. Las técnicas que añadas tú no pasan por
      aquí: se quedan como las escribas, igual que tus escenarios. */
   "tecnicas": {
-    "t_pess": { "etiqueta": "t-SSEP", "descripcion": "Transcranial SSEP" },
+    "t_pess": { "etiqueta": "t-SEP", "descripcion": "Transcranial SSEP" },
     "t_pem": { "etiqueta": "t-MEP", "descripcion": "Transcranial motor evoked potentials" },
     "c_pem": { "etiqueta": "c-MEP", "descripcion": "MEP by direct cortical stimulation" },
-    "c_pess": { "etiqueta": "c-SSEP", "descripcion": "Cortical SSEP" },
+    "c_pess": { "etiqueta": "c-SEP", "descripcion": "Cortical SSEP" },
     "pem_corticobulbares": { "etiqueta": "Corticobulbar MEP", "descripcion": "Corticobulbar tracts (cranial nerves)" },
     "onda_d": { "etiqueta": "D wave", "descripcion": "Epidural D-wave recording" },
     "br": { "etiqueta": "Blink Reflex (BR)", "descripcion": "Blink reflex" },
     "rbc": { "etiqueta": "BCR", "descripcion": "Bulbocavernosus reflex" },
     "peatc": { "etiqueta": "BAEP", "descripcion": "Brainstem auditory evoked potentials" },
-    "emg": { "descripcion": "Electromyography" },
+    "emg": { "etiqueta": "Free-EMG", "descripcion": "Electromyography" },
     "eeg": { "descripcion": "Electroencephalography" },
     "ecog": { "descripcion": "Electrocorticography" },
     "pev": { "etiqueta": "VEP", "descripcion": "Visual evoked potentials — under study" },

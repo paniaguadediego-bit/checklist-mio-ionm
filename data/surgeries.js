@@ -281,8 +281,8 @@ window.SURGERIES_DATA = {
       "items": [
         { "id": "l_v1", "nombre": "L.V1", "etiqueta": "aguja_trenzada", "nota": "Rama oftálmica izquierda del V par — Blink Reflex (registro en orbiculares oculi)" },
         { "id": "r_v1", "nombre": "R.V1", "etiqueta": "aguja_trenzada", "nota": "Rama oftálmica derecha del V par — Blink Reflex (registro en orbiculares oculi)" },
-        { "id": "l_v2", "nombre": "L.V2", "etiqueta": "aguja_trenzada", "nota": "Rama maxilar izquierda del V par — reflejo trigémino-cervical (registro en STCM y cricotiroideo)" },
-        { "id": "r_v2", "nombre": "R.V2", "etiqueta": "aguja_trenzada", "nota": "Rama maxilar derecha del V par — reflejo trigémino-cervical (registro en STCM y cricotiroideo)" },
+        { "id": "l_v2", "nombre": "L.V2", "etiqueta": "pegatinas", "nota": "Rama maxilar izquierda del V par — reflejo trigémino-cervical (registro en STCM y cricotiroideo)" },
+        { "id": "r_v2", "nombre": "R.V2", "etiqueta": "pegatinas", "nota": "Rama maxilar derecha del V par — reflejo trigémino-cervical (registro en STCM y cricotiroideo)" },
         { "id": "l_v3", "nombre": "L.V3", "etiqueta": "aguja_trenzada", "nota": "Rama mandibular izquierda del V par — reflejo trigémino-vocal (registro en cuerdas vocales)" },
         { "id": "r_v3", "nombre": "R.V3", "etiqueta": "aguja_trenzada", "nota": "Rama mandibular derecha del V par — reflejo trigémino-vocal (registro en cuerdas vocales)" }
       ]
@@ -561,16 +561,16 @@ window.SURGERIES_DATA = {
    * montar y quedan impresas en el resumen.
    * ------------------------------------------------------------------ */
   "tecnicas": [
-    { "id": "t_pess", "etiqueta": "t-PESS", "grupo": "monitorizacion", "activa": true, "descripcion": "PESS transcraneales" },
-    { "id": "t_pem", "etiqueta": "t-PEM", "grupo": "monitorizacion", "activa": true, "descripcion": "Potenciales evocados motores transcraneales" },
-    { "id": "c_pem", "etiqueta": "c-PEM", "grupo": "monitorizacion", "activa": true, "descripcion": "PEM por estímulo directo cortical" },
-    { "id": "c_pess", "etiqueta": "c-PESS", "grupo": "monitorizacion", "activa": true, "descripcion": "PESS corticales" },
-    { "id": "pem_corticobulbares", "etiqueta": "PEM córtico-bulbares", "grupo": "monitorizacion", "activa": true, "descripcion": "Vías corticobulbares (pares craneales)" },
+    { "id": "t_pess", "etiqueta": "t-SEP", "grupo": "monitorizacion", "activa": true, "descripcion": "PESS transcraneales" },
+    { "id": "t_pem", "etiqueta": "t-MEP", "grupo": "monitorizacion", "activa": true, "descripcion": "Potenciales evocados motores transcraneales" },
+    { "id": "c_pem", "etiqueta": "c-MEP", "grupo": "monitorizacion", "activa": true, "descripcion": "PEM por estímulo directo cortical" },
+    { "id": "c_pess", "etiqueta": "c-SEP", "grupo": "monitorizacion", "activa": true, "descripcion": "PESS corticales" },
+    { "id": "pem_corticobulbares", "etiqueta": "MEP córtico-bulbares", "grupo": "monitorizacion", "activa": true, "descripcion": "Vías corticobulbares (pares craneales)" },
     { "id": "onda_d", "etiqueta": "Onda D", "grupo": "monitorizacion", "activa": true, "descripcion": "Registro epidural de la onda D" },
     { "id": "br", "etiqueta": "Blink Reflex (BR)", "grupo": "monitorizacion", "activa": true, "descripcion": "Reflejo del parpadeo" },
     { "id": "rbc", "etiqueta": "RBC", "grupo": "monitorizacion", "activa": true, "descripcion": "Reflejo bulbo-cavernoso" },
     { "id": "peatc", "etiqueta": "PEATC", "grupo": "monitorizacion", "activa": true, "descripcion": "Potenciales evocados auditivos de tronco cerebral" },
-    { "id": "emg", "etiqueta": "EMG", "grupo": "monitorizacion", "activa": true, "descripcion": "Electromiografía" },
+    { "id": "emg", "etiqueta": "Free-EMG", "grupo": "monitorizacion", "activa": true, "descripcion": "Electromiografía" },
     { "id": "eeg", "etiqueta": "EEG", "grupo": "monitorizacion", "activa": true, "descripcion": "Electroencefalografía" },
     { "id": "ecog", "etiqueta": "ECoG", "grupo": "monitorizacion", "activa": true, "descripcion": "Electrocorticografía" },
     { "id": "pev", "etiqueta": "PEV", "grupo": "monitorizacion", "activa": true, "descripcion": "Potenciales evocados visuales — en estudio" },
@@ -587,6 +587,18 @@ window.SURGERIES_DATA = {
     { "id": "lsr", "etiqueta": "LSR", "grupo": "monitorizacion", "activa": true },
     { "id": "prm", "etiqueta": "PRM", "grupo": "monitorizacion", "activa": true },
     { "id": "arm", "etiqueta": "ARM", "grupo": "monitorizacion", "activa": true },
+
+    /* Reflejos de tronco. Van sueltos y no dentro de un "Reflejos" genérico
+       porque cada uno se monitoriza por su cuenta y con su propio montaje;
+       agrupados no se podría marcar cuál se hizo de verdad.
+       El Blink Reflex, el RBC y el Reflejo H ya estaban más arriba. */
+    { "id": "rx_mandibular", "etiqueta": "Reflejo mandibular (jaw jerk)", "grupo": "monitorizacion", "activa": true },
+    { "id": "rx_inhib_maseterino", "etiqueta": "Reflejo inhibitorio del masetero", "grupo": "monitorizacion", "activa": true },
+    { "id": "rx_tvcr", "etiqueta": "Reflejo trigémino-vocal (TVcR)", "grupo": "monitorizacion", "activa": true },
+    { "id": "rx_thr", "etiqueta": "Reflejo trigémino-hipogloso (THR)", "grupo": "monitorizacion", "activa": true },
+    { "id": "rx_tcr", "etiqueta": "Reflejo trigémino-cervical (TCR)", "grupo": "monitorizacion", "activa": true },
+    { "id": "rx_lar", "etiqueta": "Reflejo laríngeo aductor (LAR)", "grupo": "monitorizacion", "activa": true },
+    { "id": "rx_glosofaringeo_trigeminal", "etiqueta": "Reflejo glosofaríngeo-trigeminal", "grupo": "monitorizacion", "activa": true },
 
     { "id": "mapeo_cortical", "etiqueta": "Mapeo cortical", "grupo": "mapeo", "activa": true, "descripcion": "Técnica de Penfield" },
     { "id": "mapeo_subcortical", "etiqueta": "Mapeo subcortical", "grupo": "mapeo", "activa": true },
@@ -620,7 +632,9 @@ window.SURGERIES_DATA = {
     { "id": "esc_tumor_med",   "nombre": "Tumor Medular", "activa": true },
     { "id": "esc_awake",       "nombre": "Awake surgery", "activa": true, "descripcion": "Cirugía con paciente despierto" },
     { "id": "esc_ecc",         "nombre": "ECC",           "activa": true, "descripcion": "Estenosis del canal cervical" },
-    { "id": "esc_ecl",         "nombre": "ECL",           "activa": true, "descripcion": "Estenosis del canal lumbar" }
+    { "id": "esc_ecl",         "nombre": "ECL",           "activa": true, "descripcion": "Estenosis del canal lumbar" },
+    { "id": "esc_mav",         "nombre": "MAV",           "activa": true, "descripcion": "Malformación arteriovenosa" },
+    { "id": "esc_escoliosis",  "nombre": "Escoliosis",    "activa": true }
   ],
 
   /* ------------------------------------------------------------------ *
