@@ -467,6 +467,24 @@
     docente_cobertura_ok: { es: "Cubres los {n} niveles elegidos.", en: "You cover all {n} chosen levels." },
     docente_cobertura_falta: { es: "Sin cubrir: {niveles}", en: "Not covered: {niveles}" },
     docente_reiniciar_conf: { es: "¿Empezar el ejercicio de cero?", en: "Start the exercise over?" },
+    docente_titulo_gen:  { es: "Docente", en: "Teaching" },
+    docente_tab_miotomas: { es: "Miotomas", en: "Myotomes" },
+    docente_tab_cama:    { es: "Cama de quirófano", en: "Operating table" },
+    cama_intro:          { es: "Elige la <b>posición del paciente</b> y reparte las cajas alrededor de la mesa. Pulsa una caja de abajo y luego la zona donde la pondrías; pulsa una ya colocada para retirarla. Lo que se practica es que el cable llegue: una caja en los pies no sirve para los electrodos de la cabeza.",
+                           en: "Choose the <b>patient position</b> and distribute the boxes around the table. Click a box below and then the area where you would put it; click a placed one to take it back. The point is cable reach: a box at the feet is no use for head electrodes." },
+    cama_cabecera:       { es: "Cabecera", en: "Head end" },
+    cama_izq:            { es: "Lateral izquierdo", en: "Left side" },
+    cama_der:            { es: "Lateral derecho", en: "Right side" },
+    cama_pies:           { es: "Pies", en: "Foot end" },
+    cama_sin_colocar:    { es: "Cajas por repartir", en: "Boxes to place" },
+    cama_todas:          { es: "Todas las cajas están repartidas.", en: "All boxes are placed." },
+    cama_reparto:        { es: "{repartidas} de {total} cajas repartidas.", en: "{repartidas} of {total} boxes placed." },
+    cama_elige_zona:     { es: "«{caja}» elegida: pulsa ahora la zona donde va.",
+                           en: "“{caja}” selected: now click the area where it goes." },
+    pos_supino:          { es: "Supino", en: "Supine" },
+    pos_supino_brazos:   { es: "Supino con brazos extendidos", en: "Supine, arms extended" },
+    pos_prono:           { es: "Prono", en: "Prone" },
+    pos_sentado:         { es: "Sentado", en: "Sitting" },
     caso_editar_montaje: { es: "Corregir el material y el montaje", en: "Correct material and montage" },
     caso_editar_montaje_ay: { es: "Abre las cajas de este caso para cambiar dónde va cada cosa. Lo que cambies se guarda en el caso, no en el montaje del que salió.",
                            en: "Opens this case’s boxes to change where each item goes. What you change is saved in the case, not in the montage it came from." },
@@ -5366,6 +5384,10 @@
       if (g) {
         docenteNiveles = g.niveles || [];
         docenteElegidos = g.elegidos || [];
+        if (g.cama_posicion) camaPosicion = g.cama_posicion;
+        if (g.cama_zonas) {
+          ZONAS_CAMA.forEach(function (z) { camaZonas[z] = g.cama_zonas[z] || []; });
+        }
       }
     } catch (e) { /* sin ejercicio guardado */ }
   }
@@ -5375,7 +5397,8 @@
     // tiene por qué viajar a la sincronización ni ensuciar el repositorio.
     try {
       localStorage.setItem(DOCENTE_KEY, JSON.stringify({
-        niveles: docenteNiveles, elegidos: docenteElegidos
+        niveles: docenteNiveles, elegidos: docenteElegidos,
+        cama_posicion: camaPosicion, cama_zonas: camaZonas
       }));
     } catch (e) { /* sin persistencia */ }
   }
@@ -5508,8 +5531,177 @@
     renderDocenteListas();
   }
 
+  /* ---- Cama de quirófano ------------------------------------------ *
+   * Dónde cae cada caja según cómo esté colocado el paciente. Lo que se
+   * practica es que el cable llegue: una caja en los pies no sirve para los
+   * electrodos de la cabeza, y con el paciente en prono o sentado el sitio
+   * cambia respecto a supino.
+   * ------------------------------------------------------------------ */
+  var POSICIONES_CAMA = ["supino", "supino_brazos", "prono", "sentado"];
+  var ZONAS_CAMA = ["cabecera", "izq", "der", "pies"];
+  var camaPosicion = "supino";
+  var camaZonas = { cabecera: [], izq: [], der: [], pies: [] };
+  var camaSeleccion = null;
+
+  /* El dibujo es esquemático a propósito: una vista cenital de la mesa con el
+     paciente encima. No pretende ser anatómico, solo dejar claro dónde queda
+     la cabeza, dónde los pies y por dónde salen los brazos, que es lo que
+     decide a qué distancia hay que poner cada caja.
+     Es marcado fijo, sin ningún dato interpolado, así que va por innerHTML
+     sin el riesgo que tiene concatenar texto del usuario. */
+  var DIBUJOS_CAMA = {
+    supino:
+      '<rect class="mesa" x="26" y="8" width="68" height="244" rx="7"/>' +
+      '<circle class="cuerpo" cx="60" cy="40" r="14"/>' +
+      '<rect class="cuerpo" x="44" y="56" width="32" height="72" rx="5"/>' +
+      '<rect class="cuerpo" x="33" y="60" width="9" height="62" rx="4"/>' +
+      '<rect class="cuerpo" x="78" y="60" width="9" height="62" rx="4"/>' +
+      '<rect class="cuerpo" x="47" y="130" width="11" height="94" rx="5"/>' +
+      '<rect class="cuerpo" x="62" y="130" width="11" height="94" rx="5"/>',
+    supino_brazos:
+      '<rect class="mesa" x="26" y="8" width="68" height="244" rx="7"/>' +
+      '<rect class="soporte" x="2" y="58" width="26" height="16" rx="4"/>' +
+      '<rect class="soporte" x="92" y="58" width="26" height="16" rx="4"/>' +
+      '<circle class="cuerpo" cx="60" cy="40" r="14"/>' +
+      '<rect class="cuerpo" x="44" y="56" width="32" height="72" rx="5"/>' +
+      '<rect class="cuerpo" x="6" y="61" width="38" height="10" rx="5"/>' +
+      '<rect class="cuerpo" x="76" y="61" width="38" height="10" rx="5"/>' +
+      '<rect class="cuerpo" x="47" y="130" width="11" height="94" rx="5"/>' +
+      '<rect class="cuerpo" x="62" y="130" width="11" height="94" rx="5"/>',
+    prono:
+      '<rect class="mesa" x="26" y="8" width="68" height="244" rx="7"/>' +
+      '<circle class="cuerpo prono" cx="60" cy="40" r="14"/>' +
+      // La cara mira a un lado: es lo que distingue el prono de un vistazo
+      '<circle class="marca" cx="50" cy="40" r="3.5"/>' +
+      '<rect class="cuerpo prono" x="44" y="56" width="32" height="72" rx="5"/>' +
+      '<rect class="cuerpo prono" x="33" y="60" width="9" height="62" rx="4"/>' +
+      '<rect class="cuerpo prono" x="78" y="60" width="9" height="62" rx="4"/>' +
+      '<rect class="cuerpo prono" x="47" y="130" width="11" height="94" rx="5"/>' +
+      '<rect class="cuerpo prono" x="62" y="130" width="11" height="94" rx="5"/>',
+    sentado:
+      // Respaldo levantado: la mesa deja de ser un rectángulo
+      '<path class="mesa" d="M26 8 h68 v104 h-24 v140 h-44 z" />' +
+      '<circle class="cuerpo" cx="60" cy="36" r="14"/>' +
+      '<rect class="cuerpo" x="44" y="52" width="32" height="58" rx="5"/>' +
+      '<rect class="cuerpo" x="33" y="56" width="9" height="52" rx="4"/>' +
+      '<rect class="cuerpo" x="78" y="56" width="9" height="52" rx="4"/>' +
+      '<rect class="cuerpo" x="40" y="112" width="34" height="16" rx="6"/>' +
+      '<rect class="cuerpo" x="47" y="128" width="11" height="96" rx="5"/>' +
+      '<rect class="cuerpo" x="62" y="128" width="11" height="96" rx="5"/>'
+  };
+
+  function renderCamaPosiciones() {
+    var cont = document.getElementById("cama-posiciones");
+    cont.innerHTML = "";
+    POSICIONES_CAMA.forEach(function (p) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "chip chip-escenario" + (p === camaPosicion ? " activo" : "");
+      b.textContent = T("pos_" + p);
+      b.addEventListener("click", function () {
+        camaPosicion = p;
+        guardarDocente();
+        renderCama();
+      });
+      cont.appendChild(b);
+    });
+  }
+
+  function renderCamaMesa() {
+    var mesa = document.getElementById("cama-mesa");
+    mesa.innerHTML = '<svg viewBox="0 0 120 260" class="cama-svg" aria-hidden="true">' +
+      (DIBUJOS_CAMA[camaPosicion] || DIBUJOS_CAMA.supino) + "</svg>";
+  }
+
+  function camaColocadas() {
+    var puestas = {};
+    ZONAS_CAMA.forEach(function (z) {
+      (camaZonas[z] || []).forEach(function (k) { puestas[k] = z; });
+    });
+    return puestas;
+  }
+
+  function chipCaja(cajaKey, enZona) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "cama-caja" + (camaSeleccion === cajaKey ? " seleccionada" : "");
+    b.textContent = infoCaja(cajaKey).nombre;
+    b.addEventListener("click", function (e) {
+      e.stopPropagation();
+      if (enZona) {
+        // Pulsar una colocada la devuelve a la lista de abajo
+        ZONAS_CAMA.forEach(function (z) {
+          camaZonas[z] = (camaZonas[z] || []).filter(function (k) { return k !== cajaKey; });
+        });
+        camaSeleccion = null;
+      } else {
+        camaSeleccion = camaSeleccion === cajaKey ? null : cajaKey;
+      }
+      guardarDocente();
+      renderCama();
+    });
+    return b;
+  }
+
+  function renderCamaZonas() {
+    var puestas = camaColocadas();
+    ZONAS_CAMA.forEach(function (z) {
+      var zona = document.querySelector('.cama-zona[data-zona="' + z + '"]');
+      var cajas = zona.querySelector(".cama-zona-cajas");
+      cajas.innerHTML = "";
+      (camaZonas[z] || []).forEach(function (k) { cajas.appendChild(chipCaja(k, true)); });
+      zona.classList.toggle("recibe", !!camaSeleccion);
+    });
+
+    var disp = document.getElementById("cama-disponibles");
+    disp.innerHTML = "";
+    var sueltas = Object.keys(CAJAS).filter(function (k) { return !puestas[k]; });
+    if (!sueltas.length) {
+      disp.appendChild(pistaVacia(T("cama_todas")));
+    } else {
+      sueltas.forEach(function (k) { disp.appendChild(chipCaja(k, false)); });
+    }
+
+    var total = Object.keys(CAJAS).length;
+    document.getElementById("cama-pista").textContent = camaSeleccion
+      ? T("cama_elige_zona", { caja: infoCaja(camaSeleccion).nombre })
+      : T("cama_reparto", { repartidas: total - sueltas.length, total: total });
+  }
+
+  // Un solo listener en el tablero en vez de uno por zona: las zonas se
+  // repintan enteras en cada cambio y volverían a engancharse cada vez.
+  document.querySelector(".cama-tablero").addEventListener("click", function (e) {
+    var zona = e.target.closest(".cama-zona");
+    if (!zona || !camaSeleccion) return;
+    var z = zona.dataset.zona;
+    camaZonas[z] = (camaZonas[z] || []).concat([camaSeleccion]);
+    camaSeleccion = null;
+    guardarDocente();
+    renderCama();
+  });
+
+  function renderCama() {
+    renderCamaPosiciones();
+    renderCamaMesa();
+    renderCamaZonas();
+  }
+
+  // Pestañas de la ventana docente
+  document.getElementById("docente-pestanas").addEventListener("click", function (e) {
+    var b = e.target.closest(".pestana");
+    if (!b) return;
+    var pane = b.dataset.pane;
+    [].forEach.call(this.querySelectorAll(".pestana"), function (x) {
+      x.classList.toggle("activa", x === b);
+    });
+    document.getElementById("pane-miotomas").hidden = pane !== "miotomas";
+    document.getElementById("pane-cama").hidden = pane !== "cama";
+    if (pane === "cama") renderCama();
+  });
+
   document.getElementById("btn-docente").addEventListener("click", function () {
     renderDocente();
+    renderCama();
     dlgDocente.showModal();
   });
   document.getElementById("docente-cerrar").addEventListener("click", function () {
@@ -5524,8 +5716,11 @@
     if (!confirm(T("docente_reiniciar_conf"))) return;
     docenteNiveles = [];
     docenteElegidos = [];
+    camaSeleccion = null;
+    ZONAS_CAMA.forEach(function (z) { camaZonas[z] = []; });
     guardarDocente();
     renderDocente();
+    renderCama();
   });
 
   /* ---------------------------------------------------------------- *

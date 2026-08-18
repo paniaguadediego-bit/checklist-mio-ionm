@@ -901,9 +901,63 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
 
 #docente-limpiar-niveles { font-size: 0.68rem; margin-top: 0.3rem; width: 100%; }
 
+/* --- Cama de quirófano --- */
+.cama-posiciones { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.6rem; }
+
+.cama-tablero {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.7rem;
+}
+.cama-fila { display: flex; gap: 0.4rem; align-items: stretch; }
+.cama-fila .cama-zona { flex: 1; }
+
+.cama-zona {
+  border: 1px dashed var(--border);
+  border-radius: var(--r);
+  padding: 0.35rem 0.45rem;
+  min-height: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+/* Mientras hay una caja elegida, las zonas se marcan como destino posible */
+.cama-zona.recibe { border-color: var(--accent); border-style: solid; cursor: pointer; }
+.cama-zona-nombre {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+.cama-zona-cajas { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+
+.cama-mesa { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; }
+.cama-svg { width: 108px; height: auto; max-height: 250px; }
+.cama-svg .mesa { fill: var(--card-bg); stroke: var(--border); stroke-width: 2; }
+.cama-svg .soporte { fill: var(--card-bg); stroke: var(--border); stroke-width: 1.5; }
+.cama-svg .cuerpo { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+/* En prono el cuerpo va hueco: se distingue del supino sin leer la etiqueta */
+.cama-svg .cuerpo.prono { fill: none; stroke-dasharray: 4 3; }
+.cama-svg .marca { fill: var(--accent); }
+
+.cama-caja {
+  font: inherit;
+  font-size: 0.7rem;
+  cursor: pointer;
+  padding: 0.15rem 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card-bg);
+  color: var(--text);
+}
+.cama-caja.seleccionada { background: var(--accent); border-color: var(--accent); color: #fff; }
+.cama-disponibles { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+
 @media (max-width: 700px) {
   .docente-cols { grid-template-columns: 1fr; }
   .vertebras { flex-direction: row; flex-wrap: wrap; max-height: none; }
+  .cama-svg { width: 74px; }
 }
 
 /* ------------------ Corrigiendo el montaje de un caso ------------------ */

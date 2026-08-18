@@ -13,7 +13,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260818c">
+<link rel="stylesheet" href="style.css?v=20260818d">
 </head>
 <body>
 
@@ -374,7 +374,14 @@
 </dialog>
 
 <dialog id="dlg-docente" class="no-print dlg-ancho">
-  <h3 data-i18n="docente_titulo"></h3>
+  <h3 data-i18n="docente_titulo_gen"></h3>
+
+  <div class="pestanas" id="docente-pestanas">
+    <button type="button" class="pestana activa" data-pane="miotomas" data-i18n="docente_tab_miotomas"></button>
+    <button type="button" class="pestana" data-pane="cama" data-i18n="docente_tab_cama"></button>
+  </div>
+
+  <div id="pane-miotomas">
   <p class="dlg-intro" data-i18n-html="docente_intro"></p>
 
   <div class="docente-cols">
@@ -396,6 +403,40 @@
       <div id="docente-elegidos" class="docente-lista"></div>
     </div>
   </div>
+
+  </div><!-- /pane-miotomas -->
+
+  <div id="pane-cama" hidden>
+    <p class="dlg-intro" data-i18n-html="cama_intro"></p>
+
+    <div class="cama-posiciones" id="cama-posiciones"></div>
+
+    <div class="cama-tablero">
+      <div class="cama-zona" data-zona="cabecera">
+        <span class="cama-zona-nombre" data-i18n="cama_cabecera"></span>
+        <div class="cama-zona-cajas"></div>
+      </div>
+      <div class="cama-fila">
+        <div class="cama-zona" data-zona="izq">
+          <span class="cama-zona-nombre" data-i18n="cama_izq"></span>
+          <div class="cama-zona-cajas"></div>
+        </div>
+        <div class="cama-mesa" id="cama-mesa"></div>
+        <div class="cama-zona" data-zona="der">
+          <span class="cama-zona-nombre" data-i18n="cama_der"></span>
+          <div class="cama-zona-cajas"></div>
+        </div>
+      </div>
+      <div class="cama-zona" data-zona="pies">
+        <span class="cama-zona-nombre" data-i18n="cama_pies"></span>
+        <div class="cama-zona-cajas"></div>
+      </div>
+    </div>
+
+    <h4 data-i18n="cama_sin_colocar"></h4>
+    <div id="cama-disponibles" class="cama-disponibles"></div>
+    <p class="docente-pista" id="cama-pista"></p>
+  </div><!-- /pane-cama -->
 
   <div class="dlg-botones">
     <button type="button" id="docente-reiniciar" class="peligro" data-i18n="docente_reiniciar"></button>
@@ -430,8 +471,8 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260818c"></script>
-<script src="data/i18n-en.js?v=20260818c"></script>
-<script src="app.js?v=20260818c"></script>
+<script src="data/surgeries.js?v=20260818d"></script>
+<script src="data/i18n-en.js?v=20260818d"></script>
+<script src="app.js?v=20260818d"></script>
 </body>
 </html>
