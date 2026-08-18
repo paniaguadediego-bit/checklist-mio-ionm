@@ -453,6 +453,8 @@
                            en: "Exercise: choose the muscles for the surgical level" },
     docente_intro:       { es: "Pulsa en la columna los <b>niveles</b> que abarca la cirugía. A la izquierda aparecen los músculos que dependen de esas raíces; pulsa uno para llevarlo a los <b>monitorizados</b> de la derecha, y pulsa allí para quitarlo. Los rangos son los que se enseñan habitualmente: la inervación se solapa y no todas las escuelas dan los mismos límites, así que están para discutirlos.",
                            en: "Click the <b>levels</b> the surgery covers on the spine. The muscles depending on those roots appear on the left; click one to move it to <b>monitored</b> on the right, and click there to remove it. The ranges are the ones usually taught: innervation overlaps and not every school gives the same limits, so they are there to be discussed." },
+    docente_fuentes:      { es: "El detalle al pasar el ratón por un músculo, cuando lo lleva, cita: <b>[TD/L]</b> Toleikis/Deletis 2.ª ed. cap. 13 y Leppänen (ASNM) para el músculo y el nivel · <b>[Sch]</b> Schirmer 2011 y <b>[Lon]</b> London 2022 (J Neurosurg Spine) para la frecuencia real de solapamiento entre niveles. Los músculos sin ninguna marca no vienen de esta tabla: son rangos habituales de enseñanza, sin cita concreta detrás.",
+                           en: "The tooltip on a muscle, when it has one, cites: <b>[TD/L]</b> Toleikis/Deletis 2nd ed. ch. 13 and Leppänen (ASNM) for the muscle and level · <b>[Sch]</b> Schirmer 2011 and <b>[Lon]</b> London 2022 (J Neurosurg Spine) for how often levels actually overlap. Muscles with no mark are not from this table: they are the usual teaching ranges, with no specific citation behind them." },
     docente_posibles:    { es: "Músculos posibles", en: "Possible muscles" },
     docente_columna:     { es: "Columna", en: "Spine" },
     docente_elegidos:    { es: "Monitorizados", en: "Monitored" },
@@ -5466,6 +5468,10 @@
       niv.textContent = (m.niveles || []).join(" · ");
       b.appendChild(n);
       b.appendChild(niv);
+      // El detalle clínico (solapamientos, agrupaciones, citas) va en el
+      // tooltip: en la tarjeta apenas cabe el nombre y el nivel, y es
+      // justo el tipo de matiz que conviene leer, no memorizar de un vistazo.
+      if (m.nota) b.title = m.nota;
       b.addEventListener("click", function () {
         if (elegido) {
           docenteElegidos = docenteElegidos.filter(function (x) { return x !== m.id; });

@@ -825,6 +825,13 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
 /* --------------------------- Ventana docente --------------------------- */
 .dlg-ancho { max-width: 62rem; width: calc(100vw - 2rem); }
 
+.docente-fuentes {
+  font-size: 0.66rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin: -0.3rem 0 0.6rem;
+}
+
 .docente-cols {
   display: grid;
   /* La columna vertebral en el centro y estrecha, con los músculos a los dos

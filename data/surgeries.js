@@ -414,6 +414,8 @@ window.SURGERIES_DATA = {
       "items": [
         {"id":"l_diafragma","nombre":"L.Diafragma","etiqueta":"aguja_trenzada","nota":"Diafragma — nervio frénico izquierdo"},
         {"id":"r_diafragma","nombre":"R.Diafragma","etiqueta":"aguja_trenzada","nota":"Diafragma — nervio frénico derecho"},
+        {"id":"l_ic","nombre":"L.IC","etiqueta":"aguja_trenzada","nota":"Intercostal izquierdo — registro muscular, T1-T4"},
+        {"id":"r_ic","nombre":"R.IC","etiqueta":"aguja_trenzada","nota":"Intercostal derecho — registro muscular, T1-T4"},
         {"id":"l_ras","nombre":"L.RAS","etiqueta":"aguja_trenzada","nota":"Recto anterior superior izquierdo"},
         {"id":"r_ras","nombre":"R.RAS","etiqueta":"aguja_trenzada","nota":"Recto anterior superior derecho"},
         {"id":"l_ram","nombre":"L.RAM","etiqueta":"aguja_trenzada","nota":"Recto anterior medio izquierdo"},
@@ -437,6 +439,8 @@ window.SURGERIES_DATA = {
         {"id":"r_add","nombre":"R.ADD","etiqueta":"aguja_trenzada","nota":"Aductores derecho"},
         {"id":"l_vl","nombre":"L.VL","etiqueta":"aguja_trenzada","nota":"Vasto lateral — cuádriceps izquierdo"},
         {"id":"r_vl","nombre":"R.VL","etiqueta":"aguja_trenzada","nota":"Vasto lateral — cuádriceps derecho"},
+        {"id":"l_vm","nombre":"L.VM","etiqueta":"aguja_trenzada","nota":"Vasto medial — cuádriceps izquierdo"},
+        {"id":"r_vm","nombre":"R.VM","etiqueta":"aguja_trenzada","nota":"Vasto medial — cuádriceps derecho"},
         {"id":"l_pl","nombre":"L.PL","etiqueta":"aguja_trenzada","nota":"Peroneo largo izquierdo"},
         {"id":"r_pl","nombre":"R.PL","etiqueta":"aguja_trenzada","nota":"Peroneo largo derecho"},
         {"id":"l_ehb","nombre":"L.EHB","etiqueta":"aguja_trenzada","nota":"Extensor corto de los dedos / extensor brevis izquierdo"},
@@ -640,46 +644,77 @@ window.SURGERIES_DATA = {
   /* ------------------------------------------------------------------ *
    * MIOTOMAS — solo para la ventana docente
    *
-   * Qué músculo depende de qué raíces. Son los rangos que se enseñan
-   * habitualmente, puestos como punto de partida para el ejercicio: la
-   * inervación real se solapa entre niveles y no todas las escuelas dan los
-   * mismos límites, así que esta lista está para discutirla y corregirla, no
-   * para tomarla como referencia clínica.
+   * Qué músculo depende de qué raíces. La mayoría de las entradas siguen la
+   * tabla consolidada que dio el usuario (18-08-2026), a partir de:
+   *   - Toleikis/Deletis, 2nd ed., cap. 13 — y Leppänen 2005/2006 (ASNM):
+   *     músculos y niveles de partida, marcados como "[TD/L]" en la nota.
+   *   - Schirmer 2011 y London 2022 (J Neurosurg Spine): frecuencia de
+   *     solapamiento entre niveles, marcados como "[Sch]" / "[Lon]".
+   * Estas SÍ son referencia clínica citada, no un punto de partida a discutir.
+   *
+   * Las entradas sin ninguna de esas marcas (diafragma, supraespinoso,
+   * infraespinoso, braquiorradial, flexor cubital del carpo, interóseos de
+   * la mano, cremáster, cuádriceps genérico, extensor corto de los dedos,
+   * abductor del hallux) son las que ya había antes de esa tabla: rangos
+   * habituales de enseñanza, sin cita concreta detrás. Se dejan porque siguen
+   * siendo válidas y amplían la cobertura, pero con menos rigor que las
+   * citadas — están para discutirlas y corregirlas.
    *
    * "item" enlaza con el catálogo de material cuando existe el músculo, para
    * que lo que se elige aquí se reconozca luego en las cajas.
    * ------------------------------------------------------------------ */
   "miotomas": [
-    { "id": "mio_ecm",        "nombre": "Esternocleidomastoideo", "niveles": ["C2", "C3"], "item": "l_stcm" },
-    { "id": "mio_trapecio",   "nombre": "Trapecio",            "niveles": ["C3", "C4"], "item": "l_trapecio" },
+    { "id": "mio_ecm",        "nombre": "Esternocleidomastoideo", "niveles": ["C2", "C3", "C4"], "item": "l_stcm",
+      "nota": "Por la rama espinal del XI par, igual que el trapecio. [TD/L]" },
+    { "id": "mio_trapecio",   "nombre": "Trapecio",            "niveles": ["C2", "C3", "C4"], "item": "l_trapecio",
+      "nota": "Por la rama espinal del XI par, igual que el ECM. [TD/L]" },
     { "id": "mio_diafragma",  "nombre": "Diafragma",           "niveles": ["C3", "C4", "C5"], "item": "l_diafragma" },
     { "id": "mio_supraes",    "nombre": "Supraespinoso",       "niveles": ["C5", "C6"], "item": "l_supraes" },
     { "id": "mio_infraes",    "nombre": "Infraespinoso",       "niveles": ["C5", "C6"], "item": "l_infraes" },
-    { "id": "mio_deltoides",  "nombre": "Deltoides",           "niveles": ["C5", "C6"], "item": "l_delt" },
-    { "id": "mio_biceps",     "nombre": "Bíceps",              "niveles": ["C5", "C6"], "item": "l_bcps" },
+    { "id": "mio_deltoides",  "nombre": "Deltoides",           "niveles": ["C5", "C6"], "item": "l_delt",
+      "nota": "No se aísla por raíz individual: se monitoriza junto al bíceps en este bloque, porque la dominancia C5 vs C6 varía entre pacientes. [TD/L]" },
+    { "id": "mio_biceps",     "nombre": "Bíceps",              "niveles": ["C5", "C6"], "item": "l_bcps",
+      "nota": "No se aísla por raíz individual: se monitoriza junto al deltoides en este bloque, porque la dominancia C5 vs C6 varía entre pacientes. [TD/L]" },
     { "id": "mio_br",         "nombre": "Braquiorradial",      "niveles": ["C5", "C6"], "item": "l_br" },
-    { "id": "mio_fcr",        "nombre": "Flexor radial del carpo", "niveles": ["C6", "C7"], "item": "l_fcr" },
-    { "id": "mio_triceps",    "nombre": "Tríceps",             "niveles": ["C6", "C7", "C8"], "item": "l_triceps" },
+    { "id": "mio_fcr",        "nombre": "Flexor radial del carpo", "niveles": ["C6", "C7"], "item": "l_fcr",
+      "nota": "Se monitoriza junto al tríceps en este bloque. [TD/L]" },
+    { "id": "mio_triceps",    "nombre": "Tríceps",             "niveles": ["C6", "C7"], "item": "l_triceps",
+      "nota": "Se monitoriza junto al flexor radial del carpo en este bloque. [TD/L]" },
     { "id": "mio_ecd",        "nombre": "Extensor común de los dedos", "niveles": ["C7", "C8"], "item": "l_ext" },
     { "id": "mio_fcu",        "nombre": "Flexor cubital del carpo", "niveles": ["C7", "C8", "T1"], "item": "l_fcu" },
-    { "id": "mio_apb",        "nombre": "Abductor corto del pulgar", "niveles": ["C8", "T1"], "item": "l_apb" },
-    { "id": "mio_adm",        "nombre": "Abductor del meñique", "niveles": ["C8", "T1"], "item": "l_adm" },
+    { "id": "mio_apb",        "nombre": "Abductor corto del pulgar", "niveles": ["C8", "T1"], "item": "l_apb",
+      "nota": "Se monitoriza junto al abductor del meñique en este bloque. [TD/L]" },
+    { "id": "mio_adm",        "nombre": "Abductor del meñique", "niveles": ["C8", "T1"], "item": "l_adm",
+      "nota": "Se monitoriza junto al abductor corto del pulgar en este bloque. [TD/L]" },
     { "id": "mio_interoseos", "nombre": "Interóseos de la mano", "niveles": ["C8", "T1"], "item": "l_fdio" },
-    { "id": "mio_ras",        "nombre": "Recto anterior superior", "niveles": ["T6", "T7", "T8"], "item": "l_ras" },
-    { "id": "mio_ram",        "nombre": "Recto anterior medio", "niveles": ["T9", "T10"], "item": "l_ram" },
-    { "id": "mio_rai",        "nombre": "Recto anterior inferior", "niveles": ["T11", "T12"], "item": "l_rai" },
+    { "id": "mio_intercostales", "nombre": "Intercostales",   "niveles": ["T1", "T2", "T3", "T4"], "item": "l_ic",
+      "nota": "Único músculo de este bloque troncal: por debajo de T4 el registro pasa a los rectos abdominales, con los intercostales todavía presentes de acompañamiento. [TD/L]" },
+    { "id": "mio_ras",        "nombre": "Recto anterior superior", "niveles": ["T5", "T6"], "item": "l_ras",
+      "nota": "Más intercostales en ese nivel, de acompañamiento. [TD/L]" },
+    { "id": "mio_ram",        "nombre": "Recto anterior medio", "niveles": ["T7", "T8"], "item": "l_ram",
+      "nota": "Más intercostales en ese nivel, de acompañamiento. [TD/L]" },
+    { "id": "mio_rai",        "nombre": "Recto anterior inferior", "niveles": ["T9", "T10", "T11", "T12"], "item": "l_rai",
+      "nota": "T9-T11 con intercostales de acompañamiento; T12 es la porción más caudal, ya sin intercostal propiamente dicho (nervio subcostal). [TD/L]" },
     { "id": "mio_oae",        "nombre": "Oblicuo abdominal externo", "niveles": ["T8", "T9", "T10", "T11", "T12"], "item": "l_oae" },
     { "id": "mio_cremaster",  "nombre": "Cremáster",           "niveles": ["L1", "L2"], "item": "l_cremaster" },
-    { "id": "mio_psoas",      "nombre": "Psoas",               "niveles": ["L1", "L2", "L3"], "item": "l_pso" },
-    { "id": "mio_aductores",  "nombre": "Aductores",           "niveles": ["L2", "L3", "L4"], "item": "l_add" },
+    { "id": "mio_psoas",      "nombre": "Psoas",               "niveles": ["L1"], "item": "l_pso",
+      "nota": "Raíz aislada: no se agrupa con L2, a diferencia de otros músculos de la zona. [TD/L]" },
+    { "id": "mio_aductores",  "nombre": "Aductores (aductor mayor)", "niveles": ["L2", "L3"], "item": "l_add",
+      "nota": "Aductor mayor específicamente. [TD/L]" },
     { "id": "mio_cuadriceps", "nombre": "Cuádriceps",          "niveles": ["L2", "L3", "L4"], "item": "l_q" },
     { "id": "mio_vl",         "nombre": "Vasto lateral",       "niveles": ["L3", "L4"], "item": "l_vl" },
-    { "id": "mio_ta",         "nombre": "Tibial anterior",     "niveles": ["L4", "L5"], "item": "l_ta" },
+    { "id": "mio_vm",         "nombre": "Vasto medial",        "niveles": ["L3", "L4"], "item": "l_vm",
+      "nota": "Leppänen amplía el rango a L2-L3-L4. Al estimular L3 se activa el cuádriceps con más frecuencia que ningún otro músculo, pero también el aductor y el iliopsoas en una proporción no despreciable de casos. [TD/L] [Sch]" },
+    { "id": "mio_ta",         "nombre": "Tibial anterior",     "niveles": ["L4", "L5"], "item": "l_ta",
+      "nota": "Leppänen amplía el rango a L4-L5-S1. Al estimular L4, cuádriceps y tibial anterior se activan con frecuencias comparables: no hay predominio neto de uno sobre otro. [TD/L] [Sch]" },
     { "id": "mio_ehb",        "nombre": "Extensor corto de los dedos", "niveles": ["L5", "S1"], "item": "l_ehb" },
-    { "id": "mio_pl",         "nombre": "Peroneo largo",       "niveles": ["L5", "S1"], "item": "l_pl" },
-    { "id": "mio_gm",         "nombre": "Gastrocnemio",        "niveles": ["S1", "S2"], "item": "l_g" },
+    { "id": "mio_pl",         "nombre": "Peroneo largo",       "niveles": ["L5", "S1"], "item": "l_pl",
+      "nota": "Al estimular L5 también se activa con frecuencia relevante el gastrocnemio, y ocasionalmente el abductor del hallux. [TD/L] [Sch]" },
+    { "id": "mio_gm",         "nombre": "Gastrocnemio (porción medial)", "niveles": ["S1", "S2"], "item": "l_g",
+      "nota": "Al estimular S1 se activa el tibial anterior en una proporción apreciable de casos, pese a ser músculo \"típico\" de niveles más altos. [TD/L] [Lon]" },
     { "id": "mio_ah",         "nombre": "Abductor del hallux", "niveles": ["S1", "S2"], "item": "l_ah" },
-    { "id": "mio_cc",         "nombre": "Esfínter anal",       "niveles": ["S2", "S3", "S4"], "item": "l_cc" }
+    { "id": "mio_cc",         "nombre": "Esfínter anal externo", "niveles": ["S2", "S3", "S4"], "item": "l_cc",
+      "nota": "[TD/L]" }
   ],
 
   /* ------------------------------------------------------------------ *
