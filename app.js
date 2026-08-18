@@ -17,6 +17,8 @@
   // los nombres de personas reales no se escriben en este repositorio, que es
   // público. Creados desde la interfaz viven en estado.json, que es privado.
   var USUARIOS_BASE = [];
+  // Solo para la ventana docente: qué músculo depende de qué raíces
+  var MIOTOMAS = DATA.miotomas || [];
   var STORAGE_KEY = "mio_ionm_escenarios_v1";
 
   /* ---------------------------------------------------------------- *
@@ -445,6 +447,26 @@
     montaje_de:          { es: "{nombre} · {autor}", en: "{nombre} · {autor}" },
     montaje_sin_escenario: { es: "Sin escenario", en: "No scenario" },
     caso_sin_id:         { es: "Caso sin número", en: "Case with no number" },
+    btn_docente:         { es: "Docente", en: "Teaching" },
+    docente_titulo:      { es: "Miotomas: qué músculos monitorizar", en: "Myotomes: which muscles to monitor" },
+    docente_titulo_ay:   { es: "Ejercicio: elegir los músculos según el nivel de la cirugía",
+                           en: "Exercise: choose the muscles for the surgical level" },
+    docente_intro:       { es: "Pulsa en la columna los <b>niveles</b> que abarca la cirugía. A la izquierda aparecen los músculos que dependen de esas raíces; pulsa uno para llevarlo a los <b>monitorizados</b> de la derecha, y pulsa allí para quitarlo. Los rangos son los que se enseñan habitualmente: la inervación se solapa y no todas las escuelas dan los mismos límites, así que están para discutirlos.",
+                           en: "Click the <b>levels</b> the surgery covers on the spine. The muscles depending on those roots appear on the left; click one to move it to <b>monitored</b> on the right, and click there to remove it. The ranges are the ones usually taught: innervation overlaps and not every school gives the same limits, so they are there to be discussed." },
+    docente_posibles:    { es: "Músculos posibles", en: "Possible muscles" },
+    docente_columna:     { es: "Columna", en: "Spine" },
+    docente_elegidos:    { es: "Monitorizados", en: "Monitored" },
+    docente_limpiar:     { es: "Quitar niveles", en: "Clear levels" },
+    docente_reiniciar:   { es: "Empezar de cero", en: "Start over" },
+    docente_sin_nivel:   { es: "Elige algún nivel en la columna para ver qué músculos dependen de él.",
+                           en: "Pick a level on the spine to see which muscles depend on it." },
+    docente_nivel_pista: { es: "Niveles elegidos: {niveles}", en: "Levels chosen: {niveles}" },
+    docente_sin_musculos: { es: "Ningún músculo de la lista depende de esos niveles.",
+                           en: "No muscle in the list depends on those levels." },
+    docente_nada_elegido: { es: "Todavía no has elegido ninguno.", en: "You have not chosen any yet." },
+    docente_cobertura_ok: { es: "Cubres los {n} niveles elegidos.", en: "You cover all {n} chosen levels." },
+    docente_cobertura_falta: { es: "Sin cubrir: {niveles}", en: "Not covered: {niveles}" },
+    docente_reiniciar_conf: { es: "¿Empezar el ejercicio de cero?", en: "Start the exercise over?" },
     caso_editar_montaje: { es: "Corregir el material y el montaje", en: "Correct material and montage" },
     caso_editar_montaje_ay: { es: "Abre las cajas de este caso para cambiar dónde va cada cosa. Lo que cambies se guarda en el caso, no en el montaje del que salió.",
                            en: "Opens this case’s boxes to change where each item goes. What you change is saved in the case, not in the montage it came from." },
@@ -5315,6 +5337,198 @@
   });
 
   /* ---------------------------------------------------------------- *
+   * Ventana docente: miotomas
+   *
+   * Un ejercicio, no una calculadora: el alumno elige los niveles que abarca
+   * la cirugía, ve qué músculos dependen de esas raíces y decide cuáles
+   * monitorizaría. La herramienta no elige por él; solo le dice al final qué
+   * niveles se le han quedado sin cubrir, que es donde está el aprendizaje.
+   *
+   * No toca ni el montaje ni los casos: es una ventana aparte a propósito.
+   * ---------------------------------------------------------------- */
+  var dlgDocente = document.getElementById("dlg-docente");
+  var DOCENTE_KEY = "mio_ionm_docente_v1";
+  var docenteNiveles = [];    // niveles marcados en la columna
+  var docenteElegidos = [];   // ids de miotoma llevados a la derecha
+
+  // C1-C7, T1-T12, L1-L5, S1-S5: la columna entera, como pidió el usuario
+  function vertebras() {
+    var v = [];
+    [["C", 7], ["T", 12], ["L", 5], ["S", 5]].forEach(function (par) {
+      for (var i = 1; i <= par[1]; i++) v.push(par[0] + i);
+    });
+    return v;
+  }
+
+  function cargarDocente() {
+    try {
+      var g = JSON.parse(localStorage.getItem(DOCENTE_KEY) || "null");
+      if (g) {
+        docenteNiveles = g.niveles || [];
+        docenteElegidos = g.elegidos || [];
+      }
+    } catch (e) { /* sin ejercicio guardado */ }
+  }
+
+  function guardarDocente() {
+    // Solo en este navegador: es un ejercicio, no un dato del equipo, y no
+    // tiene por qué viajar a la sincronización ni ensuciar el repositorio.
+    try {
+      localStorage.setItem(DOCENTE_KEY, JSON.stringify({
+        niveles: docenteNiveles, elegidos: docenteElegidos
+      }));
+    } catch (e) { /* sin persistencia */ }
+  }
+
+  function miotomaPorId(id) {
+    return MIOTOMAS.filter(function (m) { return m.id === id; })[0] || null;
+  }
+
+  // Los que dependen de alguno de los niveles marcados
+  function miotomasDeNiveles() {
+    if (!docenteNiveles.length) return [];
+    return MIOTOMAS.filter(function (m) {
+      return (m.niveles || []).some(function (n) {
+        return docenteNiveles.indexOf(n) !== -1;
+      });
+    });
+  }
+
+  function renderDocenteVertebras() {
+    var cont = document.getElementById("docente-vertebras");
+    cont.innerHTML = "";
+    // Qué niveles quedan cubiertos por lo ya elegido, para pintarlos distinto
+    var cubiertos = {};
+    docenteElegidos.forEach(function (id) {
+      var m = miotomaPorId(id);
+      if (m) (m.niveles || []).forEach(function (n) { cubiertos[n] = true; });
+    });
+
+    vertebras().forEach(function (v) {
+      var b = document.createElement("button");
+      b.type = "button";
+      var marcado = docenteNiveles.indexOf(v) !== -1;
+      b.className = "vertebra" + (marcado ? " marcada" : "") +
+        (marcado && cubiertos[v] ? " cubierta" : "");
+      b.textContent = v;
+      b.addEventListener("click", function () {
+        var i = docenteNiveles.indexOf(v);
+        if (i === -1) docenteNiveles.push(v); else docenteNiveles.splice(i, 1);
+        guardarDocente();
+        renderDocente();
+      });
+      cont.appendChild(b);
+    });
+  }
+
+  function renderDocenteListas() {
+    var izq = document.getElementById("docente-posibles");
+    var der = document.getElementById("docente-elegidos");
+    izq.innerHTML = "";
+    der.innerHTML = "";
+
+    document.getElementById("docente-nivel-pista").textContent = docenteNiveles.length
+      ? T("docente_nivel_pista", { niveles: docenteNiveles.join(", ") })
+      : "";
+
+    function tarjeta(m, elegido) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "miotoma" + (elegido ? " elegido" : "");
+      var n = document.createElement("span");
+      n.className = "miotoma-nombre";
+      n.textContent = m.nombre;
+      var niv = document.createElement("span");
+      niv.className = "miotoma-niveles";
+      niv.textContent = (m.niveles || []).join(" · ");
+      b.appendChild(n);
+      b.appendChild(niv);
+      b.addEventListener("click", function () {
+        if (elegido) {
+          docenteElegidos = docenteElegidos.filter(function (x) { return x !== m.id; });
+        } else if (docenteElegidos.indexOf(m.id) === -1) {
+          docenteElegidos.push(m.id);
+        }
+        guardarDocente();
+        renderDocente();
+      });
+      return b;
+    }
+
+    var posibles = miotomasDeNiveles().filter(function (m) {
+      return docenteElegidos.indexOf(m.id) === -1;
+    });
+    if (!docenteNiveles.length) {
+      izq.appendChild(pistaVacia(T("docente_sin_nivel")));
+    } else if (!posibles.length) {
+      izq.appendChild(pistaVacia(T("docente_sin_musculos")));
+    } else {
+      posibles.forEach(function (m) { izq.appendChild(tarjeta(m, false)); });
+    }
+
+    if (!docenteElegidos.length) {
+      der.appendChild(pistaVacia(T("docente_nada_elegido")));
+    } else {
+      docenteElegidos.forEach(function (id) {
+        var m = miotomaPorId(id);
+        if (m) der.appendChild(tarjeta(m, true));
+      });
+    }
+
+    renderDocenteCobertura();
+  }
+
+  function pistaVacia(texto) {
+    var p = document.createElement("p");
+    p.className = "empty-hint";
+    p.textContent = texto;
+    return p;
+  }
+
+  /* Lo único que corrige la herramienta: qué niveles marcados se quedan sin
+     ningún músculo que los cubra. No dice cuál poner -esa es la decisión que
+     se está aprendiendo-, solo dónde queda un hueco. */
+  function renderDocenteCobertura() {
+    var el = document.getElementById("docente-cobertura");
+    if (!docenteNiveles.length || !docenteElegidos.length) { el.textContent = ""; return; }
+    var cubiertos = {};
+    docenteElegidos.forEach(function (id) {
+      var m = miotomaPorId(id);
+      if (m) (m.niveles || []).forEach(function (n) { cubiertos[n] = true; });
+    });
+    var faltan = docenteNiveles.filter(function (n) { return !cubiertos[n]; });
+    el.textContent = faltan.length
+      ? T("docente_cobertura_falta", { niveles: faltan.join(", ") })
+      : T("docente_cobertura_ok", { n: docenteNiveles.length });
+    el.className = "docente-pista" + (faltan.length ? " falta" : " ok");
+  }
+
+  function renderDocente() {
+    renderDocenteVertebras();
+    renderDocenteListas();
+  }
+
+  document.getElementById("btn-docente").addEventListener("click", function () {
+    renderDocente();
+    dlgDocente.showModal();
+  });
+  document.getElementById("docente-cerrar").addEventListener("click", function () {
+    dlgDocente.close();
+  });
+  document.getElementById("docente-limpiar-niveles").addEventListener("click", function () {
+    docenteNiveles = [];
+    guardarDocente();
+    renderDocente();
+  });
+  document.getElementById("docente-reiniciar").addEventListener("click", function () {
+    if (!confirm(T("docente_reiniciar_conf"))) return;
+    docenteNiveles = [];
+    docenteElegidos = [];
+    guardarDocente();
+    renderDocente();
+  });
+
+  /* ---------------------------------------------------------------- *
    * Arranque
    * ---------------------------------------------------------------- */
   // El idioma va primero: todo lo que se pinta después ya sale traducido
@@ -5339,6 +5553,7 @@
   cargarCasos();
   cargarSync();
   cargarPerfilUsuario();
+  cargarDocente();
   pintarEstadoSync();
   renderPerfilUsuario();
   renderPerfilSelect();

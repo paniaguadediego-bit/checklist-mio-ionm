@@ -13,7 +13,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260818b">
+<link rel="stylesheet" href="style.css?v=20260818c">
 </head>
 <body>
 
@@ -24,6 +24,7 @@
   <span class="barra-flex"></span>
   <button type="button" id="btn-idioma" class="btn-modo" title="Switch to English">EN</button>
   <button type="button" id="btn-casos" class="btn-modo" data-i18n-title="btn_casos_tit" data-i18n="btn_casos"></button>
+  <button type="button" id="btn-docente" class="btn-modo" data-i18n-title="docente_titulo_ay" data-i18n="btn_docente"></button>
   <button type="button" id="btn-sync" class="btn-modo" data-i18n-title="sync_titulo">☁ <span id="sync-estado"></span></button>
   <button type="button" id="btn-quirofano" class="btn-modo" data-i18n-title="quirofano_titulo" data-i18n="quirofano_entrar"></button>
 </header>
@@ -372,6 +373,37 @@
   </div>
 </dialog>
 
+<dialog id="dlg-docente" class="no-print dlg-ancho">
+  <h3 data-i18n="docente_titulo"></h3>
+  <p class="dlg-intro" data-i18n-html="docente_intro"></p>
+
+  <div class="docente-cols">
+    <div class="docente-col">
+      <h4 data-i18n="docente_posibles"></h4>
+      <p class="docente-pista" id="docente-nivel-pista"></p>
+      <div id="docente-posibles" class="docente-lista"></div>
+    </div>
+
+    <div class="docente-columna-vert">
+      <h4 data-i18n="docente_columna"></h4>
+      <div id="docente-vertebras" class="vertebras"></div>
+      <button type="button" id="docente-limpiar-niveles" data-i18n="docente_limpiar"></button>
+    </div>
+
+    <div class="docente-col">
+      <h4 data-i18n="docente_elegidos"></h4>
+      <p class="docente-pista" id="docente-cobertura"></p>
+      <div id="docente-elegidos" class="docente-lista"></div>
+    </div>
+  </div>
+
+  <div class="dlg-botones">
+    <button type="button" id="docente-reiniciar" class="peligro" data-i18n="docente_reiniciar"></button>
+    <span class="barra-flex"></span>
+    <button type="button" id="docente-cerrar" data-i18n="cerrar"></button>
+  </div>
+</dialog>
+
 <dialog id="dlg-catalogos" class="no-print">
   <h3 data-i18n="dlg_cat_titulo"></h3>
 
@@ -398,8 +430,8 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260818b"></script>
-<script src="data/i18n-en.js?v=20260818b"></script>
-<script src="app.js?v=20260818b"></script>
+<script src="data/surgeries.js?v=20260818c"></script>
+<script src="data/i18n-en.js?v=20260818c"></script>
+<script src="app.js?v=20260818c"></script>
 </body>
 </html>

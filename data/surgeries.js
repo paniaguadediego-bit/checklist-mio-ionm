@@ -638,6 +638,51 @@ window.SURGERIES_DATA = {
   ],
 
   /* ------------------------------------------------------------------ *
+   * MIOTOMAS — solo para la ventana docente
+   *
+   * Qué músculo depende de qué raíces. Son los rangos que se enseñan
+   * habitualmente, puestos como punto de partida para el ejercicio: la
+   * inervación real se solapa entre niveles y no todas las escuelas dan los
+   * mismos límites, así que esta lista está para discutirla y corregirla, no
+   * para tomarla como referencia clínica.
+   *
+   * "item" enlaza con el catálogo de material cuando existe el músculo, para
+   * que lo que se elige aquí se reconozca luego en las cajas.
+   * ------------------------------------------------------------------ */
+  "miotomas": [
+    { "id": "mio_ecm",        "nombre": "Esternocleidomastoideo", "niveles": ["C2", "C3"], "item": "l_stcm" },
+    { "id": "mio_trapecio",   "nombre": "Trapecio",            "niveles": ["C3", "C4"], "item": "l_trapecio" },
+    { "id": "mio_diafragma",  "nombre": "Diafragma",           "niveles": ["C3", "C4", "C5"], "item": "l_diafragma" },
+    { "id": "mio_supraes",    "nombre": "Supraespinoso",       "niveles": ["C5", "C6"], "item": "l_supraes" },
+    { "id": "mio_infraes",    "nombre": "Infraespinoso",       "niveles": ["C5", "C6"], "item": "l_infraes" },
+    { "id": "mio_deltoides",  "nombre": "Deltoides",           "niveles": ["C5", "C6"], "item": "l_delt" },
+    { "id": "mio_biceps",     "nombre": "Bíceps",              "niveles": ["C5", "C6"], "item": "l_bcps" },
+    { "id": "mio_br",         "nombre": "Braquiorradial",      "niveles": ["C5", "C6"], "item": "l_br" },
+    { "id": "mio_fcr",        "nombre": "Flexor radial del carpo", "niveles": ["C6", "C7"], "item": "l_fcr" },
+    { "id": "mio_triceps",    "nombre": "Tríceps",             "niveles": ["C6", "C7", "C8"], "item": "l_triceps" },
+    { "id": "mio_ecd",        "nombre": "Extensor común de los dedos", "niveles": ["C7", "C8"], "item": "l_ext" },
+    { "id": "mio_fcu",        "nombre": "Flexor cubital del carpo", "niveles": ["C7", "C8", "T1"], "item": "l_fcu" },
+    { "id": "mio_apb",        "nombre": "Abductor corto del pulgar", "niveles": ["C8", "T1"], "item": "l_apb" },
+    { "id": "mio_adm",        "nombre": "Abductor del meñique", "niveles": ["C8", "T1"], "item": "l_adm" },
+    { "id": "mio_interoseos", "nombre": "Interóseos de la mano", "niveles": ["C8", "T1"], "item": "l_fdio" },
+    { "id": "mio_ras",        "nombre": "Recto anterior superior", "niveles": ["T6", "T7", "T8"], "item": "l_ras" },
+    { "id": "mio_ram",        "nombre": "Recto anterior medio", "niveles": ["T9", "T10"], "item": "l_ram" },
+    { "id": "mio_rai",        "nombre": "Recto anterior inferior", "niveles": ["T11", "T12"], "item": "l_rai" },
+    { "id": "mio_oae",        "nombre": "Oblicuo abdominal externo", "niveles": ["T8", "T9", "T10", "T11", "T12"], "item": "l_oae" },
+    { "id": "mio_cremaster",  "nombre": "Cremáster",           "niveles": ["L1", "L2"], "item": "l_cremaster" },
+    { "id": "mio_psoas",      "nombre": "Psoas",               "niveles": ["L1", "L2", "L3"], "item": "l_pso" },
+    { "id": "mio_aductores",  "nombre": "Aductores",           "niveles": ["L2", "L3", "L4"], "item": "l_add" },
+    { "id": "mio_cuadriceps", "nombre": "Cuádriceps",          "niveles": ["L2", "L3", "L4"], "item": "l_q" },
+    { "id": "mio_vl",         "nombre": "Vasto lateral",       "niveles": ["L3", "L4"], "item": "l_vl" },
+    { "id": "mio_ta",         "nombre": "Tibial anterior",     "niveles": ["L4", "L5"], "item": "l_ta" },
+    { "id": "mio_ehb",        "nombre": "Extensor corto de los dedos", "niveles": ["L5", "S1"], "item": "l_ehb" },
+    { "id": "mio_pl",         "nombre": "Peroneo largo",       "niveles": ["L5", "S1"], "item": "l_pl" },
+    { "id": "mio_gm",         "nombre": "Gastrocnemio",        "niveles": ["S1", "S2"], "item": "l_g" },
+    { "id": "mio_ah",         "nombre": "Abductor del hallux", "niveles": ["S1", "S2"], "item": "l_ah" },
+    { "id": "mio_cc",         "nombre": "Esfínter anal",       "niveles": ["S2", "S3", "S4"], "item": "l_cc" }
+  ],
+
+  /* ------------------------------------------------------------------ *
    * SERVICIOS QUIRÚRGICOS
    * Catálogo editable. Los casos guardan el "id", nunca el nombre, para
    * poder renombrar un servicio sin dejar huérfano ningún caso anterior.
