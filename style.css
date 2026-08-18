@@ -290,9 +290,13 @@ main {
 .card:not([open]) > summary.card-cab::after { content: "▸"; }
 .card:not([open]) > summary.card-cab { margin-bottom: 0; }
 
-/* El catálogo ya no es panel lateral fijo: es la cuarta ventana, en el flujo.
-   Conserva scroll propio y alto acotado para no empujar las cajas fuera de la
-   pantalla, y es ese scroll el que plegarCatalogo() guarda y restaura. */
+/* El catálogo es la cuarta ventana en el orden del HTML, pero en pantalla
+   ancha vuelve a la columna lateral fija (ver la media query de más abajo):
+   en el móvil se trabaja en vertical y va bien en el flujo, mientras que en
+   el ordenador tenerlo siempre a la vista mientras miras las cajas es lo que
+   hace cómodo el "pulsar y colocar".
+   El scroll propio y el alto acotado se conservan en los dos casos: es ese
+   scroll el que plegarCatalogo() guarda y restaura. */
 .panel-catalogo {
   max-height: 50vh;
   overflow-y: auto;
@@ -1368,6 +1372,33 @@ dialog h3 {
 @media (max-width: 900px) {
   .panel-catalogo { max-height: 40vh; }
   #montajes-lista { grid-template-columns: 1fr; }
+}
+
+/* Pantalla ancha: el catálogo vuelve a la columna lateral fija.
+   El HTML no cambia -sigue siendo la cuarta ventana, que es el orden de
+   trabajo y el que vale en el móvil-; aquí solo se le manda a la segunda
+   columna, ocupando todas las filas, y se queda pegado al hacer scroll para
+   tenerlo a la vista mientras miras las cajas. */
+@media (min-width: 901px) {
+  .columna-principal {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 260px;
+    align-items: start;
+    column-gap: 0.7rem;
+  }
+  .columna-principal > * { grid-column: 1; }
+  .panel-catalogo {
+    grid-column: 2;
+    /* span 99 y no "1 / -1": con filas implícitas, -1 no llega al final */
+    grid-row: 1 / span 99;
+    position: sticky;
+    top: calc(var(--header-h) + 0.5rem);
+    max-height: calc(100vh - var(--header-h) - 1rem);
+  }
+  /* En quirófano el catálogo está oculto y el resumen se coloca por "order",
+     que necesita el flex de siempre: sin esto la rejilla lo dejaría clavado
+     en su fila y el resumen no subiría arriba del todo. */
+  body.modo-quirofano .columna-principal { display: flex; }
 }
 
 /* -------------------------------- Oscuro ------------------------------- */
