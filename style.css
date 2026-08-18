@@ -822,6 +822,39 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
 
 .empty-hint { color: var(--text-muted); font-style: italic; font-size: 0.82rem; }
 
+/* ------------------ Corrigiendo el montaje de un caso ------------------ */
+.barra-caso {
+  position: sticky;
+  top: var(--header-h);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  background: var(--accent);
+  color: #fff;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.82rem;
+}
+.barra-caso b { font-weight: 700; }
+.barra-caso small { display: block; opacity: 0.85; font-size: 0.7rem; }
+.barra-caso button { margin-left: auto; }
+
+/* Mientras se corrige un caso, Escenario y Montajes no pintan nada: no estás
+   eligiendo montaje, estás arreglando el de un caso concreto. Dejarlos a la
+   vista invita a tocar el montaje equivocado. */
+body.editando-caso #escenario,
+body.editando-caso #montajes { display: none !important; }
+
+.caso-montaje-fila {
+  margin: 0.5rem 0 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.caso-montaje-fila small { color: var(--text-muted); font-size: 0.7rem; flex: 1; min-width: 12rem; }
+
 /* --------------------------- Modo quirófano ---------------------------- */
 body.modo-quirofano .no-print { display: none !important; }
 /* Escenario, técnicas y catálogo llevan .no-print y desaparecen solos. La

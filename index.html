@@ -13,7 +13,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260818">
+<link rel="stylesheet" href="style.css?v=20260818b">
 </head>
 <body>
 
@@ -114,6 +114,17 @@
   </div>
 
 </main>
+
+<!-- Aviso fijo mientras se corrige el montaje de un caso: sin él es muy fácil
+     creer que se está tocando el montaje de siempre. -->
+<div class="barra-caso no-print" id="barra-caso" hidden>
+  <span>
+    <span data-i18n="barra_caso_texto"></span>
+    <b id="barra-caso-nombre"></b>
+    <small data-i18n="barra_caso_ay"></small>
+  </span>
+  <button type="button" id="barra-caso-volver" class="primario" data-i18n="barra_caso_volver"></button>
+</div>
 
 <div class="barra-seleccion no-print" id="barra-seleccion" hidden>
   <span><span data-i18n="colocando"></span> <b id="bs-nombre"></b> <span data-i18n="colocando_ayuda"></span></span>
@@ -347,6 +358,11 @@
   <p class="caso-meta" id="caso-meta"></p>
   <p class="dlg-error" id="caso-error" hidden></p>
 
+  <p class="caso-montaje-fila">
+    <button type="button" id="caso-editar-montaje" data-i18n="caso_editar_montaje"></button>
+    <small data-i18n="caso_editar_montaje_ay"></small>
+  </p>
+
   <div class="dlg-botones">
     <button type="button" id="caso-borrar" class="peligro" hidden data-i18n="caso_borrar"></button>
     <button type="button" id="caso-volver" data-i18n="caso_volver"></button>
@@ -382,8 +398,8 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260818"></script>
-<script src="data/i18n-en.js?v=20260818"></script>
-<script src="app.js?v=20260818"></script>
+<script src="data/surgeries.js?v=20260818b"></script>
+<script src="data/i18n-en.js?v=20260818b"></script>
+<script src="app.js?v=20260818b"></script>
 </body>
 </html>

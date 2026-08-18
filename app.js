@@ -444,6 +444,16 @@
                            en: "This montage belongs to {autor}, so you cannot change it.\n\nUse “Duplicate” to make your own copy and work on that." },
     montaje_de:          { es: "{nombre} · {autor}", en: "{nombre} · {autor}" },
     montaje_sin_escenario: { es: "Sin escenario", en: "No scenario" },
+    caso_sin_id:         { es: "Caso sin número", en: "Case with no number" },
+    caso_editar_montaje: { es: "Corregir el material y el montaje", en: "Correct material and montage" },
+    caso_editar_montaje_ay: { es: "Abre las cajas de este caso para cambiar dónde va cada cosa. Lo que cambies se guarda en el caso, no en el montaje del que salió.",
+                           en: "Opens this case’s boxes to change where each item goes. What you change is saved in the case, not in the montage it came from." },
+    barra_caso_texto:    { es: "Corrigiendo el material del caso", en: "Correcting the material of case" },
+    barra_caso_ay:       { es: "Se guarda solo, en el caso. El montaje original no se toca.",
+                           en: "Saved automatically, into the case. The original montage is untouched." },
+    barra_caso_volver:   { es: "Volver al caso", en: "Back to the case" },
+    caso_reconstruccion_parcial: { es: "De este caso solo se han podido recolocar {recuperadas} de {esperadas} entradas.\n\nEs un caso antiguo, de antes de que se guardara el montaje completo, y alguna de sus entradas ya no existe en las cajas de ahora.\n\nSi sigues y cambias algo, el caso se quedará con las {recuperadas} que se ven. ¿Continuar?",
+                           en: "Only {recuperadas} of {esperadas} inputs could be restored for this case.\n\nIt is an old case, from before the full montage was stored, and some of its inputs no longer exist in the current boxes.\n\nIf you continue and change anything, the case will keep only the {recuperadas} shown. Continue?" },
     escenario_titulo:    { es: "Escenario", en: "Scenario" },
     escenario_todos:     { es: "Todos", en: "All" },
     escenario_pista:     { es: "{nombre}", en: "{nombre}" },
@@ -1243,16 +1253,119 @@
     el.className = "guardado-aviso" + (esError ? " error" : "");
   }
 
+  /* Montaje de trabajo mientras se corrige el de un caso. No es un montaje
+     del repositorio: es el del caso, cargado en las cajas para poder tocarlo.
+     Mientras está puesto, todo lo que lee el montaje activo -las cajas, las
+     técnicas, el resumen- ve este en lugar del que estuviera abierto. */
+  var montajeCaso = null;
+  var casoEditandoUid = null;
+
+  function editandoMontajeDeCaso() { return !!montajeCaso; }
+
   function escenarioActual() {
+    if (montajeCaso) return montajeCaso;
     return montajes[activo] || null;
   }
 
   /* Guarda el montaje activo. Lo que se cambia en las cajas, en las técnicas
      o en el material extra es del montaje, así que va a su propio archivo y
-     no tiene por qué reescribir estado.json entero. */
+     no tiene por qué reescribir estado.json entero.
+     Si lo que se está tocando es el montaje de un caso, va al caso. */
   function guardarMontajeActivo() {
+    if (montajeCaso) { guardarMontajeEnCaso(); return; }
     var m = escenarioActual();
     if (m) guardarMontaje(m);
+  }
+
+  /* Vuelca lo que hay ahora en las cajas dentro del caso que se está
+     corrigiendo. Se hace en cada cambio, igual que con los montajes: no hay
+     un "guardar" que se pueda olvidar, y si se cierra el navegador a media
+     corrección no se pierde nada. */
+  function guardarMontajeEnCaso() {
+    var caso = casos[casoEditandoUid];
+    if (!caso || !montajeCaso) return;
+    caso.tecnicas_realizadas = (montajeCaso.tecnicas || []).slice();
+    volcarMontajeEnCaso(caso, montajeCaso);
+    guardarCaso(caso);
+  }
+
+  /* Carga el montaje de un caso en las cajas para poder corregirlo.
+     Los casos antiguos, de antes de que se guardara el montaje en crudo, solo
+     tienen la instantánea legible: se puede reconstruir a partir de ella
+     porque lleva el id del ítem, pero la clave de la entrada era su rótulo,
+     así que hay que traducirlo de vuelta. Lo que no cuadre se deja fuera en
+     lugar de colocarlo donde no va. */
+  function montajeDesdeCaso(caso) {
+    var m = {
+      montaje_uid: "__caso__" + caso.caso_uid,
+      nombre: caso.ID_Caso || T("caso_sin_id"),
+      tecnicas: (caso.tecnicas_realizadas || []).slice(),
+      asignaciones: clonar(caso.asignaciones || {}),
+      extras: (caso.extras || []).slice(),
+      etiquetas: clonar(caso.etiquetas_colocadas || {}),
+      conmutador: clonar(caso.conmutador || {}),
+      nota_perfil_id: caso.perfil || ""
+    };
+    if (Object.keys(m.asignaciones).length) return m;
+
+    // Reconstrucción de un caso anterior a este cambio
+    var esperadas = 0, recuperadas = 0;
+    (caso.montaje || []).forEach(function (c) {
+      var entradas = entradasDe(c.caja);
+      m.asignaciones[c.caja] = m.asignaciones[c.caja] || {};
+      (c.entradas || []).forEach(function (e) {
+        if (!e.item) return;
+        esperadas++;
+        var enc = entradas.filter(function (ent) {
+          // String() a los dos lados: el rótulo de un canal numerado es un
+          // número, y en la instantánea quedó guardado como texto. Sin esto
+          // 1 === "1" da falso y no encajaba ninguna entrada numerada, que
+          // son casi todas, sin que nada avisara.
+          var rotulo = ent.polo ? ent.etiqueta + " " + ent.polo : ent.etiqueta;
+          return String(rotulo) === String(e.entrada);
+        })[0];
+        if (enc) { m.asignaciones[c.caja][enc.id] = e.item; recuperadas++; }
+      });
+    });
+    m.reconstruccion = { esperadas: esperadas, recuperadas: recuperadas };
+    return m;
+  }
+
+  function abrirMontajeDeCaso(uid) {
+    var caso = casos[uid];
+    if (!caso) return;
+    var m = montajeDesdeCaso(caso);
+    // Un caso viejo puede traer entradas que ya no existen -una caja que
+    // cambió de canales, un ítem retirado-. Si se dejara guardar sin avisar,
+    // el primer cambio reescribiría el montaje del caso con menos material
+    // del que tenía y nadie se enteraría.
+    var rec = m.reconstruccion;
+    if (rec && rec.recuperadas < rec.esperadas) {
+      if (!confirm(T("caso_reconstruccion_parcial", {
+        recuperadas: rec.recuperadas, esperadas: rec.esperadas
+      }))) return;
+    }
+    delete m.reconstruccion;
+    casoEditandoUid = uid;
+    montajeCaso = m;
+    document.body.classList.add("editando-caso");
+    document.getElementById("barra-caso-nombre").textContent =
+      (caso.ID_Caso || "") + (caso.nombre_caso ? " — " + caso.nombre_caso : "");
+    document.getElementById("barra-caso").hidden = false;
+    renderTodo();
+    // Las cajas son lo que se viene a tocar: se deja a la vista directamente
+    var cajas = document.getElementById("cajas-contenido");
+    if (cajas) cajas.scrollIntoView({ block: "start" });
+  }
+
+  function cerrarMontajeDeCaso(volverAlCaso) {
+    var uid = casoEditandoUid;
+    montajeCaso = null;
+    casoEditandoUid = null;
+    document.body.classList.remove("editando-caso");
+    document.getElementById("barra-caso").hidden = true;
+    renderTodo();
+    if (volverAlCaso && uid && casos[uid]) abrirCaso(uid);
   }
 
   // Material extra del escenario (no ocupa entrada de ninguna caja)
@@ -2354,6 +2467,13 @@
       material_previsto: {}, material_real: {},
       montaje: [], n_cajas: 0, n_canales_ocupados: 0, avisos_preparacion: [],
       coste_material: 0, coste_completo: false,
+      // El montaje EN CRUDO, además de la instantánea legible de "montaje".
+      // La instantánea guarda el rótulo de la entrada ("6 anodal"), que sirve
+      // para leer el caso años después pero no para volver a montarlo: para
+      // eso hace falta la clave real de la entrada. Sin esto no se puede
+      // corregir dónde iba cada ítem sin adivinar.
+      montaje_origen: "", asignaciones: {}, extras: [],
+      etiquetas_colocadas: {}, conmutador: {},
       tipo_anestesia: "", tipo_anestesia_detalle: "", relajante_nm: "", relajante_cual: "",
       tof_monitorizado: "", incidencias_anestesicas: "",
       basales_obtenidas: "", alerta: false, tipo_alerta: "", criterio_alarma: "",
@@ -2371,22 +2491,26 @@
   /* Caso a partir del escenario montado. Todo lo que la herramienta ya sabe
      -técnicas, material, cajas, montaje y avisos- entra solo: no se teclea
      nada de esto. */
-  function casoDesdeEscenario() {
-    var esc = escenarioActual();
-    var caso = casoVacio();
-    if (!esc) return caso;
+  /* Vuelca en el caso todo lo que sale del montaje. Se usa al crear el caso y
+     cada vez que se corrige su montaje desde la propia ficha. */
+  function volcarMontajeEnCaso(caso, esc) {
     var res = calcularResumen(esc);
-    caso.escenario_nombre = campo(esc, "nombre");
-    caso.perfil = esc.nota_perfil_id || "";
-    caso.tecnicas_realizadas = res.tecnicas.slice();
+    var previstoAntes = JSON.stringify(caso.material_previsto || {});
     caso.material_previsto = materialRedondeado(res.material);
-    caso.material_real = materialRedondeado(res.material);
+    // "Material realmente usado" es del usuario en cuanto lo toca: solo se
+    // vuelve a precargar si seguía siendo idéntico a lo previsto, es decir si
+    // no lo había cambiado a mano. Si no, corregir el montaje le borraría lo
+    // que anotó al cerrar el caso.
+    if (JSON.stringify(caso.material_real || {}) === previstoAntes) {
+      caso.material_real = materialRedondeado(res.material);
+    }
     caso.n_cajas = res.cajas.length;
     caso.n_canales_ocupados = res.entradas;
     caso.avisos_preparacion = res.avisos.slice();
-    // Instantánea del montaje: se guarda tal cual estaba, con los textos ya
-    // resueltos, para que un caso antiguo se siga leyendo aunque el catálogo
-    // de material cambie después.
+    caso.coste_material = res.coste ? Math.round(res.coste.total * 100) / 100 : 0;
+    caso.coste_completo = !!(res.coste && !res.coste.sinPrecio.length);
+    // Instantánea legible, con los textos ya resueltos, para que un caso
+    // antiguo se siga leyendo aunque el catálogo cambie después
     caso.montaje = res.cajas.map(function (c) {
       return {
         caja: c.key, nombre: c.nombre, usadas: c.usadas, total: c.total,
@@ -2395,13 +2519,23 @@
         })
       };
     });
-    // Coste del fungible en el momento de preparar. Se archiva el número, no
-    // el precio de cada tipo: los precios cambian con el tiempo y un caso de
-    // hace un año tiene que seguir diciendo lo que costó entonces.
-    // "completo" avisa de si algún material se quedó fuera por no tener
-    // precio, para no leer un total a medias como si fuera el definitivo.
-    caso.coste_material = res.coste ? Math.round(res.coste.total * 100) / 100 : 0;
-    caso.coste_completo = !!(res.coste && !res.coste.sinPrecio.length);
+    // Y el montaje en crudo, que es lo que permite volver a editarlo
+    caso.asignaciones = clonar(esc.asignaciones || {});
+    caso.extras = (esc.extras || []).slice();
+    caso.etiquetas_colocadas = clonar(esc.etiquetas || {});
+    caso.conmutador = clonar(esc.conmutador || {});
+    return res;
+  }
+
+  function casoDesdeEscenario() {
+    var esc = escenarioActual();
+    var caso = casoVacio();
+    if (!esc) return caso;
+    caso.escenario_nombre = campo(esc, "nombre");
+    caso.perfil = esc.nota_perfil_id || "";
+    caso.montaje_origen = esc.montaje_uid || "";
+    var res = volcarMontajeEnCaso(caso, esc);
+    caso.tecnicas_realizadas = res.tecnicas.slice();
 
     // La intervención se propone por el nombre del escenario, si coincide
     var porNombre = INTERVENCIONES.filter(function (i) {
@@ -3482,6 +3616,9 @@
     // Un caso que todavía no se ha guardado ni una vez no existe en "casos":
     // no hay nada que borrar hasta el primer "Guardar".
     document.getElementById("caso-borrar").hidden = casoEsNuevo;
+    // Corregir el montaje necesita que el caso exista ya en `casos`: uno
+    // recién creado y sin guardar todavía no está, así que no hay qué abrir.
+    document.getElementById("caso-editar-montaje").hidden = casoEsNuevo;
     document.getElementById("caso-error").hidden = true;
   }
 
@@ -3654,6 +3791,21 @@
   });
   document.getElementById("caso-guardar").addEventListener("click", function () {
     if (guardarFicha(false)) { renderFichaCaso(); }
+  });
+
+  /* Corregir el montaje de un caso. Se guarda antes lo que haya escrito en la
+     ficha: si no, salir a las cajas le perdería lo tecleado y no habría por
+     qué asociar una cosa con la otra. */
+  document.getElementById("caso-editar-montaje").addEventListener("click", function () {
+    if (!guardarFicha(false)) return;
+    var uid = casoAbierto && casoAbierto.caso_uid;
+    if (!uid || !casos[uid]) return;
+    dlgCaso.close();
+    abrirMontajeDeCaso(uid);
+  });
+
+  document.getElementById("barra-caso-volver").addEventListener("click", function () {
+    cerrarMontajeDeCaso(true);
   });
   document.getElementById("caso-btn-cerrar-caso").addEventListener("click", function () {
     if (guardarFicha(true)) { dlgCaso.close(); abrirListaCasos(); }
