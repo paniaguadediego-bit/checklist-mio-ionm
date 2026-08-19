@@ -1,4 +1,4 @@
-# CLAUDE.md — Checklist de material MIO/IONM
+# CLAUDE.md — MIO-Check
 
 Instrucciones para trabajar en este repositorio. El manual de uso de la
 herramienta está en [README.md](README.md); aquí está lo que hay que saber para

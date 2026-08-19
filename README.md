@@ -1,4 +1,4 @@
-# Checklist de material MIO/IONM
+# MIO-Check
 
 Herramienta interna, sin backend ni build step, para montar el escenario de
 cada cirugía monitorizada y saber exactamente qué material hace falta.
@@ -487,7 +487,7 @@ una sola vez, en un Google Sheet tuyo:
    `Tecnicas_long`, `Material_long`, `Listas` y `Meta`.
 
 A partir de aquí funciona solo, una vez al día. Para forzarlo a mano sin
-entrar al editor: recarga el Sheet y usa el menú **MIO/IONM → Reconstruir
+entrar al editor: recarga el Sheet y usa el menú **MIO-Check → Reconstruir
 ahora** que aparece arriba.
 
 **Si sale «API rate limit exceeded» leyendo `data/surgeries.js`:** ese error

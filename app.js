@@ -39,8 +39,6 @@
     escenario_aria:      { es: "Escenario de cirugía", en: "Surgery scenario" },
     idioma_titulo:       { es: "Switch to English", en: "Cambiar a español" },
     sync_titulo:         { es: "Sincronizar con GitHub", en: "Sync with GitHub" },
-    quirofano_titulo:    { es: "Oculta el catálogo y las técnicas para dejar solo el montaje y el resumen",
-                           en: "Hides the catalogue and techniques, leaving only the montage and the summary" },
     quirofano_entrar:    { es: "Modo quirófano", en: "Theatre mode" },
     quirofano_salir:     { es: "Salir del modo quirófano", en: "Exit theatre mode" },
     btn_nuevo:           { es: "Nuevo", en: "New" },
@@ -304,8 +302,10 @@
     caso_g_cirugia:      { es: "Cirugía", en: "Surgery" },
     caso_g_tecnicas:     { es: "Técnicas", en: "Techniques" },
     caso_g_material:     { es: "Material", en: "Material" },
+    caso_g_anatomia:     { es: "Anatomía patológica", en: "Pathology / level" },
     caso_g_anestesia:    { es: "Anestesia", en: "Anaesthesia" },
     caso_g_desarrollo:   { es: "Desarrollo", en: "Course" },
+    caso_g_evolucion:    { es: "Evolución postquirúrgica", en: "Postoperative outcome" },
     caso_g_incidencias:  { es: "Incidencias técnicas", en: "Technical incidents" },
     caso_g_formacion:    { es: "Formación", en: "Training" },
     caso_volver:         { es: "Volver a la lista", en: "Back to the list" },
@@ -352,6 +352,24 @@
     caso_antecedentes_relevantes: { es: "Antecedentes relevantes", en: "Relevant history" },
     caso_region_nivel:   { es: "Región / nivel", en: "Region / level" },
     caso_diagnostico:    { es: "Diagnóstico", en: "Diagnosis" },
+    opc_diagnostico_ecc: { es: "ECC — estenosis de canal cervical", en: "ECC — cervical canal stenosis" },
+    opc_diagnostico_ecd: { es: "ECD — estenosis de canal dorsal", en: "ECD — dorsal canal stenosis" },
+    opc_diagnostico_ecl: { es: "ECL — estenosis de canal lumbar", en: "ECL — lumbar canal stenosis" },
+    opc_diagnostico_escoliosis: { es: "Escoliosis (cualquier nivel y edad)", en: "Scoliosis (any level or age)" },
+    opc_diagnostico_loe_med: { es: "LOE Med — lesión ocupante de espacio medular (médula y meninges)",
+                           en: "SOL — spinal cord (cord and meninges)" },
+    opc_diagnostico_loe_st: { es: "LOE ST — LOE supratentorial (intracraneal)", en: "SOL — supratentorial (intracranial)" },
+    opc_diagnostico_loe_it: { es: "LOE IT — LOE infratentorial (intracraneal)", en: "SOL — infratentorial (intracranial)" },
+    opc_diagnostico_parotida: { es: "Parótida", en: "Parotid" },
+    opc_diagnostico_mav: { es: "MAV — malformación arteriovenosa (cualquier lesión vascular)",
+                           en: "AVM — arteriovenous malformation (any vascular lesion)" },
+    opc_diagnostico_hipofisis: { es: "Hipófisis — endoscopia nasal", en: "Pituitary — transnasal endoscopic" },
+    opc_diagnostico_chiari: { es: "Chiari", en: "Chiari" },
+    opc_diagnostico_jannetta: { es: "Jannetta — descompresión del trigémino / espasmo hemifacial",
+                           en: "Jannetta — trigeminal decompression / hemifacial spasm" },
+    opc_diagnostico_fractvert: { es: "FractVert — fractura vertebral", en: "FractVert — vertebral fracture" },
+    opc_diagnostico_loe_vert: { es: "LOE Vert — LOE vertebral (columna, cualquier nivel)",
+                           en: "SOL — vertebral (spine, any level)" },
     caso_posicion:       { es: "Posición", en: "Position" },
     caso_posicion_detalle: { es: "Detalle de la posición", en: "Position detail" },
     caso_posicion_detalle_ay: { es: "Lo que no cabe en el desplegable: colocación de los brazos, cabezal, almohadillados, o en qué momento se volteó.",
@@ -360,24 +378,28 @@
     opc_posicion_prono:  { es: "Prono", en: "Prone" },
     opc_posicion_sedestacion: { es: "Sedestación", en: "Sitting" },
     opc_posicion_volteo: { es: "Volteo", en: "Turned during surgery" },
+    caso_anatomia_patologica: { es: "Anatomía patológica", en: "Pathology / level" },
+    caso_anatomia_patologica_ay: { es: "El resultado de anatomía patológica si lo hay (p. ej. «Meningioma», «GBM»), o el nivel intervenido si es columna (p. ej. «C5-C6-C7»).",
+                           en: "The pathology result if there is one (e.g. “Meningioma”, “GBM”), or the operated level if it's a spine case (e.g. “C5-C6-C7”)." },
     caso_pares_craneales_cuales: { es: "Pares craneales monitorizados", en: "Cranial nerves monitored" },
     caso_cambios_respecto_al_plan: { es: "Cambios respecto al plan", en: "Changes from the plan" },
     caso_material_real:  { es: "Material realmente usado", en: "Material actually used" },
     caso_tipo_anestesia: { es: "Tipo de anestesia", en: "Type of anaesthesia" },
     caso_tipo_anestesia_detalle: { es: "Detalle", en: "Detail" },
-    caso_tipo_anestesia_detalle_ay: { es: "Qué lleva exactamente, o qué fue si elegiste «Otra». Por ejemplo: «TIVA + remifentanilo, sin relajante».",
-                           en: "What it actually includes, or what it was if you chose “Other”. E.g.: “TIVA + remifentanil, no relaxant”." },
-    caso_relajante_nm:   { es: "Relajante neuromuscular", en: "Neuromuscular blocker" },
-    caso_relajante_cual: { es: "¿Cuál?", en: "Which one?" },
+    caso_tipo_anestesia_detalle_ay: { es: "Cualquier otro fármaco que se use, aparte del tipo elegido arriba. Por ejemplo: «+ ketamina en bolo antes de los basales».",
+                           en: "Any other drug used, on top of the type chosen above. E.g.: “+ ketamine bolus before baselines”." },
     caso_tof_monitorizado: { es: "TOF monitorizado", en: "TOF monitored" },
     caso_incidencias_anestesicas: { es: "Incidencias anestésicas", en: "Anaesthetic incidents" },
-    caso_basales_obtenidas: { es: "Basales obtenidas", en: "Baselines obtained" },
-    caso_basales_obtenidas_ay: { es: "Qué salió en cada técnica, no solo si sí o no. Por ejemplo: «t-PESS normales al inicio; t-PEM hemicuerpo izquierdo no evocables».",
-                           en: "What came out per technique, not just yes/no. E.g.: “t-SSEP normal at baseline; t-MEP left hemibody not evocable”." },
+    caso_basales_obtenidas: { es: "Opening baselines (OP BSL)", en: "Opening baselines (OP BSL)" },
+    caso_basales_obtenidas_ay: { es: "Qué salió en cada técnica, no solo si sí o no. Por ejemplo: «t-SEP normales al inicio; t-MEP hemicuerpo izquierdo no evocables».",
+                           en: "What came out per technique, not just yes/no. E.g.: “t-SEP normal at baseline; t-MEP left hemibody not evocable”." },
     caso_tipo_alerta:    { es: "Tipo de alerta", en: "Type of alert" },
     caso_criterio_alarma:{ es: "Criterio de alarma", en: "Alarm criterion" },
     caso_medida_correctora: { es: "Medida correctora", en: "Corrective action" },
     caso_recuperacion_senal: { es: "Recuperación de la señal", en: "Signal recovery" },
+    caso_basales_cierre: { es: "Closing baselines (CL BSL)", en: "Closing baselines (CL BSL)" },
+    caso_basales_cierre_ay: { es: "Qué salió en cada técnica al terminar el registro, comparado con las opening baselines. Por ejemplo: «t-MEP hemicuerpo izquierdo recuperado a partir de C4».",
+                           en: "What came out per technique at the end of the recording, compared to the opening baselines. E.g.: “t-MEP left hemibody recovered from C4 onwards”." },
     caso_deficit_postoperatorio: { es: "Déficit postoperatorio", en: "Postoperative deficit" },
     caso_concordancia:   { es: "Concordancia", en: "Concordance" },
     caso_incidencias_tecnicas: { es: "Incidencias técnicas", en: "Technical incidents" },
@@ -399,13 +421,11 @@
     opc_estado_cerrado:  { es: "Cerrado", en: "Closed" },
     opc_sino_si:         { es: "Sí", en: "Yes" },
     opc_sino_no:         { es: "No", en: "No" },
-    // "Solo inducción" va primero en OPCIONES.relajante: es la más habitual
-    opc_relajante_induccion: { es: "Solo en la inducción", en: "Induction only" },
-    opc_relajante_si:    { es: "Sí", en: "Yes" },
-    opc_relajante_no:    { es: "No", en: "No" },
-    opc_anestesia_tiva:  { es: "TIVA", en: "TIVA" },
-    opc_anestesia_balanceada: { es: "Balanceada", en: "Balanced" },
-    opc_anestesia_otra:  { es: "Otra", en: "Other" },
+    opc_anestesia_tiva:  { es: "TIVA (propofol + remifentanilo)", en: "TIVA (propofol + remifentanil)" },
+    opc_anestesia_rtiva: { es: "R-TIVA (relajantes toda la cirugía + TIVA)", en: "R-TIVA (relaxants throughout + TIVA)" },
+    opc_anestesia_dxm:   { es: "DXM — dexmedetomidina (paciente despierto)", en: "DXM — dexmedetomidine (awake patient)" },
+    opc_anestesia_alo:   { es: "ALO — anestesia libre de opioides", en: "ALO — opioid-free anaesthesia" },
+    opc_anestesia_gas:   { es: "Gas (inhalatoria toda la cirugía)", en: "Gas (inhalational throughout)" },
     opc_recuperacion_completa: { es: "Completa", en: "Complete" },
     opc_recuperacion_parcial: { es: "Parcial", en: "Partial" },
     opc_recuperacion_no: { es: "No hubo", en: "None" },
@@ -449,8 +469,6 @@
     caso_sin_id:         { es: "Caso sin número", en: "Case with no number" },
     btn_docente:         { es: "Docente", en: "Teaching" },
     docente_titulo:      { es: "Miotomas: qué músculos monitorizar", en: "Myotomes: which muscles to monitor" },
-    docente_titulo_ay:   { es: "Ejercicio: elegir los músculos según el nivel de la cirugía",
-                           en: "Exercise: choose the muscles for the surgical level" },
     docente_intro:       { es: "Pulsa en la columna los <b>niveles</b> que abarca la cirugía. A la izquierda aparecen los músculos que dependen de esas raíces; pulsa uno para llevarlo a los <b>monitorizados</b> de la derecha, y pulsa allí para quitarlo. Los rangos son los que se enseñan habitualmente: la inervación se solapa y no todas las escuelas dan los mismos límites, así que están para discutirlos.",
                            en: "Click the <b>levels</b> the surgery covers on the spine. The muscles depending on those roots appear on the left; click one to move it to <b>monitored</b> on the right, and click there to remove it. The ranges are the ones usually taught: innervation overlaps and not every school gives the same limits, so they are there to be discussed." },
     docente_fuentes:      { es: "El detalle al pasar el ratón por un músculo, cuando lo lleva, cita: <b>[TD/L]</b> Toleikis/Deletis 2.ª ed. cap. 13 y Leppänen (ASNM) para el músculo y el nivel · <b>[Sch]</b> Schirmer 2011 y <b>[Lon]</b> London 2022 (J Neurosurg Spine) para la frecuencia real de solapamiento entre niveles. Los músculos sin ninguna marca no vienen de esta tabla: son rangos habituales de enseñanza, sin cita concreta detrás.",
@@ -470,6 +488,8 @@
     docente_cobertura_falta: { es: "Sin cubrir: {niveles}", en: "Not covered: {niveles}" },
     docente_reiniciar_conf: { es: "¿Empezar el ejercicio de cero?", en: "Start the exercise over?" },
     docente_titulo_gen:  { es: "Docente", en: "Teaching" },
+    menu_otros_aria:     { es: "Otros", en: "Other" },
+    menu_otros_placeholder: { es: "Otros", en: "Other" },
     docente_tab_miotomas: { es: "Miotomas", en: "Myotomes" },
     docente_tab_cama:    { es: "Cama de quirófano", en: "Operating table" },
     cama_intro:          { es: "Elige la <b>posición del paciente</b> y reparte las cajas alrededor de la mesa. Pulsa una caja de abajo y luego la zona donde la pondrías; pulsa una ya colocada para retirarla. Lo que se practica es que el cable llegue: una caja en los pies no sirve para los electrodos de la cabeza.",
@@ -705,10 +725,8 @@
     if (repintar) {
       renderPerfilSelect();
       renderTodo();
-      // El botón de quirófano tiene dos textos según el estado
-      var q = document.body.classList.contains("modo-quirofano");
-      document.getElementById("btn-quirofano").textContent =
-        T(q ? "quirofano_salir" : "quirofano_entrar");
+      // El desplegable "Otros" tiene textos según el idioma y el estado
+      renderMenuOtros();
       pintarEstadoSync();
       avisoGuardado(T(syncActivo() ? "guardado_nube" : "guardado_local"));
     }
@@ -2112,7 +2130,7 @@
   // sobre la que escribimos (GitHub la exige para no pisar a ciegas).
   function enviarEstado(shaRemoto) {
     var cuerpo = {
-      message: "Actualizar escenarios MIO/IONM",
+      message: "Actualizar escenarios MIO-Check",
       content: aBase64(JSON.stringify(estadoActual(), null, 2))
     };
     if (shaRemoto) cuerpo.sha = shaRemoto;
@@ -2504,7 +2522,7 @@
       escenario_nombre: "", perfil: "",
       edad: "", sexo: "", antecedentes_relevantes: "",
       intervencion_id: "", servicio_id: "", region_nivel: "", diagnostico: "",
-      posicion: "", posicion_detalle: "",
+      posicion: "", posicion_detalle: "", anatomia_patologica: "",
       tecnicas_realizadas: [], pares_craneales_cuales: "", cambios_respecto_al_plan: "",
       material_previsto: {}, material_real: {},
       montaje: [], n_cajas: 0, n_canales_ocupados: 0, avisos_preparacion: [],
@@ -2516,10 +2534,10 @@
       // corregir dónde iba cada ítem sin adivinar.
       montaje_origen: "", asignaciones: {}, extras: [],
       etiquetas_colocadas: {}, conmutador: {},
-      tipo_anestesia: "", tipo_anestesia_detalle: "", relajante_nm: "", relajante_cual: "",
+      tipo_anestesia: "", tipo_anestesia_detalle: "",
       tof_monitorizado: "", incidencias_anestesicas: "",
       basales_obtenidas: "", alerta: false, tipo_alerta: "", criterio_alarma: "",
-      medida_correctora: "", recuperacion_senal: "",
+      medida_correctora: "", recuperacion_senal: "", basales_cierre: "",
       deficit_postoperatorio: "", concordancia: "",
       incidencias_tecnicas: "", equipo: "",
       rol: "", supervisor: "", dificultad_1a5: "", aprendizaje_clave: "", caso_destacado: false,
@@ -3375,17 +3393,23 @@
     rol: ["observo", "supervisado", "autonomo"],
     estado: ["preparado", "cerrado"],
     sino: ["si", "no"],
-    // "Solo inducción" primero: es lo más habitual, para no obligar a
-    // desplazarse hasta el final del desplegable en el caso típico.
-    relajante: ["induccion", "si", "no"],
-    anestesia: ["tiva", "balanceada", "otra"],
+    // El tipo de anestesia ya dice si hubo relajante y durante cuánto tiempo
+    // (R-TIVA = relajantes toda la cirugía) o si fue libre de opioides (ALO),
+    // así que los campos sueltos de relajante quedaron redundantes y se
+    // quitaron.
+    anestesia: ["tiva", "rtiva", "dxm", "alo", "gas"],
     // Supino primero, que es lo más frecuente. "Volteo" es su propia opción
     // porque no es una postura más: la cirugía empieza en una y sigue en
     // otra, y eso cambia el montaje a mitad.
     posicion: ["supino", "prono", "sedestacion", "volteo"],
     recuperacion: ["completa", "parcial", "no", "na"],
     concordancia: ["VP", "FP", "VN", "FN"],
-    dificultad: ["1", "2", "3", "4", "5"]
+    dificultad: ["1", "2", "3", "4", "5"],
+    // Lista cerrada y corta a propósito, como los tipos de cirugía: sirve
+    // para agrupar y contar. La anatomía patológica real o el nivel exacto
+    // van en su propio campo de texto.
+    diagnostico: ["ecc", "ecd", "ecl", "escoliosis", "loe_med", "loe_st", "loe_it",
+                  "parotida", "mav", "hipofisis", "chiari", "jannetta", "fractvert", "loe_vert"]
   };
 
   // Cierre rápido: lo que se rellena siempre. Objetivo, menos de 3 minutos.
@@ -3411,16 +3435,18 @@
     { g: "traza", c: "escenario_nombre", t: "ro" },
     { g: "paciente", c: "antecedentes_relevantes", t: "area" },
     { g: "cirugia", c: "region_nivel", t: "text" },
-    { g: "cirugia", c: "diagnostico", t: "text" },
+    { g: "cirugia", c: "diagnostico", t: "sel", o: "diagnostico" },
     { g: "cirugia", c: "posicion", t: "sel", o: "posicion" },
     { g: "cirugia", c: "posicion_detalle", t: "area", ay: "caso_posicion_detalle_ay" },
+    // Aparte del diagnóstico: el diagnóstico agrupa y cuenta, esto describe
+    // el caso concreto. Puede ser un resultado de anatomía patológica
+    // (Meningioma, GBM...) o, en columna, el nivel intervenido (C5-C6-C7).
+    { g: "anatomia", c: "anatomia_patologica", t: "text", ay: "caso_anatomia_patologica_ay" },
     { g: "tecnicas", c: "pares_craneales_cuales", t: "text" },
     { g: "tecnicas", c: "cambios_respecto_al_plan", t: "area" },
     { g: "material", c: "material_real", t: "material", ay: "caso_material_real_ay" },
     { g: "anestesia", c: "tipo_anestesia", t: "sel", o: "anestesia" },
     { g: "anestesia", c: "tipo_anestesia_detalle", t: "text", ay: "caso_tipo_anestesia_detalle_ay" },
-    { g: "anestesia", c: "relajante_nm", t: "sel", o: "relajante" },
-    { g: "anestesia", c: "relajante_cual", t: "text" },
     { g: "anestesia", c: "tof_monitorizado", t: "sel", o: "sino" },
     { g: "anestesia", c: "incidencias_anestesicas", t: "area" },
     // Texto libre y no sí/no/parciales: las basales se intentan siempre, lo
@@ -3430,8 +3456,9 @@
     { g: "desarrollo", c: "criterio_alarma", t: "text" },
     { g: "desarrollo", c: "medida_correctora", t: "area" },
     { g: "desarrollo", c: "recuperacion_senal", t: "sel", o: "recuperacion" },
-    { g: "desarrollo", c: "deficit_postoperatorio", t: "text" },
-    { g: "desarrollo", c: "concordancia", t: "sel", o: "concordancia" },
+    { g: "desarrollo", c: "basales_cierre", t: "area", ay: "caso_basales_cierre_ay" },
+    { g: "evolucion", c: "deficit_postoperatorio", t: "text" },
+    { g: "evolucion", c: "concordancia", t: "sel", o: "concordancia" },
     { g: "incidencias", c: "incidencias_tecnicas", t: "area" },
     { g: "incidencias", c: "equipo", t: "text" },
     { g: "formacion", c: "supervisor", t: "text" },
@@ -5326,9 +5353,9 @@
 
   function aplicarModoQuirofano(activo) {
     document.body.classList.toggle("modo-quirofano", activo);
-    var btn = document.getElementById("btn-quirofano");
-    btn.classList.toggle("activo", activo);
-    btn.textContent = T(activo ? "quirofano_salir" : "quirofano_entrar");
+    // El estado ya no lo dice un botón fijo, sino la etiqueta de la opción
+    // dentro de "Otros": renderMenuOtros() la recalcula cada vez.
+    renderMenuOtros();
     try { localStorage.setItem(MODO_KEY, activo ? "1" : "0"); } catch (e) { /* sin persistencia */ }
     if (activo) {
       seleccionar(null);
@@ -5344,8 +5371,48 @@
     pintarEstadoSync();
   }
 
-  document.getElementById("btn-quirofano").addEventListener("click", function () {
-    aplicarModoQuirofano(!document.body.classList.contains("modo-quirofano"));
+  /* ---- Desplegable "Otros": modo quirófano y docente -------------- *
+   * Los dos se usan poco -uno durante la cirugía, el otro para practicar
+   * fuera de ella- y no merecían un botón fijo cada uno ocupando sitio en la
+   * barra de arriba. Es un <select> y no un menú porque no hay ningún
+   * componente de menú en el resto de la herramienta y un <select> nativo
+   * funciona igual de bien con guantes o con el móvil. Elegir una opción
+   * dispara la acción y el desplegable vuelve solo a "Otros". */
+  function renderMenuOtros() {
+    var sel = document.getElementById("menu-otros");
+    var valorPrevio = sel.value;
+    sel.innerHTML = "";
+    var vacio = document.createElement("option");
+    vacio.value = "";
+    vacio.textContent = T("menu_otros_placeholder");
+    sel.appendChild(vacio);
+
+    var qOpt = document.createElement("option");
+    qOpt.value = "quirofano";
+    qOpt.textContent = T(enQuirofano() ? "quirofano_salir" : "quirofano_entrar");
+    sel.appendChild(qOpt);
+
+    var dOpt = document.createElement("option");
+    dOpt.value = "docente";
+    dOpt.textContent = T("btn_docente");
+    sel.appendChild(dOpt);
+
+    // Solo se queda en una opción distinta de "Otros" mientras el diálogo
+    // docente está abierto: así se ve de un vistazo que sigue abierto.
+    sel.value = (valorPrevio === "docente" && dlgDocente.open) ? "docente" : "";
+  }
+
+  function abrirDocente() {
+    renderDocente();
+    renderCama();
+    dlgDocente.showModal();
+  }
+
+  document.getElementById("menu-otros").addEventListener("change", function (e) {
+    var valor = e.target.value;
+    if (valor === "quirofano") aplicarModoQuirofano(!enQuirofano());
+    else if (valor === "docente") abrirDocente();
+    renderMenuOtros();
   });
 
   document.getElementById("btn-plegar").addEventListener("click", function () {
@@ -5705,14 +5772,15 @@
     if (pane === "cama") renderCama();
   });
 
-  document.getElementById("btn-docente").addEventListener("click", function () {
-    renderDocente();
-    renderCama();
-    dlgDocente.showModal();
-  });
+  // No basta con escuchar "close" del diálogo: en algunos navegadores ese
+  // evento no llega a dispararse cuando el cierre viene de dialog.close()
+  // desde script, así que se resetea "Otros" a mano en cada camino de
+  // cierre -el botón y la tecla Esc- en vez de depender de él.
   document.getElementById("docente-cerrar").addEventListener("click", function () {
     dlgDocente.close();
+    renderMenuOtros();
   });
+  dlgDocente.addEventListener("cancel", function () { renderMenuOtros(); });
   document.getElementById("docente-limpiar-niveles").addEventListener("click", function () {
     docenteNiveles = [];
     guardarDocente();

@@ -1,5 +1,5 @@
 /*
- * MIO/IONM — Reconstrucción del Google Sheet desde el repositorio de datos
+ * MIO-Check — Reconstrucción del Google Sheet desde el repositorio de datos
  * ==========================================================================
  *
  * Qué hace: lee los catálogos y los casos del repositorio privado de datos,
@@ -265,14 +265,15 @@ function construirFilasCasos_(casos, cat, columnasTec) {
     "escenario_nombre", "perfil",
     "edad", "sexo", "antecedentes_relevantes",
     "intervencion", "codigo_intervencion", "servicio", "region_nivel", "diagnostico",
-    "posicion", "posicion_detalle",
+    "posicion", "posicion_detalle", "anatomia_patologica",
     "pares_craneales_cuales", "cambios_respecto_al_plan",
     "n_cajas", "n_canales_ocupados", "avisos_preparacion",
     "coste_material", "coste_completo",
-    "tipo_anestesia", "tipo_anestesia_detalle", "relajante_nm", "relajante_cual",
+    "tipo_anestesia", "tipo_anestesia_detalle",
     "tof_monitorizado", "incidencias_anestesicas",
     "basales_obtenidas", "alerta", "tipo_alerta", "criterio_alarma",
-    "medida_correctora", "recuperacion_senal", "deficit_postoperatorio", "concordancia",
+    "medida_correctora", "recuperacion_senal", "basales_cierre",
+    "deficit_postoperatorio", "concordancia",
     "incidencias_tecnicas", "equipo",
     "rol", "supervisor", "dificultad_1a5", "aprendizaje_clave", "caso_destacado",
     "notas", "version_esquema", "n_ediciones", "ultima_edicion", "guardado_en"
@@ -289,14 +290,15 @@ function construirFilasCasos_(casos, cat, columnasTec) {
       c.escenario_nombre, c.perfil,
       c.edad, c.sexo, c.antecedentes_relevantes,
       interv ? interv.nombre : "", interv ? (interv.codigo || "") : "", serv ? serv.nombre : "",
-      c.region_nivel, c.diagnostico, c.posicion, c.posicion_detalle,
+      c.region_nivel, c.diagnostico, c.posicion, c.posicion_detalle, c.anatomia_patologica,
       c.pares_craneales_cuales, c.cambios_respecto_al_plan,
       c.n_cajas || 0, c.n_canales_ocupados || 0, (c.avisos_preparacion || []).join(" · "),
       typeof c.coste_material === "number" ? c.coste_material : "", comoNumero01_(c.coste_completo),
-      c.tipo_anestesia, c.tipo_anestesia_detalle, c.relajante_nm, c.relajante_cual,
+      c.tipo_anestesia, c.tipo_anestesia_detalle,
       c.tof_monitorizado, c.incidencias_anestesicas,
       c.basales_obtenidas, comoNumero01_(c.alerta), c.tipo_alerta, c.criterio_alarma,
-      c.medida_correctora, c.recuperacion_senal, c.deficit_postoperatorio, c.concordancia,
+      c.medida_correctora, c.recuperacion_senal, c.basales_cierre,
+      c.deficit_postoperatorio, c.concordancia,
       c.incidencias_tecnicas, c.equipo,
       c.rol, c.supervisor, c.dificultad_1a5, c.aprendizaje_clave, comoNumero01_(c.caso_destacado),
       c.notas, c.version_esquema, (c.editado_en || []).length,
@@ -583,10 +585,10 @@ function crearDisparadorDiario() {
   ScriptApp.newTrigger("reconstruirTodo").timeBased().everyDays(1).atHour(4).create();
 }
 
-// Añade un menú "MIO/IONM" al abrir el Sheet, con la reconstrucción manual.
+// Añade un menú "MIO-Check" al abrir el Sheet, con la reconstrucción manual.
 // No hace falta entrar al editor de Apps Script para forzarla.
 function onOpen() {
-  SpreadsheetApp.getUi().createMenu("MIO/IONM")
+  SpreadsheetApp.getUi().createMenu("MIO-Check")
     .addItem("Reconstruir ahora", "reconstruirTodo")
     .addToUi();
 }
