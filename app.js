@@ -162,8 +162,6 @@
     resumen_entradas:    { es: "{usadas}/{total} entradas", en: "{usadas}/{total} inputs" },
     resumen_redondeo:    { es: "Redondeado hacia arriba: {cantidad} paquetes en uso",
                            en: "Rounded up: {cantidad} packs in use" },
-    aviso_caja_llena:    { es: "La caja “{caja}” está completa — no quedan entradas libres.",
-                           en: "Box “{caja}” is full — no free inputs left." },
     aviso_pendiente:     { es: "Pendiente de confirmar: {texto}", en: "Pending confirmation: {texto}" },
 
     /* --- Escenarios --- */
@@ -336,7 +334,7 @@
     caso_edad:           { es: "Edad", en: "Age" },
     caso_sexo:           { es: "Sexo", en: "Sex" },
     caso_servicio_id:    { es: "Servicio", en: "Specialty" },
-    caso_intervencion_id:{ es: "Intervención", en: "Procedure" },
+    caso_intervencion:   { es: "Intervención", en: "Procedure" },
     caso_tecnicas_realizadas: { es: "Técnicas realizadas", en: "Techniques performed" },
     caso_tecnicas_ay:    { es: "Vienen marcadas las que planificaste. Marca o desmarca lo que cambió.",
                            en: "The ones you planned come pre-selected. Tick or untick what changed." },
@@ -383,6 +381,9 @@
                            en: "The pathology result if there is one (e.g. “Meningioma”, “GBM”), or the operated level if it's a spine case (e.g. “C5-C6-C7”)." },
     caso_pares_craneales_cuales: { es: "Pares craneales monitorizados", en: "Cranial nerves monitored" },
     caso_cambios_respecto_al_plan: { es: "Cambios respecto al plan", en: "Changes from the plan" },
+    caso_umbral_tornillos_pediculares: { es: "Umbral EMG de tornillos pediculares", en: "Pedicle screw EMG threshold" },
+    caso_umbral_tornillos_pediculares_ay: { es: "A qué nivel y con qué umbral se dejó cada tornillo puesto por los cirujanos. Un nivel por línea: nivel, lado (I/D) y umbral en mA. Por ejemplo: «L4 I 20 D 15».",
+                           en: "The level and threshold each surgeon-placed screw was left at. One level per line: level, side (L/R) and threshold in mA. E.g.: “L4 L20 R15”." },
     caso_material_real:  { es: "Material realmente usado", en: "Material actually used" },
     caso_tipo_anestesia: { es: "Tipo de anestesia", en: "Type of anaesthesia" },
     caso_tipo_anestesia_detalle: { es: "Detalle", en: "Detail" },
@@ -2521,9 +2522,10 @@
       hora_inicio: "", hora_fin: "",
       escenario_nombre: "", perfil: "",
       edad: "", sexo: "", antecedentes_relevantes: "",
-      intervencion_id: "", servicio_id: "", region_nivel: "", diagnostico: "",
+      intervencion: "", servicio_id: "", region_nivel: "", diagnostico: "",
       posicion: "", posicion_detalle: "", anatomia_patologica: "",
       tecnicas_realizadas: [], pares_craneales_cuales: "", cambios_respecto_al_plan: "",
+      umbral_tornillos_pediculares: "",
       material_previsto: {}, material_real: {},
       montaje: [], n_cajas: 0, n_canales_ocupados: 0, avisos_preparacion: [],
       coste_material: 0, coste_completo: false,
@@ -2587,6 +2589,16 @@
     return res;
   }
 
+  /* La intervención de un caso, como texto. Los casos nuevos la guardan
+     directamente en "intervencion"; uno de antes de este cambio solo tiene
+     "intervencion_id" apuntando al catálogo, así que se resuelve por ahí
+     como respaldo, para no perder de vista lo que ya tenía. */
+  function intervencionDe(c) {
+    if (c.intervencion) return c.intervencion;
+    var interv = c.intervencion_id ? INTERV[c.intervencion_id] : null;
+    return interv ? campo(interv, "nombre") : "";
+  }
+
   function casoDesdeEscenario() {
     var esc = escenarioActual();
     var caso = casoVacio();
@@ -2598,11 +2610,13 @@
     caso.tecnicas_realizadas = res.tecnicas.slice();
 
     // La intervención se propone por el nombre del escenario, si coincide
+    // con alguna del catálogo: se escribe el nombre tal cual, ya como texto
+    // libre, y el servicio (que sigue siendo un catálogo) se rellena aparte.
     var porNombre = INTERVENCIONES.filter(function (i) {
       return (campo(i, "nombre") || "").toLowerCase() === (caso.escenario_nombre || "").toLowerCase();
     })[0];
     if (porNombre) {
-      caso.intervencion_id = porNombre.id;
+      caso.intervencion = campo(porNombre, "nombre");
       caso.servicio_id = porNombre.servicio || "";
     }
     return caso;
@@ -3419,7 +3433,11 @@
     { c: "edad", t: "num" },
     { c: "sexo", t: "sel", o: "sexo" },
     { c: "servicio_id", t: "cat", cat: "servicios" },
-    { c: "intervencion_id", t: "cat", cat: "intervenciones" },
+    // Texto libre y no el catálogo de Intervenciones: el usuario quiere
+    // escribirla directamente, sin elegir de una lista cerrada. El catálogo
+    // (con su código de hospital) sigue existiendo y editable en Catálogos,
+    // simplemente ya no está enlazado a este campo.
+    { c: "intervencion", t: "text" },
     { c: "tecnicas_realizadas", t: "tecnicas", ay: "caso_tecnicas_ay" },
     { c: "alerta", t: "check" },
     { c: "rol", t: "sel", o: "rol" },
@@ -3444,6 +3462,7 @@
     { g: "anatomia", c: "anatomia_patologica", t: "text", ay: "caso_anatomia_patologica_ay" },
     { g: "tecnicas", c: "pares_craneales_cuales", t: "text" },
     { g: "tecnicas", c: "cambios_respecto_al_plan", t: "area" },
+    { g: "tecnicas", c: "umbral_tornillos_pediculares", t: "area", ay: "caso_umbral_tornillos_pediculares_ay" },
     { g: "material", c: "material_real", t: "material", ay: "caso_material_real_ay" },
     { g: "anestesia", c: "tipo_anestesia", t: "sel", o: "anestesia" },
     { g: "anestesia", c: "tipo_anestesia_detalle", t: "text", ay: "caso_tipo_anestesia_detalle_ay" },
@@ -3643,7 +3662,11 @@
     var rapido = document.getElementById("caso-rapido");
     rapido.innerHTML = "";
     CAMPOS_RAPIDO.forEach(function (def) {
-      rapido.appendChild(campoCaso(def, c[def.c]));
+      // Un caso de antes de este cambio no trae "intervencion": se precarga
+      // resuelta desde el viejo intervencion_id, así se ve al abrirlo sin
+      // tener que volver a escribirla, y si se guarda queda ya migrada.
+      var valor = def.c === "intervencion" ? intervencionDe(c) : c[def.c];
+      rapido.appendChild(campoCaso(def, valor));
     });
 
     var ampliar = document.getElementById("caso-ampliar-campos");
@@ -3794,9 +3817,7 @@
       det.className = "caso-fila-det";
       // El nombre que le hayas puesto manda sobre la intervención resuelta:
       // es justo lo que pediste para reconocer el caso de un vistazo.
-      var interv = INTERV[c.intervencion_id];
-      det.textContent = c.nombre_caso || (interv ? campo(interv, "nombre")
-        : (c.escenario_nombre || T("caso_sin_intervencion")));
+      det.textContent = c.nombre_caso || (intervencionDe(c) || c.escenario_nombre || T("caso_sin_intervencion"));
       fila.appendChild(det);
 
       var pie = document.createElement("span");
@@ -4784,9 +4805,6 @@
 
     res.coste = calcularCoste(res);
 
-    res.cajas.forEach(function (c) {
-      if (c.usadas === c.total) res.avisos.push(T("aviso_caja_llena", { caja: c.nombre }));
-    });
     // El perfil se guarda por id para poder traducir su nota; nota_perfil es
     // el texto suelto que guardaban los escenarios anteriores.
     if (esc.nota_perfil_id) {

@@ -264,9 +264,9 @@ function construirFilasCasos_(casos, cat, columnasTec) {
     "caso_uid", "ID_Caso", "nombre_caso", "estado", "Fecha", "centro", "hora_inicio", "hora_fin",
     "escenario_nombre", "perfil",
     "edad", "sexo", "antecedentes_relevantes",
-    "intervencion", "codigo_intervencion", "servicio", "region_nivel", "diagnostico",
+    "intervencion", "servicio", "region_nivel", "diagnostico",
     "posicion", "posicion_detalle", "anatomia_patologica",
-    "pares_craneales_cuales", "cambios_respecto_al_plan",
+    "pares_craneales_cuales", "cambios_respecto_al_plan", "umbral_tornillos_pediculares",
     "n_cajas", "n_canales_ocupados", "avisos_preparacion",
     "coste_material", "coste_completo",
     "tipo_anestesia", "tipo_anestesia_detalle",
@@ -280,7 +280,13 @@ function construirFilasCasos_(casos, cat, columnasTec) {
   ].concat(columnasTec.map(function (c) { return c.columna; }));
 
   var filas = casos.map(function (c) {
+    // La intervención es texto libre desde este cambio; un caso de antes
+    // solo tiene intervencion_id apuntando al catálogo, y se resuelve por
+    // ahí como respaldo para no perder de vista lo que ya tenía. El código
+    // de hospital ya no se propaga solo -dependía del enlace al catálogo,
+    // que se ha quitado a propósito-, así que esa columna desaparece.
     var interv = cat.INTERV[c.intervencion_id];
+    var intervTexto = c.intervencion || (interv ? interv.nombre : "");
     var serv = cat.SERV[c.servicio_id];
     var marcadas = {};
     (c.tecnicas_realizadas || []).forEach(function (id) { marcadas[id] = true; });
@@ -289,9 +295,9 @@ function construirFilasCasos_(casos, cat, columnasTec) {
       c.caso_uid, c.ID_Caso, c.nombre_caso, c.estado, aFecha_(c.fecha), c.centro, c.hora_inicio, c.hora_fin,
       c.escenario_nombre, c.perfil,
       c.edad, c.sexo, c.antecedentes_relevantes,
-      interv ? interv.nombre : "", interv ? (interv.codigo || "") : "", serv ? serv.nombre : "",
+      intervTexto, serv ? serv.nombre : "",
       c.region_nivel, c.diagnostico, c.posicion, c.posicion_detalle, c.anatomia_patologica,
-      c.pares_craneales_cuales, c.cambios_respecto_al_plan,
+      c.pares_craneales_cuales, c.cambios_respecto_al_plan, c.umbral_tornillos_pediculares,
       c.n_cajas || 0, c.n_canales_ocupados || 0, (c.avisos_preparacion || []).join(" · "),
       typeof c.coste_material === "number" ? c.coste_material : "", comoNumero01_(c.coste_completo),
       c.tipo_anestesia, c.tipo_anestesia_detalle,
