@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MIO-Check</title>
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0b0d0e">
 <!--
   El ?v= de los archivos no es decorativo: GitHub Pages los cachea 10 minutos
   cada uno por su cuenta, así que el navegador puede quedarse con el HTML
@@ -13,12 +17,12 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260819b">
+<link rel="stylesheet" href="style.css?v=20260820">
 </head>
 <body>
 
 <header class="barra-sup">
-  <span class="marca">MIO<span class="marca-sep">-</span>Check</span>
+  <img class="marca" src="img/favicon.png" alt="MIO-Check" width="32" height="32">
   <select id="perfil-usuario" data-i18n-aria="perfil_usuario_aria" data-i18n-title="perfil_usuario_aria"></select>
   <span class="montaje-actual" id="montaje-actual"></span>
   <span class="barra-flex"></span>
@@ -473,8 +477,8 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260819b"></script>
-<script src="data/i18n-en.js?v=20260819b"></script>
-<script src="app.js?v=20260819b"></script>
+<script src="data/surgeries.js?v=20260820"></script>
+<script src="data/i18n-en.js?v=20260820"></script>
+<script src="app.js?v=20260820"></script>
 </body>
 </html>

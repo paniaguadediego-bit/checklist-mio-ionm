@@ -56,13 +56,16 @@ body {
   border-bottom: 1px solid #0f1a21;
 }
 
-.marca {
-  font-weight: 700;
-  font-size: 0.9rem;
-  letter-spacing: 0.06em;
-  white-space: nowrap;
+/* El icono de la app en la cabecera. 32px de alto encaja con --header-h
+   (44px) dejando aire arriba y abajo; el archivo fuente es de 180px
+   (apple-touch-icon), así que se ve nítido incluso en pantallas retina. */
+.barra-sup img.marca {
+  height: 32px;
+  width: 32px;
+  border-radius: 7px;
+  display: block;
+  flex-shrink: 0;
 }
-.marca-sep { color: var(--panel-tenue); font-weight: 400; }
 
 .barra-flex { flex: 1; }
 
@@ -1531,7 +1534,7 @@ dialog h3 {
   /* El hueco flexible robaba ancho al selector: en móvil se anula */
   .barra-sup .barra-flex { display: none; }
   .barra-sup #perfil-usuario { min-width: 0; flex: 1; max-width: none; }
-  .marca { font-size: 0.78rem; }
+  .barra-sup img.marca { height: 26px; width: 26px; }
   .btn-modo, .barra-sup #menu-otros { font-size: 0.7rem; padding: 0.3rem 0.45rem; }
 }
 
