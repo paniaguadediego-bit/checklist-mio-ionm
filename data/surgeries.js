@@ -578,7 +578,13 @@ window.SURGERIES_DATA = {
     { "id": "eeg", "etiqueta": "EEG", "grupo": "monitorizacion", "activa": true, "descripcion": "Electroencefalografía" },
     { "id": "ecog", "etiqueta": "ECoG", "grupo": "monitorizacion", "activa": true, "descripcion": "Electrocorticografía" },
     { "id": "pev", "etiqueta": "PEV", "grupo": "monitorizacion", "activa": true, "descripcion": "Potenciales evocados visuales — en estudio" },
-    { "id": "reflejo_h", "etiqueta": "Reflejo H", "grupo": "monitorizacion", "activa": true, "descripcion": "Reflejo H por estímulo en hueco poplíteo" },
+    // "Reflejo H" se divide en dos: no es la misma técnica según el músculo
+    // de registro. Se desactiva en vez de borrarse -"desactivar no borra"-,
+    // así que un caso o montaje antiguo que todavía diga "reflejo_h" lo
+    // sigue mostrando (tachado) en vez de perder la marca.
+    { "id": "reflejo_h", "etiqueta": "Reflejo H", "grupo": "monitorizacion", "activa": false, "descripcion": "Dividido en HR Poplíteo y HR Masetero" },
+    { "id": "hr_popliteo", "etiqueta": "HR Poplíteo", "grupo": "monitorizacion", "activa": true, "descripcion": "Reflejo H por estímulo en hueco poplíteo" },
+    { "id": "hr_masetero", "etiqueta": "HR Masetero", "grupo": "monitorizacion", "activa": true, "descripcion": "Reflejo H por estímulo del nervio masetero" },
 
     /* Añadidas de la lista del usuario. Van con su etiqueta exacta y SIN
        descripción: expandir una abreviatura a ojo en una herramienta clínica
@@ -800,7 +806,7 @@ window.SURGERIES_DATA = {
   "escenarios": {
     "artrodesis_descompresion": {
       "nombre": "Artrodesis + descompresión",
-      "tecnicas": ["t_pess", "t_pem", "emg", "mapeo_raices_tornillos", "reflejo_h"],
+      "tecnicas": ["t_pess", "t_pem", "emg", "mapeo_raices_tornillos", "hr_popliteo"],
       "asignaciones": {
         "caja_estimulo": {
           "1": "l_mediano",

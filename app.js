@@ -291,7 +291,6 @@
     /* --- Ficha del caso --- */
     dlg_caso_titulo:     { es: "Caso {id}", en: "Case {id}" },
     caso_cerrar_titulo:  { es: "Cierre rápido", en: "Quick close" },
-    caso_ampliar:        { es: "Ampliar (opcional)", en: "More detail (optional)" },
     caso_g_traza:        { es: "Trazabilidad", en: "Traceability" },
     caso_g_paciente:     { es: "Paciente", en: "Patient" },
     caso_g_cirugia:      { es: "Cirugía", en: "Surgery" },
@@ -388,16 +387,15 @@
                            en: "Any other drug used, on top of the type chosen above. E.g.: “+ ketamine bolus before baselines”." },
     caso_tof_monitorizado: { es: "TOF monitorizado", en: "TOF monitored" },
     caso_incidencias_anestesicas: { es: "Incidencias anestésicas", en: "Anaesthetic incidents" },
-    caso_basales_obtenidas: { es: "Opening baselines (OP BSL)", en: "Opening baselines (OP BSL)" },
-    caso_basales_obtenidas_ay: { es: "Qué salió en cada técnica, no solo si sí o no. Por ejemplo: «t-SEP normales al inicio; t-MEP hemicuerpo izquierdo no evocables».",
-                           en: "What came out per technique, not just yes/no. E.g.: “t-SEP normal at baseline; t-MEP left hemibody not evocable”." },
+    caso_resumen_monitorizacion: { es: "Resumen de la monitorización", en: "Monitoring summary" },
+    caso_resumen_monitorizacion_ay: { es: "De corrido: qué salió al empezar (OP BSL), qué pasó por el camino, y qué salió al cerrar (CL BSL). Por ejemplo: «SEP y MEP normales al inicio (OP BSL) […] descargas de alta frecuencia a las 14.20h, ceden solas […] CL BSL: similares a las de apertura».",
+                           en: "In sequence: what came out at the start (OP BSL), what happened along the way, and what came out at closing (CL BSL). E.g.: “SEP and MEP normal at baseline (OP BSL) […] high-frequency discharges at 2:20pm, resolve on their own […] CL BSL: similar to opening”." },
     caso_tipo_alerta:    { es: "Tipo de alerta", en: "Type of alert" },
-    caso_criterio_alarma:{ es: "Criterio de alarma", en: "Alarm criterion" },
     caso_medida_correctora: { es: "Medida correctora", en: "Corrective action" },
     caso_recuperacion_senal: { es: "Recuperación de la señal", en: "Signal recovery" },
-    caso_basales_cierre: { es: "Closing baselines (CL BSL)", en: "Closing baselines (CL BSL)" },
-    caso_basales_cierre_ay: { es: "Qué salió en cada técnica al terminar el registro, comparado con las opening baselines. Por ejemplo: «t-MEP hemicuerpo izquierdo recuperado a partir de C4».",
-                           en: "What came out per technique at the end of the recording, compared to the opening baselines. E.g.: “t-MEP left hemibody recovered from C4 onwards”." },
+    caso_resultado_esperable: { es: "Resultado esperable", en: "Expected outcome" },
+    caso_resultado_esperable_ay: { es: "Lo que cabría esperar en el postoperatorio dado lo registrado, para compararlo después con el déficit real.",
+                           en: "What would be expected postoperatively given what was recorded, to compare later against the actual deficit." },
     caso_deficit_postoperatorio: { es: "Déficit postoperatorio", en: "Postoperative deficit" },
     caso_concordancia:   { es: "Concordancia", en: "Concordance" },
     caso_incidencias_tecnicas: { es: "Incidencias técnicas", en: "Technical incidents" },
@@ -2525,8 +2523,8 @@
       etiquetas_colocadas: {}, conmutador: {},
       tipo_anestesia: "", tipo_anestesia_detalle: "",
       tof_monitorizado: "", incidencias_anestesicas: "",
-      basales_obtenidas: "", alerta: false, tipo_alerta: "", criterio_alarma: "",
-      medida_correctora: "", recuperacion_senal: "", basales_cierre: "",
+      resumen_monitorizacion: "", alerta: false, tipo_alerta: "",
+      medida_correctora: "", recuperacion_senal: "", resultado_esperable: "",
       deficit_postoperatorio: "", concordancia: "",
       incidencias_tecnicas: "", equipo: "",
       rol: "", supervisor: "", dificultad_1a5: "", aprendizaje_clave: "", caso_destacado: false,
@@ -2584,6 +2582,30 @@
     if (c.intervencion) return c.intervencion;
     var interv = c.intervencion_id ? INTERV[c.intervencion_id] : null;
     return interv ? campo(interv, "nombre") : "";
+  }
+
+  /* El resumen de monitorización de un caso. Uno nuevo lo guarda ya como un
+     solo texto; uno de antes de este cambio tiene "basales_obtenidas" y
+     "basales_cierre" sueltos, así que se juntan como respaldo -con la misma
+     etiqueta "CL BSL:" que ya se usaba a mano para separar el cierre-, para
+     no perder de vista lo que ya tenía. */
+  function resumenMonitorizacionDe(c) {
+    if (c.resumen_monitorizacion) return c.resumen_monitorizacion;
+    var partes = [];
+    if (c.basales_obtenidas) partes.push(c.basales_obtenidas);
+    if (c.basales_cierre) partes.push("CL BSL: " + c.basales_cierre);
+    return partes.join("\n\n");
+  }
+
+  /* El tipo de alerta de un caso, con el criterio de alarma metido dentro si
+     lo tenía: eran dos cajas para una misma idea -qué saltó y por qué-, y un
+     caso de antes de este cambio los guardaba sueltos. */
+  function tipoAlertaDe(c) {
+    if (!c.criterio_alarma) return c.tipo_alerta || "";
+    var base = c.tipo_alerta || "";
+    return base
+      ? base + "\n\nCriterio de alarma: " + c.criterio_alarma
+      : c.criterio_alarma;
   }
 
   function casoDesdeEscenario() {
@@ -3415,6 +3437,7 @@
 
   // Cierre rápido: lo que se rellena siempre. Objetivo, menos de 3 minutos.
   var CAMPOS_RAPIDO = [
+    { c: "estado", t: "sel", o: "estado" },
     { c: "fecha", t: "date", ay: "caso_fecha_ay" },
     { c: "nombre_caso", t: "text", ay: "caso_nombre_caso_ay" },
     { c: "edad", t: "num" },
@@ -3433,7 +3456,6 @@
 
   var CAMPOS_AMPLIAR = [
     { g: "traza", c: "ID_Caso", t: "ro" },
-    { g: "traza", c: "estado", t: "sel", o: "estado" },
     { g: "traza", c: "centro", t: "text" },
     { g: "traza", c: "hora_inicio", t: "time" },
     { g: "traza", c: "hora_fin", t: "time" },
@@ -3455,21 +3477,25 @@
     { g: "anestesia", c: "tipo_anestesia_detalle", t: "text", ay: "caso_tipo_anestesia_detalle_ay" },
     { g: "anestesia", c: "tof_monitorizado", t: "sel", o: "sino" },
     { g: "anestesia", c: "incidencias_anestesicas", t: "area" },
-    // Texto libre y no sí/no/parciales: las basales se intentan siempre, lo
-    // que varía es qué salió en cada técnica, y eso no cabe en tres opciones.
-    { g: "desarrollo", c: "basales_obtenidas", t: "area", ay: "caso_basales_obtenidas_ay" },
-    { g: "desarrollo", c: "tipo_alerta", t: "text" },
-    { g: "desarrollo", c: "criterio_alarma", t: "text" },
+    // Un solo cuadro grande en vez de OP BSL y CL BSL sueltos: en la
+    // practica real ya se escribian juntos, con las incidencias intraop
+    // en medio contando la evolucion de una a otra -separarlas en dos cajas
+    // rompia justo lo que se queria contar de corrido.
+    { g: "desarrollo", c: "resumen_monitorizacion", t: "area", rows: 6, ay: "caso_resumen_monitorizacion_ay" },
+    // Absorbe tambien el criterio de alarma: eran dos cajas para una misma
+    // idea -que salto y por que-, y tipo_alerta ya se escribia largo en la
+    // practica real, asi que pasa a area en vez de una linea.
+    { g: "desarrollo", c: "tipo_alerta", t: "area" },
     { g: "desarrollo", c: "medida_correctora", t: "area" },
     { g: "desarrollo", c: "recuperacion_senal", t: "sel", o: "recuperacion" },
-    { g: "desarrollo", c: "basales_cierre", t: "area", ay: "caso_basales_cierre_ay" },
+    { g: "desarrollo", c: "resultado_esperable", t: "area", ay: "caso_resultado_esperable_ay" },
     { g: "evolucion", c: "deficit_postoperatorio", t: "text" },
     { g: "evolucion", c: "concordancia", t: "sel", o: "concordancia" },
     { g: "incidencias", c: "incidencias_tecnicas", t: "area" },
     { g: "incidencias", c: "equipo", t: "text" },
     { g: "formacion", c: "supervisor", t: "text" },
     { g: "formacion", c: "dificultad_1a5", t: "sel", o: "dificultad" },
-    { g: "formacion", c: "aprendizaje_clave", t: "area" },
+    { g: "formacion", c: "aprendizaje_clave", t: "area", rows: 5 },
     { g: "formacion", c: "caso_destacado", t: "check" }
   ];
 
@@ -3618,7 +3644,7 @@
       control.value = valor == null ? "" : String(valor);
     } else if (def.t === "area") {
       control = document.createElement("textarea");
-      control.rows = 2;
+      control.rows = def.rows || 2;
       control.value = valor || "";
     } else {
       control = document.createElement("input");
@@ -3659,22 +3685,43 @@
     var ampliar = document.getElementById("caso-ampliar-campos");
     ampliar.innerHTML = "";
     var grupoActual = null;
+    // A qué contenedor va cada campo: normalmente "ampliar" en línea, pero
+    // el grupo "material" se pliega aparte (ver más abajo) y sus campos van
+    // dentro de ese <details> en vez de sueltos en la ficha.
+    var contenedorGrupo = ampliar;
     CAMPOS_AMPLIAR.forEach(function (def) {
       if (def.g !== grupoActual) {
         grupoActual = def.g;
-        var h = document.createElement("h4");
-        h.textContent = T("caso_g_" + def.g);
-        ampliar.appendChild(h);
         if (def.g === "material") {
+          // Puede ser una lista larga de material: se pliega aparte aunque
+          // el resto de la ficha esté siempre a la vista.
+          var det = document.createElement("details");
+          det.className = "caso-grupo-plegable";
+          det.open = true;
+          var sum = document.createElement("summary");
+          sum.textContent = T("caso_g_material");
+          det.appendChild(sum);
           var res = document.createElement("p");
           res.className = "caso-resumen-linea";
           res.textContent = c.n_cajas
             ? T("caso_montaje_res", { cajas: c.n_cajas, canales: c.n_canales_ocupados })
             : T("caso_sin_montaje");
-          ampliar.appendChild(res);
+          det.appendChild(res);
+          ampliar.appendChild(det);
+          contenedorGrupo = det;
+        } else {
+          var h = document.createElement("h4");
+          h.textContent = T("caso_g_" + def.g);
+          ampliar.appendChild(h);
+          contenedorGrupo = ampliar;
         }
       }
-      ampliar.appendChild(campoCaso(def, c[def.c]));
+      // Un caso de antes de este cambio no trae estos campos juntos todavía:
+      // se precargan resueltos desde los que tenía, igual que "intervencion".
+      var valor = def.c === "resumen_monitorizacion" ? resumenMonitorizacionDe(c)
+        : def.c === "tipo_alerta" ? tipoAlertaDe(c)
+        : c[def.c];
+      contenedorGrupo.appendChild(campoCaso(def, valor));
     });
 
     // Pie: cuándo se creó el archivo y cuántas veces se ha tocado después

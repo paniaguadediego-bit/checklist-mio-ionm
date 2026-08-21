@@ -1335,6 +1335,19 @@ dialog h3 {
 }
 #dlg-caso h4:first-of-type { margin-top: 0; }
 .caso-ampliar { margin-top: 0.8rem; }
+
+/* El grupo Material: mismo aspecto que un h4 de grupo, pero es un <summary>
+   -se puede plegar aparte aunque el resto de la ficha esté siempre a la
+   vista, porque la lista de material puede ser larga-. */
+.caso-grupo-plegable summary {
+  margin: 0.9rem 0 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent);
+  border-bottom: 1px solid var(--border-soft);
+  padding-bottom: 0.15rem;
+  cursor: pointer;
+}
 .caso-ro { font-size: 0.82rem; color: var(--text-muted); padding: 0.2rem 0; }
 .caso-meta { font-size: 0.65rem; color: var(--text-muted); margin: 0.6rem 0 0; }
 .caso-resumen-linea { font-size: 0.72rem; color: var(--text-muted); margin: 0 0 0.4rem; }

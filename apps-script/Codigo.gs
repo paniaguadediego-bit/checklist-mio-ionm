@@ -271,8 +271,8 @@ function construirFilasCasos_(casos, cat, columnasTec) {
     "coste_material", "coste_completo",
     "tipo_anestesia", "tipo_anestesia_detalle",
     "tof_monitorizado", "incidencias_anestesicas",
-    "basales_obtenidas", "alerta", "tipo_alerta", "criterio_alarma",
-    "medida_correctora", "recuperacion_senal", "basales_cierre",
+    "resumen_monitorizacion", "alerta", "tipo_alerta",
+    "medida_correctora", "recuperacion_senal", "resultado_esperable",
     "deficit_postoperatorio", "concordancia",
     "incidencias_tecnicas", "equipo",
     "rol", "supervisor", "dificultad_1a5", "aprendizaje_clave", "caso_destacado",
@@ -291,6 +291,23 @@ function construirFilasCasos_(casos, cat, columnasTec) {
     var marcadas = {};
     (c.tecnicas_realizadas || []).forEach(function (id) { marcadas[id] = true; });
 
+    // Igual que arriba con la intervención: un caso de antes de este cambio
+    // tiene los campos sueltos, y se juntan como respaldo para que el Sheet
+    // no se quede con la celda en blanco.
+    var resumenMonitorizacion = c.resumen_monitorizacion;
+    if (!resumenMonitorizacion) {
+      var partesMon = [];
+      if (c.basales_obtenidas) partesMon.push(c.basales_obtenidas);
+      if (c.basales_cierre) partesMon.push("CL BSL: " + c.basales_cierre);
+      resumenMonitorizacion = partesMon.join("\n\n");
+    }
+    var tipoAlerta = c.tipo_alerta || "";
+    if (c.criterio_alarma) {
+      tipoAlerta = tipoAlerta
+        ? tipoAlerta + "\n\nCriterio de alarma: " + c.criterio_alarma
+        : c.criterio_alarma;
+    }
+
     var base = [
       c.caso_uid, c.ID_Caso, c.nombre_caso, c.estado, aFecha_(c.fecha), c.centro, c.hora_inicio, c.hora_fin,
       c.escenario_nombre, c.perfil,
@@ -302,8 +319,8 @@ function construirFilasCasos_(casos, cat, columnasTec) {
       typeof c.coste_material === "number" ? c.coste_material : "", comoNumero01_(c.coste_completo),
       c.tipo_anestesia, c.tipo_anestesia_detalle,
       c.tof_monitorizado, c.incidencias_anestesicas,
-      c.basales_obtenidas, comoNumero01_(c.alerta), c.tipo_alerta, c.criterio_alarma,
-      c.medida_correctora, c.recuperacion_senal, c.basales_cierre,
+      resumenMonitorizacion, comoNumero01_(c.alerta), tipoAlerta,
+      c.medida_correctora, c.recuperacion_senal, c.resultado_esperable,
       c.deficit_postoperatorio, c.concordancia,
       c.incidencias_tecnicas, c.equipo,
       c.rol, c.supervisor, c.dificultad_1a5, c.aprendizaje_clave, comoNumero01_(c.caso_destacado),
