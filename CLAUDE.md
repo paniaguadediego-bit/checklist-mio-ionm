@@ -13,8 +13,9 @@ herramienta está en [README.md](README.md); aquí está lo que hay que saber pa
    Solo identificador de caso, edad, sexo y antecedentes relevantes. Esto vale
    para el repositorio del código, para el de datos y para el Google Sheet.
 2. **El repositorio del código es público.** Nunca se escriben en él tokens,
-   datos de pacientes ni el nombre del centro.
-3. **Lo que se guarda son ids, nunca etiquetas visibles.** Los escenarios ya
+   datos de pacientes, nombres de usuario reales (los perfiles de usuario se
+   crean desde la app, no aquí) ni el nombre del centro.
+3. **Lo que se guarda son ids, nunca etiquetas visibles.** Los montajes ya
    guardan ids de técnica y de material. Así se puede renombrar cualquier cosa
    sin dejar huérfano lo guardado antes. Cualquier bloque nuevo sigue esa regla.
 4. **Sin build, sin dependencias, sin backend.** `index.html` tiene que seguir
@@ -79,12 +80,21 @@ del otro) o *Bajar* (se pierde lo tuyo) — y se pierde el archivo **entero**,
 no solo el montaje en disputa. Con un archivo por montaje eso no puede pasar.
 Es la misma razón por la que los casos ya estaban así. **Cualquier dato nuevo
 que dos personas puedan escribir a la vez va en su propio archivo.**
-- Lo escribe `estadoActual()` ([app.js:1538](app.js:1538)) y tiene esta forma:
+- Lo escribe `estadoActual()` (`grep -n "function estadoActual"`) y tiene esta
+  forma:
 
 ```
-{ formato: "mio-ionm", version: 2, fecha, escenarios, catalogo_usuario,
+{ formato: "mio-ionm", version: 3, fecha, escenarios, catalogo_usuario,
   etiquetas_usuario, etiquetas_borradas, catalogos, borrados, activo }
 ```
+
+  `escenarios` y `activo` aquí son el **legado de la versión 2**
+  (`legadoEscenarios`/`legadoActivo`), una foto congelada de antes de que los
+  montajes salieran a `montajes/`. Se sigue escribiendo tal cual, sin
+  tocarlo, solo como red de seguridad de esa conversión — no lo lee nada como
+  fuente de verdad. No confundir con `catalogos.escenarios` (los tipos de
+  cirugía) ni con `DATA.escenarios` (los montajes de fábrica): ver el
+  apartado siguiente.
 
 - Se sube en base64 por la Contents API de GitHub. El token es *fine-grained*,
   con `Contents: Read and write` **solo** sobre ese repositorio, y vive
@@ -149,29 +159,36 @@ que se sube a GitHub, así que sirve de restauración completa.
 
 ## Mapa del código
 
-Todo el JavaScript vive en un único IIFE en `app.js` (~4200 líneas). No hay
+Todo el JavaScript vive en un único IIFE en `app.js` (~5800 líneas). No hay
 módulos. Las funciones son declaraciones, así que el orden de definición no
 importa. **Los números de línea de esta tabla se desactualizan con cada
 cambio grande** — si no cuadran con lo que hay, es más fiable un
 `grep -n "function nombreDeLaFuncion"` que fiarse del número a ciegas.
+(Los de abajo están comprobados el 21-08-2026.)
 
 | Zona | Función clave | Línea |
 |---|---|---|
-| Idioma | `volcarTraducciones()`, `campo()` | [466](app.js:466), [548](app.js:548) |
-| Etiquetas (tipos físicos) | `reconstruirEtiquetas()` | [622](app.js:622) |
-| Catálogo de material | `reconstruirCatalogo()` | [711](app.js:711) |
-| Catálogos editables (técnicas/servicios/intervenciones/perfiles) | `fusionarCatalogo()`, `reconstruirCatalogos()` | ver `grep` |
-| Carga y guardado del estado | `cargarEstado()`, `guardarEstado()` | [931](app.js:931), [1002](app.js:1002) |
-| Entradas de una caja | `entradasDe()` | [1117](app.js:1117) |
+| Idioma | `volcarTraducciones()`, `campo()` | [599](app.js:599), [681](app.js:681) |
+| Etiquetas (tipos físicos) | `reconstruirEtiquetas()` | [751](app.js:751) |
+| Catálogo de material | `reconstruirCatalogo()` | [840](app.js:840) |
+| Catálogos editables (técnicas/servicios/intervenciones/perfiles/escenarios/usuarios) | `fusionarCatalogo()`, `reconstruirCatalogos()` | ver `grep` |
+| Carga y guardado del estado | `cargarEstado()`, `guardarEstado()` | [1159](app.js:1159), [1281](app.js:1281) |
+| Entradas de una caja | `entradasDe()` | [1510](app.js:1510) |
 | Selección y colocación (pulsar y colocar) | `seleccionar()`, `colocar()` | ver `grep` |
-| Sincronización de escenarios/catálogos | `estadoActual()`, `aplicarEstado()`, `programarSubida()`, `subirAuto()`, `bajarAuto()` | [1538](app.js:1538)–[1695](app.js:1695) |
-| Casos: modelo y ficha | `borrarCaso()`, `guardarCaso()`, `casoVacio()`, `renderFichaCaso()` | [1902](app.js:1902), [1915](app.js:1915), [1946](app.js:1946), [2831](app.js:2831) |
+| Sincronización de `estado.json` | `estadoActual()`, `aplicarEstado()`, `programarSubida()`, `subirAuto()`, `bajarAuto()` | [2057](app.js:2057)–[2224](app.js:2224) |
+| Montajes: modelo, autoría y sincronización | `montajeNuevo()`, `puedoEditar()`, `guardarMontaje()`, `subirMontaje()`, `bajarMontajes()` | ver `grep` |
+| Casos: modelo y ficha | `borrarCaso()`, `guardarCaso()`, `casoVacio()`, `renderFichaCaso()` | [2454](app.js:2454), [2467](app.js:2467), [2498](app.js:2498), [3669](app.js:3669) |
 | Casos: sincronización | `subirCaso()`, `bajarCasos()`, `borrarCasosPendientes()` | ver `grep` |
-| Cálculo del resumen | `calcularResumen()` (dato) → `renderResumen()` (pintado) | [3689](app.js:3689), [3766](app.js:3766) |
+| Cálculo del resumen (con coste) | `calcularResumen()`, `calcularCoste()` (dato) → `renderResumen()` (pintado) | [4785](app.js:4785), [4868](app.js:4868) |
+| Ventana Docente (miotomas, cama de quirófano) | `renderDocente()`, `renderCama()` | ver `grep` |
 
-Datos de fábrica en `data/surgeries.js`: `cajas_material`, `etiquetas`,
-`catalogo_material`, `tecnicas` (14 de monitorización + 8 de mapeo),
-`servicios`, `intervenciones`, `perfiles_procedimiento` y `escenarios`.
+Datos de fábrica en `data/surgeries.js`: `cajas_material`, `etiquetas` (35,
+con `precio` y `fungible` — ver *Coste del material* en README),
+`catalogo_material` (~260 ítems), `tecnicas` (~40, monitorización y mapeo),
+`servicios`, `intervenciones`, `perfiles_procedimiento`, `escenarios_tipo`
+(los tipos de cirugía: Tumor ST, ECC, ECL…), `escenarios` (montajes de
+fábrica, ojo con el nombre heredado — ver más abajo) y `miotomas` (solo para
+la ventana Docente, sin uso en el cálculo de material).
 
 ### Patrón de datos editables
 
@@ -188,9 +205,11 @@ editables.
 
 ### Catálogos editables
 
-`tecnicas`, `servicios`, `intervenciones` y `perfiles` se editan desde el
-diálogo **Catálogos** (botón en la barra de herramientas). Su estado vive en
-`catalogos` y se guarda dentro de `estado.json`:
+`tecnicas`, `servicios`, `intervenciones`, `perfiles`, `escenarios` (los
+tipos de cirugía — no confundir con `DATA.escenarios`, los montajes de
+fábrica) y `usuarios` se editan desde el diálogo **Catálogos** (botón en la
+barra de herramientas). Su estado vive en `catalogos` y se guarda dentro de
+`estado.json`:
 
 ```
 catalogos: {
@@ -201,10 +220,20 @@ catalogos: {
 - `propios` — elementos creados o editados por el usuario, por `id`.
 - `orden` — ids en el orden fijado a mano. Lo que no esté va detrás, en el
   orden de fábrica: una técnica nueva aparece al final, nunca desaparece.
-- `borrados` — solo se usa en perfiles. Técnicas, servicios e intervenciones
-  **no se borran**, se desactivan (`activa: false`), porque un caso guardado
-  puede referirse a ellos.
+- `borrados` — solo se usa en perfiles (`borrarCat()`). Los otros cinco
+  catálogos **no se borran**, se desactivan (`activa: false`), porque un
+  caso o montaje guardado puede referirse a ellos.
 - `version` sube y `actualizado_en` se sella en cada cambio (`tocarCatalogo`).
+
+`usuarios` va **vacío de fábrica a propósito**: los nombres de personas
+reales no se escriben en este repositorio, que es público (regla 2). Se
+crean desde la app (selector "quién eres" en la barra superior) y quedan en
+`catalogos.usuarios` dentro de `estado.json`, que va al repo privado. El
+perfil *elegido* (no la lista de usuarios) vive aparte, en
+`localStorage["mio_ionm_perfil_v1"]`, y no se sincroniza: es de este
+dispositivo, no del equipo. Sirve para firmar montajes (`autor_id`), pero
+**no es seguridad** — cualquiera puede cambiar de perfil sin más, y sin
+backend no hay forma de impedirlo.
 
 Cuidado con el nombre **`etiqueta`**: en una técnica es su texto visible; en el
 material es el tipo físico (aguja, sacacorchos…). No tienen nada que ver.
@@ -264,69 +293,101 @@ distinta a la anterior, no importa el formato exacto.
 
 ## Estado del proyecto
 
-La herramienta de preparación está terminada y en uso. De la **Fase 2.0**:
+**La herramienta está en uso clínico real desde agosto de 2026.** El
+repositorio de datos tiene casos reales con contenido real (`2026-002` a
+`2026-006` al 21-08-2026) — **no está limpio de casos de prueba porque ya no
+son de prueba**. Cualquier cambio en el modelo de datos de un caso a partir
+de ahora es un cambio sobre datos clínicos de verdad, no sobre un arnés: si
+hay que migrar algo, se migra también en el repositorio de datos, no solo en
+el código (ver ejemplo reciente más abajo).
 
-1. ~~Catálogos editables desde la interfaz~~ — **hecho**. Técnicas,
-   servicios, intervenciones y perfiles se editan en el diálogo Catálogos; los
-   escenarios ya se editaban desde la barra de herramientas.
-2. ~~Registro de cada caso como un archivo JSON en `casos/`~~ — **hecho**.
-   Probado por el usuario de verdad: caso preparado en un dispositivo y
-   cerrado en otro, caso retrospectivo, fecha corregida en un caso ya
-   cerrado.
-3. ~~Volcado a un Google Sheet mediante Apps Script~~ — **hecho y
-   confirmado en producción**. Instalado por el usuario en un Sheet real
-   (Apps Script propio, no de Claude), con `crearDisparadorDiario()` activo.
-   El objetivo central de esta fase —una base de datos que se construye
-   sola desde la herramienta, sin tocarla a mano— está cumplido y en uso.
-4. **Instrucciones de Looker Studio — a medias, en pausa por decisión del
-   usuario.** Las tres fuentes de datos (`Casos`, `Tecnicas_long`,
-   `Material_long`) están conectadas y detectando bien los campos. Está
-   confirmado el truco de agregación (cambiar Suma por Media en campos como
-   `edad` o `alerta`: sumados directamente no significan nada — sumar
-   edades de pacientes distintos, por ejemplo). Quedan por montar, del todo
-   o en parte, los 6 grupos de gráficos que están
-   detallados en el README (`El dashboard: Looker Studio`). El usuario
-   quiere explorar por su cuenta qué más se le puede sacar a Looker antes de
-   seguir; no asumir que están todos hechos sin preguntar.
+### Las cinco fases del plan original están hechas
 
-El repositorio de datos está **limpio de casos de prueba**: los tres que
-había (`2026-002`, `2026-003`, `2026-004`, ninguno con contenido real) se
-borraron a mano contra la API. Sigue recuperables en el historial de git si
-hiciera falta.
+1. **Preparación de material** (catálogo, cajas, montaje, resumen) — la base
+   de la herramienta desde el principio.
+2. **Catálogo ampliado y coste** — de 132 a ~260 ítems de material, 35
+   etiquetas con `precio`/`fungible`, apartado de coste en el resumen.
+3. **Perfiles de usuario, escenarios como tipo de cirugía, y montajes**
+   — el cambio de modelo más grande: un "escenario" pasó de ser el montaje a
+   ser el tipo de cirugía, y los montajes salieron a `montajes/<uid>.json`
+   con autoría. La interfaz se reordenó en seis ventanas: Escenario →
+   Montajes personales → Técnicas → Catálogo → Cajas → Resumen.
+4. **Corregir el montaje de un caso ya guardado** — el caso archiva ahora el
+   montaje en crudo (no solo la instantánea legible), así que se puede volver
+   a abrir y editar sin perder lo que ya tenía.
+5. **Ventana Docente** — miotomas (ejercicio, cita fuentes reales) y cama de
+   quirófano (colocación de cajas según la posición del paciente). Sin
+   relación con la preparación de material; no se sincroniza.
 
-Dos ampliaciones sobre la especificación original de la Fase 2.0, pedidas
-por el usuario después de tenerla en uso:
+El **Google Sheet vía Apps Script está confirmado en producción** (Fase
+paralela a las de arriba): instalado por el usuario en un Sheet real, con
+`crearDisparadorDiario()` activo. **Looker Studio sigue a medias, en pausa
+por decisión del usuario** — las tres fuentes de datos están conectadas y
+detectando bien los campos, quedan por montar los 6 grupos de gráficos del
+README; no asumir que están hechos sin preguntar.
 
-- **`nombre_caso`** — campo de texto libre y opcional en el cierre rápido,
-  para renombrar un caso a mano sin tocar el `ID_Caso` (que sigue siendo el
-  correlativo automático, no editable). Ver `## Casos` más abajo.
-- **Borrar caso** — botón en la ficha, con cola de borrado remoto igual que
-  la de subida (`casosBorrados`). Ver `## Casos` más abajo. Al implementarlo
-  se descubrió y arregló un hueco real en `bajarCasos()`: no detectaba
-  cuando un caso había dejado de existir en GitHub, así que uno borrado por
-  fuera de la app se quedaba fantasma en el navegador. Ya corregido.
+### Retoques posteriores a las cinco fases (21-08-2026)
 
-Retoques de interfaz pedidos tras usar la herramienta de verdad en varias
-cirugías (confirmados por el usuario, "todo funciona"):
+Todo esto se hizo *después* de dar las cinco fases por terminadas, pedido
+por el usuario tras usar la herramienta de verdad:
 
-- El **conmutador** ya no tiene el desplegable C1/C2/C3/C4/Cz-1/Cz+6: es un
-  chip fijo, sin `opciones` ni `item.conmutador` en el dato. Tampoco se
-  puede ya **cambiar el tipo físico por colocación** desde la caja —eso
-  liberó el sitio que el desplegable del conmutador invadía en la columna
-  Catodal de TES MEP—; `etiquetaColocada()` sigue leyendo overrides ya
-  guardados en escenarios de antes de este cambio, solo se quitó la forma
-  de crear uno nuevo.
-- `colocar()` deselecciona el ítem solo tras colocarlo (antes se quedaba
-  listo para repetir, pensado para pares, pero molestaba para todo lo
-  demás) y, en móvil, vuelve a desplegar el catálogo solo para el
-  siguiente ítem.
-- Las tarjetas de Técnicas y Resumen son `<details>` plegables. El resumen
-  va el último, debajo de las cajas —antes iba en medio—. Se fuerza abierto
-  al imprimir, por si se hubiera quedado plegado.
+- **Renombrada a "MIO-Check"** — título, cabecera (con logo propio en
+  `img/`), README, Apps Script. Las URLs del repositorio y de GitHub Pages
+  **no se tocaron a propósito** — renombrarlas rompería accesos directos ya
+  guardados; sigue pendiente si el usuario lo quiere en algún momento.
+- **Modo quirófano, retirado entero** — no solo el botón: la pausa de
+  subida automática durante la cirugía, el reordenado por CSS `order`, todo.
+  "Otros" volvió a ser un botón simple de Docente al quedarse con una sola
+  opción.
+- **Ficha del caso, reorganizada a fondo**: Estado ahora es el primer campo
+  (antes de Fecha); "Ampliar" dejó de ser un `<details>` plegado —el usuario
+  lo rellena siempre—; dentro de eso, solo el grupo Material se pliega
+  aparte (puede ser una lista larga); Diagnóstico y Tipo de anestesia pasaron
+  de texto libre a listas cerradas; Intervención pasó de catálogo a texto
+  libre (se perdió la propagación automática del código de hospital, que
+  dependía de ese enlace); Opening/Closing baselines se fundieron en un solo
+  "Resumen de la monitorización"; Criterio de alarma se fundió dentro de
+  Tipo de alerta; "Resultado esperable" es campo nuevo; se quitó el aviso
+  de "caja completa".
+- **"Reflejo H" dividido en HR Poplíteo y HR Masetero** — no es la misma
+  técnica según el músculo de registro. Se desactivó el id viejo en vez de
+  borrarlo (regla de siempre: "desactivar no borra"), y además **se migraron
+  a mano los casos y montajes reales** que lo usaban en el repositorio de
+  datos, con criterio clínico dado por el usuario (todos los anteriores eran
+  Poplíteo, el de ese mismo día fue Masetero). Es el patrón a seguir la
+  próxima vez que una técnica o campo se divida o se funda estando ya en uso
+  real: el código cambia, y los datos reales existentes se migran con él, en
+  el mismo turno, no "algún día".
 
-Pendiente, sin urgencia: verificar en vivo con datos reales (no solo con el
-arnés de pruebas) que añadir/renombrar una técnica actualiza el Sheet solo, y
-que rellenar el `código` de una intervención se propaga a los casos previos.
+### Un gap real encontrado y documentado, sin arreglar todavía
+
+**"Exportar copia" / "Importar copia" ya no cubren los montajes ni los
+casos.** Desde que salieron a archivos sueltos (Fase 3 y antes), el volcado
+de `estadoActual()` dejó de incluirlos, pero el texto de la interfaz y el
+README seguían prometiendo "todo". El README ya está corregido para decir la
+verdad (solo catálogo propio, etiquetas y catálogos editables); el código no
+se ha tocado. Si se quiere que ese botón vuelva a ser una copia de seguridad
+completa, hay que decidir cómo empaquetar archivos de `montajes/` y `casos/`
+junto al resto — no es trivial porque son colecciones de tamaño variable, no
+un único objeto.
+
+### Detalles de implementación que conviene no perder
+
+- El **conmutador** es un chip fijo, sin desplegable de canal ni
+  `item.conmutador` en el dato. No se puede cambiar el tipo físico por
+  colocación desde la caja; `etiquetaColocada()` sigue leyendo overrides
+  guardados antes de ese cambio, pero nada vuelve a crear uno.
+- `colocar()` deselecciona el ítem tras colocarlo (antes se quedaba listo
+  para repetir) y, en móvil, vuelve a desplegar el catálogo por donde iba
+  para el siguiente ítem — `plegarCatalogo()` guarda y restaura el
+  `scrollTop`, porque el navegador lo fuerza a 0 al ocultar el contenido.
+- Las tarjetas plegables (`<details>`) se fuerzan abiertas antes de imprimir
+  y vuelven a como estaban después (`beforeprint`/`afterprint`), para que no
+  falte nada en el papel.
+
+Pendiente, sin urgencia: verificar en vivo con datos reales que
+añadir/renombrar una técnica actualiza el Sheet solo, y que rellenar el
+`código` de una intervención se propaga a los casos previos.
 
 ## Google Sheet (Apps Script)
 

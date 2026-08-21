@@ -1,12 +1,15 @@
 # MIO-Check
 
-Herramienta interna, sin backend ni build step, para montar el escenario de
-cada cirugía monitorizada y saber exactamente qué material hace falta.
+Herramienta interna, sin backend ni build step, para montar el material de
+cada cirugía monitorizada y saber exactamente qué hace falta.
 
-**Flujo de uso previsto:** el día antes de la cirugía abres la herramienta,
-eliges (o creas) el escenario del tipo de cirugía, ajustas las entradas de
-las cajas arrastrando material, y el **Resumen de material** te dice qué
-tienes que preparar y si te sobran o faltan entradas y cajas.
+**Flujo de uso previsto:** el día antes de la cirugía eliges el **escenario**
+(el tipo de cirugía: Tumor ST, ECC, ECL…), abres o creas un **montaje**
+—tuyo o de un compañero— para ese escenario, ajustas las entradas de las
+cajas arrastrando material, y el **Resumen** te dice qué tienes que preparar,
+qué cuesta y si te sobran o faltan entradas y cajas. La herramienta tiene
+además una ventana **Docente** (miotomas y colocación de cajas según la
+posición del paciente) sin relación con la preparación del material.
 
 ## Cómo abrir la herramienta
 
@@ -23,12 +26,20 @@ conexión a internet (no hace ninguna petición de red).
 
 - `index.html` — interfaz
 - `style.css` — estilos
-- `app.js` — lógica: catálogo, etiquetas, cajas, arrastrar y soltar, resumen
+- `app.js` — toda la lógica, en un único archivo
 - `data/surgeries.js` — los datos de fábrica: `cajas_material`, `etiquetas`,
   `catalogo_material`, `tecnicas`, `servicios`, `intervenciones`,
-  `perfiles_procedimiento` y `escenarios`. Casi todo esto ya se edita desde
-  la propia web; este archivo es lo que viene de serie
+  `perfiles_procedimiento`, `escenarios_tipo` (los tipos de cirugía),
+  `escenarios` (montajes de fábrica) y `miotomas` (para la ventana Docente).
+  Casi todo esto ya se edita desde la propia web; este archivo es lo que
+  viene de serie
 - `data/i18n-en.js` — la traducción al inglés de todo lo anterior
+- `img/` — el icono de la app (favicon, icono de "añadir a pantalla de
+  inicio", logo de la cabecera) y `manifest.json` para el acceso directo en
+  Android
+- `apps-script/Codigo.gs` — el script de Google Apps que reconstruye el
+  Google Sheet (ver más abajo); no se sirve por GitHub Pages, se pega a mano
+  en el editor de Apps Script
 
 ## Idioma
 
@@ -38,8 +49,8 @@ primera visita se propone el del sistema.
 
 Cambia toda la interfaz y también los datos: nombres y descripciones de las
 cajas, etiquetas, categorías del catálogo, notas de los ítems, técnicas,
-perfiles y los escenarios de fábrica. **Lo que escribes tú se queda como lo
-escribiste** —tus escenarios, tus etiquetas y tu material propio— porque no
+perfiles y los montajes de fábrica. **Lo que escribes tú se queda como lo
+escribiste** —tus montajes, tus etiquetas y tu material propio— porque no
 hay forma de traducirlo solo.
 
 El inglés vive en [`data/i18n-en.js`](data/i18n-en.js), separado de
@@ -48,24 +59,81 @@ hay texto, localizado por el `id` de cada cosa; lo que no esté traducido se
 queda en castellano. Para añadir otro idioma, ese mismo archivo explica los
 cuatro pasos.
 
-## Cómo funciona
+## Las seis ventanas, en el orden en que se trabaja
 
-### 1. Catálogo maestro
+Escenario → Montajes personales → Técnicas → Catálogo → Cajas → Resumen. Cada
+una se pliega sola (menos el catálogo, que en pantalla ancha es la columna
+lateral fija de siempre). El orden es el del flujo real: qué cirugía es, de
+qué montaje partes, qué técnicas vas a hacer, qué material hay, dónde va y
+qué sale de todo ello.
+
+### 1. Escenario
+
+Chips con el **tipo de cirugía**: Tumor ST, Tumor IT, Tumor Medular, Awake
+surgery, ECC, ECL, MAV, Escoliosis, y los que añadas. Es una lista corta y
+cerrada a propósito — no describe la intervención concreta (para eso está el
+catálogo de Intervenciones, con su código de hospital), solo agrupa los
+montajes. Pulsar un chip filtra la ventana de Montajes a los de ese tipo; el
+número junto al nombre es cuántos montajes tiene ya.
+
+### 2. Montajes personales
+
+Un escenario no *es* el montaje: **dentro** de él vive uno o varios
+montajes, cada uno con **qué material va en qué entrada de qué caja** y sus
+técnicas. Se crean, duplican, renombran, vacían y borran con los botones de
+esta ventana. Cada montaje muestra su **autor** de subtítulo: los tuyos
+llevan una marca lateral para reconocerlos de un vistazo entre los de un
+compañero.
+
+**Solo el autor puede renombrar, vaciar o borrar su montaje.** Cualquiera
+puede *duplicarlo* — es la forma de partir del molde de otro para hacerte el
+tuyo; la copia nace a tu nombre. Los montajes de fábrica no tienen autor, así
+que los puede tocar cualquiera. **Esto no es seguridad de verdad**: cambiar
+de perfil (ver abajo) salta el candado sin más, porque la herramienta no
+tiene backend que pueda impedirlo. Es solo para no pisarse el trabajo entre
+compañeros sin querer.
+
+A qué escenario pertenece un montaje se elige en el desplegable de esta
+misma ventana, aparte de los chips de arriba — para no cambiarlo sin querer
+al simplemente mirar los de otro tipo.
+
+**Perfil de usuario** (arriba a la izquierda, junto al logo): quién eres.
+Sirve para firmar tus montajes. Se crea la primera vez desde ese mismo
+desplegable, escribiendo tu nombre — no hay contraseña ni registro. El
+perfil elegido se recuerda en ese navegador y no viaja en la sincronización:
+es de tu dispositivo, no del equipo.
+
+### 3. Técnicas
+
+Lista las técnicas de monitorización y de mapeo. Se marcan pulsándolas y
+salen en el resumen. Son informativas: no calculan material por sí solas,
+pero dejan constancia de qué se va a hacer.
+
+El desplegable **Perfil** de esta tarjeta trae las combinaciones habituales
+por tipo de procedimiento (supratentorial, troncoencéfalo, médula espinal,
+columna, procesos vasculares, raíces y nervio periférico). Elegir uno
+**resalta** esas técnicas con un halo — no las marca ni las desmarca. Eres
+tú quien decide con el check cuáles se hicieron de verdad; el perfil es solo
+la sugerencia.
+
+### 4. Catálogo
 
 `catalogo_material` es la lista de **todo** el material que se puede colocar
 en una entrada: electrodos corticales, músculos, estimulaciones periféricas,
-GRID, tierras... Vive en un **panel lateral fijo** que no se mueve al hacer
-scroll, así que siempre lo tienes a mano aunque estés mirando la última caja.
-Está agrupado por categorías y tiene buscador; el botón ▾ lo pliega si
-necesitas más sitio.
+GRID, tierras... Agrupado en categorías plegables con buscador. En pantalla
+ancha es la **columna lateral fija** de siempre, así que siempre lo tienes a
+mano aunque estés mirando la última caja; en el móvil va en su sitio dentro
+del flujo de las seis ventanas.
 
 Hay dos formas de colocar material, y un mismo ítem se puede usar tantas
 veces como haga falta (el catálogo no se "gasta"):
 
-- **Pulsar y colocar** (recomendado, sin arrastrar): pulsa el ítem — se
-  queda resaltado y aparece una barra abajo — y luego pulsa la entrada donde
-  va. Sigue seleccionado, así que puedes colocarlo en varias entradas
-  seguidas. `Esc` o el botón *Cancelar* lo suelta.
+- **Pulsar y colocar** (recomendado, sin arrastrar): pulsa el ítem del
+  catálogo — se queda resaltado y aparece una barra abajo — y luego pulsa la
+  entrada donde va. Sigue seleccionado, así que puedes colocarlo en varias
+  entradas seguidas. `Esc` o el botón *Cancelar* lo suelta. También al
+  revés: pulsa una entrada vacía y elige el material desde ahí, con el mismo
+  catálogo filtrado a lo que ocupa entrada.
 - **Arrastrar y soltar**: arrastra el ítem hasta la entrada. Si te acercas
   al borde superior o inferior de la ventana, la página hace scroll sola.
 
@@ -76,16 +144,19 @@ para activarlos (☑) y aparecen en el resumen; pulsas otra vez para
 quitarlos. En el JSON se marcan con `"sin_entrada": true`, en el ítem o en
 la categoría entera.
 
-### 2. Etiquetas (tipos físicos)
+#### Etiquetas (tipos físicos)
 
 Una **etiqueta** es de qué está hecho el ítem: aguja trenzada, sacacorchos,
-pegatina, hook wire… Hace dos cosas a la vez:
+pegatina, hook wire… Hace tres cosas a la vez:
 
 - **Es lo que se cuenta** en «Material a preparar». Dos ítems con la misma
   etiqueta se suman juntos.
 - **Es lo que se ve**: cada etiqueta tiene forma de borde (sólido, punteado,
   discontinuo, doble, grueso), color de borde y tinte de fondo, así que
   reconoces el tipo de material de un vistazo sin leer el nombre.
+- **Es de donde sale el coste**: `precio` por unidad y si es `fungible` (se
+  gasta) o no (se prepara, no se gasta, no cuenta en el coste). Ver *Coste
+  del material* más abajo.
 
 El botón **Etiquetas** de la cabecera del catálogo abre el gestor: crear
 nuevas, editar cualquiera —también las de fábrica— y borrarlas. Cada etiqueta
@@ -104,82 +175,66 @@ dejando el resto heredado de la etiqueta. Así, con pegatinas de estímulo
 puedes tener `L.Mediano` con borde rojo y `R.Mediano` con borde negro,
 aunque las dos cuenten como «Pegatinas (par)».
 
-### 3. Cajas físicas
+### 5. Cajas
 
 `cajas_material` describe las cajas reales del INOMED. Cada caja se dibuja
 con sus entradas y conectores. Para quitar material de una entrada: pulsa la
-✕ del chip o arrástralo de vuelta al panel del catálogo. Para moverlo:
-arrástralo a otra entrada, aunque sea de otra caja.
+✕ del chip, arrástralo de vuelta al panel del catálogo, o pulsa la entrada
+y elige "Dejar la entrada vacía". Para moverlo: arrástralo a otra entrada,
+aunque sea de otra caja.
 
-### 4. Técnicas y perfiles
-
-La tarjeta **Técnicas** lista las técnicas de monitorización y de mapeo.
-Se marcan pulsándolas y salen en el resumen. Son informativas: no calculan
-material por sí solas, pero dejan constancia de qué se va a hacer. Pulsando
-el título se pliega, para dejar más sitio a las cajas.
-
-El desplegable **Aplicar perfil** trae las combinaciones habituales por tipo
-de procedimiento (supratentorial, troncoencéfalo, médula espinal, columna,
-procesos vasculares, raíces y nervio periférico). Al elegir uno se marcan
-sus técnicas de golpe — **el material colocado no se toca** — y su nota
-aclaratoria aparece en los avisos del resumen.
-
-Ambas listas se editan desde la interfaz, en el botón **Catálogos** (ver
-abajo). También se pueden dejar de fábrica en `data/surgeries.js`.
-
-## Catálogos: técnicas, servicios, intervenciones y perfiles
-
-El botón **Catálogos** de la barra de herramientas abre una ventana con cuatro
-pestañas. En todas funciona igual: **▲▼** para reordenar, el nombre para
-editarlo, y **☑** para activar o desactivar.
-
-- **Técnicas** — las 22 de partida (14 de monitorización + 8 de mapeo) y las
-  que añadas. Lo que ves y cambias es la *etiqueta*; por dentro cada técnica
-  tiene un identificador fijo que no cambia nunca. Por eso **renombrar una
-  técnica actualiza también los casos que ya la usaban**, en vez de dejarlos
-  colgando.
-- **Servicios** — Neurocirugía, COT, ORL, Vascular, Endocrino, Maxilofacial y
-  Urología, más los que quieras.
-- **Intervenciones** — el tipo de cirugía, con su **código del hospital**.
-  El código puede quedarse vacío: cuando lo rellenes se aplicará solo a todos
-  los casos anteriores de ese tipo, sin tocarlos uno a uno.
-- **Perfiles** — las combinaciones de técnicas del desplegable *Aplicar
-  perfil*. Se pueden crear, editar y borrar.
-
-**Desactivar no borra.** Una técnica desactivada deja de ofrecerse para casos
-nuevos, pero sigue existiendo: los casos y escenarios que ya la tenían la
-conservan, y se sigue viendo (tachada) para poder quitarla si hace falta. Por
-eso técnicas, servicios e intervenciones no tienen botón de borrar: borrarlos
-dejaría casos antiguos apuntando a algo inexistente.
-
-Los escenarios se siguen editando desde la propia barra de herramientas
-(*Nuevo*, *Duplicar*, *Renombrar*, *Vaciar*, *Borrar*).
-
-Todo esto se guarda y se sincroniza igual que tus escenarios y tu material.
-
-### 5. Escenarios (presets)
-
-Cada escenario guarda **qué material va en qué entrada de qué caja**. La
-barra de herramientas permite crear, duplicar, renombrar, vaciar y borrar
-escenarios.
-
-### 6. Resumen de material
+### 6. Resumen de técnicas y material
 
 Se recalcula solo con cada cambio y es el objetivo de la herramienta:
 
 - **Material a preparar** — recuento por tipo (agujas subdérmicas, agujas
   trenzadas, pegatinas, sacacorchos...)
+- **Coste del material** — unitario × cantidad por tipo y total de la
+  intervención, solo del material fungible (lo reutilizable —sondas, gafas,
+  auriculares— se prepara pero no se gasta, y no cuenta). Los precios se
+  ponen uno por uno en el botón **Etiquetas**; un tipo sin precio se lista
+  aparte en vez de contar como cero, para que el total no parezca completo
+  sin serlo.
 - **Cajas necesarias** — cuáles, con entradas usadas / totales y el detalle
   de qué va en cada entrada
-- **Avisos** — cajas completas sin entradas libres, notas del escenario y
-  cosas pendientes de confirmar
+- **Avisos** — notas del montaje y cosas pendientes de confirmar
 
 El botón **Imprimir resumen** saca solo esta sección en papel — sale entera
 aunque la tengas plegada en pantalla en ese momento.
 
-Va **el último**, debajo de las cajas: es el resumen de lo que se ha ido
-colocando arriba. Igual que la tarjeta de Técnicas, se pliega pulsando el
-título.
+## Catálogos: técnicas, servicios, intervenciones, perfiles, escenarios y usuarios
+
+El botón **Catálogos** de la barra de herramientas abre una ventana con seis
+pestañas. En todas funciona igual: **▲▼** para reordenar, el nombre para
+editarlo, y **☑** para activar o desactivar.
+
+- **Técnicas** — las de partida (monitorización y mapeo) y las que añadas.
+  Lo que ves y cambias es la *etiqueta*; por dentro cada técnica tiene un
+  identificador fijo que no cambia nunca. Por eso **renombrar una técnica
+  actualiza también los casos que ya la usaban**, en vez de dejarlos
+  colgando.
+- **Servicios** — Neurocirugía, COT, ORL, Vascular, Endocrino, Maxilofacial y
+  Urología, más los que quieras.
+- **Intervenciones** — la descripción de la cirugía concreta, con su
+  **código del hospital**. El código puede quedarse vacío: cuando lo
+  rellenes se aplicará solo a todos los casos anteriores de ese tipo, sin
+  tocarlos uno a uno. Es independiente del campo *Intervención* del caso
+  (texto libre, ver más abajo) y del *Escenario* (el tipo de cirugía).
+- **Perfiles** — las combinaciones de técnicas del desplegable *Perfil* de
+  la tarjeta Técnicas. Se pueden crear, editar y borrar.
+- **Escenarios** — los tipos de cirugía de la primera ventana.
+- **Usuarios** — quién puede firmar montajes (ver *Montajes personales*
+  arriba). Vacío de fábrica a propósito: los nombres de personas reales no
+  se escriben en el repositorio público del código, se crean desde la app y
+  viven en el repositorio privado de datos.
+
+**Desactivar no borra.** Un elemento desactivado deja de ofrecerse para
+casos nuevos, pero sigue existiendo: lo que ya lo tenía lo conserva, y se
+sigue viendo (tachado) para poder quitarlo si hace falta. Por eso técnicas,
+servicios e intervenciones no tienen botón de borrar: borrarlos dejaría
+casos antiguos apuntando a algo inexistente. Perfiles sí se puede borrar.
+
+Todo esto se guarda y se sincroniza igual que tus montajes y tu material.
 
 ## Añadir material propio desde la interfaz
 
@@ -209,16 +264,31 @@ el montaje entero y los avisos: **nada de eso se teclea**, la herramienta ya lo
 había calculado. Queda en estado *Preparado*.
 
 **Al cerrar**, abre el caso desde la lista. Arriba está el **cierre rápido**:
-fecha, **nombre del caso** (opcional, para reconocerlo tú de un vistazo —
-nunca el nombre del paciente), edad, sexo, servicio, intervención, técnicas
-realizadas (ya vienen marcadas las que planificaste, solo ajustas), si hubo
-alerta, tu papel y notas. Con eso basta, y es cuestión de un par de minutos
-desde el móvil. Debajo,
-plegado, está **Ampliar** con lo demás: anestesia, material realmente usado
-(precargado con el previsto), desarrollo, incidencias y formación. Se rellena
-solo si quieres.
+estado, fecha, **nombre del caso** (opcional, para reconocerlo tú de un
+vistazo — nunca el nombre del paciente), edad, sexo, servicio,
+**intervención** (texto libre — no un catálogo cerrado; escríbela tal cual),
+técnicas realizadas (ya vienen marcadas las que planificaste, solo ajustas),
+si hubo alerta, tu papel y notas. Con eso basta, y es cuestión de un par de
+minutos desde el móvil.
+
+Debajo va el resto —ya no plegado, forma parte continua de la ficha—:
+anatomía patológica (el resultado real, o el nivel si es columna),
+técnicas (pares craneales, cambios respecto al plan, umbral EMG de
+tornillos pediculares), **Material** (éste sí se puede plegar aparte, la
+lista puede ser larga), anestesia (tipo de anestesia — TIVA, R-TIVA, DXM,
+ALO, Gas — y detalle), desarrollo (**Resumen de la monitorización**: de
+corrido qué salió al empezar, qué pasó por el medio y qué salió al cerrar;
+tipo de alerta; medida correctora; recuperación de la señal; resultado
+esperable), evolución postquirúrgica (déficit postoperatorio, concordancia),
+incidencias técnicas y formación. Se rellena lo que haga falta.
 
 Pulsa *Cerrar caso* y pasa a *Cerrado*.
+
+**Corregir el montaje de un caso ya guardado**: el botón bajo la ficha abre
+las cajas de ese caso concreto para cambiar dónde va cada cosa —un cambio de
+última hora, un error al preparar—. Se guarda en el caso, no toca el montaje
+del que salió. Mientras tanto una barra fija arriba recuerda en qué caso
+estás.
 
 **Un caso preparado en el ordenador se cierra en el móvil**, o al revés: los
 casos viajan por la misma sincronización que el resto, cada uno en su propio
@@ -249,6 +319,27 @@ Ningún dato que identifique al paciente. Ni nombre, ni apellidos, ni NHC, ni
 fecha de nacimiento. Solo el identificador del caso, edad, sexo y antecedentes
 relevantes.
 
+## Ventana Docente
+
+Botón **Docente** de la barra superior. Dos pestañas, sin relación con la
+preparación de material — no tocan ningún montaje ni caso, y el ejercicio se
+guarda solo en ese navegador, no se sincroniza:
+
+- **Miotomas** — la columna vertebral entera (C1 a S5) en el centro, los
+  músculos posibles a la izquierda y los monitorizados a la derecha. Marcas
+  los niveles que abarca la cirugía y aparecen los músculos que dependen de
+  esas raíces; los llevas de un lado a otro pulsándolos. Es un ejercicio, no
+  una calculadora: la herramienta no elige por ti, solo avisa de qué niveles
+  se quedan sin ningún músculo que los cubra. Los rangos de `data/surgeries.js`
+  vienen en parte citados (Toleikis/Deletis, Leppänen, Schirmer, London — se
+  marcan con `[TD/L]`, `[Sch]`, `[Lon]` en el propio tooltip) y en parte son
+  cobertura de enseñanza habitual sin cita concreta detrás; la ventana explica
+  cuál es cuál.
+- **Cama de quirófano** — eliges la posición del paciente (supino, supino con
+  brazos extendidos, prono, sentado) y repartes las cajas por cabecera,
+  laterales y pies con el mismo gesto de pulsar y colocar del resto de la
+  herramienta. Lo que se practica es que el cable llegue.
+
 ## Uso desde el móvil
 
 La interfaz es táctil. Lo cómodo en el móvil es **pulsar y colocar**:
@@ -268,9 +359,10 @@ de inicio*): se abre como una app, a pantalla completa y sin barra del
 navegador.
 
 > La web y el repositorio del código son **públicos**. No contienen ningún dato
-> de paciente, ningún token ni ninguna referencia al centro. Tus escenarios,
-> etiquetas y material propio **no viajan ahí**: viven en tu navegador y se
-> sincronizan con un repositorio de datos **privado** aparte (ver abajo).
+> de paciente, ningún token, ningún nombre de usuario ni ninguna referencia al
+> centro. Tus montajes, etiquetas y material propio **no viajan ahí**: viven
+> en tu navegador y se sincronizan con un repositorio de datos **privado**
+> aparte (ver abajo).
 
 ## Dónde se guarda todo, y cómo pasarlo de un dispositivo a otro
 
@@ -281,14 +373,20 @@ si no, el navegador del móvil y el del ordenador son almacenes distintos.
 
 Para pasar tu trabajo de uno a otro a mano:
 
-1. **Exportar copia** descarga un `.json` con **todo**: escenarios, etiquetas,
-   material propio y qué va en cada entrada.
+1. **Exportar copia** descarga un `.json` con tu material propio, tus
+   etiquetas y los catálogos editables (técnicas, servicios, intervenciones,
+   perfiles, escenarios, usuarios). **No incluye tus montajes ni tus
+   casos** — desde que pasaron a un archivo por montaje/caso, este volcado
+   dejó de cubrirlos; para esos dos, la sincronización con GitHub es la
+   única copia de verdad. Pendiente de decidir si merece la pena ampliarlo.
 2. Pasa ese archivo al otro dispositivo (correo, nube, cable…).
-3. **Importar copia** allí. Avisa de cuántos escenarios y materiales trae, y
-   sustituye lo que hubiera en ese navegador.
+3. **Importar copia** allí. Avisa de cuántos elementos trae, y sustituye lo
+   que hubiera en ese navegador.
 
-Ese mismo archivo sirve de copia de seguridad: si el navegador borra los
-datos del sitio, se recupera importándolo.
+Ese mismo archivo sirve de copia de seguridad de lo que cubre: si el
+navegador borra los datos del sitio, ese material y esas etiquetas se
+recuperan importándolo — los montajes y los casos, solo si estaban
+sincronizados con GitHub.
 
 ### Sincronización automática con GitHub
 
@@ -300,7 +398,7 @@ Preparación, una sola vez y en un solo dispositivo:
 
 1. Crea un repositorio **privado y vacío** solo para los datos, por ejemplo
    `checklist-mio-datos`. **No uses el del código**: es público, dejaría los
-   escenarios a la vista, y así el token tampoco puede tocar el código.
+   montajes a la vista, y así el token tampoco puede tocar el código.
 2. En GitHub: *Settings → Developer settings → Personal access tokens →
    Fine-grained tokens → Generate new token*.
 3. En *Repository access*, **Only select repositories** → solo el de datos.
@@ -321,18 +419,19 @@ Repite el paso 5 con el mismo token en el móvil, y los dos quedan conectados.
   decides tú con **Subir** o **Bajar** desde el diálogo. Nunca sobrescribe sin
   preguntar.
 
-El estado se ve en el propio botón: *Sin conectar*, *Guardando…*, *En pausa*,
+El estado se ve en el propio botón: *Sin conectar*, *Guardando…*,
 *Sinc. 12/08 19:30*, *Sin subir* o *Conflicto*.
 
 El token se guarda solo en ese navegador. **Desconectar** lo borra del
-dispositivo (no toca ni tus escenarios ni lo guardado en GitHub), y siempre
+dispositivo (no toca ni tus montajes ni lo guardado en GitHub), y siempre
 puedes revocarlo desde GitHub.
 
-Si además quieres que un preset venga de fábrica en el repositorio, pega su
-bloque en `data/surgeries.js` dentro de `"escenarios"` y haz `git commit` +
+Si además quieres que un montaje venga de fábrica en el repositorio, pega su
+bloque en `data/surgeries.js` dentro de `"escenarios"` (ver *Añadir un
+montaje de fábrica a mano en el JSON* más abajo) y haz `git commit` +
 `git push`.
 
-**Restablecer** borra lo guardado en el navegador y vuelve a los escenarios
+**Restablecer** borra lo guardado en el navegador y vuelve a los montajes
 y al catálogo del archivo.
 
 ## Añadir material al catálogo editando el archivo
@@ -403,11 +502,17 @@ PEATC, DNS...), con `clave`, `nombre`, `conector` y opcionalmente `color` y
 Los valores de `canales`/`conector` son aproximados a partir de fotos del
 equipo — ajústalos si no cuadran.
 
-## Añadir un escenario a mano en el JSON
+## Añadir un montaje de fábrica a mano en el JSON
+
+Esto es el bloque `"escenarios"` de `data/surgeries.js` — un nombre heredado
+de antes de que "escenario" pasara a significar el tipo de cirugía. Cada
+clave de ahí es un **montaje** de fábrica: al arrancar la app lo convierte
+en un montaje normal con el id `fab_<clave>`, sin autor, editable por
+cualquiera.
 
 ```json
-"clave_escenario": {
-  "nombre": "Nombre visible de la cirugía",
+"clave_montaje": {
+  "nombre": "Nombre visible del montaje",
   "modalidades": ["PESS", "PEM"],
   "asignaciones": {
     "registro_muscular_mmii": { "9": "l_ta", "10": "l_ah", "gnd": "tierra" },
