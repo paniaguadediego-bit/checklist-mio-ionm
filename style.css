@@ -94,18 +94,6 @@ body {
 }
 .btn-modo:hover { background: #2f434f; }
 
-/* Otros: mismo aspecto que los botones de la barra, pero es un <select> */
-.barra-sup #menu-otros {
-  font: inherit;
-  font-size: 0.78rem;
-  padding: 0.25rem 0.7rem;
-  border: 1px solid var(--panel-borde);
-  background: #24343e;
-  color: var(--panel-texto);
-  border-radius: var(--r);
-  cursor: pointer;
-}
-
 /* -------------------------------- Main --------------------------------- */
 main {
   max-width: 1500px;
@@ -1006,23 +994,6 @@ body.editando-caso #montajes { display: none !important; }
 }
 .caso-montaje-fila small { color: var(--text-muted); font-size: 0.7rem; flex: 1; min-width: 12rem; }
 
-/* --------------------------- Modo quirófano ---------------------------- */
-body.modo-quirofano .no-print { display: none !important; }
-/* Escenario, técnicas y catálogo llevan .no-print y desaparecen solos. La
-   ventana de Montajes se queda: el README promete que durante la cirugía se
-   puede seguir cambiando de montaje. Lo que sí se va son sus botones de
-   edición, que llevan .no-print por dentro. */
-body.modo-quirofano #montajes { order: 1; }
-body.modo-quirofano .cajas-grid {
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-}
-body.modo-quirofano .resumen-card { position: sticky; top: calc(var(--header-h) + 0.4rem); z-index: 10; }
-/* Fuera de quirófano el resumen va el último (orden natural del HTML). En
-   quirófano, con las técnicas ocultas, se pone primero -sticky arriba- para
-   verlo de un vistazo mientras se consultan las cajas debajo, como siempre
-   ha sido en este modo. */
-body.modo-quirofano #resumen { order: -1; }
-
 /* ------------------------ Material propio y diálogo -------------------- */
 .chip-propio { border-style: solid; border-color: var(--accent); }
 
@@ -1529,13 +1500,12 @@ dialog h3 {
 @media (max-width: 620px) {
   main { padding: 0.5rem 0.45rem 3rem; }
   .cajas-grid { grid-template-columns: 1fr; }
-  body.modo-quirofano .cajas-grid { grid-template-columns: 1fr; }
   .toolbar { gap: 0.25rem; }
   /* El hueco flexible robaba ancho al selector: en móvil se anula */
   .barra-sup .barra-flex { display: none; }
   .barra-sup #perfil-usuario { min-width: 0; flex: 1; max-width: none; }
   .barra-sup img.marca { height: 26px; width: 26px; }
-  .btn-modo, .barra-sup #menu-otros { font-size: 0.7rem; padding: 0.3rem 0.45rem; }
+  .btn-modo { font-size: 0.7rem; padding: 0.3rem 0.45rem; }
 }
 
 /* ------------------------------ Impresión ------------------------------ */
@@ -1579,10 +1549,6 @@ dialog h3 {
     top: calc(var(--header-h) + 0.5rem);
     max-height: calc(100vh - var(--header-h) - 1rem);
   }
-  /* En quirófano el catálogo está oculto y el resumen se coloca por "order",
-     que necesita el flex de siempre: sin esto la rejilla lo dejaría clavado
-     en su fila y el resumen no subiría arriba del todo. */
-  body.modo-quirofano .columna-principal { display: flex; }
 }
 
 /* -------------------------------- Oscuro ------------------------------- */
@@ -1608,6 +1574,6 @@ dialog h3 {
        falta repetir selectores por tipo: todos leen la misma variable. */
     --campo-bg: #131a1d;
   }
-  #perfil-usuario, #menu-otros, #catalogo-buscar, #perfil-select { background: #1b2226; color: var(--text); }
+  #perfil-usuario, #catalogo-buscar, #perfil-select { background: #1b2226; color: var(--text); }
   .caja-plate { background: #c8d2d8; }
 }

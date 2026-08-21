@@ -216,9 +216,6 @@ Al cambiar un texto que venía de fábrica, `fijarTexto()` borra sus traduccione
 
 - Cada `guardarEstado()` marca `pendiente` y arranca una cuenta atrás de 4 s
   (`programarSubida()`).
-- **Modo quirófano pausa la subida**: marca pendiente pero no arranca el
-  temporizador. Al salir del modo se manda lo acumulado. Durante la cirugía no
-  se toca la red.
 - Al abrir, `bajarAuto()` se trae lo último **salvo que haya cambios locales sin
   subir**, en cuyo caso sube en vez de bajar. Así el trabajo del móvil no se
   pisa.
@@ -324,11 +321,8 @@ cirugías (confirmados por el usuario, "todo funciona"):
   demás) y, en móvil, vuelve a desplegar el catálogo solo para el
   siguiente ítem.
 - Las tarjetas de Técnicas y Resumen son `<details>` plegables. El resumen
-  pasa a ir el último, debajo de las cajas —antes iba en medio—. En Modo
-  quirófano se mantiene primero y `sticky` vía CSS `order` (`.columna-principal`
-  es flex column, no grid), sin depender del orden del HTML; forzado
-  abierto tanto al entrar en quirófano como al imprimir, por si se hubiera
-  quedado plegado.
+  va el último, debajo de las cajas —antes iba en medio—. Se fuerza abierto
+  al imprimir, por si se hubiera quedado plegado.
 
 Pendiente, sin urgencia: verificar en vivo con datos reales (no solo con el
 arnés de pruebas) que añadir/renombrar una técnica actualiza el Sheet solo, y
@@ -477,7 +471,7 @@ material cambie después.
 
 Almacenamiento local: `mio_ionm_casos_v1` con `{ casos, sha, sin_subir }`.
 `sin_subir` sobrevive al cierre del navegador, así que un caso guardado sin
-conexión sube en cuanto vuelve la red o al salir del Modo quirófano.
+conexión sube en cuanto vuelve la red.
 
 Sincronización: `subirCaso()` sube uno con su `sha`; si el archivo cambió desde
 otro dispositivo relee el `sha` y reintenta una vez (gana lo que acabas de

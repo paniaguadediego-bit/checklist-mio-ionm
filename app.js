@@ -39,8 +39,6 @@
     escenario_aria:      { es: "Escenario de cirugía", en: "Surgery scenario" },
     idioma_titulo:       { es: "Switch to English", en: "Cambiar a español" },
     sync_titulo:         { es: "Sincronizar con GitHub", en: "Sync with GitHub" },
-    quirofano_entrar:    { es: "Modo quirófano", en: "Theatre mode" },
-    quirofano_salir:     { es: "Salir del modo quirófano", en: "Exit theatre mode" },
     btn_nuevo:           { es: "Nuevo", en: "New" },
     btn_duplicar:        { es: "Duplicar", en: "Duplicate" },
     btn_renombrar:       { es: "Renombrar", en: "Rename" },
@@ -63,7 +61,6 @@
     sync_conflicto:      { es: "Conflicto", en: "Conflict" },
     sync_sincronizando:  { es: "Sincronizando…", en: "Syncing…" },
     sync_sin_subir:      { es: "Sin subir", en: "Not uploaded" },
-    sync_en_pausa:       { es: "En pausa", en: "Paused" },
     sync_guardando:      { es: "Guardando…", en: "Saving…" },
     sync_conectado:      { es: "Conectado", en: "Connected" },
     sync_fecha:          { es: "Sinc. {fecha}", en: "Synced {fecha}" },
@@ -489,8 +486,6 @@
     docente_cobertura_falta: { es: "Sin cubrir: {niveles}", en: "Not covered: {niveles}" },
     docente_reiniciar_conf: { es: "¿Empezar el ejercicio de cero?", en: "Start the exercise over?" },
     docente_titulo_gen:  { es: "Docente", en: "Teaching" },
-    menu_otros_aria:     { es: "Otros", en: "Other" },
-    menu_otros_placeholder: { es: "Otros", en: "Other" },
     docente_tab_miotomas: { es: "Miotomas", en: "Myotomes" },
     docente_tab_cama:    { es: "Cama de quirófano", en: "Operating table" },
     cama_intro:          { es: "Elige la <b>posición del paciente</b> y reparte las cajas alrededor de la mesa. Pulsa una caja de abajo y luego la zona donde la pondrías; pulsa una ya colocada para retirarla. Lo que se practica es que el cable llegue: una caja en los pies no sirve para los electrodos de la cabeza.",
@@ -726,8 +721,6 @@
     if (repintar) {
       renderPerfilSelect();
       renderTodo();
-      // El desplegable "Otros" tiene textos según el idioma y el estado
-      renderMenuOtros();
       pintarEstadoSync();
       avisoGuardado(T(syncActivo() ? "guardado_nube" : "guardado_local"));
     }
@@ -1978,10 +1971,6 @@
     return !!(sync.repo && sync.token);
   }
 
-  function enQuirofano() {
-    return document.body.classList.contains("modo-quirofano");
-  }
-
   function cargarSync() {
     try {
       var g = JSON.parse(localStorage.getItem(SYNC_KEY) || "null");
@@ -2009,7 +1998,7 @@
       el.textContent = T("sync_sin_subir");
       estado = "error";
     } else if (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length) {
-      el.textContent = T(enQuirofano() ? "sync_en_pausa" : "sync_guardando");
+      el.textContent = T("sync_guardando");
       estado = "aviso";
     } else if (sync.fecha) {
       el.textContent = T("sync_fecha", { fecha: new Date(sync.fecha).toLocaleString(localeActual(), {
@@ -2194,8 +2183,6 @@
     if (!syncActivo()) return;
     pintarEstadoSync();
     if (temporizador) clearTimeout(temporizador);
-    // En quirófano no se toca la red: se sube al salir del modo
-    if (enQuirofano()) return;
     temporizador = setTimeout(function () {
       temporizador = null;
       subirAuto();
@@ -2286,16 +2273,16 @@
   // suspende o descarta la pestaña en cuanto cambias de app o bloqueas la
   // pantalla, así que la cuenta atrás de 4 s de programarEnvio() muchas veces
   // no llega a dispararse: lo guardado justo antes de guardar el teléfono en
-  // el bolsillo se quedaba sin subir. En quirófano se respeta la pausa.
+  // el bolsillo se quedaba sin subir.
   document.addEventListener("visibilitychange", function () {
     if (document.visibilityState !== "visible") return;
-    if (!syncActivo() || enQuirofano()) return;
+    if (!syncActivo()) return;
     if (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length) subirAuto();
   });
 
   // Cerrar la pestaña con algo sin subir: avisa antes de perderlo de vista
   window.addEventListener("beforeunload", function (e) {
-    if (syncActivo() && (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length) && !enQuirofano()) {
+    if (syncActivo() && (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length)) {
       e.preventDefault();
       e.returnValue = "";
     }
@@ -5366,72 +5353,13 @@
     if (e.key === "Escape") seleccionar(null);
   });
 
-  // Modo quirófano: deja solo el montaje y el resumen, sin herramientas de edición
-  var MODO_KEY = "mio_ionm_modo_quirofano";
-
-  function aplicarModoQuirofano(activo) {
-    document.body.classList.toggle("modo-quirofano", activo);
-    // El estado ya no lo dice un botón fijo, sino la etiqueta de la opción
-    // dentro de "Otros": renderMenuOtros() la recalcula cada vez.
-    renderMenuOtros();
-    try { localStorage.setItem(MODO_KEY, activo ? "1" : "0"); } catch (e) { /* sin persistencia */ }
-    if (activo) {
-      seleccionar(null);
-      // El resumen es lo que se consulta durante la cirugía: si se hubiera
-      // quedado plegado de antes, entrar en quirófano no puede dejarlo
-      // escondido.
-      document.getElementById("resumen").open = true;
-    }
-    // La subida automática se pausa en quirófano para no depender de la red
-    // durante la cirugía; al salir se manda lo que se haya acumulado, tanto
-    // el estado como los casos guardados o borrados mientras tanto.
-    if (!activo && (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length)) programarEnvio();
-    pintarEstadoSync();
-  }
-
-  /* ---- Desplegable "Otros": modo quirófano y docente -------------- *
-   * Los dos se usan poco -uno durante la cirugía, el otro para practicar
-   * fuera de ella- y no merecían un botón fijo cada uno ocupando sitio en la
-   * barra de arriba. Es un <select> y no un menú porque no hay ningún
-   * componente de menú en el resto de la herramienta y un <select> nativo
-   * funciona igual de bien con guantes o con el móvil. Elegir una opción
-   * dispara la acción y el desplegable vuelve solo a "Otros". */
-  function renderMenuOtros() {
-    var sel = document.getElementById("menu-otros");
-    var valorPrevio = sel.value;
-    sel.innerHTML = "";
-    var vacio = document.createElement("option");
-    vacio.value = "";
-    vacio.textContent = T("menu_otros_placeholder");
-    sel.appendChild(vacio);
-
-    var qOpt = document.createElement("option");
-    qOpt.value = "quirofano";
-    qOpt.textContent = T(enQuirofano() ? "quirofano_salir" : "quirofano_entrar");
-    sel.appendChild(qOpt);
-
-    var dOpt = document.createElement("option");
-    dOpt.value = "docente";
-    dOpt.textContent = T("btn_docente");
-    sel.appendChild(dOpt);
-
-    // Solo se queda en una opción distinta de "Otros" mientras el diálogo
-    // docente está abierto: así se ve de un vistazo que sigue abierto.
-    sel.value = (valorPrevio === "docente" && dlgDocente.open) ? "docente" : "";
-  }
-
   function abrirDocente() {
     renderDocente();
     renderCama();
     dlgDocente.showModal();
   }
 
-  document.getElementById("menu-otros").addEventListener("change", function (e) {
-    var valor = e.target.value;
-    if (valor === "quirofano") aplicarModoQuirofano(!enQuirofano());
-    else if (valor === "docente") abrirDocente();
-    renderMenuOtros();
-  });
+  document.getElementById("btn-docente").addEventListener("click", abrirDocente);
 
   document.getElementById("btn-plegar").addEventListener("click", function () {
     plegarCatalogo(!document.getElementById("panel-catalogo").classList.contains("plegado"));
@@ -5790,15 +5718,9 @@
     if (pane === "cama") renderCama();
   });
 
-  // No basta con escuchar "close" del diálogo: en algunos navegadores ese
-  // evento no llega a dispararse cuando el cierre viene de dialog.close()
-  // desde script, así que se resetea "Otros" a mano en cada camino de
-  // cierre -el botón y la tecla Esc- en vez de depender de él.
   document.getElementById("docente-cerrar").addEventListener("click", function () {
     dlgDocente.close();
-    renderMenuOtros();
   });
-  dlgDocente.addEventListener("cancel", function () { renderMenuOtros(); });
   document.getElementById("docente-limpiar-niveles").addEventListener("click", function () {
     docenteNiveles = [];
     guardarDocente();
@@ -5845,11 +5767,6 @@
   renderPerfilUsuario();
   renderPerfilSelect();
   renderTodo();
-  try {
-    aplicarModoQuirofano(localStorage.getItem(MODO_KEY) === "1");
-  } catch (e) {
-    aplicarModoQuirofano(false);
-  }
   avisoGuardado(T(syncActivo() ? "guardado_nube" : "guardado_local"));
   // Traer lo último de GitHub al abrir, sin preguntar si no hay nada local
   // sin subir. Si lo hay, sube en vez de bajar.

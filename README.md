@@ -48,17 +48,6 @@ hay texto, localizado por el `id` de cada cosa; lo que no esté traducido se
 queda en castellano. Para añadir otro idioma, ese mismo archivo explica los
 cuatro pasos.
 
-## Modo quirófano
-
-El botón **Modo quirófano** (arriba a la derecha) oculta el catálogo, las
-técnicas y los botones de edición, y deja solo el resumen —fijado en la
-parte superior— y las cajas montadas, en una rejilla compacta que se ve de
-un vistazo. Está pensado para consultar durante la cirugía, no para editar.
-El selector de escenario sigue accesible, y se puede seguir quitando o
-moviendo material si hace falta un ajuste sobre la marcha.
-
-El modo se recuerda entre sesiones en ese navegador.
-
 ## Cómo funciona
 
 ### 1. Catálogo maestro
@@ -212,8 +201,7 @@ y borde punteado para distinguirlo del resto del grupo.
 
 ## Registrar casos
 
-El botón **Casos** de la barra superior abre tus casos. Está siempre a mano,
-también en Modo quirófano.
+El botón **Casos** de la barra superior abre tus casos. Está siempre a mano.
 
 **Al preparar**, con el montaje hecho, pulsa *Guardar este montaje como caso*.
 El caso nace con las técnicas planificadas, el material a preparar, las cajas,
@@ -326,8 +314,6 @@ Repite el paso 5 con el mismo token en el móvil, y los dos quedan conectados.
 
 - Al abrir la web **baja** lo último que haya en el repositorio.
 - Unos segundos después de cada cambio, lo **sube**.
-- En **Modo quirófano** la subida se **pausa**: durante la cirugía no se toca
-  la red. Al salir del modo, se manda todo lo acumulado.
 - **Sin conexión** sigue funcionando con normalidad y reintenta cuando vuelve.
 - Si has tocado algo en el móvil sin subirlo y abres el ordenador, **no se
   pisa nada**: sube lo tuyo en vez de bajar.
