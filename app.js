@@ -302,6 +302,7 @@
     caso_g_evolucion:    { es: "Evolución postquirúrgica", en: "Postoperative outcome" },
     caso_g_incidencias:  { es: "Incidencias técnicas", en: "Technical incidents" },
     caso_g_formacion:    { es: "Formación", en: "Training" },
+    caso_g_alteraciones: { es: "Alteraciones durante la cirugía", en: "Intraoperative alterations" },
     caso_volver:         { es: "Volver a la lista", en: "Back to the list" },
     caso_btn_cerrar_caso:{ es: "Cerrar caso", en: "Close case" },
     caso_reabrir:        { es: "Marcar como preparado", en: "Mark as prepared" },
@@ -335,6 +336,11 @@
     caso_tecnicas_ay:    { es: "Vienen marcadas las que planificaste. Marca o desmarca lo que cambió.",
                            en: "The ones you planned come pre-selected. Tick or untick what changed." },
     caso_alerta:         { es: "Hubo alerta", en: "There was an alert" },
+    caso_tecnicas_alteradas: { es: "Técnicas con alteración", en: "Techniques with an alteration" },
+    caso_tecnicas_alteradas_ay: { es: "Marca las técnicas realizadas que tuvieron algún cambio, hallazgo o aviso durante la cirugía.",
+                                  en: "Tick the techniques performed that had some change, finding or alert during surgery." },
+    caso_sin_tecnicas_alt: { es: "Marca primero las técnicas realizadas, arriba.",
+                             en: "First tick the techniques performed, above." },
     caso_rol:            { es: "Mi papel", en: "My role" },
     caso_notas:          { es: "Notas", en: "Notes" },
     caso_ID_Caso:        { es: "Identificador", en: "Identifier" },
@@ -2509,7 +2515,7 @@
       edad: "", sexo: "", antecedentes_relevantes: "",
       intervencion: "", servicio_id: "", region_nivel: "", diagnostico: "",
       posicion: "", posicion_detalle: "", anatomia_patologica: "",
-      tecnicas_realizadas: [], pares_craneales_cuales: "", cambios_respecto_al_plan: "",
+      tecnicas_realizadas: [], tecnicas_alteradas: [], pares_craneales_cuales: "", cambios_respecto_al_plan: "",
       umbral_tornillos_pediculares: "",
       material_previsto: {}, material_real: {},
       montaje: [], n_cajas: 0, n_canales_ocupados: 0, avisos_preparacion: [],
@@ -3410,6 +3416,13 @@
   var casoAbierto = null;      // copia de trabajo del caso que se edita
   var casoEsNuevo = false;
   var camposCaso = {};         // clave -> control del formulario
+  // El chip-fila de "tecnicas_alteradas" depende en vivo de lo marcado en
+  // "tecnicas_realizadas": cada vez que ese cambia, se avisa a quien se haya
+  // apuntado aquí para que se repinte (ver campoCaso, t === "tecnicas_alt").
+  var oyentesTecnicasRealizadas = [];
+  function notificarTecnicasRealizadas() {
+    oyentesTecnicasRealizadas.forEach(function (fn) { fn(); });
+  }
 
   var OPCIONES = {
     sexo: ["mujer", "hombre", "otro"],
@@ -3496,7 +3509,12 @@
     { g: "formacion", c: "supervisor", t: "text" },
     { g: "formacion", c: "dificultad_1a5", t: "sel", o: "dificultad" },
     { g: "formacion", c: "aprendizaje_clave", t: "area", rows: 5 },
-    { g: "formacion", c: "caso_destacado", t: "check" }
+    { g: "formacion", c: "caso_destacado", t: "check" },
+    // Al final de todo a propósito: se rellena al cerrar el caso, cuando ya
+    // se sabe qué técnicas tuvieron algo raro. Depende en vivo de lo que
+    // esté marcado en "tecnicas_realizadas" -ver oyentesTecnicasRealizadas-,
+    // así que tiene que ir después de esa lista, nunca antes.
+    { g: "alteraciones", c: "tecnicas_alteradas", t: "tecnicas_alt", ay: "caso_tecnicas_alteradas_ay" }
   ];
 
   function opcionTexto(grupo, valor) {
@@ -3552,10 +3570,56 @@
           var i = elegidas.indexOf(t.id);
           if (i === -1) elegidas.push(t.id); else elegidas.splice(i, 1);
           chip.classList.toggle("activo", i === -1);
+          if (def.c === "tecnicas_realizadas") notificarTecnicasRealizadas();
         });
         fila.appendChild(chip);
       });
       div.appendChild(fila);
+      if (def.ay) div.appendChild(ayudaCampo(def.ay));
+      return div;
+    }
+
+    if (def.t === "tecnicas_alt") {
+      // Mismos chips que "tecnicas", pero solo con las que estén marcadas
+      // ahora mismo en "tecnicas_realizadas" -no todo el catálogo-: no tiene
+      // sentido marcar una alteración en una técnica que no se hizo. Se
+      // repinta cada vez que esa lista cambia (notificarTecnicasRealizadas).
+      var alteradas = (valor || []).slice();
+      camposCaso[def.c] = alteradas;
+      var filaAlt = document.createElement("div");
+      filaAlt.className = "chip-fila";
+      var pintarAlteradas = function () {
+        var realizadas = camposCaso.tecnicas_realizadas || [];
+        // Una técnica que se desmarcó de "realizadas" no puede seguir
+        // marcada aquí como alterada.
+        for (var i = alteradas.length - 1; i >= 0; i--) {
+          if (realizadas.indexOf(alteradas[i]) === -1) alteradas.splice(i, 1);
+        }
+        filaAlt.textContent = "";
+        if (!realizadas.length) {
+          var nada = document.createElement("span");
+          nada.className = "caso-ro";
+          nada.textContent = T("caso_sin_tecnicas_alt");
+          filaAlt.appendChild(nada);
+          return;
+        }
+        TECNICAS.filter(function (t) {
+          return realizadas.indexOf(t.id) !== -1;
+        }).forEach(function (t) {
+          var chip = document.createElement("span");
+          chip.className = "chip chip-extra" + (alteradas.indexOf(t.id) !== -1 ? " activo" : "");
+          chip.textContent = campo(t, "etiqueta");
+          chip.addEventListener("click", function () {
+            var i = alteradas.indexOf(t.id);
+            if (i === -1) alteradas.push(t.id); else alteradas.splice(i, 1);
+            chip.classList.toggle("activo", i === -1);
+          });
+          filaAlt.appendChild(chip);
+        });
+      };
+      pintarAlteradas();
+      oyentesTecnicasRealizadas.push(pintarAlteradas);
+      div.appendChild(filaAlt);
       if (def.ay) div.appendChild(ayudaCampo(def.ay));
       return div;
     }
@@ -3668,6 +3732,7 @@
 
   function renderFichaCaso() {
     camposCaso = {};
+    oyentesTecnicasRealizadas = [];
     var c = casoAbierto;
     document.getElementById("caso-titulo").textContent =
       T("dlg_caso_titulo", { id: c.ID_Caso || "" }) + (c.nombre_caso ? " — " + c.nombre_caso : "");
@@ -3753,7 +3818,7 @@
     CAMPOS_RAPIDO.concat(CAMPOS_AMPLIAR).forEach(function (def) {
       var control = camposCaso[def.c];
       if (control === undefined) return;
-      if (def.t === "tecnicas") { c[def.c] = control.slice(); return; }
+      if (def.t === "tecnicas" || def.t === "tecnicas_alt") { c[def.c] = control.slice(); return; }
       if (def.t === "material") { c[def.c] = Object.assign({}, control); return; }
       if (def.t === "check") { c[def.c] = control.checked; return; }
       // Los numéricos se guardan como número, no como texto: en el Sheet hay

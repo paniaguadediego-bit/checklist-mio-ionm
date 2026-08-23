@@ -584,7 +584,7 @@ window.SURGERIES_DATA = {
     // sigue mostrando (tachado) en vez de perder la marca.
     { "id": "reflejo_h", "etiqueta": "Reflejo H", "grupo": "monitorizacion", "activa": false, "descripcion": "Dividido en HR Poplíteo y HR Masetero" },
     { "id": "hr_popliteo", "etiqueta": "HR Poplíteo", "grupo": "monitorizacion", "activa": true, "descripcion": "Reflejo H por estímulo en hueco poplíteo" },
-    { "id": "hr_masetero", "etiqueta": "HR Masetero", "grupo": "monitorizacion", "activa": true, "descripcion": "Reflejo H por estímulo del nervio masetero" },
+    { "id": "hr_masetero", "etiqueta": "H-reflex del masetero (Jaw Jerk)", "grupo": "monitorizacion", "activa": true, "descripcion": "Reflejo H por estímulo del nervio masetero — mismo circuito que el jaw jerk / reflejo maseterino clásico. No confundir con el reflejo inhibitorio del masetero (silent period), que es otro circuito y no se estudia en IONM." },
 
     /* Añadidas de la lista del usuario. Van con su etiqueta exacta y SIN
        descripción: expandir una abreviatura a ojo en una herramienta clínica
@@ -602,8 +602,15 @@ window.SURGERIES_DATA = {
        porque cada uno se monitoriza por su cuenta y con su propio montaje;
        agrupados no se podría marcar cuál se hizo de verdad.
        El Blink Reflex, el RBC y el Reflejo H ya estaban más arriba. */
-    { "id": "rx_mandibular", "etiqueta": "Reflejo mandibular (jaw jerk)", "grupo": "monitorizacion", "activa": true },
-    { "id": "rx_inhib_maseterino", "etiqueta": "Reflejo inhibitorio del masetero", "grupo": "monitorizacion", "activa": true },
+    // Unificado con hr_masetero: jaw jerk y H-reflex del masetero son la
+    // misma técnica (el H-reflex es el nombre correcto). Se desactiva en
+    // vez de borrarse -"desactivar no borra"-; no había ningún caso ni
+    // montaje real usando este id (comprobado en el repo de datos).
+    { "id": "rx_mandibular", "etiqueta": "Reflejo mandibular (jaw jerk)", "grupo": "monitorizacion", "activa": false, "descripcion": "Unificado con HR Masetero — jaw jerk y H-reflex del masetero son la misma técnica." },
+    // No es una técnica que se estudie en IONM: el reflejo inhibitorio del
+    // masetero (silent period) es un circuito distinto del H-reflex, no un
+    // sinónimo. Se desactiva por la misma razón que rx_mandibular.
+    { "id": "rx_inhib_maseterino", "etiqueta": "Reflejo inhibitorio del masetero", "grupo": "monitorizacion", "activa": false, "descripcion": "No se estudia en IONM: es el silent period maseterino, un circuito inhibitorio distinto del H-reflex del masetero." },
     { "id": "rx_tvcr", "etiqueta": "Reflejo trigémino-vocal (TVcR)", "grupo": "monitorizacion", "activa": true },
     { "id": "rx_thr", "etiqueta": "Reflejo trigémino-hipogloso (THR)", "grupo": "monitorizacion", "activa": true },
     { "id": "rx_tcr", "etiqueta": "Reflejo trigémino-cervical (TCR)", "grupo": "monitorizacion", "activa": true },

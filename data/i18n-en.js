@@ -173,7 +173,7 @@ window.SURGERIES_I18N.en = {
     "pev": { "etiqueta": "VEP", "descripcion": "Visual evoked potentials — under study" },
     "reflejo_h": { "etiqueta": "H reflex", "descripcion": "Split into HR Popliteal and HR Masseter" },
     "hr_popliteo": { "etiqueta": "HR Popliteal", "descripcion": "H reflex by popliteal fossa stimulation" },
-    "hr_masetero": { "etiqueta": "HR Masseter", "descripcion": "H reflex by masseteric nerve stimulation" },
+    "hr_masetero": { "etiqueta": "Masseter H-reflex (Jaw Jerk)", "descripcion": "H reflex by masseteric nerve stimulation — same circuit as the classic jaw jerk / masseteric reflex. Not to be confused with the masseteric inhibitory reflex (silent period), a different circuit not studied in IONM." },
     "mapeo_cortical": { "etiqueta": "Cortical mapping", "descripcion": "Penfield technique" },
     "mapeo_subcortical": { "etiqueta": "Subcortical mapping" },
     "phase_reversal": { "etiqueta": "Phase reversal", "descripcion": "SSEP phase inversion" },

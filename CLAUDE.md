@@ -359,6 +359,25 @@ por el usuario tras usar la herramienta de verdad:
   real: el código cambia, y los datos reales existentes se migran con él, en
   el mismo turno, no "algún día".
 
+### Retoques posteriores, 23-08-2026
+
+- **Alteraciones intraoperatorias por técnica** — nuevo campo
+  `tecnicas_alteradas` en el caso (detalle en la sección [Casos](#casos)
+  más abajo) y su columna hermana `TEC_<etiqueta> - alteración` en el Sheet
+  (detalle en [Google Sheet](#google-sheet-apps-script)).
+- **Reflejos maseterinos, unificados** — `rx_mandibular` ("Reflejo
+  mandibular (jaw jerk)") se desactivó por ser la misma técnica que
+  `hr_masetero`: el jaw jerk clásico y el H-reflex del masetero son un solo
+  reflejo con dos nombres, no dos técnicas. `hr_masetero` pasó a llamarse
+  **"H-reflex del masetero (Jaw Jerk)"** para dejarlo dicho. `rx_inhib_maseterino`
+  ("Reflejo inhibitorio del masetero") también se desactivó, pero por la
+  razón contraria: es un circuito distinto (silent period), no un sinónimo,
+  y no es una técnica que se estudie en IONM — no se fusiona con nada, solo
+  se retira de las técnicas activas. Mismo patrón de siempre, "desactivar no
+  borra". **No hizo falta migrar nada en el repositorio de datos**: se
+  comprobó a mano que ningún caso ni montaje real usaba ninguno de los dos
+  ids antes de desactivarlos.
+
 ### Un gap real encontrado y documentado, sin arreglar todavía
 
 **"Exportar copia" / "Importar copia" ya no cubren los montajes ni los
@@ -437,7 +456,11 @@ no compartido.
 Las columnas `TEC_<etiqueta>` se generan a partir del catálogo de técnicas
 **fusionado y en su orden**, incluidas las desactivadas — una técnica
 desactivada no debe perder su columna, porque casos antiguos siguen
-refiriéndose a ella por id.
+refiriéndose a ella por id. Cada una lleva justo al lado su hermana
+`TEC_<etiqueta> - alteración` (`columnasTecnicas_()` devuelve las dos claves
+juntas, `construirFilasCasos_()` las intercala): `1` si esa técnica está en
+`tecnicas_alteradas` del caso, `0` si no. Al añadir o quitar una columna de
+técnica hay que tocar las dos, nunca solo `columna`.
 
 Los `filas.sort()` de `construirFilasCasos_()`, `construirTecnicasLong_()` y
 `construirMaterialLong_()` **buscan la columna por su nombre**
@@ -511,6 +534,15 @@ nombre derivado de un UUID, dos dispositivos no pueden chocar.
   paciente — es un campo de texto libre más, sujeto a la regla 1.
 - `estado` — `preparado` | `cerrado`.
 - `tecnicas_realizadas` — ids de técnica, nunca etiquetas.
+- `tecnicas_alteradas` — subconjunto de `tecnicas_realizadas` (mismos ids):
+  las que tuvieron algún cambio, hallazgo o aviso durante la cirugía. Se
+  marca al cerrar el caso, en un chip-fila propio al final de la ficha que
+  solo ofrece las técnicas ya marcadas como realizadas — en la interfaz
+  (`campoCaso`, `t: "tecnicas_alt"`) se repinta en vivo si se toca
+  "Técnicas realizadas", y si una técnica se desmarca de ahí deja de poder
+  estar aquí. En el Sheet genera la columna hermana
+  `TEC_<etiqueta> - alteración` junto a cada `TEC_<etiqueta>` (ver más
+  abajo), con el mismo `1`/`0` que el resto de columnas booleanas.
 
 **Tres fechas y no se confunden:**
 

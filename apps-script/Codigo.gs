@@ -7,7 +7,9 @@
  * Listas y Meta. Nunca actualiza fila a fila.
  *
  * De ahí salen gratis tres cosas:
- *   - Una técnica nueva crea su columna TEC_<etiqueta> sola.
+ *   - Una técnica nueva crea su columna TEC_<etiqueta> sola, con su hermana
+ *     "TEC_<etiqueta> - alteración" (1 si esa técnica tuvo algún cambio o
+ *     aviso durante la cirugía, marcado a mano al cerrar el caso).
  *   - Renombrar una técnica se propaga a todo el histórico, porque las
  *     columnas se generan resolviendo el id contra el catálogo actual.
  *   - El Sheet es desechable: si algo se rompe, se borra y se reconstruye.
@@ -229,6 +231,9 @@ function nombreTecnica_(cat, id) {
 // e inactivas: una técnica desactivada no deja de tener historial). Si dos
 // técnicas compartieran etiqueta -no debería pasar, la interfaz lo impide-
 // se desambigua con el id para no mezclar sus recuentos.
+// Cada técnica trae además su columna "- alteración" hermana, para el caso
+// en que esa técnica concreta tuvo algún cambio o aviso durante la cirugía
+// (marcado a mano al cerrar el caso, ver tecnicas_alteradas).
 function columnasTecnicas_(cat) {
   var vistas = {};
   return cat.tecnicas.map(function (t) {
@@ -236,7 +241,7 @@ function columnasTecnicas_(cat) {
     var clave = "TEC_" + etiqueta;
     if (vistas[clave]) clave = "TEC_" + etiqueta + " (" + t.id + ")";
     vistas[clave] = true;
-    return { id: t.id, columna: clave };
+    return { id: t.id, columna: clave, columnaAlteracion: clave + " - alteración" };
   });
 }
 
@@ -277,7 +282,9 @@ function construirFilasCasos_(casos, cat, columnasTec) {
     "incidencias_tecnicas", "equipo",
     "rol", "supervisor", "dificultad_1a5", "aprendizaje_clave", "caso_destacado",
     "notas", "version_esquema", "n_ediciones", "ultima_edicion", "guardado_en"
-  ].concat(columnasTec.map(function (c) { return c.columna; }));
+  ].concat(columnasTec.reduce(function (acc, c) {
+    return acc.concat([c.columna, c.columnaAlteracion]);
+  }, []));
 
   var filas = casos.map(function (c) {
     // La intervención es texto libre desde este cambio; un caso de antes
@@ -290,6 +297,8 @@ function construirFilasCasos_(casos, cat, columnasTec) {
     var serv = cat.SERV[c.servicio_id];
     var marcadas = {};
     (c.tecnicas_realizadas || []).forEach(function (id) { marcadas[id] = true; });
+    var marcadasAlteracion = {};
+    (c.tecnicas_alteradas || []).forEach(function (id) { marcadasAlteracion[id] = true; });
 
     // Igual que arriba con la intervención: un caso de antes de este cambio
     // tiene los campos sueltos, y se juntan como respaldo para que el Sheet
@@ -328,7 +337,9 @@ function construirFilasCasos_(casos, cat, columnasTec) {
       (c.editado_en || []).length ? c.editado_en[c.editado_en.length - 1] : "",
       c.guardado_en
     ];
-    var tec = columnasTec.map(function (col) { return marcadas[col.id] ? 1 : 0; });
+    var tec = columnasTec.reduce(function (acc, col) {
+      return acc.concat([marcadas[col.id] ? 1 : 0, marcadasAlteracion[col.id] ? 1 : 0]);
+    }, []);
     return base.concat(tec);
   });
 

@@ -280,7 +280,10 @@ ALO, Gas — y detalle), desarrollo (**Resumen de la monitorización**: de
 corrido qué salió al empezar, qué pasó por el medio y qué salió al cerrar;
 tipo de alerta; medida correctora; recuperación de la señal; resultado
 esperable), evolución postquirúrgica (déficit postoperatorio, concordancia),
-incidencias técnicas y formación. Se rellena lo que haga falta.
+incidencias técnicas, formación y, al final, **alteraciones durante la
+cirugía**: un chip-fila con solo las técnicas ya marcadas como realizadas
+—se actualiza solo si las tocas arriba—, para marcar con qué técnica hubo
+algún cambio, hallazgo o aviso. Se rellena lo que haga falta.
 
 Pulsa *Cerrar caso* y pasa a *Cerrado*.
 
@@ -593,9 +596,11 @@ espera unos minutos y pulsa *Reconstruir ahora* de nuevo.
 **Cuando añadas una técnica nueva** desde el catálogo de la app, no hace
 falta hacer nada aquí: en la siguiente reconstrucción (al día siguiente, o
 al momento si pulsas *Reconstruir ahora*) su columna `TEC_<etiqueta>`
-aparece sola. Igual si la renombras: el histórico entero se actualiza solo,
-porque la columna se genera resolviendo el id contra el catálogo actual, no
-guardando el nombre de cuando se creó el caso.
+aparece sola, con su columna hermana `TEC_<etiqueta> - alteración` justo al
+lado (marca con `1` los casos donde esa técnica tuvo algún cambio o aviso, ver
+*Registrar casos* más arriba). Igual si la renombras: el histórico entero se
+actualiza solo, porque la columna se genera resolviendo el id contra el
+catálogo actual, no guardando el nombre de cuando se creó el caso.
 
 La hoja **Meta** avisa, sin romper nada, de: correlativos `ID_Caso`
 duplicados, casos en estado *preparado* que llevan tiempo sin cerrarse, e
