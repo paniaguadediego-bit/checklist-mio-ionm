@@ -4881,6 +4881,20 @@
         // media_unidad: dos entradas que salen del mismo paquete (Erb1 + Erb2)
         res.material[tipo] = (res.material[tipo] || 0) + (item.media_unidad ? 0.5 : 1);
         res.entradas++;
+        // El conmutador reparte hacia 6 electrodos de sacacorchos (C3/C4 lo
+        // habitual, a veces C5/C6) que no ocupan entrada propia en la caja
+        // -son el mismo canal 6, repartido por dentro del switch-, así que
+        // sin esto no salían nunca en el material a preparar. Se suman fijos
+        // a 6 y no a los ids concretos porque cuáles sean cambia según el
+        // caso; lo único constante es la cantidad.
+        if (item.id === "conmutador") {
+          var itemSacacorchos = { etiqueta: "electrodo_sacacorchos" };
+          var tipoSacacorchos = nombreEtiquetaDe(itemSacacorchos, null);
+          if (!res.estilos[tipoSacacorchos]) res.estilos[tipoSacacorchos] = estiloDe(itemSacacorchos, null);
+          var etSacacorchos = etiquetaDe(itemSacacorchos, null);
+          if (etSacacorchos && !res.tipoEtiqueta[tipoSacacorchos]) res.tipoEtiqueta[tipoSacacorchos] = etSacacorchos.id;
+          res.material[tipoSacacorchos] = (res.material[tipoSacacorchos] || 0) + 6;
+        }
       });
       if (detalle.length) {
         res.cajas.push({

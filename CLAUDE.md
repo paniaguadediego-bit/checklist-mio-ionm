@@ -396,6 +396,18 @@ un único objeto.
   `item.conmutador` en el dato. No se puede cambiar el tipo físico por
   colocación desde la caja; `etiquetaColocada()` sigue leyendo overrides
   guardados antes de ese cambio, pero nada vuelve a crear uno.
+- **El conmutador siempre suma 6 "Electrodo sacacorchos" al material**,
+  además de su propia unidad (`calcularResumen()`, buscar `item.id ===
+  "conmutador"`). Reparte por dentro hacia 6 posiciones (C3/C4 lo habitual,
+  a veces C5/C6), que no ocupan entrada propia en la caja — sin este
+  añadido a mano no salían nunca en el material a preparar. Se suma fijo a
+  6, no a ids de electrodo concretos, porque cuáles sean varía según el
+  caso. Añadido el 23-08-2026: se corrigieron a mano los 5 casos reales que
+  ya existían entonces (`material_previsto`, `material_real` y
+  `coste_material`, +6 unidades y +18€ cada uno — el precio de
+  `electrodo_sacacorchos` era 3€/ud), con un `editado_en` nuevo dejando
+  constancia. Mismo patrón de siempre: el código se arregla y los datos
+  reales existentes se migran en el mismo turno.
 - `colocar()` deselecciona el ítem tras colocarlo (antes se quedaba listo
   para repetir) y, en móvil, vuelve a desplegar el catálogo por donde iba
   para el siguiente ítem — `plegarCatalogo()` guarda y restaura el
