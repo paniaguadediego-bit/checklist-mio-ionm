@@ -139,6 +139,12 @@ window.SURGERIES_DATA = {
     { "id": "electrodo_sacacorchos","nombre": "Electrodo sacacorchos",     "borde": "solido",      "color": "morado",   "fondo": "morado",    "fungible": true },
     { "id": "hook_wire",            "nombre": "Electrodo Hook Wire",       "borde": "doble",       "color": "naranja",  "fondo": "naranja",   "fungible": true },
     { "id": "pegatinas",            "nombre": "Pegatinas (par)",           "borde": "solido",      "color": "verde",    "fondo": "verde",     "fungible": true },
+    // Etiqueta propia de L.Cubital/R.Cubital, separada de "pegatinas": son
+    // electrodos de superficie igual que el resto, pero de uso mucho más
+    // puntual (solo casos concretos de estimulación cubital), así que
+    // conviene poder distinguir su gasto y su precio del de las pegatinas
+    // habituales (mediano, tibial post., poplíteo...).
+    { "id": "electrodo_cubital",    "nombre": "Electrodo cubital",         "borde": "solido",      "color": "verde",    "fondo": "verde",     "fungible": true },
     { "id": "adhesivo_eng",         "nombre": "Electrodo adhesivo de ENG", "borde": "solido",      "color": "turquesa", "fondo": "verde",     "fungible": true },
     { "id": "electrodo_grid",       "nombre": "Electrodo de grid",         "borde": "grueso",      "color": "rojo",     "fondo": "rojo",      "fungible": true },
     { "id": "electrodo_epidural",   "nombre": "Electrodo epidural",        "borde": "doble",       "color": "morado",   "fondo": "morado",    "fungible": true },
@@ -268,8 +274,8 @@ window.SURGERIES_DATA = {
       "items": [
         { "id": "l_mediano", "nombre": "L.Mediano", "etiqueta": "pegatinas" },
         { "id": "r_mediano", "nombre": "R.Mediano", "etiqueta": "pegatinas" },
-        { "id": "l_cubital", "nombre": "L.Cubital", "etiqueta": "pegatinas" },
-        { "id": "r_cubital", "nombre": "R.Cubital", "etiqueta": "pegatinas" },
+        { "id": "l_cubital", "nombre": "L.Cubital", "etiqueta": "electrodo_cubital" },
+        { "id": "r_cubital", "nombre": "R.Cubital", "etiqueta": "electrodo_cubital" },
         { "id": "l_ptn", "nombre": "L.Tibial post.", "etiqueta": "pegatinas" },
         { "id": "r_ptn", "nombre": "R.Tibial post.", "etiqueta": "pegatinas" },
         { "id": "l_popliteo", "nombre": "L.Poplíteo (H)", "etiqueta": "pegatinas", "nota": "Hueco poplíteo — reflejo H" },

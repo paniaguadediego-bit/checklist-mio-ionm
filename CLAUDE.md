@@ -377,6 +377,27 @@ por el usuario tras usar la herramienta de verdad:
   borra". **No hizo falta migrar nada en el repositorio de datos**: se
   comprobó a mano que ningún caso ni montaje real usaba ninguno de los dos
   ids antes de desactivarlos.
+- **El conmutador suma 6 "Electrodo sacacorchos"** al material previsto/real
+  en cuanto se coloca (detalle en *Detalles de implementación* más abajo).
+  **Se migraron a mano los 5 casos reales** que ya existían.
+- **Campo del caso "Déficit postoperatorio" → "Evolución postquirúrgica"**,
+  y de una línea de texto a un `<textarea>` de 4 filas (más sitio para
+  escribir). Es el mismo campo (`deficit_postoperatorio`), solo cambia la
+  etiqueta visible y el tamaño de la caja — no toca la columna del Sheet.
+- **Etiqueta de L.Cubital/R.Cubital separada de "pegatinas"** — compartían
+  etiqueta con los electrodos de superficie habituales (Mediano, Tibial
+  post., Poplíteo, V2), así que cualquier uso de esos electrodos rutinarios
+  se contaba y se mostraba bajo el nombre que el usuario le había puesto al
+  cubital ("R. Periférico Cubital2", con precio), aunque no hubiera colocado
+  ningún cubital de verdad. Ahora `l_cubital`/`r_cubital` usan su propia
+  etiqueta de fábrica `electrodo_cubital` (sin precio, como toca). **Se
+  corrigió también el catálogo real** (`etiquetas_usuario` en
+  `estado.json`): se quitó el override de `pegatinas` (vuelve a "Pegatinas
+  (par)", sin precio) y se creó `electrodo_cubital` → "R. Periférico
+  Cubital2" (2€) en su lugar. Pendiente de decidir con el usuario si los
+  casos ya cerrados que tenían "R. Periférico Cubital2" en su material
+  (ninguno usó nunca un cubital de verdad, comprobado) se corrigen también
+  a mano — cambia el coste registrado, no solo la etiqueta.
 
 ### Un gap real encontrado y documentado, sin arreglar todavía
 

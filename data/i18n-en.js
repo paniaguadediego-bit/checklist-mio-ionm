@@ -63,6 +63,7 @@ window.SURGERIES_I18N.en = {
     "electrodo_sacacorchos": "Corkscrew electrode",
     "hook_wire": "Hook-wire electrode",
     "pegatinas": "Adhesive pads (pair)",
+    "electrodo_cubital": "Cubital electrode",
     "electrodo_grid": "Grid electrode",
     "sensor_tubo": "Endotracheal tube sensor",
     "sonda_mapeo": "Cortical mapping probe",
