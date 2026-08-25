@@ -280,8 +280,8 @@ ALO, Gas — y detalle), desarrollo (**Resumen de la monitorización**: de
 corrido qué salió al empezar, qué pasó por el medio y qué salió al cerrar;
 tipo de alerta; medida correctora; recuperación de la señal; resultado
 esperable), evolución postquirúrgica (una caja de texto amplia para la
-evolución del déficit, y concordancia),
-incidencias técnicas, formación y, al final, **alteraciones durante la
+evolución del déficit, y concordancia), incidencias técnicas (otra caja
+amplia), formación y, al final, **alteraciones durante la
 cirugía**: un chip-fila con solo las técnicas ya marcadas como realizadas
 —se actualiza solo si las tocas arriba—, para marcar con qué técnica hubo
 algún cambio, hallazgo o aviso. Se rellena lo que haga falta.
