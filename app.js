@@ -3494,7 +3494,7 @@
     // practica real ya se escribian juntos, con las incidencias intraop
     // en medio contando la evolucion de una a otra -separarlas en dos cajas
     // rompia justo lo que se queria contar de corrido.
-    { g: "desarrollo", c: "resumen_monitorizacion", t: "area", rows: 6, ay: "caso_resumen_monitorizacion_ay" },
+    { g: "desarrollo", c: "resumen_monitorizacion", t: "area", rows: 8, ay: "caso_resumen_monitorizacion_ay" },
     // Absorbe tambien el criterio de alarma: eran dos cajas para una misma
     // idea -que salto y por que-, y tipo_alerta ya se escribia largo en la
     // practica real, asi que pasa a area en vez de una linea.
@@ -3504,7 +3504,7 @@
     { g: "desarrollo", c: "resultado_esperable", t: "area", ay: "caso_resultado_esperable_ay" },
     { g: "evolucion", c: "deficit_postoperatorio", t: "area", rows: 4 },
     { g: "evolucion", c: "concordancia", t: "sel", o: "concordancia" },
-    { g: "incidencias", c: "incidencias_tecnicas", t: "area" },
+    { g: "incidencias", c: "incidencias_tecnicas", t: "area", rows: 4 },
     { g: "incidencias", c: "equipo", t: "text" },
     { g: "formacion", c: "supervisor", t: "text" },
     { g: "formacion", c: "dificultad_1a5", t: "sel", o: "dificultad" },

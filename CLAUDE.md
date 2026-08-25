@@ -394,10 +394,29 @@ por el usuario tras usar la herramienta de verdad:
   corrigió también el catálogo real** (`etiquetas_usuario` en
   `estado.json`): se quitó el override de `pegatinas` (vuelve a "Pegatinas
   (par)", sin precio) y se creó `electrodo_cubital` → "R. Periférico
-  Cubital2" (2€) en su lugar. Pendiente de decidir con el usuario si los
-  casos ya cerrados que tenían "R. Periférico Cubital2" en su material
-  (ninguno usó nunca un cubital de verdad, comprobado) se corrigen también
-  a mano — cambia el coste registrado, no solo la etiqueta.
+  Cubital2" (2€) en su lugar. **Se corrigieron también a mano los 4 casos
+  reales** que ya tenían "R. Periférico Cubital2" en su material (ninguno
+  usó nunca un cubital de verdad, comprobado antes de tocar nada): pasó a
+  "Pegatinas (par)" en `material_previsto`/`material_real`, y
+  `coste_material` bajó lo que esa cantidad aportaba a 2€/ud (entre 8€ y
+  12€ según el caso) — `coste_completo` pasó a `false` en los que lo tenían
+  a `true`, porque ahora sí hay un material sin precio de verdad.
+
+### Retoques posteriores, 25-08-2026
+
+- **L.Eye / R.Eye** en *Otros puntos de registro* — un único paquete de
+  aguja trenzada para las dos (`media_unidad: true`), igual que Erb1/Erb2:
+  se cuentan entre las dos como 1 paquete, no dos. Para el ERG
+  (electrorretinograma).
+- **Dos técnicas de monitorización nuevas**: `c_pev` ("c-PEV", potencial
+  evocado visual cortical) y `erg` ("ERG", electrorretinograma), junto a
+  PEV.
+- **Cajas de texto más grandes**: "Resumen de la monitorización" de 6 a 8
+  filas, "Incidencias técnicas" de 2 (el valor por defecto, no se
+  especificaba) a 4. Solo tamaño, ningún campo ni columna del Sheet cambia.
+- **`centro`: "VdC" → "HdN"** en los 3 casos reales que todavía lo tenían
+  (2026-002, 2026-003, 2026-005) — cambio de nombre del centro, no hace
+  falta tocar código porque `centro` es texto libre.
 
 ### Un gap real encontrado y documentado, sin arreglar todavía
 
