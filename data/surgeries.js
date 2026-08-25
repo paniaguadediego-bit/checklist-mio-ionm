@@ -551,7 +551,9 @@ window.SURGERIES_DATA = {
         {"id":"l_p_popliteo","nombre":"L.P.Popliteo","etiqueta":"aguja_subdermica","nota":"Registro en hueco poplíteo izquierdo"},
         {"id":"r_p_popliteo","nombre":"R.P.Popliteo","etiqueta":"aguja_subdermica","nota":"Registro en hueco poplíteo derecho"},
         {"id":"l_p_lumbar","nombre":"L.P.Lumbar","etiqueta":"aguja_subdermica","nota":"Punto de registro lumbar izquierdo"},
-        {"id":"r_p_lumbar","nombre":"R.P.Lumbar","etiqueta":"aguja_subdermica","nota":"Punto de registro lumbar derecho"}
+        {"id":"r_p_lumbar","nombre":"R.P.Lumbar","etiqueta":"aguja_subdermica","nota":"Punto de registro lumbar derecho"},
+        { "id": "l_eye", "nombre": "L.Eye", "etiqueta": "aguja_trenzada", "media_unidad": true, "nota": "Registro de ERG, ojo izquierdo — aguja del par trenzado (L.Eye + R.Eye = 1 paquete)" },
+        { "id": "r_eye", "nombre": "R.Eye", "etiqueta": "aguja_trenzada", "media_unidad": true, "nota": "Registro de ERG, ojo derecho — aguja del par trenzado (L.Eye + R.Eye = 1 paquete)" }
       ]
     },
     {
@@ -584,6 +586,8 @@ window.SURGERIES_DATA = {
     { "id": "eeg", "etiqueta": "EEG", "grupo": "monitorizacion", "activa": true, "descripcion": "Electroencefalografía" },
     { "id": "ecog", "etiqueta": "ECoG", "grupo": "monitorizacion", "activa": true, "descripcion": "Electrocorticografía" },
     { "id": "pev", "etiqueta": "PEV", "grupo": "monitorizacion", "activa": true, "descripcion": "Potenciales evocados visuales — en estudio" },
+    { "id": "c_pev", "etiqueta": "c-PEV", "grupo": "monitorizacion", "activa": true, "descripcion": "Potencial evocado visual cortical" },
+    { "id": "erg", "etiqueta": "ERG", "grupo": "monitorizacion", "activa": true, "descripcion": "Electrorretinograma" },
     // "Reflejo H" se divide en dos: no es la misma técnica según el músculo
     // de registro. Se desactiva en vez de borrarse -"desactivar no borra"-,
     // así que un caso o montaje antiguo que todavía diga "reflejo_h" lo

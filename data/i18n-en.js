@@ -152,7 +152,9 @@ window.SURGERIES_I18N.en = {
     "o2": { "nota": "Right occipital visual recording. Goes in one of the numbered REF-AEP inputs" },
     "tierra": { "nombre": "Ground", "nota": "One per recording box" },
     "auriculares_peatc": { "nombre": "BAEP headphones", "nota": "Auditory stimulation for BAEP (A1/A2). They connect to the yellow REF-AEP connector and use no input" },
-    "gafas_vep": { "nombre": "VEP goggles", "nota": "Visual stimulation for visual evoked potentials (O1/O2). They use no input" }
+    "gafas_vep": { "nombre": "VEP goggles", "nota": "Visual stimulation for visual evoked potentials (O1/O2). They use no input" },
+    "l_eye": { "nota": "ERG recording, left eye — needle of the twisted pair (L.Eye + R.Eye = 1 pack)" },
+    "r_eye": { "nota": "ERG recording, right eye — needle of the twisted pair (L.Eye + R.Eye = 1 pack)" }
   },
 
   /* Técnicas: id -> { etiqueta, descripcion }
@@ -172,6 +174,8 @@ window.SURGERIES_I18N.en = {
     "eeg": { "descripcion": "Electroencephalography" },
     "ecog": { "descripcion": "Electrocorticography" },
     "pev": { "etiqueta": "VEP", "descripcion": "Visual evoked potentials — under study" },
+    "c_pev": { "etiqueta": "c-VEP", "descripcion": "Cortical visual evoked potential" },
+    "erg": { "descripcion": "Electroretinogram" },
     "reflejo_h": { "etiqueta": "H reflex", "descripcion": "Split into HR Popliteal and HR Masseter" },
     "hr_popliteo": { "etiqueta": "HR Popliteal", "descripcion": "H reflex by popliteal fossa stimulation" },
     "hr_masetero": { "etiqueta": "Masseter H-reflex (Jaw Jerk)", "descripcion": "H reflex by masseteric nerve stimulation — same circuit as the classic jaw jerk / masseteric reflex. Not to be confused with the masseteric inhibitory reflex (silent period), a different circuit not studied in IONM." },
