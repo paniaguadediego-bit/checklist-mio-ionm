@@ -63,9 +63,10 @@ cuatro pasos.
 
 Escenario → Montajes personales → Técnicas → Catálogo → Cajas → Resumen. Cada
 una se pliega sola (menos el catálogo, que en pantalla ancha es la columna
-lateral fija de siempre). El orden es el del flujo real: qué cirugía es, de
-qué montaje partes, qué técnicas vas a hacer, qué material hay, dónde va y
-qué sale de todo ello.
+lateral fija de siempre) y **arrancan todas plegadas**: despliega solo la que
+te interese en cada momento, sin tener que ir plegando las demás a mano. El
+orden es el del flujo real: qué cirugía es, de qué montaje partes, qué
+técnicas vas a hacer, qué material hay, dónde va y qué sale de todo ello.
 
 ### 1. Escenario
 
@@ -194,7 +195,10 @@ Se recalcula solo con cada cambio y es el objetivo de la herramienta:
   auriculares— se prepara pero no se gasta, y no cuenta). Los precios se
   ponen uno por uno en el botón **Etiquetas**; un tipo sin precio se lista
   aparte en vez de contar como cero, para que el total no parezca completo
-  sin serlo.
+  sin serlo. Alguna etiqueta —la manta de electrodos GRID, por ejemplo— viene
+  marcada **"Se cobra por manta"**: cuenta 1 unidad de coste sin importar
+  cuántas de sus entradas se coloquen, porque el conjunto entero se abre
+  igual se use una tira o las ocho.
 - **Cajas necesarias** — cuáles, con entradas usadas / totales y el detalle
   de qué va en cada entrada
 - **Avisos** — notas del montaje y cosas pendientes de confirmar

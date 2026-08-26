@@ -525,6 +525,72 @@ por el usuario tras usar la herramienta de verdad:
     salía en el papel** (`#cajas-contenido { display: none }` en
     `@media print`, igual que Montajes): se ajustó el selector a `#cajas`
     tras envolverla, sin cambiar el comportamiento.
+  - **Bug real encontrado y corregido**: `.campo[hidden] { display: none; }`
+    tuvo que añadirse a mano en `style.css`. Sin él, los campos con
+    `dependeDe` (Tipo de alerta, Detalle de los cambios…) seguían
+    visibles aunque su casilla estuviera desmarcada: `.campo { display:
+    flex }` y el `[hidden]` nativo del navegador empatan en especificidad
+    (0,0,1,0 los dos), y como `.campo` viene después en la hoja, gana ella.
+    Se detectó probando en el navegador (`getComputedStyle` mostraba
+    `display: flex` en un elemento con `hidden=true`), no por inspección de
+    código. **Cualquier `[hidden]` nuevo sobre un elemento con una clase que
+    ya trae su propio `display` hay que forzarlo así explícitamente -no
+    basta con poner el atributo.**
+
+### El clon local de checklist-mio-datos estaba desactualizado ~140 commits (26-08-2026)
+
+Al ir a hacer `git push` de la migración de arriba se descubrió que el clon
+local de `checklist-mio-datos` llevaba desde antes del 23-08-2026 sin
+`git pull`: el repositorio remoto tenía ~140 commits más -usuarios reales
+usando la herramienta en otro dispositivo, casos `2026-006` a `2026-009`
+cerrados y editados, `Actualizar escenarios MIO-Check` varias veces-. Los 5
+casos que se acababan de migrar a mano (ver arriba) habían cambiado también
+en el remoto con contenido clínico real en el mismo rango de campos.
+
+**Lección para la próxima vez que se toque `checklist-mio-datos` a mano
+-fuera de la sincronización de la propia app-:** antes de editar nada,
+`git fetch origin main` y comparar `HEAD` con `origin/main`
+(`git log --oneline HEAD..origin/main`). Este repositorio lo escribe la app
+sola, sin pasar por este clon, así que puede haber avanzado sin que se note
+hasta el `push`. Editar a ciegas sobre una copia vieja y forzar el push
+habría borrado silenciosamente ediciones clínicas reales (`centro`,
+`deficit_postoperatorio`, `tipo_alerta`, correcciones de material…).
+
+Resolución seguida (sin usar `push --force` ni `reset --hard`):
+1. `git tag` de seguridad antes de tocar nada.
+2. `git merge origin/main` -deja marcas de conflicto `<<<<<<<`, no decide
+   por su cuenta-.
+3. Cada conflicto se resolvió a mano campo por campo, no aceptando un lado
+   entero: se conservó el contenido clínico real más reciente del remoto en
+   los campos que la migración no tocaba, y se reaplicó la transformación de
+   modelo (p. ej. `rol: "supervisado"` → `"residente"`) sobre el valor
+   *actual* del remoto, no sobre el valor viejo con el que se había
+   calculado originalmente.
+4. **git no marcó como conflicto todos los solapes reales**: en más de un
+   caso cambió `rol` en el remoto y en este lado sin marcarlo `<<<<<<<` -las
+   líneas quedaban alineadas de forma distinta en cada versión-, así que el
+   merge automático se quedó con un lado sin avisar. Se detectó revisando a
+   mano, campo por campo, los 5 casos después de la fusión -no fiarse de que
+   "sin marcas de conflicto" signifique "sin nada que revisar" cuando se
+   sabe que dos lados tocaron el mismo campo.
+5. **Bug de JSON real, y grave**: al fusionar `casos/4df789d1-…json`, un
+   lado había añadido `"anatomia_patologica"` en un sitio del archivo y el
+   otro lado en otro sitio distinto -ambos cambios no solapaban en líneas,
+   así que ninguno quedó marcado como conflicto-, dejando dos claves
+   `"anatomia_patologica"` en el mismo objeto JSON. JSON no rechaza claves
+   repetidas, y `JSON.parse()` se queda calladamente con la última -que era
+   la vacía-, perdiendo el valor migrado. Se encontró con un script que
+   cuenta claves de primer nivel repetidas
+   (`grep -n '^  "' archivo.json | ... | uniq -c`), no por inspección visual
+   ni por un error en consola. **Después de cualquier fusión de un `.json`
+   con conflictos, conviene pasar ese script sobre los archivos tocados**:
+   una clave duplicada no da ningún error hasta que se lee el campo
+   equivocado, silenciosamente.
+6. Antes de dar el merge por bueno: `node --check`/`JSON.parse()` de cada
+   archivo tocado, y una relectura campo a campo de `rol`, `posicion`,
+   `recuperacion_senal`, `anatomia_patologica` y `notas_montaje_tecnicas` en
+   los 5 casos para confirmar que la migración sobrevivió con el contenido
+   correcto.
 
 ### Un gap real encontrado y documentado, sin arreglar todavía
 
