@@ -46,6 +46,14 @@ window.SURGERIES_I18N.en = {
     "caja_etiqueta_4": {
       "nombre": "Label 4 box",
       "descripcion": "Not usually used, available for larger surgeries."
+    },
+    "caja_etiqueta_5": {
+      "nombre": "Label 5 box",
+      "descripcion": "Not usually used, available for larger surgeries."
+    },
+    "caja_etiqueta_6": {
+      "nombre": "Label 6 box",
+      "descripcion": "Not usually used, available for larger surgeries."
     }
   },
 

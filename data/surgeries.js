@@ -85,12 +85,17 @@ window.SURGERIES_DATA = {
         { "clave": "gnd", "nombre": "GND", "conector": "individual", "color": "verde" }
       ]
     },
+    // Las cuatro de refuerzo (3-6) llevan "plegable": true -ver
+    // renderCajaFisica()-: se pliegan aparte dentro de la ventana Cajas y
+    // arrancan cerradas, porque son las que menos se usan y si no, seis
+    // diagramas de cableado a la vista de golpe es demasiado.
     "caja_etiqueta_3": {
       "nombre": "Caja etiqueta 3",
       "descripcion": "No se suele usar, disponible para cirugías más amplias.",
       "canales": 8,
       "numeracion_inicio": 1,
       "conector": "par",
+      "plegable": true,
       "especiales": [
         { "clave": "gnd", "nombre": "GND", "conector": "individual", "color": "verde" }
       ]
@@ -101,6 +106,29 @@ window.SURGERIES_DATA = {
       "canales": 8,
       "numeracion_inicio": 9,
       "conector": "par",
+      "plegable": true,
+      "especiales": [
+        { "clave": "gnd", "nombre": "GND", "conector": "individual", "color": "verde" }
+      ]
+    },
+    "caja_etiqueta_5": {
+      "nombre": "Caja etiqueta 5",
+      "descripcion": "No se suele usar, disponible para cirugías más amplias.",
+      "canales": 8,
+      "numeracion_inicio": 1,
+      "conector": "par",
+      "plegable": true,
+      "especiales": [
+        { "clave": "gnd", "nombre": "GND", "conector": "individual", "color": "verde" }
+      ]
+    },
+    "caja_etiqueta_6": {
+      "nombre": "Caja etiqueta 6",
+      "descripcion": "No se suele usar, disponible para cirugías más amplias.",
+      "canales": 8,
+      "numeracion_inicio": 9,
+      "conector": "par",
+      "plegable": true,
       "especiales": [
         { "clave": "gnd", "nombre": "GND", "conector": "individual", "color": "verde" }
       ]

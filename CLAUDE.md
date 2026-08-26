@@ -631,6 +631,41 @@ hasta que alguien vuelve a pegar el script a mano. Vale la pena recordárselo
 al usuario explícitamente cuando se toque este archivo, no dar por hecho que
 se actualiza solo.
 
+### Retoques posteriores, 26-08-2026 (tarde): barra en dos filas, dificultad, cajas 5-6
+
+- **`.barra-sup` en dos filas** (`.barra-fila` + `.barra-fila-casos`): fila 1
+  identidad/contexto (marca, perfil, montaje, EN, Docente), fila 2 Gestión
+  de casos + Sincronizar, aparte porque son las dos cosas que se tocan a
+  media cirugía. `--header-h` pasa de `44px` (una fila) a `82px` (las dos
+  juntas, medido en el navegador) — lo usan `.barra-caso` y `.panel-catalogo`
+  para su offset `sticky`; si se vuelve a tocar la altura de la barra, hay
+  que remedir y actualizar esta variable a mano, no hay cálculo automático.
+- **Dificultad junto a la estrella** en el listado de Gestión de casos
+  (`.caso-fila-dificultad`, "N/5"), mismo motivo que la estrella: verla sin
+  abrir el caso.
+- **Dos cajas nuevas, `caja_etiqueta_5` y `caja_etiqueta_6`**, mismo patrón
+  que 3/4 (8 canales cada una, numeración 1-8 y 9-16 propias, no continúan
+  la de las cajas 3/4). `CAJAS = DATA.cajas_material` se recorre con
+  `Object.keys()` en todos lados, así que no hizo falta tocar nada más para
+  que aparecieran.
+- **Cajas 3-6 ahora plegables y cerradas por defecto** dentro de la ventana
+  Cajas -antes las seis physical boxes de refuerzo/registro se veían
+  siempre enteras, seis diagramas de cableado a la vista aunque casi nunca
+  se usen-. Nuevo flag `"plegable": true` en `cajas_material` (mismo patrón
+  que `"manta"` en etiquetas): `infoCaja()` lo pasa a `renderCajaFisica()`,
+  que construye la tarjeta como `<details><summary>` en vez de
+  `<div><div>` cuando está presente. **Cuidado al probar esto con
+  `getBoundingClientRect()` o `getComputedStyle().display` desde JS: en el
+  entorno de pruebas de este proyecto (Browser pane) esas dos APIs
+  devuelven la altura/`display` como si el `<details>` estuviera abierto
+  incluso estando cerrado -pasa hasta con un `<details>` vacío recién
+  creado, no es nada de esta app-, así que dieron un falso positivo de "no
+  se pliega".** La comprobación fiable fue `get_page_text` (extracción de
+  texto visible): con la caja cerrada no aparece nada de su diagrama
+  (ni "kΩ" ni los números de canal), solo la cabecera. Para verificar que un
+  `<details>` se pliega de verdad, comprobar el texto/contenido
+  renderizado, no las medidas de layout vía JS.
+
 ### Un gap real encontrado y documentado, sin arreglar todavía
 
 **"Exportar copia" / "Importar copia" ya no cubren los montajes ni los

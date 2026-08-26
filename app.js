@@ -1519,7 +1519,8 @@
       canales: info.canales || 8,
       conector: info.conector || "par",
       inicio: info.numeracion_inicio || 1,
-      especiales: info.especiales || []
+      especiales: info.especiales || [],
+      plegable: !!info.plegable
     };
   }
 
@@ -3994,6 +3995,14 @@
         estrella.title = T("caso_caso_destacado");
         idGrupo.appendChild(estrella);
       }
+      // Dificultad: mismo motivo que la estrella, verla sin abrir el caso.
+      if (c.dificultad_1a5 !== "" && c.dificultad_1a5 != null) {
+        var dificultad = document.createElement("span");
+        dificultad.className = "caso-fila-dificultad";
+        dificultad.textContent = c.dificultad_1a5 + "/5";
+        dificultad.title = T("caso_dificultad_1a5");
+        idGrupo.appendChild(dificultad);
+      }
       cab.appendChild(idGrupo);
       var fecha = document.createElement("span");
       fecha.className = "caso-fila-fecha";
@@ -4702,10 +4711,14 @@
     var numeradas = entradas.filter(function (e) { return !e.especial; });
     var especiales = entradas.filter(function (e) { return e.especial; });
 
-    var card = document.createElement("div");
-    card.className = "card caja-card";
+    // Las cajas de refuerzo (3-6: poco usadas, "disponible para cirugías
+    // más amplias") se pliegan aparte y arrancan cerradas -si no, cada vez
+    // que hay escenario se ven seis diagramas de cableado aunque solo se
+    // usen dos-. El resto se queda siempre visible, como hasta ahora.
+    var card = document.createElement(info.plegable ? "details" : "div");
+    card.className = "card caja-card" + (info.plegable ? " caja-plegable" : "");
 
-    var cab = document.createElement("div");
+    var cab = document.createElement(info.plegable ? "summary" : "div");
     cab.className = "caja-cab";
 
     var h3 = document.createElement("h3");
@@ -4728,6 +4741,12 @@
     contador.className = "caja-contador" + (usadas === 0 ? " vacia" : "");
     contador.textContent = usadas + "/" + entradas.length;
     cab.appendChild(contador);
+
+    if (info.plegable) {
+      var flecha = document.createElement("span");
+      flecha.className = "caja-flecha";
+      cab.appendChild(flecha);
+    }
 
     card.appendChild(cab);
 

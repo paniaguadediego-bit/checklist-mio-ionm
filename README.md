@@ -184,6 +184,11 @@ con sus entradas y conectores. Para quitar material de una entrada: pulsa la
 y elige "Dejar la entrada vacía". Para moverlo: arrástralo a otra entrada,
 aunque sea de otra caja.
 
+Las cajas 3 a 6 ("Caja etiqueta 3"… "Caja etiqueta 6") son de refuerzo, para
+cirugías más amplias que necesiten más canales de registro muscular de los
+habituales — se usan poco, así que cada una **se pliega aparte y arranca
+cerrada**: solo se despliega la que vayas a usar en ese caso.
+
 ### 6. Resumen de técnicas y material
 
 Se recalcula solo con cada cambio y es el objetivo de la herramienta:
@@ -270,8 +275,9 @@ el montaje entero y los avisos: **nada de eso se teclea**, la herramienta ya lo
 había calculado. Queda en estado *Preparado*.
 
 Un caso marcado como **caso destacado** (punto 8, Docencia/Meta) lleva una
-★ ámbar junto a su identificador en el propio listado, para verlos de un
-vistazo sin abrir cada caso ni mirar la hoja de cálculo.
+★ ámbar junto a su identificador en el propio listado, y si además tiene
+puesta la **dificultad** aparece justo al lado como "N/5" — las dos cosas
+para verlas de un vistazo sin abrir cada caso ni mirar la hoja de cálculo.
 
 **Al cerrar**, abre el caso desde la lista. La ficha son **8 apartados
 plegables, cronológicos, todos cerrados por defecto**: despliega el que te

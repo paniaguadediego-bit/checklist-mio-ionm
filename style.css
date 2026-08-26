@@ -17,7 +17,9 @@
   --panel-borde: #33454f;
   --panel-texto: #e7eef2;
   --panel-tenue: #8ba1af;
-  --header-h: 44px;
+  /* Alto de las DOS filas de la barra superior juntas (ver .barra-sup):
+     lo usan los sticky de debajo para no quedar tapados. */
+  --header-h: 82px;
   --r: 5px;
   /* Fondo de los campos rellenables. Es una variable y no un #fff suelto
      porque en modo oscuro tiene que cambiar: un blanco fijo con la letra
@@ -42,23 +44,34 @@ body {
 }
 
 /* ------------------------------ Barra sup ------------------------------ */
+/* Dos filas: identidad/contexto arriba (marca, perfil, montaje, idioma,
+   docente) y Gestión de casos + Sincronizar abajo, aparte porque son las
+   dos cosas que se tocan a media cirugía y conviene tenerlas siempre en el
+   mismo sitio, sin que el resto de botones les quite espacio. */
 .barra-sup {
   position: sticky;
   top: 0;
   z-index: 30;
-  height: var(--header-h);
   display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  padding: 0 0.9rem;
+  flex-direction: column;
   background: var(--panel);
   color: var(--panel-texto);
   border-bottom: 1px solid #0f1a21;
 }
+.barra-fila {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.32rem 0.9rem;
+}
+.barra-fila-casos {
+  border-top: 1px solid var(--panel-borde);
+}
 
-/* El icono de la app en la cabecera. 32px de alto encaja con --header-h
-   (44px) dejando aire arriba y abajo; el archivo fuente es de 180px
-   (apple-touch-icon), así que se ve nítido incluso en pantallas retina. */
+/* El icono de la app en la cabecera. 32px de alto encaja con la primera
+   fila de .barra-sup dejando aire arriba y abajo; el archivo fuente es de
+   180px (apple-touch-icon), así que se ve nítido incluso en pantallas
+   retina. */
 .barra-sup img.marca {
   height: 32px;
   width: 32px;
@@ -701,6 +714,19 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
 }
 .caja-contador.vacia { color: var(--text-muted); font-weight: 400; }
 
+/* Cajas 3-6: plegables aparte, con el mismo patrón ▸/▾ del resto de la
+   herramienta. Empiezan cerradas -sin "open" en el HTML/JS-. */
+.caja-plegable > summary.caja-cab { cursor: pointer; list-style: none; }
+.caja-plegable > summary.caja-cab::-webkit-details-marker { display: none; }
+.caja-flecha {
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+.caja-flecha::before { content: "▸"; }
+.caja-plegable[open] > summary.caja-cab .caja-flecha::before { content: "▾"; }
+
 .caja-info {
   border: 1px solid var(--border);
   border-radius: 50%;
@@ -1341,6 +1367,14 @@ dialog h3 {
 .caso-fila-cab { display: flex; justify-content: space-between; font-size: 0.82rem; }
 .caso-fila-id-grupo { display: flex; align-items: center; gap: 0.3rem; }
 .caso-fila-destacado { color: var(--aviso-border); font-size: 0.9rem; line-height: 1; }
+.caso-fila-dificultad {
+  font-size: 0.62rem;
+  font-weight: 600;
+  padding: 0.05rem 0.3rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.07);
+  color: var(--text-muted);
+}
 .caso-fila-fecha { color: var(--text-muted); font-size: 0.75rem; }
 .caso-fila-det { font-size: 0.78rem; color: var(--text); }
 .caso-fila-pie { display: flex; gap: 0.25rem; flex-wrap: wrap; margin-top: 0.1rem; }
