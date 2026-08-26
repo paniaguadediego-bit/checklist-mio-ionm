@@ -1360,7 +1360,12 @@ dialog h3 {
    franjas: cabecera fija, contenido con su propio scroll, y la barra de
    acciones (Guardar/Cerrar/Borrar/Volver) fija abajo -el punto 9 del
    esquema-, siempre a mano sin tener que bajar del todo. */
-#dlg-caso {
+/* [open] es obligatorio aquí: un <dialog> sin abrir ya viene oculto por el
+   navegador (display:none de fábrica), pero un "display:flex" sin más en
+   "#dlg-caso" pisaría ese valor por especificidad -exactamente el mismo
+   fallo que ".campo[hidden]" más arriba- y el diálogo se quedaría metido en
+   el flujo normal de la página en vez de oculto hasta abrirse. */
+#dlg-caso[open] {
   display: flex;
   flex-direction: column;
   max-height: calc(100vh - 2rem);
