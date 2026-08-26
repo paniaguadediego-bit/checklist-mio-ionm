@@ -621,8 +621,8 @@ window.SURGERIES_DATA = {
     { "id": "c_pess", "etiqueta": "c-SEP", "grupo": "monitorizacion", "activa": true, "descripcion": "PESS corticales" },
     { "id": "pem_corticobulbares", "etiqueta": "MEP córtico-bulbares", "grupo": "monitorizacion", "activa": true, "descripcion": "Vías corticobulbares (pares craneales)" },
     { "id": "onda_d", "etiqueta": "Onda D", "grupo": "monitorizacion", "activa": true, "descripcion": "Registro epidural de la onda D" },
-    { "id": "br", "etiqueta": "Blink Reflex (BR)", "grupo": "monitorizacion", "activa": true, "descripcion": "Reflejo del parpadeo" },
-    { "id": "rbc", "etiqueta": "RBC", "grupo": "monitorizacion", "activa": true, "descripcion": "Reflejo bulbo-cavernoso" },
+    { "id": "br", "etiqueta": "Blink Reflex (BR)", "grupo": "monitorizacion", "activa": true, "reflejo": true, "descripcion": "Reflejo del parpadeo" },
+    { "id": "rbc", "etiqueta": "RBC", "grupo": "monitorizacion", "activa": true, "reflejo": true, "descripcion": "Reflejo bulbo-cavernoso" },
     { "id": "peatc", "etiqueta": "PEATC", "grupo": "monitorizacion", "activa": true, "descripcion": "Potenciales evocados auditivos de tronco cerebral" },
     { "id": "emg", "etiqueta": "Free-EMG", "grupo": "monitorizacion", "activa": true, "descripcion": "Electromiografía" },
     { "id": "eeg", "etiqueta": "EEG", "grupo": "monitorizacion", "activa": true, "descripcion": "Electroencefalografía" },
@@ -634,9 +634,10 @@ window.SURGERIES_DATA = {
     // de registro. Se desactiva en vez de borrarse -"desactivar no borra"-,
     // así que un caso o montaje antiguo que todavía diga "reflejo_h" lo
     // sigue mostrando (tachado) en vez de perder la marca.
-    { "id": "reflejo_h", "etiqueta": "Reflejo H", "grupo": "monitorizacion", "activa": false, "descripcion": "Dividido en HR Poplíteo y HR Masetero" },
-    { "id": "hr_popliteo", "etiqueta": "HR Poplíteo", "grupo": "monitorizacion", "activa": true, "descripcion": "Reflejo H por estímulo en hueco poplíteo" },
-    { "id": "hr_masetero", "etiqueta": "H-reflex del masetero (Jaw Jerk)", "grupo": "monitorizacion", "activa": true, "descripcion": "Reflejo H por estímulo del nervio masetero — mismo circuito que el jaw jerk / reflejo maseterino clásico. No confundir con el reflejo inhibitorio del masetero (silent period), que es otro circuito y no se estudia en IONM." },
+    { "id": "reflejo_h", "etiqueta": "Reflejo H", "grupo": "monitorizacion", "activa": false, "reflejo": true, "descripcion": "Dividido en H-R Gastrocnemio y H-R Masetero" },
+    { "id": "hr_popliteo", "etiqueta": "H-R Gastrocnemio", "grupo": "monitorizacion", "activa": true, "reflejo": true, "descripcion": "Reflejo H por estímulo en hueco poplíteo" },
+    { "id": "hr_masetero", "etiqueta": "H-R Masetero (Jaw Jerk)", "grupo": "monitorizacion", "activa": true, "reflejo": true, "descripcion": "Reflejo H por estímulo del nervio masetero — mismo circuito que el jaw jerk / reflejo maseterino clásico. No confundir con el reflejo inhibitorio del masetero (silent period), que es otro circuito y no se estudia en IONM." },
+    { "id": "hr_cuadriceps", "etiqueta": "H-R Cuádriceps", "grupo": "monitorizacion", "activa": true, "reflejo": true },
 
     /* Añadidas de la lista del usuario. Van con su etiqueta exacta y SIN
        descripción: expandir una abreviatura a ojo en una herramienta clínica
@@ -658,16 +659,16 @@ window.SURGERIES_DATA = {
     // misma técnica (el H-reflex es el nombre correcto). Se desactiva en
     // vez de borrarse -"desactivar no borra"-; no había ningún caso ni
     // montaje real usando este id (comprobado en el repo de datos).
-    { "id": "rx_mandibular", "etiqueta": "Reflejo mandibular (jaw jerk)", "grupo": "monitorizacion", "activa": false, "descripcion": "Unificado con HR Masetero — jaw jerk y H-reflex del masetero son la misma técnica." },
+    { "id": "rx_mandibular", "etiqueta": "Reflejo mandibular (jaw jerk)", "grupo": "monitorizacion", "activa": false, "reflejo": true, "descripcion": "Unificado con HR Masetero — jaw jerk y H-reflex del masetero son la misma técnica." },
     // No es una técnica que se estudie en IONM: el reflejo inhibitorio del
     // masetero (silent period) es un circuito distinto del H-reflex, no un
     // sinónimo. Se desactiva por la misma razón que rx_mandibular.
-    { "id": "rx_inhib_maseterino", "etiqueta": "Reflejo inhibitorio del masetero", "grupo": "monitorizacion", "activa": false, "descripcion": "No se estudia en IONM: es el silent period maseterino, un circuito inhibitorio distinto del H-reflex del masetero." },
-    { "id": "rx_tvcr", "etiqueta": "Reflejo trigémino-vocal (TVcR)", "grupo": "monitorizacion", "activa": true },
-    { "id": "rx_thr", "etiqueta": "Reflejo trigémino-hipogloso (THR)", "grupo": "monitorizacion", "activa": true },
-    { "id": "rx_tcr", "etiqueta": "Reflejo trigémino-cervical (TCR)", "grupo": "monitorizacion", "activa": true },
-    { "id": "rx_lar", "etiqueta": "Reflejo laríngeo aductor (LAR)", "grupo": "monitorizacion", "activa": true },
-    { "id": "rx_glosofaringeo_trigeminal", "etiqueta": "Reflejo glosofaríngeo-trigeminal", "grupo": "monitorizacion", "activa": true },
+    { "id": "rx_inhib_maseterino", "etiqueta": "Reflejo inhibitorio del masetero", "grupo": "monitorizacion", "activa": false, "reflejo": true, "descripcion": "No se estudia en IONM: es el silent period maseterino, un circuito inhibitorio distinto del H-reflex del masetero." },
+    { "id": "rx_tvcr", "etiqueta": "Reflejo trigémino-vocal (TVcR)", "grupo": "monitorizacion", "activa": true, "reflejo": true },
+    { "id": "rx_thr", "etiqueta": "Reflejo trigémino-hipogloso (THR)", "grupo": "monitorizacion", "activa": true, "reflejo": true },
+    { "id": "rx_tcr", "etiqueta": "Reflejo trigémino-cervical (TCR)", "grupo": "monitorizacion", "activa": true, "reflejo": true },
+    { "id": "rx_lar", "etiqueta": "Reflejo laríngeo aductor (LAR)", "grupo": "monitorizacion", "activa": true, "reflejo": true },
+    { "id": "rx_glosofaringeo_trigeminal", "etiqueta": "Reflejo glosofaríngeo-trigeminal", "grupo": "monitorizacion", "activa": true, "reflejo": true },
 
     { "id": "mapeo_cortical", "etiqueta": "Mapeo cortical", "grupo": "mapeo", "activa": true, "descripcion": "Técnica de Penfield" },
     { "id": "mapeo_subcortical", "etiqueta": "Mapeo subcortical", "grupo": "mapeo", "activa": true },
@@ -684,7 +685,9 @@ window.SURGERIES_DATA = {
        mismo partirían en dos las estadísticas del histórico. Si de verdad
        son cosas distintas, se separan desde el diálogo Catálogos. */
     { "id": "mapeo_intramedular_ce", "etiqueta": "Intramedular CE", "grupo": "mapeo", "activa": true },
-    { "id": "mapeo_material_qx", "etiqueta": "Material Qx", "grupo": "mapeo", "activa": true },
+    // Retirada de técnicas por el usuario. "Desactivar no borra": si algún
+    // caso o montaje ya la tenía marcada, se sigue viendo (tachada).
+    { "id": "mapeo_material_qx", "etiqueta": "Material Qx", "grupo": "mapeo", "activa": false },
     { "id": "eog", "etiqueta": "EOG", "grupo": "mapeo", "activa": true }
   ],
 

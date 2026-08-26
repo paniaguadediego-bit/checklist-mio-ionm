@@ -3571,6 +3571,38 @@
     return t === clave ? valor : t;
   }
 
+  /* Chips de técnicas en la ficha del caso: reparte una lista ya filtrada
+     en tres cestas -monitorización, reflejos, mapeo-, conservando el orden
+     del catálogo dentro de cada una. Los reflejos (Blink Reflex, RBC, los
+     H-R, los trigeminales...) llevan "reflejo": true en data/surgeries.js
+     aunque su "grupo" siga siendo "monitorizacion" -ese campo lo usa
+     también la ventana Técnicas, que solo separa monitorización/mapeo y no
+     se toca aquí-. */
+  function bloquesTecnicas(lista) {
+    return {
+      monitor: lista.filter(function (t) { return t.grupo === "monitorizacion" && !t.reflejo; }),
+      reflejos: lista.filter(function (t) { return t.reflejo; }),
+      mapeo: lista.filter(function (t) { return t.grupo === "mapeo"; })
+    };
+  }
+
+  // Cuelga los chips de los tres bloques en "contenedor", con una fila de
+  // espacio (.chip-espacio) entre los que tengan contenido.
+  function anadirChipsAgrupados(contenedor, lista, crearChip) {
+    var bloques = bloquesTecnicas(lista);
+    var primero = true;
+    [bloques.monitor, bloques.reflejos, bloques.mapeo].forEach(function (grupo) {
+      if (!grupo.length) return;
+      if (!primero) {
+        var espacio = document.createElement("div");
+        espacio.className = "chip-espacio";
+        contenedor.appendChild(espacio);
+      }
+      primero = false;
+      grupo.forEach(function (t) { contenedor.appendChild(crearChip(t)); });
+    });
+  }
+
   /* Construye un campo del formulario y deja el control en camposCaso.
      Devuelve el bloque .campo listo para colgar. */
   function campoCaso(def, valor) {
@@ -3612,9 +3644,10 @@
       fila.className = "chip-fila";
       // Se ofrecen las activas, más las que ya tuviera el caso aunque estén
       // desactivadas: si no, no habría manera de quitarlas.
-      TECNICAS.filter(function (t) {
+      var ofrecidas = TECNICAS.filter(function (t) {
         return t.activa !== false || elegidas.indexOf(t.id) !== -1;
-      }).forEach(function (t) {
+      });
+      anadirChipsAgrupados(fila, ofrecidas, function (t) {
         var chip = document.createElement("span");
         chip.className = "chip chip-extra" + (elegidas.indexOf(t.id) !== -1 ? " activo" : "") +
           (t.activa === false ? " desactivada" : "");
@@ -3625,7 +3658,7 @@
           chip.classList.toggle("activo", i === -1);
           if (def.c === "tecnicas_realizadas") notificarTecnicasRealizadas();
         });
-        fila.appendChild(chip);
+        return chip;
       });
       div.appendChild(fila);
       if (def.ay) div.appendChild(ayudaCampo(def.ay));
@@ -3656,9 +3689,10 @@
           filaAlt.appendChild(nada);
           return;
         }
-        TECNICAS.filter(function (t) {
+        var realizadasTec = TECNICAS.filter(function (t) {
           return realizadas.indexOf(t.id) !== -1;
-        }).forEach(function (t) {
+        });
+        anadirChipsAgrupados(filaAlt, realizadasTec, function (t) {
           var chip = document.createElement("span");
           chip.className = "chip chip-extra" + (alteradas.indexOf(t.id) !== -1 ? " activo" : "");
           chip.textContent = campo(t, "etiqueta");
@@ -3667,7 +3701,7 @@
             if (i === -1) alteradas.push(t.id); else alteradas.splice(i, 1);
             chip.classList.toggle("activo", i === -1);
           });
-          filaAlt.appendChild(chip);
+          return chip;
         });
       };
       pintarAlteradas();

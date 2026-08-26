@@ -666,6 +666,39 @@ se actualiza solo.
   `<details>` se pliega de verdad, comprobar el texto/contenido
   renderizado, no las medidas de layout vía JS.
 
+### Retoques posteriores, 26-08-2026 (noche): reflejos agrupados en la ficha del caso
+
+- **`hr_popliteo` → "H-R Gastrocnemio"** y **`hr_masetero` → "H-R Masetero
+  (Jaw Jerk)"** (antes "HR Poplíteo" y "H-reflex del masetero (Jaw Jerk)").
+  Solo cambia `etiqueta` -y su traducción en `data/i18n-en.js`-, los ids se
+  quedan igual: `hr_popliteo`, `hr_masetero` y `mapeo_material_qx` están
+  usados en casos y montajes reales (comprobado en el repo de datos), así
+  que renombrar en vez de recrear era obligatorio, no una preferencia de
+  estilo.
+- **Técnica nueva `hr_cuadriceps`** ("H-R Cuádriceps"), sin descripción
+  inventada -mismo criterio que las demás técnicas añadidas a mano: mejor
+  en blanco que una descripción clínica que nadie ha confirmado-.
+- **`mapeo_material_qx` desactivada** ("Material Qx"), a petición del
+  usuario y sin motivo dado; comprobado que ningún caso ni montaje real la
+  usaba, así que no hizo falta migrar nada.
+- **Nuevo campo `"reflejo": true`** en `data/surgeries.js` sobre las
+  técnicas que son reflejos (Blink Reflex, RBC, Reflejo H y sus tres
+  variantes activas, los 5 reflejos trigeminales, y los 2 unificados
+  desactivados). Es aparte de `"grupo"` -que sigue siendo solo
+  `monitorizacion`/`mapeo` y lo sigue usando la ventana Técnicas del todo
+  igual, sin tocar-: `"reflejo"` es una subclasificación nueva, solo para
+  agrupar visualmente dentro de la ficha del caso.
+- **Espacio visual entre bloques en "Técnicas realizadas" y "Técnicas con
+  alteración"** (Gestión de casos, apartado 5 y 6): `bloquesTecnicas()`
+  reparte la lista ya filtrada en monitorización (sin reflejos) / reflejos
+  / mapeo conservando el orden del catálogo dentro de cada cesta, y
+  `anadirChipsAgrupados()` cuelga los chips con un `.chip-espacio` -un
+  `div` con `flex-basis:100%` dentro del `.chip-fila` flex-wrap, fuerza el
+  salto de línea- entre cada bloque no vacío. La ventana Técnicas principal
+  no se toca: sigue con sus dos grupos de siempre
+  (`grupo_monitorizacion`/`grupo_mapeo`), el reparto en tres es solo dentro
+  de la ficha del caso, como pidió el usuario.
+
 ### Un gap real encontrado y documentado, sin arreglar todavía
 
 **"Exportar copia" / "Importar copia" ya no cubren los montajes ni los
