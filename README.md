@@ -298,9 +298,11 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
 4. **Anestesia** — tipo (TIVA, R-TIVA, DXM, ALO, Gas), detalle, TOF
    monitorizado, incidencias anestésicas.
 5. **Montaje / Técnicas** — técnicas realizadas (ya vienen marcadas las que
-   planificaste, solo ajustas), el material que salió del montaje base (solo
-   lectura) y el material realmente usado (editable, precargado con lo
-   previsto), umbral EMG de tornillos pediculares, notas de montaje/técnicas.
+   planificaste, solo ajustas — los chips salen en tres bloques separados
+   por un hueco: monitorización, reflejos y mapeo, para encontrarlas más
+   rápido), el material que salió del montaje base (solo lectura) y el
+   material realmente usado (editable, precargado con lo previsto), umbral
+   EMG de tornillos pediculares, notas de montaje/técnicas.
 6. **Desarrollo intraoperatorio** — resumen de la monitorización (de
    corrido qué salió al empezar, qué pasó por el medio y qué salió al
    cerrar); si hubo cambios respecto al plan y, si los hubo, su detalle; si
