@@ -607,6 +607,30 @@ Resolución seguida (sin usar `push --force` ni `reset --hard`):
    los 5 casos para confirmar que la migración sobrevivió con el contenido
    correcto.
 
+### El script del Sheet real llevaba desde antes del 23-08-2026 sin actualizar (26-08-2026)
+
+El usuario reportó que su Google Sheet no traía las columnas
+`TEC_<etiqueta> - alteración` (alteraciones por técnica, añadidas en el
+commit `d884833` del 23-08-2026). El código de `apps-script/Codigo.gs` en
+este repositorio ya las genera bien -comprobado leyendo
+`columnasTecnicas_()`-: el problema no era el código, era que **el script
+pegado a mano en su Apps Script real es de antes de esa fecha**, y a
+diferencia de la app (que se actualiza sola con cada `git push`),
+`Codigo.gs` no se actualiza solo — se queda congelado en lo que se pegó la
+última vez, para siempre, hasta que alguien lo vuelva a pegar.
+
+El README solo documentaba la instalación desde cero, nunca cómo actualizar
+una instalación ya existente, así que no había manera de que el usuario
+supiera qué hacer con esto. Se añadió una sección **"Actualizar el script si
+ya lo tenías instalado"** justo después de los pasos de instalación: pegar
+de nuevo el contenido completo de `Código.gs` y pulsar *Reconstruir ahora*.
+**Cualquier cambio futuro en `Codigo.gs`** (columnas nuevas, campos
+renombrados) tiene este mismo problema en potencia: el repositorio se
+actualiza con el `git push`, pero el Sheet real del usuario no se entera
+hasta que alguien vuelve a pegar el script a mano. Vale la pena recordárselo
+al usuario explícitamente cuando se toque este archivo, no dar por hecho que
+se actualiza solo.
+
 ### Un gap real encontrado y documentado, sin arreglar todavía
 
 **"Exportar copia" / "Importar copia" ya no cubren los montajes ni los

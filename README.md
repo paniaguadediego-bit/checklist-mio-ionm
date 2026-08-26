@@ -609,6 +609,20 @@ A partir de aquí funciona solo, una vez al día. Para forzarlo a mano sin
 entrar al editor: recarga el Sheet y usa el menú **MIO-Check → Reconstruir
 ahora** que aparece arriba.
 
+**Actualizar el script si ya lo tenías instalado:** a diferencia de la app
+—que se actualiza sola con cada `git push`—, este código **no se actualiza
+solo**: lo pegaste a mano una vez, y se queda tal cual hasta que lo vuelvas a
+pegar. Si notas que falta una columna nueva (por ejemplo
+`TEC_<etiqueta> - alteración`, o cualquier campo añadido después de tu
+instalación), el Sheet no tiene ningún bug: tiene una copia vieja del
+script. Para ponerlo al día: *Extensiones → Apps Script*, selecciona todo el
+contenido de `Código.gs` (Ctrl/Cmd+A) y sustitúyelo entero por el contenido
+actual de [`apps-script/Codigo.gs`](apps-script/Codigo.gs) de este
+repositorio. Guarda, y pulsa **MIO-Check → Reconstruir ahora** en el Sheet
+para verlo reflejado al momento, sin esperar al disparador diario. Los
+`Script Properties` (`GITHUB_TOKEN`, `REPO_DATOS`) no se tocan al actualizar,
+solo el código.
+
 **Si sale «API rate limit exceeded» leyendo `data/surgeries.js`:** ese error
 no es cosa tuya — la lectura del repositorio público, sin autenticar, usa un
 cupo de 60 peticiones/hora que **comparten todos los scripts de Apps Script
