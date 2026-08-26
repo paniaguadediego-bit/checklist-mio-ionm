@@ -3980,12 +3980,24 @@
 
       var cab = document.createElement("span");
       cab.className = "caso-fila-cab";
+      var idGrupo = document.createElement("span");
+      idGrupo.className = "caso-fila-id-grupo";
       var id = document.createElement("b");
       id.textContent = c.ID_Caso || "—";
+      idGrupo.appendChild(id);
+      // Caso destacado: visible en el listado sin tener que abrir el caso
+      // ni mirar la hoja de cálculo.
+      if (c.caso_destacado) {
+        var estrella = document.createElement("span");
+        estrella.className = "caso-fila-destacado";
+        estrella.textContent = "★";
+        estrella.title = T("caso_caso_destacado");
+        idGrupo.appendChild(estrella);
+      }
+      cab.appendChild(idGrupo);
       var fecha = document.createElement("span");
       fecha.className = "caso-fila-fecha";
       fecha.textContent = c.fecha || "";
-      cab.appendChild(id);
       cab.appendChild(fecha);
       fila.appendChild(cab);
 

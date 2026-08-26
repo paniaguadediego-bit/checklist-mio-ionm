@@ -1339,6 +1339,8 @@ dialog h3 {
 .caso-fila.estado-cerrado { border-left-color: var(--text-muted); }
 
 .caso-fila-cab { display: flex; justify-content: space-between; font-size: 0.82rem; }
+.caso-fila-id-grupo { display: flex; align-items: center; gap: 0.3rem; }
+.caso-fila-destacado { color: var(--aviso-border); font-size: 0.9rem; line-height: 1; }
 .caso-fila-fecha { color: var(--text-muted); font-size: 0.75rem; }
 .caso-fila-det { font-size: 0.78rem; color: var(--text); }
 .caso-fila-pie { display: flex; gap: 0.25rem; flex-wrap: wrap; margin-top: 0.1rem; }
