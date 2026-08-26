@@ -453,9 +453,13 @@ por el usuario tras usar la herramienta de verdad:
   `g` (uno de los 8 apartados) y opcionalmente `dependeDe` (oculta el campo
   hasta que se marque esa casilla; ver `condicionalesPendientes` y el cierre
   de `renderFichaCaso()` que conecta cada casilla con sus campos
-  dependientes). El botón/diálogo pasa de "Casos" a **"Creador de casos"**,
-  y la ficha muestra debajo del título un subtítulo con el identificador
-  -"CASO 2026-XXX, nombre del caso"-.
+  dependientes). El botón/diálogo pasa de "Casos" a **"Creador de casos"**
+  y, más tarde el mismo día, a **"Gestión de casos"** (nombre definitivo,
+  claves `btn_casos`/`dlg_casos_titulo`/`dlg_caso_titulo`) al pedirlo el
+  usuario; sigue siendo el único punto de acceso -`btn-casos` en la barra
+  superior, sin ningún otro botón en la página que abra `dlgCasos`, ni
+  siquiera bajo el Resumen-. La ficha muestra debajo del título un
+  subtítulo con el identificador -"CASO 2026-XXX, nombre del caso"-.
 
   Cambios de modelo, todos con su migración a mano en `casos/` (5 casos
   reales, `2026-002` a `2026-006`):

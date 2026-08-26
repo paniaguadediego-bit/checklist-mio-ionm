@@ -273,9 +273,9 @@
     color_gris:          { es: "Gris", en: "Grey" },
 
     /* --- Casos --- */
-    btn_casos:           { es: "Creador de casos", en: "Case builder" },
+    btn_casos:           { es: "Gestión de casos", en: "Case management" },
     btn_casos_tit:       { es: "Registrar y consultar casos", en: "Record and review cases" },
-    dlg_casos_titulo:    { es: "Creador de casos", en: "Case builder" },
+    dlg_casos_titulo:    { es: "Gestión de casos", en: "Case management" },
     casos_guardar_montaje:{ es: "Guardar este montaje como caso", en: "Save this montage as a case" },
     casos_guardar_ay:    { es: "Crea el caso con las técnicas, el material, las cajas y los avisos que ya ha calculado la herramienta. No hay que teclear nada.",
                            en: "Creates the case with the techniques, material, boxes and warnings the tool has already worked out. Nothing to type." },
@@ -296,7 +296,7 @@
     caso_pendiente_subir: { es: "Guardado aquí, pendiente de subir", en: "Saved here, waiting to upload" },
 
     /* --- Ficha del caso --- */
-    dlg_caso_titulo:     { es: "Creador de casos", en: "Case builder" },
+    dlg_caso_titulo:     { es: "Gestión de casos", en: "Case management" },
     caso_subtitulo_prefijo: { es: "CASO", en: "CASE" },
     // Los 8 apartados de la ficha, cada uno un <details> plegado por
     // defecto: se despliega el que interese según el punto del caso en el

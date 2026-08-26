@@ -260,8 +260,9 @@ y borde punteado para distinguirlo del resto del grupo.
 
 ## Registrar casos
 
-El botón **Creador de casos** de la barra superior abre tus casos. Está
-siempre a mano.
+El botón **Gestión de casos** de la barra superior abre tus casos —es el
+único sitio desde donde se abre, no hay otro acceso repetido en la
+herramienta—. Está siempre a mano.
 
 **Al preparar**, con el montaje hecho, pulsa *Guardar este montaje como caso*.
 El caso nace con las técnicas planificadas, el material a preparar, las cajas,
@@ -271,7 +272,7 @@ había calculado. Queda en estado *Preparado*.
 **Al cerrar**, abre el caso desde la lista. La ficha son **8 apartados
 plegables, cronológicos, todos cerrados por defecto**: despliega el que te
 interese según el punto del caso en el que estés, no hay que rellenar de
-arriba abajo. Debajo del título ("Creador de casos") sale el identificador
+arriba abajo. Debajo del título ("Gestión de casos") sale el identificador
 del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
 
 1. **Identificación / Trazabilidad** — identificador (fijo), estado, fecha
