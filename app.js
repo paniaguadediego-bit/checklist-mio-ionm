@@ -134,6 +134,10 @@
     tec_recomendada:     { es: "Recomendada en “{perfil}”. Decides tú si se marca.",
                            en: "Recommended in “{perfil}”. You decide whether to select it." },
 
+    /* --- Cajas --- */
+    cajas_titulo:        { es: "Cajas", en: "Boxes" },
+    cajas_cuenta:        { es: "{n} de {total} con material", en: "{n} of {total} with material" },
+
     /* --- Resumen --- */
     resumen_titulo:      { es: "Resumen de técnicas y material", en: "Techniques and material summary" },
     resumen_sin_esc:     { es: "No hay ningún escenario. Crea uno con “+ Nuevo”.",
@@ -269,9 +273,9 @@
     color_gris:          { es: "Gris", en: "Grey" },
 
     /* --- Casos --- */
-    btn_casos:           { es: "Casos", en: "Cases" },
+    btn_casos:           { es: "Creador de casos", en: "Case builder" },
     btn_casos_tit:       { es: "Registrar y consultar casos", en: "Record and review cases" },
-    dlg_casos_titulo:    { es: "Mis casos", en: "My cases" },
+    dlg_casos_titulo:    { es: "Creador de casos", en: "Case builder" },
     casos_guardar_montaje:{ es: "Guardar este montaje como caso", en: "Save this montage as a case" },
     casos_guardar_ay:    { es: "Crea el caso con las técnicas, el material, las cajas y los avisos que ya ha calculado la herramienta. No hay que teclear nada.",
                            en: "Creates the case with the techniques, material, boxes and warnings the tool has already worked out. Nothing to type." },
@@ -292,20 +296,19 @@
     caso_pendiente_subir: { es: "Guardado aquí, pendiente de subir", en: "Saved here, waiting to upload" },
 
     /* --- Ficha del caso --- */
-    dlg_caso_titulo:     { es: "Caso {id}", en: "Case {id}" },
-    caso_cerrar_titulo:  { es: "Cierre rápido", en: "Quick close" },
-    caso_g_traza:        { es: "Trazabilidad", en: "Traceability" },
+    dlg_caso_titulo:     { es: "Creador de casos", en: "Case builder" },
+    caso_subtitulo_prefijo: { es: "CASO", en: "CASE" },
+    // Los 8 apartados de la ficha, cada uno un <details> plegado por
+    // defecto: se despliega el que interese según el punto del caso en el
+    // que se esté, no hay que rellenar de arriba abajo.
+    caso_g_traza:        { es: "Identificación / Trazabilidad", en: "Identification / Traceability" },
     caso_g_paciente:     { es: "Paciente", en: "Patient" },
     caso_g_cirugia:      { es: "Cirugía", en: "Surgery" },
-    caso_g_tecnicas:     { es: "Técnicas", en: "Techniques" },
-    caso_g_material:     { es: "Material", en: "Material" },
-    caso_g_anatomia:     { es: "Anatomía patológica", en: "Pathology / level" },
     caso_g_anestesia:    { es: "Anestesia", en: "Anaesthesia" },
-    caso_g_desarrollo:   { es: "Desarrollo", en: "Course" },
-    caso_g_evolucion:    { es: "Evolución postquirúrgica", en: "Postoperative outcome" },
-    caso_g_incidencias:  { es: "Incidencias técnicas", en: "Technical incidents" },
-    caso_g_formacion:    { es: "Formación", en: "Training" },
-    caso_g_alteraciones: { es: "Alteraciones durante la cirugía", en: "Intraoperative alterations" },
+    caso_g_montaje:      { es: "Montaje / Técnicas", en: "Montage / Techniques" },
+    caso_g_desarrollo:   { es: "Desarrollo intraoperatorio", en: "Intraoperative course" },
+    caso_g_resultado:    { es: "Resultado / Correlación clínica", en: "Outcome / Clinical correlation" },
+    caso_g_formacion:    { es: "Docencia / Meta", en: "Teaching / Meta" },
     caso_volver:         { es: "Volver a la lista", en: "Back to the list" },
     caso_btn_cerrar_caso:{ es: "Cerrar caso", en: "Close case" },
     caso_reabrir:        { es: "Marcar como preparado", en: "Mark as prepared" },
@@ -353,7 +356,6 @@
     caso_hora_fin:       { es: "Hora de fin", en: "End time" },
     caso_escenario_nombre: { es: "Escenario usado", en: "Scenario used" },
     caso_antecedentes_relevantes: { es: "Antecedentes relevantes", en: "Relevant history" },
-    caso_region_nivel:   { es: "Región / nivel", en: "Region / level" },
     caso_diagnostico:    { es: "Diagnóstico", en: "Diagnosis" },
     opc_diagnostico_ecc: { es: "ECC — estenosis de canal cervical", en: "ECC — cervical canal stenosis" },
     opc_diagnostico_ecd: { es: "ECD — estenosis de canal dorsal", en: "ECD — dorsal canal stenosis" },
@@ -375,20 +377,30 @@
                            en: "SOL — vertebral (spine, any level)" },
     caso_posicion:       { es: "Posición", en: "Position" },
     caso_posicion_detalle: { es: "Detalle de la posición", en: "Position detail" },
-    caso_posicion_detalle_ay: { es: "Lo que no cabe en el desplegable: colocación de los brazos, cabezal, almohadillados, o en qué momento se volteó.",
-                           en: "Whatever the dropdown does not cover: arm placement, head holder, padding, or when the patient was turned." },
+    caso_posicion_detalle_ay: { es: "Lo que no cabe en el desplegable: colocación de los brazos, cabezal, almohadillados, lado del lateral/park bench, o en qué momento se volteó.",
+                           en: "Whatever the dropdown does not cover: arm placement, head holder, padding, which side for lateral/park bench, or when the patient was turned." },
     opc_posicion_supino: { es: "Supino", en: "Supine" },
     opc_posicion_prono:  { es: "Prono", en: "Prone" },
-    opc_posicion_sedestacion: { es: "Sedestación", en: "Sitting" },
-    opc_posicion_volteo: { es: "Volteo", en: "Turned during surgery" },
+    opc_posicion_lateral: { es: "Lateral", en: "Lateral" },
+    opc_posicion_park_bench: { es: "Park bench", en: "Park bench" },
+    opc_posicion_volteo_sp: { es: "Volteo supino → prono", en: "Turned supine → prone" },
+    opc_posicion_volteo_ps: { es: "Volteo prono → supino", en: "Turned prone → supine" },
+    opc_posicion_volteo_doble_sps: { es: "Volteo doble supino-prono-supino", en: "Double turn supine-prone-supine" },
+    opc_posicion_volteo_doble_psp: { es: "Volteo doble prono-supino-prono", en: "Double turn prone-supine-prone" },
+    opc_posicion_otros:  { es: "Otros", en: "Other" },
     caso_anatomia_patologica: { es: "Anatomía patológica", en: "Pathology / level" },
     caso_anatomia_patologica_ay: { es: "El resultado de anatomía patológica si lo hay (p. ej. «Meningioma», «GBM»), o el nivel intervenido si es columna (p. ej. «C5-C6-C7»).",
                            en: "The pathology result if there is one (e.g. “Meningioma”, “GBM”), or the operated level if it's a spine case (e.g. “C5-C6-C7”)." },
-    caso_pares_craneales_cuales: { es: "Pares craneales monitorizados", en: "Cranial nerves monitored" },
-    caso_cambios_respecto_al_plan: { es: "Cambios respecto al plan", en: "Changes from the plan" },
+    caso_otros_datos_quirurgicos: { es: "Otros datos quirúrgicos", en: "Other surgical details" },
+    caso_notas_montaje_tecnicas: { es: "Notas de Montaje/Técnicas", en: "Montage/Techniques notes" },
+    caso_hubo_cambios_plan: { es: "¿Hubo cambios respecto al plan?", en: "Were there changes from the plan?" },
+    caso_cambios_respecto_al_plan: { es: "Detalle de los cambios", en: "Details of the changes" },
     caso_umbral_tornillos_pediculares: { es: "Umbral EMG de tornillos pediculares", en: "Pedicle screw EMG threshold" },
     caso_umbral_tornillos_pediculares_ay: { es: "A qué nivel y con qué umbral se dejó cada tornillo puesto por los cirujanos. Un nivel por línea: nivel, lado (I/D) y umbral en mA. Por ejemplo: «L4 I 20 D 15».",
                            en: "The level and threshold each surgeon-placed screw was left at. One level per line: level, side (L/R) and threshold in mA. E.g.: “L4 L20 R15”." },
+    caso_material_previsto: { es: "Material (montaje base)", en: "Material (base montage)" },
+    caso_material_previsto_ay: { es: "El material que salió del montaje planificado. No se edita aquí: lo que se cambió de más o de menos va abajo, en «Material realmente usado».",
+                           en: "The material that came out of the planned montage. Not editable here: what was used more or less of goes below, in “Material actually used”." },
     caso_material_real:  { es: "Material realmente usado", en: "Material actually used" },
     caso_tipo_anestesia: { es: "Tipo de anestesia", en: "Type of anaesthesia" },
     caso_tipo_anestesia_detalle: { es: "Detalle", en: "Detail" },
@@ -419,9 +431,9 @@
     opc_sexo_mujer:      { es: "Mujer", en: "Female" },
     opc_sexo_hombre:     { es: "Hombre", en: "Male" },
     opc_sexo_otro:       { es: "Otro", en: "Other" },
-    opc_rol_observo:     { es: "Observo", en: "Observing" },
-    opc_rol_supervisado: { es: "Con supervisión", en: "Supervised" },
-    opc_rol_autonomo:    { es: "Autónomo", en: "Independent" },
+    opc_rol_adjunto1:    { es: "Adjunto 1", en: "Attending 1" },
+    opc_rol_adjunto2:    { es: "Adjunto 2", en: "Attending 2" },
+    opc_rol_residente:   { es: "Residente", en: "Resident" },
     opc_estado_preparado:{ es: "Preparado", en: "Prepared" },
     opc_estado_cerrado:  { es: "Cerrado", en: "Closed" },
     opc_sino_si:         { es: "Sí", en: "Yes" },
@@ -431,10 +443,6 @@
     opc_anestesia_dxm:   { es: "DXM — dexmedetomidina (paciente despierto)", en: "DXM — dexmedetomidine (awake patient)" },
     opc_anestesia_alo:   { es: "ALO — anestesia libre de opioides", en: "ALO — opioid-free anaesthesia" },
     opc_anestesia_gas:   { es: "Gas (inhalatoria toda la cirugía)", en: "Gas (inhalational throughout)" },
-    opc_recuperacion_completa: { es: "Completa", en: "Complete" },
-    opc_recuperacion_parcial: { es: "Parcial", en: "Partial" },
-    opc_recuperacion_no: { es: "No hubo", en: "None" },
-    opc_recuperacion_na: { es: "No procede", en: "Not applicable" },
     opc_concordancia_VP: { es: "VP — verdadero positivo", en: "TP — true positive" },
     opc_concordancia_FP: { es: "FP — falso positivo", en: "FP — false positive" },
     opc_concordancia_VN: { es: "VN — verdadero negativo", en: "TN — true negative" },
@@ -2516,9 +2524,12 @@
       hora_inicio: "", hora_fin: "",
       escenario_nombre: "", perfil: "",
       edad: "", sexo: "", antecedentes_relevantes: "",
-      intervencion: "", servicio_id: "", region_nivel: "", diagnostico: "",
+      intervencion: "", servicio_id: "", diagnostico: "",
       posicion: "", posicion_detalle: "", anatomia_patologica: "",
-      tecnicas_realizadas: [], tecnicas_alteradas: [], pares_craneales_cuales: "", cambios_respecto_al_plan: "",
+      otros_datos_quirurgicos: "",
+      tecnicas_realizadas: [], tecnicas_alteradas: [],
+      notas_montaje_tecnicas: "",
+      hubo_cambios_plan: false, cambios_respecto_al_plan: "",
       umbral_tornillos_pediculares: "",
       material_previsto: {}, material_real: {},
       montaje: [], n_cajas: 0, n_canales_ocupados: 0, avisos_preparacion: [],
@@ -3428,10 +3439,17 @@
   function notificarTecnicasRealizadas() {
     oyentesTecnicasRealizadas.forEach(function (fn) { fn(); });
   }
+  // Campos con "dependeDe" (p. ej. "Tipo de alerta" depende de la casilla
+  // "alerta"): campoCaso() los apunta aquí al construirse, y al final de
+  // renderFichaCaso() se conecta cada uno con su casilla -ocultos hasta que
+  // se marque, y se muestran/ocultan en vivo si se toca la casilla-.
+  var condicionalesPendientes = [];
 
   var OPCIONES = {
     sexo: ["mujer", "hombre", "otro"],
-    rol: ["observo", "supervisado", "autonomo"],
+    // Quién rellena la ficha, no el nivel de supervisión clínica -eso ya no
+    // se distingue en ningún campo-.
+    rol: ["adjunto1", "adjunto2", "residente"],
     estado: ["preparado", "cerrado"],
     sino: ["si", "no"],
     // El tipo de anestesia ya dice si hubo relajante y durante cuánto tiempo
@@ -3439,11 +3457,13 @@
     // así que los campos sueltos de relajante quedaron redundantes y se
     // quitaron.
     anestesia: ["tiva", "rtiva", "dxm", "alo", "gas"],
-    // Supino primero, que es lo más frecuente. "Volteo" es su propia opción
-    // porque no es una postura más: la cirugía empieza en una y sigue en
-    // otra, y eso cambia el montaje a mitad.
-    posicion: ["supino", "prono", "sedestacion", "volteo"],
-    recuperacion: ["completa", "parcial", "no", "na"],
+    // Supino y prono primero, que es lo más frecuente. Los cuatro "volteo"
+    // son su propia opción cada uno -no una casilla aparte- porque la
+    // dirección (y si es doble) cambia el montaje a mitad de cirugía; antes
+    // era un único "Volteo" genérico y el sentido solo quedaba en el texto
+    // libre de detalle.
+    posicion: ["supino", "prono", "lateral", "park_bench",
+               "volteo_sp", "volteo_ps", "volteo_doble_sps", "volteo_doble_psp", "otros"],
     concordancia: ["VP", "FP", "VN", "FN"],
     dificultad: ["1", "2", "3", "4", "5"],
     // Lista cerrada y corta a propósito, como los tipos de cirugía: sirve
@@ -3453,74 +3473,96 @@
                   "parotida", "mav", "hipofisis", "chiari", "jannetta", "fractvert", "loe_vert"]
   };
 
-  // Cierre rápido: lo que se rellena siempre. Objetivo, menos de 3 minutos.
-  var CAMPOS_RAPIDO = [
-    { c: "estado", t: "sel", o: "estado" },
-    { c: "fecha", t: "date", ay: "caso_fecha_ay" },
-    { c: "nombre_caso", t: "text", ay: "caso_nombre_caso_ay" },
-    { c: "edad", t: "num" },
-    { c: "sexo", t: "sel", o: "sexo" },
-    { c: "servicio_id", t: "cat", cat: "servicios" },
-    // Texto libre y no el catálogo de Intervenciones: el usuario quiere
-    // escribirla directamente, sin elegir de una lista cerrada. El catálogo
-    // (con su código de hospital) sigue existiendo y editable en Catálogos,
-    // simplemente ya no está enlazado a este campo.
-    { c: "intervencion", t: "text" },
-    { c: "tecnicas_realizadas", t: "tecnicas", ay: "caso_tecnicas_ay" },
-    { c: "alerta", t: "check" },
-    { c: "rol", t: "sel", o: "rol" },
-    { c: "notas", t: "area" }
-  ];
-
-  var CAMPOS_AMPLIAR = [
+  /* Los 9 puntos de la ficha: los 8 primeros son <details> plegados por
+     defecto (uno por "g"), cronológicos según se van sabiendo los datos; el
+     9º -Guardar/Cerrar/Borrar/Volver- es la barra de acciones fija del
+     diálogo, fuera de esta lista porque no es un campo.
+     "dependeDe" oculta el campo hasta que se marque esa casilla (ver
+     "condicionalesPendientes" en renderFichaCaso): así "Hubo alerta" o
+     "Cambios respecto al plan" no ensucian la ficha cuando no aplican. */
+  var CAMPOS_CASO = [
+    // 1. Identificación / Trazabilidad
     { g: "traza", c: "ID_Caso", t: "ro" },
+    { g: "traza", c: "estado", t: "sel", o: "estado" },
+    { g: "traza", c: "fecha", t: "date", ay: "caso_fecha_ay" },
+    { g: "traza", c: "nombre_caso", t: "text", ay: "caso_nombre_caso_ay" },
     { g: "traza", c: "centro", t: "text" },
     { g: "traza", c: "hora_inicio", t: "time" },
     { g: "traza", c: "hora_fin", t: "time" },
     { g: "traza", c: "escenario_nombre", t: "ro" },
+
+    // 2. Paciente
+    { g: "paciente", c: "edad", t: "num" },
+    { g: "paciente", c: "sexo", t: "sel", o: "sexo" },
+    { g: "paciente", c: "servicio_id", t: "cat", cat: "servicios" },
     { g: "paciente", c: "antecedentes_relevantes", t: "area" },
-    { g: "cirugia", c: "region_nivel", t: "text" },
+
+    // 3. Cirugía
     { g: "cirugia", c: "diagnostico", t: "sel", o: "diagnostico" },
+    // Absorbe también lo que antes era "Región / nivel": es el mismo dato
+    // -qué parte se operó-, y tenerlo en dos campos separados duplicaba lo
+    // que había que escribir.
+    { g: "cirugia", c: "anatomia_patologica", t: "text", ay: "caso_anatomia_patologica_ay" },
+    // Texto libre y no el catálogo de Intervenciones: el usuario quiere
+    // escribirla directamente, sin elegir de una lista cerrada. El catálogo
+    // (con su código de hospital) sigue existiendo y editable en Catálogos,
+    // simplemente ya no está enlazado a este campo.
+    { g: "cirugia", c: "intervencion", t: "text" },
     { g: "cirugia", c: "posicion", t: "sel", o: "posicion" },
     { g: "cirugia", c: "posicion_detalle", t: "area", ay: "caso_posicion_detalle_ay" },
-    // Aparte del diagnóstico: el diagnóstico agrupa y cuenta, esto describe
-    // el caso concreto. Puede ser un resultado de anatomía patológica
-    // (Meningioma, GBM...) o, en columna, el nivel intervenido (C5-C6-C7).
-    { g: "anatomia", c: "anatomia_patologica", t: "text", ay: "caso_anatomia_patologica_ay" },
-    { g: "tecnicas", c: "pares_craneales_cuales", t: "text" },
-    { g: "tecnicas", c: "cambios_respecto_al_plan", t: "area" },
-    { g: "tecnicas", c: "umbral_tornillos_pediculares", t: "area", ay: "caso_umbral_tornillos_pediculares_ay" },
-    { g: "material", c: "material_real", t: "material", ay: "caso_material_real_ay" },
+    { g: "cirugia", c: "otros_datos_quirurgicos", t: "area" },
+
+    // 4. Anestesia
     { g: "anestesia", c: "tipo_anestesia", t: "sel", o: "anestesia" },
     { g: "anestesia", c: "tipo_anestesia_detalle", t: "text", ay: "caso_tipo_anestesia_detalle_ay" },
     { g: "anestesia", c: "tof_monitorizado", t: "sel", o: "sino" },
     { g: "anestesia", c: "incidencias_anestesicas", t: "area" },
+
+    // 5. Montaje / Técnicas
+    { g: "montaje", c: "tecnicas_realizadas", t: "tecnicas", ay: "caso_tecnicas_ay" },
+    { g: "montaje", c: "material_previsto", t: "material_ro", ay: "caso_material_previsto_ay" },
+    { g: "montaje", c: "material_real", t: "material", ay: "caso_material_real_ay" },
+    { g: "montaje", c: "umbral_tornillos_pediculares", t: "area", ay: "caso_umbral_tornillos_pediculares_ay" },
+    // Absorbe lo que antes era "Pares craneales monitorizados": ya no tiene
+    // campo propio, va aquí como una nota más de montaje.
+    { g: "montaje", c: "notas_montaje_tecnicas", t: "area" },
+
+    // 6. Desarrollo intraoperatorio
     // Un solo cuadro grande en vez de OP BSL y CL BSL sueltos: en la
     // practica real ya se escribian juntos, con las incidencias intraop
     // en medio contando la evolucion de una a otra -separarlas en dos cajas
     // rompia justo lo que se queria contar de corrido.
     { g: "desarrollo", c: "resumen_monitorizacion", t: "area", rows: 8, ay: "caso_resumen_monitorizacion_ay" },
+    { g: "desarrollo", c: "hubo_cambios_plan", t: "check" },
+    { g: "desarrollo", c: "cambios_respecto_al_plan", t: "area", dependeDe: "hubo_cambios_plan" },
+    { g: "desarrollo", c: "alerta", t: "check" },
     // Absorbe tambien el criterio de alarma: eran dos cajas para una misma
     // idea -que salto y por que-, y tipo_alerta ya se escribia largo en la
     // practica real, asi que pasa a area en vez de una linea.
-    { g: "desarrollo", c: "tipo_alerta", t: "area" },
-    { g: "desarrollo", c: "medida_correctora", t: "area" },
-    { g: "desarrollo", c: "recuperacion_senal", t: "sel", o: "recuperacion" },
+    { g: "desarrollo", c: "tipo_alerta", t: "area", dependeDe: "alerta" },
+    { g: "desarrollo", c: "medida_correctora", t: "area", dependeDe: "alerta" },
+    { g: "desarrollo", c: "recuperacion_senal", t: "area", dependeDe: "alerta" },
     { g: "desarrollo", c: "resultado_esperable", t: "area", ay: "caso_resultado_esperable_ay" },
-    { g: "evolucion", c: "deficit_postoperatorio", t: "area", rows: 4 },
-    { g: "evolucion", c: "concordancia", t: "sel", o: "concordancia" },
-    { g: "incidencias", c: "incidencias_tecnicas", t: "area", rows: 4 },
-    { g: "incidencias", c: "equipo", t: "text" },
+    // Depende en vivo de lo que esté marcado en "tecnicas_realizadas" -ver
+    // oyentesTecnicasRealizadas-, así que tiene que ir después de esa
+    // lista, nunca antes.
+    { g: "desarrollo", c: "tecnicas_alteradas", t: "tecnicas_alt", ay: "caso_tecnicas_alteradas_ay" },
+    { g: "desarrollo", c: "incidencias_tecnicas", t: "area", rows: 4 },
+    { g: "desarrollo", c: "equipo", t: "text" },
+
+    // 7. Resultado / Correlación clínica
+    { g: "resultado", c: "deficit_postoperatorio", t: "area", rows: 4 },
+    { g: "resultado", c: "concordancia", t: "sel", o: "concordancia" },
+
+    // 8. Docencia / Meta
+    { g: "formacion", c: "rol", t: "sel", o: "rol" },
     { g: "formacion", c: "supervisor", t: "text" },
     { g: "formacion", c: "dificultad_1a5", t: "sel", o: "dificultad" },
     { g: "formacion", c: "aprendizaje_clave", t: "area", rows: 5 },
     { g: "formacion", c: "caso_destacado", t: "check" },
-    // Al final de todo a propósito: se rellena al cerrar el caso, cuando ya
-    // se sabe qué técnicas tuvieron algo raro. Depende en vivo de lo que
-    // esté marcado en "tecnicas_realizadas" -ver oyentesTecnicasRealizadas-,
-    // así que tiene que ir después de esa lista, nunca antes.
-    { g: "alteraciones", c: "tecnicas_alteradas", t: "tecnicas_alt", ay: "caso_tecnicas_alteradas_ay" }
+    { g: "formacion", c: "notas", t: "area" }
   ];
+  var GRUPOS_CASO = ["traza", "paciente", "cirugia", "anestesia", "montaje", "desarrollo", "resultado", "formacion"];
 
   function opcionTexto(grupo, valor) {
     var clave = "opc_" + grupo + "_" + valor;
@@ -3534,6 +3576,11 @@
     var div = document.createElement("div");
     div.className = "campo";
     var control;
+
+    if (def.dependeDe) {
+      div.classList.add("campo-condicional");
+      condicionalesPendientes.push({ div: div, de: def.dependeDe });
+    }
 
     if (def.t === "check") {
       var lab = document.createElement("label");
@@ -3625,6 +3672,37 @@
       pintarAlteradas();
       oyentesTecnicasRealizadas.push(pintarAlteradas);
       div.appendChild(filaAlt);
+      if (def.ay) div.appendChild(ayudaCampo(def.ay));
+      return div;
+    }
+
+    if (def.t === "material_ro") {
+      // Igual que "material" pero de solo lectura: es el montaje base tal
+      // cual salió del cálculo, no se edita aquí -para eso está "Material
+      // realmente usado"-, así que no entra en camposCaso ni se lee en
+      // leerFichaCaso().
+      var tablaRo = document.createElement("div");
+      tablaRo.className = "caso-material";
+      var tiposRo = Object.keys(valor || {}).sort();
+      if (!tiposRo.length) {
+        var nadaRo = document.createElement("span");
+        nadaRo.className = "caso-ro";
+        nadaRo.textContent = T("caso_sin_montaje");
+        tablaRo.appendChild(nadaRo);
+      }
+      tiposRo.forEach(function (tipo) {
+        var f = document.createElement("div");
+        f.className = "caso-material-fila";
+        var n = document.createElement("span");
+        n.textContent = tipo;
+        var cant = document.createElement("span");
+        cant.className = "caso-ro";
+        cant.textContent = valor[tipo];
+        f.appendChild(n);
+        f.appendChild(cant);
+        tablaRo.appendChild(f);
+      });
+      div.appendChild(tablaRo);
       if (def.ay) div.appendChild(ayudaCampo(def.ay));
       return div;
     }
@@ -3738,60 +3816,54 @@
   function renderFichaCaso() {
     camposCaso = {};
     oyentesTecnicasRealizadas = [];
+    condicionalesPendientes = [];
     var c = casoAbierto;
-    document.getElementById("caso-titulo").textContent =
-      T("dlg_caso_titulo", { id: c.ID_Caso || "" }) + (c.nombre_caso ? " — " + c.nombre_caso : "");
 
-    var rapido = document.getElementById("caso-rapido");
-    rapido.innerHTML = "";
-    CAMPOS_RAPIDO.forEach(function (def) {
-      // Un caso de antes de este cambio no trae "intervencion": se precarga
-      // resuelta desde el viejo intervencion_id, así se ve al abrirlo sin
-      // tener que volver a escribirla, y si se guarda queda ya migrada.
-      var valor = def.c === "intervencion" ? intervencionDe(c) : c[def.c];
-      rapido.appendChild(campoCaso(def, valor));
+    document.getElementById("caso-subtitulo").textContent =
+      T("caso_subtitulo_prefijo") + " " + (c.ID_Caso || "—") + (c.nombre_caso ? ", " + c.nombre_caso : "");
+
+    // Los 8 apartados son <details> fijos en el HTML (caso-g-<grupo>), cada
+    // uno con su contenedor propio (caso-c-<grupo>) donde se cuelgan sus
+    // campos en el orden de CAMPOS_CASO. Plegados por defecto -ver
+    // index.html-: se despliega el que interese, no hay que rellenar de
+    // arriba abajo.
+    GRUPOS_CASO.forEach(function (g) {
+      var cont = document.getElementById("caso-c-" + g);
+      cont.innerHTML = "";
+      if (g === "montaje") {
+        var res = document.createElement("p");
+        res.className = "caso-resumen-linea";
+        res.textContent = c.n_cajas
+          ? T("caso_montaje_res", { cajas: c.n_cajas, canales: c.n_canales_ocupados })
+          : T("caso_sin_montaje");
+        cont.appendChild(res);
+      }
+      CAMPOS_CASO.filter(function (def) { return def.g === g; }).forEach(function (def) {
+        // Un caso de antes de este cambio no trae estos campos ya resueltos:
+        // se precargan resueltos desde los que tenía, igual que "intervencion".
+        var valor = def.c === "intervencion" ? intervencionDe(c)
+          : def.c === "resumen_monitorizacion" ? resumenMonitorizacionDe(c)
+          : def.c === "tipo_alerta" ? tipoAlertaDe(c)
+          : c[def.c];
+        cont.appendChild(campoCaso(def, valor));
+      });
     });
 
-    var ampliar = document.getElementById("caso-ampliar-campos");
-    ampliar.innerHTML = "";
-    var grupoActual = null;
-    // A qué contenedor va cada campo: normalmente "ampliar" en línea, pero
-    // el grupo "material" se pliega aparte (ver más abajo) y sus campos van
-    // dentro de ese <details> en vez de sueltos en la ficha.
-    var contenedorGrupo = ampliar;
-    CAMPOS_AMPLIAR.forEach(function (def) {
-      if (def.g !== grupoActual) {
-        grupoActual = def.g;
-        if (def.g === "material") {
-          // Puede ser una lista larga de material: se pliega aparte aunque
-          // el resto de la ficha esté siempre a la vista.
-          var det = document.createElement("details");
-          det.className = "caso-grupo-plegable";
-          det.open = true;
-          var sum = document.createElement("summary");
-          sum.textContent = T("caso_g_material");
-          det.appendChild(sum);
-          var res = document.createElement("p");
-          res.className = "caso-resumen-linea";
-          res.textContent = c.n_cajas
-            ? T("caso_montaje_res", { cajas: c.n_cajas, canales: c.n_canales_ocupados })
-            : T("caso_sin_montaje");
-          det.appendChild(res);
-          ampliar.appendChild(det);
-          contenedorGrupo = det;
-        } else {
-          var h = document.createElement("h4");
-          h.textContent = T("caso_g_" + def.g);
-          ampliar.appendChild(h);
-          contenedorGrupo = ampliar;
-        }
-      }
-      // Un caso de antes de este cambio no trae estos campos juntos todavía:
-      // se precargan resueltos desde los que tenía, igual que "intervencion".
-      var valor = def.c === "resumen_monitorizacion" ? resumenMonitorizacionDe(c)
-        : def.c === "tipo_alerta" ? tipoAlertaDe(c)
-        : c[def.c];
-      contenedorGrupo.appendChild(campoCaso(def, valor));
+    // Conecta cada campo condicional con la casilla de la que depende:
+    // oculto hasta que se marque, y se muestra/oculta en vivo si se toca.
+    var dependientesDe = {};
+    condicionalesPendientes.forEach(function (item) {
+      (dependientesDe[item.de] = dependientesDe[item.de] || []).push(item.div);
+    });
+    Object.keys(dependientesDe).forEach(function (de) {
+      var control = camposCaso[de];
+      if (!control) return;
+      var divs = dependientesDe[de];
+      var actualizar = function () {
+        divs.forEach(function (d) { d.hidden = !control.checked; });
+      };
+      actualizar();
+      control.addEventListener("change", actualizar);
     });
 
     // Pie: cuándo se creó el archivo y cuántas veces se ha tocado después
@@ -3820,7 +3892,7 @@
 
   function leerFichaCaso() {
     var c = casoAbierto;
-    CAMPOS_RAPIDO.concat(CAMPOS_AMPLIAR).forEach(function (def) {
+    CAMPOS_CASO.forEach(function (def) {
       var control = camposCaso[def.c];
       if (control === undefined) return;
       if (def.t === "tecnicas" || def.t === "tecnicas_alt") { c[def.c] = control.slice(); return; }
@@ -4726,14 +4798,19 @@
   function renderCajas() {
     var cont = document.getElementById("cajas-contenido");
     cont.innerHTML = "";
-    if (!escenarioActual()) return;
+    var pista = document.getElementById("cajas-pista");
+    if (!escenarioActual()) { pista.textContent = ""; return; }
 
     var grid = document.createElement("div");
     grid.className = "cajas-grid";
+    var usadas = 0;
     Object.keys(CAJAS).forEach(function (key) {
       grid.appendChild(renderCajaFisica(key));
+      var asign = asignacionesDe(key);
+      if (entradasDe(key).some(function (e) { return !!asign[e.id]; })) usadas++;
     });
     cont.appendChild(grid);
+    pista.textContent = T("cajas_cuenta", { n: usadas, total: Object.keys(CAJAS).length });
   }
 
   /* ---------------------------------------------------------------- *
@@ -5458,9 +5535,11 @@
     window.print();
   });
 
-  // El resumen es un <details> plegable: si estuviera cerrado al imprimir
-  // (con el botón o con Ctrl/Cmd+P), no saldría nada en el papel. Se abre a
-  // la fuerza justo antes de imprimir y se devuelve a como estaba después.
+  // El resumen es la única tarjeta que sale en el papel -escenario, montajes
+  // y cajas se ocultan por CSS en @media print, ver style.css-. Si estuviera
+  // cerrada al imprimir (con el botón o con Ctrl/Cmd+P), no saldría nada en
+  // el papel. Se abre a la fuerza justo antes de imprimir y se devuelve a
+  // como estaba después.
   var resumenAbiertoAntesDeImprimir = null;
   window.addEventListener("beforeprint", function () {
     var det = document.getElementById("resumen");

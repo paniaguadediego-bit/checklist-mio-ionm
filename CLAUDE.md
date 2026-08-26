@@ -418,6 +418,114 @@ por el usuario tras usar la herramienta de verdad:
   (2026-002, 2026-003, 2026-005) — cambio de nombre del centro, no hace
   falta tocar código porque `centro` es texto libre.
 
+### Retoques posteriores, 26-08-2026
+
+- **Categoría "GRID / MANTA" y precio por manta, no por electrodo**: una
+  manta GRID son 8 tiras que vienen físicas juntas de fábrica, así que
+  colocar 2 o 8 de ellas abre la misma manta y debía cobrarse una sola vez.
+  Antes la etiqueta `electrodo_grid` cobraba por electrodo colocado, lo que
+  sobrefacturaba cualquier caso con GRID. Ahora hay dos etiquetas
+  independientes -`electrodo_grid_mantaA` y `electrodo_grid_mantaB`, para
+  GRID A.1-A.8 y GRID B.1-B.8 (antes GRID 1-8, un solo grupo)- con un flag
+  nuevo `"manta": true` que hace que `calcularCoste()` cuente 1 unidad por
+  manta sin importar cuántas de sus entradas se coloquen; el material a
+  preparar sigue mostrando el recuento real de posiciones. El flag tiene su
+  propio checkbox "Se cobra por manta" en el gestor de etiquetas -si no,
+  `guardarEtiqueta()` lo habría perdido la primera vez que el usuario le
+  pusiera precio desde ahí, porque esa función reemplaza la etiqueta de
+  fábrica entera por la del formulario-. **Se migró a mano** la etiqueta
+  `electrodo_grid` (400€, puesta por el usuario) del repositorio de datos:
+  pasó a `electrodo_grid_mantaA` con el mismo precio, y se creó
+  `electrodo_grid_mantaB` también a 400€ (confirmado por el usuario, mismo
+  producto). Ningún caso ni montaje real usaba GRID todavía, así que no hizo
+  falta tocar `casos/` ni `montajes/` más allá de esa etiqueta.
+
+- **Ficha del caso, rediseño completo a 9 puntos** (pedido tras usar la
+  herramienta de verdad): se elimina el concepto de "cierre rápido" +
+  "ampliar" (dos bloques, uno siempre visible y otro plegado en su
+  mayoría) y se sustituye por **8 apartados `<details>` cronológicos,
+  todos plegados por defecto**, más una barra de acciones fija (punto 9,
+  fuera del scroll de la ficha): Identificación/Trazabilidad, Paciente,
+  Cirugía, Anestesia, Montaje/Técnicas, Desarrollo intraoperatorio,
+  Resultado/Correlación clínica, Docencia/Meta. `CAMPOS_RAPIDO` +
+  `CAMPOS_AMPLIAR` (con sus sub-grupos `h4` y el `material` plegado aparte)
+  se sustituyen por un único array plano `CAMPOS_CASO`, cada campo con su
+  `g` (uno de los 8 apartados) y opcionalmente `dependeDe` (oculta el campo
+  hasta que se marque esa casilla; ver `condicionalesPendientes` y el cierre
+  de `renderFichaCaso()` que conecta cada casilla con sus campos
+  dependientes). El botón/diálogo pasa de "Casos" a **"Creador de casos"**,
+  y la ficha muestra debajo del título un subtítulo con el identificador
+  -"CASO 2026-XXX, nombre del caso"-.
+
+  Cambios de modelo, todos con su migración a mano en `casos/` (5 casos
+  reales, `2026-002` a `2026-006`):
+  - **`region_nivel` eliminado**, absorbido por `anatomia_patologica` (es
+    el mismo dato -qué parte se operó- en dos campos separados). Se
+    concatenó el valor de `region_nivel` al final de `anatomia_patologica`
+    en los 3 casos que solo tenían el primero, y se descartó en el único
+    caso (`2026-004`) donde ambos campos ya traían el mismo texto.
+  - **`pares_craneales_cuales` eliminado**, absorbido por el nuevo
+    `notas_montaje_tecnicas` (campo libre del apartado 5, sin sitio propio
+    ya). Migrado con el prefijo "Pares craneales monitorizados: " en los 2
+    casos que lo tenían.
+  - **`hubo_cambios_plan` nuevo** (checkbox): antes `cambios_respecto_al_plan`
+    era una caja de texto siempre visible; ahora solo aparece si se marca
+    esta casilla. Se puso a `true` en el único caso (`2026-003`) que ya
+    tenía texto ahí.
+  - **`posicion`: la opción genérica `"volteo"` se divide en cuatro** —
+    `volteo_sp` (supino→prono), `volteo_ps` (prono→supino),
+    `volteo_doble_sps`, `volteo_doble_psp`— más `lateral`, `park_bench` y
+    `otros`; se quita `sedestacion` (ningún caso real la usaba). Los 2 casos
+    reales con `posicion: "volteo"` (`2026-003`, `2026-004`) migraron a
+    `volteo_sp`: su propio `posicion_detalle` ya describía supino→prono sin
+    ambigüedad.
+  - **`rol` reutilizado para "Mi papel"**: era nivel de supervisión
+    (`observo`/`supervisado`/`autonomo`), pasa a ser quién rellena
+    (`adjunto1`/`adjunto2`/`residente`) — dos ejes distintos, decisión del
+    usuario. Los 4 casos reales con `rol: "supervisado"` migraron a
+    `"residente"` (decisión explícita del usuario, no un mapeo automático).
+  - **`recuperacion_senal`: de lista cerrada a área de texto libre** (ya no
+    hay campo "Recuperación de la señal" con desplegable). Los valores
+    codificados de los 3 casos reales que lo tenían se migraron a su texto
+    ("no" → "No hubo", "completa" → "Completa"), igual que se hizo antes con
+    "Reflejo H" y el cubital: el código cambia y el dato real se migra en el
+    mismo turno.
+  - **Campos nuevos sin dato previo que migrar**: `otros_datos_quirurgicos`
+    (apartado 3) y `material_previsto` ganó su propio campo de solo lectura
+    ("Material (montaje base)", tipo `material_ro` en `campoCaso()`) junto
+    al ya existente `material_real` editable.
+
+  El Sheet (`Codigo.gs`, `construirFilasCasos_()`) se actualizó en el mismo
+  turno: cabecera y array `base` pierden las columnas `region_nivel` y
+  `pares_craneales_cuales`, y ganan `otros_datos_quirurgicos`,
+  `notas_montaje_tecnicas` y `hubo_cambios_plan` (booleano 0/1, mismo patrón
+  que `alerta`/`coste_completo`). Las dos listas se revisaron a mano
+  posición por posición para que sigan alineadas 1:1 -son 53 columnas base a
+  cada lado-. **El arnés de pruebas de Node mencionado en este archivo no
+  está en este repositorio** -no se encontró al hacer este cambio-, así que
+  no se pudo re-ejecutar contra `Codigo.gs`; si existe en otro sitio,
+  conviene pasarlo antes de instalar esta versión del script en el Sheet
+  real.
+
+  También cambió, en la misma pasada:
+  - **Títulos de ventana con resalte**: `.card h2`, `.panel-cab h2` y
+    `dialog h3` pasan de texto pequeño y gris a una "píldora" más grande con
+    fondo `--accent-soft` y texto `--accent`, para distinguirse de un
+    vistazo de los subtítulos internos (`grupo-titulo`, `h3` de caja,
+    bloques del resumen…), que se quedan igual que estaban.
+  - **Flechas ▸/▾ más visibles en toda la herramienta**: más grandes y en
+    color `--accent` en vez de `--text-muted` -`.card > summary.card-cab`,
+    `.grupo-titulo`, `#btn-plegar`, y las nuevas `.caso-grupo > summary`-.
+  - **Las 6 ventanas principales empiezan plegadas** (antes Escenario,
+    Montajes, Técnicas y Resumen se abrían solas): se quita `open` de sus
+    `<details>`. **Cajas pasa a ser plegable** -antes era una `<section>`
+    suelta, sin tarjeta ni título, siempre visible entera-, ahora
+    `<details class="card" id="cajas">` con su propio `card-pista` ("N de M
+    con material"). Al revisar el CSS de impresión se vio que **Cajas nunca
+    salía en el papel** (`#cajas-contenido { display: none }` en
+    `@media print`, igual que Montajes): se ajustó el selector a `#cajas`
+    tras envolverla, sin cambiar el comportamiento.
+
 ### Un gap real encontrado y documentado, sin arreglar todavía
 
 **"Exportar copia" / "Importar copia" ya no cubren los montajes ni los

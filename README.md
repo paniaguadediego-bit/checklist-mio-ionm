@@ -256,37 +256,52 @@ y borde punteado para distinguirlo del resto del grupo.
 
 ## Registrar casos
 
-El botón **Casos** de la barra superior abre tus casos. Está siempre a mano.
+El botón **Creador de casos** de la barra superior abre tus casos. Está
+siempre a mano.
 
 **Al preparar**, con el montaje hecho, pulsa *Guardar este montaje como caso*.
 El caso nace con las técnicas planificadas, el material a preparar, las cajas,
 el montaje entero y los avisos: **nada de eso se teclea**, la herramienta ya lo
 había calculado. Queda en estado *Preparado*.
 
-**Al cerrar**, abre el caso desde la lista. Arriba está el **cierre rápido**:
-estado, fecha, **nombre del caso** (opcional, para reconocerlo tú de un
-vistazo — nunca el nombre del paciente), edad, sexo, servicio,
-**intervención** (texto libre — no un catálogo cerrado; escríbela tal cual),
-técnicas realizadas (ya vienen marcadas las que planificaste, solo ajustas),
-si hubo alerta, tu papel y notas. Con eso basta, y es cuestión de un par de
-minutos desde el móvil.
+**Al cerrar**, abre el caso desde la lista. La ficha son **8 apartados
+plegables, cronológicos, todos cerrados por defecto**: despliega el que te
+interese según el punto del caso en el que estés, no hay que rellenar de
+arriba abajo. Debajo del título ("Creador de casos") sale el identificador
+del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
 
-Debajo va el resto —ya no plegado, forma parte continua de la ficha—:
-anatomía patológica (el resultado real, o el nivel si es columna),
-técnicas (pares craneales, cambios respecto al plan, umbral EMG de
-tornillos pediculares), **Material** (éste sí se puede plegar aparte, la
-lista puede ser larga), anestesia (tipo de anestesia — TIVA, R-TIVA, DXM,
-ALO, Gas — y detalle), desarrollo (**Resumen de la monitorización**: de
-corrido qué salió al empezar, qué pasó por el medio y qué salió al cerrar;
-tipo de alerta; medida correctora; recuperación de la señal; resultado
-esperable), evolución postquirúrgica (una caja de texto amplia para la
-evolución del déficit, y concordancia), incidencias técnicas (otra caja
-amplia), formación y, al final, **alteraciones durante la
-cirugía**: un chip-fila con solo las técnicas ya marcadas como realizadas
-—se actualiza solo si las tocas arriba—, para marcar con qué técnica hubo
-algún cambio, hallazgo o aviso. Se rellena lo que haga falta.
+1. **Identificación / Trazabilidad** — identificador (fijo), estado, fecha
+   de la cirugía, nombre del caso (opcional, para reconocerlo tú de un
+   vistazo — nunca el nombre del paciente), centro, hora de inicio/fin,
+   escenario usado.
+2. **Paciente** — edad, sexo, servicio, antecedentes relevantes.
+3. **Cirugía** — diagnóstico, anatomía patológica (el resultado real, o el
+   nivel intervenido si es columna), intervención (texto libre — no un
+   catálogo cerrado; escríbela tal cual), posición (con las variantes de
+   volteo separadas: supino→prono, prono→supino, y los dos dobles) y su
+   detalle, otros datos quirúrgicos.
+4. **Anestesia** — tipo (TIVA, R-TIVA, DXM, ALO, Gas), detalle, TOF
+   monitorizado, incidencias anestésicas.
+5. **Montaje / Técnicas** — técnicas realizadas (ya vienen marcadas las que
+   planificaste, solo ajustas), el material que salió del montaje base (solo
+   lectura) y el material realmente usado (editable, precargado con lo
+   previsto), umbral EMG de tornillos pediculares, notas de montaje/técnicas.
+6. **Desarrollo intraoperatorio** — resumen de la monitorización (de
+   corrido qué salió al empezar, qué pasó por el medio y qué salió al
+   cerrar); si hubo cambios respecto al plan y, si los hubo, su detalle; si
+   hubo alerta y, si la hubo, tipo de alerta, medida correctora y
+   recuperación de la señal; resultado esperable; técnicas con alteración
+   (un chip-fila con solo las técnicas ya marcadas como realizadas —se
+   actualiza solo si las tocas en el punto 5—); incidencias técnicas; equipo.
+7. **Resultado / Correlación clínica** — evolución postquirúrgica,
+   concordancia.
+8. **Docencia / Meta** — mi papel (Adjunto 1 / Adjunto 2 / Residente),
+   supervisor, dificultad, aprendizaje clave, caso destacado, notas.
 
-Pulsa *Cerrar caso* y pasa a *Cerrado*.
+Se rellena lo que haga falta. Pulsa *Cerrar caso* y pasa a *Cerrado* —el
+botón está en la barra de acciones fija de abajo del diálogo, junto con
+*Guardar*, *Borrar caso* y *Volver a la lista*, siempre visible aunque hayas
+bajado en el scroll de los 8 apartados.
 
 **Corregir el montaje de un caso ya guardado**: el botón bajo la ficha abre
 las cajas de ese caso concreto para cambiar dónde va cada cosa —un cambio de

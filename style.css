@@ -118,13 +118,21 @@ main {
   margin-bottom: 0.4rem;
 }
 
+/* Título de cada ventana principal: más grande y con un resalte de color
+   detrás -una "píldora"- para que se distinga de un vistazo de los
+   subtítulos internos (grupo de técnicas, caja física, bloque del resumen…),
+   que se quedan con el estilo pequeño y sin fondo de siempre. */
 .card h2 {
   margin: 0;
-  font-size: 0.82rem;
+  font-size: 0.95rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  color: var(--accent);
   font-weight: 700;
+  background: var(--accent-soft);
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  display: inline-block;
 }
 
 /* ------------------------------- Toolbar ------------------------------- */
@@ -277,8 +285,9 @@ main {
 .card > summary.card-cab::-webkit-details-marker { display: none; }
 .card > summary.card-cab::after {
   content: "▾";
-  color: var(--text-muted);
-  font-size: 0.7rem;
+  color: var(--accent);
+  font-size: 1rem;
+  font-weight: 700;
   margin-left: auto;
 }
 .card:not([open]) > summary.card-cab::after { content: "▸"; }
@@ -308,22 +317,28 @@ main {
 }
 .panel-cab h2 {
   margin: 0;
-  font-size: 0.78rem;
+  font-size: 0.9rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  color: var(--accent);
   font-weight: 700;
+  background: var(--accent-soft);
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  display: inline-block;
 }
 
 #btn-plegar {
   font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
   border: 1px solid var(--border);
   background: var(--card-bg);
-  color: var(--text-muted);
+  color: var(--accent);
   border-radius: 4px;
   cursor: pointer;
   line-height: 1;
-  padding: 0.1rem 0.35rem;
+  padding: 0.15rem 0.45rem;
 }
 
 .panel-ayuda {
@@ -370,7 +385,9 @@ main {
 /* Flecha propia: el triángulo del navegador no hereda el color del tema */
 .grupo-titulo::before {
   content: "▸";
-  font-size: 0.7rem;
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 700;
   line-height: 1;
   transition: transform 0.12s;
 }
@@ -1141,13 +1158,24 @@ dialog::backdrop { background: rgba(10, 16, 20, 0.55); }
 
 dialog h3 {
   margin: 0 0 0.7rem;
-  font-size: 0.9rem;
+  font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--text-muted);
+  color: var(--accent);
+  font-weight: 700;
+  background: var(--accent-soft);
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  display: inline-block;
 }
 
 .campo { margin-bottom: 0.6rem; display: flex; flex-direction: column; gap: 0.18rem; }
+/* [hidden] y ".campo" empatan en especificidad (0,0,1,0 los dos): sin esto,
+   ".campo { display:flex }" -que viene después en la hoja- le gana al
+   "display:none" del navegador y el campo condicional se seguiría viendo
+   aunque el atributo "hidden" esté puesto. Pasa con los campos que dependen
+   de una casilla (alerta, cambios respecto al plan). */
+.campo[hidden] { display: none; }
 .campo label { font-size: 0.76rem; font-weight: 600; }
 .campo small { font-size: 0.68rem; color: var(--text-muted); line-height: 1.3; }
 .campo .req { color: var(--peligro); }
@@ -1326,28 +1354,59 @@ dialog h3 {
 .caso-etiqueta.sin-subir { background: var(--accent-soft); color: var(--accent); }
 
 /* ---------------------------- Casos: ficha ----------------------------- */
-#dlg-caso h4 {
-  margin: 0.9rem 0 0.5rem;
-  font-size: 0.78rem;
-  color: var(--accent);
-  border-bottom: 1px solid var(--border-soft);
-  padding-bottom: 0.15rem;
+/* La ficha es alta -9 apartados-, así que el diálogo se parte en tres
+   franjas: cabecera fija, contenido con su propio scroll, y la barra de
+   acciones (Guardar/Cerrar/Borrar/Volver) fija abajo -el punto 9 del
+   esquema-, siempre a mano sin tener que bajar del todo. */
+#dlg-caso {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 2rem);
+  overflow: hidden;
+  padding: 0;
 }
-#dlg-caso h4:first-of-type { margin-top: 0; }
-.caso-ampliar { margin-top: 0.8rem; }
+.caso-cab { flex: 0 0 auto; padding: 1rem 1.1rem 0.5rem; }
+.caso-cab h3 { margin-bottom: 0.2rem; }
+.caso-subtitulo { margin: 0; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
+.caso-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 0 1.1rem 0.4rem; }
+.caso-acciones {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0.65rem 1.1rem;
+  border-top: 1px solid var(--border-soft);
+  background: var(--card-bg);
+}
 
-/* El grupo Material: mismo aspecto que un h4 de grupo, pero es un <summary>
-   -se puede plegar aparte aunque el resto de la ficha esté siempre a la
-   vista, porque la lista de material puede ser larga-. */
-.caso-grupo-plegable summary {
-  margin: 0.9rem 0 0.5rem;
-  font-size: 0.78rem;
+/* Los 8 apartados: mismo patrón ▸/▾ que el resto de la herramienta, pero a
+   escala de diálogo -más compacto que las ventanas principales- y todos
+   plegados por defecto (ver el HTML: sin "open"). */
+.caso-grupo {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r);
+  margin-bottom: 0.5rem;
+  background: var(--tag-bg);
+}
+.caso-grupo > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: var(--accent);
-  border-bottom: 1px solid var(--border-soft);
-  padding-bottom: 0.15rem;
-  cursor: pointer;
 }
+.caso-grupo > summary::-webkit-details-marker { display: none; }
+.caso-grupo > summary::before {
+  content: "▸";
+  font-size: 0.85rem;
+  transition: transform 0.12s;
+}
+.caso-grupo[open] > summary::before { transform: rotate(90deg); }
+.caso-grupo[open] > summary { border-bottom: 1px solid var(--border-soft); }
+.caso-grupo-campos { padding: 0.7rem 0.7rem 0.2rem; background: var(--card-bg); }
+
 .caso-ro { font-size: 0.82rem; color: var(--text-muted); padding: 0.2rem 0; }
 .caso-meta { font-size: 0.65rem; color: var(--text-muted); margin: 0.6rem 0 0; }
 .caso-resumen-linea { font-size: 0.72rem; color: var(--text-muted); margin: 0 0 0.4rem; }
@@ -1528,10 +1587,11 @@ dialog h3 {
   main { max-width: none; padding: 0; }
   .columna-principal { display: block; }
   .card { border: none; padding: 0; }
-  /* La ventana de Montajes es navegación, no parte del resumen impreso */
-  #escenario, #montajes { display: none !important; }
+  /* Escenario y Montajes son navegación, no parte del resumen impreso; las
+     cajas son la vista de trabajo canal por canal, el resumen ya trae el
+     material a preparar en una lista compacta. */
+  #escenario, #montajes, #cajas { display: none !important; }
   .resumen-card { border-left: none; }
-  #cajas-contenido { display: none; }
   .avisos li { background: none; border-left: 2px solid #888; color: #000; }
 }
 

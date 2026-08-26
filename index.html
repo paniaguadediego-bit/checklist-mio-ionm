@@ -17,7 +17,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260826">
+<link rel="stylesheet" href="style.css?v=20260826b">
 </head>
 <body>
 
@@ -53,7 +53,7 @@
   -->
   <div class="columna-principal">
 
-    <details class="card no-print" id="escenario" open>
+    <details class="card no-print" id="escenario">
       <summary class="card-cab">
         <h2 data-i18n="escenario_titulo"></h2>
         <span class="card-pista" id="escenario-pista"></span>
@@ -61,7 +61,7 @@
       <div id="escenario-contenido" class="escenario-chips"></div>
     </details>
 
-    <details class="card" id="montajes" open>
+    <details class="card" id="montajes">
       <summary class="card-cab">
         <h2 data-i18n="montajes_titulo"></h2>
         <span class="card-pista" id="montajes-pista"></span>
@@ -81,7 +81,7 @@
       <div id="montajes-lista"></div>
     </details>
 
-    <details class="card tecnicas-card no-print" id="tecnicas" open>
+    <details class="card tecnicas-card no-print" id="tecnicas">
       <summary class="card-cab">
         <h2 data-i18n="tecnicas_titulo"></h2>
         <label class="perfil-label">
@@ -106,9 +106,15 @@
       <div id="catalogo-contenido"></div>
     </div>
 
-    <section id="cajas-contenido"></section>
+    <details class="card" id="cajas">
+      <summary class="card-cab">
+        <h2 data-i18n="cajas_titulo"></h2>
+        <span class="card-pista" id="cajas-pista"></span>
+      </summary>
+      <section id="cajas-contenido"></section>
+    </details>
 
-    <details class="card resumen-card" id="resumen" open>
+    <details class="card resumen-card" id="resumen">
       <summary class="card-cab">
         <h2 data-i18n="resumen_titulo"></h2>
       </summary>
@@ -356,22 +362,59 @@
 </dialog>
 
 <dialog id="dlg-caso" class="no-print">
-  <h3 id="caso-titulo"></h3>
+  <div class="caso-cab">
+    <h3 data-i18n="dlg_caso_titulo"></h3>
+    <p class="caso-subtitulo" id="caso-subtitulo"></p>
+  </div>
 
-  <h4 data-i18n="caso_cerrar_titulo"></h4>
-  <div id="caso-rapido"></div>
+  <!-- Los 9 puntos de la ficha: 8 apartados plegables (uno por punto, todos
+       cerrados por defecto -ver renderFichaCaso()-) más la barra de
+       acciones fija de abajo, que queda fuera de este scroll a propósito
+       para que Guardar/Cerrar siempre estén a mano sin bajar del todo. -->
+  <div class="caso-scroll">
+    <details class="caso-grupo" id="caso-g-traza">
+      <summary data-i18n="caso_g_traza"></summary>
+      <div class="caso-grupo-campos" id="caso-c-traza"></div>
+    </details>
+    <details class="caso-grupo" id="caso-g-paciente">
+      <summary data-i18n="caso_g_paciente"></summary>
+      <div class="caso-grupo-campos" id="caso-c-paciente"></div>
+    </details>
+    <details class="caso-grupo" id="caso-g-cirugia">
+      <summary data-i18n="caso_g_cirugia"></summary>
+      <div class="caso-grupo-campos" id="caso-c-cirugia"></div>
+    </details>
+    <details class="caso-grupo" id="caso-g-anestesia">
+      <summary data-i18n="caso_g_anestesia"></summary>
+      <div class="caso-grupo-campos" id="caso-c-anestesia"></div>
+    </details>
+    <details class="caso-grupo" id="caso-g-montaje">
+      <summary data-i18n="caso_g_montaje"></summary>
+      <div class="caso-grupo-campos" id="caso-c-montaje"></div>
+    </details>
+    <details class="caso-grupo" id="caso-g-desarrollo">
+      <summary data-i18n="caso_g_desarrollo"></summary>
+      <div class="caso-grupo-campos" id="caso-c-desarrollo"></div>
+    </details>
+    <details class="caso-grupo" id="caso-g-resultado">
+      <summary data-i18n="caso_g_resultado"></summary>
+      <div class="caso-grupo-campos" id="caso-c-resultado"></div>
+    </details>
+    <details class="caso-grupo" id="caso-g-formacion">
+      <summary data-i18n="caso_g_formacion"></summary>
+      <div class="caso-grupo-campos" id="caso-c-formacion"></div>
+    </details>
 
-  <div id="caso-ampliar-campos" class="caso-ampliar"></div>
+    <p class="caso-meta" id="caso-meta"></p>
+    <p class="dlg-error" id="caso-error" hidden></p>
 
-  <p class="caso-meta" id="caso-meta"></p>
-  <p class="dlg-error" id="caso-error" hidden></p>
+    <p class="caso-montaje-fila">
+      <button type="button" id="caso-editar-montaje" data-i18n="caso_editar_montaje"></button>
+      <small data-i18n="caso_editar_montaje_ay"></small>
+    </p>
+  </div>
 
-  <p class="caso-montaje-fila">
-    <button type="button" id="caso-editar-montaje" data-i18n="caso_editar_montaje"></button>
-    <small data-i18n="caso_editar_montaje_ay"></small>
-  </p>
-
-  <div class="dlg-botones">
+  <div class="dlg-botones caso-acciones">
     <button type="button" id="caso-borrar" class="peligro" hidden data-i18n="caso_borrar"></button>
     <button type="button" id="caso-volver" data-i18n="caso_volver"></button>
     <span class="barra-flex"></span>
@@ -479,8 +522,8 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260826"></script>
-<script src="data/i18n-en.js?v=20260826"></script>
-<script src="app.js?v=20260826"></script>
+<script src="data/surgeries.js?v=20260826b"></script>
+<script src="data/i18n-en.js?v=20260826b"></script>
+<script src="app.js?v=20260826b"></script>
 </body>
 </html>
