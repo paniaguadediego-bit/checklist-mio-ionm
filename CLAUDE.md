@@ -540,6 +540,17 @@ por el usuario tras usar la herramienta de verdad:
     código. **Cualquier `[hidden]` nuevo sobre un elemento con una clase que
     ya trae su propio `display` hay que forzarlo así explícitamente -no
     basta con poner el atributo.**
+  - **El mismo fallo, otra vez, en `#dlg-caso`** (reportado por el usuario:
+    la ficha se veía metida en la página, debajo de la barra fija de
+    "Corrigiendo el material del caso", en vez de desaparecer al cerrarla).
+    `#dlg-caso { display: flex; ... }` pisaba el `display: none` de fábrica
+    que trae un `<dialog>` sin el atributo `open` -mismo empate de
+    especificidad que el caso de arriba, pero esta vez contra una regla del
+    propio navegador en vez de un `[hidden]` puesto a mano-. Se corrigió
+    acotando el selector a `#dlg-caso[open]`. **Regla general: cualquier
+    `display` puesto a mano en un `<dialog>` (o en algo que dependa de
+    `[hidden]`) tiene que ir condicionado a su estado -`[open]` o
+    `[hidden]`-, nunca suelto en el selector base.**
 
 ### El clon local de checklist-mio-datos estaba desactualizado ~140 commits (26-08-2026)
 

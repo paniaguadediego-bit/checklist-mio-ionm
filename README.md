@@ -269,6 +269,10 @@ El caso nace con las técnicas planificadas, el material a preparar, las cajas,
 el montaje entero y los avisos: **nada de eso se teclea**, la herramienta ya lo
 había calculado. Queda en estado *Preparado*.
 
+Un caso marcado como **caso destacado** (punto 8, Docencia/Meta) lleva una
+★ ámbar junto a su identificador en el propio listado, para verlos de un
+vistazo sin abrir cada caso ni mirar la hoja de cálculo.
+
 **Al cerrar**, abre el caso desde la lista. La ficha son **8 apartados
 plegables, cronológicos, todos cerrados por defecto**: despliega el que te
 interese según el punto del caso en el que estés, no hay que rellenar de
