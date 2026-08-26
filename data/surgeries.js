@@ -146,7 +146,13 @@ window.SURGERIES_DATA = {
     // habituales (mediano, tibial post., poplíteo...).
     { "id": "electrodo_cubital",    "nombre": "Electrodo cubital",         "borde": "solido",      "color": "verde",    "fondo": "verde",     "fungible": true },
     { "id": "adhesivo_eng",         "nombre": "Electrodo adhesivo de ENG", "borde": "solido",      "color": "turquesa", "fondo": "verde",     "fungible": true },
-    { "id": "electrodo_grid",       "nombre": "Electrodo de grid",         "borde": "grueso",      "color": "rojo",     "fondo": "rojo",      "fungible": true },
+    // Una manta GRID son 8 electrodos que vienen juntos de fábrica: aunque solo
+    // se coloquen 2 o 3 en la caja, la manta entera se ha abierto igual, así que
+    // se cobra una sola vez por manta y no por electrodo colocado ("manta": true,
+    // ver calcularCoste()). Dos mantas van en dos etiquetas separadas porque son
+    // dos compras independientes que se cobran cada una la suya.
+    { "id": "electrodo_grid_mantaA","nombre": "Manta GRID A",              "borde": "grueso",      "color": "rojo",     "fondo": "rojo",      "fungible": true, "manta": true },
+    { "id": "electrodo_grid_mantaB","nombre": "Manta GRID B",              "borde": "grueso",      "color": "rojo",     "fondo": "rojo",      "fungible": true, "manta": true },
     { "id": "electrodo_epidural",   "nombre": "Electrodo epidural",        "borde": "doble",       "color": "morado",   "fondo": "morado",    "fungible": true },
     { "id": "sensor_tubo",          "nombre": "Sensor de tubo orotraqueal","borde": "doble",       "color": "turquesa", "fondo": "turquesa",  "fungible": true },
     { "id": "gancho_j",             "nombre": "Electrodo gancho / J / Delta", "borde": "doble",    "color": "amarillo", "fondo": "amarillo",  "fungible": true },
@@ -294,16 +300,24 @@ window.SURGERIES_DATA = {
       ]
     },
     {
-      "categoria": "GRID / estimulación directa",
+      "categoria": "GRID / MANTA",
       "items": [
-        { "id": "grid1", "nombre": "GRID 1", "etiqueta": "electrodo_grid" },
-        { "id": "grid2", "nombre": "GRID 2", "etiqueta": "electrodo_grid" },
-        { "id": "grid3", "nombre": "GRID 3", "etiqueta": "electrodo_grid" },
-        { "id": "grid4", "nombre": "GRID 4", "etiqueta": "electrodo_grid" },
-        { "id": "grid5", "nombre": "GRID 5", "etiqueta": "electrodo_grid" },
-        { "id": "grid6", "nombre": "GRID 6", "etiqueta": "electrodo_grid" },
-        { "id": "grid7", "nombre": "GRID 7", "etiqueta": "electrodo_grid" },
-        { "id": "grid8", "nombre": "GRID 8", "etiqueta": "electrodo_grid" },
+        { "id": "grid1", "nombre": "GRID A.1", "etiqueta": "electrodo_grid_mantaA" },
+        { "id": "grid2", "nombre": "GRID A.2", "etiqueta": "electrodo_grid_mantaA" },
+        { "id": "grid3", "nombre": "GRID A.3", "etiqueta": "electrodo_grid_mantaA" },
+        { "id": "grid4", "nombre": "GRID A.4", "etiqueta": "electrodo_grid_mantaA" },
+        { "id": "grid5", "nombre": "GRID A.5", "etiqueta": "electrodo_grid_mantaA" },
+        { "id": "grid6", "nombre": "GRID A.6", "etiqueta": "electrodo_grid_mantaA" },
+        { "id": "grid7", "nombre": "GRID A.7", "etiqueta": "electrodo_grid_mantaA" },
+        { "id": "grid8", "nombre": "GRID A.8", "etiqueta": "electrodo_grid_mantaA" },
+        { "id": "grid2_1", "nombre": "GRID B.1", "etiqueta": "electrodo_grid_mantaB" },
+        { "id": "grid2_2", "nombre": "GRID B.2", "etiqueta": "electrodo_grid_mantaB" },
+        { "id": "grid2_3", "nombre": "GRID B.3", "etiqueta": "electrodo_grid_mantaB" },
+        { "id": "grid2_4", "nombre": "GRID B.4", "etiqueta": "electrodo_grid_mantaB" },
+        { "id": "grid2_5", "nombre": "GRID B.5", "etiqueta": "electrodo_grid_mantaB" },
+        { "id": "grid2_6", "nombre": "GRID B.6", "etiqueta": "electrodo_grid_mantaB" },
+        { "id": "grid2_7", "nombre": "GRID B.7", "etiqueta": "electrodo_grid_mantaB" },
+        { "id": "grid2_8", "nombre": "GRID B.8", "etiqueta": "electrodo_grid_mantaB" },
         { "id": "dcs_v2", "nombre": "DCS / V2", "etiqueta": "sin_determinar", "nota": "Aparece rotulado en el canal 8 anodal de la caja real — función sin confirmar" },
         { "id": "hc", "nombre": "HC", "etiqueta": "sin_determinar", "nota": "Aparece rotulado en el canal 11 de la caja real — función sin confirmar" }
       ]

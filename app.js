@@ -210,6 +210,9 @@
     campo_fungible:      { es: "Se gasta (fungible)", en: "Consumable" },
     campo_precio_ay:     { es: "Déjalo en blanco si todavía no sabes el precio: en blanco es «sin dato», no cero. Desmarca «se gasta» en lo reutilizable (sondas, gafas, auriculares): sale en el material a preparar, pero no suma al coste.",
                            en: "Leave blank if you do not know the price yet: blank means “no data”, not zero. Untick “consumable” for reusable items (probes, goggles, headphones): they still appear in the material list, but add nothing to the cost." },
+    campo_manta:         { es: "Se cobra por manta (no por electrodo)", en: "Charged per mat (not per electrode)" },
+    campo_manta_ay:      { es: "Márcalo cuando el material viene en un conjunto que se abre entero de una vez (p. ej. una manta de electrodos GRID): el coste cuenta 1 unidad aunque solo se coloque parte del conjunto.",
+                           en: "Tick this when the material comes as a set that is opened whole in one go (e.g. a GRID electrode mat): the cost counts 1 unit even if only part of the set gets placed." },
     et_precio_malo:      { es: "El precio tiene que ser un número de 0 en adelante, o quedarse en blanco.",
                            en: "The price must be a number from 0 upwards, or left blank." },
     campo_nota:          { es: "Nota", en: "Note" },
@@ -3242,6 +3245,7 @@
     document.getElementById("et-precio").value =
       et && typeof et.precio === "number" ? et.precio : "";
     document.getElementById("et-fungible").checked = et ? et.fungible !== false : true;
+    document.getElementById("et-manta").checked = et ? !!et.manta : false;
     document.getElementById("et-borrar").hidden = !et;
     document.getElementById("et-error").hidden = true;
     refrescarPreviaEtiqueta();
@@ -3284,7 +3288,8 @@
       borde: document.getElementById("et-borde").value,
       color: document.getElementById("et-color").value,
       fondo: document.getElementById("et-fondo").value,
-      fungible: document.getElementById("et-fungible").checked
+      fungible: document.getElementById("et-fungible").checked,
+      manta: document.getElementById("et-manta").checked
     };
     // Sin precio no se guarda la clave, para que se distinga de un 0 real
     if (precio !== null) datos.precio = precio;
@@ -4836,7 +4841,9 @@
     Object.keys(res.material).forEach(function (tipo) {
       var et = ETQ[res.tipoEtiqueta[tipo]];
       if (et && et.fungible === false) return;   // reutilizable: no se gasta
-      var cantidad = Math.ceil(res.material[tipo]);
+      // manta: se compra y se cobra entera, colocar 1 electrodo o los 8 de la
+      // manta es el mismo gasto (ver "manta" en el gestor de etiquetas).
+      var cantidad = (et && et.manta) ? 1 : Math.ceil(res.material[tipo]);
       var precio = et && typeof et.precio === "number" && et.precio >= 0 ? et.precio : null;
       if (precio === null) { coste.sinPrecio.push(tipo); return; }
       coste.hayPrecios = true;
