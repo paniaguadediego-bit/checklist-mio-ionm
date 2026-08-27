@@ -266,7 +266,7 @@ function compararColumna_(a, b) {
 
 function construirFilasCasos_(casos, cat, columnasTec) {
   var cabecera = [
-    "caso_uid", "ID_Caso", "nombre_caso", "estado", "Fecha", "centro", "hora_inicio", "hora_fin",
+    "caso_uid", "ID_Caso", "nombre_caso", "estado", "motivo_cancelacion", "Fecha", "centro", "hora_inicio", "hora_fin",
     "escenario_nombre", "perfil",
     "edad", "sexo", "antecedentes_relevantes",
     "intervencion", "servicio", "diagnostico",
@@ -318,7 +318,7 @@ function construirFilasCasos_(casos, cat, columnasTec) {
     }
 
     var base = [
-      c.caso_uid, c.ID_Caso, c.nombre_caso, c.estado, aFecha_(c.fecha), c.centro, c.hora_inicio, c.hora_fin,
+      c.caso_uid, c.ID_Caso, c.nombre_caso, c.estado, c.motivo_cancelacion, aFecha_(c.fecha), c.centro, c.hora_inicio, c.hora_fin,
       c.escenario_nombre, c.perfil,
       c.edad, c.sexo, c.antecedentes_relevantes,
       intervTexto, serv ? serv.nombre : "",
@@ -365,7 +365,10 @@ function construirTecnicasLong_(casos, cat) {
 
   var filas = [];
   var idsDesconocidos = {};
-  casos.forEach(function (c) {
+  // Un caso cancelado no llegó a hacerse: sus técnicas (si las tenía, de
+  // cuando estaba en preparación) no cuentan como técnicas realmente
+  // usadas. Solo cuenta para trazabilidad y paciente, que viven en Casos.
+  casos.filter(function (c) { return c.estado !== "cancelado"; }).forEach(function (c) {
     var serv = cat.SERV[c.servicio_id];
     (c.tecnicas_realizadas || []).forEach(function (id) {
       var nombre = nombreTecnica_(cat, id);
@@ -389,7 +392,10 @@ function construirMaterialLong_(casos) {
   var iFecha = cabecera.indexOf("Fecha"), iIdCaso = cabecera.indexOf("ID_Caso"), iTipo = cabecera.indexOf("Tipo");
 
   var filas = [];
-  casos.forEach(function (c) {
+  // Mismo criterio que en Tecnicas_long: un caso cancelado no cuenta para el
+  // material consumido, aunque tuviera material previsto de cuando se
+  // preparó.
+  casos.filter(function (c) { return c.estado !== "cancelado"; }).forEach(function (c) {
     var tipos = {};
     Object.keys(c.material_previsto || {}).forEach(function (t) { tipos[t] = true; });
     Object.keys(c.material_real || {}).forEach(function (t) { tipos[t] = true; });
@@ -455,12 +461,15 @@ function construirMeta_(casos, malformados, tecnicasDesconocidas) {
   var sinCerrar = casos.filter(function (c) { return c.estado === "preparado"; })
     .sort(function (a, b) { return String(a.fecha).localeCompare(String(b.fecha)); });
 
+  var cancelados = casos.filter(function (c) { return c.estado === "cancelado"; });
+
   var versiones = {};
   casos.forEach(function (c) { versiones[c.version_esquema] = true; });
 
   var filas = [
     ["Última sincronización", new Date()],
     ["Número de casos", casos.length],
+    ["Casos cancelados", cancelados.length],
     ["Casos preparados sin cerrar", sinCerrar.length],
     ["Versiones de esquema en uso", Object.keys(versiones).sort().join(", ")],
     ["", ""],
@@ -496,6 +505,11 @@ function construirMeta_(casos, malformados, tecnicasDesconocidas) {
  * ------------------------------------------------------------------ */
 
 var TEMA_FRANJAS = SpreadsheetApp.BandingTheme.TEAL;
+// El tema TEAL trae de fábrica una cabecera en verde con el texto en negro
+// de Sheets, poco legible. Se sobreescribe con el mismo verde de acento que
+// usa la propia web (--accent en style.css) y texto blanco.
+var COLOR_CABECERA_FONDO = "#14705a";
+var COLOR_CABECERA_TEXTO = "#ffffff";
 var GRIS_SEPARADOR = "#f1f3f4";
 
 function quitarFormatoAnterior_(hoja) {
@@ -520,8 +534,9 @@ function escribirHoja_(ss, nombre, filas) {
 // sola tabla de ancho uniforme (Casos, Tecnicas_long, Material_long).
 function formatearTabla_(hoja, numFilas, numCols) {
   if (!numFilas || !numCols) return;
-  hoja.getRange(1, 1, numFilas, numCols).applyRowBanding(TEMA_FRANJAS, true, false);
-  hoja.getRange(1, 1, 1, numCols).setFontWeight("bold");
+  var banding = hoja.getRange(1, 1, numFilas, numCols).applyRowBanding(TEMA_FRANJAS, true, false);
+  banding.setHeaderRowColor(COLOR_CABECERA_FONDO);
+  hoja.getRange(1, 1, 1, numCols).setFontWeight("bold").setFontColor(COLOR_CABECERA_TEXTO);
   hoja.autoResizeColumns(1, numCols);
 }
 
@@ -531,8 +546,9 @@ function formatearTabla_(hoja, numFilas, numCols) {
 function formatearListas_(hoja, bloquesInfo) {
   bloquesInfo.forEach(function (b) {
     if (!b.filas) return;
-    hoja.getRange(1, b.inicioCol, b.filas + 1, b.columnas).applyRowBanding(TEMA_FRANJAS, true, false);
-    hoja.getRange(1, b.inicioCol, 1, b.columnas).setFontWeight("bold");
+    var banding = hoja.getRange(1, b.inicioCol, b.filas + 1, b.columnas).applyRowBanding(TEMA_FRANJAS, true, false);
+    banding.setHeaderRowColor(COLOR_CABECERA_FONDO);
+    hoja.getRange(1, b.inicioCol, 1, b.columnas).setFontWeight("bold").setFontColor(COLOR_CABECERA_TEXTO);
   });
   var colFinal = bloquesInfo.length
     ? bloquesInfo[bloquesInfo.length - 1].inicioCol + bloquesInfo[bloquesInfo.length - 1].columnas - 1

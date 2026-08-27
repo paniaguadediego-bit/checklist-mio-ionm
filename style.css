@@ -1367,6 +1367,7 @@ dialog h3 {
 .caso-fila:hover { border-color: var(--accent); background: var(--accent-soft); }
 .caso-fila.estado-preparado { border-left-color: var(--accent); }
 .caso-fila.estado-cerrado { border-left-color: var(--text-muted); }
+.caso-fila.estado-cancelado { border-left-color: var(--peligro); }
 
 .caso-fila-cab { display: flex; justify-content: space-between; font-size: 0.82rem; }
 .caso-fila-id-grupo { display: flex; align-items: center; gap: 0.3rem; }

@@ -285,10 +285,11 @@ interese según el punto del caso en el que estés, no hay que rellenar de
 arriba abajo. Debajo del título ("Gestión de casos") sale el identificador
 del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
 
-1. **Identificación / Trazabilidad** — identificador (fijo), estado, fecha
-   de la cirugía, nombre del caso (opcional, para reconocerlo tú de un
-   vistazo — nunca el nombre del paciente), centro, hora de inicio/fin,
-   escenario usado.
+1. **Identificación / Trazabilidad** — identificador (fijo), estado (con
+   **Cancelado** como opción, que muestra un motivo de cancelación en
+   cuanto se marca — ver más abajo), fecha de la cirugía, nombre del caso
+   (opcional, para reconocerlo tú de un vistazo — nunca el nombre del
+   paciente), centro, hora de inicio/fin, escenario usado.
 2. **Paciente** — edad, sexo, servicio, antecedentes relevantes.
 3. **Cirugía** — diagnóstico, anatomía patológica (el resultado real, o el
    nivel intervenido si es columna), intervención (texto libre — no un
@@ -329,6 +330,17 @@ estás.
 **Un caso preparado en el ordenador se cierra en el móvil**, o al revés: los
 casos viajan por la misma sincronización que el resto, cada uno en su propio
 archivo. No hay que exportar ni importar nada.
+
+### Cancelar un caso
+
+Si marcas **Estado → Cancelado** (apartado 1, Identificación/Trazabilidad)
+aparece un campo **Motivo de cancelación** para dejar constancia de por qué
+—suspensión quirúrgica, cambio de planes, lo que sea—. Un caso cancelado no
+llegó a monitorizarse, así que en las estadísticas del Google Sheet solo
+cuenta para lo que sí es real de él: fecha, nombre del caso y centro
+(Trazabilidad) y los datos de Paciente. No entra en las hojas de técnicas ni
+de material consumido (`Tecnicas_long`, `Material_long`), y la hoja **Meta**
+muestra cuántos casos cancelados hay en total.
 
 ### Casos de días pasados y correcciones
 
@@ -649,9 +661,10 @@ lado (marca con `1` los casos donde esa técnica tuvo algún cambio o aviso, ver
 actualiza solo, porque la columna se genera resolviendo el id contra el
 catálogo actual, no guardando el nombre de cuando se creó el caso.
 
-La hoja **Meta** avisa, sin romper nada, de: correlativos `ID_Caso`
-duplicados, casos en estado *preparado* que llevan tiempo sin cerrarse, e
-ids de técnica usados en algún caso que ya no existen en el catálogo.
+La hoja **Meta** muestra el número total de casos y de casos cancelados, y
+avisa, sin romper nada, de: correlativos `ID_Caso` duplicados, casos en
+estado *preparado* que llevan tiempo sin cerrarse, e ids de técnica usados en
+algún caso que ya no existen en el catálogo.
 
 ## El dashboard: Looker Studio
 

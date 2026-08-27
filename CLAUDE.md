@@ -699,6 +699,57 @@ se actualiza solo.
   (`grupo_monitorizacion`/`grupo_mapeo`), el reparto en tres es solo dentro
   de la ficha del caso, como pidió el usuario.
 
+### Retoques posteriores, 27-08-2026: Estado "Cancelado" y cabecera del Sheet
+
+- **Nuevo valor `"cancelado"` en `estado`** (apartado 1, Identificación/
+  Trazabilidad), junto a los ya existentes `preparado`/`cerrado`. Al
+  elegirlo aparece un campo nuevo, **`motivo_cancelacion`** (área de texto),
+  con el mismo mecanismo `dependeDe` que ya usaban "Detalle de los cambios"
+  o "Tipo de alerta" -oculto hasta que se cumple la condición-. Hasta ahora
+  `dependeDe` solo sabía depender de una **casilla** marcada (`control.checked`);
+  aquí depende de que un **desplegable** tenga un valor concreto
+  (`estado === "cancelado"`), así que se generalizó a aceptar también
+  `dependeDe: { c: "<campo>", v: "<valor>" }` en vez de solo el id de una
+  casilla -ver `campoCaso()` y el cierre de `renderFichaCaso()` que conecta
+  cada condicional con su control-. Cualquier campo condicional futuro que
+  dependa de un desplegable (no de una casilla) sigue este mismo patrón.
+- **Un caso cancelado no llegó a monitorizarse de verdad**, así que en el
+  Sheet solo cuenta para lo que sí es real de él: Trazabilidad (fecha,
+  nombre_caso, centro) y Paciente. `construirTecnicasLong_()` y
+  `construirMaterialLong_()` (`Codigo.gs`) ahora filtran `estado !==
+  "cancelado"` antes de construir sus filas -un caso cancelado puede
+  arrastrar `tecnicas_realizadas`/`material_previsto` de cuando estaba en
+  preparación, y no deben contar como técnica/material realmente usado-.
+  La hoja `Casos` sí conserva el caso entero, con su columna nueva
+  `motivo_cancelacion` justo al lado de `estado` en `cabecera`/`base` de
+  `construirFilasCasos_()` -54 columnas base ahora, no 53-. `Meta` suma una
+  fila **"Casos cancelados"** con el recuento, calculada en `construirMeta_()`.
+  **No hizo falta migrar nada** en el repositorio de datos: es un valor y un
+  campo nuevos, ningún caso real usaba `estado: "cancelado"` antes de que
+  existiera.
+- **Cabecera de `Casos`, `Tecnicas_long`, `Material_long` y `Listas`
+  recoloreada**: el tema `BandingTheme.TEAL` de Sheets deja la cabecera en
+  verde con el texto en negro por defecto de Sheets, poco legible -lo que el
+  usuario reportó como "el negro con el verde actual no es agradable"-. En
+  vez de cambiar de tema (perdería el franjeado alterno del resto de filas,
+  que sí gustaba), `formatearTabla_()` y `formatearListas_()` ahora capturan
+  el objeto `Banding` que devuelve `applyRowBanding()` y llaman a
+  `banding.setHeaderRowColor(COLOR_CABECERA_FONDO)` para sobreescribir solo
+  el color de la cabecera -intentar poner el color con
+  `Range.setBackground()` no sirve aquí: mientras el franjeado está activo,
+  manda él sobre el fondo de las celdas banded, hay que tocar el propio
+  objeto `Banding`-. El color elegido, `#14705a`, es el mismo verde de
+  acento que usa la web (`--accent` en `style.css`), con texto blanco
+  (`setFontColor`, que sí es cosa de la celda y no del franjeado, así que
+  ese sí funcionaba ya antes). `formatearMeta_()` no se tocó: no usa
+  franjeado ni tema, no tenía este problema.
+- **Pendiente para el usuario**: como con cualquier cambio en `Codigo.gs`
+  (ver la sección de arriba, "El script del Sheet real llevaba desde antes
+  del 23-08-2026 sin actualizar"), este cambio no llega solo al Sheet real
+  -hay que volver a pegar `Código.gs` a mano en el editor de Apps Script y
+  pulsar *Reconstruir ahora* para verlo reflejado, incluida la columna
+  `motivo_cancelacion` y el nuevo color de cabecera-.
+
 ### Un gap real encontrado y documentado, sin arreglar todavía
 
 **"Exportar copia" / "Importar copia" ya no cubren los montajes ni los

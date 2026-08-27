@@ -292,6 +292,7 @@
     casos_sin_subir:     { es: "{n} sin subir", en: "{n} not uploaded" },
     caso_estado_preparado: { es: "Preparado", en: "Prepared" },
     caso_estado_cerrado: { es: "Cerrado", en: "Closed" },
+    caso_estado_cancelado: { es: "Cancelado", en: "Cancelled" },
     caso_sin_intervencion: { es: "— sin intervención —", en: "— no procedure —" },
     caso_pendiente_subir: { es: "Guardado aquí, pendiente de subir", en: "Saved here, waiting to upload" },
 
@@ -351,6 +352,7 @@
     caso_notas:          { es: "Notas", en: "Notes" },
     caso_ID_Caso:        { es: "Identificador", en: "Identifier" },
     caso_estado:         { es: "Estado", en: "Status" },
+    caso_motivo_cancelacion: { es: "Motivo de cancelación", en: "Cancellation reason" },
     caso_centro:         { es: "Centro", en: "Hospital" },
     caso_hora_inicio:    { es: "Hora de inicio", en: "Start time" },
     caso_hora_fin:       { es: "Hora de fin", en: "End time" },
@@ -436,6 +438,7 @@
     opc_rol_residente:   { es: "Residente", en: "Resident" },
     opc_estado_preparado:{ es: "Preparado", en: "Prepared" },
     opc_estado_cerrado:  { es: "Cerrado", en: "Closed" },
+    opc_estado_cancelado:{ es: "Cancelado", en: "Cancelled" },
     opc_sino_si:         { es: "Sí", en: "Yes" },
     opc_sino_no:         { es: "No", en: "No" },
     opc_anestesia_tiva:  { es: "TIVA (propofol + remifentanilo)", en: "TIVA (propofol + remifentanil)" },
@@ -2520,6 +2523,7 @@
       ID_Caso: siguienteIdCaso(fecha),
       nombre_caso: "",
       estado: "preparado",
+      motivo_cancelacion: "",
       fecha: fecha,
       centro: centroPorDefecto(),
       hora_inicio: "", hora_fin: "",
@@ -3451,7 +3455,7 @@
     // Quién rellena la ficha, no el nivel de supervisión clínica -eso ya no
     // se distingue en ningún campo-.
     rol: ["adjunto1", "adjunto2", "residente"],
-    estado: ["preparado", "cerrado"],
+    estado: ["preparado", "cerrado", "cancelado"],
     sino: ["si", "no"],
     // El tipo de anestesia ya dice si hubo relajante y durante cuánto tiempo
     // (R-TIVA = relajantes toda la cirugía) o si fue libre de opioides (ALO),
@@ -3478,13 +3482,17 @@
      defecto (uno por "g"), cronológicos según se van sabiendo los datos; el
      9º -Guardar/Cerrar/Borrar/Volver- es la barra de acciones fija del
      diálogo, fuera de esta lista porque no es un campo.
-     "dependeDe" oculta el campo hasta que se marque esa casilla (ver
+     "dependeDe" oculta el campo hasta que se cumpla una condición (ver
      "condicionalesPendientes" en renderFichaCaso): así "Hubo alerta" o
-     "Cambios respecto al plan" no ensucian la ficha cuando no aplican. */
+     "Cambios respecto al plan" no ensucian la ficha cuando no aplican. Puede
+     ser el id de una casilla (depende de que esté marcada) o un objeto
+     { c, v } con el id de un desplegable y el valor que debe tener, como
+     "Motivo de cancelación" con estado === "cancelado". */
   var CAMPOS_CASO = [
     // 1. Identificación / Trazabilidad
     { g: "traza", c: "ID_Caso", t: "ro" },
     { g: "traza", c: "estado", t: "sel", o: "estado" },
+    { g: "traza", c: "motivo_cancelacion", t: "area", dependeDe: { c: "estado", v: "cancelado" } },
     { g: "traza", c: "fecha", t: "date", ay: "caso_fecha_ay" },
     { g: "traza", c: "nombre_caso", t: "text", ay: "caso_nombre_caso_ay" },
     { g: "traza", c: "centro", t: "text" },
@@ -3884,18 +3892,17 @@
       });
     });
 
-    // Conecta cada campo condicional con la casilla de la que depende:
-    // oculto hasta que se marque, y se muestra/oculta en vivo si se toca.
-    var dependientesDe = {};
+    // Conecta cada campo condicional con el control del que depende: oculto
+    // hasta que se cumpla la condición, y se muestra/oculta en vivo si se
+    // toca. "dependeDe" es o bien el id de una casilla -depende de que esté
+    // marcada, p. ej. "alerta"- o un objeto { c, v } con el id de un
+    // desplegable y el valor que debe tener -p. ej. estado === "cancelado"-.
     condicionalesPendientes.forEach(function (item) {
-      (dependientesDe[item.de] = dependientesDe[item.de] || []).push(item.div);
-    });
-    Object.keys(dependientesDe).forEach(function (de) {
-      var control = camposCaso[de];
+      var esSelect = typeof item.de === "object";
+      var control = camposCaso[esSelect ? item.de.c : item.de];
       if (!control) return;
-      var divs = dependientesDe[de];
       var actualizar = function () {
-        divs.forEach(function (d) { d.hidden = !control.checked; });
+        item.div.hidden = esSelect ? control.value !== item.de.v : !control.checked;
       };
       actualizar();
       control.addEventListener("change", actualizar);
