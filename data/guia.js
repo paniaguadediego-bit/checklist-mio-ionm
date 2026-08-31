@@ -58,7 +58,7 @@ window.GUIA = {
     },
     {
       titulo: "Preparar un montaje desde cero",
-      html: "<p>Botón <b>Montajes</b> de la barra superior → <b>+ Montaje en blanco</b>. El banco de trabajo (Técnicas, Catálogo, Cajas, Resumen) queda cargado con él al momento.</p><p>Marca las técnicas que vas a hacer, y en Catálogo pulsa un ítem y luego la entrada de la caja donde va -también se puede arrastrar, aunque en pantallas táctiles pulsar y colocar funciona mejor-. Se guarda solo con cada cambio: no hay un botón «Guardar» que se pueda olvidar.</p>"
+      html: "<p>Botón <b>Montajes</b> (junto al rótulo «Plantilla: …») → <b>+ Montaje en blanco</b>. El banco de trabajo (Técnicas, Catálogo, Cajas, Resumen) queda cargado con él al momento.</p><p>Marca las técnicas que vas a hacer, y en Catálogo pulsa un ítem y luego la entrada de la caja donde va -también se puede arrastrar, aunque en pantallas táctiles pulsar y colocar funciona mejor-. Se guarda solo con cada cambio: no hay un botón «Guardar» que se pueda olvidar.</p>"
     },
     {
       titulo: "Partir de la plantilla de un compañero (duplicar)",
@@ -66,7 +66,7 @@ window.GUIA = {
     },
     {
       titulo: "La biblioteca de Montajes: buscar, elegir, gestionar",
-      html: "<p>Botón <b>Montajes</b> de la barra superior. Lista con buscador por nombre o autor, y cuántas entradas tiene ocupadas cada uno.</p><p>Elegir un montaje <b>cierra el diálogo y lo carga al momento, sin preguntar</b>: no hay ningún riesgo, cada montaje es su propio archivo y el anterior se queda guardado tal cual.</p><p><b>Duplicar, Renombrar, Vaciar y Borrar</b> actúan sobre el montaje que tengas cargado en ese momento. Solo puedes tocar los tuyos -salvo los de fábrica, sin autor, que puede editar cualquiera-.</p>"
+      html: "<p>Botón <b>Montajes</b>, a la derecha del rótulo permanente -el que dice «Plantilla: …»-. Solo se ve mientras no estás dentro de un caso; corrigiendo uno, ese hueco lo ocupan los botones de corrección. Lista con buscador por nombre o autor, y cuántas entradas tiene ocupadas cada uno.</p><p>Elegir un montaje <b>cierra el diálogo y lo carga al momento, sin preguntar</b>: no hay ningún riesgo, cada montaje es su propio archivo y el anterior se queda guardado tal cual.</p><p><b>Duplicar, Renombrar, Vaciar y Borrar</b> actúan sobre el montaje que tengas cargado en ese momento. Solo puedes tocar los tuyos -salvo los de fábrica, sin autor, que puede editar cualquiera-.</p>"
     },
     {
       titulo: "Cargar una plantilla en un caso ya creado",
@@ -78,7 +78,7 @@ window.GUIA = {
     },
     {
       titulo: "Registrar un caso y cerrarlo: los 8 apartados",
-      html: "<p>Desde <b>Gestión de casos</b>, la ficha se organiza en 8 apartados plegables, todos cerrados por defecto -se abre el que interese, no hace falta rellenar de arriba abajo-: Identificación/Trazabilidad, Paciente, Cirugía, Anestesia, Montaje/Técnicas, Desarrollo intraoperatorio, Resultado/Correlación clínica, y Docencia/Meta.</p><p>El <b>Estado</b> (apartado 1) puede ser Preparado, Cerrado o Cancelado. Un caso cancelado pide un motivo, y en el Google Sheet solo cuenta para trazabilidad y paciente -no entra en las estadísticas de técnicas ni de material, porque no llegó a monitorizarse de verdad-.</p>"
+      html: "<p>Desde <b>Gestión de casos</b>, la ficha se organiza en 8 apartados plegables, todos cerrados por defecto -se abre el que interese, no hace falta rellenar de arriba abajo-: Identificación/Trazabilidad, Paciente, Cirugía, Anestesia, Montaje/Técnicas, Desarrollo intraoperatorio, Resultado/Correlación clínica, y Docencia/Meta.</p><p>El <b>Estado</b> (apartado 1) puede ser Preparado, Cerrado o Cancelado. Un caso cancelado pide un motivo, y en el Google Sheet solo cuenta para trazabilidad y paciente -no entra en las estadísticas de técnicas ni de material, porque no llegó a monitorizarse de verdad-.</p><p>El apartado 5 (Montaje/Técnicas) muestra también el <b>detalle canal a canal</b> -qué hay puesto en cada entrada de cada caja, con el mismo aspecto que la ventana Resumen-, de solo lectura: para corregirlo hace falta el botón <b>Corregir el material y el montaje</b> del mismo apartado.</p>"
     },
     {
       titulo: "Material extra y conmutador",
@@ -98,7 +98,7 @@ window.GUIA = {
     },
     {
       titulo: "Exportar tus casos a CSV a mano",
-      html: "<p>Botón <b>Exportar casos</b>, junto a Sincronizar. Descarga un CSV con los casos que tengas cargados en ese navegador en ese momento, sin esperar a la sincronización automática con el Google Sheet -útil si quieres los datos ya mismo, o simplemente prefieres no depender de ella-.</p>"
+      html: "<p>Dentro de <b>Gestión de casos</b>, botón <b>Exportar casos</b> abajo a la izquierda. Descarga un CSV con los casos que tengas cargados en ese navegador en ese momento, sin esperar a la sincronización automática con el Google Sheet -útil si quieres los datos ya mismo, o simplemente prefieres no depender de ella-.</p>"
     },
     {
       titulo: "Qué NO se guarda nunca",

@@ -958,6 +958,46 @@ turno. Quedarse solo con el README es exactamente el tipo de desincronización
 silenciosa que ya pasó una vez con el script del Sheet (ver 26-08-2026 más
 abajo) — nadie avisa cuando uno de los dos se queda obsoleto.
 
+### Retoques posteriores, 31-08-2026 (tarde): reorganización de la barra superior, pedida tras usar el puente de verdad
+
+Mismo día, turno aparte, tras probar en real el trabajo de la mañana:
+
+- **Botón "Montajes" movido al rótulo permanente** (`#barra-caso`), a la
+  derecha del todo, visible solo cuando el rótulo dice "Plantilla: X" -en
+  modo caso ese hueco lo ocupa `.barra-caso-acciones`, mutuamente
+  excluyentes, ambos alternados en `renderBarraCaso()`-. Ya no vive en
+  `.barra-fila-casos`.
+- **"Guía de uso" / Idioma / "Docente" agrupados en un desplegable "⋮"**
+  (`.menu-desplegable`/`#menu-lista`, primera fila de la cabecera). Mismo
+  patrón de bug que `.campo[hidden]`: `.menu-lista` pone su propio
+  `display: flex`, así que necesita `.menu-lista[hidden] { display: none; }`
+  explícito -van ya tres veces con este mismo empate de especificidad en el
+  proyecto (`.campo[hidden]`, `.barra-caso-acciones[hidden]`, y este):
+  cualquier `[hidden]` nuevo sobre algo con `display` propio lo necesita
+  sin excepción-. Se cierra solo, al elegir una opción o al pulsar fuera
+  (`document.addEventListener("click", ...)` a nivel de documento).
+- **"Exportar casos" movido dentro de `dlg-casos`**, en la barra de
+  acciones fija, primero (izquierda) en vez de junto a Sincronizar.
+- `.barra-fila-casos` queda solo con Gestión de casos y Sincronizar.
+- **Fuente del nombre del montaje en el rótulo permanente**, que se había
+  dejado a `1.02rem` en el retoque de la mañana, vuelve al tamaño heredado
+  del resto de la barra (`0.86rem`) — quedaba más grande que el resto de la
+  interfaz, pedido explícito de que fuera igual, no solo "más visible".
+- **Detalle canal a canal dentro de la ficha del caso** (apartado 5,
+  Montaje/Técnicas): la queja real fue "en Gestión de casos no veo dónde
+  tengo colocado cada cosa, solo técnicas y material". Se añadió la misma
+  vista de "Cajas necesarias" que ya existía en Resumen
+  (`.resumen-caja`/`.resumen-entrada`, con `aplicarEstilo()` para los
+  bordes de color), de solo lectura, construida con
+  `calcularResumen(montajeDesdeCaso(c))` -mismas dos funciones que ya
+  sostenían toda la Fase 1, ninguna lógica nueva, solo un pintado nuevo-.
+  Solo aparece si el caso tiene montaje (`c.n_cajas`).
+
+README.md y data/guia.js revisados en el mismo turno (nota de mantenimiento
+de arriba, aplicada de inmediato): las menciones a dónde vive cada botón
+-Montajes, Exportar casos, Idioma/Guía/Docente- se actualizaron a la vez que
+el código, no en un turno aparte.
+
 ## Google Sheet (Apps Script)
 
 `apps-script/Codigo.gs` es un script de Google Apps independiente: no forma

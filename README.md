@@ -68,7 +68,8 @@ cuatro pasos.
 
 ## Guía de uso, dentro de la propia herramienta
 
-Botón **Guía de uso** de la barra superior. Seis tarjetas cortas (qué es la
+Botón **⋮** de la barra superior (agrupa Idioma, Guía de uso y Docente,
+de consulta ocasional) → **Guía de uso**. Seis tarjetas cortas (qué es la
 herramienta, el flujo de un día, que plantilla y caso no son lo mismo,
 catálogo/etiquetas, cajas/resumen, y lo demás) más un acordeón con quince
 puntos más detallados, todos plegados. Es la versión corta y orientada a la
@@ -89,16 +90,18 @@ la que te interese en cada momento. El orden es el del flujo real: qué
 técnicas vas a hacer, qué material hay, dónde va y qué sale de todo ello.
 
 Qué montaje hay cargado en ese banco de trabajo se elige aparte, desde el
-diálogo **Montajes** de la barra superior o desde la ficha de un caso. Un
-**rótulo permanente**, justo debajo de la cabecera, dice siempre cuál de los
-dos estás tocando: *«Plantilla: ECL con mapeo»* en gris/verde suave, o *«CASO
-2026-011, Meningioma APC»* en verde sólido con los botones de corrección
-cuando estás dentro de un caso.
+diálogo **Montajes** o desde la ficha de un caso. Un **rótulo permanente**,
+justo debajo de la cabecera, dice siempre cuál de los dos estás tocando:
+*«Plantilla: ECL con mapeo»* en gris/verde suave, con el botón **Montajes**
+a su derecha, o *«CASO 2026-011, Meningioma APC»* en verde sólido con los
+botones de corrección en su lugar, cuando estás dentro de un caso.
 
 ### El diálogo Montajes (la biblioteca de plantillas)
 
-Botón **Montajes** de la barra superior. Lista plana con buscador por nombre
-o autor, y cuántas entradas tiene ocupadas cada montaje. **+ Montaje en
+Botón **Montajes**, a la derecha del rótulo permanente (solo visible
+mientras no estás dentro de un caso — ahí ese hueco lo ocupan los botones de
+corrección). Lista plana con buscador por nombre o autor, y cuántas entradas
+tiene ocupadas cada montaje. **+ Montaje en
 blanco**, fijo arriba de la lista, crea uno nuevo y vacío al momento. Elegir
 un montaje **cierra el diálogo y lo carga directo en el banco de trabajo,
 sin preguntar** — no hay ningún riesgo: cada montaje es su propio archivo y
@@ -328,8 +331,11 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
    concreto para cambiar dónde va cada cosa), **Cargar plantilla…** (copia
    el contenido de otro montaje sobre este caso, con confirmación siempre —
    ver más abajo) y **Guardar este montaje como plantilla…** (crea una
-   plantilla nueva a partir de lo que hay ahora mismo en el caso). Debajo,
-   técnicas realizadas (ya vienen marcadas las que planificaste, solo
+   plantilla nueva a partir de lo que hay ahora mismo en el caso). Justo
+   debajo, el **detalle canal a canal**: la misma vista de "Cajas
+   necesarias" que hay en Resumen, de solo lectura, para saber exactamente
+   qué hay puesto en cada entrada sin salir a corregir el montaje. Debajo de
+   eso, técnicas realizadas (ya vienen marcadas las que planificaste, solo
    ajustas — los chips salen en tres bloques separados por un hueco:
    monitorización, reflejos y mapeo), el material que salió del montaje
    base (solo lectura), el material realmente usado (editable, precargado
@@ -415,7 +421,7 @@ relevantes.
 
 ## Ventana Docente
 
-Botón **Docente** de la barra superior. Dos pestañas, sin relación con la
+Botón **⋮ → Docente**. Dos pestañas, sin relación con la
 preparación de material — no tocan ningún montaje ni caso, y el ejercicio se
 guarda solo en ese navegador, no se sincroniza:
 
@@ -520,8 +526,9 @@ El token se guarda solo en ese navegador. **Desconectar** lo borra del
 dispositivo (no toca ni tus montajes ni lo guardado en GitHub), y siempre
 puedes revocarlo desde GitHub.
 
-**Exportar casos**, junto al botón ☁, descarga un CSV con los casos que
-tengas cargados en ese navegador en ese momento —mismas columnas que la
+**Exportar casos**, dentro del diálogo **Gestión de casos** (abajo a la
+izquierda), descarga un CSV con los casos que tengas cargados en ese
+navegador en ese momento —mismas columnas que la
 hoja *Casos* del Google Sheet, sin las columnas por técnica—. No depende de
 la sincronización automática ni del disparador diario de Apps Script: es
 una vía manual y más rudimentaria para tener los datos a mano cuando

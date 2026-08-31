@@ -107,6 +107,40 @@ body {
 }
 .btn-modo:hover { background: #2f434f; }
 
+/* Guía de uso / Idioma / Docente, agrupados: de consulta ocasional, no
+   compiten en ancho con los botones que se tocan a diario. */
+.menu-desplegable { position: relative; }
+.menu-lista {
+  position: absolute;
+  top: calc(100% + 0.3rem);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  background: var(--panel);
+  border: 1px solid var(--panel-borde);
+  border-radius: var(--r);
+  padding: 0.35rem;
+  z-index: 40;
+  min-width: 150px;
+}
+/* Mismo empate de especificidad que .campo[hidden]: display:flex puesto a
+   mano gana al [hidden] nativo si no se acota así. */
+.menu-lista[hidden] { display: none; }
+.menu-lista button {
+  font: inherit;
+  font-size: 0.78rem;
+  text-align: left;
+  padding: 0.4rem 0.6rem;
+  border: none;
+  background: transparent;
+  color: var(--panel-texto);
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.menu-lista button:hover { background: #2f434f; }
+
 /* -------------------------------- Main --------------------------------- */
 main {
   max-width: 1500px;
@@ -1073,9 +1107,12 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
   padding: 0.45rem 0.7rem;
   font-size: 0.86rem;
 }
-.barra-caso b { font-weight: 700; color: var(--accent); font-size: 1.02rem; }
+.barra-caso b { font-weight: 700; color: var(--accent); }
 body.editando-caso .barra-caso b { color: #fff; }
 .barra-caso small { display: block; opacity: 0.85; font-size: 0.7rem; }
+/* Cambiar de plantilla es la acción natural cuando el rótulo dice
+   "Plantilla: X"; en modo caso ese hueco lo ocupa .barra-caso-acciones. */
+#btn-montajes { margin-left: auto; }
 .barra-caso-acciones { margin-left: auto; display: flex; gap: 0.4rem; }
 /* Mismo empate de especificidad que .campo[hidden]: una clase con su propio
    display gana al [hidden] nativo si no se acota así -no basta con poner el
@@ -1514,6 +1551,18 @@ dialog h3 {
 .caso-ro { font-size: 0.82rem; color: var(--text-muted); padding: 0.2rem 0; }
 .caso-meta { font-size: 0.65rem; color: var(--text-muted); margin: 0.6rem 0 0; }
 .caso-resumen-linea { font-size: 0.72rem; color: var(--text-muted); margin: 0 0 0.4rem; }
+
+/* Detalle canal a canal dentro de la ficha (apartado 5): mismas filas
+   .resumen-caja/.resumen-entrada que la ventana Resumen, solo lectura. */
+.caso-cajas-detalle-titulo {
+  margin: 0.4rem 0 0.3rem;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+.caso-cajas-detalle { margin-bottom: 0.6rem; }
 
 .caso-material { display: flex; flex-direction: column; gap: 0.2rem; }
 .caso-material-fila {

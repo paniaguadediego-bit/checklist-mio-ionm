@@ -17,7 +17,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260831">
+<link rel="stylesheet" href="style.css?v=20260831b">
 </head>
 <body>
 
@@ -26,15 +26,21 @@
     <img class="marca" src="img/favicon.png" alt="MIO-Check" width="32" height="32">
     <select id="perfil-usuario" data-i18n-aria="perfil_usuario_aria" data-i18n-title="perfil_usuario_aria"></select>
     <span class="barra-flex"></span>
-    <button type="button" id="btn-idioma" class="btn-modo" title="Switch to English">EN</button>
-    <button type="button" id="btn-guia" class="btn-modo" data-i18n-title="btn_guia_tit" data-i18n="btn_guia"></button>
-    <button type="button" id="btn-docente" class="btn-modo" data-i18n="btn_docente"></button>
+    <!-- Guía de uso / Idioma / Docente son de consulta ocasional, no de cada
+         gesto: van agrupados en un desplegable para no competir en ancho con
+         Montajes/Gestión de casos/Sincronizar, que sí se tocan a diario. -->
+    <div class="menu-desplegable">
+      <button type="button" id="btn-menu" class="btn-modo" data-i18n-title="btn_menu_tit">⋮</button>
+      <div class="menu-lista" id="menu-lista" hidden>
+        <button type="button" id="btn-idioma" title="Switch to English">EN</button>
+        <button type="button" id="btn-guia" data-i18n-title="btn_guia_tit" data-i18n="btn_guia"></button>
+        <button type="button" id="btn-docente" data-i18n="btn_docente"></button>
+      </div>
+    </div>
   </div>
   <div class="barra-fila barra-fila-casos">
-    <button type="button" id="btn-montajes" class="btn-modo" data-i18n-title="btn_montajes_tit" data-i18n="btn_montajes"></button>
     <button type="button" id="btn-casos" class="btn-modo" data-i18n-title="btn_casos_tit" data-i18n="btn_casos"></button>
     <button type="button" id="btn-sync" class="btn-modo" data-i18n-title="sync_titulo">☁ <span id="sync-estado"></span></button>
-    <button type="button" id="btn-exportar-casos" class="btn-modo" data-i18n-title="btn_exportar_casos_tit" data-i18n="btn_exportar_casos"></button>
   </div>
 </header>
 
@@ -54,6 +60,10 @@
     <button type="button" id="barra-caso-guardar-plantilla" data-i18n="caso_guardar_plantilla"></button>
     <button type="button" id="barra-caso-volver" class="primario" data-i18n="barra_caso_volver"></button>
   </span>
+  <!-- Solo visible cuando NO se está corrigiendo un caso -ahí ya está la
+       barra de acciones de arriba-: cambiar de montaje activo es la acción
+       natural cuando lo que se ve aquí es "Plantilla: X". -->
+  <button type="button" id="btn-montajes" class="btn-modo" data-i18n-title="btn_montajes_tit" data-i18n="btn_montajes"></button>
 </div>
 
 <main>
@@ -369,6 +379,7 @@
   <p class="cat-version" id="casos-cuenta"></p>
 
   <div class="dlg-botones">
+    <button type="button" id="btn-exportar-casos" data-i18n-title="btn_exportar_casos_tit" data-i18n="btn_exportar_casos"></button>
     <span class="barra-flex"></span>
     <button type="button" id="casos-cerrar" data-i18n="cerrar"></button>
   </div>
@@ -570,9 +581,9 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260831"></script>
-<script src="data/i18n-en.js?v=20260831"></script>
-<script src="data/guia.js?v=20260831"></script>
-<script src="app.js?v=20260831"></script>
+<script src="data/surgeries.js?v=20260831b"></script>
+<script src="data/i18n-en.js?v=20260831b"></script>
+<script src="data/guia.js?v=20260831b"></script>
+<script src="app.js?v=20260831b"></script>
 </body>
 </html>

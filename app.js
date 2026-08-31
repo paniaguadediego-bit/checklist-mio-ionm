@@ -475,6 +475,7 @@
                            en: "This montage belongs to {autor}, so you cannot change it.\n\nUse “Duplicate” to make your own copy and work on that." },
     montaje_de:          { es: "{nombre} · {autor}", en: "{nombre} · {autor}" },
     caso_sin_id:         { es: "Caso sin número", en: "Case with no number" },
+    btn_menu_tit:        { es: "Idioma, guía de uso y ventana Docente", en: "Language, user guide and Teaching window" },
     btn_guia:            { es: "Guía de uso", en: "User guide" },
     btn_guia_tit:        { es: "Cómo se usa MIO-Check, de un vistazo", en: "How to use MIO-Check, at a glance" },
     dlg_guia_titulo:     { es: "Guía de uso", en: "User guide" },
@@ -4244,6 +4245,59 @@
           cont.appendChild(origenP);
         }
 
+        // Detalle canal a canal, pedido por el usuario: la misma vista que
+        // ya existe en Resumen ("Cajas necesarias"), aquí de solo lectura,
+        // para saber qué hay puesto sin salir a corregir el montaje. Se
+        // reconstruye desde el montaje en crudo del caso (montajeDesdeCaso)
+        // y se recalcula con calcularResumen() -misma función que usa el
+        // banco de trabajo, no se duplica nada de su lógica-.
+        if (c.n_cajas) {
+          var tituloDetalle = document.createElement("h4");
+          tituloDetalle.className = "caso-cajas-detalle-titulo";
+          var resDetalle = calcularResumen(montajeDesdeCaso(c));
+          tituloDetalle.textContent = T("resumen_cajas", { n: resDetalle.cajas.length });
+          cont.appendChild(tituloDetalle);
+
+          var contDetalle = document.createElement("div");
+          contDetalle.className = "caso-cajas-detalle";
+          resDetalle.cajas.forEach(function (cj) {
+            var bloque = document.createElement("div");
+            bloque.className = "resumen-caja";
+
+            var cab = document.createElement("div");
+            cab.className = "resumen-caja-cab";
+            var nom = document.createElement("span");
+            nom.className = "resumen-caja-nombre";
+            nom.textContent = cj.nombre;
+            var cnt = document.createElement("span");
+            cnt.className = "resumen-caja-cnt" + (cj.usadas === cj.total ? " llena" : "");
+            cnt.textContent = T("resumen_entradas", { usadas: cj.usadas, total: cj.total });
+            cab.appendChild(nom);
+            cab.appendChild(cnt);
+            bloque.appendChild(cab);
+
+            var lista = document.createElement("div");
+            lista.className = "resumen-entradas";
+            cj.detalle.forEach(function (d) {
+              var el = document.createElement("span");
+              el.className = "resumen-entrada";
+              if (d.estilo) aplicarEstilo(el, d.estilo);
+              el.title = T("chip_tipo", { tipo: d.tipo });
+              el.innerHTML = "<span class=\"re-num\">" + d.entrada + "</span> ";
+              if (d.color) {
+                var dot = document.createElement("span");
+                dot.className = "color-dot color-" + d.color;
+                el.appendChild(dot);
+              }
+              el.appendChild(document.createTextNode(d.nombre));
+              lista.appendChild(el);
+            });
+            bloque.appendChild(lista);
+            contDetalle.appendChild(bloque);
+          });
+          cont.appendChild(contDetalle);
+        }
+
         // Corregir el material y el montaje: pedido por el usuario que viva
         // aquí, en el mismo submenú donde ya se ve el resumen y se elige
         // plantilla, en vez de al final de la ficha -es la única forma de
@@ -5924,18 +5978,21 @@
     var nombre = document.getElementById("barra-caso-nombre");
     var ay = document.getElementById("barra-caso-ay");
     var acciones = document.getElementById("barra-caso-acciones");
+    var btnMontajes = document.getElementById("btn-montajes");
     if (document.body.classList.contains("editando-caso")) {
       var caso = casos[casoEditandoUid];
       prefijo.textContent = T("barra_caso_texto");
       nombre.textContent = caso ? ((caso.ID_Caso || "") + (caso.nombre_caso ? " — " + caso.nombre_caso : "")) : "";
       ay.textContent = T("barra_caso_ay");
       acciones.hidden = false;
+      btnMontajes.hidden = true;
     } else {
       var esc = escenarioActual();
       prefijo.textContent = T("barra_plantilla_texto");
       nombre.textContent = esc ? campo(esc, "nombre") : T("barra_plantilla_ninguna");
       ay.textContent = "";
       acciones.hidden = true;
+      btnMontajes.hidden = false;
     }
   }
 
@@ -6113,6 +6170,21 @@
 
   document.getElementById("btn-idioma").addEventListener("click", function () {
     aplicarIdioma(idioma === "es" ? "en" : "es", true);
+  });
+
+  /* Desplegable "⋮": Idioma, Guía de uso y Docente. Se cierra solo al elegir
+     cualquiera de los tres (sus propios listeners ya abren su diálogo o
+     cambian el idioma; aquí solo se pliega el menú) o al pulsar fuera. */
+  var menuLista = document.getElementById("menu-lista");
+  document.getElementById("btn-menu").addEventListener("click", function (e) {
+    e.stopPropagation();
+    menuLista.hidden = !menuLista.hidden;
+  });
+  menuLista.addEventListener("click", function (e) {
+    if (e.target.tagName === "BUTTON") menuLista.hidden = true;
+  });
+  document.addEventListener("click", function () {
+    menuLista.hidden = true;
   });
 
   /* ---------------------------------------------------------------- *
