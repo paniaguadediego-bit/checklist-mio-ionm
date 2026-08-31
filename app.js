@@ -9,10 +9,6 @@
   var SERVICIOS_BASE = DATA.servicios || [];
   var INTERVENCIONES_BASE = DATA.intervenciones || [];
   var PERFILES_BASE = DATA.perfiles_procedimiento || [];
-  // Los tipos de cirugía. Es una lista cerrada y corta a propósito: sirve para
-  // agrupar los montajes, no para describir la intervención (eso es el
-  // catálogo de intervenciones, que sí lleva el código del hospital).
-  var ESCENARIOS_BASE = DATA.escenarios_tipo || [];
   // Quién usa la herramienta. Va VACÍO de fábrica y se rellena desde la app:
   // los nombres de personas reales no se escriben en este repositorio, que es
   // público. Creados desde la interfaz viven en estado.json, que es privado.
@@ -39,7 +35,10 @@
     escenario_aria:      { es: "Escenario de cirugía", en: "Surgery scenario" },
     idioma_titulo:       { es: "Switch to English", en: "Cambiar a español" },
     sync_titulo:         { es: "Sincronizar con GitHub", en: "Sync with GitHub" },
-    btn_nuevo:           { es: "Nuevo", en: "New" },
+    btn_exportar_casos:  { es: "Exportar casos", en: "Export cases" },
+    btn_exportar_casos_tit: { es: "Descargar todos los casos en un CSV, sin esperar a la sincronización automática con el Sheet",
+                           en: "Download all cases as a CSV, without waiting for automatic Sheet sync" },
+    casos_exportados:    { es: "Casos exportados a CSV.", en: "Cases exported to CSV." },
     btn_duplicar:        { es: "Duplicar", en: "Duplicate" },
     btn_renombrar:       { es: "Renombrar", en: "Rename" },
     btn_vaciar:          { es: "Vaciar", en: "Empty" },
@@ -165,10 +164,8 @@
                            en: "Rounded up: {cantidad} packs in use" },
     aviso_pendiente:     { es: "Pendiente de confirmar: {texto}", en: "Pending confirmation: {texto}" },
 
-    /* --- Escenarios --- */
-    sin_escenarios:      { es: "— sin escenarios —", en: "— no scenarios —" },
+    /* --- Montajes: acciones --- */
     restablecido:        { es: "Restablecido a los presets del archivo.", en: "Reset to the presets from the file." },
-    esc_nuevo_prompt:    { es: "Nombre del nuevo escenario de cirugía:", en: "Name of the new surgery scenario:" },
     esc_nuevo_def:       { es: "Cirugía nueva", en: "New surgery" },
     esc_duplicar_prompt: { es: "Nombre de la copia:", en: "Name of the copy:" },
     esc_copia_sufijo:    { es: " (copia)", en: " (copy)" },
@@ -356,7 +353,6 @@
     caso_centro:         { es: "Centro", en: "Hospital" },
     caso_hora_inicio:    { es: "Hora de inicio", en: "Start time" },
     caso_hora_fin:       { es: "Hora de fin", en: "End time" },
-    caso_escenario_nombre: { es: "Escenario usado", en: "Scenario used" },
     caso_antecedentes_relevantes: { es: "Antecedentes relevantes", en: "Relevant history" },
     caso_diagnostico:    { es: "Diagnóstico", en: "Diagnosis" },
     opc_diagnostico_ecc: { es: "ECC — estenosis de canal cervical", en: "ECC — cervical canal stenosis" },
@@ -465,10 +461,7 @@
     tab_intervenciones:  { es: "Intervenciones", en: "Procedures" },
     tab_servicios:       { es: "Servicios", en: "Specialties" },
     tab_perfiles:        { es: "Perfiles", en: "Profiles" },
-    tab_escenarios:      { es: "Escenarios", en: "Scenarios" },
     tab_usuarios:        { es: "Usuarios", en: "Users" },
-    cat_intro_escenarios: { es: "El <b>tipo de cirugía</b>, para agrupar los montajes. Es una lista corta a propósito: describir la intervención concreta es cosa de la pestaña <b>Intervenciones</b>, que lleva el código del hospital.",
-                           en: "The <b>type of surgery</b>, used to group montages. It is deliberately a short list: describing the specific procedure belongs in the <b>Procedures</b> tab, which carries the hospital code." },
     cat_intro_usuarios:  { es: "Quién usa la herramienta. Sirve para <b>firmar los montajes</b>: cada uno lleva el nombre de quien lo creó, y solo su autor puede editarlo o borrarlo. No es una contraseña ni protege nada — cualquiera puede cambiar de perfil desde la barra de arriba. Estos nombres viven en tu repositorio de datos privado, nunca en el del código.",
                            en: "Who uses the tool. It is used to <b>sign montages</b>: each one carries the name of whoever created it, and only its author can edit or delete it. It is not a password and protects nothing — anyone can switch profile from the top bar. These names live in your private data repository, never in the code one." },
     perfil_usuario_aria: { es: "Quién eres", en: "Who you are" },
@@ -481,8 +474,11 @@
     montaje_no_es_tuyo:  { es: "Este montaje es de {autor}, así que no puedes cambiarlo.\n\nUsa «Duplicar» para hacerte una copia tuya y trabajar sobre ella.",
                            en: "This montage belongs to {autor}, so you cannot change it.\n\nUse “Duplicate” to make your own copy and work on that." },
     montaje_de:          { es: "{nombre} · {autor}", en: "{nombre} · {autor}" },
-    montaje_sin_escenario: { es: "Sin escenario", en: "No scenario" },
     caso_sin_id:         { es: "Caso sin número", en: "Case with no number" },
+    btn_guia:            { es: "Guía de uso", en: "User guide" },
+    btn_guia_tit:        { es: "Cómo se usa MIO-Check, de un vistazo", en: "How to use MIO-Check, at a glance" },
+    dlg_guia_titulo:     { es: "Guía de uso", en: "User guide" },
+    guia_aviso_en:       { es: "This guide is only written in Spanish for now.", en: "This guide is only written in Spanish for now." },
     btn_docente:         { es: "Docente", en: "Teaching" },
     docente_titulo:      { es: "Miotomas: qué músculos monitorizar", en: "Myotomes: which muscles to monitor" },
     docente_intro:       { es: "Pulsa en la columna los <b>niveles</b> que abarca la cirugía. A la izquierda aparecen los músculos que dependen de esas raíces; pulsa uno para llevarlo a los <b>monitorizados</b> de la derecha, y pulsa allí para quitarlo. Los rangos son los que se enseñan habitualmente: la inervación se solapa y no todas las escuelas dan los mismos límites, así que están para discutirlos.",
@@ -524,22 +520,50 @@
     caso_editar_montaje: { es: "Corregir el material y el montaje", en: "Correct material and montage" },
     caso_editar_montaje_ay: { es: "Abre las cajas de este caso para cambiar dónde va cada cosa. Lo que cambies se guarda en el caso, no en el montaje del que salió.",
                            en: "Opens this case’s boxes to change where each item goes. What you change is saved in the case, not in the montage it came from." },
+    caso_cargar_plantilla: { es: "Cargar plantilla…", en: "Load template…" },
+    caso_cargar_plantilla_ay: { es: "Copia el contenido de una plantilla sobre este caso. Editar la plantilla después no cambia lo que ya se copió aquí.",
+                           en: "Copies a template's content onto this case. Editing the template afterwards does not change what was already copied here." },
+    caso_montaje_origen: { es: "Plantilla de origen: {nombre}", en: "Source template: {nombre}" },
+    caso_montaje_origen_no_disponible: { es: "plantilla no disponible", en: "template not available" },
+    caso_guardar_plantilla: { es: "Guardar este montaje como plantilla…", en: "Save this montage as a template…" },
+    caso_guardar_plantilla_ay: { es: "Crea una plantilla nueva a partir de lo que hay ahora en las cajas de este caso. El caso no se modifica.",
+                           en: "Creates a new template from what's currently in this case's boxes. The case itself is not changed." },
+    plantilla_guardar_prompt: { es: "Nombre de la plantilla nueva:\n\nPara reconocerla luego en la lista — nunca un dato del paciente.",
+                           en: "Name of the new template:\n\nSo you can recognise it later in the list — never patient data." },
+    plantilla_guardada: { es: "Plantilla «{nombre}» guardada.", en: "Template “{nombre}” saved." },
     barra_caso_texto:    { es: "Corrigiendo el material del caso", en: "Correcting the material of case" },
     barra_caso_ay:       { es: "Se guarda solo, en el caso. El montaje original no se toca.",
                            en: "Saved automatically, into the case. The original montage is untouched." },
     barra_caso_volver:   { es: "Volver al caso", en: "Back to the case" },
+    barra_plantilla_texto: { es: "Plantilla:", en: "Template:" },
+    barra_plantilla_ninguna: { es: "— sin plantilla activa —", en: "— no active template —" },
     caso_reconstruccion_parcial: { es: "De este caso solo se han podido recolocar {recuperadas} de {esperadas} entradas.\n\nEs un caso antiguo, de antes de que se guardara el montaje completo, y alguna de sus entradas ya no existe en las cajas de ahora.\n\nSi sigues y cambias algo, el caso se quedará con las {recuperadas} que se ven. ¿Continuar?",
                            en: "Only {recuperadas} of {esperadas} inputs could be restored for this case.\n\nIt is an old case, from before the full montage was stored, and some of its inputs no longer exist in the current boxes.\n\nIf you continue and change anything, the case will keep only the {recuperadas} shown. Continue?" },
-    escenario_titulo:    { es: "Escenario", en: "Scenario" },
-    escenario_todos:     { es: "Todos", en: "All" },
-    escenario_pista:     { es: "{nombre}", en: "{nombre}" },
-    escenario_ninguno:   { es: "Sin elegir", en: "None chosen" },
-    montajes_titulo:     { es: "Montajes personales", en: "Personal montages" },
-    montajes_vacio:      { es: "Todavía no hay ningún montaje de este escenario. Crea uno con «Nuevo», o duplica el de un compañero.",
-                           en: "There are no montages for this scenario yet. Create one with “New”, or duplicate a colleague’s." },
     montajes_cuenta:     { es: "{n} de {total}", en: "{n} of {total}" },
-    montaje_asignar_esc: { es: "Escenario de este montaje", en: "Scenario for this montage" },
     montaje_tuyo:        { es: "tuyo", en: "yours" },
+
+    /* --- Fase 4.1: biblioteca de montajes --- */
+    btn_montajes:        { es: "Montajes", en: "Montages" },
+    btn_montajes_tit:    { es: "Elegir, crear o gestionar tus montajes", en: "Choose, create or manage your montages" },
+    dlg_montajes_titulo: { es: "Montajes", en: "Montages" },
+    montaje_en_blanco:   { es: "+ Montaje en blanco", en: "+ Blank montage" },
+
+    /* --- Fase 1: cargar una plantilla sobre un caso --- */
+    dlg_elegir_plantilla_titulo: { es: "Elegir plantilla", en: "Choose template" },
+    plantilla_filtro_buscar: { es: "Buscar", en: "Search" },
+    plantilla_buscar_ph: { es: "Nombre o autor…", en: "Name or author…" },
+    plantilla_entradas: { es: "{n} entradas", en: "{n} inputs" },
+    plantilla_vacio:    { es: "Ningún montaje con esos filtros.", en: "No montage matches those filters." },
+    dlg_aplicar_plantilla_titulo: { es: "Cargar plantilla en el caso", en: "Load template into the case" },
+    plantilla_confirmar_estado: { es: "Este caso está en estado «{estado}». ¿Seguro que quieres cargar una plantilla sobre él?",
+                           en: "This case is in “{estado}” status. Are you sure you want to load a template onto it?" },
+    plantilla_msg_vacio: { es: "El caso está vacío: se colocarán {n} entradas.", en: "The case is empty: {n} inputs will be placed." },
+    plantilla_msg_reemplazar: { es: "Reemplazar todo — se sobrescriben {n} entradas.", en: "Replace everything — {n} inputs get overwritten." },
+    plantilla_msg_anadir: { es: "Añadir solo lo que falta — se rellenan {rellenables} entradas vacías y se conservan {ocupadas}.",
+                           en: "Add only what's missing — {rellenables} empty inputs get filled in and {ocupadas} are kept." },
+    plantilla_btn_reemplazar: { es: "Reemplazar todo", en: "Replace everything" },
+    plantilla_btn_anadir: { es: "Añadir solo lo que falta", en: "Add only what's missing" },
+    plantilla_btn_aplicar: { es: "Aplicar", en: "Apply" },
     cat_intro_tecnicas:  { es: "Lo que ves y puedes cambiar es la <b>etiqueta</b>. Por dentro cada técnica tiene un identificador fijo que no cambia nunca, así que renombrarla actualiza también los casos ya guardados. <b>Desactivar no borra</b>: deja de ofrecerse para casos nuevos, pero sigue existiendo en el histórico.",
                            en: "What you see and can change is the <b>label</b>. Internally each technique has a fixed identifier that never changes, so renaming it also updates cases already saved. <b>Deactivating does not delete</b>: it stops being offered for new cases, but remains in the history." },
     cat_intro_interv:    { es: "El <b>código</b> puede quedarse vacío hasta que tengas la codificación del hospital. Cuando lo rellenes, se aplica solo a todos los casos anteriores de ese tipo.",
@@ -722,6 +746,10 @@
     document.querySelectorAll("[data-i18n-title]").forEach(function (el) {
       el.title = T(el.dataset.i18nTitle);
     });
+    // La guía solo está escrita en castellano por ahora: en inglés se avisa
+    // dentro del propio diálogo en vez de dejarla a medio traducir sin decirlo.
+    var avisoEn = document.getElementById("guia-aviso-en");
+    if (avisoEn) avisoEn.hidden = idioma !== "en";
     document.querySelectorAll("[data-i18n-aria]").forEach(function (el) {
       el.setAttribute("aria-label", T(el.dataset.i18nAria));
     });
@@ -933,7 +961,7 @@
    * Ojo con el nombre "etiqueta": en una técnica es su texto visible, y no
    * tiene nada que ver con las etiquetas de material (tipos físicos).
    * ---------------------------------------------------------------- */
-  var CATALOGOS = ["tecnicas", "servicios", "intervenciones", "perfiles", "escenarios", "usuarios"];
+  var CATALOGOS = ["tecnicas", "servicios", "intervenciones", "perfiles", "usuarios"];
   var GRUPOS_TECNICA = ["monitorizacion", "mapeo"];
 
   // nombre -> { version, actualizado_en, propios[], orden[], borrados[] }
@@ -943,7 +971,6 @@
   var SERVICIOS = [], SERV = {};
   var INTERVENCIONES = [], INTERV = {};
   var PERFILES = [], PERF = {};
-  var ESCENARIOS_TIPO = [], ESCT = {};
   var USUARIOS = [], USRS = {};
 
   function reiniciarCatalogos() {
@@ -994,8 +1021,6 @@
     INTERVENCIONES = i.lista; INTERV = i.indice;
     var p = fusionarCatalogo(PERFILES_BASE, catalogos.perfiles);
     PERFILES = p.lista; PERF = p.indice;
-    var e = fusionarCatalogo(ESCENARIOS_BASE, catalogos.escenarios);
-    ESCENARIOS_TIPO = e.lista; ESCT = e.indice;
     var u = fusionarCatalogo(USUARIOS_BASE, catalogos.usuarios);
     USUARIOS = u.lista; USRS = u.indice;
   }
@@ -1060,7 +1085,7 @@
     var meta = catalogos[nombre];
     var lista = { tecnicas: TECNICAS, servicios: SERVICIOS,
                   intervenciones: INTERVENCIONES, perfiles: PERFILES,
-                  escenarios: ESCENARIOS_TIPO, usuarios: USUARIOS }[nombre];
+                  usuarios: USUARIOS }[nombre];
     // El orden se fija por primera vez con el que se está viendo, para que
     // mover un elemento no reordene de golpe todo lo demás.
     var ids = lista.map(function (e) { return e.id; });
@@ -1078,13 +1103,13 @@
    * Estado
    * ---------------------------------------------------------------- */
   /* Los MONTAJES: qué material va en qué entrada de qué caja, con sus
-     técnicas. Antes se llamaban "escenarios" y eran lo único que había; ahora
-     un escenario es el tipo de cirugía (Tumor ST, ECC...) y los montajes van
-     dentro de él, firmados por quien los hizo.
-
-     Ojo al leer el resto del archivo: `catalogos.escenarios` son los tipos de
-     cirugía y `DATA.escenarios` son los presets de fábrica que se convierten
-     en montajes al arrancar. Son tres cosas distintas con nombres parecidos.
+     técnicas, firmados por quien los hizo. El nombre "escenario" que sigue
+     apareciendo en `escenarioActual()`, `casoDesdeEscenario()` y el parámetro
+     `esc` de varias funciones es un alias heredado de "montaje" -así se
+     llamaba antes de que existiera un catálogo de tipos de cirugía-. Ese
+     catálogo (`ESCENARIOS_TIPO`) se retiró por duplicar el `diagnostico` de
+     la ficha del caso; `DATA.escenarios` es otra cosa aparte, sin relación:
+     los presets de fábrica que se convierten en montajes al arrancar.
 
      Cada montaje se guarda en su propio archivo del repositorio de datos
      (montajes/<uid>.json), igual que los casos y por el mismo motivo:
@@ -1114,31 +1139,12 @@
   function montajeDesdePreset(clave, preset) {
     var m = clonar(preset);
     m.montaje_uid = uidDeFabrica(clave);
-    m.escenario_id = m.escenario_id || escenarioPorNombre(campo(preset, "nombre"));
     // Sin autor: los de fábrica no son de nadie, así que cualquiera los edita
     m.autor_id = "";
     m.de_fabrica = true;
     m.creado_en = m.creado_en || new Date().toISOString();
     m.editado_en = m.editado_en || [];
     return m;
-  }
-
-  /* Empareja un preset con su tipo de cirugía por el nombre. Es solo una
-     propuesta para no dejarlos todos sueltos: si no encuentra nada, el
-     montaje se queda sin escenario y se elige a mano. */
-  function escenarioPorNombre(nombre) {
-    var n = (nombre || "").toLowerCase();
-    if (!n) return "";
-    // Se prueba también contra la descripción: el nombre corto es una sigla
-    // ("Tumor ST") que casi nunca aparece literal en el nombre del montaje,
-    // pero la descripción ("Tumor supratentorial") sí.
-    var hallado = ESCENARIOS_TIPO.filter(function (e) {
-      return [campo(e, "nombre"), campo(e, "descripcion")].some(function (txt) {
-        var t = (txt || "").toLowerCase();
-        return t && (n === t || n.indexOf(t) !== -1 || t.indexOf(n) !== -1);
-      });
-    })[0];
-    return hallado ? hallado.id : "";
   }
 
   function cargarMontajes() {
@@ -1245,7 +1251,6 @@
         if (montajes[uid]) return;
         var m = clonar(legadoEscenarios[clave]);
         m.montaje_uid = uid;
-        m.escenario_id = m.escenario_id || escenarioPorNombre(campo(m, "nombre"));
         m.autor_id = m.autor_id || "";
         m.creado_en = new Date().toISOString();
         m.editado_en = [];
@@ -1421,9 +1426,6 @@
     casoEditandoUid = uid;
     montajeCaso = m;
     document.body.classList.add("editando-caso");
-    document.getElementById("barra-caso-nombre").textContent =
-      (caso.ID_Caso || "") + (caso.nombre_caso ? " — " + caso.nombre_caso : "");
-    document.getElementById("barra-caso").hidden = false;
     renderTodo();
     // Las cajas son lo que se viene a tocar: se deja a la vista directamente
     var cajas = document.getElementById("cajas-contenido");
@@ -1435,7 +1437,6 @@
     montajeCaso = null;
     casoEditandoUid = null;
     document.body.classList.remove("editando-caso");
-    document.getElementById("barra-caso").hidden = true;
     renderTodo();
     if (volverAlCaso && uid && casos[uid]) abrirCaso(uid);
   }
@@ -2633,28 +2634,374 @@
       : c.criterio_alarma;
   }
 
+  /* ---------------------------------------------------------------- *
+   * Exportación manual de Casos a CSV. Pedida por el usuario para tener
+   * los datos a mano sin depender del disparador diario de Apps Script:
+   * mismas 53 columnas base que construirFilasCasos_() genera en la hoja
+   * "Casos" de Codigo.gs -sin las columnas TEC_<etiqueta> por técnica, que
+   * se consultan mejor caso a caso en la ficha-, con los mismos campos
+   * resueltos (intervencionDe, resumenMonitorizacionDe, tipoAlertaDe) que
+   * ya usa la ficha, para que un caso antiguo se lea igual aquí que en
+   * pantalla. Si algún día se toca la cabecera de Codigo.gs, esta lista
+   * hay que revisarla a la vez -son la misma tabla, en dos sitios-.
+   * ---------------------------------------------------------------- */
+  var COLUMNAS_CSV_CASOS = [
+    "caso_uid", "ID_Caso", "nombre_caso", "estado", "motivo_cancelacion", "fecha", "centro", "hora_inicio", "hora_fin",
+    "perfil",
+    "edad", "sexo", "antecedentes_relevantes",
+    "intervencion", "servicio", "diagnostico",
+    "posicion", "posicion_detalle", "anatomia_patologica", "otros_datos_quirurgicos",
+    "notas_montaje_tecnicas", "hubo_cambios_plan", "cambios_respecto_al_plan", "umbral_tornillos_pediculares",
+    "n_cajas", "n_canales_ocupados", "avisos_preparacion",
+    "coste_material", "coste_completo",
+    "tipo_anestesia", "tipo_anestesia_detalle",
+    "tof_monitorizado", "incidencias_anestesicas",
+    "resumen_monitorizacion", "alerta", "tipo_alerta",
+    "medida_correctora", "recuperacion_senal", "resultado_esperable",
+    "deficit_postoperatorio", "concordancia",
+    "incidencias_tecnicas", "equipo",
+    "rol", "supervisor", "dificultad_1a5", "aprendizaje_clave", "caso_destacado",
+    "notas", "version_esquema", "n_ediciones", "ultima_edicion", "guardado_en"
+  ];
+
+  function valorCsvDeCaso(c, columna) {
+    switch (columna) {
+      case "fecha": return c.fecha || "";
+      case "intervencion": return intervencionDe(c);
+      case "servicio": return SERV[c.servicio_id] ? campo(SERV[c.servicio_id], "nombre") : "";
+      case "resumen_monitorizacion": return resumenMonitorizacionDe(c);
+      case "tipo_alerta": return tipoAlertaDe(c);
+      case "n_cajas": return c.n_cajas || 0;
+      case "n_canales_ocupados": return c.n_canales_ocupados || 0;
+      case "avisos_preparacion": return (c.avisos_preparacion || []).join(" · ");
+      case "coste_material": return typeof c.coste_material === "number" ? c.coste_material : "";
+      case "coste_completo": return c.coste_completo ? 1 : 0;
+      case "alerta": return c.alerta ? 1 : 0;
+      case "hubo_cambios_plan": return c.hubo_cambios_plan ? 1 : 0;
+      case "caso_destacado": return c.caso_destacado ? 1 : 0;
+      case "n_ediciones": return (c.editado_en || []).length;
+      case "ultima_edicion": return (c.editado_en || []).length ? c.editado_en[c.editado_en.length - 1] : "";
+      default: return c[columna] != null ? c[columna] : "";
+    }
+  }
+
+  // Comillas solo si hacen falta -coma, comilla o salto de línea-, y la
+  // comilla interna se escapa doblándola, regla estándar de CSV.
+  function csvEscape(valor) {
+    var texto = valor == null ? "" : String(valor);
+    if (/[",\n]/.test(texto)) return "\"" + texto.replace(/"/g, "\"\"") + "\"";
+    return texto;
+  }
+
+  function casosACsv() {
+    var filas = [COLUMNAS_CSV_CASOS.join(",")];
+    // Mismo orden que el Sheet: cronológico por fecha de la cirugía, no por
+    // cuándo se guardó el archivo.
+    var uids = Object.keys(casos).sort(function (a, b) {
+      return (casos[a].fecha || "").localeCompare(casos[b].fecha || "") ||
+        (casos[a].ID_Caso || "").localeCompare(casos[b].ID_Caso || "");
+    });
+    uids.forEach(function (uid) {
+      var c = casos[uid];
+      var fila = COLUMNAS_CSV_CASOS.map(function (col) { return csvEscape(valorCsvDeCaso(c, col)); });
+      filas.push(fila.join(","));
+    });
+    // BOM al principio: para que Excel en Windows abra los acentos bien en
+    // vez de confundir la codificación.
+    return "﻿" + filas.join("\r\n");
+  }
+
+  document.getElementById("btn-exportar-casos").addEventListener("click", function () {
+    var csv = casosACsv();
+    var blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "mio-ionm-casos-" + new Date().toISOString().slice(0, 10) + ".csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    avisoGuardado(T("casos_exportados"));
+  });
+
   function casoDesdeEscenario() {
     var esc = escenarioActual();
     var caso = casoVacio();
     if (!esc) return caso;
-    caso.escenario_nombre = campo(esc, "nombre");
+    // caso.escenario_nombre ya no se escribe -el catálogo de tipos de
+    // cirugía se retiró-, pero el campo se queda en casoVacio() tal cual:
+    // no se toca el modelo del caso, y los casos reales antiguos que ya lo
+    // tenían relleno no cambian.
     caso.perfil = esc.nota_perfil_id || "";
     caso.montaje_origen = esc.montaje_uid || "";
     var res = volcarMontajeEnCaso(caso, esc);
     caso.tecnicas_realizadas = res.tecnicas.slice();
-
-    // La intervención se propone por el nombre del escenario, si coincide
-    // con alguna del catálogo: se escribe el nombre tal cual, ya como texto
-    // libre, y el servicio (que sigue siendo un catálogo) se rellena aparte.
-    var porNombre = INTERVENCIONES.filter(function (i) {
-      return (campo(i, "nombre") || "").toLowerCase() === (caso.escenario_nombre || "").toLowerCase();
-    })[0];
-    if (porNombre) {
-      caso.intervencion = campo(porNombre, "nombre");
-      caso.servicio_id = porNombre.servicio || "";
-    }
     return caso;
   }
+
+  /* ---------------------------------------------------------------- *
+   * Fase 1: cargar una plantilla (un montaje de la biblioteca) sobre un
+   * caso ya creado. "Plantilla" es cualquier montaje; aplicarla COPIA su
+   * contenido -asignaciones, extras, etiquetas, conmutador y técnicas- sobre
+   * el caso. Nunca es un enlace vivo: editar la plantilla después no toca
+   * nada de lo ya copiado.
+   *
+   * Reutiliza lo que ya existía para corregir el montaje de un caso
+   * (montajeDesdeCaso/volcarMontajeEnCaso/guardarMontajeEnCaso): esta
+   * sección solo añade la fusión con una plantilla y la confirmación con
+   * números, no una tubería nueva.
+   * ---------------------------------------------------------------- */
+
+  var dlgElegirPlantilla = document.getElementById("dlg-elegir-plantilla");
+  var dlgAplicarPlantilla = document.getElementById("dlg-aplicar-plantilla");
+  // true si el botón que abrió el selector fue el de la barra fija
+  // (corrigiendo el montaje de un caso); false si fue el de la ficha.
+  var plantillaModoEditando = false;
+  var plantillaElegida = null;
+
+  // El montaje-destino real sobre el que se fusiona: el que se está
+  // corrigiendo en las cajas, o una reconstrucción fresca del caso abierto
+  // en la ficha (de solo lectura hasta que se confirme la carga).
+  function destinoPlantilla() {
+    return plantillaModoEditando ? montajeCaso : montajeDesdeCaso(casoAbierto);
+  }
+
+  function contarOcupadas(m) {
+    return calcularResumen(m).entradas;
+  }
+
+  // Entradas vacías en "destino" que la plantilla sí tiene ocupadas: lo que
+  // "Añadir solo lo que falta" rellenaría, sin tocar el resto.
+  function contarRellenables(destino, plantilla) {
+    var n = 0;
+    Object.keys(CAJAS).forEach(function (cajaKey) {
+      var asignDestino = (destino.asignaciones || {})[cajaKey] || {};
+      var asignPlant = (plantilla.asignaciones || {})[cajaKey] || {};
+      entradasDe(cajaKey).forEach(function (ent) {
+        if (!asignDestino[ent.id] && asignPlant[ent.id]) n++;
+      });
+    });
+    return n;
+  }
+
+  // Aplica "plantilla" sobre "destino", mutándolo in situ.
+  // modo "reemplazar": asignaciones, extras, etiquetas, conmutador y
+  // técnicas pasan a ser una copia de los de la plantilla.
+  // modo "anadir": las entradas ya ocupadas en destino no se tocan; las
+  // vacías reciben lo que la plantilla tenga. Técnicas y extras de la
+  // plantilla se suman a los del destino, sin quitar ninguno.
+  function aplicarPlantillaSobreDestino(destino, plantilla, modo) {
+    if (modo === "reemplazar") {
+      destino.asignaciones = clonar(plantilla.asignaciones || {});
+      destino.extras = (plantilla.extras || []).slice();
+      destino.etiquetas = clonar(plantilla.etiquetas || {});
+      destino.conmutador = clonar(plantilla.conmutador || {});
+      destino.tecnicas = (plantilla.tecnicas || []).slice();
+      return;
+    }
+    destino.asignaciones = destino.asignaciones || {};
+    destino.etiquetas = destino.etiquetas || {};
+    Object.keys(CAJAS).forEach(function (cajaKey) {
+      var asignPlant = (plantilla.asignaciones || {})[cajaKey] || {};
+      entradasDe(cajaKey).forEach(function (ent) {
+        var itemPlant = asignPlant[ent.id];
+        if (!itemPlant) return;
+        destino.asignaciones[cajaKey] = destino.asignaciones[cajaKey] || {};
+        if (destino.asignaciones[cajaKey][ent.id]) return; // ya ocupada, no se toca
+        destino.asignaciones[cajaKey][ent.id] = itemPlant;
+        var overridePlant = (plantilla.etiquetas || {})[claveEntrada(cajaKey, ent.id)];
+        if (overridePlant) destino.etiquetas[claveEntrada(cajaKey, ent.id)] = overridePlant;
+      });
+    });
+    destino.extras = (destino.extras || []).concat(plantilla.extras || []);
+    var actuales = {};
+    (destino.tecnicas || []).forEach(function (id) { actuales[id] = true; });
+    destino.tecnicas = (destino.tecnicas || []).concat(
+      (plantilla.tecnicas || []).filter(function (id) { return !actuales[id]; })
+    );
+  }
+
+  // Punto de entrada de los dos botones ("Cargar plantilla…" de la ficha y
+  // el de la barra fija mientras se corrige un caso).
+  function iniciarCargaPlantilla(modoEditando) {
+    var caso = modoEditando ? casos[casoEditandoUid] : leerFichaCaso();
+    if (!caso) return;
+    if (caso.estado === "cerrado" || caso.estado === "cancelado") {
+      if (!confirm(T("plantilla_confirmar_estado", { estado: T("caso_estado_" + caso.estado) }))) return;
+    }
+    plantillaModoEditando = modoEditando;
+    document.getElementById("plantilla-buscar").value = "";
+    renderListaPlantillas();
+    dlgElegirPlantilla.showModal();
+  }
+
+  // Lista de montajes elegibles como plantilla: se ofrecen también los de
+  // otros -aplicar es una copia, no toca su archivo, así que puedoEditar()
+  // no interviene aquí, a diferencia del diálogo Montajes.
+  function renderListaPlantillas() {
+    var cont = document.getElementById("plantilla-elegir-lista");
+    cont.innerHTML = "";
+    var busq = (document.getElementById("plantilla-buscar").value || "").toLowerCase();
+    var yo = usuarioActual();
+    var uids = Object.keys(montajes).filter(function (uid) {
+      var m = montajes[uid];
+      if (!busq) return true;
+      var nombre = (campo(m, "nombre") || "").toLowerCase();
+      return nombre.indexOf(busq) !== -1 || autorDe(m).toLowerCase().indexOf(busq) !== -1;
+    });
+    uids.sort(function (a, b) {
+      var ma = yo && montajes[a].autor_id === yo.id ? 0 : 1;
+      var mb = yo && montajes[b].autor_id === yo.id ? 0 : 1;
+      if (ma !== mb) return ma - mb;
+      return (campo(montajes[a], "nombre") || "").localeCompare(campo(montajes[b], "nombre") || "");
+    });
+
+    document.getElementById("plantilla-elegir-vacio").hidden = !!uids.length;
+    if (!uids.length) {
+      document.getElementById("plantilla-elegir-vacio").textContent = T("plantilla_vacio");
+      return;
+    }
+
+    uids.forEach(function (uid) {
+      var m = montajes[uid];
+      var fila = document.createElement("button");
+      fila.type = "button";
+      fila.className = "montaje-fila" + (puedoEditar(m) ? " mio" : "");
+      var nom = document.createElement("span");
+      nom.className = "montaje-nombre";
+      nom.textContent = campo(m, "nombre") || uid;
+      var sub = document.createElement("span");
+      sub.className = "montaje-autor";
+      sub.textContent = autorDe(m) + " · " + T("plantilla_entradas", { n: contarOcupadas(m) });
+      fila.appendChild(nom);
+      fila.appendChild(sub);
+      fila.addEventListener("click", function () {
+        dlgElegirPlantilla.close();
+        abrirConfirmarPlantilla(m);
+      });
+      cont.appendChild(fila);
+    });
+  }
+
+  document.getElementById("plantilla-buscar").addEventListener("input", renderListaPlantillas);
+  document.getElementById("plantilla-elegir-cerrar").addEventListener("click", function () {
+    dlgElegirPlantilla.close();
+  });
+
+  // La confirmación con números, siempre -tenga o no material el caso-.
+  function abrirConfirmarPlantilla(plantilla) {
+    plantillaElegida = plantilla;
+    var destino = destinoPlantilla();
+    var ocupadas = contarOcupadas(destino);
+    var rellenables = contarRellenables(destino, plantilla);
+
+    document.getElementById("aplicar-plantilla-nombre").textContent =
+      T("montaje_de", { nombre: campo(plantilla, "nombre"), autor: autorDe(plantilla) });
+
+    var msg1 = document.getElementById("aplicar-plantilla-msg");
+    var msg2 = document.getElementById("aplicar-plantilla-msg2");
+    var btnAnadir = document.getElementById("aplicar-plantilla-anadir");
+    var btnReemplazar = document.getElementById("aplicar-plantilla-reemplazar");
+
+    // Con el caso vacío las dos opciones dan el mismo resultado: se ofrece
+    // solo "Aplicar", pero el diálogo se sigue mostrando igual.
+    if (!ocupadas) {
+      msg1.textContent = T("plantilla_msg_vacio", { n: contarOcupadas(plantilla) });
+      msg2.textContent = "";
+      btnAnadir.hidden = true;
+      btnReemplazar.textContent = T("plantilla_btn_aplicar");
+    } else {
+      msg1.textContent = T("plantilla_msg_reemplazar", { n: ocupadas });
+      msg2.textContent = T("plantilla_msg_anadir", { rellenables: rellenables, ocupadas: ocupadas });
+      btnAnadir.hidden = false;
+      btnReemplazar.textContent = T("plantilla_btn_reemplazar");
+    }
+    dlgAplicarPlantilla.showModal();
+  }
+
+  function confirmarCargaPlantilla(modo) {
+    var plantilla = plantillaElegida;
+    dlgAplicarPlantilla.close();
+    if (!plantilla) return;
+
+    if (plantillaModoEditando) {
+      aplicarPlantillaSobreDestino(montajeCaso, plantilla, modo);
+      var caso = casos[casoEditandoUid];
+      if (caso) caso.montaje_origen = plantilla.montaje_uid;
+      guardarMontajeEnCaso();
+      renderTodo();
+    } else {
+      var m = montajeDesdeCaso(casoAbierto);
+      aplicarPlantillaSobreDestino(m, plantilla, modo);
+      casoAbierto.tecnicas_realizadas = m.tecnicas.slice();
+      casoAbierto.montaje_origen = plantilla.montaje_uid;
+      volcarMontajeEnCaso(casoAbierto, m);
+      guardarCaso(casoAbierto, casoEsNuevo);
+      casoEsNuevo = false;
+      casoAbierto = clonar(casos[casoAbierto.caso_uid]);
+      renderFichaCaso();
+      avisoGuardado(T("caso_guardado"));
+    }
+    plantillaElegida = null;
+  }
+
+  document.getElementById("aplicar-plantilla-cancelar").addEventListener("click", function () {
+    dlgAplicarPlantilla.close();
+    plantillaElegida = null;
+  });
+  document.getElementById("aplicar-plantilla-reemplazar").addEventListener("click", function () {
+    confirmarCargaPlantilla("reemplazar");
+  });
+  document.getElementById("aplicar-plantilla-anadir").addEventListener("click", function () {
+    confirmarCargaPlantilla("anadir");
+  });
+  document.getElementById("barra-caso-cargar-plantilla").addEventListener("click", function () {
+    iniciarCargaPlantilla(true);
+  });
+
+  /* ---------------------------------------------------------------- *
+   * Fase 3: guardar el montaje de un caso como plantilla nueva.
+   *
+   * Puente inverso del de la Fase 1: aquí se lee del caso y se crea un
+   * montaje nuevo en la biblioteca -nunca se sobrescribe uno existente, y
+   * el caso no se toca en absoluto-. Disponible en cualquier momento, sin
+   * mirar el estado del caso: no hay ningún riesgo de sobrescritura que
+   * justifique una confirmación como la de cargar plantilla.
+   * ---------------------------------------------------------------- */
+
+  function guardarMontajeComoPlantilla(modoEditando) {
+    var caso, montajeRaw;
+    if (modoEditando) {
+      caso = casos[casoEditandoUid];
+      montajeRaw = montajeCaso;
+    } else {
+      caso = leerFichaCaso();
+      montajeRaw = montajeDesdeCaso(caso);
+    }
+    if (!caso || !montajeRaw) return;
+
+    // Sugerencia a partir del diagnóstico y el nombre del caso -ninguno de
+    // los dos es dato de paciente-: es lo más parecido a "de qué trata esta
+    // plantilla" que el caso ya tiene escrito, sin inventar nada nuevo.
+    var nombreSugerido = [opcionTexto("diagnostico", caso.diagnostico), caso.nombre_caso]
+      .filter(Boolean).join(" — ") || T("esc_nuevo_def");
+    var nombre = prompt(T("plantilla_guardar_prompt"), nombreSugerido);
+    if (!nombre) return;
+
+    var m = montajeNuevo(nombre);
+    m.asignaciones = clonar(montajeRaw.asignaciones || {});
+    m.extras = (montajeRaw.extras || []).slice();
+    m.etiquetas = clonar(montajeRaw.etiquetas || {});
+    m.conmutador = clonar(montajeRaw.conmutador || {});
+    m.tecnicas = (montajeRaw.tecnicas || []).slice();
+    guardarMontaje(m, true);
+    avisoGuardado(T("plantilla_guardada", { nombre: campo(m, "nombre") }));
+  }
+
+  document.getElementById("barra-caso-guardar-plantilla").addEventListener("click", function () {
+    guardarMontajeComoPlantilla(true);
+  });
 
   /* ---------------------------------------------------------------- *
    * Casos: sincronización
@@ -3498,7 +3845,6 @@
     { g: "traza", c: "centro", t: "text" },
     { g: "traza", c: "hora_inicio", t: "time" },
     { g: "traza", c: "hora_fin", t: "time" },
-    { g: "traza", c: "escenario_nombre", t: "ro" },
 
     // 2. Paciente
     { g: "paciente", c: "edad", t: "num" },
@@ -3531,7 +3877,6 @@
     { g: "montaje", c: "tecnicas_realizadas", t: "tecnicas", ay: "caso_tecnicas_ay" },
     { g: "montaje", c: "material_previsto", t: "material_ro", ay: "caso_material_previsto_ay" },
     { g: "montaje", c: "material_real", t: "material", ay: "caso_material_real_ay" },
-    { g: "montaje", c: "umbral_tornillos_pediculares", t: "area", ay: "caso_umbral_tornillos_pediculares_ay" },
     // Absorbe lo que antes era "Pares craneales monitorizados": ya no tiene
     // campo propio, va aquí como una nota más de montaje.
     { g: "montaje", c: "notas_montaje_tecnicas", t: "area" },
@@ -3542,6 +3887,9 @@
     // en medio contando la evolucion de una a otra -separarlas en dos cajas
     // rompia justo lo que se queria contar de corrido.
     { g: "desarrollo", c: "resumen_monitorizacion", t: "area", rows: 8, ay: "caso_resumen_monitorizacion_ay" },
+    // Pedido por el usuario justo debajo del resumen: es el mismo momento
+    // -cerrando la cirugía- en el que se anota qué umbral se dejó puesto.
+    { g: "desarrollo", c: "umbral_tornillos_pediculares", t: "area", ay: "caso_umbral_tornillos_pediculares_ay" },
     { g: "desarrollo", c: "hubo_cambios_plan", t: "check" },
     { g: "desarrollo", c: "cambios_respecto_al_plan", t: "area", dependeDe: "hubo_cambios_plan" },
     { g: "desarrollo", c: "alerta", t: "check" },
@@ -3880,6 +4228,75 @@
           ? T("caso_montaje_res", { cajas: c.n_cajas, canales: c.n_canales_ocupados })
           : T("caso_sin_montaje");
         cont.appendChild(res);
+
+        // Fase 2: de qué plantilla salió, resuelto en vivo -si se renombra la
+        // plantilla, el nombre que se ve aquí cambia con ella; congelarlo
+        // pediría un campo nuevo en el caso, y no lo hay. Un caso sin
+        // montaje_origen (registrado a mano, o de antes de que existiera el
+        // campo) no muestra nada: no se rellena hacia atrás.
+        if (c.montaje_origen) {
+          var origenP = document.createElement("p");
+          origenP.className = "caso-resumen-linea";
+          var mOrigen = montajes[c.montaje_origen];
+          origenP.textContent = T("caso_montaje_origen", {
+            nombre: mOrigen ? campo(mOrigen, "nombre") : T("caso_montaje_origen_no_disponible")
+          });
+          cont.appendChild(origenP);
+        }
+
+        // Corregir el material y el montaje: pedido por el usuario que viva
+        // aquí, en el mismo submenú donde ya se ve el resumen y se elige
+        // plantilla, en vez de al final de la ficha -es la única forma de
+        // ver dónde está colocado cada ítem, canal a canal, y hasta ahora
+        // había que bajar del todo para encontrarla-. Necesita el caso ya
+        // guardado en `casos` -uno recién creado y sin guardar aún no
+        // existe ahí, no hay qué abrir-.
+        if (!casoEsNuevo) {
+          var filaCorregir = document.createElement("p");
+          filaCorregir.className = "caso-montaje-fila";
+          var btnCorregir = document.createElement("button");
+          btnCorregir.type = "button";
+          btnCorregir.textContent = T("caso_editar_montaje");
+          // Se guarda antes lo que haya escrito en la ficha: si no, salir a
+          // las cajas le perdería lo tecleado y no habría por qué asociar
+          // una cosa con la otra.
+          btnCorregir.addEventListener("click", function () {
+            if (!guardarFicha(false)) return;
+            var uid = casoAbierto && casoAbierto.caso_uid;
+            if (!uid || !casos[uid]) return;
+            dlgCaso.close();
+            abrirMontajeDeCaso(uid);
+          });
+          var ayCorregir = document.createElement("small");
+          ayCorregir.textContent = T("caso_editar_montaje_ay");
+          filaCorregir.appendChild(btnCorregir);
+          filaCorregir.appendChild(ayCorregir);
+          cont.appendChild(filaCorregir);
+        }
+
+        var filaPlantilla = document.createElement("p");
+        filaPlantilla.className = "caso-montaje-fila";
+        var btnPlantilla = document.createElement("button");
+        btnPlantilla.type = "button";
+        btnPlantilla.textContent = T("caso_cargar_plantilla");
+        btnPlantilla.addEventListener("click", function () { iniciarCargaPlantilla(false); });
+        var ayPlantilla = document.createElement("small");
+        ayPlantilla.textContent = T("caso_cargar_plantilla_ay");
+        filaPlantilla.appendChild(btnPlantilla);
+        filaPlantilla.appendChild(ayPlantilla);
+        cont.appendChild(filaPlantilla);
+
+        var filaGuardarPlantilla = document.createElement("p");
+        filaGuardarPlantilla.className = "caso-montaje-fila";
+        var btnGuardarPlantilla = document.createElement("button");
+        btnGuardarPlantilla.type = "button";
+        btnGuardarPlantilla.textContent = T("caso_guardar_plantilla");
+        btnGuardarPlantilla.addEventListener("click", function () { guardarMontajeComoPlantilla(false); });
+        var ayGuardarPlantilla = document.createElement("small");
+        ayGuardarPlantilla.textContent = T("caso_guardar_plantilla_ay");
+        filaGuardarPlantilla.appendChild(btnGuardarPlantilla);
+        filaGuardarPlantilla.appendChild(ayGuardarPlantilla);
+        cont.appendChild(filaGuardarPlantilla);
       }
       CAMPOS_CASO.filter(function (def) { return def.g === g; }).forEach(function (def) {
         // Un caso de antes de este cambio no trae estos campos ya resueltos:
@@ -3926,9 +4343,6 @@
     // Un caso que todavía no se ha guardado ni una vez no existe en "casos":
     // no hay nada que borrar hasta el primer "Guardar".
     document.getElementById("caso-borrar").hidden = casoEsNuevo;
-    // Corregir el montaje necesita que el caso exista ya en `casos`: uno
-    // recién creado y sin guardar todavía no está, así que no hay qué abrir.
-    document.getElementById("caso-editar-montaje").hidden = casoEsNuevo;
     document.getElementById("caso-error").hidden = true;
   }
 
@@ -4121,17 +4535,6 @@
     if (guardarFicha(false)) { renderFichaCaso(); }
   });
 
-  /* Corregir el montaje de un caso. Se guarda antes lo que haya escrito en la
-     ficha: si no, salir a las cajas le perdería lo tecleado y no habría por
-     qué asociar una cosa con la otra. */
-  document.getElementById("caso-editar-montaje").addEventListener("click", function () {
-    if (!guardarFicha(false)) return;
-    var uid = casoAbierto && casoAbierto.caso_uid;
-    if (!uid || !casos[uid]) return;
-    dlgCaso.close();
-    abrirMontajeDeCaso(uid);
-  });
-
   document.getElementById("barra-caso-volver").addEventListener("click", function () {
     cerrarMontajeDeCaso(true);
   });
@@ -4152,18 +4555,18 @@
   var catEditando = null;    // id que se está editando, o null si es nuevo
   var catCampos = {};        // clave -> elemento del formulario
   var PREFIJO_ID = { tecnicas: "t_", servicios: "s_", intervenciones: "i_", perfiles: "p_",
-                     escenarios: "esc_", usuarios: "u_" };
+                     usuarios: "u_" };
 
   function catLista() {
     return { tecnicas: TECNICAS, servicios: SERVICIOS,
              intervenciones: INTERVENCIONES, perfiles: PERFILES,
-             escenarios: ESCENARIOS_TIPO, usuarios: USUARIOS }[catPestana];
+             usuarios: USUARIOS }[catPestana];
   }
 
   function catIndice() {
     return { tecnicas: TECS, servicios: SERV,
              intervenciones: INTERV, perfiles: PERF,
-             escenarios: ESCT, usuarios: USRS }[catPestana];
+             usuarios: USRS }[catPestana];
   }
 
   // Las técnicas llaman "etiqueta" a su texto visible; el resto, "nombre".
@@ -4401,7 +4804,7 @@
     renderCatPestanas();
     var intros = { tecnicas: "cat_intro_tecnicas", intervenciones: "cat_intro_interv",
                    servicios: "cat_intro_serv", perfiles: "cat_intro_perfiles",
-                   escenarios: "cat_intro_escenarios", usuarios: "cat_intro_usuarios" };
+                   usuarios: "cat_intro_usuarios" };
     document.getElementById("cat-intro").innerHTML = T(intros[catPestana]);
     renderCatLista();
     renderCatVersion();
@@ -5273,144 +5676,11 @@
   }
 
   /* ---------------------------------------------------------------- *
-   * Selector de escenarios y acciones
+   * Rótulo permanente y biblioteca de montajes (Fase 4)
    * ---------------------------------------------------------------- */
-  /* Qué escenario se está mirando en la primera ventana. Es solo un filtro de
-     la lista de montajes: no se guarda en el montaje ni viaja a ningún sitio.
-     "" significa todos. */
-  var escenarioFiltro = "";
-
   function renderSelect() {
-    renderEscenarios();
-    renderMontajes();
-    renderMontajeActual();
+    renderBarraCaso();
   }
-
-  // Ventana 1: el tipo de cirugía. Chips y no desplegable porque son pocos,
-  // se ven todos a la vez y se pulsan bien con guantes.
-  function renderEscenarios() {
-    var cont = document.getElementById("escenario-contenido");
-    cont.innerHTML = "";
-    var opciones = [{ id: "", nombre: T("escenario_todos") }]
-      .concat(activos(ESCENARIOS_TIPO).map(function (e) {
-        return { id: e.id, nombre: campo(e, "nombre"), desc: campo(e, "descripcion") };
-      }));
-    opciones.forEach(function (o) {
-      var chip = document.createElement("button");
-      chip.type = "button";
-      chip.className = "chip chip-escenario" + (o.id === escenarioFiltro ? " activo" : "");
-      chip.textContent = o.nombre;
-      if (o.desc) chip.title = o.desc;
-      // Cuántos montajes hay de ese escenario, para no tener que entrar a mirar
-      var n = Object.keys(montajes).filter(function (uid) {
-        return !o.id || (montajes[uid].escenario_id || "") === o.id;
-      }).length;
-      var cuenta = document.createElement("span");
-      cuenta.className = "chip-cuenta";
-      cuenta.textContent = n;
-      chip.appendChild(cuenta);
-      chip.addEventListener("click", function () {
-        escenarioFiltro = o.id;
-        renderEscenarios();
-        renderMontajes();
-      });
-      cont.appendChild(chip);
-    });
-    var esc = escenarioActual();
-    var eid = esc && esc.escenario_id;
-    document.getElementById("escenario-pista").textContent =
-      eid && ESCT[eid] ? campo(ESCT[eid], "nombre") : T("escenario_ninguno");
-  }
-
-  // Ventana 2: los montajes de ese escenario, con su autor debajo del nombre.
-  function renderMontajes() {
-    var cont = document.getElementById("montajes-lista");
-    cont.innerHTML = "";
-    var uids = Object.keys(montajes).filter(function (uid) {
-      return !escenarioFiltro || (montajes[uid].escenario_id || "") === escenarioFiltro;
-    });
-    // Los tuyos primero: es lo que buscas el 90% de las veces
-    var yo = usuarioActual();
-    uids.sort(function (a, b) {
-      var ma = yo && montajes[a].autor_id === yo.id ? 0 : 1;
-      var mb = yo && montajes[b].autor_id === yo.id ? 0 : 1;
-      if (ma !== mb) return ma - mb;
-      return (campo(montajes[a], "nombre") || "").localeCompare(campo(montajes[b], "nombre") || "");
-    });
-
-    document.getElementById("montajes-pista").textContent =
-      T("montajes_cuenta", { n: uids.length, total: Object.keys(montajes).length });
-
-    if (!uids.length) {
-      var vacio = document.createElement("p");
-      vacio.className = "empty-hint";
-      vacio.textContent = T("montajes_vacio");
-      cont.appendChild(vacio);
-      return;
-    }
-
-    uids.forEach(function (uid) {
-      var m = montajes[uid];
-      var fila = document.createElement("button");
-      fila.type = "button";
-      fila.className = "montaje-fila" + (uid === activo ? " activo" : "") +
-        (puedoEditar(m) ? " mio" : "");
-      var nom = document.createElement("span");
-      nom.className = "montaje-nombre";
-      nom.textContent = campo(m, "nombre") || uid;
-      var sub = document.createElement("span");
-      sub.className = "montaje-autor";
-      // El subtítulo es el autor, que es lo que pedía el usuario: con montajes
-      // compartidos hay que saber de quién es antes de abrirlo.
-      sub.textContent = autorDe(m) + (yo && m.autor_id === yo.id ? " · " + T("montaje_tuyo") : "");
-      fila.appendChild(nom);
-      fila.appendChild(sub);
-      fila.addEventListener("click", function () {
-        activo = uid;
-        guardarMontajes();
-        renderTodo();
-      });
-      cont.appendChild(fila);
-    });
-  }
-
-  // El montaje abierto, siempre visible arriba aunque plegues las ventanas
-  function renderMontajeActual() {
-    var esc = escenarioActual();
-    document.getElementById("montaje-actual").textContent =
-      esc ? campo(esc, "nombre") : T("sin_escenarios");
-    renderEscenarioDeMontaje();
-  }
-
-  // A qué tipo de cirugía pertenece el montaje abierto. Va aquí y no en la
-  // ventana de Escenario porque allí los chips filtran la lista; mezclar
-  // "mirar los de columna" con "este montaje es de columna" en el mismo gesto
-  // se presta a cambiar sin querer el escenario de un montaje ajeno.
-  function renderEscenarioDeMontaje() {
-    var sel = document.getElementById("montaje-escenario");
-    var esc = escenarioActual();
-    sel.innerHTML = "";
-    var vacio = document.createElement("option");
-    vacio.value = "";
-    vacio.textContent = T("montaje_sin_escenario");
-    sel.appendChild(vacio);
-    activos(ESCENARIOS_TIPO).forEach(function (e) {
-      var o = document.createElement("option");
-      o.value = e.id;
-      o.textContent = campo(e, "nombre");
-      sel.appendChild(o);
-    });
-    sel.value = esc && esc.escenario_id ? esc.escenario_id : "";
-    sel.disabled = !esc || !puedoEditar(esc);
-  }
-
-  document.getElementById("montaje-escenario").addEventListener("change", function (e) {
-    var esc = escenarioActual();
-    if (!esc || !exigeSerAutor(esc)) { renderEscenarioDeMontaje(); return; }
-    esc.escenario_id = e.target.value;
-    guardarMontaje(esc);
-    renderTodo();
-  });
 
   /* Un montaje nuevo se identifica por UUID, no por un id derivado del
      nombre. Es lo que permite que dos personas creen a la vez un montaje
@@ -5421,9 +5691,6 @@
     return {
       montaje_uid: uuid(),
       nombre: nombre,
-      // Hereda el escenario que estés mirando: si estás en "ECL" y creas uno,
-      // lo lógico es que sea de ECL y no que nazca suelto.
-      escenario_id: escenarioFiltro || "",
       autor_id: yo ? yo.id : "",
       modalidades: [],
       tecnicas: [],
@@ -5473,14 +5740,13 @@
     return false;
   }
 
-  document.getElementById("btn-nuevo").addEventListener("click", function () {
-    var nombre = prompt(T("esc_nuevo_prompt"), T("esc_nuevo_def"));
-    if (!nombre) return;
-    var m = montajeNuevo(nombre);
-    activo = m.montaje_uid;
-    guardarMontaje(m, true);
-    renderTodo();
-  });
+  // Si el diálogo Montajes está abierto, cualquier acción de aquí abajo
+  // tiene que refrescar también su lista -si no, se queda mostrando un
+  // nombre viejo, o un montaje ya borrado, hasta que se cierre y se
+  // reabra. Mismo patrón que "if (dlgCasos && dlgCasos.open) renderListaCasos()".
+  function sincronizarDlgMontajesSiAbierto() {
+    if (dlgMontajes && dlgMontajes.open) renderListaMontajesDialog();
+  }
 
   // Duplicar sí funciona sobre el montaje de otro: es la forma de partir del
   // suyo para hacerte el tuyo. La copia nace a tu nombre, no al suyo.
@@ -5501,6 +5767,7 @@
     activo = m.montaje_uid;
     guardarMontaje(m, true);
     renderTodo();
+    sincronizarDlgMontajesSiAbierto();
   });
 
   document.getElementById("btn-renombrar").addEventListener("click", function () {
@@ -5512,6 +5779,7 @@
     delete esc.nombre_en;
     guardarMontaje(esc);
     renderTodo();
+    sincronizarDlgMontajesSiAbierto();
   });
 
   document.getElementById("btn-vaciar").addEventListener("click", function () {
@@ -5524,6 +5792,7 @@
     esc.extras = [];
     guardarMontaje(esc);
     renderTodo();
+    sincronizarDlgMontajesSiAbierto();
   });
 
   document.getElementById("btn-borrar").addEventListener("click", function () {
@@ -5540,7 +5809,135 @@
     guardarMontajes();
     programarEnvio();
     renderTodo();
+    sincronizarDlgMontajesSiAbierto();
   });
+
+  /* ---------------------------------------------------------------- *
+   * Fase 4.1: diálogo "Montajes" -la biblioteca-. Mismo patrón que
+   * dlgCasos: lista con filtro, acciones fijas arriba, cierra sola al
+   * elegir. Lista plana -sin escenario que agrupe-, filtro por nombre y
+   * autor, entradas ocupadas visibles en cada fila.
+   * ---------------------------------------------------------------- */
+  var dlgMontajes = document.getElementById("dlg-montajes");
+
+  function abrirDlgMontajes() {
+    document.getElementById("montajes-buscar").value = "";
+    renderListaMontajesDialog();
+    dlgMontajes.showModal();
+  }
+
+  function renderListaMontajesDialog() {
+    var cont = document.getElementById("dlg-montajes-lista");
+    cont.innerHTML = "";
+    var busq = (document.getElementById("montajes-buscar").value || "").toLowerCase();
+    var yo = usuarioActual();
+
+    // "Montaje en blanco": fijo en primera posición, siempre visible pase
+    // lo que pase el filtro -no es una fila de la biblioteca, es la acción
+    // "crear uno nuevo y ponerme a trabajar", equivalente al viejo botón
+    // "Nuevo". No se puede sobrescribir porque cada pulsación crea un
+    // montaje distinto, con su propio uid.
+    var blanco = document.createElement("button");
+    blanco.type = "button";
+    blanco.className = "montaje-fila montaje-en-blanco";
+    var blancoNom = document.createElement("span");
+    blancoNom.className = "montaje-nombre";
+    blancoNom.textContent = T("montaje_en_blanco");
+    blanco.appendChild(blancoNom);
+    blanco.addEventListener("click", function () {
+      var m = montajeNuevo(T("esc_nuevo_def"));
+      activo = m.montaje_uid;
+      guardarMontaje(m, true);
+      dlgMontajes.close();
+      renderTodo();
+    });
+    cont.appendChild(blanco);
+
+    var uids = Object.keys(montajes).filter(function (uid) {
+      if (!busq) return true;
+      var m = montajes[uid];
+      var nombre = (campo(m, "nombre") || "").toLowerCase();
+      return nombre.indexOf(busq) !== -1 || autorDe(m).toLowerCase().indexOf(busq) !== -1;
+    });
+    // Los tuyos primero: es lo que buscas el 90% de las veces
+    uids.sort(function (a, b) {
+      var ma = yo && montajes[a].autor_id === yo.id ? 0 : 1;
+      var mb = yo && montajes[b].autor_id === yo.id ? 0 : 1;
+      if (ma !== mb) return ma - mb;
+      return (campo(montajes[a], "nombre") || "").localeCompare(campo(montajes[b], "nombre") || "");
+    });
+
+    document.getElementById("montajes-cuenta").textContent =
+      T("montajes_cuenta", { n: uids.length, total: Object.keys(montajes).length });
+
+    if (!uids.length) {
+      var vacio = document.createElement("p");
+      vacio.className = "empty-hint";
+      vacio.textContent = T("plantilla_vacio");
+      cont.appendChild(vacio);
+      return;
+    }
+
+    uids.forEach(function (uid) {
+      var m = montajes[uid];
+      var fila = document.createElement("button");
+      fila.type = "button";
+      fila.className = "montaje-fila" + (uid === activo ? " activo" : "") +
+        (puedoEditar(m) ? " mio" : "");
+      var nom = document.createElement("span");
+      nom.className = "montaje-nombre";
+      nom.textContent = campo(m, "nombre") || uid;
+      var sub = document.createElement("span");
+      sub.className = "montaje-autor";
+      // El subtítulo es el autor y cuántas entradas tiene ocupadas: con
+      // montajes compartidos hay que saber de quién es y cuánto trae antes
+      // de abrirlo.
+      sub.textContent = autorDe(m) + (yo && m.autor_id === yo.id ? " · " + T("montaje_tuyo") : "") +
+        " · " + T("plantilla_entradas", { n: calcularResumen(m).entradas });
+      fila.appendChild(nom);
+      fila.appendChild(sub);
+      // Elegir un montaje no lleva confirmación: no destruye nada, cada
+      // montaje es su propio archivo y el anterior queda guardado tal
+      // cual. La confirmación de la Fase 1 es solo para aplicar contenido
+      // DENTRO de un caso, que sí sobrescribe.
+      fila.addEventListener("click", function () {
+        activo = uid;
+        guardarMontajes();
+        dlgMontajes.close();
+        renderTodo();
+      });
+      cont.appendChild(fila);
+    });
+  }
+
+  document.getElementById("btn-montajes").addEventListener("click", abrirDlgMontajes);
+  document.getElementById("montajes-cerrar").addEventListener("click", function () { dlgMontajes.close(); });
+  document.getElementById("montajes-buscar").addEventListener("input", renderListaMontajesDialog);
+
+  /* ---------------------------------------------------------------- *
+   * Fase 4.2: rótulo permanente. #barra-caso deja de ser exclusivo de la
+   * corrección de un caso: está siempre visible, diciendo qué se está
+   * tocando -una plantilla suelta o el material de un caso concreto-.
+   * ---------------------------------------------------------------- */
+  function renderBarraCaso() {
+    var prefijo = document.getElementById("barra-caso-prefijo");
+    var nombre = document.getElementById("barra-caso-nombre");
+    var ay = document.getElementById("barra-caso-ay");
+    var acciones = document.getElementById("barra-caso-acciones");
+    if (document.body.classList.contains("editando-caso")) {
+      var caso = casos[casoEditandoUid];
+      prefijo.textContent = T("barra_caso_texto");
+      nombre.textContent = caso ? ((caso.ID_Caso || "") + (caso.nombre_caso ? " — " + caso.nombre_caso : "")) : "";
+      ay.textContent = T("barra_caso_ay");
+      acciones.hidden = false;
+    } else {
+      var esc = escenarioActual();
+      prefijo.textContent = T("barra_plantilla_texto");
+      nombre.textContent = esc ? campo(esc, "nombre") : T("barra_plantilla_ninguna");
+      ay.textContent = "";
+      acciones.hidden = true;
+    }
+  }
 
   document.getElementById("btn-restablecer").addEventListener("click", function () {
     if (!confirm(T("restablecer_conf"))) return;
@@ -5637,6 +6034,63 @@
     if (e.key === "Escape") seleccionar(null);
   });
 
+  /* ---------------------------------------------------------------- *
+   * Fase 5: guía de uso. Contenido estático de data/guia.js -no se
+   * sincroniza, no se guarda nada de aquí, igual que la ventana Docente-.
+   * Se pinta una sola vez, la primera vez que se abre: el contenido no
+   * cambia mientras dura la sesión, así que no hace falta rehacerlo en
+   * cada apertura.
+   * ---------------------------------------------------------------- */
+  var dlgGuia = document.getElementById("dlg-guia");
+  var guiaRenderizada = false;
+
+  function renderGuia() {
+    var guia = window.GUIA || { tarjetas: [], acordeon: [] };
+
+    var contTarjetas = document.getElementById("guia-tarjetas");
+    contTarjetas.innerHTML = "";
+    guia.tarjetas.forEach(function (t, i) {
+      var tarjeta = document.createElement("div");
+      // La tercera tarjeta ("Plantilla y caso no son lo mismo") es la más
+      // importante de las seis -pedido explícito al escribir el guion-.
+      tarjeta.className = "guia-tarjeta" + (i === 2 ? " guia-destacada" : "");
+      var h4 = document.createElement("h4");
+      h4.textContent = t.titulo;
+      var p = document.createElement("p");
+      p.textContent = t.texto;
+      tarjeta.appendChild(h4);
+      tarjeta.appendChild(p);
+      contTarjetas.appendChild(tarjeta);
+    });
+
+    var contAcordeon = document.getElementById("guia-acordeon");
+    contAcordeon.innerHTML = "";
+    guia.acordeon.forEach(function (sec) {
+      var det = document.createElement("details");
+      det.className = "caso-grupo";
+      var summary = document.createElement("summary");
+      summary.textContent = sec.titulo;
+      var campos = document.createElement("div");
+      campos.className = "caso-grupo-campos";
+      // Contenido estático de desarrollador (data/guia.js), no dato de
+      // usuario: mismo patrón que las intros de Catálogos (cat_intro_*).
+      campos.innerHTML = sec.html;
+      det.appendChild(summary);
+      det.appendChild(campos);
+      contAcordeon.appendChild(det);
+    });
+
+    guiaRenderizada = true;
+  }
+
+  function abrirGuia() {
+    if (!guiaRenderizada) renderGuia();
+    dlgGuia.showModal();
+  }
+
+  document.getElementById("btn-guia").addEventListener("click", abrirGuia);
+  document.getElementById("guia-cerrar").addEventListener("click", function () { dlgGuia.close(); });
+
   function abrirDocente() {
     renderDocente();
     renderCama();
@@ -5646,6 +6100,14 @@
   document.getElementById("btn-docente").addEventListener("click", abrirDocente);
 
   document.getElementById("btn-plegar").addEventListener("click", function () {
+    plegarCatalogo(!document.getElementById("panel-catalogo").classList.contains("plegado"));
+  });
+
+  // Pulsar la barra entera pliega el catálogo, igual que el <summary> de
+  // Técnicas/Cajas/Resumen -antes solo respondía la flechita ▾-. Los tres
+  // botones de la barra (Etiquetas, +, ▾) siguen con su propia acción.
+  document.querySelector(".panel-cab").addEventListener("click", function (e) {
+    if (e.target.closest("button")) return;
     plegarCatalogo(!document.getElementById("panel-catalogo").classList.contains("plegado"));
   });
 

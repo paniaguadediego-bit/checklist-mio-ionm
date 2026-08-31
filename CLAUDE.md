@@ -181,14 +181,21 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Casos: sincronización | `subirCaso()`, `bajarCasos()`, `borrarCasosPendientes()` | ver `grep` |
 | Cálculo del resumen (con coste) | `calcularResumen()`, `calcularCoste()` (dato) → `renderResumen()` (pintado) | [4785](app.js:4785), [4868](app.js:4868) |
 | Ventana Docente (miotomas, cama de quirófano) | `renderDocente()`, `renderCama()` | ver `grep` |
+| Puente plantilla↔caso (cargar/guardar) | `iniciarCargaPlantilla()`, `aplicarPlantillaSobreDestino()`, `guardarMontajeComoPlantilla()` | ver `grep` |
+| Biblioteca de Montajes (diálogo) | `abrirDlgMontajes()`, `renderListaMontajesDialog()`, `montajeNuevo()` | ver `grep` |
+| Rótulo permanente | `renderBarraCaso()` | ver `grep` |
+| Exportación manual de casos a CSV | `casosACsv()`, `COLUMNAS_CSV_CASOS` | ver `grep` |
+| Guía de uso (contenido en `data/guia.js`) | `renderGuia()`, `abrirGuia()` | ver `grep` |
 
 Datos de fábrica en `data/surgeries.js`: `cajas_material`, `etiquetas` (35,
 con `precio` y `fungible` — ver *Coste del material* en README),
 `catalogo_material` (~260 ítems), `tecnicas` (~40, monitorización y mapeo),
 `servicios`, `intervenciones`, `perfiles_procedimiento`, `escenarios_tipo`
-(los tipos de cirugía: Tumor ST, ECC, ECL…), `escenarios` (montajes de
-fábrica, ojo con el nombre heredado — ver más abajo) y `miotomas` (solo para
-la ventana Docente, sin uso en el cálculo de material).
+(los tipos de cirugía: Tumor ST, ECC, ECL… **inerte desde el 31-08-2026**,
+ver "Retoques posteriores" de esa fecha — nada en `app.js` lo lee ya),
+`escenarios` (montajes de fábrica, ojo con el nombre heredado — ver más
+abajo) y `miotomas` (solo para la ventana Docente, sin uso en el cálculo de
+material).
 
 ### Patrón de datos editables
 
@@ -205,11 +212,13 @@ editables.
 
 ### Catálogos editables
 
-`tecnicas`, `servicios`, `intervenciones`, `perfiles`, `escenarios` (los
-tipos de cirugía — no confundir con `DATA.escenarios`, los montajes de
-fábrica) y `usuarios` se editan desde el diálogo **Catálogos** (botón en la
-barra de herramientas). Su estado vive en `catalogos` y se guarda dentro de
-`estado.json`:
+`tecnicas`, `servicios`, `intervenciones`, `perfiles` y `usuarios` se editan
+desde el diálogo **Catálogos** (botón en la barra de herramientas). Su
+estado vive en `catalogos` y se guarda dentro de `estado.json`. **Ya no hay
+`escenarios`** (los tipos de cirugía) en esta lista desde el 31-08-2026 —se
+retiró, ver "Retoques posteriores" de esa fecha—; no confundir con
+`DATA.escenarios`, los montajes de fábrica, que sigue existiendo y no tiene
+nada que ver con este catálogo:
 
 ```
 catalogos: {
@@ -220,7 +229,7 @@ catalogos: {
 - `propios` — elementos creados o editados por el usuario, por `id`.
 - `orden` — ids en el orden fijado a mano. Lo que no esté va detrás, en el
   orden de fábrica: una técnica nueva aparece al final, nunca desaparece.
-- `borrados` — solo se usa en perfiles (`borrarCat()`). Los otros cinco
+- `borrados` — solo se usa en perfiles (`borrarCat()`). Los otros cuatro
   catálogos **no se borran**, se desactivan (`activa: false`), porque un
   caso o montaje guardado puede referirse a ellos.
 - `version` sube y `actualizado_en` se sella en cada cambio (`tocarCatalogo`).
@@ -791,6 +800,163 @@ un único objeto.
 Pendiente, sin urgencia: verificar en vivo con datos reales que
 añadir/renombrar una técnica actualiza el Sheet solo, y que rellenar el
 `código` de una intervención se propaga a los casos previos.
+
+### Retoques posteriores, 31-08-2026: puente montajes↔casos, retirada de Escenario, guía de uso
+
+Trabajo grande, hecho por fases con el usuario aprobando cada una. Antes de
+esto el puente entre montajes y casos era de una sola dirección
+(`casoDesdeEscenario()`); ahora es de ida y vuelta.
+
+**Fase 1 — Cargar una plantilla sobre un caso ya creado.** Botón *Cargar
+plantilla…* en el apartado 5 de la ficha y en la barra fija de corrección.
+Reglas que hay que conservar si se vuelve a tocar esto:
+- **Copia, nunca enlace vivo.** Aplicar una plantilla copia
+  `asignaciones`/`extras`/`etiquetas`/`conmutador`/`tecnicas` en el caso.
+  Editar la plantilla después no cambia nada de lo ya copiado -verificado a
+  mano: aplicar → cerrar caso → renombrar y vaciar la plantilla → reabrir el
+  caso → sigue intacto-.
+- **Confirmación siempre**, tenga o no material el caso -ni siquiera un caso
+  vacío se salta el diálogo-, con los números reales de qué va a pasar
+  (`contarOcupadas`/`contarRellenables`, ver `app.js` sección "Fase 1").
+- **Caso `cerrado` y caso `cancelado` van al mismo nivel**: los dos piden la
+  misma confirmación adicional (vía `confirm()` nativo, antes de abrir el
+  selector), nombrando el estado. Un caso cerrado ya viajó al Sheet; uno
+  cancelado no debería recibir una plantilla nunca, así que si llega ahí es
+  casi seguro un error de pulsación.
+- Reutiliza `montajeDesdeCaso()`/`volcarMontajeEnCaso()`/`guardarMontajeEnCaso()`
+  tal cual estaban: no se tocó su lógica.
+
+**Fase 2 — Mostrar `montaje_origen`.** Ya existía el campo (string, el uid
+de la plantilla); solo faltaba pintarlo en el apartado 5, resuelto en vivo
+contra `montajes[uid]`. **Trade-off consciente**: el nombre no se congela
+-si renombras la plantilla, los casos que salieron de ella muestran el
+nombre nuevo-. Congelarlo pediría un campo nuevo y una columna nueva en el
+Sheet; se descartó a propósito. Si la plantilla ya no existe localmente,
+muestra "plantilla no disponible", nunca el uid crudo.
+
+**Fase 3 — Guardar el montaje de un caso como plantilla nueva.** Botón
+*Guardar este montaje como plantilla…* en el mismo apartado 5, disponible
+**en cualquier estado del caso**, sin gate de confirmación -al contrario que
+la Fase 1, aquí no hay ningún riesgo de sobrescritura: siempre nace un
+montaje nuevo (`montajeNuevo()`, uid propio, nunca `__caso__...`), nunca se
+sobrescribe uno existente, y el caso no se toca en absoluto-.
+
+**Fase 4.0 — Retirada del catálogo de tipos de cirugía ("Escenario").**
+Decidido con el usuario: duplicaba casi literalmente al `diagnostico` de la
+ficha del caso (Tumor ST/LOE ST, ECC/ECC, ECL/ECL, MAV/MAV,
+Escoliosis/Escoliosis), y `diagnostico` es más completo (14 valores frente a
+8). Se retiraron `ESCENARIOS_TIPO`/`ESCT`/`ESCENARIOS_BASE`,
+`escenarioPorNombre()`, la pestaña *Escenarios* de Catálogos (quedan cinco:
+Técnicas, Servicios, Intervenciones, Perfiles, Usuarios), los chips de la
+ventana 1, `escenario_id` en `montajeNuevo()`/duplicar/presets de fábrica, y
+la escritura de `caso.escenario_nombre` en `casoDesdeEscenario()` (el campo
+se queda en `casoVacio()` sin tocar, por la regla de no cambiar el modelo
+del caso — solo deja de rellenarse). **Se perdió el autocompletado de
+intervención/servicio** que comparaba el nombre del escenario contra el
+catálogo de Intervenciones al crear un caso: es una pérdida real, pequeña,
+ya avisada al usuario.
+
+`escenarioActual()`, `casoDesdeEscenario()` y el parámetro `esc` de medio
+`app.js` **no se tocaron**: es el otro significado de "escenario", heredado
+de antes de que existiera el catálogo retirado (significa "montaje"). Los
+dos significados convivían en el código con nombres parecidos; solo se
+retiró uno.
+
+`data/surgeries.js` conserva `escenarios_tipo` inerte, sin tocar -regla de
+"desactivar no borra" aplicada a una funcionalidad entera-. Los montajes y
+casos ya sincronizados conservan su `escenario_id`/`escenario_nombre` tal
+cual estén, sin migración ni limpieza. **Nota técnica no cubierta por esa
+regla**: si algún dispositivo tenía `catalogos.escenarios` personalizado en
+su `estado.json` (edits a mano del catálogo retirado), la app deja de
+leerlo y escribirlo -no se borra el archivo remoto a propósito, pero la
+próxima subida ya no lo llevará-. El usuario confirmó que no lo usaba.
+
+**Codigo.gs**: se quitó la columna `escenario_nombre` de `cabecera`/`base`
+en `construirFilasCasos_()` -decisión del usuario, opción "quitar ya" frente
+a "dejarla vacía"-. **54 → 53 columnas base**, verificado 1:1 a mano (no hay
+arnés de Node en este repositorio para volver a pasarlo, ver nota de
+23-08-2026 más abajo). **Pendiente para el usuario: repegar `Código.gs`** en
+el editor de Apps Script, como con cualquier cambio ahí.
+
+**Fase 4.1 — Diálogo "Montajes" (la biblioteca).** Sustituye a las ventanas
+*Escenario* y *Montajes personales* de la página, retiradas enteras. Lista
+plana (sin escenario que agrupe), filtro por nombre/autor, entradas
+ocupadas por fila. "+ Montaje en blanco" fijo arriba -mismo `montajeNuevo()`
+que el viejo botón "Nuevo", sin prompt, un clic-. Elegir una fila cierra el
+diálogo y carga el banco de trabajo **sin confirmación**: no hay riesgo,
+cada montaje es su propio archivo. Duplicar/Renombrar/Vaciar/Borrar se
+movieron tal cual -mismo `exigeSerAutor()`-, con una llamada añadida a
+`sincronizarDlgMontajesSiAbierto()` al final de cada uno para que la lista
+del diálogo no se quede obsoleta si sigue abierto (mismo patrón que
+`if (dlgCasos && dlgCasos.open) renderListaCasos()`, ya usado en otro
+sitio).
+
+**Fase 4.2 — Rótulo permanente.** `#barra-caso` generalizado: *"Plantilla:
+X"* (fondo `--accent-soft`, nombre en `--accent`) o *"CASO ..."* (fondo
+`--accent` sólido, con los tres botones) según `body.editando-caso`.
+**Se movió de sitio en el DOM** -antes vivía después de `</main>`, ahora
+entre la cabecera y `<main>`-: estando siempre visible (ya no se
+oculta/muestra con `hidden`), su `position: sticky` necesitaba arrancar
+cerca de la cabecera para "engancharse" de verdad; en su posición vieja,
+con contenido corto en pantalla, casi nunca llegaba a pegarse arriba al
+hacer scroll -se detectó probando la Fase 1 en el navegador, antes de mover
+nada-. `--header-h` no cambió (sigue 82px), pero se añadió `--barra-caso-h`
+(32px en modo plantilla, 48px en modo caso, medidos a mano) porque
+`.panel-catalogo` tenía que dejarle sitio también al rótulo, no solo a la
+cabecera -mismo patrón manual de remedir, sin cálculo automático-.
+
+**Bug real encontrado y corregido**: `.barra-caso-acciones[hidden]`
+necesitaba el mismo arreglo que ya documenta este archivo para
+`.campo[hidden]` (26-08-2026) — una clase con su propio `display: flex`
+empata en especificidad con el `[hidden]` nativo y gana por ir después en
+la hoja. Se detectó en el navegador: los tres botones de corrección
+aparecían en modo plantilla, donde no debían. **Cualquier `[hidden]` nuevo
+sobre un elemento con una clase que ya trae su propio `display` sigue
+necesitando la regla explícita** -van ya dos veces, es un patrón real de
+este proyecto, no una casualidad.
+
+**Ajustes de UX pedidos tras usar el puente de verdad** (mismo turno):
+- El panel Catálogo se pliega pulsando toda su barra (`.panel-cab`), no
+  solo la flechita `#btn-plegar` -igual que el resto de tarjetas, que son
+  `<summary>` nativos y ya respondían en toda la fila-.
+- El rótulo permanente en modo plantilla pasó de texto gris suelto a fondo
+  `--accent-soft` y nombre en `--accent`, negrita: pedido explícito de que
+  el montaje activo se vea bien a simple vista.
+- *Corregir el material y el montaje* se movió de "al final de la ficha,
+  fuera de los 8 apartados" al apartado 5 (Montaje/Técnicas), como primera
+  de las tres acciones: era la queja real -"no veo dónde tengo colocado
+  cada cosa, solo técnicas y material"-, y el botón vivía lejos de donde se
+  mira eso.
+- `umbral_tornillos_pediculares` pasó del apartado 5 al 6, justo debajo de
+  `resumen_monitorizacion` -mismo campo, mismo modelo, solo cambia el grupo
+  (`g`) y la posición dentro de `CAMPOS_CASO`; no toca `Codigo.gs`, que
+  busca columnas por nombre-.
+- Botón **Exportar casos**, junto a Sincronizar: `casosACsv()` construye un
+  CSV con las mismas 53 columnas base que `construirFilasCasos_()` -sin las
+  columnas `TEC_<etiqueta>`-, reutilizando `intervencionDe()`/
+  `resumenMonitorizacionDe()`/`tipoAlertaDe()` tal cual las usa la ficha,
+  para que un caso antiguo se lea igual aquí que en pantalla. Pensado para
+  no depender del disparador diario de Apps Script; si algún día cambia la
+  cabecera de `construirFilasCasos_()`, `COLUMNAS_CSV_CASOS` hay que
+  revisarla a la vez -son la misma tabla, en dos sitios ahora-.
+
+**Fase 5 — Guía de uso.** Diálogo nuevo (`btn-guia`/`dlg-guia`), contenido
+en [`data/guia.js`](data/guia.js) -mismo patrón `window.X = {...}` que
+`data/surgeries.js`, por el bloqueo de `fetch()` en `file://`-. Seis
+tarjetas cortas + acordeón de quince puntos, todo verificado contra el
+código real antes de escribirlo, no contra lo que "sonaba bien". Decisión
+del usuario: **solo en castellano por ahora**, con aviso visible dentro del
+propio diálogo cuando la interfaz está en inglés (`guia_aviso_en`, se
+actualiza en `aplicarTextos()`). No se sincroniza, no se guarda nada de
+ahí, excluida de la impresión (clase `no-print`).
+
+**Nota de mantenimiento importante**: `data/guia.js` es la **segunda**
+descripción del flujo de trabajo que existe en el proyecto, después de este
+`README.md`. Si se vuelve a tocar el flujo -qué es plantilla, qué es caso,
+dónde vive cada botón-, hay que revisar **los dos** archivos en el mismo
+turno. Quedarse solo con el README es exactamente el tipo de desincronización
+silenciosa que ya pasó una vez con el script del Sheet (ver 26-08-2026 más
+abajo) — nadie avisa cuando uno de los dos se queda obsoleto.
 
 ## Google Sheet (Apps Script)
 

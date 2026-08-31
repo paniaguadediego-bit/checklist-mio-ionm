@@ -267,7 +267,7 @@ function compararColumna_(a, b) {
 function construirFilasCasos_(casos, cat, columnasTec) {
   var cabecera = [
     "caso_uid", "ID_Caso", "nombre_caso", "estado", "motivo_cancelacion", "Fecha", "centro", "hora_inicio", "hora_fin",
-    "escenario_nombre", "perfil",
+    "perfil",
     "edad", "sexo", "antecedentes_relevantes",
     "intervencion", "servicio", "diagnostico",
     "posicion", "posicion_detalle", "anatomia_patologica", "otros_datos_quirurgicos",
@@ -319,7 +319,7 @@ function construirFilasCasos_(casos, cat, columnasTec) {
 
     var base = [
       c.caso_uid, c.ID_Caso, c.nombre_caso, c.estado, c.motivo_cancelacion, aFecha_(c.fecha), c.centro, c.hora_inicio, c.hora_fin,
-      c.escenario_nombre, c.perfil,
+      c.perfil,
       c.edad, c.sexo, c.antecedentes_relevantes,
       intervTexto, serv ? serv.nombre : "",
       c.diagnostico, c.posicion, c.posicion_detalle, c.anatomia_patologica, c.otros_datos_quirurgicos,

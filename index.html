@@ -17,7 +17,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260827">
+<link rel="stylesheet" href="style.css?v=20260831">
 </head>
 <body>
 
@@ -25,16 +25,36 @@
   <div class="barra-fila">
     <img class="marca" src="img/favicon.png" alt="MIO-Check" width="32" height="32">
     <select id="perfil-usuario" data-i18n-aria="perfil_usuario_aria" data-i18n-title="perfil_usuario_aria"></select>
-    <span class="montaje-actual" id="montaje-actual"></span>
     <span class="barra-flex"></span>
     <button type="button" id="btn-idioma" class="btn-modo" title="Switch to English">EN</button>
+    <button type="button" id="btn-guia" class="btn-modo" data-i18n-title="btn_guia_tit" data-i18n="btn_guia"></button>
     <button type="button" id="btn-docente" class="btn-modo" data-i18n="btn_docente"></button>
   </div>
   <div class="barra-fila barra-fila-casos">
+    <button type="button" id="btn-montajes" class="btn-modo" data-i18n-title="btn_montajes_tit" data-i18n="btn_montajes"></button>
     <button type="button" id="btn-casos" class="btn-modo" data-i18n-title="btn_casos_tit" data-i18n="btn_casos"></button>
     <button type="button" id="btn-sync" class="btn-modo" data-i18n-title="sync_titulo">☁ <span id="sync-estado"></span></button>
+    <button type="button" id="btn-exportar-casos" class="btn-modo" data-i18n-title="btn_exportar_casos_tit" data-i18n="btn_exportar_casos"></button>
   </div>
 </header>
+
+<!-- Rótulo permanente (Fase 4.2): dice siempre qué se está tocando, una
+     plantilla suelta o el material de un caso concreto. Va aquí, fuera de
+     <main>, para que su position:sticky se enganche justo debajo de la
+     cabecera desde el principio -no como banner ocasional, sino como
+     orientación constante-. -->
+<div class="barra-caso no-print" id="barra-caso">
+  <span class="barra-caso-info">
+    <span id="barra-caso-prefijo"></span>
+    <b id="barra-caso-nombre"></b>
+    <small id="barra-caso-ay"></small>
+  </span>
+  <span class="barra-caso-acciones" id="barra-caso-acciones" hidden>
+    <button type="button" id="barra-caso-cargar-plantilla" data-i18n="caso_cargar_plantilla"></button>
+    <button type="button" id="barra-caso-guardar-plantilla" data-i18n="caso_guardar_plantilla"></button>
+    <button type="button" id="barra-caso-volver" class="primario" data-i18n="barra_caso_volver"></button>
+  </span>
+</div>
 
 <main>
 
@@ -50,40 +70,13 @@
   </section>
 
   <!--
-    Las seis ventanas van en el orden en que se trabaja: primero qué cirugía
-    es, luego de qué montaje partes, qué técnicas vas a hacer, qué material
-    hay, dónde va y qué sale de todo ello. Cada una se pliega sola, que con
-    seis apiladas es lo que las hace manejables.
+    El banco de trabajo es único -Técnicas, Catálogo, Cajas, Resumen-, siempre
+    el mismo tanto si se edita una plantilla suelta como si se corrige el
+    material de un caso. Qué montaje hay cargado se elige aparte, en el
+    diálogo Montajes (barra superior) o desde la ficha de un caso; el rótulo
+    permanente de arriba dice siempre cuál de los dos se está tocando.
   -->
   <div class="columna-principal">
-
-    <details class="card no-print" id="escenario">
-      <summary class="card-cab">
-        <h2 data-i18n="escenario_titulo"></h2>
-        <span class="card-pista" id="escenario-pista"></span>
-      </summary>
-      <div id="escenario-contenido" class="escenario-chips"></div>
-    </details>
-
-    <details class="card" id="montajes">
-      <summary class="card-cab">
-        <h2 data-i18n="montajes_titulo"></h2>
-        <span class="card-pista" id="montajes-pista"></span>
-      </summary>
-      <div class="montajes-acciones no-print">
-        <button type="button" id="btn-nuevo" data-i18n="btn_nuevo"></button>
-        <button type="button" id="btn-duplicar" data-i18n="btn_duplicar"></button>
-        <button type="button" id="btn-renombrar" data-i18n="btn_renombrar"></button>
-        <button type="button" id="btn-vaciar" data-i18n="btn_vaciar"></button>
-        <button type="button" id="btn-borrar" class="peligro" data-i18n="btn_borrar"></button>
-        <span class="barra-flex"></span>
-        <label class="montaje-esc-label">
-          <span data-i18n="montaje_asignar_esc"></span>
-          <select id="montaje-escenario"></select>
-        </label>
-      </div>
-      <div id="montajes-lista"></div>
-    </details>
 
     <details class="card tecnicas-card no-print" id="tecnicas">
       <summary class="card-cab">
@@ -128,17 +121,6 @@
   </div>
 
 </main>
-
-<!-- Aviso fijo mientras se corrige el montaje de un caso: sin él es muy fácil
-     creer que se está tocando el montaje de siempre. -->
-<div class="barra-caso no-print" id="barra-caso" hidden>
-  <span>
-    <span data-i18n="barra_caso_texto"></span>
-    <b id="barra-caso-nombre"></b>
-    <small data-i18n="barra_caso_ay"></small>
-  </span>
-  <button type="button" id="barra-caso-volver" class="primario" data-i18n="barra_caso_volver"></button>
-</div>
 
 <div class="barra-seleccion no-print" id="barra-seleccion" hidden>
   <span><span data-i18n="colocando"></span> <b id="bs-nombre"></b> <span data-i18n="colocando_ayuda"></span></span>
@@ -327,6 +309,32 @@
   </div>
 </dialog>
 
+<dialog id="dlg-montajes" class="no-print">
+  <h3 data-i18n="dlg_montajes_titulo"></h3>
+
+  <div class="casos-filtros">
+    <span>
+      <label for="montajes-buscar" data-i18n="plantilla_filtro_buscar"></label>
+      <input type="search" id="montajes-buscar" data-i18n-ph="plantilla_buscar_ph" autocomplete="off">
+    </span>
+  </div>
+
+  <div class="montajes-acciones no-print">
+    <button type="button" id="btn-duplicar" data-i18n="btn_duplicar"></button>
+    <button type="button" id="btn-renombrar" data-i18n="btn_renombrar"></button>
+    <button type="button" id="btn-vaciar" data-i18n="btn_vaciar"></button>
+    <button type="button" id="btn-borrar" class="peligro" data-i18n="btn_borrar"></button>
+  </div>
+
+  <div id="dlg-montajes-lista"></div>
+  <p class="cat-version" id="montajes-cuenta"></p>
+
+  <div class="dlg-botones">
+    <span class="barra-flex"></span>
+    <button type="button" id="montajes-cerrar" data-i18n="cerrar"></button>
+  </div>
+</dialog>
+
 <dialog id="dlg-casos" class="no-print">
   <h3 data-i18n="dlg_casos_titulo"></h3>
 
@@ -412,11 +420,6 @@
 
     <p class="caso-meta" id="caso-meta"></p>
     <p class="dlg-error" id="caso-error" hidden></p>
-
-    <p class="caso-montaje-fila">
-      <button type="button" id="caso-editar-montaje" data-i18n="caso_editar_montaje"></button>
-      <small data-i18n="caso_editar_montaje_ay"></small>
-    </p>
   </div>
 
   <div class="dlg-botones caso-acciones">
@@ -425,6 +428,46 @@
     <span class="barra-flex"></span>
     <button type="button" id="caso-btn-cerrar-caso"></button>
     <button type="button" id="caso-guardar" class="primario" data-i18n="guardar"></button>
+  </div>
+</dialog>
+
+<dialog id="dlg-elegir-plantilla" class="no-print">
+  <h3 data-i18n="dlg_elegir_plantilla_titulo"></h3>
+  <div class="casos-filtros">
+    <span>
+      <label for="plantilla-buscar" data-i18n="plantilla_filtro_buscar"></label>
+      <input type="search" id="plantilla-buscar" data-i18n-ph="plantilla_buscar_ph" autocomplete="off">
+    </span>
+  </div>
+  <div id="plantilla-elegir-lista"></div>
+  <p class="empty-hint" id="plantilla-elegir-vacio" hidden></p>
+  <div class="dlg-botones">
+    <span class="barra-flex"></span>
+    <button type="button" id="plantilla-elegir-cerrar" data-i18n="cerrar"></button>
+  </div>
+</dialog>
+
+<dialog id="dlg-aplicar-plantilla" class="no-print">
+  <h3 data-i18n="dlg_aplicar_plantilla_titulo"></h3>
+  <p class="dlg-intro" id="aplicar-plantilla-nombre"></p>
+  <p class="dlg-intro" id="aplicar-plantilla-msg"></p>
+  <p class="dlg-intro" id="aplicar-plantilla-msg2"></p>
+  <div class="dlg-botones">
+    <button type="button" id="aplicar-plantilla-cancelar" data-i18n="cancelar"></button>
+    <span class="barra-flex"></span>
+    <button type="button" id="aplicar-plantilla-anadir" data-i18n="plantilla_btn_anadir"></button>
+    <button type="button" id="aplicar-plantilla-reemplazar" class="primario" data-i18n="plantilla_btn_reemplazar"></button>
+  </div>
+</dialog>
+
+<dialog id="dlg-guia" class="no-print dlg-ancho">
+  <h3 data-i18n="dlg_guia_titulo"></h3>
+  <p class="dlg-intro" id="guia-aviso-en" hidden data-i18n="guia_aviso_en"></p>
+  <div id="guia-tarjetas" class="guia-tarjetas"></div>
+  <div id="guia-acordeon"></div>
+  <div class="dlg-botones">
+    <span class="barra-flex"></span>
+    <button type="button" id="guia-cerrar" data-i18n="cerrar"></button>
   </div>
 </dialog>
 
@@ -527,8 +570,9 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260827"></script>
-<script src="data/i18n-en.js?v=20260827"></script>
-<script src="app.js?v=20260827"></script>
+<script src="data/surgeries.js?v=20260831"></script>
+<script src="data/i18n-en.js?v=20260831"></script>
+<script src="data/guia.js?v=20260831"></script>
+<script src="app.js?v=20260831"></script>
 </body>
 </html>

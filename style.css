@@ -187,8 +187,10 @@ main {
    quirófano sin tener que reordenar el propio HTML. */
 .columna-principal { min-width: 0; display: flex; flex-direction: column; }
 
-/* --- Ventana 1: escenario --- */
-.escenario-chips { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+/* .chip-escenario: nombre heredado de cuando existía el catálogo de tipos
+   de cirugía (retirado en la Fase 4). Se queda como clase reutilizable para
+   los chips de posición de la ventana Docente -misma pastilla con marco
+   discontinuo-, no tiene relación con la biblioteca de montajes. */
 .chip-escenario {
   font: inherit;
   font-size: 0.8rem;
@@ -209,15 +211,10 @@ main {
   color: var(--accent);
   font-weight: 600;
 }
-.chip-cuenta {
-  font-size: 0.68rem;
-  opacity: 0.7;
-  border-left: 1px solid currentColor;
-  padding-left: 0.35rem;
-}
 
 /* Pista en la cabecera de la tarjeta: dice lo esencial con la tarjeta
-   plegada, que con seis apiladas es como se va a usar la mayor parte del rato */
+   plegada, que con varias apiladas es como se va a usar la mayor parte del
+   rato */
 .card-pista {
   margin-left: auto;
   font-size: 0.72rem;
@@ -225,7 +222,7 @@ main {
   font-weight: 400;
 }
 
-/* --- Ventana 2: montajes --- */
+/* --- Diálogo Montajes (Fase 4.1) --- */
 .montajes-acciones {
   display: flex;
   flex-wrap: wrap;
@@ -233,19 +230,31 @@ main {
   align-items: center;
   margin-bottom: 0.5rem;
 }
-.montaje-esc-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.72rem;
-  color: var(--text-muted);
-}
-#montaje-escenario { font: inherit; font-size: 0.78rem; }
 
-#montajes-lista {
+#dlg-montajes-lista {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
   gap: 0.35rem;
+  max-height: 46vh;
+  overflow-y: auto;
+}
+/* Fija en primera posición, distinta de una fila real: es una acción -crea
+   un montaje nuevo-, no un elemento de la biblioteca. */
+.montaje-en-blanco {
+  border-style: dashed;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Selector de plantillas (Fase 1: cargar una plantilla sobre un caso).
+   Mismas filas que el diálogo Montajes (.montaje-fila), pero con su propio
+   scroll: puede haber muchas más plantillas de las que caben a la vista. */
+#plantilla-elegir-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 0.35rem;
+  max-height: 46vh;
+  overflow-y: auto;
 }
 .montaje-fila {
   display: flex;
@@ -327,7 +336,11 @@ main {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: pointer;
 }
+/* Los tres botones (Etiquetas, +, ▾/▸) tienen su propia acción: no heredan
+   el cursor de "pliega la barra entera" del resto de la fila. */
+.panel-cab button { cursor: pointer; }
 .panel-cab h2 {
   margin: 0;
   font-size: 0.9rem;
@@ -866,6 +879,37 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
 /* --------------------------- Ventana docente --------------------------- */
 .dlg-ancho { max-width: 62rem; width: calc(100vw - 2rem); }
 
+/* --------------------------- Guía de uso (Fase 5) ------------------------ */
+.guia-tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 0.9rem;
+}
+.guia-tarjeta {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r);
+  background: var(--card-bg);
+  padding: 0.6rem 0.7rem;
+}
+.guia-tarjeta h4 {
+  margin: 0 0 0.3rem;
+  font-size: 0.82rem;
+  color: var(--accent);
+  font-weight: 700;
+}
+.guia-tarjeta p {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--text);
+  line-height: 1.35;
+}
+/* La tarjeta 3 ("Plantilla y caso no son lo mismo") es la más importante de
+   las seis -pedido explícito-: un marco de acento la distingue sin gritar. */
+.guia-tarjeta.guia-destacada { border-color: var(--accent); border-width: 2px; }
+#guia-acordeon p { font-size: 0.8rem; line-height: 1.45; margin: 0 0 0.5rem; }
+#guia-acordeon p:last-child { margin-bottom: 0; }
+
 .docente-fuentes {
   font-size: 0.66rem;
   color: var(--text-muted);
@@ -1008,7 +1052,13 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
   .cama-svg { width: 74px; }
 }
 
-/* ------------------ Corrigiendo el montaje de un caso ------------------ */
+/* --------------------- Rótulo permanente (Fase 4.2) --------------------- */
+/* Siempre visible, justo debajo de la cabecera: dice qué se está tocando
+   ahora mismo. Fondo --accent-soft y nombre en --accent incluso en modo
+   plantilla -el usuario pidió que el montaje activo se viera bien a
+   simple vista, no solo como texto suelto-; en modo de corrección de un
+   caso pasa a --accent sólido, para que además se note el cambio de
+   contexto de un vistazo. */
 .barra-caso {
   position: sticky;
   top: var(--header-h);
@@ -1017,20 +1067,28 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
   align-items: center;
   gap: 0.6rem;
   flex-wrap: wrap;
+  background: var(--accent-soft);
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  padding: 0.45rem 0.7rem;
+  font-size: 0.86rem;
+}
+.barra-caso b { font-weight: 700; color: var(--accent); font-size: 1.02rem; }
+body.editando-caso .barra-caso b { color: #fff; }
+.barra-caso small { display: block; opacity: 0.85; font-size: 0.7rem; }
+.barra-caso-acciones { margin-left: auto; display: flex; gap: 0.4rem; }
+/* Mismo empate de especificidad que .campo[hidden]: una clase con su propio
+   display gana al [hidden] nativo si no se acota así -no basta con poner el
+   atributo-. */
+.barra-caso-acciones[hidden] { display: none; }
+body.editando-caso .barra-caso {
   background: var(--accent);
   color: #fff;
-  padding: 0.4rem 0.7rem;
-  font-size: 0.82rem;
+  border-bottom-color: transparent;
 }
-.barra-caso b { font-weight: 700; }
-.barra-caso small { display: block; opacity: 0.85; font-size: 0.7rem; }
-.barra-caso button { margin-left: auto; }
-
-/* Mientras se corrige un caso, Escenario y Montajes no pintan nada: no estás
-   eligiendo montaje, estás arreglando el de un caso concreto. Dejarlos a la
-   vista invita a tocar el montaje equivocado. */
-body.editando-caso #escenario,
-body.editando-caso #montajes { display: none !important; }
+/* En este modo el rótulo lleva además los tres botones y ocupa más alto
+   -medido a mano, ver el comentario junto a .panel-catalogo-. */
+body.editando-caso { --barra-caso-h: 48px; }
 
 .caso-montaje-fila {
   margin: 0.5rem 0 0;
@@ -1624,6 +1682,10 @@ dialog h3 {
   .barra-sup #perfil-usuario { min-width: 0; flex: 1; max-width: none; }
   .barra-sup img.marca { height: 26px; width: 26px; }
   .btn-modo { font-size: 0.7rem; padding: 0.3rem 0.45rem; }
+  /* Con "Exportar casos" la fila de Gestión de casos ya no cabe entera en
+     una pantalla de 375px -desborda unos 12px sin partirse-; se deja
+     envolver en dos líneas en vez de recortarse. */
+  .barra-fila-casos { flex-wrap: wrap; row-gap: 0.3rem; }
 }
 
 /* ------------------------------ Impresión ------------------------------ */
@@ -1633,10 +1695,10 @@ dialog h3 {
   main { max-width: none; padding: 0; }
   .columna-principal { display: block; }
   .card { border: none; padding: 0; }
-  /* Escenario y Montajes son navegación, no parte del resumen impreso; las
-     cajas son la vista de trabajo canal por canal, el resumen ya trae el
-     material a preparar en una lista compacta. */
-  #escenario, #montajes, #cajas { display: none !important; }
+  /* Cajas es la vista de trabajo canal por canal; el resumen ya trae el
+     material a preparar en una lista compacta, así que no hace falta
+     repetirlo en el papel. */
+  #cajas { display: none !important; }
   .resumen-card { border-left: none; }
   .avisos li { background: none; border-left: 2px solid #888; color: #000; }
 }
@@ -1644,7 +1706,7 @@ dialog h3 {
 /* Pantallas estrechas */
 @media (max-width: 900px) {
   .panel-catalogo { max-height: 40vh; }
-  #montajes-lista { grid-template-columns: 1fr; }
+  #dlg-montajes-lista, #plantilla-elegir-lista { grid-template-columns: 1fr; }
 }
 
 /* Pantalla ancha: el catálogo vuelve a la columna lateral fija.
@@ -1665,8 +1727,14 @@ dialog h3 {
     /* span 99 y no "1 / -1": con filas implícitas, -1 no llega al final */
     grid-row: 1 / span 99;
     position: sticky;
-    top: calc(var(--header-h) + 0.5rem);
-    max-height: calc(100vh - var(--header-h) - 1rem);
+    /* --barra-caso-h: alto del rótulo permanente (Fase 4.2), que ahora está
+       siempre encima -no solo mientras se corrige un caso-, así que el
+       catálogo tiene que dejarle sitio siempre, no solo a la cabecera.
+       Medido a mano en el navegador, igual que --header-h: 32px en modo
+       plantilla (una línea de texto), 48px en modo caso (con los tres
+       botones). Se remide igual que --header-h si cambia el contenido. */
+    top: calc(var(--header-h) + var(--barra-caso-h, 32px) + 0.5rem);
+    max-height: calc(100vh - var(--header-h) - var(--barra-caso-h, 32px) - 1rem);
   }
 }
 
