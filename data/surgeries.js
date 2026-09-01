@@ -274,20 +274,27 @@ window.SURGERIES_DATA = {
       ]
     },
     {
-      "categoria": "Músculos craneales (pares craneales)",
+      "categoria": "Músculos MMSS — ampliación",
+      "plegada_por_defecto": true,
       "items": [
-        { "id": "l_mass", "nombre": "L.Mass", "etiqueta": "hook_wire", "nota": "Maseterino izquierdo — V par craneal" },
-        { "id": "r_mass", "nombre": "R.Mass", "etiqueta": "hook_wire", "nota": "Maseterino derecho — V par craneal" },
-        { "id": "l_ooc", "nombre": "L.OOc", "etiqueta": "hook_wire", "nota": "Orbicular de los párpados izquierdo — VII par; registro del Blink Reflex" },
-        { "id": "r_ooc", "nombre": "R.OOc", "etiqueta": "hook_wire", "nota": "Orbicular de los párpados derecho — VII par; registro del Blink Reflex" },
-        { "id": "l_ment", "nombre": "L.Ment", "etiqueta": "hook_wire", "nota": "Mentoniano izquierdo — VII par craneal" },
-        { "id": "r_ment", "nombre": "R.Ment", "etiqueta": "hook_wire", "nota": "Mentoniano derecho — VII par craneal" },
-        { "id": "l_crico", "nombre": "L.Crico", "etiqueta": "hook_wire", "nota": "Cricotiroideo izquierdo — X par; va junto a las cuerdas vocales en el mismo montaje; registro del reflejo trigémino-cervical. Sin confirmar: el crico evaluaría la parte motora y las cuerdas la sensitiva" },
-        { "id": "r_crico", "nombre": "R.Crico", "etiqueta": "hook_wire", "nota": "Cricotiroideo derecho — X par; va junto a las cuerdas vocales en el mismo montaje; registro del reflejo trigémino-cervical. Sin confirmar: el crico evaluaría la parte motora y las cuerdas la sensitiva" },
-        { "id": "vocal_1", "nombre": "Vocal 1", "etiqueta": "sensor_tubo", "media_unidad": true, "nota": "Cuerdas vocales — X par. Un único sensor de tubo orotraqueal con 2 entradas (Vocal 1 + Vocal 2 = 1 sensor). No se puede saber qué lado es cada una: depende de cómo quede colocado el tubo. Registro del reflejo trigémino-vocal" },
-        { "id": "vocal_2", "nombre": "Vocal 2", "etiqueta": "sensor_tubo", "media_unidad": true, "nota": "Cuerdas vocales — X par. Un único sensor de tubo orotraqueal con 2 entradas (Vocal 1 + Vocal 2 = 1 sensor). No se puede saber qué lado es cada una: depende de cómo quede colocado el tubo. Registro del reflejo trigémino-vocal" },
-        { "id": "l_stcm", "nombre": "L.STCM", "etiqueta": "hook_wire", "nota": "Esternocleidomastoideo izquierdo — XI par; registro del reflejo trigémino-cervical" },
-        { "id": "r_stcm", "nombre": "R.STCM", "etiqueta": "hook_wire", "nota": "Esternocleidomastoideo derecho — XI par; registro del reflejo trigémino-cervical" }
+        {"id":"l_supraes","nombre":"L.Supraes","etiqueta":"aguja_trenzada","nota":"Supraespinoso izquierdo"},
+        {"id":"r_supraes","nombre":"R.Supraes","etiqueta":"aguja_trenzada","nota":"Supraespinoso derecho"},
+        {"id":"l_infraes","nombre":"L.Infraes","etiqueta":"aguja_trenzada","nota":"Infraespinoso izquierdo"},
+        {"id":"r_infraes","nombre":"R.Infraes","etiqueta":"aguja_trenzada","nota":"Infraespinoso derecho"},
+        {"id":"l_serrato","nombre":"L.Serrato","etiqueta":"aguja_trenzada","nota":"Serrato anterior izquierdo"},
+        {"id":"r_serrato","nombre":"R.Serrato","etiqueta":"aguja_trenzada","nota":"Serrato anterior derecho"},
+        {"id":"l_delt","nombre":"L.Delt","etiqueta":"aguja_trenzada","nota":"Deltoides izquierdo"},
+        {"id":"r_delt","nombre":"R.Delt","etiqueta":"aguja_trenzada","nota":"Deltoides derecho"},
+        {"id":"l_triceps","nombre":"L.Triceps","etiqueta":"aguja_trenzada","nota":"Tríceps izquierdo"},
+        {"id":"r_triceps","nombre":"R.Triceps","etiqueta":"aguja_trenzada","nota":"Tríceps derecho"},
+        {"id":"l_br","nombre":"L.BR","etiqueta":"aguja_trenzada","nota":"Braquiorradial izquierdo"},
+        {"id":"r_br","nombre":"R.BR","etiqueta":"aguja_trenzada","nota":"Braquiorradial derecho"},
+        {"id":"l_fcu","nombre":"L.FCU","etiqueta":"aguja_trenzada","nota":"Flexor cubital del carpo izquierdo"},
+        {"id":"r_fcu","nombre":"R.FCU","etiqueta":"aguja_trenzada","nota":"Flexor cubital del carpo derecho"},
+        {"id":"l_fcr","nombre":"L.FCR","etiqueta":"aguja_trenzada","nota":"Flexor radial del carpo izquierdo"},
+        {"id":"r_fcr","nombre":"R.FCR","etiqueta":"aguja_trenzada","nota":"Flexor radial del carpo derecho"},
+        {"id":"l_adm","nombre":"L.ADM","etiqueta":"aguja_trenzada","nota":"Abductor del meñique izquierdo"},
+        {"id":"r_adm","nombre":"R.ADM","etiqueta":"aguja_trenzada","nota":"Abductor del meñique derecho"}
       ]
     },
     {
@@ -304,6 +311,28 @@ window.SURGERIES_DATA = {
       ]
     },
     {
+      "categoria": "Músculos MMII — ampliación",
+      "plegada_por_defecto": true,
+      "items": [
+        {"id":"l_pso","nombre":"L.PSO","etiqueta":"aguja_trenzada","nota":"Psoas izquierdo"},
+        {"id":"r_pso","nombre":"R.PSO","etiqueta":"aguja_trenzada","nota":"Psoas derecho"},
+        {"id":"l_add","nombre":"L.ADD","etiqueta":"aguja_trenzada","nota":"Aductores izquierdo"},
+        {"id":"r_add","nombre":"R.ADD","etiqueta":"aguja_trenzada","nota":"Aductores derecho"},
+        {"id":"l_vl","nombre":"L.VL","etiqueta":"aguja_trenzada","nota":"Vasto lateral — cuádriceps izquierdo"},
+        {"id":"r_vl","nombre":"R.VL","etiqueta":"aguja_trenzada","nota":"Vasto lateral — cuádriceps derecho"},
+        {"id":"l_vm","nombre":"L.VM","etiqueta":"aguja_trenzada","nota":"Vasto medial — cuádriceps izquierdo"},
+        {"id":"r_vm","nombre":"R.VM","etiqueta":"aguja_trenzada","nota":"Vasto medial — cuádriceps derecho"},
+        {"id":"l_pl","nombre":"L.PL","etiqueta":"aguja_trenzada","nota":"Peroneo largo izquierdo"},
+        {"id":"r_pl","nombre":"R.PL","etiqueta":"aguja_trenzada","nota":"Peroneo largo derecho"},
+        {"id":"l_ehb","nombre":"L.EHB","etiqueta":"aguja_trenzada","nota":"Extensor corto de los dedos / extensor brevis izquierdo"},
+        {"id":"r_ehb","nombre":"R.EHB","etiqueta":"aguja_trenzada","nota":"Extensor corto de los dedos / extensor brevis derecho"},
+        {"id":"l_eae","nombre":"L.EAE","etiqueta":"aguja_trenzada","nota":"Extensor largo de los dedos izquierdo"},
+        {"id":"r_eae","nombre":"R.EAE","etiqueta":"aguja_trenzada","nota":"Extensor largo de los dedos derecho"},
+        {"id":"l_eai","nombre":"L.EAI","etiqueta":"aguja_trenzada","nota":"Interóseos del pie izquierdo"},
+        {"id":"r_eai","nombre":"R.EAI","etiqueta":"aguja_trenzada","nota":"Interóseos del pie derecho"}
+      ]
+    },
+    {
       "categoria": "Estimulación periférica",
       "items": [
         { "id": "l_mediano", "nombre": "L.Mediano", "etiqueta": "pegatinas" },
@@ -317,92 +346,32 @@ window.SURGERIES_DATA = {
       ]
     },
     {
-      "categoria": "Estimulación trigeminal (reflejos)",
-      "items": [
-        { "id": "l_v1", "nombre": "L.V1", "etiqueta": "aguja_trenzada", "nota": "Rama oftálmica izquierda del V par — Blink Reflex (registro en orbiculares oculi)" },
-        { "id": "r_v1", "nombre": "R.V1", "etiqueta": "aguja_trenzada", "nota": "Rama oftálmica derecha del V par — Blink Reflex (registro en orbiculares oculi)" },
-        { "id": "l_v2", "nombre": "L.V2", "etiqueta": "pegatinas", "nota": "Rama maxilar izquierda del V par — reflejo trigémino-cervical (registro en STCM y cricotiroideo)" },
-        { "id": "r_v2", "nombre": "R.V2", "etiqueta": "pegatinas", "nota": "Rama maxilar derecha del V par — reflejo trigémino-cervical (registro en STCM y cricotiroideo)" },
-        { "id": "l_v3", "nombre": "L.V3", "etiqueta": "aguja_trenzada", "nota": "Rama mandibular izquierda del V par — reflejo trigémino-vocal (registro en cuerdas vocales)" },
-        { "id": "r_v3", "nombre": "R.V3", "etiqueta": "aguja_trenzada", "nota": "Rama mandibular derecha del V par — reflejo trigémino-vocal (registro en cuerdas vocales)" }
-      ]
-    },
-    {
-      "categoria": "GRID / MANTA",
-      "items": [
-        { "id": "grid1", "nombre": "GRID A.1", "etiqueta": "electrodo_grid_mantaA" },
-        { "id": "grid2", "nombre": "GRID A.2", "etiqueta": "electrodo_grid_mantaA" },
-        { "id": "grid3", "nombre": "GRID A.3", "etiqueta": "electrodo_grid_mantaA" },
-        { "id": "grid4", "nombre": "GRID A.4", "etiqueta": "electrodo_grid_mantaA" },
-        { "id": "grid5", "nombre": "GRID A.5", "etiqueta": "electrodo_grid_mantaA" },
-        { "id": "grid6", "nombre": "GRID A.6", "etiqueta": "electrodo_grid_mantaA" },
-        { "id": "grid7", "nombre": "GRID A.7", "etiqueta": "electrodo_grid_mantaA" },
-        { "id": "grid8", "nombre": "GRID A.8", "etiqueta": "electrodo_grid_mantaA" },
-        { "id": "grid2_1", "nombre": "GRID B.1", "etiqueta": "electrodo_grid_mantaB" },
-        { "id": "grid2_2", "nombre": "GRID B.2", "etiqueta": "electrodo_grid_mantaB" },
-        { "id": "grid2_3", "nombre": "GRID B.3", "etiqueta": "electrodo_grid_mantaB" },
-        { "id": "grid2_4", "nombre": "GRID B.4", "etiqueta": "electrodo_grid_mantaB" },
-        { "id": "grid2_5", "nombre": "GRID B.5", "etiqueta": "electrodo_grid_mantaB" },
-        { "id": "grid2_6", "nombre": "GRID B.6", "etiqueta": "electrodo_grid_mantaB" },
-        { "id": "grid2_7", "nombre": "GRID B.7", "etiqueta": "electrodo_grid_mantaB" },
-        { "id": "grid2_8", "nombre": "GRID B.8", "etiqueta": "electrodo_grid_mantaB" },
-        { "id": "dcs_v2", "nombre": "DCS / V2", "etiqueta": "sin_determinar", "nota": "Aparece rotulado en el canal 8 anodal de la caja real — función sin confirmar" },
-        { "id": "hc", "nombre": "HC", "etiqueta": "sin_determinar", "nota": "Aparece rotulado en el canal 11 de la caja real — función sin confirmar" }
-      ]
-    },
-    {
-      "categoria": "Potenciales auditivos (PEATC)",
-      "items": [
-        { "id": "a1", "nombre": "A1", "etiqueta": "electrodo_sacacorchos", "nota": "Registro auditivo del lado izquierdo. Va en una de las entradas numeradas de REF-AEP" },
-        { "id": "a2", "nombre": "A2", "etiqueta": "electrodo_sacacorchos", "nota": "Registro auditivo del lado derecho. Va en una de las entradas numeradas de REF-AEP" }
-      ]
-    },
-    {
-      "categoria": "Potenciales visuales (VEP)",
-      "items": [
-        { "id": "o1", "nombre": "O1", "etiqueta": "electrodo_sacacorchos", "nota": "Registro visual occipital izquierdo. Va en una de las entradas numeradas de REF-AEP" },
-        { "id": "o2", "nombre": "O2", "etiqueta": "electrodo_sacacorchos", "nota": "Registro visual occipital derecho. Va en una de las entradas numeradas de REF-AEP" }
-      ]
-    },
-    {
       "categoria": "Tierras y referencias",
       "items": [
         { "id": "tierra", "nombre": "Tierra", "etiqueta": "aguja_subdermica", "nota": "Una por caja de registro" }
       ]
     },
     {
-      "categoria": "Otros electrodos corticales (scalp)",
+      "categoria": "Músculos craneales (pares craneales)",
+      "plegada_por_defecto": true,
       "items": [
-        {"id":"sc_eeg_manta","nombre":"EEG Manta","etiqueta":"manta_4_8","nota":"Manta de electrodos para EEG continuo"},
-        {"id":"sc_fp1","nombre":"Fp1","etiqueta":"aguja_subdermica","nota":"Frontopolar izquierdo"},
-        {"id":"sc_fpz","nombre":"Fpz","etiqueta":"aguja_subdermica","nota":"Frontopolar medio"},
-        {"id":"sc_fp2","nombre":"Fp2","etiqueta":"aguja_subdermica","nota":"Frontopolar derecho"},
-        {"id":"sc_cz_6","nombre":"Cz-6","etiqueta":"aguja_subdermica","nota":"6 cm por detrás de Cz"},
-        {"id":"sc_f7","nombre":"F7","etiqueta":"aguja_subdermica","nota":"Frontal inferior izquierdo"},
-        {"id":"sc_f3","nombre":"F3","etiqueta":"aguja_subdermica","nota":"Frontal izquierdo"},
-        {"id":"sc_f4","nombre":"F4","etiqueta":"aguja_subdermica","nota":"Frontal derecho"},
-        {"id":"sc_f8","nombre":"F8","etiqueta":"aguja_subdermica","nota":"Frontal inferior derecho"},
-        {"id":"sc_c5","nombre":"C5'","etiqueta":"aguja_subdermica","nota":"Central izquierdo (C5 prima)"},
-        {"id":"sc_c6","nombre":"C6'","etiqueta":"aguja_subdermica","nota":"Central derecho (C6 prima)"},
-        {"id":"sc_t3","nombre":"T3","etiqueta":"aguja_subdermica","nota":"Temporal medio izquierdo"},
-        {"id":"sc_c3","nombre":"C3","etiqueta":"aguja_subdermica","nota":"Central izquierdo"},
-        {"id":"sc_cz","nombre":"Cz","etiqueta":"aguja_subdermica","nota":"Vértex"},
-        {"id":"sc_c4","nombre":"C4","etiqueta":"aguja_subdermica","nota":"Central derecho"},
-        {"id":"sc_t4","nombre":"T4","etiqueta":"aguja_subdermica","nota":"Temporal medio derecho"},
-        {"id":"sc_t5","nombre":"T5","etiqueta":"aguja_subdermica","nota":"Temporal posterior izquierdo"},
-        {"id":"sc_p3","nombre":"P3","etiqueta":"aguja_subdermica","nota":"Parietal izquierdo"},
-        {"id":"sc_pz","nombre":"Pz","etiqueta":"aguja_subdermica","nota":"Parietal medio"},
-        {"id":"sc_p4","nombre":"P4","etiqueta":"aguja_subdermica","nota":"Parietal derecho"},
-        {"id":"sc_t6","nombre":"T6","etiqueta":"aguja_subdermica","nota":"Temporal posterior derecho"},
-        {"id":"sc_m1","nombre":"M1","etiqueta":"aguja_subdermica","nota":"Mastoides izquierda"},
-        {"id":"sc_m2","nombre":"M2","etiqueta":"aguja_subdermica","nota":"Mastoides derecha"},
-        {"id":"sc_oz_mo","nombre":"Oz (MO)","etiqueta":"aguja_subdermica","nota":"Occipital medio"},
-        {"id":"sc_m3","nombre":"M3","etiqueta":"aguja_subdermica","nota":"Mastoides accesoria izquierda"},
-        {"id":"sc_m4","nombre":"M4","etiqueta":"aguja_subdermica","nota":"Mastoides accesoria derecha"}
+        { "id": "l_mass", "nombre": "L.Mass", "etiqueta": "hook_wire", "nota": "Maseterino izquierdo — V par craneal" },
+        { "id": "r_mass", "nombre": "R.Mass", "etiqueta": "hook_wire", "nota": "Maseterino derecho — V par craneal" },
+        { "id": "l_ooc", "nombre": "L.OOc", "etiqueta": "hook_wire", "nota": "Orbicular de los párpados izquierdo — VII par; registro del Blink Reflex" },
+        { "id": "r_ooc", "nombre": "R.OOc", "etiqueta": "hook_wire", "nota": "Orbicular de los párpados derecho — VII par; registro del Blink Reflex" },
+        { "id": "l_ment", "nombre": "L.Ment", "etiqueta": "hook_wire", "nota": "Mentoniano izquierdo — VII par craneal" },
+        { "id": "r_ment", "nombre": "R.Ment", "etiqueta": "hook_wire", "nota": "Mentoniano derecho — VII par craneal" },
+        { "id": "l_crico", "nombre": "L.Crico", "etiqueta": "hook_wire", "nota": "Cricotiroideo izquierdo — X par; va junto a las cuerdas vocales en el mismo montaje; registro del reflejo trigémino-cervical. Sin confirmar: el crico evaluaría la parte motora y las cuerdas la sensitiva" },
+        { "id": "r_crico", "nombre": "R.Crico", "etiqueta": "hook_wire", "nota": "Cricotiroideo derecho — X par; va junto a las cuerdas vocales en el mismo montaje; registro del reflejo trigémino-cervical. Sin confirmar: el crico evaluaría la parte motora y las cuerdas la sensitiva" },
+        { "id": "vocal_1", "nombre": "Vocal 1", "etiqueta": "sensor_tubo", "media_unidad": true, "nota": "Cuerdas vocales — X par. Un único sensor de tubo orotraqueal con 2 entradas (Vocal 1 + Vocal 2 = 1 sensor). No se puede saber qué lado es cada una: depende de cómo quede colocado el tubo. Registro del reflejo trigémino-vocal" },
+        { "id": "vocal_2", "nombre": "Vocal 2", "etiqueta": "sensor_tubo", "media_unidad": true, "nota": "Cuerdas vocales — X par. Un único sensor de tubo orotraqueal con 2 entradas (Vocal 1 + Vocal 2 = 1 sensor). No se puede saber qué lado es cada una: depende de cómo quede colocado el tubo. Registro del reflejo trigémino-vocal" },
+        { "id": "l_stcm", "nombre": "L.STCM", "etiqueta": "hook_wire", "nota": "Esternocleidomastoideo izquierdo — XI par; registro del reflejo trigémino-cervical" },
+        { "id": "r_stcm", "nombre": "R.STCM", "etiqueta": "hook_wire", "nota": "Esternocleidomastoideo derecho — XI par; registro del reflejo trigémino-cervical" }
       ]
     },
     {
       "categoria": "Músculos craneales — ampliación",
+      "plegada_por_defecto": true,
       "items": [
         {"id":"l_rsup","nombre":"L.RSup","etiqueta":"hook_wire","nota":"Recto superior (oculomotor) izquierdo"},
         {"id":"r_rsup","nombre":"R.RSup","etiqueta":"hook_wire","nota":"Recto superior (oculomotor) derecho"},
@@ -435,30 +404,92 @@ window.SURGERIES_DATA = {
       ]
     },
     {
-      "categoria": "Músculos MMSS — ampliación",
+      "categoria": "GRID / MANTA",
+      "plegada_por_defecto": true,
       "items": [
-        {"id":"l_supraes","nombre":"L.Supraes","etiqueta":"aguja_trenzada","nota":"Supraespinoso izquierdo"},
-        {"id":"r_supraes","nombre":"R.Supraes","etiqueta":"aguja_trenzada","nota":"Supraespinoso derecho"},
-        {"id":"l_infraes","nombre":"L.Infraes","etiqueta":"aguja_trenzada","nota":"Infraespinoso izquierdo"},
-        {"id":"r_infraes","nombre":"R.Infraes","etiqueta":"aguja_trenzada","nota":"Infraespinoso derecho"},
-        {"id":"l_serrato","nombre":"L.Serrato","etiqueta":"aguja_trenzada","nota":"Serrato anterior izquierdo"},
-        {"id":"r_serrato","nombre":"R.Serrato","etiqueta":"aguja_trenzada","nota":"Serrato anterior derecho"},
-        {"id":"l_delt","nombre":"L.Delt","etiqueta":"aguja_trenzada","nota":"Deltoides izquierdo"},
-        {"id":"r_delt","nombre":"R.Delt","etiqueta":"aguja_trenzada","nota":"Deltoides derecho"},
-        {"id":"l_triceps","nombre":"L.Triceps","etiqueta":"aguja_trenzada","nota":"Tríceps izquierdo"},
-        {"id":"r_triceps","nombre":"R.Triceps","etiqueta":"aguja_trenzada","nota":"Tríceps derecho"},
-        {"id":"l_br","nombre":"L.BR","etiqueta":"aguja_trenzada","nota":"Braquiorradial izquierdo"},
-        {"id":"r_br","nombre":"R.BR","etiqueta":"aguja_trenzada","nota":"Braquiorradial derecho"},
-        {"id":"l_fcu","nombre":"L.FCU","etiqueta":"aguja_trenzada","nota":"Flexor cubital del carpo izquierdo"},
-        {"id":"r_fcu","nombre":"R.FCU","etiqueta":"aguja_trenzada","nota":"Flexor cubital del carpo derecho"},
-        {"id":"l_fcr","nombre":"L.FCR","etiqueta":"aguja_trenzada","nota":"Flexor radial del carpo izquierdo"},
-        {"id":"r_fcr","nombre":"R.FCR","etiqueta":"aguja_trenzada","nota":"Flexor radial del carpo derecho"},
-        {"id":"l_adm","nombre":"L.ADM","etiqueta":"aguja_trenzada","nota":"Abductor del meñique izquierdo"},
-        {"id":"r_adm","nombre":"R.ADM","etiqueta":"aguja_trenzada","nota":"Abductor del meñique derecho"}
+        { "id": "grid1", "nombre": "GRID A.1", "etiqueta": "electrodo_grid_mantaA" },
+        { "id": "grid2", "nombre": "GRID A.2", "etiqueta": "electrodo_grid_mantaA" },
+        { "id": "grid3", "nombre": "GRID A.3", "etiqueta": "electrodo_grid_mantaA" },
+        { "id": "grid4", "nombre": "GRID A.4", "etiqueta": "electrodo_grid_mantaA" },
+        { "id": "grid5", "nombre": "GRID A.5", "etiqueta": "electrodo_grid_mantaA" },
+        { "id": "grid6", "nombre": "GRID A.6", "etiqueta": "electrodo_grid_mantaA" },
+        { "id": "grid7", "nombre": "GRID A.7", "etiqueta": "electrodo_grid_mantaA" },
+        { "id": "grid8", "nombre": "GRID A.8", "etiqueta": "electrodo_grid_mantaA" },
+        { "id": "grid2_1", "nombre": "GRID B.1", "etiqueta": "electrodo_grid_mantaB" },
+        { "id": "grid2_2", "nombre": "GRID B.2", "etiqueta": "electrodo_grid_mantaB" },
+        { "id": "grid2_3", "nombre": "GRID B.3", "etiqueta": "electrodo_grid_mantaB" },
+        { "id": "grid2_4", "nombre": "GRID B.4", "etiqueta": "electrodo_grid_mantaB" },
+        { "id": "grid2_5", "nombre": "GRID B.5", "etiqueta": "electrodo_grid_mantaB" },
+        { "id": "grid2_6", "nombre": "GRID B.6", "etiqueta": "electrodo_grid_mantaB" },
+        { "id": "grid2_7", "nombre": "GRID B.7", "etiqueta": "electrodo_grid_mantaB" },
+        { "id": "grid2_8", "nombre": "GRID B.8", "etiqueta": "electrodo_grid_mantaB" },
+        { "id": "dcs_v2", "nombre": "DCS / V2", "etiqueta": "sin_determinar", "nota": "Aparece rotulado en el canal 8 anodal de la caja real — función sin confirmar" },
+        { "id": "hc", "nombre": "HC", "etiqueta": "sin_determinar", "nota": "Aparece rotulado en el canal 11 de la caja real — función sin confirmar" }
+      ]
+    },
+    {
+      "categoria": "Potenciales auditivos (PEATC)",
+      "plegada_por_defecto": true,
+      "items": [
+        { "id": "a1", "nombre": "A1", "etiqueta": "electrodo_sacacorchos", "nota": "Registro auditivo del lado izquierdo. Va en una de las entradas numeradas de REF-AEP" },
+        { "id": "a2", "nombre": "A2", "etiqueta": "electrodo_sacacorchos", "nota": "Registro auditivo del lado derecho. Va en una de las entradas numeradas de REF-AEP" }
+      ]
+    },
+    {
+      "categoria": "Potenciales visuales (VEP)",
+      "plegada_por_defecto": true,
+      "items": [
+        { "id": "o1", "nombre": "O1", "etiqueta": "electrodo_sacacorchos", "nota": "Registro visual occipital izquierdo. Va en una de las entradas numeradas de REF-AEP" },
+        { "id": "o2", "nombre": "O2", "etiqueta": "electrodo_sacacorchos", "nota": "Registro visual occipital derecho. Va en una de las entradas numeradas de REF-AEP" }
+      ]
+    },
+    {
+      "categoria": "Estimulación trigeminal (reflejos)",
+      "plegada_por_defecto": true,
+      "items": [
+        { "id": "l_v1", "nombre": "L.V1", "etiqueta": "aguja_trenzada", "nota": "Rama oftálmica izquierda del V par — Blink Reflex (registro en orbiculares oculi)" },
+        { "id": "r_v1", "nombre": "R.V1", "etiqueta": "aguja_trenzada", "nota": "Rama oftálmica derecha del V par — Blink Reflex (registro en orbiculares oculi)" },
+        { "id": "l_v2", "nombre": "L.V2", "etiqueta": "pegatinas", "nota": "Rama maxilar izquierda del V par — reflejo trigémino-cervical (registro en STCM y cricotiroideo)" },
+        { "id": "r_v2", "nombre": "R.V2", "etiqueta": "pegatinas", "nota": "Rama maxilar derecha del V par — reflejo trigémino-cervical (registro en STCM y cricotiroideo)" },
+        { "id": "l_v3", "nombre": "L.V3", "etiqueta": "aguja_trenzada", "nota": "Rama mandibular izquierda del V par — reflejo trigémino-vocal (registro en cuerdas vocales)" },
+        { "id": "r_v3", "nombre": "R.V3", "etiqueta": "aguja_trenzada", "nota": "Rama mandibular derecha del V par — reflejo trigémino-vocal (registro en cuerdas vocales)" }
+      ]
+    },
+    {
+      "categoria": "Otros electrodos corticales (scalp)",
+      "plegada_por_defecto": true,
+      "items": [
+        {"id":"sc_eeg_manta","nombre":"EEG Manta","etiqueta":"manta_4_8","nota":"Manta de electrodos para EEG continuo"},
+        {"id":"sc_fp1","nombre":"Fp1","etiqueta":"aguja_subdermica","nota":"Frontopolar izquierdo"},
+        {"id":"sc_fpz","nombre":"Fpz","etiqueta":"aguja_subdermica","nota":"Frontopolar medio"},
+        {"id":"sc_fp2","nombre":"Fp2","etiqueta":"aguja_subdermica","nota":"Frontopolar derecho"},
+        {"id":"sc_cz_6","nombre":"Cz-6","etiqueta":"aguja_subdermica","nota":"6 cm por detrás de Cz"},
+        {"id":"sc_f7","nombre":"F7","etiqueta":"aguja_subdermica","nota":"Frontal inferior izquierdo"},
+        {"id":"sc_f3","nombre":"F3","etiqueta":"aguja_subdermica","nota":"Frontal izquierdo"},
+        {"id":"sc_f4","nombre":"F4","etiqueta":"aguja_subdermica","nota":"Frontal derecho"},
+        {"id":"sc_f8","nombre":"F8","etiqueta":"aguja_subdermica","nota":"Frontal inferior derecho"},
+        {"id":"sc_c5","nombre":"C5'","etiqueta":"aguja_subdermica","nota":"Central izquierdo (C5 prima)"},
+        {"id":"sc_c6","nombre":"C6'","etiqueta":"aguja_subdermica","nota":"Central derecho (C6 prima)"},
+        {"id":"sc_t3","nombre":"T3","etiqueta":"aguja_subdermica","nota":"Temporal medio izquierdo"},
+        {"id":"sc_c3","nombre":"C3","etiqueta":"aguja_subdermica","nota":"Central izquierdo"},
+        {"id":"sc_cz","nombre":"Cz","etiqueta":"aguja_subdermica","nota":"Vértex"},
+        {"id":"sc_c4","nombre":"C4","etiqueta":"aguja_subdermica","nota":"Central derecho"},
+        {"id":"sc_t4","nombre":"T4","etiqueta":"aguja_subdermica","nota":"Temporal medio derecho"},
+        {"id":"sc_t5","nombre":"T5","etiqueta":"aguja_subdermica","nota":"Temporal posterior izquierdo"},
+        {"id":"sc_p3","nombre":"P3","etiqueta":"aguja_subdermica","nota":"Parietal izquierdo"},
+        {"id":"sc_pz","nombre":"Pz","etiqueta":"aguja_subdermica","nota":"Parietal medio"},
+        {"id":"sc_p4","nombre":"P4","etiqueta":"aguja_subdermica","nota":"Parietal derecho"},
+        {"id":"sc_t6","nombre":"T6","etiqueta":"aguja_subdermica","nota":"Temporal posterior derecho"},
+        {"id":"sc_m1","nombre":"M1","etiqueta":"aguja_subdermica","nota":"Mastoides izquierda"},
+        {"id":"sc_m2","nombre":"M2","etiqueta":"aguja_subdermica","nota":"Mastoides derecha"},
+        {"id":"sc_oz_mo","nombre":"Oz (MO)","etiqueta":"aguja_subdermica","nota":"Occipital medio"},
+        {"id":"sc_m3","nombre":"M3","etiqueta":"aguja_subdermica","nota":"Mastoides accesoria izquierda"},
+        {"id":"sc_m4","nombre":"M4","etiqueta":"aguja_subdermica","nota":"Mastoides accesoria derecha"}
       ]
     },
     {
       "categoria": "Músculos de tronco y periné",
+      "plegada_por_defecto": true,
       "items": [
         {"id":"l_diafragma","nombre":"L.Diafragma","etiqueta":"aguja_trenzada","nota":"Diafragma — nervio frénico izquierdo"},
         {"id":"r_diafragma","nombre":"R.Diafragma","etiqueta":"aguja_trenzada","nota":"Diafragma — nervio frénico derecho"},
@@ -479,28 +510,8 @@ window.SURGERIES_DATA = {
       ]
     },
     {
-      "categoria": "Músculos MMII — ampliación",
-      "items": [
-        {"id":"l_pso","nombre":"L.PSO","etiqueta":"aguja_trenzada","nota":"Psoas izquierdo"},
-        {"id":"r_pso","nombre":"R.PSO","etiqueta":"aguja_trenzada","nota":"Psoas derecho"},
-        {"id":"l_add","nombre":"L.ADD","etiqueta":"aguja_trenzada","nota":"Aductores izquierdo"},
-        {"id":"r_add","nombre":"R.ADD","etiqueta":"aguja_trenzada","nota":"Aductores derecho"},
-        {"id":"l_vl","nombre":"L.VL","etiqueta":"aguja_trenzada","nota":"Vasto lateral — cuádriceps izquierdo"},
-        {"id":"r_vl","nombre":"R.VL","etiqueta":"aguja_trenzada","nota":"Vasto lateral — cuádriceps derecho"},
-        {"id":"l_vm","nombre":"L.VM","etiqueta":"aguja_trenzada","nota":"Vasto medial — cuádriceps izquierdo"},
-        {"id":"r_vm","nombre":"R.VM","etiqueta":"aguja_trenzada","nota":"Vasto medial — cuádriceps derecho"},
-        {"id":"l_pl","nombre":"L.PL","etiqueta":"aguja_trenzada","nota":"Peroneo largo izquierdo"},
-        {"id":"r_pl","nombre":"R.PL","etiqueta":"aguja_trenzada","nota":"Peroneo largo derecho"},
-        {"id":"l_ehb","nombre":"L.EHB","etiqueta":"aguja_trenzada","nota":"Extensor corto de los dedos / extensor brevis izquierdo"},
-        {"id":"r_ehb","nombre":"R.EHB","etiqueta":"aguja_trenzada","nota":"Extensor corto de los dedos / extensor brevis derecho"},
-        {"id":"l_eae","nombre":"L.EAE","etiqueta":"aguja_trenzada","nota":"Extensor largo de los dedos izquierdo"},
-        {"id":"r_eae","nombre":"R.EAE","etiqueta":"aguja_trenzada","nota":"Extensor largo de los dedos derecho"},
-        {"id":"l_eai","nombre":"L.EAI","etiqueta":"aguja_trenzada","nota":"Interóseos del pie izquierdo"},
-        {"id":"r_eai","nombre":"R.EAI","etiqueta":"aguja_trenzada","nota":"Interóseos del pie derecho"}
-      ]
-    },
-    {
       "categoria": "Nervios",
+      "plegada_por_defecto": true,
       "items": [
         {"id":"l_iii","nombre":"L.III","etiqueta":"aguja_trenzada","nota":"III par — oculomotor izquierdo"},
         {"id":"r_iii","nombre":"R.III","etiqueta":"aguja_trenzada","nota":"III par — oculomotor derecho"},
@@ -570,6 +581,7 @@ window.SURGERIES_DATA = {
     },
     {
       "categoria": "Reflejos",
+      "plegada_por_defecto": true,
       "items": [
         {"id":"l_blinkr","nombre":"L.BlinkR","etiqueta":"aguja_trenzada","nota":"Blink Reflex izquierdo"},
         {"id":"r_blinkr","nombre":"R.BlinkR","etiqueta":"aguja_trenzada","nota":"Blink Reflex derecho"},
@@ -587,6 +599,7 @@ window.SURGERIES_DATA = {
     },
     {
       "categoria": "Otros puntos de registro",
+      "plegada_por_defecto": true,
       "items": [
         {"id":"l_p_cervical","nombre":"L.P.Cervical","etiqueta":"aguja_subdermica","nota":"Punto de registro cervical izquierdo"},
         {"id":"r_p_cervical","nombre":"R.P.Cervical","etiqueta":"aguja_subdermica","nota":"Punto de registro cervical derecho"},
@@ -599,8 +612,28 @@ window.SURGERIES_DATA = {
       ]
     },
     {
+      "categoria": "Sondas",
+      "plegada_por_defecto": true,
+      "items": [
+        { "id": "sonda_mono_esferica", "nombre": "Sonda monopolar esférica", "etiqueta": "sonda_mono_esferica" },
+        { "id": "sonda_mono_recta", "nombre": "Sonda monopolar recta", "etiqueta": "sonda_mono_recta" },
+        { "id": "sonda_bip_concentrica", "nombre": "Sonda bipolar concéntrica", "etiqueta": "sonda_bip_concentrica" },
+        { "id": "sonda_bip_rectas", "nombre": "Sonda bipolar de puntas rectas separadas", "etiqueta": "sonda_bip_rectas" },
+        { "id": "sonda_bip_esfericas", "nombre": "Sonda bipolar de puntas esféricas separadas", "etiqueta": "sonda_bip_esfericas" },
+        { "id": "sonda_bip_gancho", "nombre": "Sonda bipolar de gancho", "etiqueta": "sonda_bip_gancho" },
+        { "id": "sonda_tripolar", "nombre": "Sonda tripolar", "etiqueta": "sonda_tripolar" },
+        { "id": "sonda_aspiracion", "nombre": "Sonda de aspiración electrificada", "etiqueta": "sonda_aspiracion" },
+        { "id": "sonda_laparoscopica", "nombre": "Sonda bipolar laparoscópica", "etiqueta": "sonda_laparoscopica" },
+        { "id": "pinza_estimulacion", "nombre": "Pinza de estimulación", "etiqueta": "pinza_estimulacion" },
+        { "id": "discos_visuales", "nombre": "Discos visuales", "etiqueta": "discos_visuales" },
+        { "id": "bipolar_barra", "nombre": "Bipolar barra / superficie ENG", "etiqueta": "bipolar_barra" },
+        { "id": "ref_sonda", "nombre": "Referencia de sonda", "etiqueta": "aguja_subdermica" }
+      ]
+    },
+    {
       "categoria": "Material extra (no ocupa entrada)",
       "sin_entrada": true,
+      "plegada_por_defecto": true,
       "items": [
         { "id": "auriculares_peatc", "nombre": "Auriculares PEATC", "etiqueta": "auriculares", "nota": "Estimulación auditiva para los PEATC (A1/A2). Se conectan al conector amarillo de REF-AEP, no ocupan entrada" },
         { "id": "gafas_vep", "nombre": "Gafas VEP", "etiqueta": "gafas", "nota": "Estimulación visual para los potenciales visuales (O1/O2). No ocupan entrada" }

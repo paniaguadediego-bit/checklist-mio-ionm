@@ -903,7 +903,7 @@
       });
       // La categoría en castellano es la clave de agrupación; la traducción
       // viaja al lado para pintarla, no para agrupar.
-      CATALOGO.push({ categoria: grupo.categoria, categoria_en: grupo.categoria_en, items: items });
+      CATALOGO.push({ categoria: grupo.categoria, categoria_en: grupo.categoria_en, plegada_por_defecto: !!grupo.plegada_por_defecto, items: items });
     });
 
     catalogoUsuario.forEach(function (item) {
@@ -1826,8 +1826,14 @@
      un chip al pulsarlo y si se ofrece el material que no ocupa entrada. */
   /* Qué categorías del catálogo quedan desplegadas. Se recuerda por nombre y
      no por índice: así añadir o reordenar categorías no cambia cuáles estaban
-     abiertas. De partida están todas plegadas — con 20 categorías es más
-     rápido abrir la que quieres que desplazarse por las otras 19. */
+     abiertas. Cada categoría trae su propio por-defecto (campo
+     "plegada_por_defecto" en data/surgeries.js): las de uso habitual nacen
+     abiertas, el resto plegado -con 22 categorías, desplazarse por todas para
+     llegar a la que casi no se usa es peor que un toque de más-. Por eso
+     recordarCategoria() guarda siempre 0/1 explícito (nunca borra la clave):
+     si se borrara al cerrar, una categoría que nace abierta volvería a
+     abrirse sola en la siguiente visita en vez de quedarse cerrada como
+     decidió el usuario. */
   var CATS_KEY = "mio_ionm_cats_abiertas_v1";
   var catsAbiertas = null;
 
@@ -1839,13 +1845,15 @@
     return catsAbiertas;
   }
 
-  function categoriaAbierta(nombre) {
-    return !!cargarCategorias()[nombre];
+  function categoriaAbierta(nombre, porDefecto) {
+    var g = cargarCategorias();
+    if (Object.prototype.hasOwnProperty.call(g, nombre)) return !!g[nombre];
+    return !!porDefecto;
   }
 
   function recordarCategoria(nombre, abierta) {
     var g = cargarCategorias();
-    if (abierta) g[nombre] = 1; else delete g[nombre];
+    g[nombre] = abierta ? 1 : 0;
     try { localStorage.setItem(CATS_KEY, JSON.stringify(g)); } catch (e) { /* sin persistencia */ }
   }
 
@@ -1872,7 +1880,7 @@
       bloque.className = "catalogo-grupo";
       // Buscando se abre todo lo que tenga resultados: si no, la búsqueda
       // encontraría cosas que siguen sin verse.
-      bloque.open = filtro ? true : categoriaAbierta(nombreCat);
+      bloque.open = filtro ? true : categoriaAbierta(nombreCat, !grupo.plegada_por_defecto);
       bloque.addEventListener("toggle", function () {
         if (!filtro) recordarCategoria(nombreCat, bloque.open);
       });
@@ -5203,6 +5211,31 @@
     return row;
   }
 
+  /* Qué cajas plegables (3-6) quedan desplegadas. Mismo patrón que
+     catsAbiertas/categoriaAbierta con el catálogo: sin esto, cada
+     renderCajas() (p. ej. al colocar material) reconstruye el <details>
+     desde cero y se pierde el "open" que había puesto el usuario a mano. */
+  var CAJAS_KEY = "mio_ionm_cajas_abiertas_v1";
+  var cajasAbiertas = null;
+
+  function cargarCajasAbiertas() {
+    if (cajasAbiertas) return cajasAbiertas;
+    try {
+      cajasAbiertas = JSON.parse(localStorage.getItem(CAJAS_KEY) || "{}") || {};
+    } catch (e) { cajasAbiertas = {}; }
+    return cajasAbiertas;
+  }
+
+  function cajaAbierta(key) {
+    return !!cargarCajasAbiertas()[key];
+  }
+
+  function recordarCaja(key, abierta) {
+    var g = cargarCajasAbiertas();
+    if (abierta) g[key] = 1; else delete g[key];
+    try { localStorage.setItem(CAJAS_KEY, JSON.stringify(g)); } catch (e) { /* sin persistencia */ }
+  }
+
   function renderCajaFisica(cajaKey) {
     var info = infoCaja(cajaKey);
     var entradas = entradasDe(cajaKey);
@@ -5215,6 +5248,10 @@
     // usen dos-. El resto se queda siempre visible, como hasta ahora.
     var card = document.createElement(info.plegable ? "details" : "div");
     card.className = "card caja-card" + (info.plegable ? " caja-plegable" : "");
+    if (info.plegable) {
+      card.open = cajaAbierta(cajaKey);
+      card.addEventListener("toggle", function () { recordarCaja(cajaKey, card.open); });
+    }
 
     var cab = document.createElement(info.plegable ? "summary" : "div");
     cab.className = "caja-cab";
