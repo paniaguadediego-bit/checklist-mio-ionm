@@ -87,7 +87,7 @@ window.SURGERIES_I18N.en = {
   "categorias": {
     "Electrodos corticales — estimulación (TES)": "Cortical electrodes — stimulation (TES)",
     "Electrodos corticales — registro": "Cortical electrodes — recording",
-    "Registro cervical / plexo": "Cervical / plexus recording",
+    "Registro cervical / periférico": "Cervical / peripheral recording",
     "Músculos MMSS": "Upper limb muscles",
     "Músculos craneales (pares craneales)": "Cranial muscles (cranial nerves)",
     "Músculos MMII": "Lower limb muscles",
@@ -186,7 +186,7 @@ window.SURGERIES_I18N.en = {
     "c_pev": { "etiqueta": "c-VEP", "descripcion": "Cortical visual evoked potential" },
     "erg": { "descripcion": "Electroretinogram" },
     "reflejo_h": { "etiqueta": "H reflex", "descripcion": "Split into H-R Gastrocnemius and H-R Masseter" },
-    "hr_popliteo": { "etiqueta": "H-R Gastrocnemius", "descripcion": "H reflex by popliteal fossa stimulation" },
+    "hr_popliteo": { "etiqueta": "H-R Soleus", "descripcion": "H reflex by popliteal fossa stimulation" },
     "hr_masetero": { "etiqueta": "H-R Masseter (Jaw Jerk)", "descripcion": "H reflex by masseteric nerve stimulation — same circuit as the classic jaw jerk / masseteric reflex. Not to be confused with the masseteric inhibitory reflex (silent period), a different circuit not studied in IONM." },
     "hr_cuadriceps": { "etiqueta": "H-R Quadriceps" },
     "mapeo_cortical": { "etiqueta": "Cortical mapping", "descripcion": "Penfield technique" },

@@ -43,6 +43,12 @@
     btn_renombrar:       { es: "Renombrar", en: "Rename" },
     btn_vaciar:          { es: "Vaciar", en: "Empty" },
     btn_borrar:          { es: "Borrar", en: "Delete" },
+    btn_guardar_montaje: { es: "Guardar montaje", en: "Save montage" },
+    dlg_guardar_montaje_titulo: { es: "Guardar montaje", en: "Save montage" },
+    guardar_montaje_intro: { es: "¿Qué quieres hacer con «{nombre}»?", en: "What do you want to do with “{nombre}”?" },
+    guardar_montaje_nuevo: { es: "Guardar como nuevo", en: "Save as new" },
+    guardar_montaje_sobrescribir: { es: "Sobrescribir este", en: "Overwrite this one" },
+    montaje_guardado:    { es: "Montaje guardado.", en: "Montage saved." },
     btn_exportar:        { es: "Exportar copia", en: "Export backup" },
     btn_importar:        { es: "Importar copia", en: "Import backup" },
     btn_imprimir:        { es: "Imprimir", en: "Print" },
@@ -309,8 +315,9 @@
     caso_g_formacion:    { es: "Docencia / Meta", en: "Teaching / Meta" },
     caso_volver:         { es: "Volver a la lista", en: "Back to the list" },
     caso_btn_cerrar_caso:{ es: "Cerrar caso", en: "Close case" },
-    caso_reabrir:        { es: "Marcar como preparado", en: "Mark as prepared" },
     caso_borrar:         { es: "Borrar caso", en: "Delete case" },
+    caso_crear_informe:  { es: "Crear informe", en: "Create report" },
+    caso_informe_proximamente: { es: "Crear informe: todavía no hace nada, en camino.", en: "Create report: not wired up yet, coming soon." },
     caso_borrar_conf:    { es: "¿Borrar el caso “{caso}”?\nSe borra también del repositorio en cuanto haya conexión. No se puede deshacer desde la app, aunque queda recuperable en el historial de git.",
                            en: "Delete the case “{caso}”?\nAlso deleted from the repository as soon as there is a connection. This cannot be undone from the app, though it stays recoverable in the git history." },
     caso_borrado:        { es: "Caso borrado.", en: "Case deleted." },
@@ -521,9 +528,7 @@
     caso_editar_montaje: { es: "Corregir el material y el montaje", en: "Correct material and montage" },
     caso_editar_montaje_ay: { es: "Abre las cajas de este caso para cambiar dónde va cada cosa. Lo que cambies se guarda en el caso, no en el montaje del que salió.",
                            en: "Opens this case’s boxes to change where each item goes. What you change is saved in the case, not in the montage it came from." },
-    caso_cargar_plantilla: { es: "Cargar plantilla…", en: "Load template…" },
-    caso_cargar_plantilla_ay: { es: "Copia el contenido de una plantilla sobre este caso. Editar la plantilla después no cambia lo que ya se copió aquí.",
-                           en: "Copies a template's content onto this case. Editing the template afterwards does not change what was already copied here." },
+    caso_cargar_plantilla: { es: "Cargar montaje…", en: "Load montage…" },
     caso_montaje_origen: { es: "Plantilla de origen: {nombre}", en: "Source template: {nombre}" },
     caso_montaje_origen_no_disponible: { es: "plantilla no disponible", en: "template not available" },
     caso_guardar_plantilla: { es: "Guardar este montaje como plantilla…", en: "Save this montage as a template…" },
@@ -2831,8 +2836,9 @@
     );
   }
 
-  // Punto de entrada de los dos botones ("Cargar plantilla…" de la ficha y
-  // el de la barra fija mientras se corrige un caso).
+  // Punto de entrada de "Cargar montaje…", en la barra fija mientras se
+  // corrige el material de un caso -antes también se podía desde la ficha,
+  // ver Fase 6-.
   function iniciarCargaPlantilla(modoEditando) {
     var caso = modoEditando ? casos[casoEditandoUid] : leerFichaCaso();
     if (!caso) return;
@@ -4336,17 +4342,11 @@
           cont.appendChild(filaCorregir);
         }
 
-        var filaPlantilla = document.createElement("p");
-        filaPlantilla.className = "caso-montaje-fila";
-        var btnPlantilla = document.createElement("button");
-        btnPlantilla.type = "button";
-        btnPlantilla.textContent = T("caso_cargar_plantilla");
-        btnPlantilla.addEventListener("click", function () { iniciarCargaPlantilla(false); });
-        var ayPlantilla = document.createElement("small");
-        ayPlantilla.textContent = T("caso_cargar_plantilla_ay");
-        filaPlantilla.appendChild(btnPlantilla);
-        filaPlantilla.appendChild(ayPlantilla);
-        cont.appendChild(filaPlantilla);
+        // "Cargar montaje…" (antes "Cargar plantilla…") ya no vive aquí:
+        // desde la ficha no se sabe si lo que se está copiando encima se
+        // puede editar de verdad o no -pedido del usuario-. Sigue existiendo,
+        // pero solo desde la barra fija de "Corrigiendo el material del
+        // caso" (#barra-caso-cargar-plantilla, más abajo en este archivo).
 
         var filaGuardarPlantilla = document.createElement("p");
         filaGuardarPlantilla.className = "caso-montaje-fila";
@@ -4401,7 +4401,7 @@
     pie.textContent = partes.join(" · ");
 
     document.getElementById("caso-btn-cerrar-caso").textContent =
-      T(c.estado === "cerrado" ? "caso_reabrir" : "caso_btn_cerrar_caso");
+      T(c.estado === "cerrado" ? "caso_volver" : "caso_btn_cerrar_caso");
     // Un caso que todavía no se ha guardado ni una vez no existe en "casos":
     // no hay nada que borrar hasta el primer "Guardar".
     document.getElementById("caso-borrar").hidden = casoEsNuevo;
@@ -4580,9 +4580,8 @@
     abrirCasoNuevo(c);
   });
 
-  document.getElementById("caso-volver").addEventListener("click", function () {
-    dlgCaso.close();
-    abrirListaCasos();
+  document.getElementById("caso-crear-informe").addEventListener("click", function () {
+    avisoGuardado(T("caso_informe_proximamente"));
   });
   document.getElementById("caso-borrar").addEventListener("click", function () {
     var c = casoAbierto;
@@ -4601,6 +4600,15 @@
     cerrarMontajeDeCaso(true);
   });
   document.getElementById("caso-btn-cerrar-caso").addEventListener("click", function () {
+    // Con el caso ya cerrado este botón dice "Volver a la lista": solo
+    // navega, no hay forma de reabrirlo a "preparado" desde aquí -si hace
+    // falta, se cambia el campo Estado dentro de la ficha, como cualquier
+    // otro campo, y se guarda con el botón Guardar.
+    if (casoAbierto && casoAbierto.estado === "cerrado") {
+      dlgCaso.close();
+      abrirListaCasos();
+      return;
+    }
     if (guardarFicha(true)) { dlgCaso.close(); abrirListaCasos(); }
   });
 
@@ -5820,6 +5828,11 @@
     renderResumen();
     renderCatalogo();
     renderCajas();
+    // Fase 6: Montajes ya no es un diálogo que se pinta solo al abrirse -es
+    // la tarjeta de arriba del todo, abierta de fábrica-, así que necesita
+    // su propio refresco aquí, igual que el resto. Sigue siendo condicional
+    // a que esté desplegada (el usuario puede plegarla): sincronizarDlgMontajesSiAbierto().
+    sincronizarDlgMontajesSiAbierto();
   }
 
 
@@ -5839,13 +5852,13 @@
     if (dlgMontajes && dlgMontajes.open) renderListaMontajesDialog();
   }
 
-  // Duplicar sí funciona sobre el montaje de otro: es la forma de partir del
-  // suyo para hacerte el tuyo. La copia nace a tu nombre, no al suyo.
-  document.getElementById("btn-duplicar").addEventListener("click", function () {
-    var esc = escenarioActual();
-    if (!esc) return;
+  // Clona un montaje a tu nombre, con un uid propio, y lo deja activo. Lo
+  // usan "Duplicar" (parte de cualquier montaje, incluido el de otro autor)
+  // y "Guardar montaje" → "Guardar como nuevo" (parte siempre del activo).
+  // Devuelve false si el usuario cancela el prompt, sin tocar nada.
+  function duplicarMontajeComo(esc) {
     var nombre = prompt(T("esc_duplicar_prompt"), campo(esc, "nombre") + T("esc_copia_sufijo"));
-    if (!nombre) return;
+    if (!nombre) return false;
     var yo = usuarioActual();
     var m = clonar(esc);
     m.montaje_uid = uuid();
@@ -5857,8 +5870,16 @@
     m.editado_en = [];
     activo = m.montaje_uid;
     guardarMontaje(m, true);
+    return true;
+  }
+
+  // Duplicar sí funciona sobre el montaje de otro: es la forma de partir del
+  // suyo para hacerte el tuyo. La copia nace a tu nombre, no al suyo.
+  document.getElementById("btn-duplicar").addEventListener("click", function () {
+    var esc = escenarioActual();
+    if (!esc) return;
+    if (!duplicarMontajeComo(esc)) return;
     renderTodo();
-    sincronizarDlgMontajesSiAbierto();
   });
 
   document.getElementById("btn-renombrar").addEventListener("click", function () {
@@ -5870,7 +5891,6 @@
     delete esc.nombre_en;
     guardarMontaje(esc);
     renderTodo();
-    sincronizarDlgMontajesSiAbierto();
   });
 
   document.getElementById("btn-vaciar").addEventListener("click", function () {
@@ -5883,7 +5903,6 @@
     esc.extras = [];
     guardarMontaje(esc);
     renderTodo();
-    sincronizarDlgMontajesSiAbierto();
   });
 
   document.getElementById("btn-borrar").addEventListener("click", function () {
@@ -5900,7 +5919,41 @@
     guardarMontajes();
     programarEnvio();
     renderTodo();
+  });
+
+  // "Guardar montaje": a diferencia de Duplicar/Renombrar/Vaciar/Borrar, el
+  // material ya se autoguarda en cada colocación (colocar() → guardarMontajeActivo());
+  // esto no es la única forma de no perder el trabajo, es una confirmación
+  // explícita para quien la quiera, con la misma disyuntiva que ya existe al
+  // cargar una plantilla sobre un caso: sobrescribir el montaje activo, o
+  // dejarlo intacto y guardar aparte como uno nuevo.
+  var dlgGuardarMontaje = document.getElementById("dlg-guardar-montaje");
+  document.getElementById("btn-guardar-montaje").addEventListener("click", function () {
+    var esc = escenarioActual();
+    if (!esc) return;
+    document.getElementById("guardar-montaje-nombre").textContent =
+      T("guardar_montaje_intro", { nombre: campo(esc, "nombre") });
+    // Sobrescribir solo tiene sentido si el montaje activo es tuyo -si es de
+    // otro autor, exigeSerAutor() lo bloquearía igualmente al pulsar-.
+    document.getElementById("guardar-montaje-sobrescribir").hidden = !puedoEditar(esc);
+    dlgGuardarMontaje.showModal();
+  });
+  document.getElementById("guardar-montaje-cancelar").addEventListener("click", function () {
+    dlgGuardarMontaje.close();
+  });
+  document.getElementById("guardar-montaje-sobrescribir").addEventListener("click", function () {
+    var esc = escenarioActual();
+    dlgGuardarMontaje.close();
+    if (!esc || !exigeSerAutor(esc)) return;
+    guardarMontaje(esc);
+    avisoGuardado(T("montaje_guardado"));
     sincronizarDlgMontajesSiAbierto();
+  });
+  document.getElementById("guardar-montaje-nuevo").addEventListener("click", function () {
+    var esc = escenarioActual();
+    dlgGuardarMontaje.close();
+    if (!esc || !duplicarMontajeComo(esc)) return;
+    renderTodo();
   });
 
   /* ---------------------------------------------------------------- *
@@ -5909,12 +5962,17 @@
    * elegir. Lista plana -sin escenario que agrupe-, filtro por nombre y
    * autor, entradas ocupadas visibles en cada fila.
    * ---------------------------------------------------------------- */
-  var dlgMontajes = document.getElementById("dlg-montajes");
+  // Fase 6: ya no es un <dialog>, es la tarjeta de siempre -mismo
+  // "dlgMontajes" de nombre porque su papel no cambia (algo que se abre y se
+  // pliega solo al elegir), solo cambia cómo: era showModal()/close(), ahora
+  // es el .open de cualquier <details>.
+  var dlgMontajes = document.getElementById("montajes");
 
   function abrirDlgMontajes() {
     document.getElementById("montajes-buscar").value = "";
     renderListaMontajesDialog();
-    dlgMontajes.showModal();
+    dlgMontajes.open = true;
+    dlgMontajes.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   function renderListaMontajesDialog() {
@@ -5939,7 +5997,7 @@
       var m = montajeNuevo(T("esc_nuevo_def"));
       activo = m.montaje_uid;
       guardarMontaje(m, true);
-      dlgMontajes.close();
+      dlgMontajes.open = false;
       renderTodo();
     });
     cont.appendChild(blanco);
@@ -5994,7 +6052,7 @@
       fila.addEventListener("click", function () {
         activo = uid;
         guardarMontajes();
-        dlgMontajes.close();
+        dlgMontajes.open = false;
         renderTodo();
       });
       cont.appendChild(fila);
@@ -6002,7 +6060,6 @@
   }
 
   document.getElementById("btn-montajes").addEventListener("click", abrirDlgMontajes);
-  document.getElementById("montajes-cerrar").addEventListener("click", function () { dlgMontajes.close(); });
   document.getElementById("montajes-buscar").addEventListener("input", renderListaMontajesDialog);
 
   /* ---------------------------------------------------------------- *
@@ -6622,6 +6679,13 @@
   renderPerfilUsuario();
   renderPerfilSelect();
   renderTodo();
+  // Arranca plegado, igual que Técnicas/Cajas/Resumen -pedido del usuario,
+  // para que las cuatro ocupen lo mismo al cargar la página-. Solo en móvil:
+  // en escritorio el catálogo es la barra lateral fija pensada para verse
+  // sin volver a abrirla en cada colocación (ver la media query de
+  // "Pantalla ancha" en style.css); plegarla también ahí obligaría a
+  // desplegarla a mano antes de poder colocar nada.
+  if (window.matchMedia("(max-width: 900px)").matches) plegarCatalogo(true);
   avisoGuardado(T(syncActivo() ? "guardado_nube" : "guardado_local"));
   // Traer lo último de GitHub al abrir, sin preguntar si no hay nada local
   // sin subir. Si lo hay, sube en vez de bajar.

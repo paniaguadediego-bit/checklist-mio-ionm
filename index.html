@@ -17,7 +17,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260901">
+<link rel="stylesheet" href="style.css?v=20260905">
 </head>
 <body>
 
@@ -25,6 +25,7 @@
   <div class="barra-fila">
     <img class="marca" src="img/favicon.png" alt="MIO-Check" width="32" height="32">
     <select id="perfil-usuario" data-i18n-aria="perfil_usuario_aria" data-i18n-title="perfil_usuario_aria"></select>
+    <button type="button" id="btn-catalogos" class="btn-modo" data-i18n="btn_catalogos" data-i18n-title="btn_catalogos_tit"></button>
     <span class="barra-flex"></span>
     <!-- Guía de uso / Idioma / Docente son de consulta ocasional, no de cada
          gesto: van agrupados en un desplegable para no competir en ancho con
@@ -41,6 +42,8 @@
   <div class="barra-fila barra-fila-casos">
     <button type="button" id="btn-casos" class="btn-modo" data-i18n-title="btn_casos_tit" data-i18n="btn_casos"></button>
     <button type="button" id="btn-sync" class="btn-modo" data-i18n-title="sync_titulo">☁ <span id="sync-estado"></span></button>
+    <span class="barra-flex"></span>
+    <span class="guardado-aviso" id="guardado-aviso"></span>
   </div>
 </header>
 
@@ -68,17 +71,6 @@
 
 <main>
 
-  <section class="toolbar no-print">
-    <button type="button" id="btn-catalogos" data-i18n="btn_catalogos" data-i18n-title="btn_catalogos_tit"></button>
-    <span class="barra-flex"></span>
-    <button type="button" id="btn-exportar" data-i18n="btn_exportar"></button>
-    <button type="button" id="btn-importar" data-i18n="btn_importar"></button>
-    <button type="button" id="btn-imprimir" data-i18n="btn_imprimir"></button>
-    <button type="button" id="btn-restablecer" class="peligro" data-i18n="btn_restablecer"></button>
-    <input type="file" id="fichero-importar" accept=".json,application/json" hidden>
-    <span class="guardado-aviso" id="guardado-aviso"></span>
-  </section>
-
   <!--
     El banco de trabajo es único -Técnicas, Catálogo, Cajas, Resumen-, siempre
     el mismo tanto si se edita una plantilla suelta como si se corrige el
@@ -87,6 +79,34 @@
     permanente de arriba dice siempre cuál de los dos se está tocando.
   -->
   <div class="columna-principal">
+
+    <!-- Fase 6: Montajes es ahora la pantalla principal, no un diálogo -abre
+         sola al cargar la página, encima de Técnicas-. Mismo contenido que
+         antes (buscador, acciones, lista), solo cambia el envoltorio: de
+         <dialog> a <details> igual que el resto de tarjetas. -->
+    <details class="card no-print" id="montajes" open>
+      <summary class="card-cab">
+        <h2 data-i18n="dlg_montajes_titulo"></h2>
+      </summary>
+
+      <div class="casos-filtros">
+        <span>
+          <label for="montajes-buscar" data-i18n="plantilla_filtro_buscar"></label>
+          <input type="search" id="montajes-buscar" data-i18n-ph="plantilla_buscar_ph" autocomplete="off">
+        </span>
+      </div>
+
+      <div class="montajes-acciones no-print">
+        <button type="button" id="btn-duplicar" data-i18n="btn_duplicar"></button>
+        <button type="button" id="btn-renombrar" data-i18n="btn_renombrar"></button>
+        <button type="button" id="btn-vaciar" data-i18n="btn_vaciar"></button>
+        <button type="button" id="btn-borrar" class="peligro" data-i18n="btn_borrar"></button>
+        <button type="button" id="btn-guardar-montaje" class="primario" data-i18n="btn_guardar_montaje"></button>
+      </div>
+
+      <div id="dlg-montajes-lista"></div>
+      <p class="cat-version" id="montajes-cuenta"></p>
+    </details>
 
     <details class="card tecnicas-card no-print" id="tecnicas">
       <summary class="card-cab">
@@ -319,29 +339,14 @@
   </div>
 </dialog>
 
-<dialog id="dlg-montajes" class="no-print">
-  <h3 data-i18n="dlg_montajes_titulo"></h3>
-
-  <div class="casos-filtros">
-    <span>
-      <label for="montajes-buscar" data-i18n="plantilla_filtro_buscar"></label>
-      <input type="search" id="montajes-buscar" data-i18n-ph="plantilla_buscar_ph" autocomplete="off">
-    </span>
-  </div>
-
-  <div class="montajes-acciones no-print">
-    <button type="button" id="btn-duplicar" data-i18n="btn_duplicar"></button>
-    <button type="button" id="btn-renombrar" data-i18n="btn_renombrar"></button>
-    <button type="button" id="btn-vaciar" data-i18n="btn_vaciar"></button>
-    <button type="button" id="btn-borrar" class="peligro" data-i18n="btn_borrar"></button>
-  </div>
-
-  <div id="dlg-montajes-lista"></div>
-  <p class="cat-version" id="montajes-cuenta"></p>
-
+<dialog id="dlg-guardar-montaje" class="no-print">
+  <h3 data-i18n="dlg_guardar_montaje_titulo"></h3>
+  <p class="dlg-intro" id="guardar-montaje-nombre"></p>
   <div class="dlg-botones">
+    <button type="button" id="guardar-montaje-cancelar" data-i18n="cancelar"></button>
     <span class="barra-flex"></span>
-    <button type="button" id="montajes-cerrar" data-i18n="cerrar"></button>
+    <button type="button" id="guardar-montaje-nuevo" data-i18n="guardar_montaje_nuevo"></button>
+    <button type="button" id="guardar-montaje-sobrescribir" class="primario" data-i18n="guardar_montaje_sobrescribir"></button>
   </div>
 </dialog>
 
@@ -435,7 +440,7 @@
 
   <div class="dlg-botones caso-acciones">
     <button type="button" id="caso-borrar" class="peligro" hidden data-i18n="caso_borrar"></button>
-    <button type="button" id="caso-volver" data-i18n="caso_volver"></button>
+    <button type="button" id="caso-crear-informe" data-i18n="caso_crear_informe"></button>
     <span class="barra-flex"></span>
     <button type="button" id="caso-btn-cerrar-caso"></button>
     <button type="button" id="caso-guardar" class="primario" data-i18n="guardar"></button>
@@ -558,6 +563,16 @@
 <dialog id="dlg-catalogos" class="no-print">
   <h3 data-i18n="dlg_cat_titulo"></h3>
 
+  <div class="dlg-botones">
+    <button type="button" id="btn-exportar" data-i18n="btn_exportar"></button>
+    <button type="button" id="btn-importar" data-i18n="btn_importar"></button>
+    <button type="button" id="btn-imprimir" data-i18n="btn_imprimir"></button>
+    <button type="button" id="btn-restablecer" class="peligro" data-i18n="btn_restablecer"></button>
+    <input type="file" id="fichero-importar" accept=".json,application/json" hidden>
+  </div>
+
+  <hr class="dlg-sep">
+
   <div class="pestanas" id="cat-pestanas"></div>
 
   <p class="dlg-intro" id="cat-intro"></p>
@@ -581,9 +596,9 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260901"></script>
-<script src="data/i18n-en.js?v=20260901"></script>
-<script src="data/guia.js?v=20260901"></script>
-<script src="app.js?v=20260901"></script>
+<script src="data/surgeries.js?v=20260905"></script>
+<script src="data/i18n-en.js?v=20260905"></script>
+<script src="data/guia.js?v=20260905"></script>
+<script src="app.js?v=20260905"></script>
 </body>
 </html>

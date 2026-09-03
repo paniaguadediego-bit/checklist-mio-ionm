@@ -247,17 +247,21 @@ window.SURGERIES_DATA = {
         { "id": "c3_prima", "nombre": "C3'", "color": "rojo", "etiqueta": "electrodo_sacacorchos" },
         { "id": "c4_prima", "nombre": "C4'", "color": "azul", "etiqueta": "electrodo_sacacorchos" },
         { "id": "fz", "nombre": "Fz", "etiqueta": "electrodo_sacacorchos", "nota": "Referencia habitual" },
-        { "id": "cv2", "nombre": "Cv2", "etiqueta": "electrodo_sacacorchos" },
         { "id": "cz_doble_prima", "nombre": "Cz''", "etiqueta": "electrodo_sacacorchos", "nota": "Alternativa a Ref.Raabe (ánodo de referencia)" },
         { "id": "ref_raabe", "nombre": "Ref.Raabe", "color": "rojo", "etiqueta": "electrodo_sacacorchos", "nota": "Referencia del estimulador Raabe — ánodo (entrada roja)" }
       ]
     },
     {
-      "categoria": "Registro cervical / plexo",
+      "categoria": "Registro cervical / periférico",
       "items": [
+        { "id": "cv2", "nombre": "Cv2", "etiqueta": "electrodo_sacacorchos" },
         { "id": "cvant", "nombre": "CvAnt", "color": "amarillo", "etiqueta": "aguja_subdermica", "nota": "Registro cervical anterior, monopolar" },
         { "id": "erb1", "nombre": "Erb1", "color": "rojo", "etiqueta": "aguja_trenzada", "media_unidad": true, "nota": "Punto de Erb — aguja roja del par trenzado (Erb1 + Erb2 = 1 paquete)" },
-        { "id": "erb2", "nombre": "Erb2", "color": "negro", "etiqueta": "aguja_trenzada", "media_unidad": true, "nota": "Punto de Erb — aguja negra del par trenzado (Erb1 + Erb2 = 1 paquete)" }
+        { "id": "erb2", "nombre": "Erb2", "color": "negro", "etiqueta": "aguja_trenzada", "media_unidad": true, "nota": "Punto de Erb — aguja negra del par trenzado (Erb1 + Erb2 = 1 paquete)" },
+        { "id": "l_cubital_periferico", "nombre": "L.Cubital periférico", "etiqueta": "pegatinas" },
+        { "id": "r_cubital_periferico", "nombre": "R.Cubital periférico", "etiqueta": "pegatinas" },
+        { "id": "l_hueco_popliteo", "nombre": "L.Hueco poplíteo", "etiqueta": "pegatinas" },
+        { "id": "r_hueco_popliteo", "nombre": "R.Hueco poplíteo", "etiqueta": "pegatinas" }
       ]
     },
     {
@@ -668,7 +672,7 @@ window.SURGERIES_DATA = {
     // así que un caso o montaje antiguo que todavía diga "reflejo_h" lo
     // sigue mostrando (tachado) en vez de perder la marca.
     { "id": "reflejo_h", "etiqueta": "Reflejo H", "grupo": "monitorizacion", "activa": false, "reflejo": true, "descripcion": "Dividido en H-R Gastrocnemio y H-R Masetero" },
-    { "id": "hr_popliteo", "etiqueta": "H-R Gastrocnemio", "grupo": "monitorizacion", "activa": true, "reflejo": true, "descripcion": "Reflejo H por estímulo en hueco poplíteo" },
+    { "id": "hr_popliteo", "etiqueta": "H-R Sóleo", "grupo": "monitorizacion", "activa": true, "reflejo": true, "descripcion": "Reflejo H por estímulo en hueco poplíteo" },
     { "id": "hr_masetero", "etiqueta": "H-R Masetero (Jaw Jerk)", "grupo": "monitorizacion", "activa": true, "reflejo": true, "descripcion": "Reflejo H por estímulo del nervio masetero — mismo circuito que el jaw jerk / reflejo maseterino clásico. No confundir con el reflejo inhibitorio del masetero (silent period), que es otro circuito y no se estudia en IONM." },
     { "id": "hr_cuadriceps", "etiqueta": "H-R Cuádriceps", "grupo": "monitorizacion", "activa": true, "reflejo": true },
 
