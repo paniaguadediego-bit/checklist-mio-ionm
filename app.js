@@ -314,7 +314,6 @@
     caso_g_resultado:    { es: "Resultado / Correlación clínica", en: "Outcome / Clinical correlation" },
     caso_g_formacion:    { es: "Docencia / Meta", en: "Teaching / Meta" },
     caso_volver:         { es: "Volver a la lista", en: "Back to the list" },
-    caso_btn_cerrar_caso:{ es: "Cerrar caso", en: "Close case" },
     caso_borrar:         { es: "Borrar caso", en: "Delete case" },
     caso_crear_informe:  { es: "Crear informe", en: "Create report" },
     caso_informe_proximamente: { es: "Crear informe: todavía no hace nada, en camino.", en: "Create report: not wired up yet, coming soon." },
@@ -1213,15 +1212,21 @@
     reconstruirCatalogo();
     reconstruirCatalogos();
     // Los montajes ya no viven aquí: tienen su propio almacén y su propio
-    // archivo por montaje. Lo que quede en `guardado.escenarios` es de la
-    // versión anterior y lo recoge sembrarMontajes().
-    legadoEscenarios = (guardado && guardado.escenarios) || null;
-    legadoBorrados = (guardado && guardado.borrados) || [];
-    legadoActivo = (guardado && guardado.activo) || null;
+    // archivo por montaje. `guardado.escenarios`/`guardado.activo` eran la
+    // foto congelada de la versión anterior a esa migración (agosto 2026),
+    // conservada solo como red de seguridad -nunca se leyó como dato real-.
+    // Pedido del usuario (03-09-2026): retirarla del todo, ya no se lee
+    // aquí. legadoEscenarios se queda siempre en null, así que el bloque de
+    // sembrarMontajes() que la convertiría en montajes "mig_*" no llega a
+    // ejecutarse nunca más -no hacía falta tocar esa función-. La red de
+    // seguridad real sigue siendo el historial de git de
+    // checklist-mio-datos, como ya decía este archivo.
   }
 
-  // Restos de la versión en la que el escenario era el montaje. Se guardan
-  // aparte para que sembrarMontajes() los convierta una sola vez.
+  // Restos de la versión en la que el escenario era el montaje. Ya no se
+  // rellenan desde ningún sitio (ver el comentario de más arriba), se
+  // quedan siempre en su valor inicial; se dejan declaradas porque
+  // sembrarMontajes() y guardarEstado()/estadoActual() todavía las miran.
   var legadoEscenarios = null;
   var legadoBorrados = [];
   var legadoActivo = null;
@@ -1279,21 +1284,30 @@
     traducirEscenarios();
   }
 
-  /* Pedido del usuario: quitar todos los montajes de fábrica, no solo dejar
-     de sembrar nuevos. Vaciar DATA.escenarios (ver data/surgeries.js) evita
-     que se siembre ninguno más, pero los que ya existían -de este mismo
-     dispositivo, o bajados de otro por sincronización, incluidos presets
-     antiguos que ya ni siguen en el archivo, como el histórico
-     "fab_tumor_it"- siguen en `montajes` hasta que se borran de verdad.
-     Se identifican por "de_fabrica: true" (montajeDesdePreset()), no por su
-     uid, así vale para cualquiera que haya existido alguna vez. Mismo
-     camino que "Borrar" a mano: marca en montajesBorrados para que la
-     sincronización los borre también en el repositorio. Sin efecto (no
-     hace nada) en cuanto no quede ninguno. */
-  function limpiarMontajesDeFabrica() {
+  /* Pedido del usuario: quitar todos los montajes heredados -ni de fábrica
+     ni migrados de la versión anterior a "un archivo por montaje"-, no solo
+     dejar de crear más. Dos orígenes, dos marcas distintas:
+       - "fab_<clave>": de DATA.escenarios (ver data/surgeries.js, vacío a
+         propósito desde el 03-09-2026). Se identifican por
+         "de_fabrica: true" (montajeDesdePreset()), no por el prefijo del
+         uid, así vale para cualquiera que haya existido alguna vez -incluido
+         un preset antiguo que ya ni sigue en el archivo, como el histórico
+         "fab_tumor_it"-.
+       - "mig_<clave>": de la foto congelada que traía estado.json antes de
+         esa migración (ver cargarEstado()/aplicarEstado(), retirada el
+         mismo día). Esos no llevan "de_fabrica", así que se identifican por
+         el prefijo "mig_" del propio uid -es el único identificador que
+         queda una vez que la foto que los generó ya no se lee-.
+     En ambos casos, si ya existían -de este mismo dispositivo o bajados de
+     otro por sincronización- siguen en `montajes` hasta que se borran de
+     verdad; vaciar la fuente que los sembraba no los borra con retroactivo.
+     Mismo camino que "Borrar" a mano: marca en montajesBorrados para que la
+     sincronización los borre también en el repositorio. Sin efecto (no hace
+     nada) en cuanto no quede ninguno. */
+  function limpiarMontajesHeredados() {
     var borrado = false;
     Object.keys(montajes).forEach(function (uid) {
-      if (!montajes[uid].de_fabrica) return;
+      if (!montajes[uid].de_fabrica && uid.indexOf("mig_") !== 0) return;
       delete montajes[uid];
       delete montajesSinSubir[uid];
       if (montajesSha[uid]) montajesBorrados[uid] = montajesSha[uid];
@@ -2135,12 +2149,12 @@
 
   function aplicarEstado(copia) {
     // Los montajes no vienen en esta copia: viajan en sus propios archivos.
-    // Si la copia es de la versión 2 se guarda su bloque de escenarios para
-    // que sembrarMontajes() lo convierta.
-    if (copia.escenarios && Object.keys(copia.escenarios).length) {
-      legadoEscenarios = copia.escenarios;
-      legadoActivo = copia.activo || null;
-    }
+    // `copia.escenarios`/`copia.activo` son la foto congelada retirada (ver
+    // cargarEstado()): si la copia trae ese bloque -de antes del
+    // 03-09-2026, o de un dispositivo que todavía no ha subido el retiro-
+    // se ignora a propósito, para no resucitar montajes viejos como
+    // "mig_*". limpiarMontajesHeredados() se encarga de borrar los que ya
+    // hubieran resucitado antes de este cambio.
     catalogoUsuario = copia.catalogo_usuario || [];
     etiquetasUsuario = copia.etiquetas_usuario || [];
     etiquetasBorradas = copia.etiquetas_borradas || [];
@@ -4419,8 +4433,6 @@
     }
     pie.textContent = partes.join(" · ");
 
-    document.getElementById("caso-btn-cerrar-caso").textContent =
-      T(c.estado === "cerrado" ? "caso_volver" : "caso_btn_cerrar_caso");
     // Un caso que todavía no se ha guardado ni una vez no existe en "casos":
     // no hay nada que borrar hasta el primer "Guardar".
     document.getElementById("caso-borrar").hidden = casoEsNuevo;
@@ -4618,17 +4630,13 @@
   document.getElementById("barra-caso-volver").addEventListener("click", function () {
     cerrarMontajeDeCaso(true);
   });
-  document.getElementById("caso-btn-cerrar-caso").addEventListener("click", function () {
-    // Con el caso ya cerrado este botón dice "Volver a la lista": solo
-    // navega, no hay forma de reabrirlo a "preparado" desde aquí -si hace
-    // falta, se cambia el campo Estado dentro de la ficha, como cualquier
-    // otro campo, y se guarda con el botón Guardar.
-    if (casoAbierto && casoAbierto.estado === "cerrado") {
-      dlgCaso.close();
-      abrirListaCasos();
-      return;
-    }
-    if (guardarFicha(true)) { dlgCaso.close(); abrirListaCasos(); }
+  document.getElementById("caso-volver").addEventListener("click", function () {
+    // Solo navega, no guarda nada: para eso está "Guardar". Cerrar el caso
+    // es cambiar el campo Estado en Identificación/Trazabilidad, como
+    // cualquier otro campo -pedido del usuario, ya no hay un botón aparte
+    // que lo haga por su cuenta-.
+    dlgCaso.close();
+    abrirListaCasos();
   });
 
   /* ---------------------------------------------------------------- *
@@ -6682,7 +6690,7 @@
   // listo para convertir, y después de los catálogos, que sembrarMontajes()
   // consulta para emparejar cada montaje con su tipo de cirugía.
   sembrarMontajes();
-  limpiarMontajesDeFabrica();
+  limpiarMontajesHeredados();
   cargarCasos();
   cargarSync();
   cargarPerfilUsuario();

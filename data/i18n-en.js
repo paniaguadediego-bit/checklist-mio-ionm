@@ -226,16 +226,6 @@ window.SURGERIES_I18N.en = {
     "raices_nervio_periferico": { "nombre": "Nerve root and peripheral nerve surgery" }
   },
 
-  /* Escenarios de fábrica: clave -> { nombre, notas, pendiente } */
-  "escenarios": {
-    "artrodesis_descompresion": {
-      "nombre": "Fusion + decompression",
-      "notas": "The two popliteal fossae for the H reflex do not fit in the 4 numbered inputs of the stimulation box: consider the extra input or a second box."
-    },
-    "tumor_supratentorial_grid": {
-      "nombre": "Supratentorial tumour with GRID",
-      "notas": "Symmetrical muscle recording; if extended, always on the side contralateral to the lesion.",
-      "pendiente": "Reference used by the GRID (cortical strip, for phase reversal / DCS) — not confirmed yet."
-    }
-  }
+  /* Escenarios de fábrica: vacío, ver data/surgeries.js (mismo motivo). */
+  "escenarios": {}
 };
