@@ -4,17 +4,18 @@ Herramienta interna, sin backend ni build step, para montar el material de
 cada cirugía monitorizada y saber exactamente qué hace falta.
 
 **Flujo de uso previsto:** el día antes de la cirugía abres o creas una
-**plantilla** —un montaje tuyo o de un compañero, desde el diálogo
-**Montajes**—, ajustas las entradas de las cajas pulsando o arrastrando
-material, y el **Resumen** te dice qué tienes que preparar, qué cuesta y si
-te sobran o faltan entradas y cajas. Cuando la cirugía es real, guardas ese
-montaje como **caso**: la plantilla es el molde y se reutiliza, el caso es
-lo que pasó ese día y no cambia aunque la plantilla cambie después. Un
-rótulo permanente, justo debajo de la cabecera, dice siempre cuál de las dos
-cosas estás tocando. La herramienta tiene además una ventana **Docente**
-(miotomas y colocación de cajas según la posición del paciente) sin
-relación con la preparación del material, y una **Guía de uso** con lo
-esencial para empezar sin tener que leer este archivo.
+**plantilla** —un montaje tuyo o de un compañero, desde la tarjeta
+**Montajes**, la primera de la página—, ajustas las entradas de las cajas
+pulsando o arrastrando material, y el **Resumen** te dice qué tienes que
+preparar, qué cuesta y si te sobran o faltan entradas y cajas. Cuando la
+cirugía es real, guardas ese montaje como **caso**: la plantilla es el
+molde y se reutiliza, el caso es lo que pasó ese día y no cambia aunque la
+plantilla cambie después. Un rótulo permanente, justo debajo de la
+cabecera, dice siempre cuál de las dos cosas estás tocando. La herramienta
+tiene además una ventana **Docente** (miotomas y colocación de cajas según
+la posición del paciente) sin relación con la preparación del material, y
+una **Guía de uso** con lo esencial para empezar sin tener que leer este
+archivo.
 
 ## Cómo abrir la herramienta
 
@@ -34,16 +35,18 @@ conexión a internet (no hace ninguna petición de red).
 - `app.js` — toda la lógica, en un único archivo
 - `data/surgeries.js` — los datos de fábrica: `cajas_material`, `etiquetas`,
   `catalogo_material`, `tecnicas`, `servicios`, `intervenciones`,
-  `perfiles_procedimiento`, `escenarios_tipo` (los tipos de cirugía),
-  `escenarios` (montajes de fábrica) y `miotomas` (para la ventana Docente).
-  Casi todo esto ya se edita desde la propia web; este archivo es lo que
-  viene de serie
+  `perfiles_procedimiento`, `escenarios_tipo` (los tipos de cirugía, inerte)
+  y `miotomas` (para la ventana Docente). `escenarios` (montajes de fábrica)
+  está vacío a propósito desde el 03-09-2026 — ver *Añadir un montaje de
+  fábrica a mano en el JSON* más abajo. Casi todo esto ya se edita desde la
+  propia web; este archivo es lo que viene de serie
 - `data/i18n-en.js` — la traducción al inglés de todo lo anterior
 - `data/guia.js` — el texto de la Guía de uso dentro de la propia
-  herramienta (botón de la barra superior); solo en castellano por ahora
+  herramienta (menú **⋮** de la barra superior); solo en castellano por ahora
 - `img/` — el icono de la app (favicon, icono de "añadir a pantalla de
-  inicio", logo de la cabecera) y `manifest.json` para el acceso directo en
-  Android
+  inicio", logo de la cabecera), `img/sondas/` (fotos de referencia de
+  algunas sondas, ver *Fotos de referencia del material* más abajo) y
+  `manifest.json` para el acceso directo en Android
 - `apps-script/Codigo.gs` — el script de Google Apps que reconstruye el
   Google Sheet (ver más abajo); no se sirve por GitHub Pages, se pega a mano
   en el editor de Apps Script
@@ -80,43 +83,51 @@ avisa de que todavía no está traducida en vez de mostrarla a medias.
 
 ## El banco de trabajo, en el orden en que se trabaja
 
-Técnicas → Catálogo → Cajas → Resumen. Es un banco único: el mismo tanto si
-estás editando una plantilla suelta como si estás corrigiendo el material de
-un caso concreto — nunca hay dos copias de estas cuatro ventanas. Cada una
-se pliega sola (menos el catálogo, que en pantalla ancha es la columna
-lateral fija de siempre, y que ahora también se pliega pulsando su barra
-entera, no solo la flechita) y **arrancan todas plegadas**: despliega solo
-la que te interese en cada momento. El orden es el del flujo real: qué
-técnicas vas a hacer, qué material hay, dónde va y qué sale de todo ello.
+Montajes → Técnicas → Catálogo → Cajas → Resumen. Es un banco único: el
+mismo tanto si estás editando una plantilla suelta como si estás
+corrigiendo el material de un caso concreto — nunca hay dos copias de estas
+cinco tarjetas. Cada una se pliega sola (menos el catálogo, que en pantalla
+ancha es la columna lateral fija de siempre, y que se pliega pulsando su
+barra entera, no solo la flechita) y **arrancan todas plegadas**: despliega
+solo la que te interese en cada momento. El orden es el del flujo real: qué
+montaje cargas, qué técnicas vas a hacer, qué material hay, dónde va y qué
+sale de todo ello.
 
-Qué montaje hay cargado en ese banco de trabajo se elige aparte, desde el
-diálogo **Montajes** o desde la ficha de un caso. Un **rótulo permanente**,
+Qué montaje hay cargado en ese banco de trabajo se elige aparte, desde la
+tarjeta **Montajes** o desde la ficha de un caso. Un **rótulo permanente**,
 justo debajo de la cabecera, dice siempre cuál de los dos estás tocando:
-*«Plantilla: ECL con mapeo»* en gris/verde suave, con el botón **Montajes**
-a su derecha, o *«CASO 2026-011, Meningioma APC»* en verde sólido con los
-botones de corrección en su lugar, cuando estás dentro de un caso.
+*«Plantilla: ECL con mapeo»* en gris/verde suave, o *«CASO 2026-011,
+Meningioma APC»* en verde sólido con los botones de corrección en su lugar,
+cuando estás dentro de un caso.
 
-### El diálogo Montajes (la biblioteca de plantillas)
+### La tarjeta Montajes (la biblioteca de plantillas)
 
-Botón **Montajes**, a la derecha del rótulo permanente (solo visible
-mientras no estás dentro de un caso — ahí ese hueco lo ocupan los botones de
-corrección). Lista plana con buscador por nombre o autor, y cuántas entradas
-tiene ocupadas cada montaje. **+ Montaje en
-blanco**, fijo arriba de la lista, crea uno nuevo y vacío al momento. Elegir
-un montaje **cierra el diálogo y lo carga directo en el banco de trabajo,
-sin preguntar** — no hay ningún riesgo: cada montaje es su propio archivo y
-el anterior se queda guardado tal cual.
+Primera tarjeta de la página, plegada de fábrica igual que el resto. Lista
+plana con buscador por nombre o autor, siempre en **orden alfabético** —da
+igual de quién sea cada montaje, y también para los que vayas creando—, y
+cuántas entradas tiene ocupadas cada uno. **+ Montaje en blanco**, fijo
+arriba de la lista, crea uno nuevo y vacío al momento. Elegir un montaje
+**lo carga directo en el banco de trabajo y pliega la tarjeta sola, sin
+preguntar** — no hay ningún riesgo: cada montaje es su propio archivo y el
+anterior se queda guardado tal cual.
 
 **Duplicar, Renombrar, Vaciar y Borrar** actúan sobre el montaje que tengas
-cargado en ese momento. Cada montaje muestra su **autor**: los tuyos llevan
-una marca lateral para reconocerlos entre los de un compañero, y **solo el
-autor puede renombrar, vaciar o borrar el suyo** — cualquiera puede
-*duplicarlo* (es la forma de partir del molde de otro para hacerte el tuyo;
-la copia nace a tu nombre). Los montajes de fábrica no tienen autor, así que
-los puede tocar cualquiera. **Esto no es seguridad de verdad**: cambiar de
-perfil (ver abajo) salta el candado sin más, porque la herramienta no tiene
-backend que pueda impedirlo. Es solo para no pisarse el trabajo entre
-compañeros sin querer.
+cargado en ese momento. **Guardar montaje** pregunta cada vez si quieres
+sobrescribir el activo o guardarlo como uno nuevo — una confirmación
+explícita, aparte del guardado automático de siempre en cada colocación.
+Cada montaje muestra su **autor**: los tuyos llevan una marca lateral para
+reconocerlos entre los de un compañero, y **solo el autor puede renombrar,
+vaciar o borrar el suyo** (tampoco puede sobrescribirlo con *Guardar
+montaje* si no es suyo) — cualquiera puede *duplicarlo* (es la forma de
+partir del molde de otro para hacerte el tuyo; la copia nace a tu nombre).
+**Esto no es seguridad de verdad**: cambiar de perfil (ver abajo) salta el
+candado sin más, porque la herramienta no tiene backend que pueda
+impedirlo. Es solo para no pisarse el trabajo entre compañeros sin querer.
+
+> No vienen montajes de fábrica desde el 03-09-2026 (decisión del usuario):
+> la biblioteca empieza vacía y se llena con lo que tú y tus compañeros
+> guardéis. Ver *Añadir un montaje de fábrica a mano en el JSON* más abajo
+> si alguna vez hace falta volver a sembrar alguno.
 
 **Perfil de usuario** (arriba a la izquierda, junto al logo): quién eres.
 Sirve para firmar tus montajes. Se crea la primera vez desde ese mismo
@@ -141,10 +152,12 @@ la sugerencia.
 
 `catalogo_material` es la lista de **todo** el material que se puede colocar
 en una entrada: electrodos corticales, músculos, estimulaciones periféricas,
-GRID, tierras... Agrupado en categorías plegables con buscador. En pantalla
-ancha es la **columna lateral fija** de siempre, así que siempre lo tienes a
-mano aunque estés mirando la última caja; en el móvil va en su sitio dentro
-del flujo de las seis ventanas.
+GRID, sondas, tierras... Agrupado en categorías plegables con buscador,
+cada una abierta o cerrada de fábrica según se use más o menos a menudo. En
+pantalla ancha es la **columna lateral fija** de siempre, así que siempre lo
+tienes a mano aunque estés mirando la última caja; en el móvil va en su
+sitio dentro del flujo del banco de trabajo, y se pliega solo al colocar
+material para dejar ver las cajas.
 
 Hay dos formas de colocar material, y un mismo ítem se puede usar tantas
 veces como haga falta (el catálogo no se "gasta"):
@@ -196,6 +209,18 @@ dejando el resto heredado de la etiqueta. Así, con pegatinas de estímulo
 puedes tener `L.Mediano` con borde rojo y `R.Mediano` con borde negro,
 aunque las dos cuenten como «Pegatinas (par)».
 
+#### Fotos de referencia del material
+
+Algunos ítems —de momento, varias de las sondas— llevan un icono **📷** junto
+al nombre del chip. Lo pulsas y abre una foto de referencia en un visor
+propio, sin salir de la herramienta ni depender de conexión: útil para
+identificar a simple vista cuál es cuál antes de una cirugía. Funciona igual
+en el catálogo, en el selector que se abre desde una entrada, y ya colocado
+en una caja. No hay editor desde la interfaz todavía: se añade a mano, con
+la clave opcional `"foto"` del ítem en `data/surgeries.js` apuntando a un
+archivo dentro de `img/` (ver *Añadir material al catálogo editando el
+archivo* más abajo).
+
 ### 3. Cajas
 
 `cajas_material` describe las cajas reales del INOMED. Cada caja se dibuja
@@ -233,9 +258,12 @@ aunque la tengas plegada en pantalla en ese momento.
 
 ## Catálogos: técnicas, servicios, intervenciones, perfiles y usuarios
 
-El botón **Catálogos** de la barra de herramientas abre una ventana con cinco
-pestañas. En todas funciona igual: **▲▼** para reordenar, el nombre para
-editarlo, y **☑** para activar o desactivar.
+El botón **Catálogos**, en la barra superior junto al selector de perfil,
+abre una ventana con cinco pestañas. En todas funciona igual: **▲▼** para
+reordenar, el nombre para editarlo, y **☑** para activar o desactivar.
+Arriba del todo, dentro de ese mismo diálogo, están **Importar copia,
+Exportar copia, Imprimir y Restablecer** (ver *Dónde se guarda todo* más
+abajo).
 
 - **Técnicas** — las de partida (monitorización y mapeo) y las que añadas.
   Lo que ves y cambias es la *etiqueta*; por dentro cada técnica tiene un
@@ -251,7 +279,7 @@ editarlo, y **☑** para activar o desactivar.
   (texto libre, ver más abajo).
 - **Perfiles** — las combinaciones de técnicas del desplegable *Perfil* de
   la tarjeta Técnicas. Se pueden crear, editar y borrar.
-- **Usuarios** — quién puede firmar montajes (ver el diálogo *Montajes*
+- **Usuarios** — quién puede firmar montajes (ver la tarjeta *Montajes*
   arriba). Vacío de fábrica a propósito: los nombres de personas reales no
   se escriben en el repositorio público del código, se crean desde la app y
   viven en el repositorio privado de datos.
@@ -326,13 +354,13 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
    monitorizado, incidencias anestésicas.
 5. **Montaje / Técnicas** — el resumen de cajas/entradas ocupadas, la
    plantilla de origen (si el caso salió de una, resuelta en vivo — si la
-   renombras después, aquí se ve el nombre nuevo), y tres botones seguidos:
+   renombras después, aquí se ve el nombre nuevo), y dos botones seguidos:
    **Corregir el material y el montaje** (abre las cajas de este caso
-   concreto para cambiar dónde va cada cosa), **Cargar plantilla…** (copia
-   el contenido de otro montaje sobre este caso, con confirmación siempre —
-   ver más abajo) y **Guardar este montaje como plantilla…** (crea una
-   plantilla nueva a partir de lo que hay ahora mismo en el caso). Justo
-   debajo, el **detalle canal a canal**: la misma vista de "Cajas
+   concreto para cambiar dónde va cada cosa — desde ahí, y solo desde ahí,
+   se puede además *cargar un montaje* sobre el caso, ver más abajo) y
+   **Guardar este montaje como plantilla…** (crea una plantilla nueva a
+   partir de lo que hay ahora mismo en el caso). Justo debajo, el **detalle
+   canal a canal**: la misma vista de "Cajas
    necesarias" que hay en Resumen, de solo lectura, para saber exactamente
    qué hay puesto en cada entrada sin salir a corregir el montaje. Debajo de
    eso, técnicas realizadas (ya vienen marcadas las que planificaste, solo
@@ -353,26 +381,33 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
 8. **Docencia / Meta** — mi papel (Adjunto 1 / Adjunto 2 / Residente),
    supervisor, dificultad, aprendizaje clave, caso destacado, notas.
 
-Se rellena lo que haga falta. Pulsa *Cerrar caso* y pasa a *Cerrado* —el
-botón está en la barra de acciones fija de abajo del diálogo, junto con
-*Guardar*, *Borrar caso* y *Volver a la lista*, siempre visible aunque hayas
-bajado en el scroll de los 8 apartados.
+Se rellena lo que haga falta y pulsa **Guardar**. Para cerrar el caso,
+cambia el propio campo **Estado** (apartado 1, Identificación/Trazabilidad)
+a *Cerrado* y guarda — no hay un botón aparte que lo haga por ti. La barra
+de acciones fija de abajo del diálogo, siempre visible aunque hayas bajado
+en el scroll de los 8 apartados, tiene **Borrar caso** y **Crear informe**
+a la izquierda (este último, de momento, sin función todavía), y **Volver
+a la lista** y **Guardar** a la derecha — *Volver a la lista* solo navega,
+nunca guarda ni cambia el estado.
 
 **Corregir el montaje de un caso ya guardado**: el botón vive en el propio
-apartado 5 (Montaje/Técnicas), junto a los otros dos de plantillas — abre
-las cajas de ese caso concreto para cambiar dónde va cada cosa, un cambio de
-última hora o un error al preparar. Se guarda en el caso, no toca el
-montaje del que salió. Mientras tanto, el rótulo permanente de arriba pasa a
-verde sólido y recuerda en qué caso estás, con los mismos tres botones a
-mano sin tener que volver a la ficha.
+apartado 5 (Montaje/Técnicas), junto al de plantillas — abre las cajas de
+ese caso concreto para cambiar dónde va cada cosa, un cambio de última hora
+o un error al preparar. Se guarda en el caso, no toca el montaje del que
+salió. Mientras tanto, el rótulo permanente de arriba pasa a verde sólido y
+recuerda en qué caso estás, con tres botones a mano sin tener que volver a
+la ficha: **Cargar montaje…**, **Guardar este montaje como plantilla…** y
+**Volver al caso**.
 
-**Cargar una plantilla en un caso ya creado**: desde el apartado 5, elige
-una plantilla y siempre te pregunta antes de tocar nada —también con el
-caso vacío—, diciendo en números qué va a pasar. Puedes **Reemplazar todo**
-o **Añadir solo lo que falta** (no toca ninguna entrada que ya tuviera
-material). Es una copia: editar la plantilla después no cambia nada de lo
-ya aplicado. Si el caso está cerrado o cancelado, pide una confirmación
-aparte antes de seguir.
+**Cargar un montaje sobre un caso ya creado**: solo se puede hacer desde
+ahí —la barra fija de "Corrigiendo el material del caso", botón **Cargar
+montaje…**—, nunca desde la ficha: así siempre sabes que lo que vas a
+sustituir se puede editar de verdad. Elige un montaje y siempre te pregunta
+antes de tocar nada —también con el caso vacío—, diciendo en números qué va
+a pasar. Puedes **Reemplazar todo** o **Añadir solo lo que falta** (no toca
+ninguna entrada que ya tuviera material). Es una copia: editar el montaje
+después no cambia nada de lo ya aplicado. Si el caso está cerrado o
+cancelado, pide una confirmación aparte antes de seguir.
 
 **Guardar el montaje de un caso como plantilla**: mismo apartado, crea
 siempre una plantilla nueva —nunca sobrescribe una existente— a partir de
@@ -534,10 +569,11 @@ la sincronización automática ni del disparador diario de Apps Script: es
 una vía manual y más rudimentaria para tener los datos a mano cuando
 quieras, sin esperar a nada.
 
-Si además quieres que un montaje venga de fábrica en el repositorio, pega su
-bloque en `data/surgeries.js` dentro de `"escenarios"` (ver *Añadir un
-montaje de fábrica a mano en el JSON* más abajo) y haz `git commit` +
-`git push`.
+Los montajes de fábrica están desactivados a propósito desde el 03-09-2026
+(ver la nota de la tarjeta *Montajes* más arriba). Si algún día hace falta
+volver a sembrar uno, no basta con rellenar `"escenarios"` en
+`data/surgeries.js` — ver el aviso en *Añadir un montaje de fábrica a mano
+en el JSON* más abajo antes de hacerlo.
 
 **Restablecer** borra lo guardado en el navegador y vuelve a los montajes
 y al catálogo del archivo.
@@ -563,6 +599,10 @@ añade un objeto:
   C2/C6 amarillo, C3 y C3' rojo, C4 y C4' azul.
 - `borde` / `fondo` *(opcionales)* — igual, para la forma del borde y el tinte.
 - `nota` *(opcional)* — texto que sale al pasar el ratón.
+- `foto` *(opcional)* — ruta a una imagen de referencia, relativa a la raíz
+  del proyecto (por ejemplo `img/sondas/sonda_tripolar.png`). Añade el icono
+  **📷** al chip; ver *Fotos de referencia del material* más arriba. Guarda
+  el archivo dentro de `img/` antes de referenciarlo.
 
 ## Añadir una etiqueta editando el archivo
 
@@ -616,9 +656,19 @@ Esto es el bloque `"escenarios"` de `data/surgeries.js` — un nombre heredado
 de la versión original de la herramienta, cuando un "escenario" era lo que
 ahora es un montaje (el catálogo de tipos de cirugía que llegó a llamarse
 así también más adelante ya no existe, ver *Catálogos* más arriba). Cada
-clave de ahí es un **montaje** de fábrica: al arrancar la app lo convierte
-en un montaje normal con el id `fab_<clave>`, sin autor, editable por
-cualquiera.
+clave de ahí sería un **montaje** de fábrica: al arrancar, la app lo
+convertiría en un montaje normal con el id `fab_<clave>`, sin autor,
+editable por cualquiera.
+
+> **Está vacío a propósito** desde el 03-09-2026 (decisión del usuario: no
+> quería ningún montaje de fábrica) — y no basta con volver a rellenarlo
+> para que reaparezcan. `limpiarMontajesHeredados()` (`app.js`) se ejecuta
+> en cada arranque y borra cualquier montaje marcado `de_fabrica: true`,
+> justo después de que `sembrarMontajes()` lo hubiera creado — así que hoy
+> por hoy sembrar uno nuevo aquí no tiene ningún efecto visible, se crea y
+> se borra en el mismo arranque. Si algún día hace falta que vuelvan a
+> funcionar los montajes de fábrica, hay que tocar también esa función (o
+> quitar su llamada en el arranque), no solo este bloque.
 
 ```json
 "clave_montaje": {

@@ -45,7 +45,7 @@ Hay **tres capas**, y conviene no confundirlas:
 
 | Capa | Qué contiene | Se pierde si… |
 |---|---|---|
-| `data/surgeries.js` | Lo de fábrica: cajas, etiquetas, catálogo, técnicas, perfiles, tipos de escenario y 2 presets de montaje | Nunca: está en git |
+| `data/surgeries.js` | Lo de fábrica: cajas, etiquetas, catálogo, técnicas, perfiles, tipos de escenario. `escenarios` (presets de montaje) vacío a propósito desde el 03-09-2026 | Nunca: está en git |
 | `localStorage` del navegador | **Tu trabajo**: montajes, etiquetas y material propios | Borras los datos del sitio, cambias de navegador o de dispositivo |
 | Repo privado `checklist-mio-datos` | Copia sincronizada: `estado.json`, `casos/` y `montajes/` | Nunca: cada sincronización es un commit |
 
@@ -62,7 +62,11 @@ Se parecen y conviene no confundirlas al leer el código:
 - **Caso** (`casos/`) — una cirugía que ocurrió de verdad, con sus datos.
 
 Cuidado además con `DATA.escenarios`: son los presets de fábrica de la versión
-anterior, que al arrancar se convierten en montajes (`fab_<clave>`).
+anterior, que al arrancar se convierten en montajes (`fab_<clave>`). Vacío a
+propósito desde el 03-09-2026 — ver "Retoques posteriores" de esa fecha:
+`limpiarMontajesHeredados()` borra en cada arranque cualquier montaje
+`de_fabrica: true` que hubiera, así que sembrar algo aquí ahora mismo no
+sobrevive al mismo arranque en que se crea.
 
 La capa frágil es la del medio. Por eso existe la sincronización, y por eso la
 red de seguridad de abajo se apoya en el **historial de git del repo de datos**.
@@ -182,7 +186,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Cálculo del resumen (con coste) | `calcularResumen()`, `calcularCoste()` (dato) → `renderResumen()` (pintado) | [4785](app.js:4785), [4868](app.js:4868) |
 | Ventana Docente (miotomas, cama de quirófano) | `renderDocente()`, `renderCama()` | ver `grep` |
 | Puente plantilla↔caso (cargar/guardar) | `iniciarCargaPlantilla()`, `aplicarPlantillaSobreDestino()`, `guardarMontajeComoPlantilla()` | ver `grep` |
-| Biblioteca de Montajes (diálogo) | `abrirDlgMontajes()`, `renderListaMontajesDialog()`, `montajeNuevo()` | ver `grep` |
+| Biblioteca de Montajes (tarjeta, ya no diálogo — Fase 6) | `renderListaMontajesDialog()`, `montajeNuevo()`, `compararMontajesPorNombre()`, `limpiarMontajesHeredados()` | ver `grep` |
 | Rótulo permanente | `renderBarraCaso()` | ver `grep` |
 | Exportación manual de casos a CSV | `casosACsv()`, `COLUMNAS_CSV_CASOS` | ver `grep` |
 | Guía de uso (contenido en `data/guia.js`) | `renderGuia()`, `abrirGuia()` | ver `grep` |
@@ -194,8 +198,8 @@ con `precio` y `fungible` — ver *Coste del material* en README),
 (los tipos de cirugía: Tumor ST, ECC, ECL… **inerte desde el 31-08-2026**,
 ver "Retoques posteriores" de esa fecha — nada en `app.js` lo lee ya),
 `escenarios` (montajes de fábrica, ojo con el nombre heredado — ver más
-abajo) y `miotomas` (solo para la ventana Docente, sin uso en el cálculo de
-material).
+abajo; **vacío a propósito desde el 03-09-2026**) y `miotomas` (solo para la
+ventana Docente, sin uso en el cálculo de material).
 
 ### Patrón de datos editables
 
@@ -997,6 +1001,208 @@ README.md y data/guia.js revisados en el mismo turno (nota de mantenimiento
 de arriba, aplicada de inmediato): las menciones a dónde vive cada botón
 -Montajes, Exportar casos, Idioma/Guía/Docente- se actualizaron a la vez que
 el código, no en un turno aparte.
+
+### Retoques posteriores, 03-09-2026 a 04-09-2026: Montajes pasa a pantalla principal, y limpieza de fábrica
+
+Trabajo grande, hecho por fases con el usuario aprobando cada una — mismo
+patrón que el puente montajes↔casos del 31-08-2026.
+
+**Fase 1 — reorganización pequeña.**
+- **Catálogos** se mueve a la barra superior, junto al perfil (antes en una
+  barra suelta encima de Técnicas). **Importar copia, Exportar copia,
+  Imprimir y Restablecer** se mudan dentro de ese mismo diálogo, arriba del
+  todo — la vieja `<section class="toolbar">` desaparece. `#guardado-aviso`
+  (el aviso de "Guardado a las…") tuvo que reubicarse aparte, en la
+  cabecera: es un aviso global (se usa en sync, casos, montajes…), no solo
+  de Catálogos, así que dejarlo dentro del diálogo lo habría hecho invisible
+  en cuanto el diálogo estuviera cerrado — se detectó antes de que llegara a
+  pasar, revisando qué más llamaba a `avisoGuardado()`.
+- **Barra de acciones de la ficha del caso**: se quita el botón dinámico
+  "Cerrar caso"/"Marcar como preparado" (el id `caso-btn-cerrar-caso` y la
+  clave `caso_reabrir` ya no existen). En su lugar, un botón fijo
+  **"Volver a la lista"** (`caso-volver`) que solo navega, nunca guarda ni
+  toca el estado — cerrar un caso se hace cambiando el propio campo
+  **Estado** en Identificación/Trazabilidad, como cualquier otro campo.
+  Nuevo botón **"Crear informe"** (`caso-crear-informe`), a la izquierda,
+  sin función todavía — solo un aviso de "en camino" al pulsarlo
+  (`avisoGuardado`). Orden final: Borrar caso · Crear informe · (flex) ·
+  Volver a la lista · Guardar.
+- **`hr_popliteo` → "H-R Sóleo"** (antes "H-R Gastrocnemio"). Mismo patrón de
+  siempre: solo cambia `etiqueta` (y su traducción en `data/i18n-en.js`), el
+  id no se toca porque está en casos y montajes reales.
+
+**Fase 2 — Montajes deja de ser un `<dialog>` y pasa a ser la pantalla
+principal.** El cambio más grande de las tres fases:
+- `<dialog id="dlg-montajes">` se convierte en `<details class="card"
+  id="montajes">`, primera tarjeta de `.columna-principal`, antes de
+  Técnicas. La variable JS sigue llamándose `dlgMontajes` -mismo papel, algo
+  que se abre y se pliega solo al elegir-, pero `showModal()`/`close()`
+  pasan a ser `.open = true`/`.open = false`. `abrirDlgMontajes()` y el
+  botón `#btn-montajes` de la barra fija (visible solo en modo "Plantilla:
+  X") se retiraron enteros en la Fase 2.5 de abajo, ver más adelante -en
+  esta Fase 2 todavía existían-.
+- **Bug real encontrado al mover esto**: al arrancar, nadie llamaba a
+  `renderListaMontajesDialog()` -antes solo se pintaba al abrir el
+  diálogo-, así que la tarjeta abría vacía. Se resolvió añadiendo
+  `sincronizarDlgMontajesSiAbierto()` al final de `renderTodo()` -mismo
+  patrón condicional de siempre (solo repinta si `dlgMontajes.open`), así
+  que no hace trabajo de más cuando está plegada-. Esto dejó redundantes
+  las llamadas sueltas a `sincronizarDlgMontajesSiAbierto()` que ya existían
+  después de cada `renderTodo()` en Duplicar/Renombrar/Vaciar/Borrar: se
+  quitaron esas cinco llamadas repetidas.
+- **Nuevo botón "Guardar montaje"**, con un diálogo propio
+  (`dlg-guardar-montaje`) de dos opciones -mismo patrón que
+  `dlg-aplicar-plantilla`-: **Sobrescribir este** (oculto si el montaje
+  activo no es tuyo) o **Guardar como nuevo** (mismo camino que Duplicar,
+  factorizado en `duplicarMontajeComo(esc)` para no repetir el código dos
+  veces). No cambia el modelo de permisos existente: el material ya se
+  autoguardaba en cada colocación (`colocar()` no comprueba autoría, nunca
+  lo ha hecho, ver "Duplicar sí funciona sobre el montaje de otro" más
+  arriba); esto es una confirmación explícita más, no un mecanismo de
+  protección nuevo.
+- **Montajes, Catálogo, Técnicas, Cajas y Resumen arrancan todos
+  plegados** (Montajes se dejó desplegado por error en un primer commit, se
+  corrigió el mismo día al pedirlo el usuario). Catálogo, antes solo se
+  plegaba en móvil tras colocar material (`plegarCatalogo()`); ahora
+  también arranca plegado de fábrica, pero **solo en pantallas ≤900px** — en
+  escritorio sigue como barra lateral fija siempre visible, a propósito
+  (colapsarla ahí obligaría a desplegarla a mano antes de poder colocar
+  nada, contra el propio diseño de la columna lateral).
+
+**Fase 2.5 — limpieza pedida después de probar la Fase 2 en real:**
+- **Botón "Montajes" de la barra fija (`#btn-montajes`) retirado del
+  todo** -quedaba duplicado con la tarjeta, que ya está siempre a la
+  vista-: `abrirDlgMontajes()`, su listener, la lógica de
+  mostrar/ocultar en `renderBarraCaso()`, la regla CSS `#btn-montajes` y las
+  claves i18n `btn_montajes`/`btn_montajes_tit` se quitaron enteros.
+- **Todos los montajes de fábrica, fuera** (pedido explícito del usuario,
+  no solo dejar de crear más): `DATA.escenarios` se vació en
+  `data/surgeries.js` (antes 2 presets: Artrodesis + descompresión, Tumor
+  supratentorial con GRID). Nueva `limpiarMontajesHeredados()`
+  (`app.js`, llamada justo después de `sembrarMontajes()` en el arranque):
+  borra cualquier montaje ya existente marcado `de_fabrica: true`
+  (`fab_<clave>`, venga de este `DATA.escenarios` o de uno que ya no esté
+  ahí, como el histórico `fab_tumor_it`), por el mismo camino que "Borrar"
+  a mano -deja marca en `montajesBorrados` para que la sincronización
+  también los borre en el repositorio-.
+- **Bug de fondo encontrado al investigar esto, más serio**: `estado.json`
+  lleva desde la migración de agosto de 2026 escribiendo siempre
+  `escenarios`/`activo` con la **foto congelada** de los montajes de antes
+  de "un archivo por montaje" (`legadoEscenarios`/`legadoActivo`, pensada
+  solo como red de seguridad de esa conversión, nunca como dato vivo — ver
+  el comentario de `estadoActual()`). El problema: `aplicarEstado()` -que
+  corre al **bajar** o **importar** cualquier copia- volvía a leer ese
+  bloque y a **repoblar `legadoEscenarios`**, y `sembrarMontajes()` lo
+  convertía otra vez en montajes `mig_<clave>` si no existían ya. Es decir:
+  cualquier "Bajar" con una copia vieja podía **resucitar montajes
+  heredados** sin que nada de la limpieza de arriba (pensada solo para
+  `fab_*`) los detectara. Solución en dos partes:
+  1. `cargarEstado()` y `aplicarEstado()` dejan de leer
+     `guardado.escenarios`/`copia.escenarios` hacia `legadoEscenarios` — se
+     queda siempre en `null`, así que el bloque de `sembrarMontajes()` que
+     lo convertía nunca se ejecuta ya (no hizo falta tocar esa función).
+  2. `limpiarMontajesDeFabrica()` pasa a llamarse
+     **`limpiarMontajesHeredados()`** y además de `de_fabrica: true` borra
+     cualquier montaje con uid que empiece por `mig_` -sin esa marca, es el
+     único identificador que queda una vez retirada la foto que los
+     generaba-.
+
+     `guardarEstado()`/`estadoActual()` **siguen escribiendo** el campo
+     `escenarios` (como `{}`, porque `legadoEscenarios` ya nunca se puebla)
+     por compatibilidad de formato -otro código que lea `copia.escenarios
+     || {}` no se rompe-, pero ya no significa nada. **Aviso real para el
+     usuario, no resuelto por completo**: el `estado.json` que ya estaba
+     subido a GitHub antes de este cambio sigue teniendo su `escenarios`
+     con contenido hasta la próxima vez que algo dispare una subida normal
+     (cualquier acción que llame a `guardarEstado()` — un cambio de
+     catálogo o etiquetas, no colocar material, que usa
+     `guardarMontajeActivo()` aparte). Hasta entonces, el diálogo de
+     "Bajar" puede seguir mostrando "N escenario(s)" en su cuenta
+     -`Object.keys(copia.escenarios).length` sobre el archivo remoto
+     todavía viejo-, aunque ya no tenga ningún efecto real.
+- **Orden alfabético en la biblioteca de Montajes** (antes "los tuyos
+  primero, luego alfabético"), pedido explícito del usuario: nuevo
+  comparador único `compararMontajesPorNombre()`, usado tanto en
+  `renderListaMontajesDialog()` como en `renderListaPlantillas()` (el
+  selector de "Cargar montaje…") para no repetir el criterio dos veces.
+
+**Fase 3 — "Cargar plantilla…" solo desde la corrección de material.**
+- Texto del botón, `caso_cargar_plantilla`: **"Cargar plantilla…" → "Cargar
+  montaje…"**.
+- Se retira el botón de la propia ficha del caso (apartado 5,
+  Montaje/Técnicas) -antes había dos entradas, una en la ficha
+  (`iniciarCargaPlantilla(false)`) y otra en la barra fija de edición
+  (`iniciarCargaPlantilla(true)`)-: ahora solo queda la de la barra fija.
+  Motivo del usuario: desde la ficha no se sabe si lo que se va a
+  sustituir se puede editar de verdad. `iniciarCargaPlantilla(modoEditando)`
+  y el resto del flujo (`aplicarPlantillaSobreDestino()`,
+  `confirmarCargaPlantilla()`) **no se tocaron** -siguen aceptando el
+  parámetro, ahora siempre `true`-, para no arriesgar la lógica de copia ya
+  verificada por un cambio que solo era de interfaz.
+
+### Cambios de catálogo del mismo periodo (pedidos sobre la marcha)
+
+- **Categoría "Sondas" nueva** (13 ítems, luego 12 tras mover uno a VEP):
+  material que llevaba tiempo definido como *etiqueta* (tipo físico, para
+  coste) pero sin ningún ítem de `catalogo_material` que lo colocara
+  -sondas monopolares/bipolares, tripolar, aspiración, laparoscópica, pinza
+  de estimulación, discos visuales, bipolar barra, más "Referencia de
+  sonda" (etiqueta `aguja_subdermica`)-. Ocupan entrada numerada como
+  cualquier otro material -no `sin_entrada`-.
+- **Las 9 sondas monopolares/bipolares/tripolar/aspiración/laparoscópica
+  comparten ahora una sola etiqueta** (`sonda_mono_esferica`, la que ya
+  tenía "Sonda monopolar esférica") en vez de una etiqueta propia cada una
+  -pedido del usuario, para que cuenten juntas en el resumen-. Pinza de
+  estimulación y Bipolar barra/superficie ENG se quedaron con la suya.
+  "Referencia de sonda" se queda con `aguja_subdermica` pero con
+  `"color": "rojo"` de override -mismo mecanismo de "excepciones por ítem"
+  que ya usaban otros materiales, ver README-. "Discos visuales" se movió a
+  la categoría "Potenciales visuales (VEP)", donde encaja mejor.
+- **"Registro cervical / plexo" → "Registro cervical / periférico"**: `Cv2`
+  se mudó aquí desde "Electrodos corticales — registro" (mismo id, misma
+  etiqueta, solo cambia la categoría), y se añadieron
+  `l_cubital_periferico`/`r_cubital_periferico`/`l_hueco_popliteo`/`r_hueco_popliteo`
+  (etiqueta `pegatinas`) — distintos de los `l_cubital`/`r_cubital` /
+  `l_popliteo`/`r_popliteo` que ya existían en "Estimulación periférica":
+  son ítems nuevos, no un renombrado.
+- **"GRID / MANTA" → "GRID y D-Wave"**: se quitan `dcs_v2`/`hc` ("función
+  sin confirmar" desde que se documentaron, sin caso/montaje real conocido
+  que los usara) y se añade `epidural_dwave` ("Electrodo epidural
+  (D-Wave)", nota "Kit 3 Platinum Contacts"), con etiqueta propia
+  `electrodo_epidural_dwave` -mismo aspecto que `electrodo_epidural` pero
+  distinta, porque es un producto/coste distinto-.
+- **Categorías del catálogo reordenadas por frecuencia de uso**, con un
+  campo nuevo `"plegada_por_defecto": true` por categoría (en el grupo, no
+  en el ítem) — antes todas se plegaban igual. `reconstruirCatalogo()`
+  propaga el flag a `CATALOGO` (antes se perdía, como ya pasaba con
+  `categoria_en`); `categoriaAbierta(nombre, porDefecto)` gana un segundo
+  parámetro con el valor por defecto de esa categoría, y
+  `recordarCategoria()` pasa a guardar siempre `0`/`1` explícito en vez de
+  borrar la clave al cerrar -si se borrara, una categoría que nace abierta
+  volvería a abrirse sola en vez de quedarse cerrada como decidió el
+  usuario-. Abiertas de fábrica: Electrodos corticales (estimulación y
+  registro), Registro cervical/periférico, Músculos MMSS, Músculos MMII,
+  Estimulación periférica, Tierras y referencias. Todo lo demás, plegado.
+- **Cajas 3-6 dejaron de plegarse solas** al colocar material dentro de
+  ellas: `renderCajaFisica()` reconstruía el `<details>` en cada
+  `renderCajas()` sin fijar `.open`, así que perdía el estado cada vez que
+  se colocaba algo en cualquier caja. Mismo patrón que las categorías del
+  catálogo: nuevo `cajaAbierta()`/`recordarCaja()`
+  (`localStorage["mio_ionm_cajas_abiertas_v1"]`), y un listener `toggle` en
+  cada `<details>` plegable de `renderCajaFisica()`.
+- **Visor de fotos de material**: campo nuevo opcional `"foto"` por ítem de
+  `catalogo_material` (ruta relativa a la raíz, p. ej.
+  `img/sondas/sonda_tripolar.png`). `crearChip()` añade un icono 📷 -en
+  cualquier sitio donde salga el chip, no solo el catálogo: también ya
+  colocado en una caja, que es cuando más falta hace identificar cuál es
+  cuál-, que abre `<dialog id="dlg-foto-sonda">` con la imagen a tamaño
+  grande (`abrirFotoSonda()`). De momento son fotos reales que pasó el
+  usuario, guardadas en `img/sondas/`: 6 de las 9 sondas monopolares/
+  bipolares tienen foto, quedan sin foto la de gancho, la tripolar y la
+  laparoscópica.
+
+README.md y data/guia.js revisados en el mismo turno (misma nota de
+mantenimiento del 31-08-2026: si se toca el flujo, los dos a la vez).
 
 ## Google Sheet (Apps Script)
 
