@@ -182,6 +182,7 @@ window.SURGERIES_DATA = {
     { "id": "electrodo_grid_mantaA","nombre": "Manta GRID A",              "borde": "grueso",      "color": "rojo",     "fondo": "rojo",      "fungible": true, "manta": true },
     { "id": "electrodo_grid_mantaB","nombre": "Manta GRID B",              "borde": "grueso",      "color": "rojo",     "fondo": "rojo",      "fungible": true, "manta": true },
     { "id": "electrodo_epidural",   "nombre": "Electrodo epidural",        "borde": "doble",       "color": "morado",   "fondo": "morado",    "fungible": true },
+    { "id": "electrodo_epidural_dwave", "nombre": "Electrodo epidural (D-Wave)", "borde": "doble",  "color": "morado",   "fondo": "morado",    "fungible": true },
     { "id": "sensor_tubo",          "nombre": "Sensor de tubo orotraqueal","borde": "doble",       "color": "turquesa", "fondo": "turquesa",  "fungible": true },
     { "id": "gancho_j",             "nombre": "Electrodo gancho / J / Delta", "borde": "doble",    "color": "amarillo", "fondo": "amarillo",  "fungible": true },
     { "id": "manta_4_8",            "nombre": "Manta de 4/6/8 electrodos", "borde": "grueso",      "color": "verde",    "fondo": "verde",     "fungible": true },
@@ -408,7 +409,7 @@ window.SURGERIES_DATA = {
       ]
     },
     {
-      "categoria": "GRID / MANTA",
+      "categoria": "GRID y D-Wave",
       "plegada_por_defecto": true,
       "items": [
         { "id": "grid1", "nombre": "GRID A.1", "etiqueta": "electrodo_grid_mantaA" },
@@ -427,8 +428,7 @@ window.SURGERIES_DATA = {
         { "id": "grid2_6", "nombre": "GRID B.6", "etiqueta": "electrodo_grid_mantaB" },
         { "id": "grid2_7", "nombre": "GRID B.7", "etiqueta": "electrodo_grid_mantaB" },
         { "id": "grid2_8", "nombre": "GRID B.8", "etiqueta": "electrodo_grid_mantaB" },
-        { "id": "dcs_v2", "nombre": "DCS / V2", "etiqueta": "sin_determinar", "nota": "Aparece rotulado en el canal 8 anodal de la caja real — función sin confirmar" },
-        { "id": "hc", "nombre": "HC", "etiqueta": "sin_determinar", "nota": "Aparece rotulado en el canal 11 de la caja real — función sin confirmar" }
+        { "id": "epidural_dwave", "nombre": "Electrodo epidural (D-Wave)", "etiqueta": "electrodo_epidural_dwave", "nota": "Kit 3 Platinum Contacts" }
       ]
     },
     {
@@ -444,7 +444,8 @@ window.SURGERIES_DATA = {
       "plegada_por_defecto": true,
       "items": [
         { "id": "o1", "nombre": "O1", "etiqueta": "electrodo_sacacorchos", "nota": "Registro visual occipital izquierdo. Va en una de las entradas numeradas de REF-AEP" },
-        { "id": "o2", "nombre": "O2", "etiqueta": "electrodo_sacacorchos", "nota": "Registro visual occipital derecho. Va en una de las entradas numeradas de REF-AEP" }
+        { "id": "o2", "nombre": "O2", "etiqueta": "electrodo_sacacorchos", "nota": "Registro visual occipital derecho. Va en una de las entradas numeradas de REF-AEP" },
+        { "id": "discos_visuales", "nombre": "Discos visuales", "etiqueta": "discos_visuales" }
       ]
     },
     {
@@ -620,18 +621,17 @@ window.SURGERIES_DATA = {
       "plegada_por_defecto": true,
       "items": [
         { "id": "sonda_mono_esferica", "nombre": "Sonda monopolar esférica", "etiqueta": "sonda_mono_esferica" },
-        { "id": "sonda_mono_recta", "nombre": "Sonda monopolar recta", "etiqueta": "sonda_mono_recta" },
-        { "id": "sonda_bip_concentrica", "nombre": "Sonda bipolar concéntrica", "etiqueta": "sonda_bip_concentrica" },
-        { "id": "sonda_bip_rectas", "nombre": "Sonda bipolar de puntas rectas separadas", "etiqueta": "sonda_bip_rectas" },
-        { "id": "sonda_bip_esfericas", "nombre": "Sonda bipolar de puntas esféricas separadas", "etiqueta": "sonda_bip_esfericas" },
-        { "id": "sonda_bip_gancho", "nombre": "Sonda bipolar de gancho", "etiqueta": "sonda_bip_gancho" },
-        { "id": "sonda_tripolar", "nombre": "Sonda tripolar", "etiqueta": "sonda_tripolar" },
-        { "id": "sonda_aspiracion", "nombre": "Sonda de aspiración electrificada", "etiqueta": "sonda_aspiracion" },
-        { "id": "sonda_laparoscopica", "nombre": "Sonda bipolar laparoscópica", "etiqueta": "sonda_laparoscopica" },
+        { "id": "sonda_mono_recta", "nombre": "Sonda monopolar recta", "etiqueta": "sonda_mono_esferica" },
+        { "id": "sonda_bip_concentrica", "nombre": "Sonda bipolar concéntrica", "etiqueta": "sonda_mono_esferica" },
+        { "id": "sonda_bip_rectas", "nombre": "Sonda bipolar de puntas rectas separadas", "etiqueta": "sonda_mono_esferica" },
+        { "id": "sonda_bip_esfericas", "nombre": "Sonda bipolar de puntas esféricas separadas", "etiqueta": "sonda_mono_esferica" },
+        { "id": "sonda_bip_gancho", "nombre": "Sonda bipolar de gancho", "etiqueta": "sonda_mono_esferica" },
+        { "id": "sonda_tripolar", "nombre": "Sonda tripolar", "etiqueta": "sonda_mono_esferica" },
+        { "id": "sonda_aspiracion", "nombre": "Sonda de aspiración electrificada", "etiqueta": "sonda_mono_esferica" },
+        { "id": "sonda_laparoscopica", "nombre": "Sonda bipolar laparoscópica", "etiqueta": "sonda_mono_esferica" },
         { "id": "pinza_estimulacion", "nombre": "Pinza de estimulación", "etiqueta": "pinza_estimulacion" },
-        { "id": "discos_visuales", "nombre": "Discos visuales", "etiqueta": "discos_visuales" },
         { "id": "bipolar_barra", "nombre": "Bipolar barra / superficie ENG", "etiqueta": "bipolar_barra" },
-        { "id": "ref_sonda", "nombre": "Referencia de sonda", "etiqueta": "aguja_subdermica" }
+        { "id": "ref_sonda", "nombre": "Referencia de sonda", "etiqueta": "aguja_subdermica", "color": "rojo" }
       ]
     },
     {

@@ -17,7 +17,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260907">
+<link rel="stylesheet" href="style.css?v=20260908">
 </head>
 <body>
 
@@ -76,11 +76,13 @@
   -->
   <div class="columna-principal">
 
-    <!-- Fase 6: Montajes es ahora la pantalla principal, no un diálogo -abre
-         sola al cargar la página, encima de Técnicas-. Mismo contenido que
-         antes (buscador, acciones, lista), solo cambia el envoltorio: de
-         <dialog> a <details> igual que el resto de tarjetas. -->
-    <details class="card no-print" id="montajes" open>
+    <!-- Fase 6: Montajes es ahora la pantalla principal, no un diálogo -es
+         la primera tarjeta, encima de Técnicas-, aunque plegada de fábrica
+         igual que el resto (pedido del usuario el 04-09-2026). Mismo
+         contenido que antes (buscador, acciones, lista), solo cambia el
+         envoltorio: de <dialog> a <details> igual que el resto de
+         tarjetas. -->
+    <details class="card no-print" id="montajes">
       <summary class="card-cab">
         <h2 data-i18n="dlg_montajes_titulo"></h2>
       </summary>
@@ -592,9 +594,9 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260907"></script>
-<script src="data/i18n-en.js?v=20260907"></script>
-<script src="data/guia.js?v=20260907"></script>
-<script src="app.js?v=20260907"></script>
+<script src="data/surgeries.js?v=20260908"></script>
+<script src="data/i18n-en.js?v=20260908"></script>
+<script src="data/guia.js?v=20260908"></script>
+<script src="app.js?v=20260908"></script>
 </body>
 </html>
