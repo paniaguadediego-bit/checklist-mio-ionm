@@ -920,6 +920,50 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
 #guia-acordeon p { font-size: 0.8rem; line-height: 1.45; margin: 0 0 0.5rem; }
 #guia-acordeon p:last-child { margin-bottom: 0; }
 
+/* ------------------------- Técnicas MIO (Lote 1) ------------------------ */
+/* Región (columna_medula, fosa_posterior_tronco) reutiliza .caso-grupo tal
+   cual; .tecmio-tecnica es la misma caja anidada un nivel dentro. */
+.tecmio-tecnica { margin: 0 0 0.4rem; }
+.tecmio-tecnica:last-child { margin-bottom: 0; }
+.tecmio-badge {
+  display: inline-block;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  margin-right: 0.4rem;
+  white-space: nowrap;
+}
+.tecmio-tecnica .caso-grupo-campos h5 {
+  margin: 0.7rem 0 0.3rem;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+}
+.tecmio-tecnica .caso-grupo-campos h5:first-child { margin-top: 0; }
+.tecmio-campos, .tecmio-sub { margin: 0; }
+.tecmio-campos dt, .tecmio-sub dt {
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-top: 0.3rem;
+}
+.tecmio-campos dt:first-child, .tecmio-sub dt:first-child { margin-top: 0; }
+.tecmio-campos dd, .tecmio-sub dd {
+  font-size: 0.78rem;
+  line-height: 1.4;
+  margin: 0.05rem 0 0;
+}
+.tecmio-sub {
+  margin: 0.2rem 0 0.2rem 0.6rem;
+  padding-left: 0.5rem;
+  border-left: 2px solid var(--border-soft);
+}
+.tecmio-lista { margin: 0.1rem 0 0; padding-left: 1.1rem; font-size: 0.78rem; line-height: 1.4; }
+.tecmio-fuente { font-size: 0.68rem; font-style: italic; color: var(--text-muted); margin: 0.35rem 0 0.5rem; }
+
 .docente-fuentes {
   font-size: 0.66rem;
   color: var(--text-muted);

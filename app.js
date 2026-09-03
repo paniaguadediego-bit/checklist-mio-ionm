@@ -482,11 +482,18 @@
                            en: "This montage belongs to {autor}, so you cannot change it.\n\nUse “Duplicate” to make your own copy and work on that." },
     montaje_de:          { es: "{nombre} · {autor}", en: "{nombre} · {autor}" },
     caso_sin_id:         { es: "Caso sin número", en: "Case with no number" },
-    btn_menu_tit:        { es: "Idioma, guía de uso y ventana Docente", en: "Language, user guide and Teaching window" },
+    btn_menu_tit:        { es: "Idioma, guía de uso, Técnicas MIO y ventana Docente", en: "Language, user guide, MIO Techniques and Teaching window" },
     btn_guia:            { es: "Guía de uso", en: "User guide" },
     btn_guia_tit:        { es: "Cómo se usa MIO-Check, de un vistazo", en: "How to use MIO-Check, at a glance" },
     dlg_guia_titulo:     { es: "Guía de uso", en: "User guide" },
     guia_aviso_en:       { es: "This guide is only written in Spanish for now.", en: "This guide is only written in Spanish for now." },
+    btn_tecnicas_mio:    { es: "Técnicas MIO", en: "MIO Techniques" },
+    btn_tecnicas_mio_tit: { es: "Sitios de estimulación/registro, filtros y barridos de cada técnica, para consulta durante el caso",
+                           en: "Stimulation/recording sites, filters and sweep times for each technique, for reference during a case" },
+    dlg_tecnicas_mio_titulo: { es: "Técnicas MIO", en: "MIO Techniques" },
+    tecnicas_mio_intro:  { es: "Cada parámetro cuantitativo indica su fuente. Cuando dos fuentes dan valores distintos, se muestran ambos por separado: nunca se promedian ni se combinan.",
+                           en: "Each quantitative parameter names its source. When two sources give different values, both are shown separately — never averaged or merged." },
+    tecnicas_mio_aviso_en: { es: "This section is only written in Spanish for now.", en: "This section is only written in Spanish for now." },
     btn_docente:         { es: "Docente", en: "Teaching" },
     docente_titulo:      { es: "Miotomas: qué músculos monitorizar", en: "Myotomes: which muscles to monitor" },
     docente_intro:       { es: "Pulsa en la columna los <b>niveles</b> que abarca la cirugía. A la izquierda aparecen los músculos que dependen de esas raíces; pulsa uno para llevarlo a los <b>monitorizados</b> de la derecha, y pulsa allí para quitarlo. Los rangos son los que se enseñan habitualmente: la inervación se solapa y no todas las escuelas dan los mismos límites, así que están para discutirlos.",
@@ -754,6 +761,8 @@
     // dentro del propio diálogo en vez de dejarla a medio traducir sin decirlo.
     var avisoEn = document.getElementById("guia-aviso-en");
     if (avisoEn) avisoEn.hidden = idioma !== "en";
+    var avisoEnTecMio = document.getElementById("tecmio-aviso-en");
+    if (avisoEnTecMio) avisoEnTecMio.hidden = idioma !== "en";
     document.querySelectorAll("[data-i18n-aria]").forEach(function (el) {
       el.setAttribute("aria-label", T(el.dataset.i18nAria));
     });
@@ -6293,6 +6302,196 @@
   }
 
   document.getElementById("btn-guia").addEventListener("click", abrirGuia);
+
+  /* ---------------------------------------------------------------- *
+   * Técnicas MIO: parámetros técnicos por técnica (data/tecnicas-mio.js),
+   * para consulta durante el caso -no se sincroniza, no se guarda nada de
+   * aquí, mismo patrón que la Guía de arriba: se pinta una sola vez, la
+   * primera vez que se abre.
+   *
+   * Cada técnica trae objetos anidados con variantes por fuente (p. ej.
+   * intensidad_mA: { costa_2015: "...", alvarez_2023: "..." }): el
+   * principio del dato es no promediarlas ni combinarlas nunca, así que
+   * pintarValorTecMio() las pinta todas, una por línea, en vez de elegir
+   * una. Las claves desconocidas (Lote 2 y siguientes) caen en el
+   * etiquetado genérico de etiquetaTecMio(), así que un lote nuevo con el
+   * mismo formato no necesita tocar este código.
+   * ---------------------------------------------------------------- */
+  var dlgTecnicasMio = document.getElementById("dlg-tecnicas-mio");
+  var tecMioRenderizada = false;
+
+  var TECMIO_REGIONES = {
+    columna_medula: "Columna / médula espinal",
+    fosa_posterior_tronco: "Fosa posterior / tronco"
+  };
+
+  var TECMIO_SECCIONES = {
+    estimulacion: "Estimulación",
+    registro: "Registro",
+    filtros: "Filtros",
+    barrido: "Barrido (sweep)",
+    umbrales_referencia: "Umbrales de referencia",
+    notas_clinicas: "Notas clínicas"
+  };
+
+  var TECMIO_CAMPOS = {
+    sitio: "Sitio", sitio_montaje: "Sitio / montaje", sitio_montajes: "Sitio / montajes",
+    sitio_cortical: "Sitio cortical", sitio_subcortical: "Sitio subcortical",
+    electrodo: "Electrodo", parametros: "Parámetros",
+    parametros_mapeo_clasico: "Parámetros (mapeo clásico)",
+    parametros_mapeo_dinamico_continuo: "Parámetros (mapeo dinámico continuo)",
+    intensidad_mA: "Intensidad (mA)", intensidad: "Intensidad",
+    duracion_pulso_ms: "Duración de pulso (ms)", duracion_pulso_us: "Duración de pulso (µs)",
+    frecuencia_hz: "Frecuencia (Hz)", tasa_hz: "Tasa (Hz)",
+    modo: "Modo", tipo: "Tipo", tipo_estimulo: "Tipo de estímulo",
+    tipo_estimulador: "Tipo de estimulador", tren_pulsos: "Tren de pulsos", isi_ms: "ISI (ms)",
+    protocolo_diferenciacion_central_vs_periferico: "Protocolo: central vs. periférico",
+    montaje: "Montaje", nota_tecnica: "Nota técnica",
+    musculos: "Músculos", musculos_habituales: "Músculos habituales", sonda: "Sonda",
+    pasa_alto_hz: "Pasa-alto (Hz)", pasa_bajo_hz: "Pasa-bajo (Hz)",
+    pasa_alto_periferico_hz: "Pasa-alto periférico (Hz)", pasa_bajo_periferico_hz: "Pasa-bajo periférico (Hz)",
+    pasa_bajo_khz: "Pasa-bajo (kHz)", notch: "Notch", rango_hz: "Rango (Hz)", evitar: "Evitar",
+    tiempo_analisis_ms: "Tiempo de análisis (ms)", tiempo_barrido_s: "Tiempo de barrido (s)",
+    ventana_registro_ms: "Ventana de registro (ms)", promediado_n: "Promediado (n)",
+    tasa_muestreo_hz: "Tasa de muestreo (Hz)",
+    criterio_alerta: "Criterio de alerta", trampas_frecuentes: "Trampas frecuentes",
+    localizacion_por_onda: "Localización por onda",
+    umbral_alarma_mas_usado_mA: "Umbral de alarma más usado (mA)",
+    rangos_alternativos_publicados_mA: "Rangos alternativos publicados (mA)",
+    valores_normales_sin_brecha_mA: "Valores normales sin brecha (mA)",
+    aplicabilidad: "Aplicabilidad", valores_normativos: "Valores normativos", nota: "Nota"
+  };
+
+  function etiquetaTecMio(clave, diccionario) {
+    if (diccionario[clave]) return diccionario[clave];
+    var s = clave.replace(/_/g, " ");
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  function pintarValorTecMio(contenedor, valor) {
+    if (valor === null || valor === undefined) return;
+    if (typeof valor === "string" || typeof valor === "number") {
+      contenedor.appendChild(document.createTextNode(String(valor)));
+      return;
+    }
+    if (Array.isArray(valor)) {
+      if (!valor.length) { contenedor.appendChild(document.createTextNode("—")); return; }
+      var ul = document.createElement("ul");
+      ul.className = "tecmio-lista";
+      valor.forEach(function (item) {
+        var li = document.createElement("li");
+        pintarValorTecMio(li, item);
+        ul.appendChild(li);
+      });
+      contenedor.appendChild(ul);
+      return;
+    }
+    // Objeto: variantes por fuente u otras subclaves (nunca se combinan).
+    var dl = document.createElement("dl");
+    dl.className = "tecmio-sub";
+    Object.keys(valor).forEach(function (k) {
+      var dt = document.createElement("dt");
+      dt.textContent = etiquetaTecMio(k, TECMIO_CAMPOS) + ":";
+      var dd = document.createElement("dd");
+      pintarValorTecMio(dd, valor[k]);
+      dl.appendChild(dt);
+      dl.appendChild(dd);
+    });
+    contenedor.appendChild(dl);
+  }
+
+  function pintarSeccionTecMio(contenedor, clave, datos) {
+    if (!datos) return;
+    var claves = Object.keys(datos).filter(function (k) { return k !== "fuente"; });
+    if (!claves.length && !(datos.fuente && datos.fuente.length)) return;
+
+    var titulo = document.createElement("h5");
+    titulo.textContent = TECMIO_SECCIONES[clave] || etiquetaTecMio(clave, TECMIO_SECCIONES);
+    contenedor.appendChild(titulo);
+
+    if (claves.length) {
+      var dl = document.createElement("dl");
+      dl.className = "tecmio-campos";
+      claves.forEach(function (k) {
+        var dt = document.createElement("dt");
+        dt.textContent = etiquetaTecMio(k, TECMIO_CAMPOS) + ":";
+        var dd = document.createElement("dd");
+        pintarValorTecMio(dd, datos[k]);
+        dl.appendChild(dt);
+        dl.appendChild(dd);
+      });
+      contenedor.appendChild(dl);
+    }
+
+    if (datos.fuente && datos.fuente.length) {
+      var p = document.createElement("p");
+      p.className = "tecmio-fuente";
+      p.textContent = "Fuente: " + datos.fuente.join(", ");
+      contenedor.appendChild(p);
+    }
+  }
+
+  function renderTecnicaMio(tecnica) {
+    var det = document.createElement("details");
+    det.className = "caso-grupo tecmio-tecnica";
+    var summary = document.createElement("summary");
+    if (tecnica.categoria) {
+      var badge = document.createElement("span");
+      badge.className = "tecmio-badge";
+      badge.textContent = tecnica.categoria;
+      summary.appendChild(badge);
+    }
+    summary.appendChild(document.createTextNode(tecnica.nombre));
+    det.appendChild(summary);
+
+    var campos = document.createElement("div");
+    campos.className = "caso-grupo-campos";
+    ["estimulacion", "registro", "filtros", "barrido", "umbrales_referencia", "notas_clinicas"].forEach(function (clave) {
+      pintarSeccionTecMio(campos, clave, tecnica[clave]);
+    });
+    det.appendChild(campos);
+    return det;
+  }
+
+  function renderTecnicasMio() {
+    var datos = window.TECNICAS_MIO || { tecnicas: [] };
+    var cont = document.getElementById("tecmio-contenido");
+    cont.innerHTML = "";
+
+    var porRegion = {};
+    var ordenRegiones = [];
+    (datos.tecnicas || []).forEach(function (t) {
+      var r = t.region || "otras";
+      if (!porRegion[r]) { porRegion[r] = []; ordenRegiones.push(r); }
+      porRegion[r].push(t);
+    });
+
+    ordenRegiones.forEach(function (r) {
+      var det = document.createElement("details");
+      det.className = "caso-grupo";
+      var summary = document.createElement("summary");
+      summary.textContent = TECMIO_REGIONES[r] || etiquetaTecMio(r, TECMIO_REGIONES);
+      det.appendChild(summary);
+
+      var campos = document.createElement("div");
+      campos.className = "caso-grupo-campos";
+      porRegion[r].forEach(function (t) {
+        campos.appendChild(renderTecnicaMio(t));
+      });
+      det.appendChild(campos);
+      cont.appendChild(det);
+    });
+
+    tecMioRenderizada = true;
+  }
+
+  function abrirTecnicasMio() {
+    if (!tecMioRenderizada) renderTecnicasMio();
+    dlgTecnicasMio.showModal();
+  }
+
+  document.getElementById("btn-tecnicas-mio").addEventListener("click", abrirTecnicasMio);
+  document.getElementById("tecmio-cerrar").addEventListener("click", function () { dlgTecnicasMio.close(); });
   document.getElementById("guia-cerrar").addEventListener("click", function () { dlgGuia.close(); });
 
   function abrirDocente() {

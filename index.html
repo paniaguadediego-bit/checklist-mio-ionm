@@ -17,7 +17,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260910">
+<link rel="stylesheet" href="style.css?v=20260910b">
 </head>
 <body>
 
@@ -35,6 +35,7 @@
       <div class="menu-lista" id="menu-lista" hidden>
         <button type="button" id="btn-idioma" title="Switch to English">EN</button>
         <button type="button" id="btn-guia" data-i18n-title="btn_guia_tit" data-i18n="btn_guia"></button>
+        <button type="button" id="btn-tecnicas-mio" data-i18n-title="btn_tecnicas_mio_tit" data-i18n="btn_tecnicas_mio"></button>
         <button type="button" id="btn-docente" data-i18n="btn_docente"></button>
       </div>
     </div>
@@ -494,6 +495,17 @@
   </div>
 </dialog>
 
+<dialog id="dlg-tecnicas-mio" class="no-print dlg-ancho">
+  <h3 data-i18n="dlg_tecnicas_mio_titulo"></h3>
+  <p class="dlg-intro" id="tecmio-aviso-en" hidden data-i18n="tecnicas_mio_aviso_en"></p>
+  <p class="dlg-intro" data-i18n="tecnicas_mio_intro"></p>
+  <div id="tecmio-contenido"></div>
+  <div class="dlg-botones">
+    <span class="barra-flex"></span>
+    <button type="button" id="tecmio-cerrar" data-i18n="cerrar"></button>
+  </div>
+</dialog>
+
 <dialog id="dlg-docente" class="no-print dlg-ancho">
   <h3 data-i18n="docente_titulo_gen"></h3>
 
@@ -603,9 +615,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260910"></script>
-<script src="data/i18n-en.js?v=20260910"></script>
-<script src="data/guia.js?v=20260910"></script>
-<script src="app.js?v=20260910"></script>
+<script src="data/surgeries.js?v=20260910b"></script>
+<script src="data/i18n-en.js?v=20260910b"></script>
+<script src="data/guia.js?v=20260910b"></script>
+<script src="data/tecnicas-mio.js?v=20260910b"></script>
+<script src="app.js?v=20260910b"></script>
 </body>
 </html>
