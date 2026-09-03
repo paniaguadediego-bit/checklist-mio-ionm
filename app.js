@@ -117,6 +117,7 @@
     chip_sin_etiqueta:   { es: "sin etiqueta", en: "no label" },
     chip_editar_tit:     { es: "Editar este material", en: "Edit this material" },
     chip_quitar_tit:     { es: "Quitar de esta entrada", en: "Remove from this input" },
+    chip_foto_tit:       { es: "Ver foto", en: "View photo" },
     dlg_elegir_titulo:   { es: "Elegir material", en: "Choose material" },
     elegir_destino:      { es: "Va a la entrada {entrada} de {caja}.", en: "Goes to input {entrada} of {caja}." },
     elegir_ocupada:      { es: "Ahora hay {item}: lo que elijas lo sustituye.",
@@ -1693,6 +1694,25 @@
     }
     chip.appendChild(document.createTextNode(campo(item, "nombre")));
 
+    // Foto de referencia (de momento solo algunas sondas): un icono que
+    // abre la imagen en un visor propio, para identificar la sonda física
+    // sin salir de la herramienta. Vale en cualquier sitio donde salga el
+    // chip -catálogo, selector y ya colocado-, no solo en el catálogo como
+    // el lápiz de editar: es justo cuando está colocada, canal a canal,
+    // cuando más falta hace comprobar cuál es cuál.
+    if (item.foto) {
+      var foto = document.createElement("button");
+      foto.type = "button";
+      foto.className = "chip-foto";
+      foto.textContent = "📷";
+      foto.title = T("chip_foto_tit");
+      foto.addEventListener("click", function (e) {
+        e.stopPropagation();
+        abrirFotoSonda(item.foto, campo(item, "nombre"));
+      });
+      chip.appendChild(foto);
+    }
+
     // Material propio: lápiz para editarlo (solo en el catálogo). En el
     // selector que se abre desde una entrada no sale: allí has ido a elegir
     // material, y abrir el editor encima del propio selector desorienta.
@@ -1753,6 +1773,20 @@
 
     return chip;
   }
+
+  /* Visor de fotos de material -de momento solo algunas sondas-. Un único
+     <dialog> reutilizado por todos los chips: no hace falta uno por ítem,
+     con cambiar la imagen y el título antes de abrirlo vale. */
+  var dlgFotoSonda = document.getElementById("dlg-foto-sonda");
+  function abrirFotoSonda(url, nombre) {
+    document.getElementById("foto-sonda-img").src = url;
+    document.getElementById("foto-sonda-img").alt = nombre;
+    document.getElementById("foto-sonda-nombre").textContent = nombre;
+    dlgFotoSonda.showModal();
+  }
+  document.getElementById("foto-sonda-cerrar").addEventListener("click", function () {
+    dlgFotoSonda.close();
+  });
 
   /* ---------------------------------------------------------------- *
    * Drag & drop (delegado en document)
