@@ -549,8 +549,6 @@
     montaje_tuyo:        { es: "tuyo", en: "yours" },
 
     /* --- Fase 4.1: biblioteca de montajes --- */
-    btn_montajes:        { es: "Montajes", en: "Montages" },
-    btn_montajes_tit:    { es: "Elegir, crear o gestionar tus montajes", en: "Choose, create or manage your montages" },
     dlg_montajes_titulo: { es: "Montajes", en: "Montages" },
     montaje_en_blanco:   { es: "+ Montaje en blanco", en: "+ Blank montage" },
 
@@ -1279,6 +1277,33 @@
     if (!activo || !montajes[activo]) activo = Object.keys(montajes)[0] || null;
     if (nuevos) guardarMontajes();
     traducirEscenarios();
+  }
+
+  /* Pedido del usuario: quitar todos los montajes de fábrica, no solo dejar
+     de sembrar nuevos. Vaciar DATA.escenarios (ver data/surgeries.js) evita
+     que se siembre ninguno más, pero los que ya existían -de este mismo
+     dispositivo, o bajados de otro por sincronización, incluidos presets
+     antiguos que ya ni siguen en el archivo, como el histórico
+     "fab_tumor_it"- siguen en `montajes` hasta que se borran de verdad.
+     Se identifican por "de_fabrica: true" (montajeDesdePreset()), no por su
+     uid, así vale para cualquiera que haya existido alguna vez. Mismo
+     camino que "Borrar" a mano: marca en montajesBorrados para que la
+     sincronización los borre también en el repositorio. Sin efecto (no
+     hace nada) en cuanto no quede ninguno. */
+  function limpiarMontajesDeFabrica() {
+    var borrado = false;
+    Object.keys(montajes).forEach(function (uid) {
+      if (!montajes[uid].de_fabrica) return;
+      delete montajes[uid];
+      delete montajesSinSubir[uid];
+      if (montajesSha[uid]) montajesBorrados[uid] = montajesSha[uid];
+      delete montajesSha[uid];
+      borrado = true;
+    });
+    if (!borrado) return;
+    if (!activo || !montajes[activo]) activo = Object.keys(montajes)[0] || null;
+    guardarMontajes();
+    programarEnvio();
   }
 
   var borrados = [];
@@ -2858,19 +2883,13 @@
     var cont = document.getElementById("plantilla-elegir-lista");
     cont.innerHTML = "";
     var busq = (document.getElementById("plantilla-buscar").value || "").toLowerCase();
-    var yo = usuarioActual();
     var uids = Object.keys(montajes).filter(function (uid) {
       var m = montajes[uid];
       if (!busq) return true;
       var nombre = (campo(m, "nombre") || "").toLowerCase();
       return nombre.indexOf(busq) !== -1 || autorDe(m).toLowerCase().indexOf(busq) !== -1;
     });
-    uids.sort(function (a, b) {
-      var ma = yo && montajes[a].autor_id === yo.id ? 0 : 1;
-      var mb = yo && montajes[b].autor_id === yo.id ? 0 : 1;
-      if (ma !== mb) return ma - mb;
-      return (campo(montajes[a], "nombre") || "").localeCompare(campo(montajes[b], "nombre") || "");
-    });
+    uids.sort(compararMontajesPorNombre);
 
     document.getElementById("plantilla-elegir-vacio").hidden = !!uids.length;
     if (!uids.length) {
@@ -5818,6 +5837,14 @@
     return m.autor_id ? nombreUsuario(m.autor_id) || T("montaje_autor_ido") : T("montaje_sin_autor");
   }
 
+  // Orden alfabético por nombre, sin importar de quién sea -antes salían
+  // primero los propios; pedido del usuario para que el listado (aquí y en
+  // "Elegir montaje" al cargarlo sobre un caso) sea siempre el mismo orden,
+  // también con los que se vayan creando.
+  function compararMontajesPorNombre(a, b) {
+    return (campo(montajes[a], "nombre") || "").localeCompare(campo(montajes[b], "nombre") || "");
+  }
+
   function renderTodo() {
     renderSelect();
     // La lista de usuarios puede haber cambiado al bajar de GitHub: si Javier
@@ -5968,13 +5995,6 @@
   // es el .open de cualquier <details>.
   var dlgMontajes = document.getElementById("montajes");
 
-  function abrirDlgMontajes() {
-    document.getElementById("montajes-buscar").value = "";
-    renderListaMontajesDialog();
-    dlgMontajes.open = true;
-    dlgMontajes.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
   function renderListaMontajesDialog() {
     var cont = document.getElementById("dlg-montajes-lista");
     cont.innerHTML = "";
@@ -6008,13 +6028,8 @@
       var nombre = (campo(m, "nombre") || "").toLowerCase();
       return nombre.indexOf(busq) !== -1 || autorDe(m).toLowerCase().indexOf(busq) !== -1;
     });
-    // Los tuyos primero: es lo que buscas el 90% de las veces
-    uids.sort(function (a, b) {
-      var ma = yo && montajes[a].autor_id === yo.id ? 0 : 1;
-      var mb = yo && montajes[b].autor_id === yo.id ? 0 : 1;
-      if (ma !== mb) return ma - mb;
-      return (campo(montajes[a], "nombre") || "").localeCompare(campo(montajes[b], "nombre") || "");
-    });
+    // Alfabético, sin importar de quién sea -pedido del usuario-.
+    uids.sort(compararMontajesPorNombre);
 
     document.getElementById("montajes-cuenta").textContent =
       T("montajes_cuenta", { n: uids.length, total: Object.keys(montajes).length });
@@ -6059,7 +6074,6 @@
     });
   }
 
-  document.getElementById("btn-montajes").addEventListener("click", abrirDlgMontajes);
   document.getElementById("montajes-buscar").addEventListener("input", renderListaMontajesDialog);
 
   /* ---------------------------------------------------------------- *
@@ -6072,21 +6086,18 @@
     var nombre = document.getElementById("barra-caso-nombre");
     var ay = document.getElementById("barra-caso-ay");
     var acciones = document.getElementById("barra-caso-acciones");
-    var btnMontajes = document.getElementById("btn-montajes");
     if (document.body.classList.contains("editando-caso")) {
       var caso = casos[casoEditandoUid];
       prefijo.textContent = T("barra_caso_texto");
       nombre.textContent = caso ? ((caso.ID_Caso || "") + (caso.nombre_caso ? " — " + caso.nombre_caso : "")) : "";
       ay.textContent = T("barra_caso_ay");
       acciones.hidden = false;
-      btnMontajes.hidden = true;
     } else {
       var esc = escenarioActual();
       prefijo.textContent = T("barra_plantilla_texto");
       nombre.textContent = esc ? campo(esc, "nombre") : T("barra_plantilla_ninguna");
       ay.textContent = "";
       acciones.hidden = true;
-      btnMontajes.hidden = false;
     }
   }
 
@@ -6671,6 +6682,7 @@
   // listo para convertir, y después de los catálogos, que sembrarMontajes()
   // consulta para emparejar cada montaje con su tipo de cirugía.
   sembrarMontajes();
+  limpiarMontajesDeFabrica();
   cargarCasos();
   cargarSync();
   cargarPerfilUsuario();

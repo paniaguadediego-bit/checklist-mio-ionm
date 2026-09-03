@@ -1086,9 +1086,6 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
 .barra-caso b { font-weight: 700; color: var(--accent); }
 body.editando-caso .barra-caso b { color: #fff; }
 .barra-caso small { display: block; opacity: 0.85; font-size: 0.7rem; }
-/* Cambiar de plantilla es la acción natural cuando el rótulo dice
-   "Plantilla: X"; en modo caso ese hueco lo ocupa .barra-caso-acciones. */
-#btn-montajes { margin-left: auto; }
 .barra-caso-acciones { margin-left: auto; display: flex; gap: 0.4rem; }
 /* Mismo empate de especificidad que .campo[hidden]: una clase con su propio
    display gana al [hidden] nativo si no se acota así -no basta con poner el

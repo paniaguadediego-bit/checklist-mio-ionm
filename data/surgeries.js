@@ -897,97 +897,20 @@ window.SURGERIES_DATA = {
   ],
 
   /* ------------------------------------------------------------------ *
-   * ESCENARIOS (presets de cirugía)
-   * asignaciones: { claveCaja: { "idEntrada": "idMaterial" } }
+   * ESCENARIOS (presets de cirugía de fábrica)
+   * Vacío a propósito: el usuario pidió quitar todos los montajes de
+   * fábrica (los que se sembraban solos como "fab_<clave>" al arrancar,
+   * ver uidDeFabrica()/sembrarMontajes() en app.js). Los que ya existían
+   * en el navegador/repositorio de datos se borran aparte, una vez, con
+   * limpiarMontajesDeFabrica() -vaciar esto no los borra retroactivamente,
+   * solo evita que se vuelva a sembrar ninguno nuevo-. Si algún día hace
+   * falta un preset de fábrica otra vez, este es el formato:
+   *   "escenarios": {
+   *     "<clave>": { "nombre": "...", "tecnicas": [...], "asignaciones": {
+   *       "<claveCaja>": { "<idEntrada>": "<idMaterial>" } } }
+   *   }
    * idEntrada: "3" (canal), "6:anodal" / "8:catodal" (TES MEP),
    *            "ref" / "gnd" / "peatc" / "dns" / "extra_par" (especiales)
    * ------------------------------------------------------------------ */
-  "escenarios": {
-    "artrodesis_descompresion": {
-      "nombre": "Artrodesis + descompresión",
-      "tecnicas": ["t_pess", "t_pem", "emg", "mapeo_raices_tornillos", "hr_popliteo"],
-      "asignaciones": {
-        "caja_estimulo": {
-          "1": "l_mediano",
-          "2": "r_mediano",
-          "3": "l_ptn",
-          "4": "r_ptn"
-        },
-        "tes_mep": {
-          "6:anodal": "conmutador"
-        },
-        "registro_cortical": {
-          "1": "cz_prima",
-          "2": "cv2",
-          "3": "c3_prima",
-          "4": "c4_prima",
-          "5": "erb1",
-          "6": "erb2",
-          "8": "cvant",
-          "ref": "fz",
-          "gnd": "tierra"
-        },
-        "registro_muscular_mmss": {
-          "1": "l_fdio",
-          "5": "r_fdio",
-          "gnd": "tierra"
-        },
-        "registro_muscular_mmii": {
-          "9": "l_q",
-          "10": "l_ta",
-          "11": "l_ah",
-          "12": "l_g",
-          "13": "r_q",
-          "14": "r_ta",
-          "15": "r_ah",
-          "16": "r_g",
-          "gnd": "tierra"
-        }
-      },
-      "notas": "Los dos huecos poplíteos del reflejo H no caben en las 4 entradas numeradas de la caja de estímulo: valorar la entrada extra o una segunda caja."
-    },
-    "tumor_supratentorial_grid": {
-      "nombre": "Tumor supratentorial con GRID",
-      "tecnicas": ["t_pess", "c_pess", "t_pem", "c_pem", "phase_reversal", "mapeo_cortical", "mapeo_subcortical", "ecog", "eeg"],
-      "asignaciones": {
-        "caja_estimulo": {
-          "1": "l_mediano",
-          "2": "r_mediano",
-          "3": "l_ptn",
-          "4": "r_ptn"
-        },
-        "tes_mep": {
-          "6:anodal": "conmutador",
-          "8:catodal": "grid8"
-        },
-        "registro_cortical": {
-          "1": "cz_prima",
-          "2": "cv2",
-          "3": "c3_prima",
-          "4": "c4_prima",
-          "5": "erb1",
-          "6": "erb2",
-          "8": "cvant",
-          "ref": "fz",
-          "gnd": "tierra"
-        },
-        "registro_muscular_mmss": {
-          "1": "l_fdio",
-          "2": "l_ext",
-          "5": "r_fdio",
-          "6": "r_ext",
-          "gnd": "tierra"
-        },
-        "registro_muscular_mmii": {
-          "9": "l_ta",
-          "10": "l_ah",
-          "13": "r_ta",
-          "14": "r_ah",
-          "gnd": "tierra"
-        }
-      },
-      "notas": "Registro muscular simétrico; si se amplía, siempre en el lado contralateral a la lesión.",
-      "pendiente": "Referencia usada por el GRID (tira cortical, para Phase Reversal/DCS) — no confirmada todavía."
-    }
-  }
+  "escenarios": {}
 };
