@@ -6328,17 +6328,22 @@
   var TECMIO_REGIONES = {
     columna_medula: "Columna / médula espinal",
     fosa_posterior_tronco: "Fosa posterior / tronco",
+    cirugia_cerebral: "Cirugía cerebral",
     craneotomia_despierta: "Craneotomía despierta",
-    plexo_periferico: "Plexo braquial / nervio periférico"
+    plexo_periferico: "Plexo braquial / nervio periférico",
+    general: "General / multipropósito"
   };
 
   var TECMIO_SECCIONES = {
     estimulacion: "Estimulación",
     registro: "Registro",
     estimulacion_y_registro: "Estimulación y registro",
+    estimulacion_registro: "Estimulación / registro",
     filtros: "Filtros",
     barrido: "Barrido (sweep)",
     umbrales_referencia: "Umbrales de referencia",
+    tecnica_colision_onda_d: "Técnica de colisión (onda D)",
+    mapeo_subcortical_radiacion_optica: "Mapeo subcortical (radiación óptica)",
     notas_clinicas: "Notas clínicas"
   };
 
@@ -6397,7 +6402,73 @@
     uso_real: "Uso real", utilidad_descrita: "Utilidad descrita",
     diferencia_clave: "Diferencia clave", regla_practica: "Regla práctica",
     correlacion_riesgo_seidel: "Correlación de riesgo (Seidel)", promediado: "Promediado",
-    ventana: "Ventana"
+    ventana: "Ventana",
+    // Lote 3 + Lote 4 (04-09-2026) y nota de derivaciones optimizadas ISION.
+    descripcion: "Descripción", caracteristicas: "Características",
+    indicacion: "Indicación", indicaciones: "Indicaciones",
+    sensibilidad: "Sensibilidad", limitaciones: "Limitaciones",
+    criterios_isquemia_endarterectomia: "Criterios de isquemia (endarterectomía)",
+    electrodos: "Electrodos",
+    uso_principal_en_mio: "Uso principal en MIO", uso_epilepsia: "Uso en epilepsia",
+    efecto_anestesicos: "Efecto de los anestésicos",
+    color_de_luz: "Color de luz", canal_retino: "Canal de retino (ERG)",
+    mapeo_via_anterior_ONAP: "Mapeo vía anterior (ONAP)",
+    limitacion_principal: "Limitación principal",
+    mapeo_vs_monitorizacion: "Mapeo vs. monitorización",
+    gastrocnemio: "Gastrocnemio", soleo: "Sóleo",
+    confirmacion_h_reflejo: "Confirmación del H-reflejo",
+    parametros_monitorizados: "Parámetros monitorizados", mediado_por: "Mediado por",
+    variante_heteronima: "Variante heterónima",
+    contexto_investigacion_SCS: "Contexto de investigación (SCS)",
+    contexto_quirurgico_practico: "Contexto quirúrgico práctico",
+    fisiologia: "Fisiología", latencia_relativa_h_reflejo: "Latencia relativa al H-reflejo",
+    aplicacion_descrita: "Aplicación descrita",
+    diferenciacion_prm: "Diferenciación con el PRM", fundamento: "Fundamento",
+    objetivo: "Objetivo",
+    anestesia_requerida: "Anestesia requerida", montajes: "Montajes",
+    configuracion_segun_nervio_en_riesgo: "Configuración según el nervio en riesgo",
+    amplitud_normal_cR1: "Amplitud normal (cR1)", latencia: "Latencia",
+    ventaja_clinica: "Ventaja clínica",
+    parametros_alvarez_2023: "Parámetros (Álvarez 2023)",
+    parametros_moller_alternativos: "Parámetros alternativos (Moller)",
+    protocolo_busqueda: "Protocolo de búsqueda",
+    CN_VII: "CN VII", CN_XII: "CN XII", CN_IX_X: "CN IX/X",
+    anatomia_referencia: "Anatomía de referencia",
+    patrones_desplazamiento_por_tumor: "Patrones de desplazamiento por el tumor",
+    seguridad: "Seguridad",
+    tecnica_rejilla_multielectrodo: "Técnica de rejilla multielectrodo",
+    epoca: "Época",
+    tecnica_alternativa_electrodo_bola: "Técnica alternativa (electrodo de bola)",
+    criterio_localizacion_linea_media: "Criterio de localización (línea media)",
+    trayecto_general: "Trayecto general",
+    protocolo_detallado_nervio_facial_extracraneal: "Protocolo detallado (nervio facial extracraneal)",
+    identificacion_fascicular_intraneural: "Identificación fascicular intraneural",
+    verificacion_previa: "Verificación previa",
+    mapeo_directo_gandhi: "Mapeo directo (Gandhi)",
+    requisito_tecnico: "Requisito técnico", uso_diferencial: "Uso diferencial",
+    supuesto_no_validado: "Supuesto no validado", alternativa_conceptual: "Alternativa conceptual",
+    sitio_v3: "Sitio (V3)", electrodo_v3: "Electrodo (V3)",
+    sitio_v1: "Sitio (V1)", electrodo_v1: "Electrodo (V1)",
+    parametros_v3_y_v1: "Parámetros (V3 y V1)",
+    estimulacion_directa_intraoperatoria: "Estimulación directa intraoperatoria",
+    styloglossus: "Styloglossus", genioglosso: "Genioglosso",
+    lateralidad: "Lateralidad", posicion_mandibula: "Posición de la mandíbula",
+    patrones: "Patrones", tasa_de_registro: "Tasa de registro",
+    valores_normativos_v3_styloglossus: "Valores normativos V3 (styloglossus)",
+    valores_normativos_v1_styloglossus: "Valores normativos V1 (styloglossus)",
+    valores_estimulacion_directa_intraoperatoria: "Valores (estimulación directa intraoperatoria)",
+    ausente_en: "Ausente en", utilidad_diferencial: "Utilidad diferencial",
+    robustez_bajo_anestesia: "Robustez bajo anestesia",
+    principio: "Principio",
+    mmss_mediano_cubital_decusacion_normal: "MMSS mediano/cubital — decusación normal",
+    mmss_no_decusacion: "MMSS — sin decusación",
+    mmii_tibial_decusacion_normal: "MMII tibial — decusación normal",
+    mmii_no_decusacion: "MMII — sin decusación",
+    mmii_posicion_sentada: "MMII — posición sentada (fosa posterior)",
+    fpz_rara_vez_optima: "Fpz rara vez óptima", comprobar_decusacion: "Comprobar decusación",
+    opcional_erb_n13: "Opcional: Erb / N13", fallback_subcortical: "Fallback subcortical",
+    velocidad: "Velocidad", topografia_variable: "Topografía variable",
+    aclaracion_jaw_jerk: "Aclaración (jaw jerk)"
   };
 
   function etiquetaTecMio(clave, diccionario) {
@@ -6487,6 +6558,11 @@
     if (!claves.length && !(datos.fuente && datos.fuente.length)) return;
 
     var titulo = document.createElement("h5");
+    // Clase por sección (tecmio-titulo-estimulacion, -filtros, -barrido...):
+    // permite destacar en CSS justo lo que se consulta a media cirugía
+    // -estimulación, filtros, barrido- por encima de registro/notas, sin
+    // tocar este archivo si el color cambia (pedido por Pani, 04-09-2026).
+    titulo.className = "tecmio-titulo-seccion tecmio-titulo-" + clave;
     pintarTextoConResaltado(titulo, TECMIO_SECCIONES[clave] || etiquetaTecMio(clave, TECMIO_SECCIONES));
     contenedor.appendChild(titulo);
 
@@ -6529,7 +6605,20 @@
 
     var campos = document.createElement("div");
     campos.className = "caso-grupo-campos";
-    ["estimulacion", "registro", "estimulacion_y_registro", "filtros", "barrido", "umbrales_referencia", "notas_clinicas"].forEach(function (clave) {
+    // "descripcion" es texto libre suelto, no un objeto con subclaves y
+    // fuente como el resto de secciones -c_sep_cortical_directo es la única
+    // técnica que lo trae de momento-, así que se pinta aparte como intro.
+    if (tecnica.descripcion) {
+      var introDesc = document.createElement("p");
+      introDesc.className = "tecmio-descripcion";
+      pintarTextoConResaltado(introDesc, tecnica.descripcion);
+      campos.appendChild(introDesc);
+    }
+    [
+      "estimulacion", "registro", "estimulacion_y_registro", "estimulacion_registro",
+      "filtros", "barrido", "umbrales_referencia", "tecnica_colision_onda_d",
+      "mapeo_subcortical_radiacion_optica", "notas_clinicas"
+    ].forEach(function (clave) {
       pintarSeccionTecMio(campos, clave, tecnica[clave]);
     });
     det.appendChild(campos);

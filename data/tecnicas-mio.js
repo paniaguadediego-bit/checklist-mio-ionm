@@ -30,12 +30,35 @@
  * lenguaje, PESS fase-reversal de cisura central), plexo braquial/nervio
  * periférico (NAP/CNAP, PESS de troncos/cordones, EMG libre/estimulado
  * periférico) y reflejos de tronco adicionales (blink reflex, RMT, TCR,
- * PESS trigeminal). 22 técnicas en total.
+ * PESS trigeminal).
+ *
+ * Lote 3: c-SEP, RBC, EEG, ECoG, PEV (vía anterior + cortical), H-reflejo de
+ * sóleo/gastrocnemio, PRM, ARM, LAR, mapeo del IV ventrículo (BSM), mapeo de
+ * columnas dorsales, mapeo de nervio periférico, estimulación directa del
+ * cordón espinal.
+ *
+ * Lote 4: THR - reflejo trigémino-hipogloso (Mirallave Pescador 2022).
+ *
+ * Reorganización del 04-09-2026, pedida por Pani al llegar el Lote 3: las
+ * técnicas de mapeo/registro cortical que se hacen igual bajo anestesia
+ * general (DES cortical, DES subcortical, phase-reversal, c-SEP, ECoG, PEV
+ * cortical) salen de "craneotomia_despierta" a una región nueva,
+ * "cirugia_cerebral" -esa región ya no significa "el paciente está
+ * despierto", que es justo lo que la hacía confusa-. La región
+ * "craneotomia_despierta" se queda solo con lo que de verdad exige al
+ * paciente despierto: el mapeo de lenguaje. Ver TECMIO_REGIONES en app.js.
+ *
+ * También se añadió la región "general" (EEG, PEV vía anterior): técnicas
+ * que no son de una zona quirúrgica concreta.
  *
  * Un lote nuevo se añade empujando más objetos al array "tecnicas" de abajo,
  * con el mismo formato -no hace falta tocar app.js, que agrupa por el campo
  * "region" de cada técnica sea cual sea (las etiquetas legibles de región
- * están en TECMIO_REGIONES, ahí sí hay que añadir la región nueva a mano).
+ * están en TECMIO_REGIONES, ahí sí hay que añadir la región nueva a mano; lo
+ * mismo con TECMIO_SECCIONES si el lote trae una sección de nivel superior
+ * que no sea "estimulacion/registro/filtros/barrido/umbrales_referencia/
+ * notas_clinicas" -el Lote 3 añadió "estimulacion_registro",
+ * "mapeo_subcortical_radiacion_optica" y "tecnica_colision_onda_d"-).
  *
  * Orden dentro de cada región (pedido por Pani el 04-09-2026, no automático:
  * cualquier técnica nueva hay que insertarla a mano en el sitio que le
@@ -45,7 +68,8 @@
  *      ordenados por el nivel del par craneal implicado, de más rostral a
  *      más caudal: Blink Reflex (V1→VII, puente) → RMT/H-reflex del
  *      masetero (V3→V3, puente) → TCR (V→cervical, desciende a la médula
- *      cervical alta) → TVcR (V3→X vago/laringe, el más caudal).
+ *      cervical alta) → TVcR (V3→X vago/laringe) → LAR (X→X, puramente
+ *      vagal) → THR (V1/V3→XII hipogloso, el par craneal más caudal).
  *
  * Los "id" y "region" de cada técnica son claves internas y se quedan sin
  * acentos a propósito (regla del proyecto: snake_case sin acentos ni
@@ -55,15 +79,17 @@
  */
 window.TECNICAS_MIO = {
   "esquema_version": "1.0",
-  "generado": "2026-09-03",
+  "generado": "2026-09-04",
   "notas_meta": {
     "principio_fuentes": "Cada parámetro cuantitativo incluye su fuente. Cuando dos fuentes difieren, se muestran ambos valores explícitamente (nunca promediados ni combinados). Los campos sin dato verificado en las fuentes del proyecto se marcan como 'no especificado en fuentes'.",
     "convencion_claves": "snake_case sin acentos ni espacios, consistente con la convención Notion de Pani.",
-    "lote_actual": "Lote 1: Columna/médula espinal (6) + Fosa posterior/tronco - evocados y EMG (5) = 11. Lote 2: Craneotomía despierta (4) + Plexo braquial/nervio periférico (3) + Reflejos de tronco adicionales (4) = 11. Total 22 entradas, todas trazadas a fuente.",
+    "lote_actual": "Lote 1: Columna/médula - evocados (6) + Fosa posterior/tronco - evocados y EMG (5) = 11. Lote 2: Craneotomía despierta (4) + Plexo braquial/nervio periférico (3) + Reflejos de tronco (4) = 11. Lote 3: c-SEP, RBC, EEG, ECoG, PEV (vía anterior + cortical), H-R sóleo/gastrocnemio, PRM, ARM, LAR, mapeo IV ventrículo, mapeo columnas dorsales, mapeo nervio periférico, estimulación directa del cordón espinal = 14. Lote 4: THR (tras aporte de Mirallave Pescador 2022) = 1. Más la nota de derivaciones optimizadas ISION para PESS (MacDonald 2019, Tabla 3), añadida como entrada propia. Total 38 entradas, todas trazadas a fuente.",
+    "tecnicas_solicitadas_no_disponibles_en_fuentes": [
+      "Reflejo glosofaríngeo-trigeminal: mencionado por nombre en la discusión de Urriza 2025 (lista de reflejos trigémino-vagales) sin metodología ni parámetros propios - no hay fuente primaria en el proyecto que lo describa."
+    ],
     "categorias_pendientes_siguiente_lote": [
       "Variantes anestésicas específicas por técnica (TIVA vs halogenados) - de momento solo aparecen como nota clínica puntual, no como campo estructurado propio",
-      "emg_libre_estimulado_periferico queda como entrada de remisión (sin protocolo específico propio localizado en fuentes) - revisar si Pani tiene protocolo clínico propio que aportar como fuente",
-      "Posibles ampliaciones futuras si Pani las pide: laryngeal adductor reflex (LAR), reflejo trigémino-hipogloso, mapeo con sonda de succión aplicado a columna (Gandhi et al., ya referenciado parcialmente en pess_troncos/onda_d)"
+      "emg_libre_estimulado_periferico queda como entrada de remisión (sin protocolo específico propio localizado en fuentes) - revisar si Pani tiene protocolo clínico propio que aportar como fuente"
     ]
   },
   "tecnicas": [
@@ -93,7 +119,7 @@ window.TECNICAS_MIO = {
       "registro": {
         "sitio_cortical": "Cz'-Fz (o CPz-Fz); electrodo de aguja EEG",
         "sitio_subcortical": "Hueco poplíteo (fosa poplítea)",
-        "montaje": "10-20 internacional; considerar derivaciones optimizadas ISION",
+        "montaje": "10-20 internacional; ver derivaciones optimizadas ISION (pess_derivaciones_optimizadas_ision) para el montaje de mayor SNR",
         "nota_tecnica": "Si la onda P40 está ausente o es de baja amplitud, desplazar el electrodo de registro ~2 cm lateralmente hacia el lado contralateral a la estimulación",
         "fuente": ["Moller cap.6", "Boaro 2026", "Certificación Repertorio FEA"]
       },
@@ -140,7 +166,7 @@ window.TECNICAS_MIO = {
       "registro": {
         "sitio_cortical": "C3'/C4'-Fz (contralateral a la estimulación)",
         "sitio_subcortical": "Punto de Erb (plexo braquial)",
-        "montaje": "10-20 internacional; canales clásicos Cz'-Fz (pierna), C3'/C4'-Fz (brazo)",
+        "montaje": "10-20 internacional; canales clásicos Cz'-Fz (pierna), C3'/C4'-Fz (brazo); ver derivaciones optimizadas ISION (pess_derivaciones_optimizadas_ision) para mayor SNR",
         "fuente": ["Boaro 2026", "Moller cap.6"]
       },
       "filtros": {
@@ -160,6 +186,30 @@ window.TECNICAS_MIO = {
           "Menos sensible a isquemia de territorio de arteria espinal anterior que MMII en cirugía torácica - complementar con onda D/PEM"
         ],
         "fuente": ["Boaro 2026"]
+      }
+    },
+    {
+      "id": "pess_derivaciones_optimizadas_ision",
+      "categoria": "PESS",
+      "region": "columna_medula",
+      "nombre": "PESS - derivaciones corticales optimizadas por SNR (MacDonald 2019 ISION)",
+      "registro": {
+        "principio": "En vez de una derivación cortical fija, se comparan varias candidatas centroparietales por lado y se elige la de mayor SNR (mayor amplitud de señal con ruido similar) - esto reduce drásticamente el número de barridos necesarios para reproducibilidad media-alta.",
+        "mmss_mediano_cubital_decusacion_normal": "Periférica de control: fosa cubital (CF). Cortical, ordenadas por frecuencia: CPc-CPz (óptima en el 75% de los nervios medianos), CPc-CPi, o CPc-Fz",
+        "mmss_no_decusacion": "Periférica: fosa cubital (CF). Cortical: CPi-CPz, CPi-CPc, o CPi-Fz",
+        "mmii_tibial_decusacion_normal": "Periférica de control: fosa poplítea (PF). Cortical (mayor SNR): CPz-CPc (óptima en ~40% de los nervios tibiales - la más frecuente pero no dominante como en MMSS), Cz-CPc, Pz-CPc, iCPi-CPc, CPi-CPc, o Cz-Pz",
+        "mmii_no_decusacion": "Periférica: fosa poplítea (PF). Cortical: CPz-CPi, Cz-CPi, Pz-CPi, iCPc-CPi, CPc-CPi, o Cz-Pz",
+        "mmii_posicion_sentada": "Cualquier decusación: CPz-Fpz (única excepción donde Fpz sí es óptima - el aire intracraneal tras apertura dural puede reducir/anular los potenciales laterales, pero las venas puente al seno sagital mantienen el córtex de pierna en contacto dural)",
+        "fuente": ["MacDonald 2019 ISION (Tabla 3)", "Neurophysiology in Neurosurgery 2ed Tabla 3.3"]
+      },
+      "notas_clinicas": {
+        "fpz_rara_vez_optima": "Fpz casi nunca es óptima fuera del caso de posición sentada de arriba - el ruido EEG frontal de banda rápida reduce el SNR aunque a veces la señal bruta sea mayor",
+        "comprobar_decusacion": "Comprobar decusación con derivación coronal (CPc-M / CPi-M, M=mastoides) antes de fijar la derivación - no asumirla",
+        "opcional_erb_n13": "Opcional si no retrasa el feedback: punto de Erb (EPi-M) y/o N13 cervical (C5S-M) - mejor SNR que las derivaciones tradicionales de Erb/C5S",
+        "fallback_subcortical": "Solo si el cortical está muy comprometido por anestesia inhalatoria o patología previa: MMSS = CPi-M (CPc-M si no decusa); MMII = Fpz-M",
+        "velocidad": "CPc-CPz (mediano) reproduce en mediana 50-120 barridos vs. cientos/miles con derivaciones tradicionales (CPc-Fpz, CPi-EPc, etc.); tibial óptima en mediana 128 barridos vs. 512 (CPz-Fpz tradicional)",
+        "topografia_variable": "En ~30% de pacientes la topografía cortical del PESS tibial cambia gradualmente durante la cirugía (el punto de máxima P37 se desplaza) - si hay caída asimétrica inexplicada fuera de contexto quirúrgico, reoptimizar antes de alarmar",
+        "fuente": ["MacDonald 2019 ISION (Tabla 3)", "Neurophysiology in Neurosurgery 2ed Tabla 3.3"]
       }
     },
     {
@@ -280,6 +330,54 @@ window.TECNICAS_MIO = {
       }
     },
     {
+      "id": "rbc_bulbocavernoso",
+      "categoria": "RBC",
+      "region": "columna_medula",
+      "nombre": "Reflejo bulbocavernoso (RBC/BCR)",
+      "estimulacion": {
+        "sitio": "Nervio dorsal del pene (varón) o clítoris (mujer) - aferencias pudendas",
+        "electrodo": "Dos discos de plata/cloruro de plata; varón: cátodo proximal; mujer: cátodo sobre el clítoris, ánodo sobre labios mayores",
+        "parametros": "Pulsos rectangulares de 0.2-0.5 ms, tren de 5 estímulos, ISI 4 ms, tasa de repetición 2.3 Hz, intensidad hasta 40 mA",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.6/29 (Vodusek, Deletis)"]
+      },
+      "registro": {
+        "sitio": "Esfínter anal externo",
+        "electrodo": "Dos pares de electrodos intramusculares hook-wire, teflón-coated, insertados en los hemiesfínteres",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.29"]
+      },
+      "notas_clinicas": {
+        "utilidad": "Reflejo oligosináptico - valora la integridad de las fibras aferentes y eferentes del nervio pudendo junto con el centro reflejo de la sustancia gris S2-S4",
+        "indicacion": "Se añade a la batería neurofisiológica siempre que la lesión afecte a segmentos lumbosacros de la médula (conus medullaris, cauda equina, tethered cord)",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.29"]
+      }
+    },
+    {
+      "id": "h_reflejo_soleo_gastrocnemio",
+      "categoria": "H-Reflejo",
+      "region": "columna_medula",
+      "nombre": "H-Reflejo de sóleo y gastrocnemio",
+      "estimulacion": {
+        "sitio": "Nervio tibial posterior en el hueco poplíteo",
+        "electrodo": "Aguja o superficie; ánodo en el área medial distal del hueco poplíteo, cátodo ~4-5 cm lateral y proximal",
+        "parametros": "Tasa 0.5 Hz; duración de estímulo larga (1 ms), baja intensidad, para activar selectivamente fibras Ia; intensidad ajustada para amplitud máxima del H-reflejo (más allá de ese punto, subir la intensidad lo inhibe y aparece la onda M)",
+        "fuente": ["Leppanen 2005/2006 ASNM"]
+      },
+      "registro": {
+        "gastrocnemio": "Agujas EEG subdérmicas en la cabeza medial de ambos gastrocnemios",
+        "soleo": "Mismo montaje; electrodos sobre la línea media dorsal de la pierna, activo 4 cm proximal a la unión de las dos cabezas del gastrocnemio con el tendón de Aquiles, referencia 3 cm distal al activo",
+        "filtros": "Pasa-alto 2-30 Hz, pasa-bajo 10-30 kHz (evitar pasa-alto >50 Hz y pasa-bajo <3 kHz)",
+        "barrido": "100 ms, registro single-sweep",
+        "fuente": ["Leppanen 2005/2006 ASNM"]
+      },
+      "notas_clinicas": {
+        "confirmacion_h_reflejo": "La amplitud debe superar la de la onda M, y la configuración/latencia deben ser constantes de un estímulo a otro",
+        "parametros_monitorizados": "Amplitud, latencia (habitualmente <35 ms, mayor intraoperatoriamente por hipotermia del miembro), ratio H:M, diferencias derecha-izquierda",
+        "mediado_por": "Fibras Ia aferentes (segmento S1) - útil para valorar la integridad de la vía monosináptica S1, complementario al PESS/PEM en cirugía de médula baja/cauda equina",
+        "variante_heteronima": "H-reflejos heterónimos (en músculos de segmento distinto al de la aferencia Ia activada) pueden aparecer en lesiones de motoneurona superior por disminución de la inhibición presináptica - signo de disfunción del sistema motor central",
+        "fuente": ["Leppanen 2005/2006 ASNM"]
+      }
+    },
+    {
       "id": "emg_estimulado_tornillo_pedicular",
       "categoria": "EMG",
       "region": "columna_medula",
@@ -323,6 +421,54 @@ window.TECNICAS_MIO = {
           "Ante duda, comparar el umbral del tornillo con el umbral de estimulación directa de la raíz visible en el campo (técnica de control)"
         ],
         "fuente": ["Leppanen 2005/2006 ASNM", "Moller cap.10", "Toleikis cap.13"]
+      }
+    },
+    {
+      "id": "mapeo_columnas_dorsales",
+      "categoria": "Mapeo de columnas dorsales",
+      "region": "columna_medula",
+      "nombre": "Mapeo de columnas dorsales (localización de la línea media medular y el DREZ)",
+      "estimulacion": {
+        "nervio": "Mediano o tibial periférico",
+        "parametros": "Hasta 40 mA, 0.2 ms, 13.3 Hz (técnica de rejilla multielectrodo)",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.12"]
+      },
+      "registro": {
+        "tecnica_rejilla_multielectrodo": "Rejilla miniatura de 8 hilos de acero inoxidable paralelos (76 µm de diámetro, separados 1 mm), colocada sobre la columna dorsal expuesta, alineada con el eje longitudinal de la médula; referencia en músculo cercano; 2 sets de 100-200 barridos promediados por cada uno de los 8 canales",
+        "filtros": "50-1700 Hz",
+        "epoca": "~20 ms",
+        "tecnica_alternativa_electrodo_bola": "Electrodo de bola de plata o disco de acero inoxidable: registro de PESS por inversión de fase directamente sobre la médula, o registro de NAP (potencial de acción nervioso) desde nervios periféricos para localizar el DREZ (zona de entrada de la raíz dorsal)",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.12"]
+      },
+      "notas_clinicas": {
+        "criterio_localizacion_linea_media": "La línea media funcional se determina como el punto entre los dos electrodos de registro con mayor amplitud del PESS (gradiente de amplitud). Para PESS de tibial la amplitud máxima está hacia la línea media y decrece hacia el DREZ. Para PESS de mediano (lesiones cervicales) el patrón es inverso, con amplitudes mayores lateralmente cerca del DREZ.",
+        "indicacion": "Localización de la línea media medular y del DREZ para procedimientos como mielotomía en tumores intramedulares o siringomielia",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.12"]
+      }
+    },
+    {
+      "id": "estimulacion_directa_cordon_espinal",
+      "categoria": "Estimulación directa CE",
+      "region": "columna_medula",
+      "nombre": "Estimulación directa del cordón espinal (mapeo intramedular) y técnica de colisión de la onda D",
+      "estimulacion": {
+        "mapeo_directo_gandhi": "Pulsos bifásicos de 1 ms de duración, tasa 60 Hz, sonda bipolar concéntrica; intensidad 0.1-1 mA; mapeo dentro de la cavidad de resección en cirugía de tumores intramedulares",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.12 (protocolo de Gandhi et al.)"]
+      },
+      "registro": {
+        "musculos": "Músculos de miembros (respuesta motora similar al PEM)",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.12"]
+      },
+      "tecnica_colision_onda_d": {
+        "fundamento": "La onda D descendente generada por TES colisiona con el volley ascendente antidrómico generado por la estimulación directa de la médula (sonda) cuando esta está próxima al tracto corticoespinal - la colisión reduce la amplitud de la onda D registrada caudalmente (hasta un 50% de reducción máxima)",
+        "requisito_tecnico": "Sincronización precisa del disparo entre el estimulador de alta intensidad (TES) y el de baja intensidad (sonda medular)",
+        "uso_diferencial": "Comparando la amplitud de la onda D proximal y distal antes y después de la colisión, se puede diferenciar entre fibras del CST sanas, desincronizadas y bloqueadas",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.12"]
+      },
+      "notas_clinicas": {
+        "supuesto_no_validado": "El protocolo de Gandhi et al. asume que la estimulación activa exclusivamente las fibras de conducción rápida del CST - esto no está completamente confirmado según la propia fuente",
+        "alternativa_conceptual": "Técnica análoga al mapeo subcortical supratentorial (ver mapeo_subcortical_des) pero aplicada dentro del cordón espinal expuesto, en vez de en sustancia blanca cerebral",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.12"]
       }
     },
     {
@@ -508,6 +654,7 @@ window.TECNICAS_MIO = {
           "Reflejo estrictamente unilateral - comparar siempre con el lado contralateral cuando sea posible",
           "Sin criterios de alerta validados aún - técnica en fase de validación quirúrgica, no consolidada como estándar según la propia fuente"
         ],
+        "aclaracion_jaw_jerk": "Confirmado con Pani: el chip 'H-R Masetero (Jaw Jerk)' de su herramienta corresponde a esta técnica eléctrica (estimulación del nervio maseterino), no a la percusión mentoniana clásica del jaw jerk por estiramiento - esa variante por percusión no está descrita como protocolo propio en las fuentes del proyecto.",
         "fuente": ["Neurophysiology in Neurosurgery 2ed cap.16"]
       }
     },
@@ -574,6 +721,73 @@ window.TECNICAS_MIO = {
       }
     },
     {
+      "id": "lar_reflejo_laringeo_aductor",
+      "categoria": "LAR",
+      "region": "fosa_posterior_tronco",
+      "nombre": "LAR - Reflejo laríngeo aductor",
+      "estimulacion": {
+        "sitio": "Mucosa laríngea (nervio laríngeo superior interno, iSLN) - vía electrodos de superficie integrados en el tubo endotraqueal, en contacto con la mucosa",
+        "anestesia_requerida": "TIVA obligatoria (propofol + remifentanilo) - los agentes inhalatorios a >=1 MAC y la lidocaína tópica al 4% sobre la mucosa laríngea suprimen significativamente todos los componentes del LAR",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.15 (Téllez, Ulkatan, Sinclair)"]
+      },
+      "registro": {
+        "electrodo": "Tubo endotraqueal con electrodos de superficie a ambos lados en contacto con las cuerdas vocales derecha e izquierda; verificar el posicionamiento correcto con videolaringoscopio antes de empezar",
+        "montajes": "V1/V2 (entre los dos electrodos de una misma cuerda vocal), V1/referencia, V2/referencia (referencia = aguja subcutánea en esternón, tierra subdérmica) - usar el montaje más estable de los tres",
+        "configuracion_segun_nervio_en_riesgo": "Si el nervio recurrente laríngeo (NRL) está en riesgo: electrodos de estimulación en el lado contralateral del tubo y registro en el lado ipsilateral al NRL en riesgo (permite registrar componentes cR1/cR2 desde los músculos inervados por el NRL en riesgo). Si el iSLN es el nervio en riesgo (ej. cirugía cervical alta): disposición inversa.",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.15"]
+      },
+      "notas_clinicas": {
+        "componentes": "R1 y R2, cada uno con componente ipsilateral y contralateral (iR1, cR1, iR2, cR2) respecto al lado estimulado",
+        "amplitud_normal_cR1": "Media 313.5 +/- 167.4 µV en función laríngea normal; mínimo útil para monitorización fiable 150-200 µV, óptimamente >200 µV",
+        "latencia": "Muy variable (22.4 +/- 2.5 ms) - NO es un buen parámetro para predecir lesión nerviosa, a diferencia de la amplitud",
+        "criterio_alerta": "Caída de amplitud >50% respecto al basal = posible lesión inminente, avisar al cirujano y liberar tejido. Caída >60% sin recuperación tras liberar tejido = alta probabilidad de disfunción de cuerda vocal/nervio postoperatoria.",
+        "ventaja_clinica": "Técnica no invasiva, continua, sin interferir con el campo quirúrgico; permite valorar simultáneamente estructuras aferentes y eferentes del nervio vago; útil en cirugía de tiroides, base de cráneo, ángulo pontocerebeloso y tronco",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.15"]
+      }
+    },
+    {
+      "id": "reflejo_trigemino_hipogloso_thr",
+      "categoria": "THR",
+      "region": "fosa_posterior_tronco",
+      "nombre": "THR - Reflejo trigémino-hipogloso (jaw-tongue reflex)",
+      "estimulacion": {
+        "sitio_v3": "Bajo el arco cigomático, 0.5 cm anterior a la ATM - mismo punto de acceso percutáneo que el H-reflejo del masetero (Godaux y Desmedt)",
+        "electrodo_v3": "Par de agujas monopolares aisladas hasta la punta, 18 mm, cátodo y ánodo separados 1.5-2 cm",
+        "sitio_v1": "Foramen supraorbitario - cátodo cerca del foramen, ánodo subcutáneo 2 cm por encima",
+        "electrodo_v1": "Par de agujas aisladas hasta la punta, 13 mm",
+        "parametros_v3_y_v1": "Tren corto de 2-4 pulsos, duración 200-500 µs (el artículo original imprime 'ms' pero es físicamente incompatible con un ISI de 2 ms entre pulsos del mismo tren - casi con toda seguridad es un error tipográfico por 200-500 µs/0.2-0.5 ms; verificar contra el pulso corto habitual de reflejos de tronco antes de programarlo en tu equipo), tasa de repetición 0.4-0.7 Hz, ISI entre pulsos del tren 2 ms",
+        "estimulacion_directa_intraoperatoria": "Sonda bipolar concéntrica de mano sobre el nervio trigémino expuesto en el campo quirúrgico (cerca del tronco): estímulo único de 0.2 ms de duración, intensidad máxima 2 mA, tasa 2 Hz",
+        "fuente": ["Mirallave Pescador 2022"]
+      },
+      "registro": {
+        "electrodo": "Par de agujas monopolares trenzadas, aisladas hasta la punta, 13 mm, separadas no más de 1 cm (minimiza contaminación por campo lejano/volumen de músculos vecinos)",
+        "styloglossus": "Cara postero-lateral de la lengua, tras proteruirla y exponerla mecánicamente con una gasa",
+        "genioglosso": "Suelo de la base de la lengua, bajo la masa lingual principal",
+        "filtros": "Pasa-alto 30 Hz, pasa-bajo 1000 Hz",
+        "barrido": "20 ms/división",
+        "lateralidad": "Ipsilateral a la lesión si está lateralizada; bilateral si es medial o el cirujano lo permite",
+        "posicion_mandibula": "Bloque de mordida (dos rollos de gasa entre molares) manteniendo los labios separados 2-3 cm, con la mandíbula en posición semiabierta ~45 grados - esta posición favorece la aparición del reflejo jaw-opening frente al jaw-closing",
+        "fuente": ["Mirallave Pescador 2022"]
+      },
+      "notas_clinicas": {
+        "patrones": "Jaw-opening THR (activación de styloglosso, músculo retractor) es el patrón ampliamente predominante (31 de 32 lados con respuesta en la serie); Jaw-closing THR (activación de genioglosso, músculo protractor) es muy infrecuente (2 casos)",
+        "tasa_de_registro": "THR registrable en 82.1% de los lados (32/39) con estimulación V3",
+        "valores_normativos_v3_styloglossus": "Latencia 42.51 +/- 3.85 ms, amplitud 77.64 +/- 70.89 µV (n=31/39 lados). Al cierre de la cirugía: latencia 40.68 +/- 9.62 ms, amplitud 68.43 +/- 63.5 µV, duración 32.38 +/- 18.58 ms (n=25)",
+        "valores_normativos_v1_styloglossus": "Latencia 48.65 +/- 14.4 ms, amplitud 67.27 +/- 73.46 µV (n=4/39) - se pudo obtener simultáneamente con el blink reflex al estimular V1",
+        "valores_estimulacion_directa_intraoperatoria": "Latencia más corta, 19.1 ms, amplitud 108.15 µV (n=2) - trayecto más corto al estar la estimulación más próxima al tronco",
+        "ausente_en": "Neuralgia del trigémino con radiofrecuencia previa (2 pacientes), schwannoma del hipogloso en el lado de la lesión (esperable, vía eferente lesionada), schwannomas vestibulares grandes Koos IV (4 pacientes)",
+        "utilidad_diferencial": "Permite distinguir alteración motora de sensitiva de los pares craneales que inervan la cara cuando se pierde solo uno de los reflejos trigeminales (ej. THR preservado con blink reflex perdido, o viceversa) - aporta información que el resto de técnicas de MIO clásicas no cubre",
+        "robustez_bajo_anestesia": "Los componentes de latencia larga del THR (y del LAR) persisten bajo anestesia general con mayor robustez que los componentes de latencia larga del blink reflex (R2), que prácticamente nunca son evocables bajo AG - sugiere que la anestesia general no suprime todas las vías polisinápticas por igual",
+        "trampas_frecuentes": [
+          "La posición de la mandíbula influye en el tipo de respuesta obtenida (jaw-opening vs jaw-closing) - una mandíbula muy cerrada podría favorecer el patrón jaw-closing, infrecuente en la mayoría de posiciones quirúrgicas habituales",
+          "La TES para PEM/CoMEP puede generar una respuesta de latencia larga en el styloglosso por fuga de corriente hacia el trigémino, que puede confundirse con una CoMEP central auténtica de origen corticobulbar - diferenciar con el paradigma de tren corto vs estímulo único (si el estímulo único también genera respuesta a intensidad cercana al umbral del tren, sugiere activación periférica del trigémino, no corticobulbar)",
+          "Confirmar ausencia de CMAP inmediato tras el artefacto de estímulo (silencio muscular previo a la respuesta de latencia larga) para descartar activación directa del músculo o del nervio hipogloso en vez de un reflejo auténtico"
+        ],
+        "estado_de_validacion": "Técnica novedosa (primera descripción 2022) - sin criterio de alerta por amplitud validado; los cambios se clasifican como reversibles (recuperan tras pausa quirúrgica) o permanentes. En la serie descrita, pérdidas reversibles ocurrieron sobre todo durante manipulación trigeminal cercana a pares bajos/tronco bajo; pérdidas permanentes se asociaron en parte a profundidad anestésica (burst suppression) y en parte a manipulación/lesión real",
+        "fuente": ["Mirallave Pescador 2022"]
+      }
+    },
+    {
       "id": "mapeo_directo_pares_craneales",
       "categoria": "Fosa posterior/tronco",
       "region": "fosa_posterior_tronco",
@@ -597,9 +811,97 @@ window.TECNICAS_MIO = {
       }
     },
     {
+      "id": "mapeo_iv_ventriculo_bsm",
+      "categoria": "Mapeo del IV ventrículo",
+      "region": "fosa_posterior_tronco",
+      "nombre": "Mapeo del suelo del IV ventrículo (Brainstem Mapping, BSM) - localización de núcleos motores de pares craneales",
+      "estimulacion": {
+        "sonda": "Monopolar de punta fina, manual",
+        "parametros_alvarez_2023": "Intensidad inicial 1.0 mA, duración de pulso 0.05 ms, tasa de repetición 1.9-3.7 Hz; corriente constante <2.0 mA considerada segura",
+        "parametros_moller_alternativos": "Tasa de repetición <=10 pps (mejor 5 pps), duración de pulso corta (50-100 µs); estimulación bipolar puntual descrita en 0.5-2 mA según el caso",
+        "protocolo_busqueda": "Mover la sonda en pasos de 1 mm, manteniendo cada punto <5 segundos; bajar la intensidad progresivamente para precisar la localización una vez obtenida respuesta",
+        "fuente": ["Álvarez 2023", "Moller cap.14", "Neurophysiology in Neurosurgery 2ed cap.11 (Morota, Deletis, Epstein)"]
+      },
+      "registro": {
+        "CN_VII": "Orbicular oculi, orbicular oris, nasal, mentoniano - colículo facial",
+        "CN_XII": "Músculos intrínsecos de la lengua (genioglosos) - trígono del hipogloso, cerca del obex",
+        "CN_IX_X": "Pared faríngea posterior; alternativa cricotiroideo o vocalis - área rostrolateral al obex",
+        "fuente": ["Álvarez 2023", "Neurophysiology in Neurosurgery 2ed cap.11"]
+      },
+      "notas_clinicas": {
+        "anatomia_referencia": "Colículo facial ~20 mm rostral al obex; CN VI y VII bajo el colículo facial; CN XII bajo el trígono del hipogloso; zona 'segura' suprafacial e infrafacial descrita por Kyoshima (bordes: fascículo longitudinal medial en medial, nervio facial en caudal, pedúnculos cerebelosos en lateral)",
+        "patrones_desplazamiento_por_tumor": "Tumores pontinos desplazan el núcleo facial alrededor del borde tumoral; tumores bulbares desplazan los núcleos de pares bajos ventralmente; tumores de la unión cervicomedular los desplazan rostral y lateralmente - orienta la planificación de la incisión",
+        "seguridad": "En estudios animales: hipotensión/bradicardia con >2 mA y parada respiratoria con 3 mA de estimulación del suelo del IV ventrículo - máxima cautela con la intensidad, empezar siempre baja",
+        "limitaciones": "El BSM localiza el núcleo/raíz intramedular, pero NO garantiza la integridad funcional de todo el trayecto del par craneal (incluido el CBT) ni de componentes sensitivos o reflejos de tronco - combinar con CoMEP, EMG libre y reflejos de tronco",
+        "fuente": ["Álvarez 2023", "Neurophysiology in Neurosurgery 2ed cap.11", "Moller cap.14"]
+      }
+    },
+    {
+      "id": "c_sep_cortical_directo",
+      "categoria": "c-SEP",
+      "region": "cirugia_cerebral",
+      "nombre": "c-SEP - Monitorización continua mediante registro cortical directo (grid/strip) tras localización por inversión de fase",
+      "descripcion": "Una vez localizada S1 mediante phase-reversal (ver pess_fase_reversal_cisura_central) con el electrodo de grid/strip ya colocado, el mismo electrodo puede dejarse in situ para monitorizar el PESS de forma continua y directa desde la corteza durante el resto de la resección, en vez de solo usarse como localización puntual.",
+      "estimulacion": {
+        "nervio": "El mismo empleado en la localización inicial (habitualmente mediano)",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.3"]
+      },
+      "registro": {
+        "caracteristicas": "Registro near-field directo sobre la corteza - alta relación señal-ruido, requiere poco promediado a diferencia del PESS de escalpo. Registro referencial a escalpo/mastoides preferible sobre bipolar.",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.3"]
+      },
+      "notas_clinicas": {
+        "ventaja": "Al ser near-field y de alta amplitud, permite detectar cambios más rápido que el PESS de escalpo convencional durante la resección cercana al área cubierta por el grid",
+        "limitacion": "Solo vigila la función del área exacta cubierta por el electrodo - no sustituye al PESS de escalpo para vigilancia global de la vía somatosensorial",
+        "trampas_frecuentes": [
+          "Patología cerebral previa o malformación puede alterar, reducir u obliterar la respuesta, igual que en la localización inicial"
+        ],
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.3"]
+      }
+    },
+    {
+      "id": "ecog",
+      "categoria": "ECoG",
+      "region": "cirugia_cerebral",
+      "nombre": "Electrocorticografía (ECoG)",
+      "estimulacion": {
+        "nota": "No es una técnica de estimulación propia; actúa como adyuvante de seguridad durante DES (ver mapeo_lenguaje_des y mapeo_cortical_directo_des)"
+      },
+      "registro": {
+        "electrodos": "Tiras (strip) o rejillas (grid) multicontacto (4, 6, 8x32, etc.) colocadas directamente sobre la corteza",
+        "montaje": "Bipolar habitual - diferencia de potencial entre electrodos consecutivos, útil para localizar inversiones de fase de las espigas epileptiformes",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.32"]
+      },
+      "notas_clinicas": {
+        "uso_principal_en_mio": "Detección de afterdischarge y crisis durante mapeo de lenguaje/DES - la ausencia de afterdischarge valida la respuesta del paciente durante la tarea; su presencia la invalida y puede escalar a crisis clínica",
+        "uso_epilepsia": "Localización de foco epileptógeno mediante análisis visual de espigas e inicio ictal (fuera del foco principal de MIO pero mencionado por completitud, ya que comparte electrodos/técnica)",
+        "efecto_anestesicos": "Efecto variable y dependiente de concentración sobre espigas y crisis según el agente - anestesia más superficial suele ser preferible para registro diagnóstico de ECoG",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.32", "Neurophysiology in Neurosurgery 2ed cap.7", "Neurophysiology in Neurosurgery 2ed cap.41"]
+      }
+    },
+    {
+      "id": "pev_cortical_via_posterior",
+      "categoria": "PEV",
+      "region": "cirugia_cerebral",
+      "nombre": "PEV cortical (vía visual posterior) - utilidad limitada",
+      "estimulacion_registro": {
+        "nota": "Mismo flash/LED que en pev_via_anterior; registro sobre corteza occipital directamente (mapeo) o sobre escalpo en Oz (monitorización)",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.4"]
+      },
+      "mapeo_subcortical_radiacion_optica": {
+        "descripcion": "En craneotomía despierta, estimulación subcortical de la radiación óptica con evaluación verbal simultánea de la función visual del paciente (Shahar et al.) - la estimulación subcortical puede identificar la localización de la radiación óptica",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.4"]
+      },
+      "notas_clinicas": {
+        "limitacion_principal": "Alta variabilidad espacial de los PEV corticales - la utilidad de la monitorización de la vía posterior se describe explícitamente como limitada en la fuente. En la práctica, la resección tumoral suele completarse según la planificación preoperatoria independientemente de los hallazgos del PEV cortical.",
+        "mapeo_vs_monitorizacion": "El mapeo (identificar dónde está la radiación óptica) tiene más utilidad práctica descrita que la monitorización continua de la vía posterior",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.4"]
+      }
+    },
+    {
       "id": "mapeo_cortical_directo_des",
-      "categoria": "Craneotomía despierta",
-      "region": "craneotomia_despierta",
+      "categoria": "DES",
+      "region": "cirugia_cerebral",
       "nombre": "Mapeo cortical directo por estimulación eléctrica directa (DES) - técnica de Penfield y técnica de tren corto/alta frecuencia",
       "estimulacion": {
         "sonda": "Bipolar (Penfield clásica) o monopolar (técnica de tren corto/alta frecuencia)",
@@ -627,8 +929,8 @@ window.TECNICAS_MIO = {
     },
     {
       "id": "mapeo_subcortical_des",
-      "categoria": "Craneotomía despierta",
-      "region": "craneotomia_despierta",
+      "categoria": "DES",
+      "region": "cirugia_cerebral",
       "nombre": "Mapeo subcortical del tracto corticoespinal (DES catódica, monopolar o bipolar)",
       "estimulacion": {
         "polaridad": "Catódica preferible (independiente del paradigma)",
@@ -656,8 +958,32 @@ window.TECNICAS_MIO = {
       }
     },
     {
+      "id": "pess_fase_reversal_cisura_central",
+      "categoria": "PESS",
+      "region": "cirugia_cerebral",
+      "nombre": "Mapeo cortical somatosensorial por inversión de fase (localización de la cisura central)",
+      "estimulacion": {
+        "nervio": "Nervio mediano (de elección - criterios mejor establecidos y área de mano habitualmente expuesta); alternativa nervio tibial o trigeminal si es necesario",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.3"]
+      },
+      "registro": {
+        "tecnica": "Electrodo en tira o rejilla subdural colocado a través de la presunta cisura central; registro referencial a escalpo/mastoides preferible sobre bipolar (más fácil de interpretar)",
+        "criterio_localizacion": "Inversión de fase: N20 posterior a la cisura (negativo) y P20 anterior (positivo) simultáneos; criterio adicional P25 algo más tardío en la cresta de S1; M1 se infiere anterior al electrodo P20",
+        "precision_descrita": "~90% de los pacientes en la serie citada",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.3"]
+      },
+      "notas_clinicas": {
+        "ventaja": "Realizable bajo anestesia general, sin necesidad de craneotomía despierta - útil en niños o pacientes frágiles donde el mapeo motor tradicional (Penfield) no es viable",
+        "trampas_frecuentes": [
+          "Ambigüedad si el electrodo cae justo sobre la cisura central o lejos del área de mano - puede requerir reposicionar la rejilla",
+          "Patología cerebral previa o malformación puede alterar, reducir u obliterar la respuesta"
+        ],
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.3"]
+      }
+    },
+    {
       "id": "mapeo_lenguaje_des",
-      "categoria": "Craneotomía despierta",
+      "categoria": "DES",
       "region": "craneotomia_despierta",
       "nombre": "Mapeo de lenguaje y funciones cognitivas mediante DES (baja frecuencia y alta frecuencia)",
       "estimulacion": {
@@ -680,30 +1006,6 @@ window.TECNICAS_MIO = {
           "La técnica HF genera menos crisis que la LF - preferible en pacientes con antecedente de crisis, radioterapia previa, o alta carga de antiepilépticos"
         ],
         "fuente": ["Neurophysiology in Neurosurgery 2ed cap.7"]
-      }
-    },
-    {
-      "id": "pess_fase_reversal_cisura_central",
-      "categoria": "Craneotomía despierta",
-      "region": "craneotomia_despierta",
-      "nombre": "Mapeo cortical somatosensorial por inversión de fase (localización de la cisura central)",
-      "estimulacion": {
-        "nervio": "Nervio mediano (de elección - criterios mejor establecidos y área de mano habitualmente expuesta); alternativa nervio tibial o trigeminal si es necesario",
-        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.3"]
-      },
-      "registro": {
-        "tecnica": "Electrodo en tira o rejilla subdural colocado a través de la presunta cisura central; registro referencial a escalpo/mastoides preferible sobre bipolar (más fácil de interpretar)",
-        "criterio_localizacion": "Inversión de fase: N20 posterior a la cisura (negativo) y P20 anterior (positivo) simultáneos; criterio adicional P25 algo más tardío en la cresta de S1; M1 se infiere anterior al electrodo P20",
-        "precision_descrita": "~90% de los pacientes en la serie citada",
-        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.3"]
-      },
-      "notas_clinicas": {
-        "ventaja": "Realizable bajo anestesia general, sin necesidad de craneotomía despierta - útil en niños o pacientes frágiles donde el mapeo motor tradicional (Penfield) no es viable",
-        "trampas_frecuentes": [
-          "Ambigüedad si el electrodo cae justo sobre la cisura central o lejos del área de mano - puede requerir reposicionar la rejilla",
-          "Patología cerebral previa o malformación puede alterar, reducir u obliterar la respuesta"
-        ],
-        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.3"]
       }
     },
     {
@@ -766,6 +1068,120 @@ window.TECNICAS_MIO = {
       "notas_clinicas": {
         "diferencia_clave": "En cirugía de plexo/nervio periférico el objetivo suele ser identificar el nervio (mapeo) más que solo vigilar irritación - combinar con NAP/CNAP (ver entrada nap_cnap_nervio_periferico) para la decisión de neurolisis vs resección-injerto",
         "fuente": []
+      }
+    },
+    {
+      "id": "prm_reflejo_raiz_posterior",
+      "categoria": "PRM",
+      "region": "plexo_periferico",
+      "nombre": "PRM - Posterior Root-Muscle reflex",
+      "estimulacion": {
+        "contexto_investigacion_SCS": "Estimulación epidural o transcutánea de la médula espinal lumbosacra (fibras aferentes propioceptivas de raíces posteriores L1-S2) - contexto de investigación en rehabilitación/lesión medular",
+        "contexto_quirurgico_practico": "Ver protocolo combinado con ARM en la entrada arm_respuesta_raiz_anterior (mismo estímulo, mismo montaje) - dos estímulos idénticos con ISI 50 ms; si el segundo estímulo NO genera respuesta = PRM puro",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.18 (Minassian)", "Neurophysiology in Neurosurgery 2ed cap.31"]
+      },
+      "registro": {
+        "musculos": "Recto femoral, bíceps femoral, tibial anterior, sóleo - electrodos de superficie bipolares",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.18"]
+      },
+      "notas_clinicas": {
+        "fisiologia": "Comparte características con el H-reflejo (depresión post-activación, morfología EMG similar) pero con reclutamiento transináptico de una proporción mayor del pool de motoneuronas - permite valorar más músculos simultáneamente",
+        "latencia_relativa_h_reflejo": "La latencia del PRM de sóleo es ~63% de la latencia del H-reflejo de sóleo (por sitio de estimulación más proximal)",
+        "ventaja": "Registro en tiempo real de barrido único (sin promediado) da feedback inmediato al cirujano; útil para valorar la integridad del plexo lumbosacro, raíces y nervios periféricos de MMII simultáneamente, incluido el nervio femoral (difícil de monitorizar por otros medios)",
+        "aplicacion_descrita": "Caso de cirugía de nervio periférico (ciático) donde el PEM mostró fade anestésico pero el PRM permaneció estable, dando confianza al cirujano para continuar",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.18", "Neurophysiology in Neurosurgery 2ed cap.31"]
+      }
+    },
+    {
+      "id": "arm_respuesta_raiz_anterior",
+      "categoria": "ARM",
+      "region": "plexo_periferico",
+      "nombre": "ARM - Anterior Root Muscle response (ARMR)",
+      "estimulacion": {
+        "electrodo": "Superficie autoadhesiva rectangular 8x4 cm, o par de electrodos disco pequeños (2.2x3 cm) conectados como electrodo único",
+        "montaje": "Dorsoventral - cátodo en la espalda, sobre la proyección cutánea del espacio interespinoso L1-L3; ánodo sobre el abdomen (ombligo, o a ambos lados)",
+        "parametros": "Dos estímulos idénticos, ISI 50 ms, duración de cada estímulo 0.5-1 ms",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.31"]
+      },
+      "registro": {
+        "musculos": "Mismos que PRM (recto femoral, bíceps femoral, tibial anterior, sóleo), electrodos de superficie bipolares",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.31"]
+      },
+      "notas_clinicas": {
+        "diferenciacion_prm": "Si el SEGUNDO estímulo (a los 50 ms) SÍ genera respuesta = ARM (la vía motora ya no está en periodo refractario tras el primer estímulo); si NO genera respuesta = es PRM puro",
+        "fundamento": "El periodo refractario absoluto de la vía del PRM es de ~50 ms en humanos - por eso se usa ese intervalo para distinguir ambas respuestas con el mismo par de estímulos",
+        "objetivo": "Valorar de forma diferenciada la vía motora (raíz anterior) de la vía refleja (raíz posterior) con el mismo montaje de estimulación",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.31 (contexto: cirugía de osteotomía periacetabular y nervio periférico)"]
+      }
+    },
+    {
+      "id": "mapeo_nervio_periferico",
+      "categoria": "Mapeo de nervio periférico",
+      "region": "plexo_periferico",
+      "nombre": "Mapeo de nervio periférico (trayecto, ramas y fascículos)",
+      "estimulacion": {
+        "trayecto_general": "Sonda manual de mapeo desplazada a lo largo del trayecto sospechado del nervio, de forma análoga al mapeo de pares craneales (ver mapeo_directo_pares_craneales)",
+        "protocolo_detallado_nervio_facial_extracraneal": "Ejemplo de protocolo completo (mapeo transcutáneo del nervio facial extracraneal): sonda monopolar de bola no estéril como cátodo, aguja subdérmica sobre la apófisis mastoides como ánodo; estímulo único a 1 Hz, duración 200 µs, intensidad 1-40 mA; ganancia baja (100-200 µV) con barrido de 30-40 ms para detectar el umbral mínimo de una rama concreta (a diferencia de la monitorización, que usa ganancia de milivoltios con intensidad supramáxima)",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.24 (mapeo facial extracraneal, ejemplo detallado)", "Neurophysiology in Neurosurgery 2ed cap.14 (Moller, principio general)"]
+      },
+      "registro": {
+        "musculos": "Músculos diana según el nervio (ejemplo facial: orbicular oculi, orbicular oris, nasal, mentoniano, frontal) - electrodos de aguja subdérmica",
+        "identificacion_fascicular_intraneural": "La técnica de CNAP (ver nap_cnap_nervio_periferico) permite además probar fascículos individuales que entran/salen de tumores intraneurales, diferenciando fascículos funcionantes de no funcionantes durante la disección",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.24", "Neurophysiology in Neurosurgery 2ed cap.30"]
+      },
+      "notas_clinicas": {
+        "verificacion_previa": "Antes de mapear, comprobar que el bloqueo neuromuscular se ha eliminado completamente (relajante residual puede simular un nervio no funcionante) - estimular el tronco principal a intensidad supramáxima (ej. 20 mA) y verificar la amplitud de CMAP esperada antes de iniciar el mapeo distal",
+        "trampas_frecuentes": [
+          "Anestesia local inyectada por error cerca del nervio por el cirujano puede simular ausencia de respuesta",
+          "Un nervio neuropático por cirugía previa también reduce la amplitud sin significar sección completa"
+        ],
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.24"]
+      }
+    },
+    {
+      "id": "eeg",
+      "categoria": "EEG",
+      "region": "general",
+      "nombre": "Electroencefalograma (EEG) intraoperatorio",
+      "estimulacion": {
+        "nota": "Técnica pasiva, registro de actividad espontánea cortical"
+      },
+      "registro": {
+        "montaje": "Sistema internacional 10-20; ejemplo de 8 canales en contexto de cirugía de fosa posterior/IV ventrículo (Álvarez 2023)",
+        "filtros": "0.5-70 Hz (Álvarez 2023)",
+        "sensibilidad": "50-100 µV/división",
+        "barrido": "1000 ms/división",
+        "fuente": ["Álvarez 2023"]
+      },
+      "notas_clinicas": {
+        "criterios_isquemia_endarterectomia": "Caída de amplitud >60% o pérdida completa de señal = signo de alarma de reducción de perfusión. Enlentecimiento general de frecuencias, incremento de actividad delta (0-4 Hz), o reducción >50% de la actividad rápida de fondo = marcadores adicionales de isquemia.",
+        "burst_suppression": "Usado como medida de profundidad anestésica y como medida neuroprotectora con barbitúricos; vigilar la hipotensión concurrente, que puede confundir la interpretación de la señal",
+        "indicaciones": "Endarterectomía carotídea, cirugía de aneurismas, cualquier procedimiento con riesgo de isquemia cortical global, detección de crisis (ej. durante cirugía del IV ventrículo)",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.25 (endarterectomía carotídea)", "Neurophysiology in Neurosurgery 2ed cap.21 (aneurismas, burst suppression)", "Álvarez 2023"]
+      }
+    },
+    {
+      "id": "pev_via_anterior",
+      "categoria": "PEV",
+      "region": "general",
+      "nombre": "Potenciales evocados visuales (PEV) - vía visual anterior",
+      "estimulacion": {
+        "tipo": "Flash de alta intensidad (estroboscopio o LEDs); goggles con LED de alta intensidad preferibles sobre lente de contacto (menor riesgo corneal) o luz roja transmitida a través de los párpados cerrados",
+        "color_de_luz": "Verde preferible sobre rojo en cirugías largas - la luz roja provoca adaptación progresiva a la oscuridad del ojo, que puede confundirse con un cambio patológico",
+        "fuente": ["Moller cap.8", "Neurophysiology in Neurosurgery 2ed cap.4"]
+      },
+      "registro": {
+        "scalp": "Cz y Oz",
+        "filtros": "Pasa-alto 5 Hz, pasa-bajo 500 Hz",
+        "canal_retino": "Canal de electrorretinograma (ERG) registrado simultáneamente al PEV para confirmar que el estímulo luminoso llega correctamente a la retina de cada ojo (verificación pre-retiniana). Referenciar ojo izquierdo contra ojo derecho es coherente con el fundamento descrito en la fuente (la verificación de entrega de luz mediante ERG mejoró la capacidad predictiva del PEV del 60% al 100%), aunque el montaje electrodo-a-electrodo específico no está detallado en las fuentes del proyecto - queda registrado como aportación de experiencia clínica propia, no de la bibliografía.",
+        "mapeo_via_anterior_ONAP": "Alternativa de mapeo (no solo monitorización): registro directo del nervio óptico (ONAP, potencial de acción del nervio óptico) con electrodo de bola",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.4", "Moller cap.8"]
+      },
+      "notas_clinicas": {
+        "indicaciones": "Resección de lesiones intraorbitarias, paraselares, y corticales adyacentes a la vía óptica",
+        "criterio_alerta": "PEV plano = indicador de alteración visual postoperatoria grave (típicamente pérdida de agudeza visual, con o sin afectación del campo)",
+        "limitaciones": "Agudeza visual preoperatoria <0.03 impide un registro fiable. Falso negativo posible: el paciente puede despertar con un defecto campimétrico leve sin cambio en el PEV. Falso positivo posible: cambios intraoperatorios sin déficit postoperatorio, descritos durante manipulación del quiasma e hipotensión.",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.4"]
       }
     }
   ]

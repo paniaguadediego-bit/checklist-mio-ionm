@@ -937,18 +937,38 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
   margin-right: 0.4rem;
   white-space: nowrap;
 }
-.tecmio-tecnica .caso-grupo-campos h5 {
+/* Títulos de sección (Estimulación, Registro, Filtros...): antes todos
+   salían en el mismo gris apagado -text-muted-, indistinguibles a golpe de
+   vista. Ahora llevan un borde inferior de color propio, y Estimulación /
+   Filtros / Barrido -lo que más se consulta a media cirugía- se pintan en
+   --accent para que salten primero al escanear la ficha; Registro,
+   Umbrales y Notas clínicas quedan en un segundo nivel, más oscuro que
+   antes pero sin competir con los tres de arriba (pedido por Pani,
+   04-09-2026). */
+.tecmio-tecnica .caso-grupo-campos h5.tecmio-titulo-seccion {
   margin: 0.7rem 0 0.3rem;
-  font-size: 0.68rem;
+  padding-bottom: 0.15rem;
+  font-size: 0.7rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  color: var(--text);
+  border-bottom: 1px solid var(--border-soft);
 }
-.tecmio-tecnica .caso-grupo-campos h5:first-child { margin-top: 0; }
+.tecmio-tecnica .caso-grupo-campos h5.tecmio-titulo-seccion:first-child { margin-top: 0; }
+.tecmio-tecnica .caso-grupo-campos h5.tecmio-titulo-estimulacion,
+.tecmio-tecnica .caso-grupo-campos h5.tecmio-titulo-estimulacion_y_registro,
+.tecmio-tecnica .caso-grupo-campos h5.tecmio-titulo-estimulacion_registro,
+.tecmio-tecnica .caso-grupo-campos h5.tecmio-titulo-filtros,
+.tecmio-tecnica .caso-grupo-campos h5.tecmio-titulo-barrido {
+  color: var(--accent);
+  border-bottom-color: var(--accent-soft);
+}
 .tecmio-campos, .tecmio-sub { margin: 0; }
 .tecmio-campos dt, .tecmio-sub dt {
   font-size: 0.78rem;
   font-weight: 700;
+  color: var(--text);
   margin-top: 0.3rem;
 }
 .tecmio-campos dt:first-child, .tecmio-sub dt:first-child { margin-top: 0; }
@@ -964,6 +984,7 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
 }
 .tecmio-lista { margin: 0.1rem 0 0; padding-left: 1.1rem; font-size: 0.78rem; line-height: 1.4; }
 .tecmio-fuente { font-size: 0.68rem; font-style: italic; color: var(--text-muted); margin: 0.35rem 0 0.5rem; }
+.tecmio-descripcion { font-size: 0.8rem; line-height: 1.4; margin: 0 0 0.5rem; }
 #tecmio-buscar { margin-bottom: 0.5rem; }
 /* Coincidencias del buscador: fondo de acento, con el color de fondo
    general como texto -así se invierte solo en el tema oscuro, sin
