@@ -6322,12 +6322,15 @@
 
   var TECMIO_REGIONES = {
     columna_medula: "Columna / médula espinal",
-    fosa_posterior_tronco: "Fosa posterior / tronco"
+    fosa_posterior_tronco: "Fosa posterior / tronco",
+    craneotomia_despierta: "Craneotomía despierta",
+    plexo_periferico: "Plexo braquial / nervio periférico"
   };
 
   var TECMIO_SECCIONES = {
     estimulacion: "Estimulación",
     registro: "Registro",
+    estimulacion_y_registro: "Estimulación y registro",
     filtros: "Filtros",
     barrido: "Barrido (sweep)",
     umbrales_referencia: "Umbrales de referencia",
@@ -6359,7 +6362,37 @@
     umbral_alarma_mas_usado_mA: "Umbral de alarma más usado (mA)",
     rangos_alternativos_publicados_mA: "Rangos alternativos publicados (mA)",
     valores_normales_sin_brecha_mA: "Valores normales sin brecha (mA)",
-    aplicabilidad: "Aplicabilidad", valores_normativos: "Valores normativos", nota: "Nota"
+    aplicabilidad: "Aplicabilidad", valores_normativos: "Valores normativos", nota: "Nota",
+    polaridad: "Polaridad", protocolo_practico: "Protocolo práctico",
+    parametros_penfield_clasica: "Parámetros (Penfield clásica)",
+    parametros_tren_corto_alta_frecuencia: "Parámetros (tren corto/alta frecuencia)",
+    parametros_variables_segun_serie: "Parámetros según la serie",
+    tecnica_baja_frecuencia_lf: "Técnica de baja frecuencia (LF)",
+    tecnica_alta_frecuencia_hf: "Técnica de alta frecuencia (HF)",
+    corriente_de_trabajo_protocolo_us: "Corriente de trabajo (protocolo EE.UU.)",
+    corriente_de_trabajo_protocolo_europeo: "Corriente de trabajo (protocolo europeo)",
+    tareas: "Tareas", criterio_sitio_elocuente: "Criterio de sitio elocuente",
+    manejo_crisis: "Manejo de crisis", criterio_seguridad: "Criterio de seguridad",
+    nervio: "Nervio", tecnica: "Técnica",
+    criterio_localizacion: "Criterio de localización", precision_descrita: "Precisión descrita",
+    ventaja: "Ventaja", distancia_electrodos: "Distancia entre electrodos",
+    sensibilidad_inicial: "Sensibilidad inicial", ventana_tiempo: "Ventana de tiempo",
+    criterios_cnap_valido: "Criterios de CNAP válido", interpretacion: "Interpretación",
+    sitio_clave: "Sitio clave", indicacion_especifica: "Indicación específica",
+    limitacion: "Limitación", facilitacion_si_no_hay_respuesta: "Facilitación si no hay respuesta",
+    filtros_hz: "Filtros (Hz)", timing_recomendado: "Timing recomendado",
+    componentes: "Componentes", trampa_critica: "Trampa crítica",
+    sensibilidad_anestesica: "Sensibilidad anestésica",
+    contexto_anestesico_descrito: "Contexto anestésico descrito",
+    tasa_exito_descrita: "Tasa de éxito descrita", utilidad: "Utilidad",
+    parametros_intraoperatorios: "Parámetros intraoperatorios",
+    preoperatorio_diagnostico: "Preoperatorio diagnóstico", musculo: "Músculo",
+    valores_normativos_intraoperatorios_scm_ipsi: "Valores normativos intraoperatorios (SCM ipsilateral)",
+    estado_de_validacion: "Estado de validación", scalp: "Scalp", intracraneal: "Intracraneal",
+    uso_real: "Uso real", utilidad_descrita: "Utilidad descrita",
+    diferencia_clave: "Diferencia clave", regla_practica: "Regla práctica",
+    correlacion_riesgo_seidel: "Correlación de riesgo (Seidel)", promediado: "Promediado",
+    ventana: "Ventana"
   };
 
   function etiquetaTecMio(clave, diccionario) {
@@ -6446,7 +6479,7 @@
 
     var campos = document.createElement("div");
     campos.className = "caso-grupo-campos";
-    ["estimulacion", "registro", "filtros", "barrido", "umbrales_referencia", "notas_clinicas"].forEach(function (clave) {
+    ["estimulacion", "registro", "estimulacion_y_registro", "filtros", "barrido", "umbrales_referencia", "notas_clinicas"].forEach(function (clave) {
       pintarSeccionTecMio(campos, clave, tecnica[clave]);
     });
     det.appendChild(campos);

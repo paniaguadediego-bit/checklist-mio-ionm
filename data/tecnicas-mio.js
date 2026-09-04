@@ -21,16 +21,21 @@
  * Solo en castellano por ahora, igual que la Guía: app.js avisa dentro del
  * propio diálogo cuando la interfaz está en inglés.
  *
- * Lote 1 (este archivo): columna/médula (PESS tibial, PESS mediano/cubital,
- * PEM/TcMEP, onda D, EMG libre espinal, EMG estimulado tornillo pedicular) +
- * fosa posterior/tronco (PEATC/BAEP, CoMEP pares craneales, EMG libre pares
- * craneales/A-train, mapeo directo pares craneales, TVcR).
+ * Lote 1: columna/médula (PESS tibial, PESS mediano/cubital, PEM/TcMEP,
+ * onda D, EMG libre espinal, EMG estimulado tornillo pedicular) + fosa
+ * posterior/tronco - evocados y EMG (PEATC/BAEP, CoMEP pares craneales, EMG
+ * libre pares craneales/A-train, mapeo directo pares craneales, TVcR).
  *
- * Lote 2 (pendiente, ver notas_meta.categorias_pendientes_siguiente_lote):
- * craneotomía despierta, plexo braquial/periférico, reflejos de tronco
- * adicionales, PESS trigeminal. Se añade empujando más objetos al array
- * "tecnicas" de abajo, con el mismo formato -no hace falta tocar app.js,
- * que agrupa por el campo "region" de cada técnica sea cual sea.
+ * Lote 2: craneotomía despierta (mapeo cortical/subcortical DES, mapeo de
+ * lenguaje, PESS fase-reversal de cisura central), plexo braquial/nervio
+ * periférico (NAP/CNAP, PESS de troncos/cordones, EMG libre/estimulado
+ * periférico) y reflejos de tronco adicionales (blink reflex, RMT, TCR,
+ * PESS trigeminal). 22 técnicas en total.
+ *
+ * Un lote nuevo se añade empujando más objetos al array "tecnicas" de abajo,
+ * con el mismo formato -no hace falta tocar app.js, que agrupa por el campo
+ * "region" de cada técnica sea cual sea (las etiquetas legibles de región
+ * están en TECMIO_REGIONES, ahí sí hay que añadir la región nueva a mano).
  */
 window.TECNICAS_MIO = {
   "esquema_version": "1.0",
@@ -38,13 +43,11 @@ window.TECNICAS_MIO = {
   "notas_meta": {
     "principio_fuentes": "Cada parametro cuantitativo incluye su fuente. Cuando dos fuentes difieren, se muestran ambos valores explicitamente (nunca promediados ni combinados). Los campos sin dato verificado en las fuentes del proyecto se marcan como 'no especificado en fuentes'.",
     "convencion_claves": "snake_case sin acentos ni espacios, consistente con la convencion Notion de Pani.",
-    "lote_actual": "Columna/medula espinal (6 tecnicas) + Fosa posterior/tronco (5 tecnicas) = 11 entradas, todas trazadas a fuente.",
+    "lote_actual": "Lote 1: Columna/medula espinal (6) + Fosa posterior/tronco - evocados y EMG (5) = 11. Lote 2: Craneotomia despierta (4) + Plexo braquial/nervio periferico (3) + Reflejos de tronco adicionales (4) = 11. Total 22 entradas, todas trazadas a fuente.",
     "categorias_pendientes_siguiente_lote": [
-      "Craneotomia despierta: mapeo cortical/subcortical (DES), mapeo de lenguaje, PESS fase-reversal para localizacion de cisura central",
-      "Plexo braquial y nervio periferico: PESS de troncos/cordones, NAP (nerve action potentials), EMG libre/estimulado periferico",
-      "Reflejos de tronco adicionales: reflejo de parpadeo (blink reflex), reflejo masetetico trigeminal (RMT), reflejo trigemino-cervical (TCR)",
-      "PESS trigeminal",
-      "Variantes anestesicas especificas por tecnica (TIVA vs halogenados) - de momento solo aparecen como nota clinica puntual, no como campo estructurado propio"
+      "Variantes anestesicas especificas por tecnica (TIVA vs halogenados) - de momento solo aparecen como nota clinica puntual, no como campo estructurado propio",
+      "emg_libre_estimulado_periferico queda como entrada de remision (sin protocolo especifico propio localizado en fuentes) - revisar si Pani tiene protocolo clinico propio que aportar como fuente",
+      "Posibles ampliaciones futuras si Pani las pide: laryngeal adductor reflex (LAR), reflejo trigemino-hipogloso, mapeo con sonda de succion aplicado a columna (Gandhi et al., ya referenciado parcialmente en pess_troncos/onda_d)"
     ]
   },
   "tecnicas": [
@@ -467,6 +470,286 @@ window.TECNICAS_MIO = {
           "La intensidad critica para obtener respuesta no es fija - varia entre pacientes y con la profundidad anestesica"
         ],
         "fuente": ["Urriza 2025"]
+      }
+    },
+    {
+      "id": "mapeo_cortical_directo_des",
+      "categoria": "Craneotomia despierta",
+      "region": "craneotomia_despierta",
+      "nombre": "Mapeo cortical directo por estimulacion electrica directa (DES) - tecnica de Penfield y tecnica de tren corto/alta frecuencia",
+      "estimulacion": {
+        "sonda": "Bipolar (Penfield clasica) o monopolar (tecnica de tren corto/alta frecuencia)",
+        "parametros_penfield_clasica": "50-60 Hz, pulso rectangular de 1 ms, aplicacion de 1-4 s (1 s suele bastar para mapeo motor; 3-4 s para lenguaje/funcion cognitiva superior)",
+        "parametros_tren_corto_alta_frecuencia": "Tren de 5 estimulos monofasicos de 0.5 ms, ISI 4 ms, tasa de repeticion 1 Hz (mapeo motor)",
+        "polaridad": "Cortical: la corriente anodica es mas efectiva, independientemente del paradigma usado. Subcortical: catodica preferible.",
+        "tipo_estimulador": "Corriente constante preferible sobre voltaje constante - mas seguro y fiable, independiente de la impedancia del tejido",
+        "protocolo_practico": "Estimular cada punto al menos 3 veces; nunca el mismo punto 2 veces consecutivas; test control sin estimulacion entre estimulaciones (protocolo European Low Grade Glioma Network)",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.9"]
+      },
+      "registro": {
+        "musculos": "Segun el homunculo motor objetivo",
+        "electrodo": "EMG simultaneo de superficie (belly-tendon) o aguja subdermica (belly-belly) - recomendado para detectar movimientos sutiles o a distancia que podrian pasar desapercibidos",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.9"]
+      },
+      "notas_clinicas": {
+        "criterio_seguridad": "Mantener la intensidad por debajo del umbral de afterdischarge; ECoG concurrente recomendada. La tecnica clasica 50-60 Hz es sustancialmente mas epileptogena que la tecnica de tren corto (DCS-MEP).",
+        "trampas_frecuentes": [
+          "La estimulacion 50-60 Hz clasica puede inducir contraccion tonica progresiva que dificulta medir el umbral motor con precision",
+          "El tren corto monopolar es mas predictivo en corteza motora primaria; la bipolar 50 Hz clasica es mas sensible en corteza premotora/area motora suplementaria",
+          "Ante afterdischarge o crisis: irrigar con Ringer o suero frio; no reestimular inmediatamente"
+        ],
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.9"]
+      }
+    },
+    {
+      "id": "mapeo_subcortical_des",
+      "categoria": "Craneotomia despierta",
+      "region": "craneotomia_despierta",
+      "nombre": "Mapeo subcortical del tracto corticoespinal (DES catodica, monopolar o bipolar)",
+      "estimulacion": {
+        "polaridad": "Catodica preferible (independiente del paradigma)",
+        "parametros_variables_segun_serie": {
+          "kamada": "Catodica, tren de 5, pulso 0.2 ms",
+          "nossek": "Catodica, tren de 5-7, pulso 0.5 ms, 300 Hz",
+          "ohue": "Catodica, tren de 5, pulso 0.2 ms, 500 Hz",
+          "seidel": "Catodica, tren de 5, pulso 0.5 ms, 250 Hz (ISI 4 ms)"
+        },
+        "protocolo_practico": "Elevar la intensidad en incrementos de 2 mA, repitiendo la estimulacion con frecuencia mientras se mapea la trayectoria estimada del tracto (European Low Grade Glioma Network)",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.9, Tabla 9.2"]
+      },
+      "registro": {
+        "nota": "Mismos musculos/electrodos que PEM/CoMEP, segun el tracto que se esta mapeando",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.9"]
+      },
+      "notas_clinicas": {
+        "regla_practica": "Regla del pulgar ampliamente usada: ~1 mA de umbral equivale a ~1 mm de distancia al tracto corticoespinal (basada en la correlacion lineal de Nossek et al., 0.97 mA/mm). Kamada et al. postularon 1.8 mA como umbral de contacto directo con el CST.",
+        "correlacion_riesgo_seidel": "Tasa de cambios/perdida irreversible de PEM cortical segun grupo de intensidad de mapeo subcortical: 0% en >20 mA, 0% en 11-20 mA, 10% en 6-10 mA, 10% en 4-5 mA, 20% en 1-3 mA",
+        "trampas_frecuentes": [
+          "No existe consenso definitivo sobre la relacion exacta intensidad-distancia entre estudios - usar la regla de 1 mA = 1 mm como orientacion, nunca como valor absoluto",
+          "A mayor intensidad de estimulacion, mayor el area donde se pueden generar PEM - una respuesta positiva a alta intensidad no localiza con precision milimetrica"
+        ],
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.9"]
+      }
+    },
+    {
+      "id": "mapeo_lenguaje_des",
+      "categoria": "Craneotomia despierta",
+      "region": "craneotomia_despierta",
+      "nombre": "Mapeo de lenguaje y funciones cognitivas mediante DES (baja frecuencia y alta frecuencia)",
+      "estimulacion": {
+        "tecnica_baja_frecuencia_lf": "Bifasica, 0.5 ms de duracion, ISI 20 ms (50-60 Hz), sonda bipolar (puntas separadas 5 o 10 mm) - paradigma tradicional",
+        "tecnica_alta_frecuencia_hf": "Monofasica, 0.5 ms, tren de 5 estimulos, ISI 4 ms, sonda monopolar; tasa de repeticion 1 Hz para mapeo motor o 3 Hz para mapeo de lenguaje - no superar 3 Hz (aumenta riesgo de crisis sin mejorar la tecnica)",
+        "corriente_de_trabajo_protocolo_us": "Incrementos de 0.5 mA desde 2 mA hasta afterdischarge en ECoG (ECoG obligatoria); rango habitual resultante 3.5-15 mA; tasa de crisis inducidas 2-25%",
+        "corriente_de_trabajo_protocolo_europeo": "Incrementos de 0.5 mA desde 2 mA hasta anartria/interferencia clara en tarea de nombrar, sin buscar afterdischarge; rango habitual resultante 2-5.5 mA; tasa de crisis inducidas 0.5-5%",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.7"]
+      },
+      "registro": {
+        "tareas": "Nombrar objetos/acciones/personas famosas, cuenta, asociacion semantica - segun el lobulo explorado",
+        "criterio_sitio_elocuente": "Error reproducible en al menos 3 estimulaciones no consecutivas",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.7"]
+      },
+      "notas_clinicas": {
+        "manejo_crisis": "Irrigacion con suero frio (Ringer o NaCl isotonico); si no cede, bolo de propofol (0.5-1 mL); no reestimular inmediatamente tras una crisis",
+        "trampas_frecuentes": [
+          "Estimulacion cortical: aplicar cada 2 items, nunca el mismo sitio 2 veces consecutivas, para reducir el riesgo de afterdischarge",
+          "Mapeo subcortical: se usa la misma intensidad de corriente establecida en el mapeo cortical; solo los sitios con error reproducible en presencia de ECoG silente (si disponible) se consideran fiables",
+          "La tecnica HF genera menos crisis que la LF - preferible en pacientes con antecedente de crisis, radioterapia previa, o alta carga de antiepilepticos"
+        ],
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.7"]
+      }
+    },
+    {
+      "id": "pess_fase_reversal_cisura_central",
+      "categoria": "Craneotomia despierta",
+      "region": "craneotomia_despierta",
+      "nombre": "Mapeo cortical somatosensorial por inversion de fase (localizacion de la cisura central)",
+      "estimulacion": {
+        "nervio": "Nervio mediano (de eleccion - criterios mejor establecidos y area de mano habitualmente expuesta); alternativa nervio tibial o trigeminal si es necesario",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.3"]
+      },
+      "registro": {
+        "tecnica": "Electrodo en tira o rejilla subdural colocado a traves de la presunta cisura central; registro referencial a escalpo/mastoides preferible sobre bipolar (mas facil de interpretar)",
+        "criterio_localizacion": "Inversion de fase: N20 posterior a la cisura (negativo) y P20 anterior (positivo) simultaneos; criterio adicional P25 algo mas tardio en la cresta de S1; M1 se infiere anterior al electrodo P20",
+        "precision_descrita": "~90% de los pacientes en la serie citada",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.3"]
+      },
+      "notas_clinicas": {
+        "ventaja": "Realizable bajo anestesia general, sin necesidad de craneotomia despierta - util en ninos o pacientes fragiles donde el mapeo motor tradicional (Penfield) no es viable",
+        "trampas_frecuentes": [
+          "Ambiguedad si el electrodo cae justo sobre la cisura central o lejos del area de mano - puede requerir reposicionar la rejilla",
+          "Patologia cerebral previa o malformacion puede alterar, reducir u obliterar la respuesta"
+        ],
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.3"]
+      }
+    },
+    {
+      "id": "nap_cnap_nervio_periferico",
+      "categoria": "Plexo braquial / nervio periferico",
+      "region": "plexo_periferico",
+      "nombre": "Potencial de accion nervioso compuesto (CNAP/NAP) - registro directo intraoperatorio",
+      "estimulacion": {
+        "distancia_electrodos": "Minimo 4 cm entre estimulacion y registro (posible pero con mas artefacto de estimulo); preferible 8-10 cm",
+        "parametros": "Pulsos de 0.02 ms de duracion, intensidad 6-8 V (aprox. 3-5 mA), aplicados habitualmente en el extremo proximal del segmento a estudiar",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.30 (Kline)"]
+      },
+      "registro": {
+        "sensibilidad_inicial": "200-500 (uV)/cm, aumentando progresivamente hasta 10 (uV)/cm si no hay respuesta visible",
+        "ventana_tiempo": "0.5-1 ms/cm",
+        "electrodo": "Aguja o gancho (hook) percutaneo o en contacto directo con el nervio",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.30 (Kline)"]
+      },
+      "notas_clinicas": {
+        "criterios_cnap_valido": "Fijo/'congelado' en la pantalla con estimulacion repetitiva (phase-locked al estimulo); amplitud siempre <2 mV (una respuesta >2 mV es mas probablemente un potencial de accion muscular, no un CNAP nervioso puro)",
+        "interpretacion": "La presencia de CNAP en un segmento con perdida funcional completa preoperatoria orienta a neurolisis (recuperacion descrita en 93-94% de series historicas); la ausencia de CNAP orienta a reseccion y reparacion/injerto",
+        "trampas_frecuentes": [
+          "No promediar de entrada - el promediado puede detectar fibras finas residuales sin significado funcional y dar una falsa impresion de continuidad",
+          "Estimulacion distal con registro proximal reduce el tamano del CNAP por fibras 'enterradas' que se suman al nervio proximalmente sin haber sido estimuladas"
+        ],
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.30 (Kline)"]
+      }
+    },
+    {
+      "id": "pess_troncos_cordones_plexo",
+      "categoria": "Plexo braquial / nervio periferico",
+      "region": "plexo_periferico",
+      "nombre": "PESS para monitorizacion del plexo braquial (troncos/cordones)",
+      "estimulacion": {
+        "nervio": "Nervio mediano o cubital en muneca, segun el segmento del plexo en riesgo",
+        "fuente": ["Moller cap.6"]
+      },
+      "registro": {
+        "sitio_clave": "Punto de Erb - refleja la conduccion neural proximal al punto de estimulacion (plexo braquial); complementa el registro cortical estandar C3'/C4'-Fz",
+        "indicacion_especifica": "Registrar PESS tambien durante el posicionamiento del paciente en cirugias con brazo/hombro en riesgo (las lesiones de plexo por posicionamiento son relativamente frecuentes) - no exclusivo de cirugia de plexo propiamente dicha",
+        "fuente": ["Moller cap.6"]
+      },
+      "notas_clinicas": {
+        "limitacion": "El PESS solo evalua la via sensitiva del nervio mixto; si se necesita valorar tambien la via motora, complementar con respuesta muscular a estimulacion del nervio mixto o con EMG estimulado/libre en musculos diana",
+        "trampas_frecuentes": [
+          "La amplitud al final de la cirugia como medida pronostica de lesion debe interpretarse con cautela - no distingue lesion temporal de permanente"
+        ],
+        "fuente": ["Moller cap.6"]
+      }
+    },
+    {
+      "id": "emg_libre_estimulado_periferico",
+      "categoria": "Plexo braquial / nervio periferico",
+      "region": "plexo_periferico",
+      "nombre": "EMG libre y estimulado en cirugia de nervio periferico",
+      "estimulacion_y_registro": {
+        "nota": "Los principios tecnicos (filtros, modo free-run, criterios de patron tonico vs breve) son analogos a los ya descritos en emg_libre_espinal y emg_estimulado_tornillo_pedicular de este mismo documento. No se ha localizado en las fuentes del proyecto un protocolo especifico y distinto para nervio periferico mas alla de esa analogia.",
+        "fuente": []
+      },
+      "notas_clinicas": {
+        "diferencia_clave": "En cirugia de plexo/nervio periferico el objetivo suele ser identificar el nervio (mapeo) mas que solo vigilar irritacion - combinar con NAP/CNAP (ver entrada nap_cnap_nervio_periferico) para la decision de neurolisis vs reseccion-injerto",
+        "fuente": []
+      }
+    },
+    {
+      "id": "reflejo_parpadeo_blink_reflex",
+      "categoria": "Reflejos de tronco",
+      "region": "fosa_posterior_tronco",
+      "nombre": "Reflejo de parpadeo (Blink Reflex, BR) bajo anestesia general",
+      "estimulacion": {
+        "sitio": "Nervio supraorbitario, agujas EEG subcutaneas; catodo en la escotadura supraorbitaria, anodo 2.5 cm superior y lateral al catodo",
+        "parametros": "1-7 estimulos rectangulares de corriente constante, ISI 2 ms, intensidad 20-40 mA, tasa de repeticion del tren 0.4 Hz",
+        "facilitacion_si_no_hay_respuesta": "Doble tren de estimulos, con intervalo entre trenes de 20-40 ms",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.17 (Fernandez-Conejero & Deletis)"]
+      },
+      "registro": {
+        "sitio": "Tercio infero-lateral del orbicular de los ojos, ipsilateral al lado estimulado (agujas identicas a las de estimulacion, o hook-wire)",
+        "promediado": "2 barridos unicos (minimo); invertir la polaridad del electrodo de estimulacion tras el primer barrido para reducir el artefacto de estimulo",
+        "ventana": "Epoca de 50 ms",
+        "filtros_hz": "Pasa-banda digital 70-1219",
+        "timing_recomendado": "Intentar tras la intubacion, durante la cirugia, y tras iniciar el cierre de piel",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.17"]
+      },
+      "notas_clinicas": {
+        "componentes": "R1: arco reflejo oligosinaptico (aferencia trigeminal V1, conexion troncoencefalica, nucleo motor facial, nervio facial, orbicular oculi). R2: mas complejo/polisinaptico, mismo arco aferente/eferente.",
+        "trampa_critica": "El CoMEP del orbicular oculi por TES fuerte puede confundirse con un BR (R1) por difusion de corriente sobre el escalpo anterior que activa el nervio supraorbitario - si se usa el CoMEP de orbicular oculi de forma aislada, un hallazgo puede reflejar el BR y no la via corticobulbar real. Se recomienda monitorizar BR y CoMEP simultaneamente y de forma diferenciada.",
+        "sensibilidad_anestesica": "No siempre evocable - sensible a la profundidad anestesica (correlacion descrita con caidas del BIS)",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.17", "Intraoperatients.pdf"]
+      }
+    },
+    {
+      "id": "reflejo_masetero_rmt",
+      "categoria": "Reflejos de tronco",
+      "region": "fosa_posterior_tronco",
+      "nombre": "Reflejo H del masetero (RMT) bajo anestesia general",
+      "estimulacion": {
+        "sitio": "Nervio maseterino (rama del trigemino), acceso percutaneo bajo el arco cigomatico, 0.5 cm anterior a la articulacion temporomandibular",
+        "electrodo": "Par de agujas EMG monopolares o electrodos hook-wire",
+        "parametros": "Estimulos unicos de intensidad creciente (de submaxima a supramaxima), tasa de repeticion 0.7 Hz",
+        "contexto_anestesico_descrito": "TIVA (propofol 75-300 ug/kg/min + remifentanilo 0.1-0.2 ug/kg/min); bloque de mordida (gasa/espuma enrollada) para mantener la boca semiabierta 2-3 cm",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.16 (Tellez & Ulkatan)"]
+      },
+      "registro": {
+        "musculos": "Masetero ipsilateral (principal); temporal ipsilateral (alternativa, umbral distinto - no registrar ambos simultaneamente asumiendo el mismo umbral)",
+        "valores_normativos": {
+          "latencia_h_reflejo_masetero_ms": "5.4 +/- 1.3 (media +/- DE)",
+          "latencia_respuesta_m_masetero_ms": "2.6 +/- 0.6",
+          "latencia_h_reflejo_temporal_ms": "5.3 +/- 0.8",
+          "amplitud_h_relativa_a_m": "~21% del maximo de la respuesta M"
+        },
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.16"]
+      },
+      "notas_clinicas": {
+        "tasa_exito_descrita": "Elicitable de forma fiable en 7/10 pacientes (70%) para masetero; 3/4 (75%) para temporal, en la serie de Ulkatan et al. 2017",
+        "utilidad": "Refleja conduccion a traves del mesencefalo y protuberancia media - util en cirugia que involucra estas estructuras (ej. descompresion microvascular, MAV de tronco)",
+        "trampas_frecuentes": [
+          "Reflejo estrictamente unilateral - comparar siempre con el lado contralateral cuando sea posible",
+          "Sin criterios de alerta validados aun - tecnica en fase de validacion quirurgica, no consolidada como estandar segun la propia fuente"
+        ],
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.16"]
+      }
+    },
+    {
+      "id": "reflejo_trigemino_cervical_tcr",
+      "categoria": "Reflejos de tronco",
+      "region": "fosa_posterior_tronco",
+      "nombre": "Reflejo trigemino-cervical (TCR)",
+      "estimulacion": {
+        "sitio": "Nervio supraorbitario o infraorbitario (rama del trigemino)",
+        "parametros_intraoperatorios": "Trenes de 2-7 estimulos (multipulso); duracion de pulso critica: 0.5-1.0 ms (patron B) favorece claramente la aparicion del reflejo bajo anestesia general frente a 0.2-0.5 ms (patron A) - recordabilidad 100% vs 22.2% respectivamente en la serie de referencia",
+        "preoperatorio_diagnostico": "Pulso unico bifasico de 0.2 ms; tiempo de analisis 50 ms; ganancia 100 uV/division",
+        "fuente": ["Lima Medeiros 2024"]
+      },
+      "registro": {
+        "musculo": "Esternocleidomastoideo (SCM) ipsilateral a la estimulacion - respuesta mas consistente; trapecio ipsi/contralateral y SCM contralateral con recordabilidad variable y menor",
+        "filtros_hz": "60-2000 o 90-2000 segun ejemplo de la fuente - ajustar segun visualizacion; filtros mas bajos (ej. 65 Hz) mejoran la visualizacion del TCR pero pueden dificultar distinguir el artefacto de estimulo",
+        "valores_normativos_intraoperatorios_scm_ipsi": {
+          "latencia_corta_mediana_ms": "15.6-16.7 segun el nervio estimulado",
+          "latencia_larga_mediana_ms": "~42-61 (infrecuente - solo en 2 de 20 pacientes de la serie)"
+        },
+        "fuente": ["Lima Medeiros 2024"]
+      },
+      "notas_clinicas": {
+        "trampa_critica": "Diferenciar del CMAP del platisma por activacion periferica no intencionada del nervio facial (difusion de corriente): el CMAP del platisma tiene latencia <8 ms, mientras que el TCR de latencia corta tiene latencia ~15-25 ms. Usar electrodos aislados en el SCM y vigilar la latencia con cuidado para no confundirlos - un CMAP de platisma mal interpretado como ausencia de TCR puede generar un falso negativo.",
+        "estado_de_validacion": "Primera demostracion de elicitacion bajo anestesia general (2024) - sin rol clinico establecido aun en IONM; tecnica exploratoria",
+        "fuente": ["Lima Medeiros 2024"]
+      }
+    },
+    {
+      "id": "pess_trigeminal_tep",
+      "categoria": "Reflejos de tronco",
+      "region": "fosa_posterior_tronco",
+      "nombre": "Potenciales evocados trigeminales (TEP) - PESS de nervio trigemino",
+      "estimulacion": {
+        "sitio": "Ramas del nervio trigemino (periferico)",
+        "fuente": ["Moller cap.5"]
+      },
+      "registro": {
+        "scalp": "Cz y Oz",
+        "intracraneal": "Directamente sobre la porcion intracraneal del nervio trigemino cuando esta expuesto (ej. descompresion microvascular para neuralgia del trigemino) - latencias de componentes negativos de corta latencia: 0.9, 1.6 y 2.6 ms",
+        "fuente": ["Moller cap.5"]
+      },
+      "notas_clinicas": {
+        "uso_real": "Tecnica raramente usada en monitorizacion intraoperatoria de rutina, a diferencia del resto de PESS - alta variabilidad entre laboratorios, especialmente en componentes de latencia larga (>5 ms)",
+        "utilidad_descrita": "Util para monitorizar la medula oblonga y en rizotomia trigeminal para neuralgia del trigemino, donde interesa vigilar la conduccion del propio nervio trigemino",
+        "trampas_frecuentes": [
+          "No se ha descrito su uso mediante estimulacion tactil (air puffs) en el contexto intraoperatorio - solo estimulacion electrica",
+          "No confundir con el reflejo TCR o TVcR, que son reflejos polisinapticos, no PESS puros de la via trigeminal"
+        ],
+        "fuente": ["Moller cap.5"]
       }
     }
   ]
