@@ -5804,8 +5804,8 @@
         });
         // media_unidad: dos entradas que salen del mismo paquete (Erb1 + Erb2).
         // doble (etiqueta, no item): esta posición necesita 2 unidades del
-        // material por colocación -activo y referencia-, como hook_wire o
-        // aguja_subdermica_pareada; media_unidad manda si coinciden ambos.
+        // material por colocación -activo y referencia-, como hook_wire;
+        // media_unidad manda si coinciden ambos.
         var unidadesPorColocacion = item.media_unidad ? 0.5 : ((etDe && etDe.doble) ? 2 : 1);
         res.material[tipo] = (res.material[tipo] || 0) + unidadesPorColocacion;
         res.entradas++;
