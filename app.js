@@ -494,6 +494,7 @@
     tecnicas_mio_intro:  { es: "Cada parámetro cuantitativo indica su fuente. Cuando dos fuentes dan valores distintos, se muestran ambos por separado: nunca se promedian ni se combinan.",
                            en: "Each quantitative parameter names its source. When two sources give different values, both are shown separately — never averaged or merged." },
     tecnicas_mio_aviso_en: { es: "This section is only written in Spanish for now.", en: "This section is only written in Spanish for now." },
+    tecmio_buscar_ph:    { es: "Buscar técnica, sitio, parámetro, cifra…", en: "Search technique, site, parameter, figure…" },
     btn_docente:         { es: "Docente", en: "Teaching" },
     docente_titulo:      { es: "Miotomas: qué músculos monitorizar", en: "Myotomes: which muscles to monitor" },
     docente_intro:       { es: "Pulsa en la columna los <b>niveles</b> que abarca la cirugía. A la izquierda aparecen los músculos que dependen de esas raíces; pulsa uno para llevarlo a los <b>monitorizados</b> de la derecha, y pulsa allí para quitarlo. Los rangos son los que se enseñan habitualmente: la inervación se solapa y no todas las escuelas dan los mismos límites, así que están para discutirlos.",
@@ -6319,6 +6320,10 @@
    * ---------------------------------------------------------------- */
   var dlgTecnicasMio = document.getElementById("dlg-tecnicas-mio");
   var tecMioRenderizada = false;
+  // Término de búsqueda ya normalizado (sin acentos, minúsculas), vigente
+  // durante el renderizado en curso: lo consultan pintarTextoConResaltado()
+  // y tecnicaCoincideTecMio() sin necesidad de pasarlo por cada función.
+  var tecMioFiltro = "";
 
   var TECMIO_REGIONES = {
     columna_medula: "Columna / médula espinal",
@@ -6401,10 +6406,53 @@
     return s.charAt(0).toUpperCase() + s.slice(1);
   }
 
+  // Quita acentos/diacríticos y pasa a minúsculas, para que buscar "musculo"
+  // encuentre "músculo" y viceversa. normalize("NFD") + quitar las marcas
+  // combinantes no cambia el número de caracteres de cada letra acentuada
+  // (una "ú" se descompone en "u" + marca, y al quitar la marca vuelve a
+  // quedar en un único carácter) -por eso los índices que da indexOf() sobre
+  // el texto normalizado sirven directamente sobre el texto original en
+  // pintarTextoConResaltado().
+  function normalizarTecMio(s) {
+    return String(s === null || s === undefined ? "" : s)
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "");
+  }
+
+  // Con búsqueda activa, envuelve las coincidencias en <mark>; sin ella,
+  // pinta el texto tal cual (mismo resultado que antes de tener buscador).
+  function pintarTextoConResaltado(contenedor, texto) {
+    var t = String(texto === null || texto === undefined ? "" : texto);
+    if (!tecMioFiltro) { contenedor.appendChild(document.createTextNode(t)); return; }
+    var normalizado = normalizarTecMio(t);
+    var pos = 0;
+    var idx = normalizado.indexOf(tecMioFiltro);
+    if (idx === -1) { contenedor.appendChild(document.createTextNode(t)); return; }
+    while (idx !== -1) {
+      if (idx > pos) contenedor.appendChild(document.createTextNode(t.slice(pos, idx)));
+      var fin = idx + tecMioFiltro.length;
+      var marca = document.createElement("mark");
+      marca.className = "tecmio-resaltado";
+      marca.textContent = t.slice(idx, fin);
+      contenedor.appendChild(marca);
+      pos = fin;
+      idx = normalizado.indexOf(tecMioFiltro, pos);
+    }
+    if (pos < t.length) contenedor.appendChild(document.createTextNode(t.slice(pos)));
+  }
+
+  // Busca en toda la técnica -nombre, categoría y cualquier parámetro
+  // anidado-, no solo en el nombre: así "supraorbitario" encuentra el Blink
+  // Reflex aunque esa palabra solo aparezca dentro de "estimulacion.sitio".
+  function tecnicaCoincideTecMio(tecnica, filtro) {
+    return normalizarTecMio(JSON.stringify(tecnica)).indexOf(filtro) !== -1;
+  }
+
   function pintarValorTecMio(contenedor, valor) {
     if (valor === null || valor === undefined) return;
     if (typeof valor === "string" || typeof valor === "number") {
-      contenedor.appendChild(document.createTextNode(String(valor)));
+      pintarTextoConResaltado(contenedor, String(valor));
       return;
     }
     if (Array.isArray(valor)) {
@@ -6424,7 +6472,7 @@
     dl.className = "tecmio-sub";
     Object.keys(valor).forEach(function (k) {
       var dt = document.createElement("dt");
-      dt.textContent = etiquetaTecMio(k, TECMIO_CAMPOS) + ":";
+      pintarTextoConResaltado(dt, etiquetaTecMio(k, TECMIO_CAMPOS) + ":");
       var dd = document.createElement("dd");
       pintarValorTecMio(dd, valor[k]);
       dl.appendChild(dt);
@@ -6439,7 +6487,7 @@
     if (!claves.length && !(datos.fuente && datos.fuente.length)) return;
 
     var titulo = document.createElement("h5");
-    titulo.textContent = TECMIO_SECCIONES[clave] || etiquetaTecMio(clave, TECMIO_SECCIONES);
+    pintarTextoConResaltado(titulo, TECMIO_SECCIONES[clave] || etiquetaTecMio(clave, TECMIO_SECCIONES));
     contenedor.appendChild(titulo);
 
     if (claves.length) {
@@ -6447,7 +6495,7 @@
       dl.className = "tecmio-campos";
       claves.forEach(function (k) {
         var dt = document.createElement("dt");
-        dt.textContent = etiquetaTecMio(k, TECMIO_CAMPOS) + ":";
+        pintarTextoConResaltado(dt, etiquetaTecMio(k, TECMIO_CAMPOS) + ":");
         var dd = document.createElement("dd");
         pintarValorTecMio(dd, datos[k]);
         dl.appendChild(dt);
@@ -6459,7 +6507,8 @@
     if (datos.fuente && datos.fuente.length) {
       var p = document.createElement("p");
       p.className = "tecmio-fuente";
-      p.textContent = "Fuente: " + datos.fuente.join(", ");
+      p.appendChild(document.createTextNode("Fuente: "));
+      pintarTextoConResaltado(p, datos.fuente.join(", "));
       contenedor.appendChild(p);
     }
   }
@@ -6467,14 +6516,15 @@
   function renderTecnicaMio(tecnica) {
     var det = document.createElement("details");
     det.className = "caso-grupo tecmio-tecnica";
+    if (tecMioFiltro) det.open = true;
     var summary = document.createElement("summary");
     if (tecnica.categoria) {
       var badge = document.createElement("span");
       badge.className = "tecmio-badge";
-      badge.textContent = tecnica.categoria;
+      pintarTextoConResaltado(badge, tecnica.categoria);
       summary.appendChild(badge);
     }
-    summary.appendChild(document.createTextNode(tecnica.nombre));
+    pintarTextoConResaltado(summary, tecnica.nombre);
     det.appendChild(summary);
 
     var campos = document.createElement("div");
@@ -6486,14 +6536,24 @@
     return det;
   }
 
+  // Con el cuadro de búsqueda vacío se pinta todo, cerrado por defecto,
+  // igual que antes de existir el buscador. En cuanto hay texto, las
+  // técnicas que no coinciden desaparecen (junto con su región si se queda
+  // sin ninguna) y lo que sí coincide se abre solo -región y técnica-, para
+  // ir directo al resultado sin desplegar nada a mano.
   function renderTecnicasMio() {
     var datos = window.TECNICAS_MIO || { tecnicas: [] };
     var cont = document.getElementById("tecmio-contenido");
     cont.innerHTML = "";
 
+    var entrada = document.getElementById("tecmio-buscar");
+    var filtroCrudo = entrada ? (entrada.value || "").trim() : "";
+    tecMioFiltro = normalizarTecMio(filtroCrudo);
+
     var porRegion = {};
     var ordenRegiones = [];
     (datos.tecnicas || []).forEach(function (t) {
+      if (tecMioFiltro && !tecnicaCoincideTecMio(t, tecMioFiltro)) return;
       var r = t.region || "otras";
       if (!porRegion[r]) { porRegion[r] = []; ordenRegiones.push(r); }
       porRegion[r].push(t);
@@ -6502,8 +6562,9 @@
     ordenRegiones.forEach(function (r) {
       var det = document.createElement("details");
       det.className = "caso-grupo";
+      if (tecMioFiltro) det.open = true;
       var summary = document.createElement("summary");
-      summary.textContent = TECMIO_REGIONES[r] || etiquetaTecMio(r, TECMIO_REGIONES);
+      pintarTextoConResaltado(summary, TECMIO_REGIONES[r] || etiquetaTecMio(r, TECMIO_REGIONES));
       det.appendChild(summary);
 
       var campos = document.createElement("div");
@@ -6515,6 +6576,13 @@
       cont.appendChild(det);
     });
 
+    if (tecMioFiltro && !ordenRegiones.length) {
+      var vacio = document.createElement("p");
+      vacio.className = "tecmio-sin-resultados";
+      vacio.textContent = "Sin resultados para «" + filtroCrudo + "».";
+      cont.appendChild(vacio);
+    }
+
     tecMioRenderizada = true;
   }
 
@@ -6524,6 +6592,7 @@
   }
 
   document.getElementById("btn-tecnicas-mio").addEventListener("click", abrirTecnicasMio);
+  document.getElementById("tecmio-buscar").addEventListener("input", renderTecnicasMio);
   document.getElementById("tecmio-cerrar").addEventListener("click", function () { dlgTecnicasMio.close(); });
   document.getElementById("guia-cerrar").addEventListener("click", function () { dlgGuia.close(); });
 

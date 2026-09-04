@@ -389,7 +389,8 @@ main {
 .panel-catalogo.plegado #catalogo-contenido { display: none; }
 
 #catalogo-buscar,
-#elegir-buscar {
+#elegir-buscar,
+#tecmio-buscar {
   width: 100%;
   margin-top: 0.35rem;
   padding: 0.25rem 0.45rem;
@@ -963,6 +964,17 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
 }
 .tecmio-lista { margin: 0.1rem 0 0; padding-left: 1.1rem; font-size: 0.78rem; line-height: 1.4; }
 .tecmio-fuente { font-size: 0.68rem; font-style: italic; color: var(--text-muted); margin: 0.35rem 0 0.5rem; }
+#tecmio-buscar { margin-bottom: 0.5rem; }
+/* Coincidencias del buscador: fondo de acento, con el color de fondo
+   general como texto -así se invierte solo en el tema oscuro, sin
+   necesidad de una regla aparte-. */
+.tecmio-resaltado {
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 0.15rem;
+  padding: 0 0.1rem;
+}
+.tecmio-sin-resultados { font-size: 0.82rem; color: var(--text-muted); margin: 0.5rem 0 0; }
 
 .docente-fuentes {
   font-size: 0.66rem;
