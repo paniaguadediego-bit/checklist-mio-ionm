@@ -221,6 +221,9 @@
     campo_manta:         { es: "Se cobra por manta (no por electrodo)", en: "Charged per mat (not per electrode)" },
     campo_manta_ay:      { es: "Márcalo cuando el material viene en un conjunto que se abre entero de una vez (p. ej. una manta de electrodos GRID): el coste cuenta 1 unidad aunque solo se coloque parte del conjunto.",
                            en: "Tick this when the material comes as a set that is opened whole in one go (e.g. a GRID electrode mat): the cost counts 1 unit even if only part of the set gets placed." },
+    campo_doble:         { es: "Cada colocación gasta 2 unidades (activo + referencia)", en: "Each placement uses 2 units (active + reference)" },
+    campo_doble_ay:      { es: "Márcalo cuando cada posición necesita dos electrodos sueltos en vez de uno (p. ej. hook-wire: activo y referencia por separado). El material a preparar y el coste cuentan el doble por cada entrada colocada con esta etiqueta.",
+                           en: "Tick this when each position needs two separate electrodes instead of one (e.g. hook-wire: active and reference apart). Material to prepare and cost both count double for every entry placed with this label." },
     et_precio_malo:      { es: "El precio tiene que ser un número de 0 en adelante, o quedarse en blanco.",
                            en: "The price must be a number from 0 upwards, or left blank." },
     campo_nota:          { es: "Nota", en: "Note" },
@@ -398,6 +401,25 @@
                            en: "The pathology result if there is one (e.g. “Meningioma”, “GBM”), or the operated level if it's a spine case (e.g. “C5-C6-C7”)." },
     caso_otros_datos_quirurgicos: { es: "Otros datos quirúrgicos", en: "Other surgical details" },
     caso_notas_montaje_tecnicas: { es: "Notas de Montaje/Técnicas", en: "Montage/Techniques notes" },
+    caso_tecnicas_parametros: { es: "Cómo se realizó cada técnica", en: "How each technique was performed" },
+    caso_tecnicas_parametros_ay: { es: "Para cada técnica marcada como realizada arriba: parámetros reales usados en este caso concreto (intensidad, frecuencia...). Queda plegado y vacío hasta que abras una técnica y escribas algo.",
+                                    en: "For each technique ticked as performed above: the actual parameters used in this specific case (intensity, frequency...). Stays collapsed and empty until you open a technique and write something." },
+    caso_sin_tecnicas_parametros: { es: "Marca primero las técnicas realizadas, arriba.",
+                                     en: "First tick the techniques performed, above." },
+    tecpar_intensidad:   { es: "Intensidad", en: "Intensity" },
+    tecpar_frecuencia:   { es: "Frecuencia", en: "Frequency" },
+    tecpar_num_pulsos:   { es: "Nº de pulsos", en: "Pulse count" },
+    tecpar_trenes:       { es: "Trenes (facilitación)", en: "Trains (facilitation)" },
+    tecpar_isi:          { es: "ISI", en: "ISI" },
+    tecpar_filtros:      { es: "Filtros", en: "Filters" },
+    tecpar_promediacion: { es: "Promediación", en: "Averaging" },
+    tecpar_barrido:      { es: "Tiempo de barrido", en: "Sweep time" },
+    caso_imagenes_montaje: { es: "Imágenes del montaje", en: "Montage images" },
+    caso_imagenes_montaje_ay: { es: "Capturas o fotos de cómo quedó el montaje en el software del equipo (pantalla del Inomed, por ejemplo), para consultarlas si en el futuro te toca un caso parecido. Se comprimen solas al añadirlas.",
+                                 en: "Screenshots or photos of how the montage ended up on the equipment's software (e.g. the Inomed screen), to look up if a similar case comes up in the future. They get compressed automatically when added." },
+    caso_imagen_anadir:  { es: "＋ Añadir imagen", en: "＋ Add image" },
+    caso_imagen_quitar_tit: { es: "Quitar esta imagen", en: "Remove this image" },
+    caso_imagen_error:   { es: "No se pudo leer esa imagen. Prueba con otro archivo.", en: "Couldn't read that image. Try another file." },
     caso_hubo_cambios_plan: { es: "¿Hubo cambios respecto al plan?", en: "Were there changes from the plan?" },
     caso_cambios_respecto_al_plan: { es: "Detalle de los cambios", en: "Details of the changes" },
     caso_umbral_tornillos_pediculares: { es: "Umbral EMG de tornillos pediculares", en: "Pedicle screw EMG threshold" },
@@ -1797,6 +1819,33 @@
   document.getElementById("foto-sonda-cerrar").addEventListener("click", function () {
     dlgFotoSonda.close();
   });
+
+  /* Redimensiona y recomprime una imagen a JPEG en el propio navegador
+     antes de guardarla en un caso -esas imágenes viajan dentro del JSON del
+     caso, en base64, a GitHub en cada sincronización, y no hay backend que
+     las sirva aparte-. Sin este paso, una foto de móvil de varios MB
+     multiplicaría el peso de cada sincronización del caso. maxLado limita
+     el lado mayor en píxeles; calidad es la calidad JPEG (0-1). */
+  function comprimirImagen(file, maxLado, calidad) {
+    return new Promise(function (resolve, reject) {
+      var lector = new FileReader();
+      lector.onerror = function () { reject(lector.error || new Error("lectura fallida")); };
+      lector.onload = function () {
+        var img = new Image();
+        img.onerror = function () { reject(new Error("imagen no válida")); };
+        img.onload = function () {
+          var escala = Math.min(1, maxLado / Math.max(img.width, img.height));
+          var cv = document.createElement("canvas");
+          cv.width = Math.max(1, Math.round(img.width * escala));
+          cv.height = Math.max(1, Math.round(img.height * escala));
+          cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+          resolve(cv.toDataURL("image/jpeg", calidad));
+        };
+        img.src = lector.result;
+      };
+      lector.readAsDataURL(file);
+    });
+  }
 
   /* ---------------------------------------------------------------- *
    * Drag & drop (delegado en document)
@@ -3701,6 +3750,7 @@
       et && typeof et.precio === "number" ? et.precio : "";
     document.getElementById("et-fungible").checked = et ? et.fungible !== false : true;
     document.getElementById("et-manta").checked = et ? !!et.manta : false;
+    document.getElementById("et-doble").checked = et ? !!et.doble : false;
     document.getElementById("et-borrar").hidden = !et;
     document.getElementById("et-error").hidden = true;
     refrescarPreviaEtiqueta();
@@ -3744,7 +3794,8 @@
       color: document.getElementById("et-color").value,
       fondo: document.getElementById("et-fondo").value,
       fungible: document.getElementById("et-fungible").checked,
-      manta: document.getElementById("et-manta").checked
+      manta: document.getElementById("et-manta").checked,
+      doble: document.getElementById("et-doble").checked
     };
     // Sin precio no se guarda la clave, para que se distinga de un 0 real
     if (precio !== null) datos.precio = precio;
@@ -3972,6 +4023,23 @@
     // Absorbe lo que antes era "Pares craneales monitorizados": ya no tiene
     // campo propio, va aquí como una nota más de montaje.
     { g: "montaje", c: "notas_montaje_tecnicas", t: "area" },
+    // Pedido por Pani, 05-09-2026: para cada técnica ya marcada como
+    // realizada, poder anotar cómo se hizo de verdad en este caso concreto
+    // -intensidad, frecuencia, nº pulsos, trenes, ISI, filtros, promediado,
+    // barrido-. Va después de "tecnicas_realizadas" en la lista de campos
+    // por el mismo motivo que tecnicas_alteradas: depende de esa lista via
+    // oyentesTecnicasRealizadas, así que tiene que construirse después.
+    { g: "montaje", c: "tecnicas_parametros", t: "tecnicas_parametros", ay: "caso_tecnicas_parametros_ay" },
+    // Pedido por Pani, 05-09-2026: fotos de cómo quedó el montaje en el
+    // software del equipo (p. ej. la pantalla del Inomed), para poder
+    // consultarlas en un caso futuro parecido. Van dentro del propio caso
+    // -no en archivo aparte-, igual que material_previsto/asignaciones: un
+    // caso lo edita una sola persona a la vez, no hace falta la separación
+    // por archivo que sí necesitan los montajes compartidos (ver "El
+    // repositorio de datos" en CLAUDE.md). Cada imagen se comprime en el
+    // navegador antes de guardarse (ver comprimirImagen()) para no disparar
+    // el tamaño de lo que viaja a GitHub en cada sincronización.
+    { g: "montaje", c: "imagenes_montaje", t: "imagenes_montaje", ay: "caso_imagenes_montaje_ay" },
 
     // 6. Desarrollo intraoperatorio
     // Un solo cuadro grande en vez de OP BSL y CL BSL sueltos: en la
@@ -4155,6 +4223,132 @@
       pintarAlteradas();
       oyentesTecnicasRealizadas.push(pintarAlteradas);
       div.appendChild(filaAlt);
+      if (def.ay) div.appendChild(ayudaCampo(def.ay));
+      return div;
+    }
+
+    if (def.t === "tecnicas_parametros") {
+      // Un <details> plegable por técnica realizada, con los 8 parámetros
+      // reales usados en este caso. A diferencia de tecnicas_alt, aquí NO se
+      // borra el dato si la técnica se desmarca por error de
+      // "tecnicas_realizadas": es texto escrito a mano, más caro de rehacer
+      // que un simple chip, así que solo se deja de mostrar -reaparece si se
+      // vuelve a marcar la técnica-.
+      var CAMPOS_TECPAR = ["intensidad", "frecuencia", "num_pulsos", "trenes", "isi", "filtros", "promediacion", "barrido"];
+      var mapaParam = Object.assign({}, valor || {});
+      camposCaso[def.c] = mapaParam;
+      var contParam = document.createElement("div");
+      contParam.className = "tecpar-lista";
+      var pintarParametros = function () {
+        var realizadas = camposCaso.tecnicas_realizadas || [];
+        contParam.textContent = "";
+        if (!realizadas.length) {
+          var nadaParam = document.createElement("span");
+          nadaParam.className = "caso-ro";
+          nadaParam.textContent = T("caso_sin_tecnicas_parametros");
+          contParam.appendChild(nadaParam);
+          return;
+        }
+        var realizadasTec = TECNICAS.filter(function (t) {
+          return realizadas.indexOf(t.id) !== -1;
+        });
+        realizadasTec.forEach(function (t) {
+          if (!mapaParam[t.id]) mapaParam[t.id] = {};
+          var datos = mapaParam[t.id];
+          var det = document.createElement("details");
+          det.className = "caso-grupo tecpar-tecnica";
+          det.open = CAMPOS_TECPAR.some(function (k) { return datos[k]; });
+          var sum = document.createElement("summary");
+          sum.textContent = campo(t, "etiqueta");
+          det.appendChild(sum);
+          var grid = document.createElement("div");
+          grid.className = "caso-grupo-campos tecpar-grid";
+          CAMPOS_TECPAR.forEach(function (k) {
+            var lab3 = document.createElement("label");
+            lab3.className = "tecpar-campo";
+            var etq = document.createElement("span");
+            etq.textContent = T("tecpar_" + k);
+            var inp = document.createElement("input");
+            inp.type = "text";
+            inp.value = datos[k] || "";
+            inp.addEventListener("input", function () { datos[k] = inp.value; });
+            lab3.appendChild(etq);
+            lab3.appendChild(inp);
+            grid.appendChild(lab3);
+          });
+          det.appendChild(grid);
+          contParam.appendChild(det);
+        });
+      };
+      pintarParametros();
+      oyentesTecnicasRealizadas.push(pintarParametros);
+      div.appendChild(contParam);
+      if (def.ay) div.appendChild(ayudaCampo(def.ay));
+      return div;
+    }
+
+    if (def.t === "imagenes_montaje") {
+      // Array de {id, nombre, dataUrl, fecha}. Se reutiliza el visor de
+      // fotos de sondas (abrirFotoSonda) para ampliarlas: solo necesita una
+      // URL y un nombre, y una dataURL vale igual que una ruta estática.
+      var listaImg = (valor || []).slice();
+      camposCaso[def.c] = listaImg;
+      var contImg = document.createElement("div");
+      contImg.className = "caso-imagenes";
+      var galeria = document.createElement("div");
+      galeria.className = "caso-imagenes-galeria";
+      var pintarGaleria = function () {
+        galeria.textContent = "";
+        listaImg.forEach(function (im) {
+          var marco = document.createElement("div");
+          marco.className = "caso-imagen-marco";
+          var mini = document.createElement("img");
+          mini.src = im.dataUrl;
+          mini.alt = im.nombre || "";
+          mini.className = "caso-imagen-mini";
+          mini.addEventListener("click", function () { abrirFotoSonda(im.dataUrl, im.nombre || ""); });
+          var quitar = document.createElement("button");
+          quitar.type = "button";
+          quitar.className = "caso-imagen-quitar";
+          quitar.textContent = "✕";
+          quitar.title = T("caso_imagen_quitar_tit");
+          quitar.addEventListener("click", function () {
+            var i = listaImg.indexOf(im);
+            if (i !== -1) listaImg.splice(i, 1);
+            pintarGaleria();
+          });
+          marco.appendChild(mini);
+          marco.appendChild(quitar);
+          galeria.appendChild(marco);
+        });
+      };
+      pintarGaleria();
+      var entradaImg = document.createElement("input");
+      entradaImg.type = "file";
+      entradaImg.accept = "image/*";
+      entradaImg.multiple = true;
+      entradaImg.hidden = true;
+      entradaImg.addEventListener("change", function () {
+        var archivos = Array.prototype.slice.call(entradaImg.files);
+        entradaImg.value = "";
+        archivos.forEach(function (f) {
+          comprimirImagen(f, 1100, 0.72).then(function (dataUrl) {
+            listaImg.push({ id: uuid(), nombre: f.name, dataUrl: dataUrl, fecha: new Date().toISOString() });
+            pintarGaleria();
+          }).catch(function () {
+            alert(T("caso_imagen_error"));
+          });
+        });
+      });
+      var btnAddImg = document.createElement("button");
+      btnAddImg.type = "button";
+      btnAddImg.className = "caso-imagen-anadir";
+      btnAddImg.textContent = T("caso_imagen_anadir");
+      btnAddImg.addEventListener("click", function () { entradaImg.click(); });
+      contImg.appendChild(galeria);
+      contImg.appendChild(btnAddImg);
+      contImg.appendChild(entradaImg);
+      div.appendChild(contImg);
       if (def.ay) div.appendChild(ayudaCampo(def.ay));
       return div;
     }
@@ -4488,8 +4682,9 @@
     CAMPOS_CASO.forEach(function (def) {
       var control = camposCaso[def.c];
       if (control === undefined) return;
-      if (def.t === "tecnicas" || def.t === "tecnicas_alt") { c[def.c] = control.slice(); return; }
+      if (def.t === "tecnicas" || def.t === "tecnicas_alt" || def.t === "imagenes_montaje") { c[def.c] = control.slice(); return; }
       if (def.t === "material") { c[def.c] = Object.assign({}, control); return; }
+      if (def.t === "tecnicas_parametros") { c[def.c] = Object.assign({}, control); return; }
       if (def.t === "check") { c[def.c] = control.checked; return; }
       // Los numéricos se guardan como número, no como texto: en el Sheet hay
       // que poder sumarlos y sacar medias sin convertir nada.
@@ -5607,8 +5802,12 @@
           entrada: rotuloEntrada, nombre: nombre, color: item.color,
           tipo: tipo, estilo: estilo, item: item.id
         });
-        // media_unidad: dos entradas que salen del mismo paquete (Erb1 + Erb2)
-        res.material[tipo] = (res.material[tipo] || 0) + (item.media_unidad ? 0.5 : 1);
+        // media_unidad: dos entradas que salen del mismo paquete (Erb1 + Erb2).
+        // doble (etiqueta, no item): esta posición necesita 2 unidades del
+        // material por colocación -activo y referencia-, como hook_wire o
+        // aguja_subdermica_pareada; media_unidad manda si coinciden ambos.
+        var unidadesPorColocacion = item.media_unidad ? 0.5 : ((etDe && etDe.doble) ? 2 : 1);
+        res.material[tipo] = (res.material[tipo] || 0) + unidadesPorColocacion;
         res.entradas++;
         // El conmutador reparte hacia 6 electrodos de sacacorchos (C3/C4 lo
         // habitual, a veces C5/C6) que no ocupan entrada propia en la caja

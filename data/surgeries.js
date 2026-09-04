@@ -163,9 +163,19 @@ window.SURGERIES_DATA = {
   "etiquetas": [
     { "id": "aguja_subdermica",     "nombre": "Aguja subdérmica",          "borde": "punteado",    "color": "azul",     "fondo": "azul",      "fungible": true },
     { "id": "aguja_trenzada",       "nombre": "Aguja trenzada (par)",      "borde": "discontinuo", "color": "azul",     "fondo": "azul",      "fungible": true },
+    // A diferencia de la trenzada (un solo producto ya emparejado de fábrica),
+    // aquí son dos agujas subdérmicas sueltas -activo y referencia- que se
+    // colocan por separado en el mismo canal. "doble": true hace que
+    // calcularResumen() cuente 2 unidades por cada posición colocada con esta
+    // etiqueta (ver también hook_wire, mismo motivo).
+    { "id": "aguja_subdermica_pareada", "nombre": "Aguja subdérmica pareada", "borde": "discontinuo", "color": "verde", "fondo": "azul",   "fungible": true, "doble": true },
     { "id": "aguja_monopolar",      "nombre": "Aguja monopolar",           "borde": "punteado",    "color": "turquesa", "fondo": "turquesa",  "fungible": true },
     { "id": "electrodo_sacacorchos","nombre": "Electrodo sacacorchos",     "borde": "solido",      "color": "morado",   "fondo": "morado",    "fungible": true },
-    { "id": "hook_wire",            "nombre": "Electrodo Hook Wire",       "borde": "doble",       "color": "naranja",  "fondo": "naranja",   "fungible": true },
+    // "doble": true porque cada canal hook-wire necesita un par -activo y
+    // referencia-, no un electrodo suelto: sin este flag el material a
+    // preparar salía a la mitad de lo que hace falta pedir de verdad
+    // (confirmado por Pani, 04-09-2026). Ver "doble" en calcularResumen().
+    { "id": "hook_wire",            "nombre": "Electrodo Hook Wire",       "borde": "doble",       "color": "naranja",  "fondo": "naranja",   "fungible": true, "doble": true },
     { "id": "pegatinas",            "nombre": "Pegatinas (par)",           "borde": "solido",      "color": "verde",    "fondo": "verde",     "fungible": true },
     // Etiqueta propia de L.Cubital/R.Cubital, separada de "pegatinas": son
     // electrodos de superficie igual que el resto, pero de uso mucho más
@@ -511,7 +521,13 @@ window.SURGERIES_DATA = {
         {"id":"l_cremaster","nombre":"L.Cremaster","etiqueta":"aguja_trenzada","nota":"Cremáster izquierdo"},
         {"id":"r_cremaster","nombre":"R.Cremaster","etiqueta":"aguja_trenzada","nota":"Cremáster derecho"},
         {"id":"l_cc","nombre":"L.CC","etiqueta":"aguja_trenzada","nota":"Esfínter anal / cavernoso-cavernoso izquierdo"},
-        {"id":"r_cc","nombre":"R.CC","etiqueta":"aguja_trenzada","nota":"Esfínter anal / cavernoso-cavernoso derecho"}
+        {"id":"r_cc","nombre":"R.CC","etiqueta":"aguja_trenzada","nota":"Esfínter anal / cavernoso-cavernoso derecho"},
+        {"id":"l_abd","nombre":"L.Abd","etiqueta":"aguja_subdermica_pareada"},
+        {"id":"r_abd","nombre":"R.Abd","etiqueta":"aguja_subdermica_pareada"},
+        {"id":"l_bulbocavernoso","nombre":"L.Bulbocavernoso","etiqueta":"aguja_subdermica_pareada","nota":"Reflejo bulbocavernoso izquierdo"},
+        {"id":"r_bulbocavernoso","nombre":"R.Bulbocavernoso","etiqueta":"aguja_subdermica_pareada","nota":"Reflejo bulbocavernoso derecho"},
+        {"id":"l_esfinter_anal_ext","nombre":"L.Esfínter Anal Externo","etiqueta":"hook_wire"},
+        {"id":"r_esfinter_anal_ext","nombre":"R.Esfínter Anal Externo","etiqueta":"hook_wire"}
       ]
     },
     {
