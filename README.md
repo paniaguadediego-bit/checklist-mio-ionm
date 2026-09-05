@@ -385,9 +385,10 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
 6. **Desarrollo intraoperatorio** — resumen de la monitorización (de
    corrido qué salió al empezar, qué pasó por el medio y qué salió al
    cerrar); si se marcó la técnica "Mapeo de raíces y tornillos", un
-   selector de niveles C1–S2 (marca los que mapeaste y aparece una caja de
-   umbral para "Izquierdo {nivel}" y "{nivel} derecho" en cada uno) más una
-   caja de notas libres de umbral EMG de tornillos pediculares para lo que
+   selector de niveles C1–S2 (marca los que mapeaste y aparece una fila
+   "I [caja] — nivel — D [caja]" por cada uno, con el umbral izquierdo y
+   derecho en sus propios extremos) más una caja de notas libres de umbral
+   EMG de tornillos pediculares para lo que
    no encaje en una raíz concreta; si hubo cambios respecto al plan y, si
    los hubo, su detalle; si hubo alerta y, si la hubo, tipo de alerta,
    medida correctora y recuperación de la señal; resultado esperable;

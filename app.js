@@ -436,6 +436,8 @@
                            en: "Tick the levels tested during mapping and note the threshold on each side." },
     umbral_raices_izq:  { es: "Izquierdo {nivel}", en: "Left {nivel}" },
     umbral_raices_der:  { es: "{nivel} derecho", en: "{nivel} right" },
+    umbral_raices_izq_corto: { es: "I", en: "L" },
+    umbral_raices_der_corto: { es: "D", en: "R" },
     caso_umbral_tornillos_pediculares: { es: "Notas de umbral EMG de tornillos pediculares", en: "Notes on pedicle screw EMG threshold" },
     caso_umbral_tornillos_pediculares_ay: { es: "Cualquier cosa que no encaje en los niveles de arriba: umbrales no testados por raíz, matices, comparaciones entre tornillos, etc.",
                            en: "Anything that doesn't fit the levels above: thresholds not tested by root, nuances, comparisons between screws, etc." },
@@ -4670,27 +4672,36 @@
         datosRaices.niveles.forEach(function (nivel) {
           if (!datosRaices.valores[nivel]) datosRaices.valores[nivel] = {};
           var vals = datosRaices.valores[nivel];
-          var filaNivel = document.createElement("div");
-          filaNivel.className = "umbral-raices-fila";
+          // I (caja) - nivel - D (caja): izquierda y derecha en sus propios
+          // extremos, la raíz centrada -pedido del usuario el 05-09-2026,
+          // para leer de un vistazo qué lado es cada umbral sin tener que
+          // leer "Izquierdo"/"derecho" enteros cada vez. El texto largo
+          // (T("umbral_raices_izq"/"_der")) se conserva como title/aria-label
+          // y es el que sigue saliendo tal cual en el informe en PDF.
+          var campoLado = function (lado, etiquetaCorta, etiquetaLarga) {
+            var lab = document.createElement("label");
+            lab.className = "umbral-raices-campo " + lado;
+            lab.title = etiquetaLarga;
+            var etq = document.createElement("span");
+            etq.textContent = etiquetaCorta;
+            var inp = document.createElement("input");
+            inp.type = "text";
+            inp.setAttribute("aria-label", etiquetaLarga);
+            inp.value = vals[lado] || "";
+            inp.addEventListener("input", function () { vals[lado] = inp.value; });
+            lab.appendChild(etq);
+            lab.appendChild(inp);
+            return lab;
+          };
           var tituloNivel = document.createElement("span");
           tituloNivel.className = "umbral-raices-nivel";
           tituloNivel.textContent = nivel;
+
+          var filaNivel = document.createElement("div");
+          filaNivel.className = "umbral-raices-fila";
+          filaNivel.appendChild(campoLado("izq", T("umbral_raices_izq_corto"), T("umbral_raices_izq", { nivel: nivel })));
           filaNivel.appendChild(tituloNivel);
-          [["izq", T("umbral_raices_izq", { nivel: nivel })], ["der", T("umbral_raices_der", { nivel: nivel })]]
-            .forEach(function (par) {
-              var lado = par[0];
-              var lab = document.createElement("label");
-              lab.className = "umbral-raices-campo";
-              var etq = document.createElement("span");
-              etq.textContent = par[1];
-              var inp = document.createElement("input");
-              inp.type = "text";
-              inp.value = vals[lado] || "";
-              inp.addEventListener("input", function () { vals[lado] = inp.value; });
-              lab.appendChild(etq);
-              lab.appendChild(inp);
-              filaNivel.appendChild(lab);
-            });
+          filaNivel.appendChild(campoLado("der", T("umbral_raices_der_corto"), T("umbral_raices_der", { nivel: nivel })));
           contValores.appendChild(filaNivel);
         });
       };

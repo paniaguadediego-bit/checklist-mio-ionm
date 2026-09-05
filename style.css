@@ -1646,25 +1646,32 @@ dialog h3 {
 
 /* Umbrales EMG por raíz (mapeo de tornillos), apartado 6: chips de nivel
    arriba, y debajo una fila por nivel marcado con sus dos umbrales
-   (izquierdo/derecho). */
+   (izquierdo/derecho). Cada fila es "I (caja) - nivel - D (caja)": la caja
+   izquierda pegada al borde izquierdo, la raíz centrada, la caja derecha
+   pegada al borde derecho -pedido del usuario el 05-09-2026, para
+   distinguir de un vistazo qué lado es cada umbral-. Grid en vez de flex
+   para que el nivel quede centrado de verdad, sin importar si las dos cajas
+   tienen distinta anchura. */
 .umbral-raices-valores { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.5rem; }
 .umbral-raices-fila {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  flex-wrap: wrap;
   gap: 0.5rem;
   padding: 0.4rem 0.5rem;
   border: 1px solid var(--border-soft);
   border-radius: var(--r);
   background: var(--tag-bg);
 }
-.umbral-raices-nivel { font-weight: 700; font-size: 0.8rem; min-width: 2.5rem; }
+.umbral-raices-nivel { font-weight: 700; font-size: 0.8rem; text-align: center; }
 .umbral-raices-campo { display: flex; align-items: center; gap: 0.3rem; font-size: 0.72rem; }
+.umbral-raices-campo.izq { justify-self: start; }
+.umbral-raices-campo.der { justify-self: end; }
 .umbral-raices-campo span { color: var(--text-muted); }
 .umbral-raices-campo input {
   font: inherit;
   font-size: 0.78rem;
-  width: 5rem;
+  width: 3rem;
   padding: 0.2rem 0.35rem;
   border: 1px solid var(--border);
   border-radius: var(--r);

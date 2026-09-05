@@ -1388,6 +1388,21 @@ navegador de la usuaria, nada que ver con este arreglo).
   sabía de dónde salía el rótulo; con el arreglo de arriba debería aparecer
   ya en la lista de Montajes.
 
+**Umbrales por raíz, layout pedido tras verlo en real**: cada fila pasa de
+"nivel arriba, Izquierdo/derecho apilados debajo" a una sola línea
+"I [caja] — nivel — D [caja]", con la caja izquierda pegada al borde
+izquierdo, la raíz centrada y la caja derecha pegada al borde derecho.
+`.umbral-raices-fila` pasa de `flex` a `grid-template-columns: 1fr auto 1fr`
+con `justify-self: start/end` en cada caja -así el nivel queda centrado de
+verdad sin importar si las dos cajas miden lo mismo, cosa que un simple
+`justify-content: space-between` no habría garantizado-. Los textos largos
+`T("umbral_raices_izq"/"_der")` ("Izquierdo {nivel}"/"{nivel} derecho") se
+conservan tal cual -son los que salen en el informe en PDF, sin tocar- pero
+ya no se pintan en pantalla: ahí se ven solo las claves nuevas
+`umbral_raices_izq_corto`/`_der_corto` ("I"/"D"), con el texto largo movido
+a `title` (tooltip) y `aria-label` del campo, para no perder contexto de
+accesibilidad al acortar la etiqueta visible.
+
 ## Google Sheet (Apps Script)
 
 `apps-script/Codigo.gs` es un script de Google Apps independiente: no forma
