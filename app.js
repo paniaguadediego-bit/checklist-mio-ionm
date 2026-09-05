@@ -35,10 +35,17 @@
     escenario_aria:      { es: "Escenario de cirugía", en: "Surgery scenario" },
     idioma_titulo:       { es: "Switch to English", en: "Cambiar a español" },
     sync_titulo:         { es: "Sincronizar con GitHub", en: "Sync with GitHub" },
-    btn_exportar_casos:  { es: "Exportar casos", en: "Export cases" },
-    btn_exportar_casos_tit: { es: "Descargar todos los casos en un CSV, sin esperar a la sincronización automática con el Sheet",
+    btn_exportar_casos:  { es: "Exportar casos (PDF)", en: "Export cases (PDF)" },
+    btn_exportar_casos_tit: { es: "Abre un informe imprimible de todos los casos -usa \"Guardar como PDF\" en el diálogo de impresión del navegador. En pruebas: dilo si algo no sale bien.",
+                           en: "Opens a printable report of all cases -use \"Save as PDF\" in the browser's print dialog. Still being tested: let me know if something looks off." },
+    btn_exportar_casos_csv: { es: "Exportar CSV", en: "Export CSV" },
+    btn_exportar_casos_csv_tit: { es: "Descargar todos los casos en un CSV, sin esperar a la sincronización automática con el Sheet",
                            en: "Download all cases as a CSV, without waiting for automatic Sheet sync" },
     casos_exportados:    { es: "Casos exportados a CSV.", en: "Cases exported to CSV." },
+    caso_pdf_sin_datos:  { es: "Todavía no hay ningún caso que exportar.", en: "There are no cases to export yet." },
+    caso_pdf_popup_bloqueado: { es: "El navegador ha bloqueado la pestaña del informe. Permite las ventanas emergentes para esta página e inténtalo de nuevo.",
+                           en: "The browser blocked the report tab. Allow pop-ups for this page and try again." },
+    caso_pdf_reflejos:   { es: "Reflejos", en: "Reflexes" },
     btn_duplicar:        { es: "Duplicar", en: "Duplicate" },
     btn_renombrar:       { es: "Renombrar", en: "Rename" },
     btn_vaciar:          { es: "Vaciar", en: "Empty" },
@@ -414,6 +421,7 @@
     tecpar_filtros:      { es: "Filtros", en: "Filters" },
     tecpar_promediacion: { es: "Promediación", en: "Averaging" },
     tecpar_barrido:      { es: "Tiempo de barrido", en: "Sweep time" },
+    tecpar_notas:        { es: "Notas técnicas de esta técnica", en: "Technical notes for this technique" },
     caso_imagenes_montaje: { es: "Imágenes del montaje", en: "Montage images" },
     caso_imagenes_montaje_ay: { es: "Capturas o fotos de cómo quedó el montaje en el software del equipo (pantalla del Inomed, por ejemplo), para consultarlas si en el futuro te toca un caso parecido. Se comprimen solas al añadirlas.",
                                  en: "Screenshots or photos of how the montage ended up on the equipment's software (e.g. the Inomed screen), to look up if a similar case comes up in the future. They get compressed automatically when added." },
@@ -422,9 +430,14 @@
     caso_imagen_error:   { es: "No se pudo leer esa imagen. Prueba con otro archivo.", en: "Couldn't read that image. Try another file." },
     caso_hubo_cambios_plan: { es: "¿Hubo cambios respecto al plan?", en: "Were there changes from the plan?" },
     caso_cambios_respecto_al_plan: { es: "Detalle de los cambios", en: "Details of the changes" },
-    caso_umbral_tornillos_pediculares: { es: "Umbral EMG de tornillos pediculares", en: "Pedicle screw EMG threshold" },
-    caso_umbral_tornillos_pediculares_ay: { es: "A qué nivel y con qué umbral se dejó cada tornillo puesto por los cirujanos. Un nivel por línea: nivel, lado (I/D) y umbral en mA. Por ejemplo: «L4 I 20 D 15».",
-                           en: "The level and threshold each surgeon-placed screw was left at. One level per line: level, side (L/R) and threshold in mA. E.g.: “L4 L20 R15”." },
+    caso_umbral_raices_niveles: { es: "Umbrales EMG por raíz (mapeo de tornillos)", en: "EMG thresholds by root (screw mapping)" },
+    caso_umbral_raices_niveles_ay: { es: "Marca los niveles testados durante el mapeo y anota el umbral de cada lado.",
+                           en: "Tick the levels tested during mapping and note the threshold on each side." },
+    umbral_raices_izq:  { es: "Izquierdo {nivel}", en: "Left {nivel}" },
+    umbral_raices_der:  { es: "{nivel} derecho", en: "{nivel} right" },
+    caso_umbral_tornillos_pediculares: { es: "Notas de umbral EMG de tornillos pediculares", en: "Notes on pedicle screw EMG threshold" },
+    caso_umbral_tornillos_pediculares_ay: { es: "Cualquier cosa que no encaje en los niveles de arriba: umbrales no testados por raíz, matices, comparaciones entre tornillos, etc.",
+                           en: "Anything that doesn't fit the levels above: thresholds not tested by root, nuances, comparisons between screws, etc." },
     caso_material_previsto: { es: "Material (montaje base)", en: "Material (base montage)" },
     caso_material_previsto_ay: { es: "El material que salió del montaje planificado. No se edita aquí: lo que se cambió de más o de menos va abajo, en «Material realmente usado».",
                            en: "The material that came out of the planned montage. Not editable here: what was used more or less of goes below, in “Material actually used”." },
@@ -801,7 +814,6 @@
     try { localStorage.setItem(IDIOMA_KEY, idioma); } catch (e) { /* sin persistencia */ }
     aplicarTextos();
     if (repintar) {
-      renderPerfilSelect();
       renderTodo();
       pintarEstadoSync();
       avisoGuardado(T(syncActivo() ? "guardado_nube" : "guardado_local"));
@@ -2682,6 +2694,7 @@
       tecnicas_realizadas: [], tecnicas_alteradas: [],
       notas_montaje_tecnicas: "",
       hubo_cambios_plan: false, cambios_respecto_al_plan: "",
+      umbral_raices_niveles: { niveles: [], valores: {} },
       umbral_tornillos_pediculares: "",
       material_previsto: {}, material_real: {},
       montaje: [], n_cajas: 0, n_canales_ocupados: 0, avisos_preparacion: [],
@@ -2857,7 +2870,7 @@
     return "﻿" + filas.join("\r\n");
   }
 
-  document.getElementById("btn-exportar-casos").addEventListener("click", function () {
+  document.getElementById("btn-exportar-casos-csv").addEventListener("click", function () {
     var csv = casosACsv();
     var blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     var url = URL.createObjectURL(blob);
@@ -2869,6 +2882,231 @@
     document.body.removeChild(a);
     setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
     avisoGuardado(T("casos_exportados"));
+  });
+
+  /* ------------------------------------------------------------------ *
+   * Informe en PDF (pedido por Pani, 05-09-2026: "en camino desde que se
+   * dejó a medias 'Crear informe'"). Sin librerías -regla 4 de CLAUDE.md-:
+   * se abre una pestaña con su propio documento, montado con
+   * createElement/textContent igual que el resto de la app -nunca
+   * innerHTML con datos concatenados-, y se llama a print() al cargar. El
+   * propio diálogo de impresión del navegador ya ofrece "Guardar como
+   * PDF" de fábrica, así que no hace falta generar el PDF a mano.
+   *
+   * Primera versión para que Pani la pruebe y la vaya afinando: recorre
+   * CAMPOS_CASO/GRUPOS_CASO -la misma lista que pinta la ficha en
+   * pantalla-, así que un campo nuevo en la ficha aparece aquí solo, sin
+   * tocar esta función.
+   * ------------------------------------------------------------------ */
+  function valorCampoInforme(def, c) {
+    var v = c[def.c];
+    if (def.t === "check") return v ? opcionTexto("sino", "si") : null;
+    if (def.t === "sel") return v ? opcionTexto(def.o, v) : "";
+    if (def.t === "cat") {
+      var lista = def.cat === "servicios" ? SERVICIOS : INTERVENCIONES;
+      var ent = (lista || []).filter(function (e) { return e.id === v; })[0];
+      return ent ? campo(ent, "nombre") : (v || "");
+    }
+    if (def.c === "resumen_monitorizacion") return resumenMonitorizacionDe(c);
+    if (def.c === "tipo_alerta") return tipoAlertaDe(c);
+    if (def.c === "dificultad_1a5") return (v || v === 0) ? (v + "/5") : "";
+    return v;
+  }
+
+  function nodoInforme(doc, tag, cls, texto) {
+    var el = doc.createElement(tag);
+    if (cls) el.className = cls;
+    if (texto != null) el.textContent = texto;
+    return el;
+  }
+
+  // Fila etiqueta/valor. Devuelve null si no hay nada que mostrar: así el
+  // informe no se llena de líneas vacías en los casos que no rellenaron
+  // ese campo -ver el .filter(Boolean) de quien la llama-.
+  function filaInforme(doc, etiqueta, valor) {
+    if (valor === null || valor === undefined || valor === "") return null;
+    var fila = nodoInforme(doc, "div", "informe-fila");
+    fila.appendChild(nodoInforme(doc, "span", "informe-etiqueta", etiqueta + ":"));
+    fila.appendChild(nodoInforme(doc, "span", "informe-valor", String(valor)));
+    return fila;
+  }
+
+  function seccionInforme(doc, titulo, filas) {
+    var validas = (filas || []).filter(Boolean);
+    if (!validas.length) return null;
+    var sec = nodoInforme(doc, "section", "informe-seccion");
+    sec.appendChild(nodoInforme(doc, "h3", null, titulo));
+    validas.forEach(function (f) { sec.appendChild(f); });
+    return sec;
+  }
+
+  // Técnicas realizadas: mismo reparto en tres cestas que la ficha
+  // (monitorización/reflejos/mapeo), pero como texto en vez de chips.
+  function seccionTecnicasInforme(doc, c) {
+    var ids = c.tecnicas_realizadas || [];
+    if (!ids.length) return null;
+    var tecs = TECNICAS.filter(function (t) { return ids.indexOf(t.id) !== -1; });
+    var bloques = bloquesTecnicas(tecs);
+    var filas = [
+      filaInforme(doc, T("grupo_monitorizacion"), bloques.monitor.map(function (t) { return campo(t, "etiqueta"); }).join(", ")),
+      filaInforme(doc, T("caso_pdf_reflejos"), bloques.reflejos.map(function (t) { return campo(t, "etiqueta"); }).join(", ")),
+      filaInforme(doc, T("grupo_mapeo"), bloques.mapeo.map(function (t) { return campo(t, "etiqueta"); }).join(", "))
+    ];
+    return seccionInforme(doc, T("caso_tecnicas_realizadas"), filas);
+  }
+
+  // "Cómo se realizó cada técnica": una fila por técnica con algo escrito,
+  // con sus parámetros en línea y la nota libre debajo.
+  function seccionParametrosInforme(doc, c) {
+    var mapa = c.tecnicas_parametros || {};
+    var CAMPOS_TECPAR = ["intensidad", "frecuencia", "num_pulsos", "trenes", "isi", "filtros", "promediacion", "barrido"];
+    var ids = (c.tecnicas_realizadas || []).filter(function (id) {
+      var d = mapa[id];
+      return d && (CAMPOS_TECPAR.some(function (k) { return d[k]; }) || d.notas);
+    });
+    if (!ids.length) return null;
+    var sec = nodoInforme(doc, "section", "informe-seccion");
+    sec.appendChild(nodoInforme(doc, "h3", null, T("caso_tecnicas_parametros")));
+    ids.forEach(function (id) {
+      var t = TECNICAS.filter(function (x) { return x.id === id; })[0];
+      var d = mapa[id];
+      var bloque = nodoInforme(doc, "div", "informe-tecpar");
+      bloque.appendChild(nodoInforme(doc, "h4", null, t ? campo(t, "etiqueta") : id));
+      var linea = CAMPOS_TECPAR.filter(function (k) { return d[k]; })
+        .map(function (k) { return T("tecpar_" + k) + ": " + d[k]; }).join(" · ");
+      if (linea) bloque.appendChild(nodoInforme(doc, "p", "informe-tecpar-linea", linea));
+      if (d.notas) bloque.appendChild(nodoInforme(doc, "p", "informe-tecpar-notas", d.notas));
+      sec.appendChild(bloque);
+    });
+    return sec;
+  }
+
+  // Umbrales EMG por raíz: una fila por nivel marcado, con sus dos lados.
+  function seccionUmbralRaicesInforme(doc, c) {
+    var datos = c.umbral_raices_niveles;
+    if (!datos || !datos.niveles || !datos.niveles.length) return null;
+    var filas = datos.niveles.map(function (nivel) {
+      var vals = (datos.valores || {})[nivel] || {};
+      var partes = [];
+      if (vals.izq) partes.push(T("umbral_raices_izq", { nivel: nivel }) + ": " + vals.izq);
+      if (vals.der) partes.push(T("umbral_raices_der", { nivel: nivel }) + ": " + vals.der);
+      return partes.length ? filaInforme(doc, nivel, partes.join(" · ")) : null;
+    });
+    return seccionInforme(doc, T("caso_umbral_raices_niveles"), filas);
+  }
+
+  function seccionMaterialInforme(doc, titulo, mapa) {
+    var tipos = Object.keys(mapa || {}).sort();
+    if (!tipos.length) return null;
+    return seccionInforme(doc, titulo, tipos.map(function (tipo) { return filaInforme(doc, tipo, mapa[tipo]); }));
+  }
+
+  // Imágenes del montaje: se incrustan tal cual -ya son dataURL- para que
+  // salgan en el PDF sin depender de ninguna URL externa.
+  function seccionImagenesInforme(doc, c) {
+    var imgs = c.imagenes_montaje || [];
+    if (!imgs.length) return null;
+    var sec = nodoInforme(doc, "section", "informe-seccion informe-seccion-imagenes");
+    sec.appendChild(nodoInforme(doc, "h3", null, T("caso_imagenes_montaje")));
+    var galeria = nodoInforme(doc, "div", "informe-imagenes");
+    imgs.forEach(function (im) {
+      var img = doc.createElement("img");
+      img.src = im.dataUrl;
+      img.alt = im.nombre || "";
+      galeria.appendChild(img);
+    });
+    sec.appendChild(galeria);
+    return sec;
+  }
+
+  function construirInformeCaso(doc, c) {
+    var art = nodoInforme(doc, "article", "informe-caso");
+    var cab = nodoInforme(doc, "header", "informe-cabecera");
+    cab.appendChild(nodoInforme(doc, "h2", null, (c.ID_Caso || "—") + (c.nombre_caso ? " — " + c.nombre_caso : "")));
+    var meta = [valorCampoInforme({ c: "estado", t: "sel", o: "estado" }, c), c.fecha, c.centro].filter(Boolean).join(" · ");
+    if (meta) cab.appendChild(nodoInforme(doc, "p", "informe-meta", meta));
+    art.appendChild(cab);
+
+    // Recorre CAMPOS_CASO agrupado por GRUPOS_CASO -la misma fuente que usa
+    // la ficha en pantalla-, salvo los campos con su propia sección hecha a
+    // mano más abajo (técnicas, material, imágenes...), que se insertan en
+    // el sitio del grupo "montaje" al que pertenecen.
+    var CAMPOS_APARTE = [
+      "tecnicas_realizadas", "tecnicas_alteradas", "tecnicas_parametros",
+      "umbral_raices_niveles", "material_previsto", "material_real", "imagenes_montaje"
+    ];
+    GRUPOS_CASO.forEach(function (g) {
+      var filas = CAMPOS_CASO
+        .filter(function (def) { return def.g === g && def.t !== "ro" && CAMPOS_APARTE.indexOf(def.c) === -1; })
+        .map(function (def) { return filaInforme(doc, T("caso_" + def.c), valorCampoInforme(def, c)); });
+      var sec = seccionInforme(doc, T("caso_g_" + g), filas);
+      if (sec) art.appendChild(sec);
+      if (g === "montaje") {
+        [
+          seccionTecnicasInforme(doc, c),
+          seccionParametrosInforme(doc, c),
+          seccionMaterialInforme(doc, T("caso_material_previsto"), c.material_previsto),
+          seccionMaterialInforme(doc, T("caso_material_real"), c.material_real),
+          seccionImagenesInforme(doc, c)
+        ].filter(Boolean).forEach(function (s) { art.appendChild(s); });
+      }
+      if (g === "desarrollo") {
+        var sr = seccionUmbralRaicesInforme(doc, c);
+        if (sr) art.appendChild(sr);
+      }
+    });
+    return art;
+  }
+
+  var ESTILO_INFORME_PDF =
+    "body{font:14px/1.4 -apple-system,Segoe UI,Arial,sans-serif;color:#1a2229;margin:0;padding:0 2rem}" +
+    ".informe-caso{padding:1.5rem 0;border-bottom:2px solid #cfd6dd}" +
+    ".informe-caso:last-child{border-bottom:none}" +
+    "@media print{.informe-caso{page-break-after:always;border-bottom:none}.informe-caso:last-child{page-break-after:avoid}}" +
+    ".informe-cabecera h2{margin:0 0 0.2rem;font-size:1.3rem}" +
+    ".informe-meta{margin:0 0 1rem;color:#62717c;font-size:0.85rem}" +
+    ".informe-seccion{margin-bottom:0.9rem;break-inside:avoid}" +
+    ".informe-seccion h3{margin:0 0 0.3rem;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.04em;color:#14705a;border-bottom:1px solid #e3e8ec;padding-bottom:0.15rem}" +
+    ".informe-fila{display:flex;gap:0.4rem;font-size:0.85rem;padding:0.1rem 0}" +
+    ".informe-etiqueta{font-weight:700;white-space:nowrap}" +
+    ".informe-valor{white-space:pre-wrap}" +
+    ".informe-tecpar{margin:0.3rem 0;padding-left:0.5rem;border-left:2px solid #e3e8ec}" +
+    ".informe-tecpar h4{margin:0;font-size:0.85rem}" +
+    ".informe-tecpar-linea,.informe-tecpar-notas{margin:0.1rem 0;font-size:0.8rem}" +
+    ".informe-imagenes{display:flex;flex-wrap:wrap;gap:0.5rem}" +
+    ".informe-imagenes img{max-width:9rem;max-height:9rem;object-fit:cover;border:1px solid #cfd6dd;border-radius:4px}";
+
+  // Recibe una lista de CASOS (objetos, no uids): la usan tanto "Exportar
+  // casos" (todos) como "Crear informe" (uno solo, el que está abierto).
+  function abrirInformeCasos(listaCasos) {
+    if (!listaCasos.length) { alert(T("caso_pdf_sin_datos")); return; }
+    var ventana = window.open("", "_blank");
+    if (!ventana) { alert(T("caso_pdf_popup_bloqueado")); return; }
+    var doc = ventana.document;
+    doc.open();
+    doc.write("<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>MIO-Check</title></head><body></body></html>");
+    doc.close();
+    doc.title = "MIO-Check — " + (listaCasos.length === 1 ? (listaCasos[0].ID_Caso || "") : T("btn_casos"));
+    var estilo = doc.createElement("style");
+    estilo.textContent = ESTILO_INFORME_PDF;
+    doc.head.appendChild(estilo);
+    listaCasos.forEach(function (c) {
+      doc.body.appendChild(construirInformeCaso(doc, c));
+    });
+    // document.write()+close() deja el documento ya montado de forma
+    // síncrona -no hay nada que cargar de fuera-, así que se imprime
+    // directamente: no hace falta esperar a "load" (y esperarlo también
+    // habría disparado el diálogo de impresión dos veces).
+    ventana.focus();
+    ventana.print();
+  }
+
+  document.getElementById("btn-exportar-casos").addEventListener("click", function () {
+    var uids = Object.keys(casos).sort(function (a, b) {
+      return (casos[a].fecha || "").localeCompare(casos[b].fecha || "") ||
+        (casos[a].ID_Caso || "").localeCompare(casos[b].ID_Caso || "");
+    });
+    abrirInformeCasos(uids.map(function (uid) { return casos[uid]; }));
   });
 
   function casoDesdeEscenario() {
@@ -3934,6 +4172,20 @@
   function notificarTecnicasRealizadas() {
     oyentesTecnicasRealizadas.forEach(function (fn) { fn(); });
   }
+  // Oculta un campo entero de la ficha entera mientras una técnica concreta
+  // no esté marcada en "tecnicas_realizadas" -a diferencia de dependeDe
+  // (que depende de una casilla o un desplegable de la propia ficha), esto
+  // depende de otro campo de tipo "tecnicas". Usado por "Umbral EMG de
+  // tornillos pediculares" y sus niveles/lados: sin mapeo_raices_tornillos
+  // marcado, ninguno de los dos tiene sentido (pedido por Pani, 05-09-2026).
+  function ocultarSegunTecnica(div, tecnicaId) {
+    var actualizar = function () {
+      var realizadas = camposCaso.tecnicas_realizadas || [];
+      div.hidden = realizadas.indexOf(tecnicaId) === -1;
+    };
+    actualizar();
+    oyentesTecnicasRealizadas.push(actualizar);
+  }
   // Campos con "dependeDe" (p. ej. "Tipo de alerta" depende de la casilla
   // "alerta"): campoCaso() los apunta aquí al construirse, y al final de
   // renderFichaCaso() se conecta cada uno con su casilla -ocultos hasta que
@@ -4046,9 +4298,12 @@
     // practica real ya se escribian juntos, con las incidencias intraop
     // en medio contando la evolucion de una a otra -separarlas en dos cajas
     // rompia justo lo que se queria contar de corrido.
-    { g: "desarrollo", c: "resumen_monitorizacion", t: "area", rows: 8, ay: "caso_resumen_monitorizacion_ay" },
-    // Pedido por el usuario justo debajo del resumen: es el mismo momento
-    // -cerrando la cirugía- en el que se anota qué umbral se dejó puesto.
+    { g: "desarrollo", c: "resumen_monitorizacion", t: "area", rows: 12, ay: "caso_resumen_monitorizacion_ay" },
+    // Pedido por Pani, 05-09-2026: ambas cajas solo aparecen si "Mapeo de
+    // raíces y tornillos" está marcada en Técnicas realizadas -sin esa
+    // técnica, ni el desplegable de niveles ni la nota de umbral tienen
+    // nada que hacer aquí- (ver ocultarSegunTecnica en campoCaso).
+    { g: "desarrollo", c: "umbral_raices_niveles", t: "umbral_raices", ay: "caso_umbral_raices_niveles_ay" },
     { g: "desarrollo", c: "umbral_tornillos_pediculares", t: "area", ay: "caso_umbral_tornillos_pediculares_ay" },
     { g: "desarrollo", c: "hubo_cambios_plan", t: "check" },
     { g: "desarrollo", c: "cambios_respecto_al_plan", t: "area", dependeDe: "hubo_cambios_plan" },
@@ -4075,7 +4330,7 @@
     { g: "formacion", c: "rol", t: "sel", o: "rol" },
     { g: "formacion", c: "supervisor", t: "text" },
     { g: "formacion", c: "dificultad_1a5", t: "sel", o: "dificultad" },
-    { g: "formacion", c: "aprendizaje_clave", t: "area", rows: 5 },
+    { g: "formacion", c: "aprendizaje_clave", t: "area", rows: 8 },
     { g: "formacion", c: "caso_destacado", t: "check" },
     { g: "formacion", c: "notas", t: "area" }
   ];
@@ -4147,15 +4402,30 @@
       return div;
     }
 
-    var lab2 = document.createElement("label");
-    lab2.textContent = T("caso_" + def.c);
-    lab2.setAttribute("for", "caso-f-" + def.c);
-    div.appendChild(lab2);
+    // Técnicas realizadas y las dos tablas de material van dentro de un
+    // <details> plegado por defecto (pedido por Pani, 05-09-2026): son las
+    // tres listas más largas de la ficha y no hace falta verlas siempre
+    // abiertas. Por eso no llevan la etiqueta <label> normal -su summary la
+    // sustituye-.
+    var esPlegableMontaje = def.t === "tecnicas" || def.t === "material_ro" || def.t === "material";
+    if (!esPlegableMontaje) {
+      var lab2 = document.createElement("label");
+      lab2.textContent = T("caso_" + def.c);
+      lab2.setAttribute("for", "caso-f-" + def.c);
+      div.appendChild(lab2);
+    }
 
     if (def.t === "tecnicas") {
       // Mismos chips que en la tarjeta de técnicas: una sola forma de marcar
       var elegidas = (valor || []).slice();
       camposCaso[def.c] = elegidas;
+      var detTec = document.createElement("details");
+      detTec.className = "caso-grupo";
+      var sumTec = document.createElement("summary");
+      sumTec.textContent = T("caso_" + def.c);
+      detTec.appendChild(sumTec);
+      var campTec = document.createElement("div");
+      campTec.className = "caso-grupo-campos";
       var fila = document.createElement("div");
       fila.className = "chip-fila";
       // Se ofrecen las activas, más las que ya tuviera el caso aunque estén
@@ -4176,7 +4446,9 @@
         });
         return chip;
       });
-      div.appendChild(fila);
+      campTec.appendChild(fila);
+      detTec.appendChild(campTec);
+      div.appendChild(detTec);
       if (def.ay) div.appendChild(ayudaCampo(def.ay));
       return div;
     }
@@ -4257,7 +4529,7 @@
           var datos = mapaParam[t.id];
           var det = document.createElement("details");
           det.className = "caso-grupo tecpar-tecnica";
-          det.open = CAMPOS_TECPAR.some(function (k) { return datos[k]; });
+          det.open = CAMPOS_TECPAR.some(function (k) { return datos[k]; }) || !!datos.notas;
           var sum = document.createElement("summary");
           sum.textContent = campo(t, "etiqueta");
           det.appendChild(sum);
@@ -4277,6 +4549,20 @@
             grid.appendChild(lab3);
           });
           det.appendChild(grid);
+          // Notas libres, aparte de la rejilla: detalles que no encajan en
+          // ningún parámetro fijo (p. ej. "facilitación cortical previa al
+          // tren periférico"), pedido por Pani el 05-09-2026.
+          var labNotas = document.createElement("label");
+          labNotas.className = "tecpar-notas";
+          var etqNotas = document.createElement("span");
+          etqNotas.textContent = T("tecpar_notas");
+          var areaNotas = document.createElement("textarea");
+          areaNotas.rows = 2;
+          areaNotas.value = datos.notas || "";
+          areaNotas.addEventListener("input", function () { datos.notas = areaNotas.value; });
+          labNotas.appendChild(etqNotas);
+          labNotas.appendChild(areaNotas);
+          grid.appendChild(labNotas);
           contParam.appendChild(det);
         });
       };
@@ -4353,11 +4639,91 @@
       return div;
     }
 
+    if (def.t === "umbral_raices") {
+      // Solo tiene sentido si se hizo mapeo de raíces y tornillos en este
+      // caso (ver ocultarSegunTecnica). Valor: { niveles: [...], valores:
+      // {NIVEL: {izq, der}} }. Un nivel presente en "valores" no se borra al
+      // desmarcar su chip -mismo criterio que tecnicas_parametros-: es texto
+      // escrito a mano, se deja de mostrar pero no se pierde.
+      var NIVELES_RAICES = [
+        "C1", "C2", "C3", "C4", "C5", "C6", "C7",
+        "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12",
+        "L1", "L2", "L3", "L4", "L5", "S1", "S2"
+      ];
+      var datosRaices = { niveles: ((valor && valor.niveles) || []).slice(), valores: Object.assign({}, valor && valor.valores) };
+      camposCaso[def.c] = datosRaices;
+
+      var contRaices = document.createElement("div");
+      contRaices.className = "umbral-raices";
+      var filaNiveles = document.createElement("div");
+      filaNiveles.className = "chip-fila";
+      var contValores = document.createElement("div");
+      contValores.className = "umbral-raices-valores";
+
+      var pintarValoresRaices = function () {
+        contValores.textContent = "";
+        datosRaices.niveles.forEach(function (nivel) {
+          if (!datosRaices.valores[nivel]) datosRaices.valores[nivel] = {};
+          var vals = datosRaices.valores[nivel];
+          var filaNivel = document.createElement("div");
+          filaNivel.className = "umbral-raices-fila";
+          var tituloNivel = document.createElement("span");
+          tituloNivel.className = "umbral-raices-nivel";
+          tituloNivel.textContent = nivel;
+          filaNivel.appendChild(tituloNivel);
+          [["izq", T("umbral_raices_izq", { nivel: nivel })], ["der", T("umbral_raices_der", { nivel: nivel })]]
+            .forEach(function (par) {
+              var lado = par[0];
+              var lab = document.createElement("label");
+              lab.className = "umbral-raices-campo";
+              var etq = document.createElement("span");
+              etq.textContent = par[1];
+              var inp = document.createElement("input");
+              inp.type = "text";
+              inp.value = vals[lado] || "";
+              inp.addEventListener("input", function () { vals[lado] = inp.value; });
+              lab.appendChild(etq);
+              lab.appendChild(inp);
+              filaNivel.appendChild(lab);
+            });
+          contValores.appendChild(filaNivel);
+        });
+      };
+
+      NIVELES_RAICES.forEach(function (nivel) {
+        var chip = document.createElement("span");
+        chip.className = "chip chip-extra" + (datosRaices.niveles.indexOf(nivel) !== -1 ? " activo" : "");
+        chip.textContent = nivel;
+        chip.addEventListener("click", function () {
+          var i = datosRaices.niveles.indexOf(nivel);
+          if (i === -1) datosRaices.niveles.push(nivel); else datosRaices.niveles.splice(i, 1);
+          chip.classList.toggle("activo", i === -1);
+          pintarValoresRaices();
+        });
+        filaNiveles.appendChild(chip);
+      });
+
+      pintarValoresRaices();
+      contRaices.appendChild(filaNiveles);
+      contRaices.appendChild(contValores);
+      div.appendChild(contRaices);
+      if (def.ay) div.appendChild(ayudaCampo(def.ay));
+      ocultarSegunTecnica(div, "mapeo_raices_tornillos");
+      return div;
+    }
+
     if (def.t === "material_ro") {
       // Igual que "material" pero de solo lectura: es el montaje base tal
       // cual salió del cálculo, no se edita aquí -para eso está "Material
       // realmente usado"-, así que no entra en camposCaso ni se lee en
       // leerFichaCaso().
+      var detRo = document.createElement("details");
+      detRo.className = "caso-grupo";
+      var sumRo = document.createElement("summary");
+      sumRo.textContent = T("caso_" + def.c);
+      detRo.appendChild(sumRo);
+      var campRo = document.createElement("div");
+      campRo.className = "caso-grupo-campos";
       var tablaRo = document.createElement("div");
       tablaRo.className = "caso-material";
       var tiposRo = Object.keys(valor || {}).sort();
@@ -4379,7 +4745,9 @@
         f.appendChild(cant);
         tablaRo.appendChild(f);
       });
-      div.appendChild(tablaRo);
+      campRo.appendChild(tablaRo);
+      detRo.appendChild(campRo);
+      div.appendChild(detRo);
       if (def.ay) div.appendChild(ayudaCampo(def.ay));
       return div;
     }
@@ -4388,6 +4756,13 @@
       // Mapa tipo -> cantidad, con una casilla por tipo
       var mapa = Object.assign({}, valor || {});
       camposCaso[def.c] = mapa;
+      var detMat = document.createElement("details");
+      detMat.className = "caso-grupo";
+      var sumMat = document.createElement("summary");
+      sumMat.textContent = T("caso_" + def.c);
+      detMat.appendChild(sumMat);
+      var campMat = document.createElement("div");
+      campMat.className = "caso-grupo-campos";
       var tabla = document.createElement("div");
       tabla.className = "caso-material";
       var tipos = Object.keys(mapa).sort();
@@ -4413,7 +4788,9 @@
         f.appendChild(inp);
         tabla.appendChild(f);
       });
-      div.appendChild(tabla);
+      campMat.appendChild(tabla);
+      detMat.appendChild(campMat);
+      div.appendChild(detMat);
       if (def.ay) div.appendChild(ayudaCampo(def.ay));
       return div;
     }
@@ -4481,6 +4858,11 @@
     div.appendChild(control);
     if (def.ay) div.appendChild(ayudaCampo(def.ay));
     camposCaso[def.c] = control;
+    // Solo tiene sentido anotar el umbral de tornillos si de verdad se hizo
+    // mapeo de raíces y tornillos en este caso: sin la técnica marcada, ni
+    // esta caja de notas ni la de niveles/umbrales de más abajo aparecen
+    // (pedido por Pani, 05-09-2026). Ver también el tipo "umbral_raices".
+    if (def.c === "umbral_tornillos_pediculares") ocultarSegunTecnica(div, "mapeo_raices_tornillos");
     return div;
   }
 
@@ -4685,6 +5067,7 @@
       if (def.t === "tecnicas" || def.t === "tecnicas_alt" || def.t === "imagenes_montaje") { c[def.c] = control.slice(); return; }
       if (def.t === "material") { c[def.c] = Object.assign({}, control); return; }
       if (def.t === "tecnicas_parametros") { c[def.c] = Object.assign({}, control); return; }
+      if (def.t === "umbral_raices") { c[def.c] = { niveles: control.niveles.slice(), valores: Object.assign({}, control.valores) }; return; }
       if (def.t === "check") { c[def.c] = control.checked; return; }
       // Los numéricos se guardan como número, no como texto: en el Sheet hay
       // que poder sumarlos y sacar medias sin convertir nada.
@@ -4851,7 +5234,11 @@
   });
 
   document.getElementById("caso-crear-informe").addEventListener("click", function () {
-    avisoGuardado(T("caso_informe_proximamente"));
+    // Lee lo que haya en la ficha ahora mismo -aunque no se haya pulsado
+    // "Guardar" todavía- para que el informe refleje lo último escrito,
+    // igual que hace "Guardar" antes de persistir.
+    leerFichaCaso();
+    abrirInformeCasos([casoAbierto]);
   });
   document.getElementById("caso-borrar").addEventListener("click", function () {
     var c = casoAbierto;
@@ -5238,11 +5625,6 @@
     cont.innerHTML = "";
     if (!escenarioActual()) return;
     var marcadas = tecnicasDe();
-    // El perfil solo recomienda: resalta las técnicas habituales de ese tipo
-    // de procedimiento, pero no marca ninguna. Quién monitoriza qué lo decide
-    // el usuario en cada cirugía, así que el check es siempre suyo.
-    var perfilSel = PERF[escenarioActual().nota_perfil_id];
-    var recomendadas = perfilSel ? (perfilSel.tecnicas || []) : [];
 
     GRUPOS_TECNICA.forEach(function (grupo) {
       // Una técnica desactivada no se ofrece para casos nuevos, pero si está
@@ -5263,18 +5645,13 @@
       var fila = document.createElement("div");
       fila.className = "chip-fila";
       items.forEach(function (t) {
-        var esRecomendada = recomendadas.indexOf(t.id) !== -1;
         var chip = document.createElement("span");
         chip.className = "chip chip-extra" +
           (marcadas.indexOf(t.id) !== -1 ? " activo" : "") +
-          (esRecomendada ? " recomendada" : "") +
           (t.activa === false ? " desactivada" : "");
         chip.textContent = campo(t, "etiqueta");
         var desc = campo(t, "descripcion");
         if (t.activa === false) desc = T("tec_desactivada") + (desc ? " · " + desc : "");
-        if (esRecomendada) {
-          desc = T("tec_recomendada", { perfil: campo(perfilSel, "nombre") }) + (desc ? " · " + desc : "");
-        }
         if (desc) chip.title = desc;
         chip.addEventListener("click", function () { alternarTecnica(t.id); });
         fila.appendChild(chip);
@@ -5371,53 +5748,14 @@
     renderTodo();
   });
 
-  function renderPerfilSelect() {
-    var sel = document.getElementById("perfil-select");
-    sel.innerHTML = "";
-    var vacio = document.createElement("option");
-    vacio.value = "";
-    vacio.textContent = T("perfil_elegir");
-    sel.appendChild(vacio);
-    activos(PERFILES).forEach(function (p) {
-      var o = document.createElement("option");
-      o.value = p.id;
-      o.textContent = campo(p, "nombre");
-      sel.appendChild(o);
-    });
-    // El perfil se queda a la vista: ahora no es una acción que se dispara y
-    // se olvida, sino el resaltado que está puesto en este escenario.
-    var esc = escenarioActual();
-    sel.value = (esc && PERF[esc.nota_perfil_id]) ? esc.nota_perfil_id : "";
-  }
-
-  // El selector de perfil vive dentro del <summary> de la tarjeta de
-  // técnicas: sin esto, cualquier clic para abrirlo también plegaría o
-  // desplegaría la tarjeta entera, porque un <summary> reacciona a
-  // cualquier clic dentro de él.
-  ["mousedown", "click"].forEach(function (ev) {
-    document.getElementById("perfil-select").addEventListener(ev, function (e) { e.stopPropagation(); });
-  });
-
-  /* Elegir un perfil solo cambia qué técnicas salen resaltadas como
-     recomendadas. No marca ninguna, no desmarca ninguna y no toca el
-     material: por eso tampoco pregunta nada. Cambiar de perfil, o volver a
-     "sin resaltar", es un gesto sin consecuencias que se puede deshacer
-     eligiendo otro. Lo que se monitoriza de verdad son los checks, y esos
-     los pone el usuario a mano en cada cirugía. */
-  document.getElementById("perfil-select").addEventListener("change", function (e) {
-    var esc = escenarioActual();
-    if (!esc) return;
-    var perfil = PERF[e.target.value];
-    // Siempre se apunta el perfil elegido, tenga nota o no: si solo se
-    // guardara cuando la hay, elegir uno sin nota dejaría en los avisos la
-    // nota del perfil anterior.
-    if (perfil) esc.nota_perfil_id = perfil.id;
-    else delete esc.nota_perfil_id;
-    delete esc.nota_perfil;
-    guardarMontajeActivo();
-    renderTecnicas();
-    renderResumen();
-  });
+  // El desplegable "Perfil" (resaltado de técnicas recomendadas según el
+  // tipo de cirugía) se retiró el 05-09-2026 a petición de Pani: ya conoce
+  // de memoria qué técnicas implica cada cirugía y no le aporta nada. Se
+  // quita el <select> del HTML y todo lo que lo pintaba/escuchaba; el dato
+  // "nota_perfil_id" que pudiera haber quedado en un montaje antiguo no se
+  // toca -sigue generando su aviso en el resumen si lo tenía-, simplemente
+  // ya no hay forma de elegir uno nuevo. El catálogo de perfiles en sí
+  // sigue vivo (Catálogos > Perfiles): esto solo retira el resaltado.
 
   /* ---------------------------------------------------------------- *
    * Render: cajas físicas
@@ -6101,7 +6439,6 @@
     // La lista de usuarios puede haber cambiado al bajar de GitHub: si Javier
     // se dio de alta en su móvil, aquí tiene que aparecer sin recargar.
     renderPerfilUsuario();
-    renderPerfilSelect();
     renderTecnicas();
     renderResumen();
     renderCatalogo();
@@ -7320,7 +7657,6 @@
   cargarDocente();
   pintarEstadoSync();
   renderPerfilUsuario();
-  renderPerfilSelect();
   renderTodo();
   // Arranca plegado, igual que Técnicas/Cajas/Resumen -pedido del usuario,
   // para que las cuatro ocupen lo mismo al cargar la página-. Solo en móvil:

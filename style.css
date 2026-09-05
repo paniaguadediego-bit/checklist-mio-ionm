@@ -474,14 +474,6 @@ main {
 }
 .chip-extra.activo::before { content: "☑"; }
 
-/* Recomendada por el perfil elegido. Es una sugerencia, no una marca: tiene
-   que verse a la vez que el check y sin parecerse a él, así que se señala con
-   un halo alrededor en vez de tocar el fondo o el borde -de eso ya se ocupa
-   .activo, y las dos clases conviven en el mismo chip cuando el usuario marca
-   una técnica que además estaba recomendada-. */
-.chip-extra.recomendada {
-  box-shadow: 0 0 0 2px var(--accent-soft), 0 0 0 3px var(--accent);
-}
 /* Selector de material abierto desde una entrada. Scroll propio y alto
    acotado: el catálogo entero no cabe en la pantalla de un móvil, y el
    diálogo tiene que dejar ver siempre a qué entrada va lo que elijas. */
@@ -519,13 +511,6 @@ main {
   line-height: 1.35;
   color: var(--text-muted);
   margin: 0.2rem 0 0.4rem;
-}
-
-.chip-extra.recomendada::after {
-  content: "★";
-  font-size: 0.62rem;
-  line-height: 1;
-  opacity: 0.75;
 }
 
 /* Gana al estilo de la etiqueta, que va en el atributo style del chip */
@@ -596,22 +581,6 @@ body.hay-seleccion .slot { border-color: rgba(90,200,150,0.55); cursor: pointer;
 body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,150,0.2); }
 
 /* ------------------------------- Técnicas ------------------------------ */
-.perfil-label {
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-#perfil-select {
-  font: inherit;
-  font-size: 0.76rem;
-  padding: 0.15rem 0.3rem;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--campo-bg);
-  color: var(--text);
-}
 .tecnicas-grupo { margin-top: 0.4rem; }
 
 /* ------------------------------- Resumen ------------------------------- */
@@ -1648,6 +1617,54 @@ dialog h3 {
 .tecpar-campo input {
   font: inherit;
   font-size: 0.78rem;
+  padding: 0.2rem 0.35rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--campo-bg);
+  color: var(--text);
+}
+/* Nota libre al final de cada técnica: ocupa toda la anchura de la rejilla
+   en vez de una celda estrecha como los 8 campos cortos de arriba. */
+.tecpar-notas {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.72rem;
+}
+.tecpar-notas span { color: var(--text-muted); }
+.tecpar-notas textarea {
+  font: inherit;
+  font-size: 0.78rem;
+  padding: 0.3rem 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--campo-bg);
+  color: var(--text);
+  resize: vertical;
+}
+
+/* Umbrales EMG por raíz (mapeo de tornillos), apartado 6: chips de nivel
+   arriba, y debajo una fila por nivel marcado con sus dos umbrales
+   (izquierdo/derecho). */
+.umbral-raices-valores { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.5rem; }
+.umbral-raices-fila {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r);
+  background: var(--tag-bg);
+}
+.umbral-raices-nivel { font-weight: 700; font-size: 0.8rem; min-width: 2.5rem; }
+.umbral-raices-campo { display: flex; align-items: center; gap: 0.3rem; font-size: 0.72rem; }
+.umbral-raices-campo span { color: var(--text-muted); }
+.umbral-raices-campo input {
+  font: inherit;
+  font-size: 0.78rem;
+  width: 5rem;
   padding: 0.2rem 0.35rem;
   border: 1px solid var(--border);
   border-radius: var(--r);
