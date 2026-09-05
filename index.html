@@ -17,7 +17,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260906c">
+<link rel="stylesheet" href="style.css?v=20260906d">
 </head>
 <body>
 
@@ -50,24 +50,6 @@
   </div>
 </header>
 
-<!-- Rótulo permanente (Fase 4.2): dice siempre qué se está tocando, una
-     plantilla suelta o el material de un caso concreto. Va aquí, fuera de
-     <main>, para que su position:sticky se enganche justo debajo de la
-     cabecera desde el principio -no como banner ocasional, sino como
-     orientación constante-. -->
-<div class="barra-caso no-print" id="barra-caso">
-  <span class="barra-caso-info">
-    <span id="barra-caso-prefijo"></span>
-    <b id="barra-caso-nombre"></b>
-    <small id="barra-caso-ay"></small>
-  </span>
-  <span class="barra-caso-acciones" id="barra-caso-acciones" hidden>
-    <button type="button" id="barra-caso-cargar-plantilla" data-i18n="caso_cargar_plantilla"></button>
-    <button type="button" id="barra-caso-guardar-plantilla" data-i18n="caso_guardar_plantilla"></button>
-    <button type="button" id="barra-caso-volver" class="primario" data-i18n="barra_caso_volver"></button>
-  </span>
-</div>
-
 <!-- Fase 7 (06-09-2026): pantalla de inicio con 6 tarjetas -pedido de la
      usuaria, boceto a mano-. Cada tarjeta lleva a su propia pantalla
      (ver ".pantalla"/".pantalla.activa" en style.css e irAPantalla() en
@@ -94,8 +76,9 @@
     El banco de trabajo es único -Técnicas, Catálogo, Cajas, Resumen-, siempre
     el mismo tanto si se edita una plantilla suelta como si se corrige el
     material de un caso. Qué montaje hay cargado se elige aparte, en la
-    tarjeta Montajes de aquí abajo o desde la ficha de un caso; el rótulo
-    permanente de arriba dice siempre cuál de los dos se está tocando.
+    tarjeta Plantillas de montajes de aquí abajo o desde la ficha de un
+    caso; el rótulo permanente, justo debajo de esa tarjeta, dice siempre
+    cuál de los dos se está tocando -oculto si no hay ninguno de los dos-.
   -->
   <div class="columna-principal">
 
@@ -130,6 +113,26 @@
       <div id="dlg-montajes-lista"></div>
       <p class="cat-version" id="montajes-cuenta"></p>
     </details>
+
+    <!-- Rótulo permanente (Fase 4.2, reubicado a la Fase 7.1 -06-09-2026-):
+         dice qué plantilla está cargada, o qué caso se está corrigiendo.
+         Antes vivía fuera de <main>, visible en las 6 pantallas -sobraba en
+         las otras 5, donde no hay ningún montaje que editar-. Ahora es parte
+         del propio Organizador, justo debajo de Plantillas de montajes, y
+         oculto del todo si no hay ninguna plantilla cargada -ver
+         renderBarraCaso()-. -->
+    <div class="barra-caso no-print" id="barra-caso" hidden>
+      <span class="barra-caso-info">
+        <span id="barra-caso-prefijo"></span>
+        <b id="barra-caso-nombre"></b>
+        <small id="barra-caso-ay"></small>
+      </span>
+      <span class="barra-caso-acciones" id="barra-caso-acciones" hidden>
+        <button type="button" id="barra-caso-cargar-plantilla" data-i18n="caso_cargar_plantilla"></button>
+        <button type="button" id="barra-caso-guardar-plantilla" data-i18n="caso_guardar_plantilla"></button>
+        <button type="button" id="barra-caso-volver" class="primario" data-i18n="barra_caso_volver"></button>
+      </span>
+    </div>
 
     <details class="card tecnicas-card no-print" id="tecnicas">
       <summary class="card-cab">
@@ -685,10 +688,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260906c"></script>
-<script src="data/i18n-en.js?v=20260906c"></script>
-<script src="data/guia.js?v=20260906c"></script>
-<script src="data/tecnicas-mio.js?v=20260906c"></script>
-<script src="app.js?v=20260906c"></script>
+<script src="data/surgeries.js?v=20260906d"></script>
+<script src="data/i18n-en.js?v=20260906d"></script>
+<script src="data/guia.js?v=20260906d"></script>
+<script src="data/tecnicas-mio.js?v=20260906d"></script>
+<script src="app.js?v=20260906d"></script>
 </body>
 </html>

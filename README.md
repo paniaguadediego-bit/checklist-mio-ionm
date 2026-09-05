@@ -7,23 +7,26 @@ cada cirugía monitorizada y saber exactamente qué hace falta.
 una pantalla con 6 tarjetas — **Organizador de Montajes**, **Gestión de
 Casos**, **Técnicas IONM**, **Docencia**, **Simulador** y **Bibliografía**—,
 cada una su propio espacio de trabajo. Se pulsa una y se trabaja solo ahí;
-el logo es el único camino de vuelta al inicio, no hay más navegación
-cruzada entre pantallas. Las tres últimas están de momento "en
-construcción" — ver *Pantallas nuevas, pendientes de contenido* más abajo.
+el logo, o el botón **Inicio** junto al título de cada pantalla, son el
+único camino de vuelta al inicio, no hay más navegación cruzada entre
+pantallas. Las tres últimas están de momento "en construcción" — ver
+*Pantallas nuevas, pendientes de contenido* más abajo.
 
 **Flujo de uso previsto:** el día antes de la cirugía abres o creas una
 **plantilla** —un montaje tuyo o de un compañero, desde **Organizador de
 Montajes**—, ajustas las entradas de las cajas pulsando o arrastrando
 material, y el **Resumen** te dice qué tienes que preparar, qué cuesta y si
-te sobran o faltan entradas y cajas. Cuando la cirugía es real, guardas ese
-montaje como **caso** en **Gestión de Casos**: la plantilla es el molde y
-se reutiliza, el caso es lo que pasó ese día y no cambia aunque la
-plantilla cambie después. Un rótulo permanente, justo debajo de la
-cabecera, dice siempre cuál de las dos cosas estás tocando, en cualquier
-pantalla. **Docencia** trae miotomas y colocación de cajas según la
-posición del paciente, sin relación con la preparación del material, y una
-**Guía de uso** (menú **⋮**) resume lo esencial para empezar sin tener que
-leer este archivo.
+te sobran o faltan entradas y cajas. Cuando la cirugía es real, pulsas
+**Crear caso** en **Gestión de Casos**: el caso se guarda al instante y te
+lleva directo al Organizador a construir su propio montaje —a mano, o
+cargando una plantilla encima sin tocar la plantilla original—. Un rótulo
+permanente, justo debajo de "Plantillas de montajes" (dentro del propio
+Organizador, no en las otras pantallas), dice qué plantilla tienes cargada
+o qué caso estás corrigiendo, y solo aparece cuando hay algo que mostrar.
+**Docencia** trae miotomas y colocación de cajas según la posición del
+paciente, sin relación con la preparación del material, y una **Guía de
+uso** (menú **⋮**) resume lo esencial para empezar sin tener que leer este
+archivo.
 
 ## Cómo abrir la herramienta
 
@@ -100,24 +103,27 @@ material de un caso desde **Gestión de Casos** te trae aquí mismo, con el
 rótulo permanente en verde sólido avisando de que estás mid-corrección).
 Cada una se pliega sola (menos el catálogo, que en pantalla ancha es la
 columna lateral fija de siempre, y que se pliega pulsando su barra entera,
-no solo la flechita). **Arrancan todas plegadas, salvo Montajes** —al ser
-lo primero que se ve al entrar aquí, desde el 05-09-2026 se abre sola—;
-despliega las demás según te interese en cada momento. El orden es el del
-flujo real: qué montaje cargas, qué técnicas vas a hacer, qué material hay, dónde va y qué
-sale de todo ello.
+no solo la flechita). **Arrancan todas plegadas, salvo Plantillas de
+montajes** —al ser lo primero que se ve al entrar aquí, desde el 05-09-2026
+se abre sola—; despliega las demás según te interese en cada momento. El
+orden es el del flujo real: qué montaje cargas, qué técnicas vas a hacer,
+qué material hay, dónde va y qué sale de todo ello.
 
 Qué montaje hay cargado en ese banco de trabajo se elige aparte, desde la
-tarjeta **Montajes** o desde la ficha de un caso. Un **rótulo permanente**,
-justo debajo de la cabecera, dice siempre cuál de los dos estás tocando:
-*«Plantilla: ECL con mapeo»* en gris/verde suave, o *«CASO 2026-011,
-Meningioma APC»* en verde sólido con los botones de corrección en su lugar,
-cuando estás dentro de un caso.
+tarjeta **Plantillas de montajes** o desde la ficha de un caso. Justo
+debajo de esa tarjeta, un **rótulo permanente** (06-09-2026: vive aquí
+dentro, no en las otras 5 pantallas, y solo aparece si hay algo que
+mostrar) dice cuál de las dos cosas estás tocando: *«Plantilla: ECL con
+mapeo»* en gris/verde suave, o *«CASO 2026-011, Meningioma APC»* en verde
+sólido con los botones de corrección en su lugar, cuando estás dentro de
+un caso.
 
-### La tarjeta Montajes (la biblioteca de plantillas)
+### La tarjeta Plantillas de montajes (la biblioteca de plantillas)
 
-Primera tarjeta de la página, y la única que empieza **desplegada** —al ser
-la pantalla principal, para que las plantillas estén a la vista sin tener
-que pulsar nada—. Lista plana con buscador por nombre o autor, siempre en
+Primera tarjeta de la pantalla Organizador de Montajes, y la única que
+empieza **desplegada** —para que las plantillas estén a la vista nada más
+entrar, sin tener que pulsar nada—. Lista plana con buscador por nombre o
+autor, siempre en
 **orden alfabético** —da
 igual de quién sea cada montaje, y también para los que vayas creando—, y
 cuántas entradas tiene ocupadas cada uno. **+ Montaje en blanco**, fijo

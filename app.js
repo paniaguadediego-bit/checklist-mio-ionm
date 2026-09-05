@@ -604,7 +604,7 @@
     montaje_tuyo:        { es: "tuyo", en: "yours" },
 
     /* --- Fase 4.1: biblioteca de montajes --- */
-    dlg_montajes_titulo: { es: "Montajes", en: "Montages" },
+    dlg_montajes_titulo: { es: "Plantillas de montajes", en: "Montage templates" },
     montaje_en_blanco:   { es: "+ Montaje en blanco", en: "+ Blank montage" },
 
     /* --- Fase 1: cargar una plantilla sobre un caso --- */
@@ -6744,23 +6744,31 @@
    * tocando -una plantilla suelta o el material de un caso concreto-.
    * ---------------------------------------------------------------- */
   function renderBarraCaso() {
+    var barra = document.getElementById("barra-caso");
     var prefijo = document.getElementById("barra-caso-prefijo");
     var nombre = document.getElementById("barra-caso-nombre");
     var ay = document.getElementById("barra-caso-ay");
     var acciones = document.getElementById("barra-caso-acciones");
     if (document.body.classList.contains("editando-caso")) {
       var caso = casos[casoEditandoUid];
+      barra.hidden = false;
       prefijo.textContent = T("barra_caso_texto");
       nombre.textContent = caso ? ((caso.ID_Caso || "") + (caso.nombre_caso ? " — " + caso.nombre_caso : "")) : "";
       ay.textContent = T("barra_caso_ay");
       acciones.hidden = false;
     } else {
+      // Pedido el 06-09-2026: ya no vive fuera de las 6 pantallas, y no se
+      // muestra en absoluto hasta que hay de verdad una plantilla cargada
+      // -antes decía "sin plantilla activa" todo el rato, de sobra ahora
+      // que el rótulo vive pegado a Plantillas de montajes-.
       var esc = escenarioActual();
+      barra.hidden = !esc;
       prefijo.textContent = T("barra_plantilla_texto");
-      nombre.textContent = esc ? campo(esc, "nombre") : T("barra_plantilla_ninguna");
+      nombre.textContent = esc ? campo(esc, "nombre") : "";
       ay.textContent = "";
       acciones.hidden = true;
     }
+    document.body.classList.toggle("barra-caso-oculta", barra.hidden);
   }
 
   document.getElementById("btn-restablecer").addEventListener("click", function () {

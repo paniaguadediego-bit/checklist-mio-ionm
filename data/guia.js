@@ -62,15 +62,15 @@ window.GUIA = {
     },
     {
       titulo: "Preparar un montaje desde cero",
-      html: "<p>Tarjeta <b>Montajes</b>, la primera de la página -plegada de fábrica, despliégala pulsando su barra- → <b>+ Montaje en blanco</b>. El banco de trabajo (Técnicas, Catálogo, Cajas, Resumen) queda cargado con él al momento.</p><p>Marca las técnicas que vas a hacer, y en Catálogo pulsa un ítem y luego la entrada de la caja donde va -también se puede arrastrar, aunque en pantallas táctiles pulsar y colocar funciona mejor-. Se guarda solo con cada cambio: no hay un botón «Guardar» que se pueda olvidar, aunque si prefieres una confirmación explícita, <b>Guardar montaje</b> la ofrece (ver más abajo).</p>"
+      html: "<p>Dentro de <b>Organizador de Montajes</b>, tarjeta <b>Plantillas de montajes</b> -abierta de fábrica, es la primera- → <b>+ Montaje en blanco</b>. El banco de trabajo (Técnicas, Catálogo, Cajas, Resumen) queda cargado con él al momento.</p><p>Marca las técnicas que vas a hacer, y en Catálogo pulsa un ítem y luego la entrada de la caja donde va -también se puede arrastrar, aunque en pantallas táctiles pulsar y colocar funciona mejor-. Se guarda solo con cada cambio: no hay un botón «Guardar» que se pueda olvidar, aunque si prefieres una confirmación explícita, <b>Guardar montaje</b> la ofrece (ver más abajo).</p>"
     },
     {
       titulo: "Partir de la plantilla de un compañero (duplicar)",
-      html: "<p>Desde <b>Montajes</b>, elige el montaje de otro autor y pulsa <b>Duplicar</b>. La copia nace a tu nombre y es tuya para editar; el original de tu compañero no se toca.</p>"
+      html: "<p>Desde <b>Plantillas de montajes</b>, elige el montaje de otro autor y pulsa <b>Duplicar</b>. La copia nace a tu nombre y es tuya para editar; el original de tu compañero no se toca.</p>"
     },
     {
-      titulo: "La biblioteca de Montajes: buscar, elegir, gestionar",
-      html: "<p>Tarjeta <b>Montajes</b>, arriba del todo -plegada de fábrica-. Buscador por nombre o autor, y cuántas entradas tiene ocupadas cada uno. La lista sale siempre en <b>orden alfabético</b>, sin importar de quién sea cada montaje.</p><p>Elegir un montaje <b>lo carga al momento y pliega la tarjeta sola, sin preguntar</b>: no hay ningún riesgo, cada montaje es su propio archivo y el anterior se queda guardado tal cual.</p><p><b>Duplicar, Renombrar, Vaciar y Borrar</b> actúan sobre el montaje que tengas cargado en ese momento. Solo puedes tocar los tuyos -salvo los de fábrica, sin autor, que puede editar cualquiera-. <b>Guardar montaje</b> pregunta cada vez si quieres sobrescribir el activo o guardarlo como uno nuevo -una confirmación explícita, aparte del guardado automático de siempre-.</p>"
+      titulo: "La biblioteca de Plantillas de montajes: buscar, elegir, gestionar",
+      html: "<p>Tarjeta <b>Plantillas de montajes</b>, arriba del todo dentro de Organizador de Montajes -abierta de fábrica-. Buscador por nombre o autor, y cuántas entradas tiene ocupadas cada uno. La lista sale siempre en <b>orden alfabético</b>, sin importar de quién sea cada montaje.</p><p>Elegir un montaje <b>lo carga al momento y pliega la tarjeta sola, sin preguntar</b>: no hay ningún riesgo, cada montaje es su propio archivo y el anterior se queda guardado tal cual.</p><p><b>Duplicar, Renombrar, Vaciar y Borrar</b> actúan sobre el montaje que tengas cargado en ese momento. Solo puedes tocar los tuyos -salvo los de fábrica, sin autor, que puede editar cualquiera-. <b>Guardar montaje</b> pregunta cada vez si quieres sobrescribir el activo o guardarlo como uno nuevo -una confirmación explícita, aparte del guardado automático de siempre-.</p>"
     },
     {
       titulo: "Cargar un montaje sobre un caso ya creado",

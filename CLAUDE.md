@@ -1629,6 +1629,67 @@ no hace falta migrar nada.
 README.md y `data/guia.js` revisados en el mismo turno -misma nota de
 mantenimiento de siempre-.
 
+### Retoques posteriores, 06-09-2026 (tarde): el rótulo permanente se muda dentro del Organizador, "Montajes" pasa a llamarse "Plantillas de montajes", título de pantalla sin píldora
+
+Tres pedidos más, tras ver la Fase 7 y sus retoques del mismo día en real.
+
+**`#barra-caso` (el rótulo "Plantilla: X" / "CASO Y") sobraba en las otras 5
+pantallas** -Gestión de Casos, Técnicas IONM, Docencia, Simulador,
+Bibliografía no tienen ningún montaje que editar, así que verlo ahí no
+aportaba nada, solo ruido-. Se movió de ser un hermano de nivel superior de
+`<main>` (visible siempre, en las 6 pantallas) a vivir **dentro** de
+`#pantalla-organizador`, como hijo directo de `.columna-principal` justo
+después de `</details>` de "Plantillas de montajes" y antes de la tarjeta
+Técnicas. Al ser ahora descendiente de `#pantalla-organizador`
+(`display:none` cuando no es la pantalla activa), queda oculto en las otras
+5 sin tocar nada más -la misma `.pantalla`/`.pantalla.activa` de la Fase 7
+ya resuelve esto gratis-.
+
+**Además, deja de mostrarse "— sin plantilla activa —" todo el rato**:
+`renderBarraCaso()` ahora oculta `#barra-caso` por completo
+(`barra.hidden = !esc`) cuando no hay ni plantilla cargada ni caso en
+corrección, y solo aparece -pedido explícito- una vez que sí hay algo que
+mostrar. La clave `barra_plantilla_ninguna` queda huérfana en `TEXTOS`, sin
+usar -se deja así, mismo criterio de siempre con las claves que dejan de
+hacer falta-.
+
+**Trampa de especificidad, la de siempre**: `.barra-caso` ya traía su propio
+`display: flex`, así que ocultarla con el atributo `hidden` necesitó la
+misma acotación explícita que ya lleva `.campo[hidden]`/
+`.barra-caso-acciones[hidden]`/`.menu-lista[hidden]` -van ya cuatro veces
+con este mismo fallo en el proyecto-: `.barra-caso[hidden] { display: none; }`.
+
+**El offset sticky de `.panel-catalogo` seguía dependiendo de
+`--barra-caso-h`** (`header-h + barra-caso-h + 0.5rem`, ver el comentario
+junto a `.panel-catalogo` en `style.css`), que hasta ahora solo tenía dos
+valores posibles -32px por defecto, 48px en `body.editando-caso`-, asumiendo
+que el rótulo *siempre* ocupaba sitio. Con el rótulo pudiendo estar
+completamente oculto ahora, hacía falta un tercer valor: nueva
+`body.barra-caso-oculta { --barra-caso-h: 0px; }`, con la clase puesta por
+el propio `renderBarraCaso()` en el mismo momento que oculta la barra. Se
+comprobó en el navegador -ancho de escritorio, con `getBoundingClientRect()`,
+no solo mirando la pantalla- que `panel-catalogo` sigue calculando bien su
+`top` en los tres estados (oculto, plantilla suelta, editando caso).
+
+**"Montajes" pasa a llamarse "Plantillas de montajes"** (`dlg_montajes_titulo`)
+-para distinguirlo mejor de "Organizador de Montajes", el título de la
+pantalla entera, que se prestaba a confusión-. Es solo el texto visible: el
+id `montajes`, la variable `dlgMontajes` y el resto del código no cambian.
+
+**Título de cada pantalla, sin la píldora de color**: `.pantalla-cab h2`
+pasó de imitar `.card h2` (mismo fondo `--accent-soft`, mismo texto en
+mayúsculas) a una negrita simple sin fondo -pedido explícito: se confundía
+visualmente con los submenús de dentro (Plantillas de montajes, Técnicas,
+Cajas...), que sí llevan esa píldora, y tienen que distinguirse de un
+vistazo del título de la pantalla que los contiene-.
+
+README.md y `data/guia.js` revisados en el mismo turno -misma nota de
+mantenimiento de siempre-. Pendiente, sin resolver todavía: la usuaria pidió
+además que "Cajas" ocupe toda la pantalla al desplegarse en móvil igual que
+ya hace, y algo relacionado con que "Catálogo" no se comporta igual -no
+quedó claro el cambio concreto que pide ahí, había que preguntarle antes de
+tocar el CSS del catálogo.
+
 ## Google Sheet (Apps Script)
 
 `apps-script/Codigo.gs` es un script de Google Apps independiente: no forma

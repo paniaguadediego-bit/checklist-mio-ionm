@@ -195,17 +195,15 @@ main {
   flex-wrap: wrap;
   margin-bottom: 0.8rem;
 }
+/* Negrita simple, sin la píldora de color de .card h2 -pedido explícito el
+   06-09-2026: el título de pantalla se confundía con los submenús de
+   dentro (Plantillas de montajes, Técnicas, Cajas...), que sí llevan esa
+   píldora. Tienen que distinguirse de un vistazo. */
 .pantalla-cab h2 {
   margin: 0;
-  font-size: 0.95rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--accent);
+  font-size: 1.3rem;
   font-weight: 700;
-  background: var(--accent-soft);
-  padding: 0.25rem 0.6rem;
-  border-radius: 999px;
-  display: inline-block;
+  color: var(--text);
 }
 .btn-pantalla-inicio {
   font: inherit;
@@ -1208,12 +1206,15 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
 }
 
 /* --------------------- Rótulo permanente (Fase 4.2) --------------------- */
-/* Siempre visible, justo debajo de la cabecera: dice qué se está tocando
-   ahora mismo. Fondo --accent-soft y nombre en --accent incluso en modo
-   plantilla -el usuario pidió que el montaje activo se viera bien a
-   simple vista, no solo como texto suelto-; en modo de corrección de un
-   caso pasa a --accent sólido, para que además se note el cambio de
-   contexto de un vistazo. */
+/* Reubicado a la Fase 7.1 (06-09-2026): antes vivía fuera de las 6
+   pantallas, siempre visible; sobraba en las 5 que no tienen ningún montaje
+   que editar. Ahora es parte del Organizador, justo debajo de Plantillas de
+   montajes, y oculto del todo si no hay plantilla cargada ni caso en
+   corrección (ver renderBarraCaso()). Fondo --accent-soft y nombre en
+   --accent en modo plantilla -el usuario pidió que el montaje activo se
+   viera bien a simple vista, no solo como texto suelto-; en modo de
+   corrección de un caso pasa a --accent sólido, para que además se note el
+   cambio de contexto de un vistazo. */
 .barra-caso {
   position: sticky;
   top: var(--header-h);
@@ -1228,6 +1229,10 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
   padding: 0.45rem 0.7rem;
   font-size: 0.86rem;
 }
+/* Mismo empate de especificidad que .campo[hidden]: .barra-caso ya trae su
+   propio "display", así que el [hidden] nativo necesita este empujón para
+   ganar -si no, el rótulo se quedaría visible y vacío. */
+.barra-caso[hidden] { display: none; }
 .barra-caso b { font-weight: 700; color: var(--accent); }
 body.editando-caso .barra-caso b { color: #fff; }
 .barra-caso small { display: block; opacity: 0.85; font-size: 0.7rem; }
@@ -1244,6 +1249,10 @@ body.editando-caso .barra-caso {
 /* En este modo el rótulo lleva además los tres botones y ocupa más alto
    -medido a mano, ver el comentario junto a .panel-catalogo-. */
 body.editando-caso { --barra-caso-h: 48px; }
+/* Oculto del todo (ni plantilla ni caso): el catálogo -que reserva sitio
+   fijo para el rótulo en su desplazamiento sticky- no debe dejar un hueco
+   vacío donde iría. */
+body.barra-caso-oculta { --barra-caso-h: 0px; }
 
 .caso-montaje-fila {
   margin: 0.5rem 0 0;
