@@ -189,6 +189,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Biblioteca de Montajes (tarjeta, ya no diálogo — Fase 6) | `renderListaMontajesDialog()`, `montajeNuevo()`, `compararMontajesPorNombre()`, `limpiarMontajesHeredados()` | ver `grep` |
 | Rótulo permanente | `renderBarraCaso()` | ver `grep` |
 | Exportación manual de casos a CSV | `casosACsv()`, `COLUMNAS_CSV_CASOS` | ver `grep` |
+| Informe en PDF (imprimible), uno o varios casos | `abrirInformeCasos()`, `construirInformeCaso()`, `seccionInforme()` y el resto de `seccion*Informe()` | ver `grep` |
 | Guía de uso (contenido en `data/guia.js`) | `renderGuia()`, `abrirGuia()` | ver `grep` |
 
 Datos de fábrica en `data/surgeries.js`: `cajas_material`, `etiquetas` (35,
@@ -1204,6 +1205,115 @@ principal.** El cambio más grande de las tres fases:
 README.md y data/guia.js revisados en el mismo turno (misma nota de
 mantenimiento del 31-08-2026: si se toca el flujo, los dos a la vez).
 
+### Retoques posteriores, 05-09-2026: umbrales por raíz, notas por técnica, plegables, quita el Perfil de Técnicas, e informe en PDF
+
+**Dos campos nuevos que se quedaron sin documentar aquí ni en README al
+añadirlos, corregido en esta misma pasada** -detectado al revisar todo el
+trabajo del día para esta actualización de documentación, no porque
+funcionaran mal-:
+
+- **`tecnicas_parametros` (apartado 5, "Cómo se realizó cada técnica")**:
+  un `<details class="caso-grupo tecpar-tecnica">` por cada técnica ya
+  marcada en `tecnicas_realizadas`, con un grid de 8 campos (intensidad,
+  frecuencia, num_pulsos, trenes, isi, filtros, promediacion, barrido) para
+  anotar los parámetros reales usados en ese caso concreto -no los que trae
+  el catálogo de fábrica, que no varían caso a caso-. Depende de la lista de
+  técnicas realizadas vía `oyentesTecnicasRealizadas` (tiene que
+  reconstruirse cada vez que cambia esa lista, por eso va *después* de
+  `tecnicas_realizadas` en `CAMPOS_CASO`, no es orden arbitrario). Guarda un
+  objeto por técnica en `c.tecnicas_parametros`; desmarcar la técnica oculta
+  su bloque pero no borra lo escrito, mismo criterio que `tecnicas_alteradas`.
+- **`imagenes_montaje` (apartado 5, "Imágenes del montaje")**: galería de
+  fotos/capturas del montaje en el software del equipo (p. ej. pantalla del
+  Inomed), pensada para consultar en un caso futuro parecido. Cada imagen se
+  comprime en el navegador antes de guardarse (`comprimirImagen()`, redimensiona
+  a 1100px de lado mayor y calidad 0.72) **porque el caso viaja entero en su
+  propio JSON al repositorio de datos** (ver "Por qué los montajes están en
+  archivos sueltos" más arriba) — sin comprimir, unas pocas fotos de móvil
+  dispararían el tamaño de cada sincronización. Reutiliza el visor de fotos
+  ya existente (`abrirFotoSonda()`/`dlg-foto-sonda`, pensado originalmente
+  para las fotos de sondas del catálogo) en vez de crear un lightbox nuevo.
+  Van dentro del propio caso, no en archivo aparte -a diferencia de los
+  montajes compartidos, un caso lo edita una sola persona a la vez, no hay
+  riesgo de choque entre dispositivos-.
+
+- **6 electrodos nuevos en "Músculos de tronco y periné"**: L.Abd, R.Abd,
+  L.Bulbocavernoso, R.Bulbocavernoso (los cuatro con `aguja_trenzada`, igual
+  que el resto de músculos — no llevan etiqueta propia, se corrigió sobre la
+  marcha tras un primer intento equivocado con una etiqueta dedicada) y
+  L./R.Esfínter Anal Externo (`hook_wire`, agujas hook-wire de verdad, activo
+  + referencia).
+- **`hook_wire` gana `"doble": true`**: cada colocación hook-wire consume 2
+  unidades de material (activo y referencia), no 1 — mismo mecanismo que
+  `"manta"` en las etiquetas GRID, pero al revés (multiplica en vez de
+  dividir). `calcularResumen()`: `var unidadesPorColocacion = item.media_unidad
+  ? 0.5 : ((etDe && etDe.doble) ? 2 : 1)`. Cualquier etiqueta futura que
+  necesite este patrón (dos piezas físicas por colocación) usa el mismo flag;
+  el editor de etiquetas tiene su checkbox "Se cuenta doble" junto al de
+  "Se cobra por manta".
+- **Umbrales EMG por raíz (`umbral_raices_niveles`, apartado 6)**: campo
+  nuevo, tipo `"umbral_raices"` en `campoCaso()`. Solo aparece si
+  "Mapeo de raíces y tornillos" está en `tecnicas_realizadas`
+  (`ocultarSegunTecnica()`, helper nuevo y genérico — cualquier campo futuro
+  que deba depender de una técnica marcada lo reutiliza, en vez de repetir el
+  patrón a mano). Chips C1–S2; marcar un nivel pinta una fila con dos cajas,
+  "Izquierdo {nivel}" y "{nivel} derecho". Modelo: `{ niveles: [], valores:
+  { <nivel>: { izq, der } } }` — deliberadamente un campo nuevo y no una
+  mutación de `umbral_tornillos_pediculares` (que sigue existiendo, ahora
+  relabeled "Notas de umbral EMG de tornillos pediculares", también gated a
+  la misma técnica), para no migrar el dato real ya guardado en el
+  repositorio privado.
+- **Nota libre al final de cada técnica**, dentro de `tecnicas_parametros`
+  (apartado 5, "Cómo se realizó cada técnica"): noveno campo del bloque de 8
+  parámetros, `datos.notas`, `<textarea>` de 2 filas. Mismo criterio de
+  preservación que el resto de `tecnicas_parametros`/`umbral_raices_niveles`:
+  desmarcar la técnica oculta el bloque entero (`ocultarSegunTecnica`), nunca
+  borra lo ya escrito.
+- **"Técnicas realizadas", "Material (montaje base)" y "Material realmente
+  usado" (apartado 5) pasan a `<details class="caso-grupo">` plegados por
+  defecto** — mismo patrón visual que ya usaban `tecnicas_parametros` y
+  `umbral_raices_niveles`. `campoCaso()` salta el `<label>` plano para estos
+  tres tipos (`t === "tecnicas" || "material_ro" || "material"`) porque el
+  título ya lo pone el propio `<summary>`.
+- **Cajas más grandes**: "Resumen de la monitorización" 8→12 filas,
+  "Aprendizaje clave" 5→8.
+- **Se quita el desplegable "Perfil" de la tarjeta Técnicas** (el que
+  resaltaba técnicas habituales por tipo de procedimiento): `renderPerfilSelect()`
+  y sus tres llamadas, el `<select id="perfil-select">` del HTML, y el
+  resaltado `.chip-extra.recomendada` en `renderTecnicas()`, todo retirado.
+  **El catálogo `Perfiles` de Catálogos se queda intacto y editable** (regla
+  de "desactivar no borra" aplicada a media función: se retiró el único
+  consumidor de la interfaz, no el dato) — pero ahora mismo **no lo lee
+  ningún sitio de la app**, es un catálogo huérfano. `nota_perfil_id` en
+  montajes antiguos tampoco se toca ni se migra, queda inerte. **Pendiente de
+  revisar en README.md** si se llega a retirar el catálogo entero algún día
+  (de momento README ya se corrigió para no describir un desplegable que ya
+  no existe, ver más abajo).
+- **"Exportar casos" pasa a generar un PDF** en vez de CSV, vía
+  `window.print()` sobre una ventana nueva construida a mano
+  (`abrirInformeCasos()` → `construirInformeCaso()`), sin librerías —regla de
+  siempre, sin dependencias—. Recorre `GRUPOS_CASO`/`CAMPOS_CASO`
+  genéricamente, así que un campo nuevo de la ficha aparece solo en el
+  informe sin tocar esta parte. **El CSV no desaparece**: se mueve a un botón
+  nuevo, "Exportar CSV" (`btn-exportar-casos-csv`), con `casosACsv()` sin
+  tocar. El botón **"Crear informe"** de la ficha de un caso (antes un aviso
+  de "próximamente") se conecta al mismo generador, para un único caso.
+  `window.open()` puede devolver `null` si el navegador bloquea la ventana —
+  hay aviso (`caso_pdf_popup_bloqueado`) en vez de romper. **Primera versión,
+  pendiente de que el usuario la pruebe en real y pida ajustes** de
+  contenido/formato — avisado explícitamente por el propio usuario al
+  pedirlo ("hay que depurarla para que sea útil"), no dar por cerrada esta
+  función sin volver a preguntar.
+
+README.md revisado en el mismo turno: se corrigió la descripción del
+desplegable Perfil de Técnicas (retirado) y la de "Exportar casos"
+(CSV → PDF, con el nuevo botón CSV aparte). `data/guia.js` no mencionaba el
+desplegable de Perfil de Técnicas ni describía `tecnicas_parametros`/
+`umbral_raices_niveles` todavía — se actualizó su entrada de exportación de
+casos; añadir contenido de guía para los campos nuevos de la ficha queda
+pendiente si el usuario lo pide (la guía es intencionadamente breve, no
+enumera cada campo de la ficha uno por uno).
+
 ## Google Sheet (Apps Script)
 
 `apps-script/Codigo.gs` es un script de Google Apps independiente: no forma
@@ -1339,6 +1449,23 @@ nombre derivado de un UUID, dos dispositivos no pueden chocar.
   estar aquí. En el Sheet genera la columna hermana
   `TEC_<etiqueta> - alteración` junto a cada `TEC_<etiqueta>` (ver más
   abajo), con el mismo `1`/`0` que el resto de columnas booleanas.
+- `tecnicas_parametros` — objeto `{ <id_tecnica>: { intensidad, frecuencia,
+  num_pulsos, trenes, isi, filtros, promediacion, barrido, notas } }`, solo
+  para las técnicas ya en `tecnicas_realizadas`. Parámetros reales usados en
+  *este* caso, no los de fábrica del catálogo. No tiene columna propia en el
+  Sheet (no cabe en una columna por técnica sin explotar la cabecera); si
+  algún día hace falta ahí, probablemente como hoja `long` nueva, igual que
+  `Material_long`.
+- `umbral_raices_niveles` — `{ niveles: [], valores: { <nivel_C1_a_S2>: {
+  izq, der } } }`, solo relevante si `mapeo_raices_tornillos` está en
+  `tecnicas_realizadas`. Campo nuevo, no una mutación de
+  `umbral_tornillos_pediculares` (que sigue existiendo en paralelo, como
+  texto libre). Tampoco tiene columna en el Sheet todavía.
+- `imagenes_montaje` — array de `{ dataUrl, nombre }`, imágenes ya
+  comprimidas en el navegador (`comprimirImagen()`) antes de guardarse en el
+  propio caso. **Ojo con el tamaño del JSON**: a diferencia del resto de
+  campos de texto, esto puede hacer crecer bastante un `casos/<uid>.json`
+  individual — no hay límite impuesto por la app, solo la compresión previa.
 
 **Tres fechas y no se confunden:**
 

@@ -141,12 +141,11 @@ Lista las técnicas de monitorización y de mapeo. Se marcan pulsándolas y
 salen en el resumen. Son informativas: no calculan material por sí solas,
 pero dejan constancia de qué se va a hacer.
 
-El desplegable **Perfil** de esta tarjeta trae las combinaciones habituales
-por tipo de procedimiento (supratentorial, troncoencéfalo, médula espinal,
-columna, procesos vasculares, raíces y nervio periférico). Elegir uno
-**resalta** esas técnicas con un halo — no las marca ni las desmarca. Eres
-tú quien decide con el check cuáles se hicieron de verdad; el perfil es solo
-la sugerencia.
+> Hasta el 05-09-2026 esta tarjeta tenía además un desplegable **Perfil** que
+> resaltaba las técnicas habituales por tipo de procedimiento. Se retiró a
+> petición del usuario, que ya no lo necesitaba. El catálogo *Perfiles* de
+> Catálogos sigue existiendo (ver más abajo) pero ya no lo usa nada de la
+> interfaz.
 
 ### 2. Catálogo
 
@@ -277,8 +276,10 @@ abajo).
   rellenes se aplicará solo a todos los casos anteriores de ese tipo, sin
   tocarlos uno a uno. Es independiente del campo *Intervención* del caso
   (texto libre, ver más abajo).
-- **Perfiles** — las combinaciones de técnicas del desplegable *Perfil* de
-  la tarjeta Técnicas. Se pueden crear, editar y borrar.
+- **Perfiles** — las combinaciones de técnicas que antes alimentaban el
+  desplegable *Perfil* de la tarjeta Técnicas (retirado el 05-09-2026, ver
+  más arriba). Se pueden seguir creando, editando y borrando, pero de
+  momento no los usa ninguna otra parte de la interfaz.
 - **Usuarios** — quién puede firmar montajes (ver la tarjeta *Montajes*
   arriba). Vacío de fábrica a propósito: los nombres de personas reales no
   se escriben en el repositorio público del código, se crean desde la app y
@@ -363,18 +364,32 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
    canal a canal**: la misma vista de "Cajas
    necesarias" que hay en Resumen, de solo lectura, para saber exactamente
    qué hay puesto en cada entrada sin salir a corregir el montaje. Debajo de
-   eso, técnicas realizadas (ya vienen marcadas las que planificaste, solo
-   ajustas — los chips salen en tres bloques separados por un hueco:
-   monitorización, reflejos y mapeo), el material que salió del montaje
-   base (solo lectura), el material realmente usado (editable, precargado
-   con lo previsto) y notas de montaje/técnicas.
+   eso, **técnicas realizadas**, **material (montaje base)** y **material
+   realmente usado** —los tres, plegados por defecto desde el 05-09-2026,
+   se despliegan pulsando su título— (ya vienen marcadas las técnicas que
+   planificaste, solo ajustas — los chips salen en tres bloques separados
+   por un hueco: monitorización, reflejos y mapeo; el material que salió del
+   montaje base es de solo lectura, el realmente usado es editable y viene
+   precargado con lo previsto), notas de montaje/técnicas, **"Cómo se
+   realizó cada técnica"** (un bloque plegable por cada técnica ya marcada
+   como realizada, con los parámetros reales usados en este caso —
+   intensidad, frecuencia, nº de pulsos, trenes, ISI, filtros, promediación,
+   barrido— y una caja de notas libres al final para cualquier detalle
+   técnico que no encaje en esos campos) y **"Imágenes del montaje"**
+   (capturas o fotos de cómo quedó en el software del equipo, p. ej. la
+   pantalla del Inomed, para consultar si te toca un caso parecido —se
+   comprimen solas al añadirlas, se pulsan para verlas en grande).
 6. **Desarrollo intraoperatorio** — resumen de la monitorización (de
    corrido qué salió al empezar, qué pasó por el medio y qué salió al
-   cerrar), umbral EMG de tornillos pediculares; si hubo cambios respecto al
-   plan y, si los hubo, su detalle; si hubo alerta y, si la hubo, tipo de
-   alerta, medida correctora y recuperación de la señal; resultado
-   esperable; técnicas con alteración (un chip-fila con solo las técnicas ya
-   marcadas como realizadas —se actualiza solo si las tocas en el punto 5—);
+   cerrar); si se marcó la técnica "Mapeo de raíces y tornillos", un
+   selector de niveles C1–S2 (marca los que mapeaste y aparece una caja de
+   umbral para "Izquierdo {nivel}" y "{nivel} derecho" en cada uno) más una
+   caja de notas libres de umbral EMG de tornillos pediculares para lo que
+   no encaje en una raíz concreta; si hubo cambios respecto al plan y, si
+   los hubo, su detalle; si hubo alerta y, si la hubo, tipo de alerta,
+   medida correctora y recuperación de la señal; resultado esperable;
+   técnicas con alteración (un chip-fila con solo las técnicas ya marcadas
+   como realizadas —se actualiza solo si las tocas en el punto 5—);
    incidencias técnicas; equipo.
 7. **Resultado / Correlación clínica** — evolución postquirúrgica,
    concordancia.
@@ -386,9 +401,9 @@ cambia el propio campo **Estado** (apartado 1, Identificación/Trazabilidad)
 a *Cerrado* y guarda — no hay un botón aparte que lo haga por ti. La barra
 de acciones fija de abajo del diálogo, siempre visible aunque hayas bajado
 en el scroll de los 8 apartados, tiene **Borrar caso** y **Crear informe**
-a la izquierda (este último, de momento, sin función todavía), y **Volver
-a la lista** y **Guardar** a la derecha — *Volver a la lista* solo navega,
-nunca guarda ni cambia el estado.
+a la izquierda (abre un PDF imprimible de ese caso, ver más abajo), y
+**Volver a la lista** y **Guardar** a la derecha — *Volver a la lista* solo
+navega, nunca guarda ni cambia el estado.
 
 **Corregir el montaje de un caso ya guardado**: el botón vive en el propio
 apartado 5 (Montaje/Técnicas), junto al de plantillas — abre las cajas de
@@ -561,13 +576,19 @@ El token se guarda solo en ese navegador. **Desconectar** lo borra del
 dispositivo (no toca ni tus montajes ni lo guardado en GitHub), y siempre
 puedes revocarlo desde GitHub.
 
-**Exportar casos**, dentro del diálogo **Gestión de casos** (abajo a la
-izquierda), descarga un CSV con los casos que tengas cargados en ese
-navegador en ese momento —mismas columnas que la
-hoja *Casos* del Google Sheet, sin las columnas por técnica—. No depende de
-la sincronización automática ni del disparador diario de Apps Script: es
-una vía manual y más rudimentaria para tener los datos a mano cuando
-quieras, sin esperar a nada.
+**Exportar casos**, dentro del diálogo **Gestión de casos** (barra de
+acciones fija), abre un **informe en PDF** —imprimible desde el propio
+diálogo "Guardar como PDF" del navegador, sin depender de ninguna librería—
+con todos los casos que tengas cargados en ese navegador en ese momento.
+**Crear informe**, dentro de la ficha de un caso concreto, genera el mismo
+tipo de informe pero solo de ese caso. Es una función nueva del
+05-09-2026, primera versión pendiente de irse afinando con el uso real.
+
+Junto a él, un botón aparte **Exportar CSV** descarga un CSV con esos mismos
+casos —mismas columnas que la hoja *Casos* del Google Sheet, sin las
+columnas por técnica—. Ninguno de los dos depende de la sincronización
+automática ni del disparador diario de Apps Script: son vías manuales para
+tener los datos a mano cuando quieras, sin esperar a nada.
 
 Los montajes de fábrica están desactivados a propósito desde el 03-09-2026
 (ver la nota de la tarjeta *Montajes* más arriba). Si algún día hace falta

@@ -97,8 +97,8 @@ window.GUIA = {
       html: "<p>Con el token conectado (botón <b>☁</b>), todo -montajes, casos, catálogos- se sube y se baja solo, unos segundos después de cada cambio.</p><p><b>Sin conexión sigue funcionando con normalidad</b> y reintenta en cuanto vuelve. Si has tocado algo en el móvil sin subirlo y abres el ordenador, no se pisa nada: sube lo tuyo en vez de bajar.</p><p>Si dos dispositivos han cambiado cosas distintas, avisa de <b>Conflicto</b> y decides tú, desde el propio diálogo, entre <b>Subir</b> (gana lo de este dispositivo) o <b>Bajar</b> (gana lo del repositorio). La app nunca decide sola cuál de las dos versiones se pierde.</p>"
     },
     {
-      titulo: "Exportar tus casos a CSV a mano",
-      html: "<p>Dentro de <b>Gestión de casos</b>, botón <b>Exportar casos</b> abajo a la izquierda. Descarga un CSV con los casos que tengas cargados en ese navegador en ese momento, sin esperar a la sincronización automática con el Google Sheet -útil si quieres los datos ya mismo, o simplemente prefieres no depender de ella-.</p>"
+      titulo: "Informe en PDF y exportar a CSV",
+      html: "<p>Dentro de <b>Gestión de casos</b>, botón <b>Exportar casos</b>: abre un informe en PDF -imprimible desde el propio diálogo del navegador- con los casos que tengas cargados en ese momento. <b>Crear informe</b>, dentro de la ficha de un caso, hace lo mismo pero solo para ese caso. Es una función nueva, en pruebas: si algo no sale como esperas, dilo para irla afinando.</p><p>El botón <b>Exportar CSV</b>, al lado, descarga un CSV con esos mismos casos, sin esperar a la sincronización automática con el Google Sheet -útil si quieres los datos ya mismo, o prefieres no depender de ella-.</p>"
     },
     {
       titulo: "Qué NO se guarda nunca",
