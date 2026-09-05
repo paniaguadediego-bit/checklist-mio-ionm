@@ -525,12 +525,32 @@ guardan solo en ese navegador, no se sincronizan:
 
 ## Simulador y Bibliografía
 
-Dos tarjetas nuevas de la pantalla de inicio (06-09-2026), de momento "en
-construcción". **Simulador** será un simulador de ventanas de un software de
-IONM (SEP, MEP, EMG, EEG...) para crear canales de electrodos con sus
-parámetros de estimulación/filtros/barrido según la técnica. **Bibliografía**
-serán enlaces a artículos open-access de PubMed con teoría relevante. Ninguna
-de las dos toca montajes, casos ni catálogos.
+Dos tarjetas de la pantalla de inicio (06-09-2026). **Bibliografía** sigue
+"en construcción" (serán enlaces a artículos open-access de PubMed con teoría
+relevante).
+
+El **Simulador** ya tiene una primera versión: representa de forma
+**esquemática** la pantalla de monitorización, sin nombrar ninguna marca. Es
+una rejilla de **filas**, y en cada fila varias **ventanas** (una por
+técnica: SEP, MEP, TOF, f-EMG…) una al lado de otra. Cada ventana tiene:
+
+- **Vista** *Promediado (Avg)* o *Cascada*.
+- **Canales** que se escriben a mano (p. ej. `Cz'-C3'`, `L.Q`).
+- **Parámetros de estimulación** (intensidad, frecuencia, nº pulsos, trenes,
+  ISI, duración) que aparecen en un rail a la izquierda de la ventana, y
+  **filtros/barrido** (LFF, HFF, notch, barrido). Todo se edita con el botón
+  ⚙ de cada ventana.
+
+Las ventanas se **arrastran** por su cabecera para recolocarlas —antes o
+después de otra, o a una fila nueva arriba/abajo— y todo se reordena al
+soltar. El botón **Ejemplo: columna lumbar** monta una pantalla típica de
+tornillos/descompresión/artrodesis para empezar. Los trazos son de ejemplo
+(no hay señal real), solo para ensayar cómo queda la pantalla. Se guarda en
+**este dispositivo** (no se sincroniza), como Docencia. No toca montajes,
+casos ni catálogos.
+
+Pendiente: un bloque nuevo **Cirugías con IONM** (qué hace cada cirugía, sus
+pasos, técnicas, momentos críticos y criterios de alarma), aún sin construir.
 - **Cama de quirófano** — eliges la posición del paciente (supino, supino con
   brazos extendidos, prono, sentado) y repartes las cajas por cabecera,
   laterales y pies con el mismo gesto de pulsar y colocar del resto de la

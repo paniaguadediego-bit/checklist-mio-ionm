@@ -586,6 +586,11 @@ main {
   color: var(--text-muted);
 }
 .coste-falta { color: var(--peligro); }
+.resumen-nota-conmutador {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
 .campo-ayuda {
   font-size: 0.68rem;
   line-height: 1.35;
@@ -2073,4 +2078,212 @@ dialog h3 {
   }
   #perfil-usuario, #catalogo-buscar, #perfil-select { background: #1b2226; color: var(--text); }
   .caja-plate { background: #c8d2d8; }
+}
+
+/* ================================================================ *
+ * Simulador de pantalla (06-09-2026). Rejilla de filas; cada fila,
+ * ventanas (técnicas) una al lado de otra. Todo con tokens de tema para
+ * que valga en claro y oscuro. Trazos en rojo/azul/turquesa fijos: es la
+ * dualidad L/R de la pantalla real, legible sobre cualquier fondo.
+ * ================================================================ */
+.sim-barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+.sim-barra .sim-aviso {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  flex-basis: 100%;
+}
+.sim-lienzo {
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  min-height: 3rem;
+}
+.sim-fila {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+  min-width: min-content;
+}
+/* Banda fina entre filas: recibe una ventana para crear una fila nueva. */
+.sim-zona-fila {
+  height: 0.6rem;
+  margin: 0.15rem 0;
+  border-radius: var(--r);
+}
+.sim-zona-fila.activa {
+  height: 1.6rem;
+  background: var(--accent-soft);
+  outline: 2px dashed var(--accent);
+}
+.sim-ventana {
+  flex: 0 0 auto;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.sim-ventana.arrastrando { opacity: 0.4; }
+.sim-ventana.insertar-antes { box-shadow: inset 3px 0 0 var(--accent); }
+.sim-ventana.insertar-despues { box-shadow: inset -3px 0 0 var(--accent); }
+.sim-ventana-cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+  padding: 0.25rem 0.4rem;
+  background: var(--accent-soft);
+  color: var(--accent);
+  cursor: grab;
+}
+.sim-ventana-cab:active { cursor: grabbing; }
+.sim-ventana-titulo {
+  font-weight: 700;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sim-ventana-acc {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  flex: 0 0 auto;
+}
+.sim-vista-tag {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  background: var(--card-bg);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0 0.35rem;
+}
+.sim-icono {
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  font-size: 0.85rem;
+  line-height: 1;
+  padding: 0.1rem 0.2rem;
+  cursor: pointer;
+  border-radius: var(--r);
+}
+.sim-icono:hover { background: rgba(0, 0, 0, 0.06); }
+.sim-ventana-cuerpo {
+  display: flex;
+  gap: 0.3rem;
+  padding: 0.35rem;
+}
+.sim-rail {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding-right: 0.35rem;
+  border-right: 1px dashed var(--border-soft);
+  min-width: 4.2rem;
+}
+.sim-rail-linea {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.3rem;
+  font-size: 0.62rem;
+  line-height: 1.3;
+}
+.sim-rail-k { color: var(--text-muted); }
+.sim-rail-v { color: var(--text); font-weight: 600; white-space: nowrap; }
+.sim-trazos {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+.sim-canal {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.sim-canal-etiq {
+  flex: 0 0 auto;
+  width: 3.6rem;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sim-svg {
+  flex: 1 1 auto;
+  width: 100%;
+  background: var(--campo-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: 3px;
+}
+.sim-sin-canales {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin: 0.2rem 0;
+}
+
+/* Diálogo de ajustes de la ventana */
+.sim-vista-radios { display: flex; gap: 1rem; }
+.sim-vista-radios label { display: flex; align-items: center; gap: 0.3rem; }
+.sim-canales-editor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-bottom: 0.4rem;
+  min-height: 1.5rem;
+}
+.sim-canal-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: var(--tag-bg);
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.75rem;
+}
+.sim-canal-quitar {
+  border: none;
+  background: transparent;
+  color: var(--peligro);
+  cursor: pointer;
+  font-size: 0.7rem;
+  padding: 0;
+}
+.sim-canal-add { display: flex; gap: 0.4rem; }
+.sim-canal-add input { flex: 1 1 auto; }
+.sim-dlg-grupo { margin: 0.5rem 0; }
+.sim-dlg-grupo > summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--accent);
+}
+.sim-params-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+.sim-params-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+@media (max-width: 560px) {
+  .sim-params-grid { grid-template-columns: repeat(2, 1fr); }
 }

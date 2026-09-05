@@ -1774,6 +1774,112 @@ de la línea media, como ya pasa con "Tierra" en "Tierras y referencias"-, y
 sin `nota` clínica -mismo criterio de siempre: mejor en blanco que una
 descripción sin confirmar por el usuario-.
 
+### Retoques posteriores, 06-09-2026 (noche): auditoría hook wire, identificar el conmutador, primera versión del Simulador
+
+Tres cosas en el mismo turno; una cuarta (bloque "Cirugías con IONM") queda
+pendiente a propósito, ver el final.
+
+**1 — Conteo de hook wire en casos cerrados, corregido en el repo de datos.**
+Regla del usuario: cada músculo con hook wire gasta **2 agujas** (activo +
+referencia), que es justo lo que hace el flag `doble: true` de la etiqueta
+`hook_wire` desde el 05-09-2026. Los casos cerrados **antes** de ese flag
+guardaron su `material_previsto`/`material_real` contando 1 por colocación.
+Auditoría (script de Node que cuenta las entradas `tipo: "Electrodo Hook
+Wire"` del snapshot `montaje` de cada caso y compara con `2 × colocaciones`):
+- **2026-002**: 10→**20**, **2026-005**: 8→**16**, **2026-012**: 11→**22**
+  (todos cerrados antes del 05-09, desajustados).
+- **2026-014** (4=2×2) y **2026-015** (22=2×11) ya estaban bien.
+
+Se migraron los 3 casos a `2 × colocaciones` -exactamente lo que produce
+reabrir y volver a guardar el caso en la app hoy-, con un `editado_en` nuevo
+dejando constancia (mismo patrón que la migración del sacacorchos del
+23-08-2026). La etiqueta `hook_wire` **no tiene precio**, así que
+`coste_material`/`coste_completo` no cambian. Detalle importante que
+despistó al principio: los hook wire de estos casos no son el esfínter anal,
+son **músculos craneales** (L.Mass, L.OOc, L.Crico, L.STCM, L.LEN…) —todos
+con etiqueta `hook_wire` en el catálogo actual, con `etiquetas_colocadas: {}`
+en el caso (sin override), así que recalcular hoy los vuelve a etiquetar
+"Electrodo Hook Wire" y a contar 2×: la migración es correcta, no un
+artefacto de etiquetado viejo. El clon local de `checklist-mio-datos` estaba
+13 commits por detrás: se hizo `git fetch` + `pull --ff-only` **antes** de
+tocar nada (lección del 26-08-2026), y round-trip `json.loads`→`json.dumps
+(ensure_ascii=False, indent=2)` byte-idéntico comprobado antes de editar,
+para que el diff fuera solo las líneas cambiadas.
+
+**2 — El conmutador identifica sus 6 sacacorchos en el resumen.** Pedido:
+ver de un vistazo en qué reparte el conmutador sus 6 electrodos. Se añade
+`res.conmutadorTipo` en `calcularResumen()` (se fija al `tipo` de la fila del
+conmutador cuando `item.id === "conmutador"`), y `renderResumen()` cuelga un
+`<small class="resumen-nota-conmutador">` con la nota junto a la fila
+"Conmutador" de "Material a preparar": **"(reparte en C1, C2, C3, C4, Cz-1,
+Cz+6)"** (clave `resumen_conmutador_nota`). Las 6 posiciones son las de la
+**descripción de fábrica de la caja TES MEP** (`data/surgeries.js`, "el canal
+6 se subdivide en C1/C2/C3/C4/Cz-1/Cz+6"), elegidas por el usuario frente al
+comentario más impreciso de `calcularResumen()` ("C3/C4, a veces C5/C6"). Va
+en la fila del **conmutador**, no en la de sacacorchos, porque esa cuenta
+mezcla los 6 del conmutador con cualquier sacacorchos suelto (Cz-1, Cz+6cm…).
+
+**3 — Simulador, primera versión** (pantalla que estaba vacía desde la Fase
+7). Representa **esquemáticamente** la pantalla de monitorización, **sin
+nombrar la marca nunca** (regla explícita del usuario). Modelo: una rejilla
+de **filas**, cada fila con **ventanas** (una por técnica) una al lado de
+otra; el lienzo hace scroll horizontal cuando no caben -se trabaja en
+apaisado, como pidió-. Todo el estado en `localStorage["mio_ionm_simulador_v1"]`,
+**no se sincroniza** (como Docencia: material de ensayo, no dato clínico).
+
+- Cada ventana: `{ id, titulo, vista: "avg"|"cascada", canales:[], params:{},
+  filtros:{} }`. **Avg** dibuja 2 trazos superpuestos por canal; **cascada**,
+  ~7 barridas apiladas (waterfall). Los trazos son **garabatos deterministas
+  por semilla** (`simSemilla`/`simRand`), no señal real: mismo montaje → mismo
+  dibujo, no bailan al repintar. Color por canal: azul lo `L*`, rojo lo `R*`,
+  turquesa el resto -la dualidad L/R de la pantalla real-.
+- **Parámetros de estimulación a la izquierda** (`simRailParams`): rail
+  compacto dentro de la ventana con lo que tenga puesto (I, f, nº, trenes,
+  ISI, duración, filtro, notch, barrido). Todo se edita en el diálogo
+  `#dlg-sim-ventana` (botón ⚙): título, vista, canales (chips add/quitar), y
+  los dos grupos plegables estímulo/filtros.
+- **Arrastrar y soltar** (HTML5 DnD nativo, `draggable`): soltar sobre otra
+  ventana inserta antes/después según el lado; soltar en una `.sim-zona-fila`
+  (bandas finas entre filas y en los extremos) crea una fila nueva. El movido
+  se referencia **por id/objeto y se recalcula el índice tras quitarlo**
+  (`simSoltarEnVentana`/`simSoltarEnZona`), nunca por índice fijo -se
+  invalida al sacar la ventana que arrastras-. Reordena al soltar y repinta.
+- Botones de la barra: **+ Ventana** (crea y abre su diálogo para nombrarla),
+  **Ejemplo: columna lumbar** (siembra 2 filas: 4 SEP en Avg + MEP L/R en
+  cascada con params de la foto que pasó el usuario, TOF, f-EMG), **Vaciar**.
+
+  **Bug real, mismo patrón que ya documenta este archivo** (`data-i18n` sobre
+  un elemento con hijos): puse `data-i18n="sim_barrido"` en un `<label>` que
+  **envolvía su `<input>`**, y `aplicarTextos()` hace `el.textContent = T(...)`,
+  que **borra el input**. `simGid("sim-f-barrido")` daba `null` y el diálogo
+  petaba al abrir. Se quitó el `data-i18n` de ese label (queda literal, como
+  el resto de micro-etiquetas de unidades del grid). **Regla: nunca `data-i18n`
+  en un elemento que contiene otros nodos que deban sobrevivir** -reescribe
+  todo su contenido-.
+- **Micro-etiquetas del grid de parámetros** ("Int. (mA)", "Nº pulsos",
+  "Trenes"…) quedan **literales en castellano**, no por `T()` -pragmatismo de
+  v1, son unidades cortas; el resto del chrome sí va por `T()`-. Pendiente si
+  se quiere bilingüe del todo.
+- Verificado en el navegador: ejemplo, + Ventana (abre diálogo, sin el error
+  de arriba), cambiar vista Avg→cascada, y las dos formas de arrastrar
+  (reordenar entre filas y crear fila nueva) -estas últimas disparando los
+  handlers con `DragEvent` sintéticos + `DataTransfer`, porque el arrastre de
+  ratón sintético del entorno no dispara DnD nativo; el contrato DnD es el
+  estándar, así que el arrastre real del usuario sí los dispara-.
+
+**4 — Pendiente, sin construir (decisión del usuario): bloque "Cirugías con
+IONM".** Una tarjeta/pantalla nueva de inicio donde se describa cada cirugía
+(ACDF, TLIF, neurinoma del acústico…): en qué consiste, pasos, técnicas a
+realizar, momentos críticos y criterios de alarma, para preparar la cirugía
+con todo a la vista. El usuario pidió **dejarlo pendiente** por ahora, así
+que **no se ha tocado** -ni tarjeta placeholder-; queda anotado aquí para
+retomarlo.
+
+README.md revisado en el mismo turno (Simulador ya no "en construcción").
+`data/guia.js` no se tocó: solo nombra el Simulador como una de las 6
+tarjetas -sigue siendo cierto-, y la guía es intencionadamente breve, no
+enumera el contenido de cada pantalla.
+
 ## Google Sheet (Apps Script)
 
 `apps-script/Codigo.gs` es un script de Google Apps independiente: no forma

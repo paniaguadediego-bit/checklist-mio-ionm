@@ -159,6 +159,8 @@
     resumen_vacio:       { es: "Escenario vacío. Arrastra material del catálogo a las entradas de las cajas.",
                            en: "Empty scenario. Drag material from the catalogue onto the box inputs." },
     resumen_material:    { es: "Material a preparar", en: "Material to prepare" },
+    resumen_conmutador_nota: { es: "reparte en C1, C2, C3, C4, Cz-1, Cz+6",
+                               en: "splits into C1, C2, C3, C4, Cz-1, Cz+6" },
     resumen_coste:       { es: "Coste del material", en: "Material cost" },
     coste_tipo:          { es: "Tipo", en: "Type" },
     coste_cantidad:      { es: "Cantidad", en: "Quantity" },
@@ -534,6 +536,32 @@
     docente_tab_material:{ es: "Material", en: "Material" },
     docente_tab_teoria:  { es: "Teoría básica de IONM", en: "IONM basic theory" },
     en_construccion:     { es: "En construcción.", en: "Under construction." },
+    /* --- Simulador --- */
+    sim_add_ventana:     { es: "+ Ventana", en: "+ Window" },
+    sim_ejemplo:         { es: "Ejemplo: columna lumbar", en: "Example: lumbar spine" },
+    sim_vaciar:          { es: "Vaciar", en: "Clear" },
+    sim_vaciar_conf:     { es: "¿Vaciar el simulador? Se quitan todas las ventanas.",
+                           en: "Clear the simulator? All windows are removed." },
+    sim_aviso_esquema:   { es: "Representación esquemática de la pantalla de monitorización. Trazos de ejemplo, sin señal real.",
+                           en: "Schematic view of the monitoring screen. Example traces, no real signal." },
+    sim_vacio:           { es: "Sin ventanas todavía. Pulsa «+ Ventana» o carga el ejemplo.",
+                           en: "No windows yet. Press “+ Window” or load the example." },
+    sim_ventana_nueva:   { es: "Ventana", en: "Window" },
+    sim_arrastrar_tit:   { es: "Arrastra para recolocar la ventana", en: "Drag to move the window" },
+    sim_ajustes_tit:     { es: "Ajustes de la ventana", en: "Window settings" },
+    sim_cerrar_tit:      { es: "Quitar la ventana", en: "Remove the window" },
+    sim_sin_canales:     { es: "Sin canales", en: "No channels" },
+    sim_dlg_titulo:      { es: "Ajustes de la ventana", en: "Window settings" },
+    sim_campo_titulo:    { es: "Título (técnica)", en: "Title (technique)" },
+    sim_campo_vista:     { es: "Vista", en: "View" },
+    sim_vista_avg:       { es: "Promediado (Avg)", en: "Averaged (Avg)" },
+    sim_vista_cascada:   { es: "Cascada", en: "Cascade" },
+    sim_campo_canales:   { es: "Canales", en: "Channels" },
+    sim_canal_ph:        { es: "p. ej. Cz'-C3'", en: "e.g. Cz'-C3'" },
+    sim_canal_add:       { es: "Añadir", en: "Add" },
+    sim_grupo_estimulo:  { es: "Parámetros de estimulación", en: "Stimulation parameters" },
+    sim_grupo_filtros:   { es: "Filtros y barrido", en: "Filters and sweep" },
+    sim_v_borrar:        { es: "Quitar ventana", en: "Remove window" },
     btn_tecnicas_mio:    { es: "Técnicas MIO", en: "MIO Techniques" },
     btn_tecnicas_mio_tit: { es: "Sitios de estimulación/registro, filtros y barridos de cada técnica, para consulta durante el caso",
                            en: "Stimulation/recording sites, filters and sweep times for each technique, for reference during a case" },
@@ -860,7 +888,7 @@
     btn.addEventListener("click", function () { irAPantalla("inicio"); });
   });
   document.getElementById("tile-organizador").addEventListener("click", function () { irAPantalla("organizador"); });
-  document.getElementById("tile-simulador").addEventListener("click", function () { irAPantalla("simulador"); });
+  document.getElementById("tile-simulador").addEventListener("click", function () { abrirSimulador(); });
   document.getElementById("tile-bibliografia").addEventListener("click", function () { irAPantalla("bibliografia"); });
   // tile-casos, tile-tecnicas-mio y tile-docente se conectan más abajo, junto
   // a abrirListaCasos()/abrirTecnicasMio()/abrirDocente() -esas sí necesitan
@@ -6169,7 +6197,7 @@
     // se agrupa por el nombre traducido, pero el precio y si es fungible viven
     // en la etiqueta, así que hace falta el puente entre los dos.
     var res = { tecnicas: [], material: {}, estilos: {}, tipoEtiqueta: {}, cajas: [],
-                extras: [], entradas: 0, avisos: [], coste: null };
+                extras: [], entradas: 0, avisos: [], coste: null, conmutadorTipo: null };
     if (!esc) return res;
 
     res.tecnicas = (esc.tecnicas || []).slice();
@@ -6209,6 +6237,10 @@
         // a 6 y no a los ids concretos porque cuáles sean cambia según el
         // caso; lo único constante es la cantidad.
         if (item.id === "conmutador") {
+          // El resumen marca en qué fila va el conmutador para poder anotar,
+          // en pequeño, las 6 posiciones en las que reparte sus sacacorchos
+          // (dato pedido: verlas de un vistazo sin abrir la caja).
+          res.conmutadorTipo = tipo;
           var itemSacacorchos = { etiqueta: "electrodo_sacacorchos" };
           var tipoSacacorchos = nombreEtiquetaDe(itemSacacorchos, null);
           if (!res.estilos[tipoSacacorchos]) res.estilos[tipoSacacorchos] = estiloDe(itemSacacorchos, null);
@@ -6339,6 +6371,14 @@
         td1.appendChild(muestra);
       }
       td1.appendChild(document.createTextNode(mat));
+      // El conmutador reparte 6 sacacorchos hacia posiciones fijas: se anotan
+      // en pequeño junto a su fila para tener el dato a la vista.
+      if (mat === resumen.conmutadorTipo) {
+        var notaConm = document.createElement("small");
+        notaConm.className = "resumen-nota-conmutador";
+        notaConm.textContent = " (" + T("resumen_conmutador_nota") + ")";
+        td1.appendChild(notaConm);
+      }
       var td2 = document.createElement("td");
       td2.className = "num";
       // Media unidad suelta: se redondea hacia arriba (hay que abrir el paquete igual)
@@ -7301,6 +7341,506 @@
   }
 
   document.getElementById("tile-docente").addEventListener("click", abrirDocente);
+
+  /* ================================================================ *
+   * Simulador de pantalla (06-09-2026, primera versión)
+   *
+   * Representa de forma ESQUEMÁTICA la pantalla de monitorización: una
+   * rejilla de filas, y en cada fila varias ventanas (una por técnica) una
+   * al lado de otra. Cada ventana tiene su vista (Avg o cascada), sus
+   * canales escritos a mano, y sus parámetros de estimulación/filtros. Se
+   * arrastra una ventana para recolocarla -antes/después de otra, o a una
+   * fila nueva- y todo se reordena al soltar.
+   *
+   * No hay señal real: los trazos son garabatos deterministas (misma
+   * semilla -> mismo dibujo), solo para ensayar cómo queda la pantalla.
+   * Nunca se nombra la marca del equipo: es un esquema genérico.
+   *
+   * Se guarda en localStorage de ESTE dispositivo, no se sincroniza -como
+   * Docencia, es material de ensayo, no dato clínico-.
+   * ================================================================ */
+  var SIM_KEY = "mio_ionm_simulador_v1";
+  var SVG_NS = "http://www.w3.org/2000/svg";
+  var simEstado = { filas: [] };
+  var simCargado = false;
+  var simVentanaEditando = null;   // id de la ventana abierta en el diálogo
+  var simCanalesEditando = [];     // copia de trabajo de los canales del diálogo
+  var simArrastrando = null;       // id de la ventana que se arrastra ahora
+  var dlgSimVentana = document.getElementById("dlg-sim-ventana");
+
+  function simGid(id) { return document.getElementById(id); }
+
+  function simCargar() {
+    try {
+      var g = JSON.parse(localStorage.getItem(SIM_KEY) || "null");
+      if (g && g.filas) simEstado = g;
+    } catch (e) { /* sin persistencia */ }
+    simCargado = true;
+  }
+  function simGuardar() {
+    try { localStorage.setItem(SIM_KEY, JSON.stringify(simEstado)); } catch (e) { /* sin persistencia */ }
+  }
+
+  function abrirSimulador() {
+    if (!simCargado) simCargar();
+    renderSimulador();
+    irAPantalla("simulador");
+  }
+
+  function simUid() {
+    return "sv_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  }
+
+  function simVentana(titulo, opts) {
+    opts = opts || {};
+    return {
+      id: simUid(),
+      titulo: titulo || T("sim_ventana_nueva"),
+      vista: opts.vista || "avg",
+      canales: opts.canales ? opts.canales.slice() : [],
+      params: opts.params ? clonar(opts.params) : {},
+      filtros: opts.filtros ? clonar(opts.filtros) : {}
+    };
+  }
+
+  // Devuelve { fila, idx, ventana } de la ventana con ese id, o null.
+  function simLocalizar(id) {
+    for (var f = 0; f < simEstado.filas.length; f++) {
+      var vs = simEstado.filas[f].ventanas;
+      for (var i = 0; i < vs.length; i++) {
+        if (vs[i].id === id) return { fila: f, idx: i, ventana: vs[i] };
+      }
+    }
+    return null;
+  }
+
+  function simAnadirVentana(v) {
+    if (!simEstado.filas.length) simEstado.filas.push({ ventanas: [] });
+    simEstado.filas[simEstado.filas.length - 1].ventanas.push(v);
+  }
+
+  function simLimpiarFilasVacias() {
+    simEstado.filas = simEstado.filas.filter(function (fila) { return fila.ventanas.length; });
+  }
+
+  function simQuitarVentana(id) {
+    var loc = simLocalizar(id);
+    if (!loc) return;
+    simEstado.filas[loc.fila].ventanas.splice(loc.idx, 1);
+    simLimpiarFilasVacias();
+    simGuardar();
+    renderSimulador();
+  }
+
+  /* --- Mover ventanas al soltar (por id/objeto, nunca por índice fijo, que
+     se invalida al quitar la que arrastras) --- */
+  function simSoltarEnVentana(refId, despues) {
+    var id = simArrastrando;
+    if (!id || id === refId) return;
+    var loc = simLocalizar(id);
+    if (!loc) return;
+    var v = loc.ventana;
+    simEstado.filas[loc.fila].ventanas.splice(loc.idx, 1);
+    var ref = simLocalizar(refId);           // índice recalculado ya sin v
+    if (!ref) { simAnadirVentana(v); }
+    else { simEstado.filas[ref.fila].ventanas.splice(ref.idx + (despues ? 1 : 0), 0, v); }
+    simLimpiarFilasVacias();
+    simGuardar();
+    renderSimulador();
+  }
+
+  function simSoltarEnZona(filaRefObj) {
+    var id = simArrastrando;
+    if (!id) return;
+    var loc = simLocalizar(id);
+    if (!loc) return;
+    var v = loc.ventana;
+    simEstado.filas[loc.fila].ventanas.splice(loc.idx, 1);
+    var pos = filaRefObj ? simEstado.filas.indexOf(filaRefObj) : simEstado.filas.length;
+    if (pos < 0) pos = simEstado.filas.length;
+    simEstado.filas.splice(pos, 0, { ventanas: [v] });
+    simLimpiarFilasVacias();
+    simGuardar();
+    renderSimulador();
+  }
+
+  /* --- Trazos de ejemplo (deterministas por semilla) --- */
+  function simSemilla(str) {
+    var h = 2166136261;
+    for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = (h * 16777619) >>> 0; }
+    return h >>> 0;
+  }
+  function simRand(seed) {
+    var s = seed >>> 0;
+    return function () { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
+  }
+  // Polilínea tipo potencial evocado dentro de la banda [y0, y0+alto].
+  function simTrazaPuntos(seed, ancho, alto, marcado, y0) {
+    y0 = y0 || 0;
+    var rand = simRand(seed);
+    var n = 44, mid = y0 + alto / 2;
+    var pPos = 0.32 + rand() * 0.34;
+    var amp = (marcado ? 0.72 : 0.5) * (alto / 2) * (0.7 + rand() * 0.5);
+    var signo = rand() > 0.5 ? -1 : 1;
+    var pts = [];
+    for (var i = 0; i <= n; i++) {
+      var t = i / n, x = t * ancho;
+      var d = t - pPos;
+      var y = mid - signo * amp * Math.exp(-(d * d) / 0.006);
+      var d2 = t - (pPos + 0.14);
+      y += signo * amp * 0.45 * Math.exp(-(d2 * d2) / 0.004);
+      y += (rand() - 0.5) * alto * (marcado ? 0.12 : 0.16);
+      if (y < y0) y = y0;
+      if (y > y0 + alto) y = y0 + alto;
+      pts.push(x.toFixed(1) + "," + y.toFixed(1));
+    }
+    return pts.join(" ");
+  }
+
+  // Color del trazo: azul lo izquierdo, rojo lo derecho, turquesa lo demás
+  // -es la dualidad L/R habitual en la pantalla real, sin nombrar la marca-.
+  function simColorCanal(v, canal) {
+    var base = ((canal || "").trim() || (v.titulo || "").trim()).toUpperCase();
+    if (base.charAt(0) === "R") return "#c0392b";
+    if (base.charAt(0) === "L") return "#2c5aa0";
+    return "#0d8f8f";
+  }
+
+  function simPolilinea(puntos, color, ancho, opacidad) {
+    var poly = document.createElementNS(SVG_NS, "polyline");
+    poly.setAttribute("points", puntos);
+    poly.setAttribute("fill", "none");
+    poly.setAttribute("stroke", color);
+    poly.setAttribute("stroke-width", ancho);
+    poly.setAttribute("opacity", opacidad);
+    return poly;
+  }
+
+  function simCanalTrazo(v, canal) {
+    var fila = document.createElement("div");
+    fila.className = "sim-canal";
+    var etiq = document.createElement("span");
+    etiq.className = "sim-canal-etiq";
+    etiq.textContent = canal;
+    fila.appendChild(etiq);
+
+    var color = simColorCanal(v, canal);
+    var ancho = 240;
+    var alto = v.vista === "cascada" ? 66 : 30;
+    var svg = document.createElementNS(SVG_NS, "svg");
+    svg.setAttribute("class", "sim-svg");
+    svg.setAttribute("viewBox", "0 0 " + ancho + " " + alto);
+    svg.setAttribute("preserveAspectRatio", "none");
+    svg.style.height = alto + "px";
+
+    if (v.vista === "cascada") {
+      var n = 7, banda = alto / n;
+      for (var k = 0; k < n; k++) {
+        var pts = simTrazaPuntos(simSemilla(canal + v.id + k), ancho, banda, false, k * banda);
+        svg.appendChild(simPolilinea(pts, color, "1", 0.85 - k * 0.05));
+      }
+    } else {
+      // Avg: dos barridas superpuestas (repetibilidad de la respuesta)
+      svg.appendChild(simPolilinea(simTrazaPuntos(simSemilla(canal + v.id + "a"), ancho, alto, true, 0), color, "1.4", 1));
+      svg.appendChild(simPolilinea(simTrazaPuntos(simSemilla(canal + v.id + "b"), ancho, alto, true, 0), color, "1", 0.45));
+    }
+    fila.appendChild(svg);
+    return fila;
+  }
+
+  // Rail de parámetros a la izquierda de la ventana (solo si hay algo puesto).
+  function simRailParams(v) {
+    var p = v.params || {}, f = v.filtros || {}, lineas = [];
+    if (p.intensidad) lineas.push(["I", p.intensidad + " mA"]);
+    if (p.frecuencia) lineas.push(["f", p.frecuencia + " Hz"]);
+    if (p.pulsos) lineas.push(["n", p.pulsos]);
+    if (p.trenes) lineas.push(["tr", p.trenes]);
+    if (p.isi) lineas.push(["ISI", p.isi + " ms"]);
+    if (p.duracion) lineas.push(["d", p.duracion + " µs"]);
+    if (f.lff || f.hff) lineas.push(["filtro", (f.lff || "–") + "–" + (f.hff || "–")]);
+    if (f.notch) lineas.push(["notch", f.notch]);
+    if (f.barrido) lineas.push(["barr", f.barrido + " ms"]);
+    if (!lineas.length) return null;
+    var rail = document.createElement("div");
+    rail.className = "sim-rail";
+    lineas.forEach(function (par) {
+      var l = document.createElement("div");
+      l.className = "sim-rail-linea";
+      var k = document.createElement("span"); k.className = "sim-rail-k"; k.textContent = par[0];
+      var val = document.createElement("span"); val.className = "sim-rail-v"; val.textContent = par[1];
+      l.appendChild(k); l.appendChild(val);
+      rail.appendChild(l);
+    });
+    return rail;
+  }
+
+  function renderSimVentana(v) {
+    var card = document.createElement("div");
+    card.className = "sim-ventana";
+    card.setAttribute("draggable", "true");
+    card.dataset.id = v.id;
+
+    card.addEventListener("dragstart", function (e) {
+      simArrastrando = v.id;
+      card.classList.add("arrastrando");
+      if (e.dataTransfer) { e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", v.id); }
+    });
+    card.addEventListener("dragend", function () {
+      simArrastrando = null;
+      card.classList.remove("arrastrando");
+      Array.prototype.forEach.call(document.querySelectorAll(".sim-ventana"), function (c) {
+        c.classList.remove("insertar-antes", "insertar-despues");
+      });
+    });
+    card.addEventListener("dragover", function (e) {
+      if (!simArrastrando || simArrastrando === v.id) return;
+      e.preventDefault();
+      var rect = card.getBoundingClientRect();
+      var despues = (e.clientX - rect.left) > rect.width / 2;
+      card.classList.toggle("insertar-despues", despues);
+      card.classList.toggle("insertar-antes", !despues);
+    });
+    card.addEventListener("dragleave", function () {
+      card.classList.remove("insertar-antes", "insertar-despues");
+    });
+    card.addEventListener("drop", function (e) {
+      e.preventDefault();
+      var rect = card.getBoundingClientRect();
+      var despues = (e.clientX - rect.left) > rect.width / 2;
+      card.classList.remove("insertar-antes", "insertar-despues");
+      simSoltarEnVentana(v.id, despues);
+    });
+
+    var cab = document.createElement("div");
+    cab.className = "sim-ventana-cab";
+    cab.title = T("sim_arrastrar_tit");
+    var tit = document.createElement("span");
+    tit.className = "sim-ventana-titulo";
+    tit.textContent = v.titulo;
+    var acc = document.createElement("span");
+    acc.className = "sim-ventana-acc";
+    var vistaTag = document.createElement("span");
+    vistaTag.className = "sim-vista-tag";
+    vistaTag.textContent = v.vista === "cascada" ? T("sim_vista_cascada") : "Avg";
+    var bAj = document.createElement("button");
+    bAj.type = "button"; bAj.className = "sim-icono"; bAj.textContent = "⚙";
+    bAj.title = T("sim_ajustes_tit");
+    bAj.addEventListener("click", function () { simAbrirDialogo(v.id); });
+    var bX = document.createElement("button");
+    bX.type = "button"; bX.className = "sim-icono"; bX.textContent = "✕";
+    bX.title = T("sim_cerrar_tit");
+    bX.addEventListener("click", function () { simQuitarVentana(v.id); });
+    acc.appendChild(vistaTag); acc.appendChild(bAj); acc.appendChild(bX);
+    cab.appendChild(tit); cab.appendChild(acc);
+    card.appendChild(cab);
+
+    var cuerpo = document.createElement("div");
+    cuerpo.className = "sim-ventana-cuerpo";
+    var rail = simRailParams(v);
+    if (rail) cuerpo.appendChild(rail);
+    var area = document.createElement("div");
+    area.className = "sim-trazos";
+    if (!v.canales.length) {
+      var sc = document.createElement("p");
+      sc.className = "sim-sin-canales";
+      sc.textContent = T("sim_sin_canales");
+      area.appendChild(sc);
+    } else {
+      v.canales.forEach(function (canal) { area.appendChild(simCanalTrazo(v, canal)); });
+    }
+    cuerpo.appendChild(area);
+    card.appendChild(cuerpo);
+    return card;
+  }
+
+  function simZonaFila(filaRefObj) {
+    var z = document.createElement("div");
+    z.className = "sim-zona-fila";
+    z.addEventListener("dragover", function (e) {
+      if (!simArrastrando) return;
+      e.preventDefault();
+      z.classList.add("activa");
+    });
+    z.addEventListener("dragleave", function () { z.classList.remove("activa"); });
+    z.addEventListener("drop", function (e) {
+      e.preventDefault();
+      z.classList.remove("activa");
+      simSoltarEnZona(filaRefObj);
+    });
+    return z;
+  }
+
+  function renderSimulador() {
+    var lienzo = simGid("sim-lienzo");
+    if (!lienzo) return;
+    lienzo.innerHTML = "";
+    simLimpiarFilasVacias();
+    if (!simEstado.filas.length) {
+      var vacio = document.createElement("p");
+      vacio.className = "empty-hint";
+      vacio.textContent = T("sim_vacio");
+      lienzo.appendChild(vacio);
+      return;
+    }
+    simEstado.filas.forEach(function (fila) {
+      lienzo.appendChild(simZonaFila(fila));
+      var filaEl = document.createElement("div");
+      filaEl.className = "sim-fila";
+      fila.ventanas.forEach(function (v) { filaEl.appendChild(renderSimVentana(v)); });
+      lienzo.appendChild(filaEl);
+    });
+    lienzo.appendChild(simZonaFila(null));
+  }
+
+  /* --- Diálogo de ajustes de una ventana --- */
+  function simRenderCanalesEditor() {
+    var cont = simGid("sim-v-canales");
+    cont.innerHTML = "";
+    if (!simCanalesEditando.length) {
+      var vac = document.createElement("span");
+      vac.className = "sim-sin-canales";
+      vac.textContent = T("sim_sin_canales");
+      cont.appendChild(vac);
+      return;
+    }
+    simCanalesEditando.forEach(function (canal, i) {
+      var chip = document.createElement("span");
+      chip.className = "sim-canal-chip";
+      var txt = document.createElement("span");
+      txt.textContent = canal;
+      var quitar = document.createElement("button");
+      quitar.type = "button";
+      quitar.className = "sim-canal-quitar";
+      quitar.textContent = "✕";
+      quitar.addEventListener("click", function () {
+        simCanalesEditando.splice(i, 1);
+        simRenderCanalesEditor();
+      });
+      chip.appendChild(txt); chip.appendChild(quitar);
+      cont.appendChild(chip);
+    });
+  }
+
+  function simAnadirCanalDesdeInput() {
+    var input = simGid("sim-v-canal-nuevo");
+    var val = (input.value || "").trim();
+    if (!val) return;
+    simCanalesEditando.push(val);
+    input.value = "";
+    input.focus();
+    simRenderCanalesEditor();
+  }
+
+  function simAbrirDialogo(id) {
+    var loc = simLocalizar(id);
+    if (!loc) return;
+    var v = loc.ventana;
+    simVentanaEditando = id;
+    simCanalesEditando = v.canales.slice();
+    simGid("sim-v-titulo").value = v.titulo;
+    Array.prototype.forEach.call(document.getElementsByName("sim-vista"), function (r) {
+      r.checked = (r.value === (v.vista || "avg"));
+    });
+    var p = v.params || {}, f = v.filtros || {};
+    simGid("sim-p-intensidad").value = p.intensidad || "";
+    simGid("sim-p-frecuencia").value = p.frecuencia || "";
+    simGid("sim-p-pulsos").value = p.pulsos || "";
+    simGid("sim-p-trenes").value = p.trenes || "";
+    simGid("sim-p-isi").value = p.isi || "";
+    simGid("sim-p-duracion").value = p.duracion || "";
+    simGid("sim-f-lff").value = f.lff || "";
+    simGid("sim-f-hff").value = f.hff || "";
+    simGid("sim-f-notch").value = f.notch || "";
+    simGid("sim-f-barrido").value = f.barrido || "";
+    simRenderCanalesEditor();
+    dlgSimVentana.showModal();
+  }
+
+  function simGuardarDialogo() {
+    var loc = simLocalizar(simVentanaEditando);
+    if (!loc) { dlgSimVentana.close(); return; }
+    var v = loc.ventana;
+    v.titulo = (simGid("sim-v-titulo").value || "").trim() || T("sim_ventana_nueva");
+    var vistaSel = "avg";
+    Array.prototype.forEach.call(document.getElementsByName("sim-vista"), function (r) {
+      if (r.checked) vistaSel = r.value;
+    });
+    v.vista = vistaSel;
+    v.canales = simCanalesEditando.slice();
+    v.params = {
+      intensidad: simGid("sim-p-intensidad").value.trim(),
+      frecuencia: simGid("sim-p-frecuencia").value.trim(),
+      pulsos: simGid("sim-p-pulsos").value.trim(),
+      trenes: simGid("sim-p-trenes").value.trim(),
+      isi: simGid("sim-p-isi").value.trim(),
+      duracion: simGid("sim-p-duracion").value.trim()
+    };
+    v.filtros = {
+      lff: simGid("sim-f-lff").value.trim(),
+      hff: simGid("sim-f-hff").value.trim(),
+      notch: simGid("sim-f-notch").value.trim(),
+      barrido: simGid("sim-f-barrido").value.trim()
+    };
+    simGuardar();
+    dlgSimVentana.close();
+    renderSimulador();
+  }
+
+  // Ejemplo: cirugía de columna lumbar (tornillos, descompresión, artrodesis).
+  // Los parámetros de MEP salen de la pantalla que compartió el usuario; los
+  // canales son un montaje plausible, editable. Filtros en blanco a propósito
+  // -varían y no se inventan-.
+  function simCargarEjemplo() {
+    simEstado = { filas: [
+      { ventanas: [
+        simVentana("SEP L.Cub", { vista: "avg", canales: ["Cz'-C3'", "Cz'-Fz", "Cv-Fz"] }),
+        simVentana("SEP R.Med", { vista: "avg", canales: ["Cz'-C4'", "Cz'-Fz", "Cv-Fz"] }),
+        simVentana("SEP L.TPN", { vista: "avg", canales: ["Cz'-C3'", "Cz'-Fz"] }),
+        simVentana("SEP R.TPN", { vista: "avg", canales: ["Cz'-C4'", "Cz'-Fz"] })
+      ] },
+      { ventanas: [
+        simVentana("MEP L.", { vista: "cascada", canales: ["L.Q", "L.TA", "L.AH", "L.G"],
+          params: { intensidad: "250", frecuencia: "2.1", pulsos: "7", isi: "3.0", duracion: "500" } }),
+        simVentana("MEP R.", { vista: "cascada", canales: ["R.Q", "R.TA", "R.AH", "R.G"],
+          params: { intensidad: "250", frecuencia: "2.1", pulsos: "7", isi: "3.0", duracion: "500" } }),
+        simVentana("TOF", { vista: "cascada", canales: ["APB"] }),
+        simVentana("f-EMG", { vista: "cascada", canales: ["L.Q", "R.Q", "L.TA", "R.TA"] })
+      ] }
+    ] };
+    simGuardar();
+    renderSimulador();
+  }
+
+  simGid("sim-add").addEventListener("click", function () {
+    if (!simCargado) simCargar();
+    var v = simVentana(T("sim_ventana_nueva"), {});
+    simAnadirVentana(v);
+    simGuardar();
+    renderSimulador();
+    simAbrirDialogo(v.id);   // se abre para nombrarla y añadir canales
+  });
+  simGid("sim-ejemplo").addEventListener("click", function () {
+    if (simEstado.filas.length && !confirm(T("sim_vaciar_conf"))) return;
+    simCargarEjemplo();
+  });
+  simGid("sim-vaciar").addEventListener("click", function () {
+    if (!simEstado.filas.length) return;
+    if (!confirm(T("sim_vaciar_conf"))) return;
+    simEstado = { filas: [] };
+    simGuardar();
+    renderSimulador();
+  });
+  simGid("sim-v-canal-add").addEventListener("click", simAnadirCanalDesdeInput);
+  simGid("sim-v-canal-nuevo").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); simAnadirCanalDesdeInput(); }
+  });
+  simGid("sim-v-guardar").addEventListener("click", simGuardarDialogo);
+  simGid("sim-v-cancelar").addEventListener("click", function () { dlgSimVentana.close(); });
+  simGid("sim-v-borrar").addEventListener("click", function () {
+    var id = simVentanaEditando;
+    dlgSimVentana.close();
+    if (id) simQuitarVentana(id);
+  });
 
   // Panel-catalogo es ya un <details> de verdad (06-09-2026, tarde): pulsar
   // el <summary> lo pliega/despliega solo, igual que Plantillas de

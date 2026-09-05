@@ -17,7 +17,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260906g">
+<link rel="stylesheet" href="style.css?v=20260906h">
 </head>
 <body>
 
@@ -391,6 +391,57 @@
   </div>
 </dialog>
 
+<!-- Ajustes de una ventana del Simulador (06-09-2026): título, vista
+     Avg/cascada, canales, parámetros de estimulación y filtros. -->
+<dialog id="dlg-sim-ventana" class="no-print">
+  <h3 data-i18n="sim_dlg_titulo"></h3>
+  <div class="campo">
+    <label for="sim-v-titulo" data-i18n="sim_campo_titulo"></label>
+    <input type="text" id="sim-v-titulo" autocomplete="off">
+  </div>
+  <div class="campo">
+    <label data-i18n="sim_campo_vista"></label>
+    <div class="sim-vista-radios">
+      <label><input type="radio" name="sim-vista" value="avg"> <span data-i18n="sim_vista_avg"></span></label>
+      <label><input type="radio" name="sim-vista" value="cascada"> <span data-i18n="sim_vista_cascada"></span></label>
+    </div>
+  </div>
+  <div class="campo">
+    <label data-i18n="sim_campo_canales"></label>
+    <div id="sim-v-canales" class="sim-canales-editor"></div>
+    <div class="sim-canal-add">
+      <input type="text" id="sim-v-canal-nuevo" autocomplete="off" data-i18n-ph="sim_canal_ph">
+      <button type="button" id="sim-v-canal-add" data-i18n="sim_canal_add"></button>
+    </div>
+  </div>
+  <details class="sim-dlg-grupo">
+    <summary data-i18n="sim_grupo_estimulo"></summary>
+    <div class="sim-params-grid">
+      <label>Int. (mA)<input type="text" id="sim-p-intensidad" autocomplete="off"></label>
+      <label>Frec. (Hz)<input type="text" id="sim-p-frecuencia" autocomplete="off"></label>
+      <label>Nº pulsos<input type="text" id="sim-p-pulsos" autocomplete="off"></label>
+      <label>Trenes<input type="text" id="sim-p-trenes" autocomplete="off"></label>
+      <label>ISI (ms)<input type="text" id="sim-p-isi" autocomplete="off"></label>
+      <label>Dur. (µs)<input type="text" id="sim-p-duracion" autocomplete="off"></label>
+    </div>
+  </details>
+  <details class="sim-dlg-grupo">
+    <summary data-i18n="sim_grupo_filtros"></summary>
+    <div class="sim-params-grid">
+      <label>LFF (Hz)<input type="text" id="sim-f-lff" autocomplete="off"></label>
+      <label>HFF (Hz)<input type="text" id="sim-f-hff" autocomplete="off"></label>
+      <label>Notch<input type="text" id="sim-f-notch" autocomplete="off"></label>
+      <label>Barrido (ms)<input type="text" id="sim-f-barrido" autocomplete="off"></label>
+    </div>
+  </details>
+  <div class="dlg-botones">
+    <button type="button" id="sim-v-borrar" class="peligro" data-i18n="sim_v_borrar"></button>
+    <span class="barra-flex"></span>
+    <button type="button" id="sim-v-cancelar" data-i18n="cancelar"></button>
+    <button type="button" id="sim-v-guardar" class="primario" data-i18n="guardar"></button>
+  </div>
+</dialog>
+
 <!-- Fase 7 (06-09-2026): pasa de <dialog> a pantalla propia -mismo contenido
      de siempre, ver el comentario equivalente en Montajes (Fase 6) más
      arriba. Ya no lleva botón "Cerrar": el logo es el único camino de
@@ -644,7 +695,14 @@
     <h2 data-i18n="tile_simulador"></h2>
     <button type="button" class="btn-pantalla-inicio" data-i18n="btn_inicio_pantalla" data-i18n-title="logo_inicio_tit"></button>
   </div>
-  <p data-i18n="en_construccion"></p>
+  <div class="sim-barra no-print">
+    <button type="button" id="sim-add" data-i18n="sim_add_ventana"></button>
+    <button type="button" id="sim-ejemplo" data-i18n="sim_ejemplo"></button>
+    <button type="button" id="sim-vaciar" class="peligro" data-i18n="sim_vaciar"></button>
+    <span class="barra-flex"></span>
+    <small class="sim-aviso" data-i18n="sim_aviso_esquema"></small>
+  </div>
+  <div id="sim-lienzo" class="sim-lienzo"></div>
 </div>
 
 <div class="pantalla" id="pantalla-bibliografia">
@@ -691,10 +749,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260906g"></script>
-<script src="data/i18n-en.js?v=20260906g"></script>
-<script src="data/guia.js?v=20260906g"></script>
-<script src="data/tecnicas-mio.js?v=20260906g"></script>
-<script src="app.js?v=20260906g"></script>
+<script src="data/surgeries.js?v=20260906h"></script>
+<script src="data/i18n-en.js?v=20260906h"></script>
+<script src="data/guia.js?v=20260906h"></script>
+<script src="data/tecnicas-mio.js?v=20260906h"></script>
+<script src="app.js?v=20260906h"></script>
 </body>
 </html>
