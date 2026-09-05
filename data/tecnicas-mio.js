@@ -71,11 +71,68 @@
  *      cervical alta) → TVcR (V3→X vago/laringe) → LAR (X→X, puramente
  *      vagal) → THR (V1/V3→XII hipogloso, el par craneal más caudal).
  *
- * Los "id" y "region" de cada técnica son claves internas y se quedan sin
- * acentos a propósito (regla del proyecto: snake_case sin acentos ni
- * espacios). Todo lo demás -nombre, categoria y el resto de texto- lleva
+ * Los "id", "region" y "familia" de cada técnica son claves internas y se
+ * quedan sin acentos a propósito (regla del proyecto: snake_case sin acentos
+ * ni espacios). Todo lo demás -nombre, categoria y el resto de texto- lleva
  * tildes y eñes con normalidad: son literales que se pintan tal cual en
  * pantalla, no claves.
+ *
+ * Reorganización del 05-09-2026, pedida por Pani: la pantalla "Técnicas
+ * IONM" agrupaba por "region" (zona quirúrgica: columna/médula, fosa
+ * posterior/tronco, cirugía cerebral...), lo que dispersaba una misma
+ * familia de técnica en varios grupos -el PESS troncal está en
+ * "columna_medula" pero el PESS trigeminal y el de plexo braquial estaban en
+ * "fosa_posterior_tronco"/"plexo_periferico", solo porque "region" describe
+ * DÓNDE se opera, no QUÉ técnica es-. Campo nuevo "familia" -por tipo de
+ * técnica, no por zona quirúrgica- para que la pantalla agrupe SEP con
+ * c-SEP, MEP con CoMEP, todos los reflejos juntos, etc. Valores usados (ver
+ * TECMIO_FAMILIAS y TECMIO_ORDEN_FAMILIAS en app.js, que fija también el
+ * orden de aparición de los grupos):
+ *   "sep"      - PESS periférico/plexo, PESS trigeminal (TEP), c-SEP,
+ *                mapeo por inversión de fase (phase-reversal)
+ *   "mep"      - PEM/TcMEP miogénico, CoMEP de pares craneales
+ *   "onda_d"   - Onda D (aparte de "mep": mismo tracto corticoespinal, pero
+ *                se pidió expresamente un color distinguible del resto de
+ *                motores, no promediar ni fundir con MEP)
+ *   "emg"      - EMG libre y estimulado, espinal/pares craneales/periférico
+ *   "reflejos" - RBC, H-Reflejo, Blink Reflex, RMT, TCR, TVcR, LAR, THR,
+ *                PRM y ARM (PRM/ARM comparten protocolo y se pintan juntos)
+ *   "vep"      - PEV vía anterior y PEV cortical
+ *   "peatc"    - PEATC/BAEP
+ *   "eeg_ecog" - EEG y ECoG (misma naturaleza de señal: actividad cortical
+ *                espontánea, registrada desde escalpo o directamente)
+ *   "des"      - Mapeo cortical/subcortical y de lenguaje por estimulación
+ *                eléctrica directa (DES)
+ *   "mapeo"    - el resto de mapeo/registro directo que no encaja arriba:
+ *                columnas dorsales, estimulación directa del cordón, mapeo
+ *                de pares craneales, BSM del IV ventrículo, NAP/CNAP y
+ *                mapeo de nervio periférico
+ *
+ * "region" NO se ha borrado (regla de siempre: desactivar/sustituir no
+ * borra) y sigue siendo fiel a la zona quirúrgica de cada técnica, pero deja
+ * de usarse para agrupar esta pantalla -por si algún día hace falta esa
+ * vista otra vez, o para otro uso futuro-. El orden de las técnicas DENTRO
+ * de cada familia sigue sin ser automático: es el orden de aparición en
+ * este array (regla de siempre, ver más arriba), que ya lee bien para las
+ * diez familias sin necesidad de reordenar ningún bloque -por ejemplo,
+ * dentro de "reflejos" ya salen en el mismo orden rostro-caudal descrito
+ * arriba, porque ese orden ya estaba fijado técnica a técnica en el array-.
+ *
+ * De paso, se corrigió la "categoria" (el texto de la etiqueta/badge, no
+ * una clave interna) de 9 técnicas que arrastraban un nombre de región
+ * -"Fosa posterior/tronco", "Reflejos de tronco" o "Plexo braquial / nervio
+ * periférico"- en vez de su tipo de técnica real, herencia del esquema
+ * viejo por región: pess_trigeminal_tep y pess_troncos_cordones_plexo
+ * pasan a "PESS" (ninguna de las dos es un reflejo ni cuenta como "plexo"
+ * más que las demás PESS de este archivo); peatc_baep a "PEATC";
+ * comep_pares_craneales a "CoMEP"; emg_libre_pares_craneales y
+ * emg_libre_estimulado_periferico a "EMG" (igual que el resto de entradas
+ * EMG del archivo); tvcr_reflejo_trigemino_vocal a "TVcR";
+ * mapeo_directo_pares_craneales a "Mapeo de pares craneales"; y
+ * nap_cnap_nervio_periferico a "NAP/CNAP". Sin este cambio, la etiqueta
+ * seguía mostrando el color de su familia nueva (correcto) pero con un
+ * texto que hablaba de zona quirúrgica (incoherente con el motivo del
+ * cambio). Ninguna fuente ni cifra clínica se tocó, solo el rótulo.
  */
 window.TECNICAS_MIO = {
   "esquema_version": "1.0",
@@ -97,6 +154,7 @@ window.TECNICAS_MIO = {
       "id": "pess_tibial_posterior",
       "categoria": "PESS",
       "region": "columna_medula",
+      "familia": "sep",
       "nombre": "PESS de nervio tibial posterior",
       "estimulacion": {
         "sitio": "Nervio tibial posterior, retromaleolar interno (tobillo)",
@@ -151,6 +209,7 @@ window.TECNICAS_MIO = {
       "id": "pess_mediano_cubital",
       "categoria": "PESS",
       "region": "columna_medula",
+      "familia": "sep",
       "nombre": "PESS de nervio mediano / cubital (MMSS)",
       "estimulacion": {
         "sitio": "Nervio mediano en muñeca; nervio cubital en muñeca o codo",
@@ -192,6 +251,7 @@ window.TECNICAS_MIO = {
       "id": "pess_derivaciones_optimizadas_ision",
       "categoria": "PESS",
       "region": "columna_medula",
+      "familia": "sep",
       "nombre": "PESS - derivaciones corticales optimizadas por SNR (MacDonald 2019 ISION)",
       "registro": {
         "principio": "En vez de una derivación cortical fija, se comparan varias candidatas centroparietales por lado y se elige la de mayor SNR (mayor amplitud de señal con ruido similar) - esto reduce drásticamente el número de barridos necesarios para reproducibilidad media-alta.",
@@ -216,6 +276,7 @@ window.TECNICAS_MIO = {
       "id": "pem_tces_miogenico",
       "categoria": "PEM",
       "region": "columna_medula",
+      "familia": "mep",
       "nombre": "PEM/TcMEP miogénico por estimulación eléctrica transcraneal (TES)",
       "estimulacion": {
         "sitio_montajes": {
@@ -262,6 +323,7 @@ window.TECNICAS_MIO = {
       "id": "onda_d_epidural",
       "categoria": "Onda D",
       "region": "columna_medula",
+      "familia": "onda_d",
       "nombre": "Onda D (potencial motor epidural, tracto corticoespinal)",
       "estimulacion": {
         "sitio": "Espacio epidural, electrodos craneal y caudal (misma vía de acceso que TES para PEM)",
@@ -300,6 +362,7 @@ window.TECNICAS_MIO = {
       "id": "emg_libre_espinal",
       "categoria": "EMG",
       "region": "columna_medula",
+      "familia": "emg",
       "nombre": "EMG libre continuo (raíces nerviosas espinales)",
       "estimulacion": {
         "nota": "Técnica pasiva, sin estímulo aplicado"
@@ -333,6 +396,7 @@ window.TECNICAS_MIO = {
       "id": "rbc_bulbocavernoso",
       "categoria": "RBC",
       "region": "columna_medula",
+      "familia": "reflejos",
       "nombre": "Reflejo bulbocavernoso (RBC/BCR)",
       "estimulacion": {
         "sitio": "Nervio dorsal del pene (varón) o clítoris (mujer) - aferencias pudendas",
@@ -355,6 +419,7 @@ window.TECNICAS_MIO = {
       "id": "h_reflejo_soleo_gastrocnemio",
       "categoria": "H-Reflejo",
       "region": "columna_medula",
+      "familia": "reflejos",
       "nombre": "H-Reflejo de sóleo y gastrocnemio",
       "estimulacion": {
         "sitio": "Nervio tibial posterior en el hueco poplíteo",
@@ -381,6 +446,7 @@ window.TECNICAS_MIO = {
       "id": "emg_estimulado_tornillo_pedicular",
       "categoria": "EMG",
       "region": "columna_medula",
+      "familia": "emg",
       "nombre": "EMG estimulado (evaluación de tornillo/broca pedicular)",
       "estimulacion": {
         "sitio": "Tornillo o broca pedicular (cátodo, pinza de cocodrilo esterilizada) frente a electrodo dispersivo sobre el hombro posterior (ánodo) - estimulación monopolar",
@@ -427,6 +493,7 @@ window.TECNICAS_MIO = {
       "id": "mapeo_columnas_dorsales",
       "categoria": "Mapeo de columnas dorsales",
       "region": "columna_medula",
+      "familia": "mapeo",
       "nombre": "Mapeo de columnas dorsales (localización de la línea media medular y el DREZ)",
       "estimulacion": {
         "nervio": "Mediano o tibial periférico",
@@ -450,6 +517,7 @@ window.TECNICAS_MIO = {
       "id": "estimulacion_directa_cordon_espinal",
       "categoria": "Estimulación directa CE",
       "region": "columna_medula",
+      "familia": "mapeo",
       "nombre": "Estimulación directa del cordón espinal (mapeo intramedular) y técnica de colisión de la onda D",
       "estimulacion": {
         "mapeo_directo_gandhi": "Pulsos bifásicos de 1 ms de duración, tasa 60 Hz, sonda bipolar concéntrica; intensidad 0.1-1 mA; mapeo dentro de la cavidad de resección en cirugía de tumores intramedulares",
@@ -473,8 +541,9 @@ window.TECNICAS_MIO = {
     },
     {
       "id": "peatc_baep",
-      "categoria": "Fosa posterior/tronco",
+      "categoria": "PEATC",
       "region": "fosa_posterior_tronco",
+      "familia": "peatc",
       "nombre": "PEATC / BAEP (potenciales evocados auditivos de tronco)",
       "estimulacion": {
         "sitio": "Vía auricular de inserción, bilateral",
@@ -510,8 +579,9 @@ window.TECNICAS_MIO = {
     },
     {
       "id": "comep_pares_craneales",
-      "categoria": "Fosa posterior/tronco",
+      "categoria": "CoMEP",
       "region": "fosa_posterior_tronco",
+      "familia": "mep",
       "nombre": "CoMEP - potenciales motores corticobulbares por TES (pares craneales motores)",
       "estimulacion": {
         "sitio_montaje": "C3(+)-Cz(-) para hemisferio izquierdo / C4(+)-Cz(-) para hemisferio derecho (Deletis). Alternativa: C5(+)-Cz(-) / C6(+)-Cz(-) (Verst et al.) - más efectiva pero con más movimiento por posible componente periférico.",
@@ -546,8 +616,9 @@ window.TECNICAS_MIO = {
     },
     {
       "id": "emg_libre_pares_craneales",
-      "categoria": "Fosa posterior/tronco",
+      "categoria": "EMG",
       "region": "fosa_posterior_tronco",
+      "familia": "emg",
       "nombre": "EMG libre continuo de pares craneales motores (patrón A-train)",
       "estimulacion": {
         "nota": "Técnica pasiva, sin estímulo aplicado"
@@ -577,8 +648,9 @@ window.TECNICAS_MIO = {
     },
     {
       "id": "pess_trigeminal_tep",
-      "categoria": "Reflejos de tronco",
+      "categoria": "PESS",
       "region": "fosa_posterior_tronco",
+      "familia": "sep",
       "nombre": "Potenciales evocados trigeminales (TEP) - PESS de nervio trigémino",
       "estimulacion": {
         "sitio": "Ramas del nervio trigémino (periférico)",
@@ -603,6 +675,7 @@ window.TECNICAS_MIO = {
       "id": "reflejo_parpadeo_blink_reflex",
       "categoria": "Reflejos de tronco",
       "region": "fosa_posterior_tronco",
+      "familia": "reflejos",
       "nombre": "Reflejo de parpadeo (Blink Reflex, BR) bajo anestesia general",
       "estimulacion": {
         "sitio": "Nervio supraorbitario, agujas EEG subcutáneas; cátodo en la escotadura supraorbitaria, ánodo 2.5 cm superior y lateral al cátodo",
@@ -629,6 +702,7 @@ window.TECNICAS_MIO = {
       "id": "reflejo_masetero_rmt",
       "categoria": "Reflejos de tronco",
       "region": "fosa_posterior_tronco",
+      "familia": "reflejos",
       "nombre": "Reflejo H del masetero (RMT) bajo anestesia general",
       "estimulacion": {
         "sitio": "Nervio maseterino (rama del trigémino), acceso percutáneo bajo el arco cigomático, 0.5 cm anterior a la articulación temporomandibular",
@@ -662,6 +736,7 @@ window.TECNICAS_MIO = {
       "id": "reflejo_trigemino_cervical_tcr",
       "categoria": "Reflejos de tronco",
       "region": "fosa_posterior_tronco",
+      "familia": "reflejos",
       "nombre": "Reflejo trigémino-cervical (TCR)",
       "estimulacion": {
         "sitio": "Nervio supraorbitario o infraorbitario (rama del trigémino)",
@@ -686,8 +761,9 @@ window.TECNICAS_MIO = {
     },
     {
       "id": "tvcr_reflejo_trigemino_vocal",
-      "categoria": "Fosa posterior/tronco",
+      "categoria": "TVcR",
       "region": "fosa_posterior_tronco",
+      "familia": "reflejos",
       "nombre": "TVcR - Reflejo trigémino-vocal (Urriza et al. 2025)",
       "estimulacion": {
         "sitio": "Rama mentoniana del nervio trigémino (V3), a nivel del foramen mandibular; lado izquierdo (L.V3) o derecho (R.V3)",
@@ -724,6 +800,7 @@ window.TECNICAS_MIO = {
       "id": "lar_reflejo_laringeo_aductor",
       "categoria": "LAR",
       "region": "fosa_posterior_tronco",
+      "familia": "reflejos",
       "nombre": "LAR - Reflejo laríngeo aductor",
       "estimulacion": {
         "sitio": "Mucosa laríngea (nervio laríngeo superior interno, iSLN) - vía electrodos de superficie integrados en el tubo endotraqueal, en contacto con la mucosa",
@@ -749,6 +826,7 @@ window.TECNICAS_MIO = {
       "id": "reflejo_trigemino_hipogloso_thr",
       "categoria": "THR",
       "region": "fosa_posterior_tronco",
+      "familia": "reflejos",
       "nombre": "THR - Reflejo trigémino-hipogloso (jaw-tongue reflex)",
       "estimulacion": {
         "sitio_v3": "Bajo el arco cigomático, 0.5 cm anterior a la ATM - mismo punto de acceso percutáneo que el H-reflejo del masetero (Godaux y Desmedt)",
@@ -789,8 +867,9 @@ window.TECNICAS_MIO = {
     },
     {
       "id": "mapeo_directo_pares_craneales",
-      "categoria": "Fosa posterior/tronco",
+      "categoria": "Mapeo de pares craneales",
       "region": "fosa_posterior_tronco",
+      "familia": "mapeo",
       "nombre": "Mapeo directo de pares craneales (sonda manual y sonda de succión dinámica)",
       "estimulacion": {
         "sonda": "Monopolar catódica o bipolar/concéntrica (mapeo clásico intermitente); sonda de succión electrificada aislada para mapeo dinámico continuo (técnica reciente)",
@@ -814,6 +893,7 @@ window.TECNICAS_MIO = {
       "id": "mapeo_iv_ventriculo_bsm",
       "categoria": "Mapeo del IV ventrículo",
       "region": "fosa_posterior_tronco",
+      "familia": "mapeo",
       "nombre": "Mapeo del suelo del IV ventrículo (Brainstem Mapping, BSM) - localización de núcleos motores de pares craneales",
       "estimulacion": {
         "sonda": "Monopolar de punta fina, manual",
@@ -840,6 +920,7 @@ window.TECNICAS_MIO = {
       "id": "c_sep_cortical_directo",
       "categoria": "c-SEP",
       "region": "cirugia_cerebral",
+      "familia": "sep",
       "nombre": "c-SEP - Monitorización continua mediante registro cortical directo (grid/strip) tras localización por inversión de fase",
       "descripcion": "Una vez localizada S1 mediante phase-reversal (ver pess_fase_reversal_cisura_central) con el electrodo de grid/strip ya colocado, el mismo electrodo puede dejarse in situ para monitorizar el PESS de forma continua y directa desde la corteza durante el resto de la resección, en vez de solo usarse como localización puntual.",
       "estimulacion": {
@@ -863,6 +944,7 @@ window.TECNICAS_MIO = {
       "id": "ecog",
       "categoria": "ECoG",
       "region": "cirugia_cerebral",
+      "familia": "eeg_ecog",
       "nombre": "Electrocorticografía (ECoG)",
       "estimulacion": {
         "nota": "No es una técnica de estimulación propia; actúa como adyuvante de seguridad durante DES (ver mapeo_lenguaje_des y mapeo_cortical_directo_des)"
@@ -883,6 +965,7 @@ window.TECNICAS_MIO = {
       "id": "pev_cortical_via_posterior",
       "categoria": "PEV",
       "region": "cirugia_cerebral",
+      "familia": "vep",
       "nombre": "PEV cortical (vía visual posterior) - utilidad limitada",
       "estimulacion_registro": {
         "nota": "Mismo flash/LED que en pev_via_anterior; registro sobre corteza occipital directamente (mapeo) o sobre escalpo en Oz (monitorización)",
@@ -902,6 +985,7 @@ window.TECNICAS_MIO = {
       "id": "mapeo_cortical_directo_des",
       "categoria": "DES",
       "region": "cirugia_cerebral",
+      "familia": "des",
       "nombre": "Mapeo cortical directo por estimulación eléctrica directa (DES) - técnica de Penfield y técnica de tren corto/alta frecuencia",
       "estimulacion": {
         "sonda": "Bipolar (Penfield clásica) o monopolar (técnica de tren corto/alta frecuencia)",
@@ -931,6 +1015,7 @@ window.TECNICAS_MIO = {
       "id": "mapeo_subcortical_des",
       "categoria": "DES",
       "region": "cirugia_cerebral",
+      "familia": "des",
       "nombre": "Mapeo subcortical del tracto corticoespinal (DES catódica, monopolar o bipolar)",
       "estimulacion": {
         "polaridad": "Catódica preferible (independiente del paradigma)",
@@ -961,6 +1046,7 @@ window.TECNICAS_MIO = {
       "id": "pess_fase_reversal_cisura_central",
       "categoria": "PESS",
       "region": "cirugia_cerebral",
+      "familia": "sep",
       "nombre": "Mapeo cortical somatosensorial por inversión de fase (localización de la cisura central)",
       "estimulacion": {
         "nervio": "Nervio mediano (de elección - criterios mejor establecidos y área de mano habitualmente expuesta); alternativa nervio tibial o trigeminal si es necesario",
@@ -985,6 +1071,7 @@ window.TECNICAS_MIO = {
       "id": "mapeo_lenguaje_des",
       "categoria": "DES",
       "region": "craneotomia_despierta",
+      "familia": "des",
       "nombre": "Mapeo de lenguaje y funciones cognitivas mediante DES (baja frecuencia y alta frecuencia)",
       "estimulacion": {
         "tecnica_baja_frecuencia_lf": "Bifásica, 0.5 ms de duración, ISI 20 ms (50-60 Hz), sonda bipolar (puntas separadas 5 o 10 mm) - paradigma tradicional",
@@ -1010,8 +1097,9 @@ window.TECNICAS_MIO = {
     },
     {
       "id": "nap_cnap_nervio_periferico",
-      "categoria": "Plexo braquial / nervio periférico",
+      "categoria": "NAP/CNAP",
       "region": "plexo_periferico",
+      "familia": "mapeo",
       "nombre": "Potencial de acción nervioso compuesto (CNAP/NAP) - registro directo intraoperatorio",
       "estimulacion": {
         "distancia_electrodos": "Mínimo 4 cm entre estimulación y registro (posible pero con más artefacto de estímulo); preferible 8-10 cm",
@@ -1036,8 +1124,9 @@ window.TECNICAS_MIO = {
     },
     {
       "id": "pess_troncos_cordones_plexo",
-      "categoria": "Plexo braquial / nervio periférico",
+      "categoria": "PESS",
       "region": "plexo_periferico",
+      "familia": "sep",
       "nombre": "PESS para monitorización del plexo braquial (troncos/cordones)",
       "estimulacion": {
         "nervio": "Nervio mediano o cubital en muñeca, según el segmento del plexo en riesgo",
@@ -1058,8 +1147,9 @@ window.TECNICAS_MIO = {
     },
     {
       "id": "emg_libre_estimulado_periferico",
-      "categoria": "Plexo braquial / nervio periférico",
+      "categoria": "EMG",
       "region": "plexo_periferico",
+      "familia": "emg",
       "nombre": "EMG libre y estimulado en cirugía de nervio periférico",
       "estimulacion_y_registro": {
         "nota": "Los principios técnicos (filtros, modo free-run, criterios de patrón tónico vs breve) son análogos a los ya descritos en emg_libre_espinal y emg_estimulado_tornillo_pedicular de este mismo documento. No se ha localizado en las fuentes del proyecto un protocolo específico y distinto para nervio periférico más allá de esa analogía.",
@@ -1074,6 +1164,7 @@ window.TECNICAS_MIO = {
       "id": "prm_reflejo_raiz_posterior",
       "categoria": "PRM",
       "region": "plexo_periferico",
+      "familia": "reflejos",
       "nombre": "PRM - Posterior Root-Muscle reflex",
       "estimulacion": {
         "contexto_investigacion_SCS": "Estimulación epidural o transcutánea de la médula espinal lumbosacra (fibras aferentes propioceptivas de raíces posteriores L1-S2) - contexto de investigación en rehabilitación/lesión medular",
@@ -1096,6 +1187,7 @@ window.TECNICAS_MIO = {
       "id": "arm_respuesta_raiz_anterior",
       "categoria": "ARM",
       "region": "plexo_periferico",
+      "familia": "reflejos",
       "nombre": "ARM - Anterior Root Muscle response (ARMR)",
       "estimulacion": {
         "electrodo": "Superficie autoadhesiva rectangular 8x4 cm, o par de electrodos disco pequeños (2.2x3 cm) conectados como electrodo único",
@@ -1118,6 +1210,7 @@ window.TECNICAS_MIO = {
       "id": "mapeo_nervio_periferico",
       "categoria": "Mapeo de nervio periférico",
       "region": "plexo_periferico",
+      "familia": "mapeo",
       "nombre": "Mapeo de nervio periférico (trayecto, ramas y fascículos)",
       "estimulacion": {
         "trayecto_general": "Sonda manual de mapeo desplazada a lo largo del trayecto sospechado del nervio, de forma análoga al mapeo de pares craneales (ver mapeo_directo_pares_craneales)",
@@ -1142,6 +1235,7 @@ window.TECNICAS_MIO = {
       "id": "eeg",
       "categoria": "EEG",
       "region": "general",
+      "familia": "eeg_ecog",
       "nombre": "Electroencefalograma (EEG) intraoperatorio",
       "estimulacion": {
         "nota": "Técnica pasiva, registro de actividad espontánea cortical"
@@ -1164,6 +1258,7 @@ window.TECNICAS_MIO = {
       "id": "pev_via_anterior",
       "categoria": "PEV",
       "region": "general",
+      "familia": "vep",
       "nombre": "Potenciales evocados visuales (PEV) - vía visual anterior",
       "estimulacion": {
         "tipo": "Flash de alta intensidad (estroboscopio o LEDs); goggles con LED de alta intensidad preferibles sobre lente de contacto (menor riesgo corneal) o luz roja transmitida a través de los párpados cerrados",

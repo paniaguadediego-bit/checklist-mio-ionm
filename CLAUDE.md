@@ -1963,6 +1963,45 @@ README.md revisado en el mismo turno (Simulador ya no "en construcción").
 tarjetas -sigue siendo cierto-, y la guía es intencionadamente breve, no
 enumera el contenido de cada pantalla.
 
+### Retoques posteriores, 05-09-2026: "Técnicas IONM" agrupada por tipo de técnica, con color por etiqueta
+
+Dos pedidos juntos, sobre la pantalla de referencia clínica (no sobre datos
+de usuario: `data/tecnicas-mio.js` no se sincroniza, ver su propio
+comentario de cabecera).
+
+- **Color por etiqueta**: cada badge de `renderTecnicaMio()` (el nombre de
+  categoría junto al título de la técnica, ej. "PESS", "MEP", "EMG") lleva
+  ahora un color propio según a qué familia de técnica pertenece -morado en
+  SEP, granate en MEP, un rojo distinto en Onda D (para no confundirlo con
+  MEP), verde en EMG, naranja en Reflejos, azul en EEG/ECoG, y el resto de
+  familias con su propio tono (VEP, PEATC, DES, mapeo)-. Diez variables CSS
+  por familia (`--tm-<familia>` / `--tm-<familia>-soft`, claro y oscuro) en
+  `style.css`, clases `.tecmio-badge-<familia>`. La cabecera de cada grupo
+  también lleva una franja de color a la izquierda a juego
+  (`.tecmio-familia-<familia> > summary`).
+- **Reordenada la pantalla entera por tipo de técnica, no por zona
+  quirúrgica**: antes agrupaba por `region` (columna/médula, fosa
+  posterior/tronco, cirugía cerebral...), lo que separaba en grupos
+  distintos técnicas del mismo tipo (el PESS trigeminal y el PESS de plexo
+  braquial vivían lejos del resto de PESS, solo por dónde se opera). Campo
+  nuevo `"familia"` en cada una de las 38 técnicas de
+  `data/tecnicas-mio.js` (sep/mep/onda_d/emg/reflejos/vep/peatc/eeg_ecog/
+  des/mapeo -ver el comentario largo en ese archivo con el porqué de cada
+  asignación-), `TECMIO_FAMILIAS`/`TECMIO_ORDEN_FAMILIAS` en `app.js` (antes
+  `TECMIO_REGIONES`) fijan el rótulo y el orden de aparición de cada grupo.
+  `region` **no se ha borrado** (regla de siempre) pero deja de leerse para
+  agrupar esta pantalla.
+- **De paso, se corrigió la `categoria`** (el texto del badge) de 9 técnicas
+  que arrastraban un nombre de región en vez de su tipo real -herencia del
+  esquema por región retirado hoy mismo-: p.ej. `pess_trigeminal_tep` decía
+  "Reflejos de tronco" sin serlo (su propia nota clínica ya avisaba de no
+  confundirlo con un reflejo de verdad), `peatc_baep` decía "Fosa
+  posterior/tronco" en vez de "PEATC". Solo cambia el rótulo visible, ninguna
+  fuente ni cifra clínica se tocó. Verificado en el navegador (claro y
+  oscuro, con el buscador): los 10 grupos aparecen en el orden fijado, cada
+  badge con su color, el filtro de búsqueda sigue abriendo solo lo que
+  coincide.
+
 ## Google Sheet (Apps Script)
 
 `apps-script/Codigo.gs` es un script de Google Apps independiente: no forma

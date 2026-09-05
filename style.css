@@ -28,6 +28,24 @@
      porque en modo oscuro tiene que cambiar: un blanco fijo con la letra
      clara encima deja el campo ilegible. */
   --campo-bg: #ffffff;
+
+  /* Color por familia de técnica en "Técnicas IONM" (pedido por Pani,
+     05-09-2026): un tono de texto y un fondo suave por familia, mismo patrón
+     que --accent/--accent-soft. Diez familias -ver TECMIO_FAMILIAS en
+     app.js-, elegidas para distinguirse entre sí incluso las que comparten
+     "familia de color" (mep/onda_d ambas rojizas, reflejos/mapeo ambas
+     cálidas): mep en granate frío, onda_d en rojo más vivo/cálido; reflejos
+     en naranja, mapeo en un marrón apagado, sin confundirse en pantalla. */
+  --tm-sep: #7c3aed;         --tm-sep-soft: #efe7fc;
+  --tm-mep: #7a1f3d;         --tm-mep-soft: #f8e2e8;
+  --tm-onda_d: #c62828;      --tm-onda_d-soft: #fbe0df;
+  --tm-emg: #157347;         --tm-emg-soft: #e1f3ea;
+  --tm-reflejos: #b5590a;    --tm-reflejos-soft: #fbead2;
+  --tm-vep: #0f7d8c;         --tm-vep-soft: #dcf3f5;
+  --tm-peatc: #4338ca;       --tm-peatc-soft: #e6e5fb;
+  --tm-eeg_ecog: #1d4ed8;    --tm-eeg_ecog-soft: #e2eafd;
+  --tm-des: #a3145c;         --tm-des-soft: #fbe1ec;
+  --tm-mapeo: #6b5842;       --tm-mapeo-soft: #ece5db;
 }
 
 /* Le dice al navegador que la página entiende los dos modos, para que los
@@ -976,8 +994,10 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
 #guia-acordeon p:last-child { margin-bottom: 0; }
 
 /* ------------------------- Técnicas MIO (Lote 1) ------------------------ */
-/* Región (columna_medula, fosa_posterior_tronco) reutiliza .caso-grupo tal
-   cual; .tecmio-tecnica es la misma caja anidada un nivel dentro. */
+/* Familia de técnica (SEP, MEP, Reflejos... - ver TECMIO_FAMILIAS en app.js)
+   reutiliza .caso-grupo tal cual, con la clase .tecmio-familia-<familia>
+   encima para el acento de color; .tecmio-tecnica es la misma caja anidada
+   un nivel dentro. */
 .tecmio-tecnica { margin: 0 0 0.4rem; }
 .tecmio-tecnica:last-child { margin-bottom: 0; }
 .tecmio-badge {
@@ -991,6 +1011,37 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
   margin-right: 0.4rem;
   white-space: nowrap;
 }
+/* Un colorcito por etiqueta/familia (pedido por Pani, 05-09-2026): morado en
+   SEP, granate en MEP, un rojo distinto en Onda D, verde en EMG, azul en
+   EEG/ECoG, naranja en Reflejos, y el resto de familias con su propio tono
+   -ver la tabla --tm-* al principio del archivo-. Mismo patrón visual que
+   .tecmio-badge de siempre (fondo suave + texto de color), solo cambia qué
+   variable de color usa cada una. */
+.tecmio-badge-sep      { background: var(--tm-sep-soft);      color: var(--tm-sep); }
+.tecmio-badge-mep      { background: var(--tm-mep-soft);      color: var(--tm-mep); }
+.tecmio-badge-onda_d   { background: var(--tm-onda_d-soft);   color: var(--tm-onda_d); }
+.tecmio-badge-emg      { background: var(--tm-emg-soft);      color: var(--tm-emg); }
+.tecmio-badge-reflejos { background: var(--tm-reflejos-soft); color: var(--tm-reflejos); }
+.tecmio-badge-vep      { background: var(--tm-vep-soft);      color: var(--tm-vep); }
+.tecmio-badge-peatc    { background: var(--tm-peatc-soft);    color: var(--tm-peatc); }
+.tecmio-badge-eeg_ecog { background: var(--tm-eeg_ecog-soft); color: var(--tm-eeg_ecog); }
+.tecmio-badge-des      { background: var(--tm-des-soft);      color: var(--tm-des); }
+.tecmio-badge-mapeo    { background: var(--tm-mapeo-soft);    color: var(--tm-mapeo); }
+/* Cabecera de cada grupo (la familia entera, no la técnica suelta): una
+   franja de color a la izquierda del <summary>, mismo color que sus
+   etiquetas, para reconocer el bloque de un vistazo al hacer scroll sin
+   tener que leer el título. */
+.tecmio-familia > summary { border-left: 4px solid transparent; }
+.tecmio-familia-sep      > summary { border-left-color: var(--tm-sep); }
+.tecmio-familia-mep      > summary { border-left-color: var(--tm-mep); }
+.tecmio-familia-onda_d   > summary { border-left-color: var(--tm-onda_d); }
+.tecmio-familia-emg      > summary { border-left-color: var(--tm-emg); }
+.tecmio-familia-reflejos > summary { border-left-color: var(--tm-reflejos); }
+.tecmio-familia-vep      > summary { border-left-color: var(--tm-vep); }
+.tecmio-familia-peatc    > summary { border-left-color: var(--tm-peatc); }
+.tecmio-familia-eeg_ecog > summary { border-left-color: var(--tm-eeg_ecog); }
+.tecmio-familia-des      > summary { border-left-color: var(--tm-des); }
+.tecmio-familia-mapeo    > summary { border-left-color: var(--tm-mapeo); }
 /* Títulos de sección (Estimulación, Registro, Filtros...): antes todos
    salían en el mismo gris apagado -text-muted-, indistinguibles a golpe de
    vista. Ahora llevan un borde inferior de color propio, y Estimulación /
@@ -2075,6 +2126,19 @@ dialog h3 {
     /* Los campos rellenables se oscurecen aquí, en un solo sitio. No hace
        falta repetir selectores por tipo: todos leen la misma variable. */
     --campo-bg: #131a1d;
+
+    /* Mismos diez colores por familia de técnica, aclarados para leerse
+       sobre fondo oscuro (mismo criterio que --accent más arriba). */
+    --tm-sep: #b794f6;         --tm-sep-soft: #2f2350;
+    --tm-mep: #e2879a;         --tm-mep-soft: #3a1620;
+    --tm-onda_d: #f0897a;      --tm-onda_d-soft: #3a2018;
+    --tm-emg: #6fd9a6;         --tm-emg-soft: #123423;
+    --tm-reflejos: #f0b45c;    --tm-reflejos-soft: #3a2a10;
+    --tm-vep: #6fd0dc;         --tm-vep-soft: #113338;
+    --tm-peatc: #a5a1f0;       --tm-peatc-soft: #262254;
+    --tm-eeg_ecog: #8fb2f5;    --tm-eeg_ecog-soft: #17233c;
+    --tm-des: #ec8dbb;         --tm-des-soft: #3a1729;
+    --tm-mapeo: #c9b697;       --tm-mapeo-soft: #322a1f;
   }
   #perfil-usuario, #catalogo-buscar, #perfil-select { background: #1b2226; color: var(--text); }
   .caja-plate { background: #c8d2d8; }

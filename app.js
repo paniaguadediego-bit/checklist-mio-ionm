@@ -6982,6 +6982,9 @@
   // y tecnicaCoincideTecMio() sin necesidad de pasarlo por cada función.
   var tecMioFiltro = "";
 
+  // Ya no se usa para agrupar la pantalla (ver TECMIO_FAMILIAS, reorganización
+  // del 05-09-2026), pero se deja: "region" sigue viniendo en cada técnica de
+  // data/tecnicas-mio.js y puede hacer falta para otra vista el día de mañana.
   var TECMIO_REGIONES = {
     columna_medula: "Columna / médula espinal",
     fosa_posterior_tronco: "Fosa posterior / tronco",
@@ -6990,6 +6993,34 @@
     plexo_periferico: "Plexo braquial / nervio periférico",
     general: "General / multipropósito"
   };
+
+  // Agrupación de la pantalla "Técnicas IONM" por tipo de técnica (pedido por
+  // Pani, 05-09-2026), no por zona quirúrgica -ver el comentario largo al
+  // principio de data/tecnicas-mio.js con el porqué y qué técnica cae en cada
+  // familia-. Cada técnica trae su "familia" ya fijada a mano en ese archivo;
+  // aquí solo se traduce a texto legible y se fija el orden de los grupos.
+  var TECMIO_FAMILIAS = {
+    sep: "SEP (potenciales evocados somatosensoriales)",
+    mep: "MEP (potenciales evocados motores)",
+    onda_d: "Onda D",
+    emg: "EMG",
+    reflejos: "Reflejos",
+    vep: "VEP (potenciales evocados visuales)",
+    peatc: "PEATC / BAEP (potenciales evocados auditivos de tronco)",
+    eeg_ecog: "EEG / ECoG",
+    des: "DES (estimulación eléctrica directa, mapeo cortical/subcortical)",
+    mapeo: "Otro mapeo y registro directo"
+  };
+  // Orden fijo de aparición de los grupos -no alfabético-: evocados motores y
+  // sensitivos primero (SEP → MEP → Onda D, el orden clínico del Lote 1),
+  // EMG y reflejos después, luego el resto de evocados (VEP, PEATC),
+  // actividad cortical espontánea (EEG/ECoG), y por último las técnicas de
+  // mapeo por estimulación directa. Cualquier familia que no esté en esta
+  // lista (no debería pasar, ver notas_meta) se pinta al final, por orden de
+  // aparición.
+  var TECMIO_ORDEN_FAMILIAS = [
+    "sep", "mep", "onda_d", "emg", "reflejos", "vep", "peatc", "eeg_ecog", "des", "mapeo"
+  ];
 
   var TECMIO_SECCIONES = {
     estimulacion: "Estimulación",
@@ -7253,7 +7284,14 @@
     var summary = document.createElement("summary");
     if (tecnica.categoria) {
       var badge = document.createElement("span");
-      badge.className = "tecmio-badge";
+      // Color por familia de técnica (pedido por Pani, 05-09-2026): un
+      // colorcito propio por etiqueta -morado en SEP, rojo/granate en MEP,
+      // un rojo distinto en Onda D, verde en EMG, azul en EEG/ECoG, naranja
+      // en Reflejos...-. Las clases .tecmio-badge-<familia> están en
+      // style.css; si la técnica no trae "familia" (no debería pasar, ver
+      // notas_meta de data/tecnicas-mio.js) se queda con el color neutro de
+      // siempre.
+      badge.className = "tecmio-badge" + (tecnica.familia ? " tecmio-badge-" + tecnica.familia : "");
       pintarTextoConResaltado(badge, tecnica.categoria);
       summary.appendChild(badge);
     }
@@ -7296,33 +7334,46 @@
     var filtroCrudo = entrada ? (entrada.value || "").trim() : "";
     tecMioFiltro = normalizarTecMio(filtroCrudo);
 
-    var porRegion = {};
-    var ordenRegiones = [];
+    // Agrupación por familia de técnica (SEP, MEP, Reflejos...), no por
+    // región/zona quirúrgica -reorganización del 05-09-2026, ver el
+    // comentario largo al principio de data/tecnicas-mio.js-. El orden de
+    // aparición de los grupos lo fija TECMIO_ORDEN_FAMILIAS, no el orden de
+    // encuentro en el array; dentro de cada grupo sí se respeta el orden de
+    // encuentro, igual que antes con las regiones.
+    var porFamilia = {};
+    var familiasEncontradas = [];
     (datos.tecnicas || []).forEach(function (t) {
       if (tecMioFiltro && !tecnicaCoincideTecMio(t, tecMioFiltro)) return;
-      var r = t.region || "otras";
-      if (!porRegion[r]) { porRegion[r] = []; ordenRegiones.push(r); }
-      porRegion[r].push(t);
+      var f = t.familia || "otras";
+      if (!porFamilia[f]) { porFamilia[f] = []; familiasEncontradas.push(f); }
+      porFamilia[f].push(t);
     });
 
-    ordenRegiones.forEach(function (r) {
+    var ordenFamilias = TECMIO_ORDEN_FAMILIAS.filter(function (f) {
+      return porFamilia[f];
+    });
+    familiasEncontradas.forEach(function (f) {
+      if (ordenFamilias.indexOf(f) === -1) ordenFamilias.push(f);
+    });
+
+    ordenFamilias.forEach(function (f) {
       var det = document.createElement("details");
-      det.className = "caso-grupo";
+      det.className = "caso-grupo tecmio-familia tecmio-familia-" + f;
       if (tecMioFiltro) det.open = true;
       var summary = document.createElement("summary");
-      pintarTextoConResaltado(summary, TECMIO_REGIONES[r] || etiquetaTecMio(r, TECMIO_REGIONES));
+      pintarTextoConResaltado(summary, TECMIO_FAMILIAS[f] || etiquetaTecMio(f, TECMIO_FAMILIAS));
       det.appendChild(summary);
 
       var campos = document.createElement("div");
       campos.className = "caso-grupo-campos";
-      porRegion[r].forEach(function (t) {
+      porFamilia[f].forEach(function (t) {
         campos.appendChild(renderTecnicaMio(t));
       });
       det.appendChild(campos);
       cont.appendChild(det);
     });
 
-    if (tecMioFiltro && !ordenRegiones.length) {
+    if (tecMioFiltro && !ordenFamilias.length) {
       var vacio = document.createElement("p");
       vacio.className = "tecmio-sin-resultados";
       vacio.textContent = "Sin resultados para «" + filtroCrudo + "».";
