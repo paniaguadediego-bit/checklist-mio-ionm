@@ -17,7 +17,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260906d">
+<link rel="stylesheet" href="style.css?v=20260906e">
 </head>
 <body>
 
@@ -142,18 +142,21 @@
     </details>
 
     <!-- Conserva la clase panel-catalogo: es a lo que apunta el soltar
-         material encima para quitarlo de una entrada. -->
-    <div class="card panel-catalogo no-print" id="panel-catalogo">
-      <div class="panel-cab">
+         material encima para quitarlo de una entrada. Pasa de <div> a
+         <details> el 06-09-2026 (tarde), para que en móvil se comporte
+         exactamente igual que el resto de tarjetas al desplegarse -ocupa
+         toda la pantalla, las demás se quedan plegadas-. En escritorio
+         sigue siendo la columna lateral fija de siempre, sin cambios ahí. -->
+    <details class="card panel-catalogo no-print" id="panel-catalogo" open>
+      <summary class="panel-cab card-cab">
         <h2 data-i18n="catalogo_titulo"></h2>
         <button type="button" id="btn-etiquetas" data-i18n-title="btn_etiquetas_tit" data-i18n="btn_etiquetas"></button>
         <button type="button" id="btn-nuevo-material" data-i18n-title="btn_nuevo_mat_tit">+</button>
-        <button type="button" id="btn-plegar" data-i18n-title="btn_plegar_tit">▾</button>
-      </div>
+      </summary>
       <input type="search" id="catalogo-buscar" data-i18n-ph="catalogo_buscar" autocomplete="off">
       <p class="panel-ayuda" data-i18n-html="catalogo_ayuda"></p>
       <div id="catalogo-contenido"></div>
-    </div>
+    </details>
 
     <details class="card" id="cajas">
       <summary class="card-cab">
@@ -688,10 +691,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260906d"></script>
-<script src="data/i18n-en.js?v=20260906d"></script>
-<script src="data/guia.js?v=20260906d"></script>
-<script src="data/tecnicas-mio.js?v=20260906d"></script>
-<script src="app.js?v=20260906d"></script>
+<script src="data/surgeries.js?v=20260906e"></script>
+<script src="data/i18n-en.js?v=20260906e"></script>
+<script src="data/guia.js?v=20260906e"></script>
+<script src="data/tecnicas-mio.js?v=20260906e"></script>
+<script src="app.js?v=20260906e"></script>
 </body>
 </html>

@@ -461,29 +461,12 @@ main {
   display: inline-block;
 }
 
-#btn-plegar {
-  font: inherit;
-  font-size: 0.95rem;
-  font-weight: 700;
-  border: 1px solid var(--border);
-  background: var(--card-bg);
-  color: var(--accent);
-  border-radius: 4px;
-  cursor: pointer;
-  line-height: 1;
-  padding: 0.15rem 0.45rem;
-}
-
 .panel-ayuda {
   font-size: 0.68rem;
   color: var(--text-muted);
   margin: 0.35rem 0 0.15rem;
   line-height: 1.3;
 }
-
-.panel-catalogo.plegado #catalogo-buscar,
-.panel-catalogo.plegado .panel-ayuda,
-.panel-catalogo.plegado #catalogo-contenido { display: none; }
 
 #catalogo-buscar,
 #elegir-buscar,
@@ -2026,14 +2009,21 @@ dialog h3 {
 /* Pantallas estrechas */
 @media (max-width: 900px) {
   .panel-catalogo { max-height: 40vh; }
+  /* Pedido el 06-09-2026 (tarde): el catálogo no es parte de una plantilla
+     de montaje, es lo que nutre a las cajas -así que en móvil, donde todo
+     va en una sola columna sin sitio para un lateral, tiene que verse antes
+     que "Plantillas de montajes", no después-. Solo visual: el HTML no se
+     toca, en escritorio .panel-catalogo sigue mandado a su propia columna
+     por "grid-column: 2" más abajo, sin relación con este order. */
+  #panel-catalogo { order: -1; }
   #dlg-montajes-lista, #plantilla-elegir-lista { grid-template-columns: 1fr; }
 }
 
-/* Pantalla ancha: el catálogo vuelve a la columna lateral fija.
-   El HTML no cambia -sigue siendo la cuarta ventana, que es el orden de
-   trabajo y el que vale en el móvil-; aquí solo se le manda a la segunda
-   columna, ocupando todas las filas, y se queda pegado al hacer scroll para
-   tenerlo a la vista mientras miras las cajas. */
+/* Pantalla ancha: el catálogo vuelve a la columna lateral fija. El HTML no
+   cambia -sigue siendo la cuarta tarjeta; el "order: -1" de la media query
+   de arriba es solo para el apilado de móvil y no afecta aquí-; aquí solo
+   se le manda a la segunda columna, ocupando todas las filas, y se queda
+   pegado al hacer scroll para tenerlo a la vista mientras miras las cajas. */
 @media (min-width: 901px) {
   .columna-principal {
     display: grid;

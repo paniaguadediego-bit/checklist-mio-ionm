@@ -95,18 +95,21 @@ avisa de que todavía no está traducida en vez de mostrarla a medias.
 
 ## Organizador de Montajes: el banco de trabajo, en el orden en que se trabaja
 
-Es la primera tarjeta de la pantalla de inicio. Dentro: Montajes → Técnicas
-→ Catálogo → Cajas → Resumen. Es un banco único: el mismo tanto si estás
-editando una plantilla suelta como si estás corrigiendo el material de un
-caso concreto — nunca hay dos copias de estas cinco tarjetas (corregir el
-material de un caso desde **Gestión de Casos** te trae aquí mismo, con el
-rótulo permanente en verde sólido avisando de que estás mid-corrección).
-Cada una se pliega sola (menos el catálogo, que en pantalla ancha es la
-columna lateral fija de siempre, y que se pliega pulsando su barra entera,
-no solo la flechita). **Arrancan todas plegadas, salvo Plantillas de
-montajes** —al ser lo primero que se ve al entrar aquí, desde el 05-09-2026
-se abre sola—; despliega las demás según te interese en cada momento. El
-orden es el del flujo real: qué montaje cargas, qué técnicas vas a hacer,
+Es la primera tarjeta de la pantalla de inicio. Dentro: Plantillas de
+montajes → Técnicas → Catálogo → Cajas → Resumen —en móvil, donde todo va
+en una sola columna sin sitio para un lateral, Catálogo se ve el primero de
+todos (06-09-2026): no es parte de una plantilla de montaje, es lo que
+nutre a las cajas—. Es un banco único: el mismo tanto si estás editando una
+plantilla suelta como si estás corrigiendo el material de un caso concreto
+— nunca hay dos copias de estas cinco tarjetas (corregir el material de un
+caso desde **Gestión de Casos** te trae aquí mismo, con el rótulo
+permanente en verde sólido avisando de que estás mid-corrección). Las
+cinco son `<details>` plegables por igual, cada una a su aire (menos el
+catálogo, que en pantalla ancha es la columna lateral fija de siempre).
+**Arrancan todas plegadas, salvo Plantillas de montajes** —al ser lo
+primero que se ve al entrar aquí, desde el 05-09-2026 se abre sola—;
+despliega las demás según te interese en cada momento. El orden es el del
+flujo real: qué montaje cargas, qué técnicas vas a hacer,
 qué material hay, dónde va y qué sale de todo ello.
 
 Qué montaje hay cargado en ese banco de trabajo se elige aparte, desde la
@@ -175,9 +178,10 @@ en una entrada: electrodos corticales, músculos, estimulaciones periféricas,
 GRID, sondas, tierras... Agrupado en categorías plegables con buscador,
 cada una abierta o cerrada de fábrica según se use más o menos a menudo. En
 pantalla ancha es la **columna lateral fija** de siempre, así que siempre lo
-tienes a mano aunque estés mirando la última caja; en el móvil va en su
-sitio dentro del flujo del banco de trabajo, y se pliega solo al colocar
-material para dejar ver las cajas.
+tienes a mano aunque estés mirando la última caja; en el móvil es una
+tarjeta plegable más (06-09-2026), la primera de todas —se pliega solo al
+colocar material para dejar ver las cajas, y se despliega solo otra vez al
+terminar—.
 
 Hay dos formas de colocar material, y un mismo ítem se puede usar tantas
 veces como haga falta (el catálogo no se "gasta"):

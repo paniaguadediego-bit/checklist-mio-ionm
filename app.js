@@ -1718,15 +1718,17 @@
      scrollTop a 0, así que al desplegarlo otra vez el catálogo aparecía por
      el principio. En móvil eso pasa en cada colocación -seleccionar pliega,
      colocar despliega-, y obligaba a volver a bajar hasta el músculo que
-     estabas usando cada vez. */
+     estabas usando cada vez.
+     Panel-catalogo pasó de <div>+clase "plegado" a <details> nativo el
+     06-09-2026 (tarde) -mismo comportamiento que el resto de tarjetas al
+     desplegarse en móvil-, así que ahora es .open lo que hay que tocar. */
   var scrollCatalogo = 0;
 
   function plegarCatalogo(plegar) {
     var panel = document.getElementById("panel-catalogo");
-    if (plegar === panel.classList.contains("plegado")) return;
+    if (plegar === !panel.open) return;
     if (plegar) scrollCatalogo = panel.scrollTop;
-    panel.classList.toggle("plegado", plegar);
-    document.getElementById("btn-plegar").textContent = plegar ? "▸" : "▾";
+    panel.open = !plegar;
     if (!plegar) panel.scrollTop = scrollCatalogo;
   }
 
@@ -7310,16 +7312,14 @@
 
   document.getElementById("tile-docente").addEventListener("click", abrirDocente);
 
-  document.getElementById("btn-plegar").addEventListener("click", function () {
-    plegarCatalogo(!document.getElementById("panel-catalogo").classList.contains("plegado"));
-  });
-
-  // Pulsar la barra entera pliega el catálogo, igual que el <summary> de
-  // Técnicas/Cajas/Resumen -antes solo respondía la flechita ▾-. Los tres
-  // botones de la barra (Etiquetas, +, ▾) siguen con su propia acción.
-  document.querySelector(".panel-cab").addEventListener("click", function (e) {
-    if (e.target.closest("button")) return;
-    plegarCatalogo(!document.getElementById("panel-catalogo").classList.contains("plegado"));
+  // Panel-catalogo es ya un <details> de verdad (06-09-2026, tarde): pulsar
+  // el <summary> lo pliega/despliega solo, igual que Plantillas de
+  // montajes/Técnicas/Cajas/Resumen -ya no hace falta ni el botón ▾/▸ ni
+  // este listener a mano-. Los botones Etiquetas y + siguen con su propia
+  // acción: hay que impedir que un clic en ellos dispare además el toggle
+  // nativo del <summary> que los contiene.
+  document.querySelector("#panel-catalogo > summary").addEventListener("click", function (e) {
+    if (e.target.closest("button")) e.preventDefault();
   });
 
   document.getElementById("btn-idioma").addEventListener("click", function () {

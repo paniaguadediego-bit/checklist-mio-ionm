@@ -1690,6 +1690,68 @@ ya hace, y algo relacionado con que "Catálogo" no se comporta igual -no
 quedó claro el cambio concreto que pide ahí, había que preguntarle antes de
 tocar el CSS del catálogo.
 
+### Retoques posteriores, 06-09-2026 (noche): Catálogo pasa a `<details>`, primero en móvil
+
+Resuelto lo que quedó pendiente en el retoque anterior, tras preguntar y
+confirmar el enfoque con la usuaria antes de tocar nada (dos preguntas:
+"¿cómo de exactamente igual que Cajas?" y "¿el orden es solo visual en
+móvil, o reordeno el HTML?" — las dos respondidas con la opción
+recomendada).
+
+**`#panel-catalogo` deja de ser un `<div>` con una clase `plegado` a mano y
+pasa a ser un `<details>` real**, exactamente como Plantillas de
+montajes/Técnicas/Cajas/Resumen. Motivo: en móvil, un `<div>` con su propio
+mecanismo de plegado no se comporta igual que un `<details>` nativo al
+desplegarse -aunque visualmente pareciera similar, no ocupaba la pantalla
+entera de la misma manera que el resto de tarjetas, que es justo lo que
+pidió la usuaria-.
+
+- `<div class="panel-cab">` pasa a `<summary class="panel-cab card-cab">`
+  -la clase `card-cab` engancha gratis con la regla ya existente
+  `.card > summary.card-cab::after` (la flecha ▾/▸ compartida por el resto
+  de tarjetas), así que se retira el botón `#btn-plegar` a mano y toda su
+  regla CSS: ya no hace falta, el propio `<summary>` lo resuelve.
+- Los botones **Etiquetas** y **+** siguen dentro de esa cabecera y
+  necesitan seguir teniendo su propia acción sin desplegar/plegar el panel
+  de golpe. Con un `<div>` a mano bastaba un `if (e.target.closest("button"))
+  return;` antes de alternar la clase; con un `<summary>` nativo el
+  mecanismo es distinto -el toggle es la acción por defecto del propio
+  evento "click", así que hay que interceptarlo con `e.preventDefault()`
+  cuando el clic viene de un botón, en vez de simplemente no llamar a la
+  función que pliega-.
+- `plegarCatalogo(plegar)` pasa de `panel.classList.toggle("plegado", plegar)`
+  a `panel.open = !plegar` -mismo nombre, misma firma, los tres sitios que
+  ya la llamaban (`seleccionar()` al elegir un ítem en móvil, `colocar()` al
+  terminar, y el arranque en móvil) seguían funcionando sin tocarlos, se
+  verificó cada uno por separado en el navegador tras el cambio-.
+- `.panel-catalogo.plegado #catalogo-buscar/...{ display: none }` se retira
+  entera: un `<details>` nativo ya oculta solo todo lo que no sea el
+  `<summary>` cuando no está `[open]`, no hace falta imitarlo a mano.
+
+**Catálogo se ve primero en móvil, antes que Plantillas de montajes**
+-razón de la usuaria: el catálogo no es parte de una plantilla de montaje
+en sí, es lo que nutre a las cajas, así que no tiene que vivir agrupado
+visualmente con las tarjetas de montaje-. Implementado con
+`#panel-catalogo { order: -1; }` dentro de `@media (max-width: 900px)`
+-mismo mecanismo de `order` que ya usaba este proyecto para el extinto
+"Modo quirófano" (retirado el 21-08-2026), reutilizado aquí porque es
+exactamente la herramienta hecha para esto: reordenar visualmente sin
+tocar el HTML. **El HTML no cambia de sitio**: sigue siendo la cuarta
+tarjeta del documento; en escritorio (`grid-column: 2`) el `order` no
+afecta a nada, la tarjeta sigue siendo su propia columna lateral, sticky,
+tal cual siempre.
+
+Verificado en el navegador, viewport estrecho y ancho por separado: arranca
+plegada en móvil (igual que antes), se ve primero en el orden visual, se
+pliega/despliega igual que Cajas al tocar el título entero, Etiquetas/+
+siguen funcionando sin plegar el panel, seleccionar un ítem sigue plegando
+el catálogo y colocarlo lo vuelve a desplegar, y en escritorio (1280px)
+sigue siendo la columna lateral fija de siempre, abierta, sin relación con
+el `order` de móvil.
+
+README.md revisado en el mismo turno -misma nota de mantenimiento de
+siempre-.
+
 ## Google Sheet (Apps Script)
 
 `apps-script/Codigo.gs` es un script de Google Apps independiente: no forma
