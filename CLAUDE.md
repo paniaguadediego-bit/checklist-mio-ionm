@@ -184,9 +184,9 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Casos: modelo y ficha | `borrarCaso()`, `guardarCaso()`, `casoVacio()`, `renderFichaCaso()` | [2454](app.js:2454), [2467](app.js:2467), [2498](app.js:2498), [3669](app.js:3669) |
 | Casos: sincronización | `subirCaso()`, `bajarCasos()`, `borrarCasosPendientes()` | ver `grep` |
 | Cálculo del resumen (con coste) | `calcularResumen()`, `calcularCoste()` (dato) → `renderResumen()` (pintado) | [4785](app.js:4785), [4868](app.js:4868) |
-| Ventana Docente (miotomas, cama de quirófano) | `renderDocente()`, `renderCama()` | ver `grep` |
+| Pantalla Docencia (miotomas, cama de quirófano) | `renderDocente()`, `renderCama()` | ver `grep` |
 | Puente plantilla↔caso (cargar/guardar) | `iniciarCargaPlantilla()`, `aplicarPlantillaSobreDestino()`, `guardarMontajeComoPlantilla()` | ver `grep` |
-| Biblioteca de Montajes (tarjeta, ya no diálogo — Fase 6) | `renderListaMontajesDialog()`, `montajeNuevo()`, `compararMontajesPorNombre()`, `limpiarMontajesHeredados()` | ver `grep` |
+| Biblioteca de plantillas ("Plantillas de montajes" desde el 06-09-2026, tarjeta ya no diálogo desde la Fase 6) | `renderListaMontajesDialog()`, `montajeNuevo()`, `compararMontajesPorNombre()`, `limpiarMontajesHeredados()` | ver `grep` |
 | Pantalla de inicio y router de pantallas (Fase 7) | `irAPantalla()`, `pantallaActiva()` | ver `grep` |
 | Rótulo permanente | `renderBarraCaso()` | ver `grep` |
 | Exportación manual de casos a CSV | `casosACsv()`, `COLUMNAS_CSV_CASOS` | ver `grep` |

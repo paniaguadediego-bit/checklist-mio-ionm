@@ -47,7 +47,7 @@ conexión a internet (no hace ninguna petición de red).
 - `data/surgeries.js` — los datos de fábrica: `cajas_material`, `etiquetas`,
   `catalogo_material`, `tecnicas`, `servicios`, `intervenciones`,
   `perfiles_procedimiento`, `escenarios_tipo` (los tipos de cirugía, inerte)
-  y `miotomas` (para la ventana Docente). `escenarios` (montajes de fábrica)
+  y `miotomas` (para la pantalla Docencia). `escenarios` (montajes de fábrica)
   está vacío a propósito desde el 03-09-2026 — ver *Añadir un montaje de
   fábrica a mano en el JSON* más abajo. Casi todo esto ya se edita desde la
   propia web; este archivo es lo que viene de serie
@@ -305,8 +305,8 @@ abajo).
   desplegable *Perfil* de la tarjeta Técnicas (retirado el 05-09-2026, ver
   más arriba). Se pueden seguir creando, editando y borrando, pero de
   momento no los usa ninguna otra parte de la interfaz.
-- **Usuarios** — quién puede firmar montajes (ver la tarjeta *Montajes*
-  arriba). Vacío de fábrica a propósito: los nombres de personas reales no
+- **Usuarios** — quién puede firmar montajes (ver la tarjeta *Plantillas de
+  montajes* arriba). Vacío de fábrica a propósito: los nombres de personas reales no
   se escriben en el repositorio público del código, se crean desde la app y
   viven en el repositorio privado de datos.
 
@@ -520,8 +520,8 @@ guardan solo en ese navegador, no se sincronizan:
   se quedan sin ningún músculo que los cubra. Los rangos de `data/surgeries.js`
   vienen en parte citados (Toleikis/Deletis, Leppänen, Schirmer, London — se
   marcan con `[TD/L]`, `[Sch]`, `[Lon]` en el propio tooltip) y en parte son
-  cobertura de enseñanza habitual sin cita concreta detrás; la ventana explica
-  cuál es cuál.
+  cobertura de enseñanza habitual sin cita concreta detrás; la pantalla
+  explica cuál es cuál.
 
 ## Simulador y Bibliografía
 
@@ -643,7 +643,7 @@ automática ni del disparador diario de Apps Script: son vías manuales para
 tener los datos a mano cuando quieras, sin esperar a nada.
 
 Los montajes de fábrica están desactivados a propósito desde el 03-09-2026
-(ver la nota de la tarjeta *Montajes* más arriba). Si algún día hace falta
+(ver la nota de la tarjeta *Plantillas de montajes* más arriba). Si algún día hace falta
 volver a sembrar uno, no basta con rellenar `"escenarios"` en
 `data/surgeries.js` — ver el aviso en *Añadir un montaje de fábrica a mano
 en el JSON* más abajo antes de hacerlo.
