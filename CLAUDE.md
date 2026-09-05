@@ -1314,6 +1314,80 @@ casos; añadir contenido de guía para los campos nuevos de la ficha queda
 pendiente si el usuario lo pide (la guía es intencionadamente breve, no
 enumera cada campo de la ficha uno por uno).
 
+### Retoques posteriores, 05-09-2026 (tarde): probado el PDF en real, dos correcciones y un bug real en Montajes
+
+El usuario pidió probar el informe en PDF en un navegador de verdad. Como el
+entorno de pruebas de este proyecto bloquea `window.open()` (política de
+popups del sandbox, no del código), se sirvió la app con un servidor
+estático local (`.claude/launch.json`, configuración `checklist`) en vez del
+`file://` de siempre -abrir por `file://` en el entorno de pruebas la
+carga como una foto estática sin ejecutar el JS, no sirve para probar nada
+interactivo- y se interceptó `window.open()` con un iframe oculto para leer
+el HTML del informe sin necesitar la ventana emergente real. Se crearon
+casos de prueba con datos ficticios (nunca reales) para forzar los casos
+límite: umbrales por raíz, alerta con sus tres campos dependientes, un caso
+vacío, y varios casos a la vez.
+
+Del PDF salieron dos correcciones:
+
+- **Orden de "Umbrales EMG por raíz"**: en la ficha, `umbral_raices_niveles`
+  va *antes* que `umbral_tornillos_pediculares` (las notas libres) dentro de
+  "Desarrollo intraoperatorio" -así lo pidió el usuario al definir el
+  campo-. En el PDF salía al revés, porque `construirInformeCaso()` siempre
+  añadía primero el bloque genérico del grupo (que incluye las notas) y
+  la sección hecha a mano de umbrales-por-raíz *después*, sin mirar el orden
+  real de `CAMPOS_CASO`. Se corrigió invirtiendo el orden de esos dos
+  `appendChild()` solo para el grupo `"desarrollo"` -mismo patrón que ya
+  usaba el grupo `"montaje"` con técnicas/parámetros/material/imágenes,
+  solo que ahí el orden relativo ya coincidía con la ficha por casualidad.
+  **Nota para la próxima vez que se toque esto**: el grupo "montaje" tiene
+  el mismo problema en potencia -su bloque genérico (`notas_montaje_tecnicas`)
+  se sigue insertando *antes* que técnicas/parámetros/material/imágenes,
+  cuando en `CAMPOS_CASO` va justo en medio de esos campos-, pero no se ha
+  tocado porque el usuario no lo ha pedido todavía.
+- **Título del informe con varios casos**: reutilizaba `T("btn_casos")`
+  ("Gestión de casos", el texto del botón) como título del documento/pestaña
+  cuando se exportan varios casos a la vez. Nueva clave `caso_pdf_titulo_varios`
+  ("Informe de casos"), pedida explícitamente por el usuario tras verlo.
+
+Aparte del PDF, el usuario reportó dos síntomas en la tarjeta **Montajes**
+(la pantalla principal desde la Fase 6 del 04-09-2026): que debería empezar
+desplegada por ser la pantalla principal, y que **la lista de plantillas no
+aparecía** -solo el buscador y los botones de acción-, aunque el rótulo de
+arriba mostraba "Plantilla: Test" (un montaje real y antiguo del propio
+navegador de la usuaria, nada que ver con este arreglo).
+
+- **Montajes ahora empieza desplegada** (`<details id="montajes" open>` en
+  `index.html`), la única de las cinco tarjetas del banco de trabajo que lo
+  hace -pedido explícito, por ser la pantalla principal-. El resto sigue
+  plegado, como se decidió el 04-09-2026.
+- **Bug real, mismo patrón que ya documentaba este archivo dos veces (ver
+  `.campo[hidden]` del 26-08-2026 y `.barra-caso-acciones[hidden]` del
+  31-08-2026), pero esta vez de *render*, no de CSS**:
+  `sincronizarDlgMontajesSiAbierto()` (línea ~6471) solo repinta la lista
+  si la tarjeta **ya estaba abierta** cuando algo más llama a `renderTodo()`
+  -mismo mecanismo que usa `dlgCasos`-. El problema es que **nada** llamaba
+  a esa función (ni a `renderListaMontajesDialog()`) cuando el usuario abría
+  la tarjeta a mano pulsando su `<summary>`: el `<details>` nativo se abre
+  solo, sin pasar por ningún JS, así que la primera vez que se despliega
+  desde cerrada la lista se queda vacía hasta que **otra** acción cualquiera
+  (colocar material, marcar una técnica...) dispare un `renderTodo()` de
+  refilón. Con Montajes ahora abierta de fábrica el síntoma quedaba oculto
+  al arrancar -el primer render sí la ve abierta-, pero volvía en cuanto se
+  plegaba y se volvía a desplegar a mano, que es justo lo que reportó el
+  usuario. Arreglado con un listener del evento nativo `toggle` sobre
+  `dlgMontajes` que llama a `renderListaMontajesDialog()` al abrirse -antes
+  no existía ninguno-. **Se comprobó que "Cajas" no tiene este mismo bug**:
+  `renderCajas()` no está condicionada a `.open`, reconstruye
+  `#cajas-contenido` en cada `renderTodo()` sin mirar si la tarjeta está
+  visible (lo que parecía vacío en las pruebas de la tarde anterior era
+  `escenarioActual() === null` -sin montaje activo-, no este bug).
+- El "Plantilla: Test" que veía el usuario no es un bug: es un montaje real
+  llamado "Test" que ya existía en su navegador de antes, marcado como
+  `activo`. Con la lista rota no podía verlo en la biblioteca, así que no
+  sabía de dónde salía el rótulo; con el arreglo de arriba debería aparecer
+  ya en la lista de Montajes.
+
 ## Google Sheet (Apps Script)
 
 `apps-script/Codigo.gs` es un script de Google Apps independiente: no forma

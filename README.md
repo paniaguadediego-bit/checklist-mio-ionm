@@ -88,9 +88,10 @@ mismo tanto si estás editando una plantilla suelta como si estás
 corrigiendo el material de un caso concreto — nunca hay dos copias de estas
 cinco tarjetas. Cada una se pliega sola (menos el catálogo, que en pantalla
 ancha es la columna lateral fija de siempre, y que se pliega pulsando su
-barra entera, no solo la flechita) y **arrancan todas plegadas**: despliega
-solo la que te interese en cada momento. El orden es el del flujo real: qué
-montaje cargas, qué técnicas vas a hacer, qué material hay, dónde va y qué
+barra entera, no solo la flechita). **Arrancan todas plegadas, salvo
+Montajes** —al ser la pantalla principal, desde el 05-09-2026 se abre sola—;
+despliega las demás según te interese en cada momento. El orden es el del
+flujo real: qué montaje cargas, qué técnicas vas a hacer, qué material hay, dónde va y qué
 sale de todo ello.
 
 Qué montaje hay cargado en ese banco de trabajo se elige aparte, desde la
@@ -102,8 +103,10 @@ cuando estás dentro de un caso.
 
 ### La tarjeta Montajes (la biblioteca de plantillas)
 
-Primera tarjeta de la página, plegada de fábrica igual que el resto. Lista
-plana con buscador por nombre o autor, siempre en **orden alfabético** —da
+Primera tarjeta de la página, y la única que empieza **desplegada** —al ser
+la pantalla principal, para que las plantillas estén a la vista sin tener
+que pulsar nada—. Lista plana con buscador por nombre o autor, siempre en
+**orden alfabético** —da
 igual de quién sea cada montaje, y también para los que vayas creando—, y
 cuántas entradas tiene ocupadas cada uno. **+ Montaje en blanco**, fijo
 arriba de la lista, crea uno nuevo y vacío al momento. Elegir un montaje

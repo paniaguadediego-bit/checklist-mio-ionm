@@ -46,6 +46,7 @@
     caso_pdf_popup_bloqueado: { es: "El navegador ha bloqueado la pestaña del informe. Permite las ventanas emergentes para esta página e inténtalo de nuevo.",
                            en: "The browser blocked the report tab. Allow pop-ups for this page and try again." },
     caso_pdf_reflejos:   { es: "Reflejos", en: "Reflexes" },
+    caso_pdf_titulo_varios: { es: "Informe de casos", en: "Case report" },
     btn_duplicar:        { es: "Duplicar", en: "Duplicate" },
     btn_renombrar:       { es: "Renombrar", en: "Rename" },
     btn_vaciar:          { es: "Vaciar", en: "Empty" },
@@ -3040,6 +3041,14 @@
         .filter(function (def) { return def.g === g && def.t !== "ro" && CAMPOS_APARTE.indexOf(def.c) === -1; })
         .map(function (def) { return filaInforme(doc, T("caso_" + def.c), valorCampoInforme(def, c)); });
       var sec = seccionInforme(doc, T("caso_g_" + g), filas);
+      // "umbral_raices_niveles" va antes que "umbral_tornillos_pediculares"
+      // en CAMPOS_CASO (ver la ficha real): su sección aparte tiene que
+      // insertarse antes del bloque genérico de "desarrollo", no después,
+      // para no invertir el orden que ve el usuario en pantalla.
+      if (g === "desarrollo") {
+        var sr = seccionUmbralRaicesInforme(doc, c);
+        if (sr) art.appendChild(sr);
+      }
       if (sec) art.appendChild(sec);
       if (g === "montaje") {
         [
@@ -3049,10 +3058,6 @@
           seccionMaterialInforme(doc, T("caso_material_real"), c.material_real),
           seccionImagenesInforme(doc, c)
         ].filter(Boolean).forEach(function (s) { art.appendChild(s); });
-      }
-      if (g === "desarrollo") {
-        var sr = seccionUmbralRaicesInforme(doc, c);
-        if (sr) art.appendChild(sr);
       }
     });
     return art;
@@ -3086,7 +3091,7 @@
     doc.open();
     doc.write("<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>MIO-Check</title></head><body></body></html>");
     doc.close();
-    doc.title = "MIO-Check — " + (listaCasos.length === 1 ? (listaCasos[0].ID_Caso || "") : T("btn_casos"));
+    doc.title = "MIO-Check — " + (listaCasos.length === 1 ? (listaCasos[0].ID_Caso || "") : T("caso_pdf_titulo_varios"));
     var estilo = doc.createElement("style");
     estilo.textContent = ESTILO_INFORME_PDF;
     doc.head.appendChild(estilo);
@@ -6663,6 +6668,17 @@
   }
 
   document.getElementById("montajes-buscar").addEventListener("input", renderListaMontajesDialog);
+
+  // Bug real (05-09-2026): abrir la tarjeta a mano -pulsando su <summary>-
+  // no pasaba por ningún render: sincronizarDlgMontajesSiAbierto() solo
+  // repinta si YA estaba abierta cuando algo más llama a renderTodo(), así
+  // que la primera vez que se despliega desde cerrada (el estado de fábrica)
+  // se queda con la lista vacía hasta que cualquier otra acción dispare un
+  // renderTodo(). El evento nativo "toggle" del <details> es justo lo que
+  // faltaba para cubrir ese primer despliegue.
+  dlgMontajes.addEventListener("toggle", function () {
+    if (dlgMontajes.open) renderListaMontajesDialog();
+  });
 
   /* ---------------------------------------------------------------- *
    * Fase 4.2: rótulo permanente. #barra-caso deja de ser exclusivo de la
