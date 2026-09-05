@@ -3401,15 +3401,9 @@
    * justifique una confirmación como la de cargar plantilla.
    * ---------------------------------------------------------------- */
 
-  function guardarMontajeComoPlantilla(modoEditando) {
-    var caso, montajeRaw;
-    if (modoEditando) {
-      caso = casos[casoEditandoUid];
-      montajeRaw = montajeCaso;
-    } else {
-      caso = leerFichaCaso();
-      montajeRaw = montajeDesdeCaso(caso);
-    }
+  function guardarMontajeComoPlantilla() {
+    var caso = casos[casoEditandoUid];
+    var montajeRaw = montajeCaso;
     if (!caso || !montajeRaw) return;
 
     // Sugerencia a partir del diagnóstico y el nombre del caso -ninguno de
@@ -3431,7 +3425,7 @@
   }
 
   document.getElementById("barra-caso-guardar-plantilla").addEventListener("click", function () {
-    guardarMontajeComoPlantilla(true);
+    guardarMontajeComoPlantilla();
   });
 
   /* ---------------------------------------------------------------- *
@@ -5072,17 +5066,12 @@
         // pero solo desde la barra fija de "Corrigiendo el material del
         // caso" (#barra-caso-cargar-plantilla, más abajo en este archivo).
 
-        var filaGuardarPlantilla = document.createElement("p");
-        filaGuardarPlantilla.className = "caso-montaje-fila";
-        var btnGuardarPlantilla = document.createElement("button");
-        btnGuardarPlantilla.type = "button";
-        btnGuardarPlantilla.textContent = T("caso_guardar_plantilla");
-        btnGuardarPlantilla.addEventListener("click", function () { guardarMontajeComoPlantilla(false); });
-        var ayGuardarPlantilla = document.createElement("small");
-        ayGuardarPlantilla.textContent = T("caso_guardar_plantilla_ay");
-        filaGuardarPlantilla.appendChild(btnGuardarPlantilla);
-        filaGuardarPlantilla.appendChild(ayGuardarPlantilla);
-        cont.appendChild(filaGuardarPlantilla);
+        // "Guardar este montaje como plantilla…" tampoco vive aquí (retirado
+        // el 06-09-2026, tarde): ya está en la barra fija de "Editar material
+        // y montaje" (#barra-caso-guardar-plantilla), con el rótulo del caso
+        // que se está corrigiendo bien visible ahí -tenerlo duplicado en la
+        // ficha y en el Organizador confundía sobre cuál de los dos montajes
+        // se estaba guardando-.
       }
       CAMPOS_CASO.filter(function (def) { return def.g === g; }).forEach(function (def) {
         // Un caso de antes de este cambio no trae estos campos ya resueltos:
@@ -5287,15 +5276,16 @@
   // aparte "Guardar este montaje como caso" que se retiró: no tenía sentido
   // -tomaba lo que hubiera en el banco de trabajo sin ninguna relación con
   // el caso nuevo-). El caso se guarda YA, vacío, para que exista de verdad
-  // en `casos` -abrirMontajeDeCaso() lo necesita así-, y se entra directo al
-  // Organizador de Montajes a construir su montaje: a mano, o cargando una
-  // plantilla encima (mantiene la plantilla original intacta, mismo
-  // mecanismo de siempre). El resto de la ficha se rellena cuando se quiera,
-  // desde "Volver al caso" en el rótulo permanente.
+  // en `casos` -abrirMontajeDeCaso() lo necesita así, si luego se entra a
+  // "Editar material y montaje"-. Pedido del usuario el 06-09-2026 (noche):
+  // en vez de saltar directo al Organizador, se abre la propia ficha del
+  // caso recién creado (misma `abrirCaso()` de siempre) para que "Crear
+  // caso" se quede dentro de Gestión de Casos -el Organizador solo se pisa
+  // a propósito, desde "Editar material y montaje" en el apartado 5-.
   document.getElementById("casos-nuevo-cero").addEventListener("click", function () {
     var c = casoVacio();
     guardarCaso(c, true);
-    abrirMontajeDeCaso(c.caso_uid);
+    abrirCaso(c.caso_uid);
   });
 
   document.getElementById("caso-crear-informe").addEventListener("click", function () {
