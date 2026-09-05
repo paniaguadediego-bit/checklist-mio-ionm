@@ -520,11 +520,22 @@
                            en: "This montage belongs to {autor}, so you cannot change it.\n\nUse “Duplicate” to make your own copy and work on that." },
     montaje_de:          { es: "{nombre} · {autor}", en: "{nombre} · {autor}" },
     caso_sin_id:         { es: "Caso sin número", en: "Case with no number" },
-    btn_menu_tit:        { es: "Idioma, guía de uso, Técnicas MIO y ventana Docente", en: "Language, user guide, MIO Techniques and Teaching window" },
+    btn_menu_tit:        { es: "Idioma y guía de uso", en: "Language and user guide" },
     btn_guia:            { es: "Guía de uso", en: "User guide" },
     btn_guia_tit:        { es: "Cómo se usa MIO-Check, de un vistazo", en: "How to use MIO-Check, at a glance" },
     dlg_guia_titulo:     { es: "Guía de uso", en: "User guide" },
     guia_aviso_en:       { es: "This guide is only written in Spanish for now.", en: "This guide is only written in Spanish for now." },
+    // Fase 7 (06-09-2026): pantalla de inicio con 6 tarjetas.
+    logo_inicio_tit:     { es: "Volver al inicio", en: "Back to home" },
+    tile_organizador:    { es: "Organizador de Montajes", en: "Montage Organizer" },
+    tile_casos:          { es: "Gestión de Casos", en: "Case Management" },
+    tile_tecnicas:       { es: "Técnicas IONM", en: "IONM Techniques" },
+    tile_docencia:       { es: "Docencia", en: "Teaching" },
+    tile_simulador:      { es: "Simulador", en: "Simulator" },
+    tile_bibliografia:   { es: "Bibliografía", en: "Bibliography" },
+    docente_tab_material:{ es: "Material", en: "Material" },
+    docente_tab_teoria:  { es: "Teoría básica de IONM", en: "IONM basic theory" },
+    en_construccion:     { es: "En construcción.", en: "Under construction." },
     btn_tecnicas_mio:    { es: "Técnicas MIO", en: "MIO Techniques" },
     btn_tecnicas_mio_tit: { es: "Sitios de estimulación/registro, filtros y barridos de cada técnica, para consulta durante el caso",
                            en: "Stimulation/recording sites, filters and sweep times for each technique, for reference during a case" },
@@ -811,6 +822,46 @@
       btn.title = T("idioma_titulo");
     }
   }
+
+  /* ---------------------------------------------------------------- *
+   * Fase 7 (06-09-2026): pantalla de inicio con 6 tarjetas, cada una
+   * llevando a su propia pantalla dedicada -antes era todo una sola
+   * página con diálogos colgando de un menú-. Cada pantalla es un
+   * elemento de nivel superior con class="pantalla" e id="pantalla-<nombre>";
+   * la visible lleva además la clase "activa". Se usan dos clases y no
+   * [hidden] a propósito: este proyecto ya se ha topado tres veces con el
+   * mismo fallo de especificidad (.campo[hidden], .barra-caso-acciones[hidden],
+   * .menu-lista[hidden] -ver más abajo en este archivo y en CLAUDE.md-) donde
+   * una clase con su propio "display" gana a un [hidden] si va después en la
+   * hoja. Dos clases (.pantalla.activa) le ganan siempre a una (.pantalla),
+   * sin depender del orden del CSS, así que este patrón evita el bug entero
+   * en vez de tener que acotarlo cada vez.
+   * ---------------------------------------------------------------- */
+  var PANTALLAS = ["inicio", "organizador", "casos", "tecnicas-mio", "docente", "simulador", "bibliografia"];
+
+  function irAPantalla(nombre) {
+    PANTALLAS.forEach(function (p) {
+      var el = document.getElementById("pantalla-" + p);
+      if (el) el.classList.toggle("activa", p === nombre);
+    });
+    window.scrollTo(0, 0);
+  }
+
+  // Para el patrón "si esta pantalla está visible ahora mismo, repinta" -antes
+  // dlgCasos.open, con dlg-casos ya convertido de <dialog> a <div> ese booleano
+  // nativo deja de existir, hace falta esta comprobación explícita.
+  function pantallaActiva(nombre) {
+    var el = document.getElementById("pantalla-" + nombre);
+    return !!(el && el.classList.contains("activa"));
+  }
+
+  document.getElementById("btn-inicio").addEventListener("click", function () { irAPantalla("inicio"); });
+  document.getElementById("tile-organizador").addEventListener("click", function () { irAPantalla("organizador"); });
+  document.getElementById("tile-simulador").addEventListener("click", function () { irAPantalla("simulador"); });
+  document.getElementById("tile-bibliografia").addEventListener("click", function () { irAPantalla("bibliografia"); });
+  // tile-casos, tile-tecnicas-mio y tile-docente se conectan más abajo, junto
+  // a abrirListaCasos()/abrirTecnicasMio()/abrirDocente() -esas sí necesitan
+  // pintar contenido antes de mostrarse, no son un simple cambio de pantalla-.
 
   function aplicarIdioma(nuevo, repintar) {
     idioma = IDIOMAS.indexOf(nuevo) === -1 ? "es" : nuevo;
@@ -1516,6 +1567,10 @@
       }))) return;
     }
     delete m.reconstruccion;
+    // Fase 7: antes <main> siempre estaba a la vista; ahora es una pantalla
+    // más y hay que navegar a ella explícitamente, si no el usuario se queda
+    // mirando Gestión de Casos mientras todo esto se repinta invisible detrás.
+    irAPantalla("organizador");
     casoEditandoUid = uid;
     montajeCaso = m;
     document.body.classList.add("editando-caso");
@@ -3540,7 +3595,7 @@
         }, Promise.resolve()).then(function () {
           if (quedan.length || yaNoExisten.length) {
             guardarCasos();
-            if (dlgCasos && dlgCasos.open) renderListaCasos();
+            if (pantallaActiva("casos")) renderListaCasos();
           }
         });
       })
@@ -4167,7 +4222,7 @@
    * en un bloque plegado, para poder cerrar un caso desde el móvil sin
    * bajar por una pantalla infinita.
    * ---------------------------------------------------------------- */
-  var dlgCasos = document.getElementById("dlg-casos");
+  var dlgCasos = document.getElementById("pantalla-casos");
   var dlgCaso = document.getElementById("dlg-caso");
   var casoAbierto = null;      // copia de trabajo del caso que se edita
   var casoEsNuevo = false;
@@ -5099,7 +5154,6 @@
   function abrirCaso(uid) {
     casoEsNuevo = false;
     casoAbierto = clonar(casos[uid]);
-    if (dlgCasos.open) dlgCasos.close();
     renderFichaCaso();
     dlgCaso.showModal();
   }
@@ -5107,7 +5161,6 @@
   function abrirCasoNuevo(caso) {
     casoEsNuevo = true;
     casoAbierto = caso;
-    if (dlgCasos.open) dlgCasos.close();
     renderFichaCaso();
     dlgCaso.showModal();
   }
@@ -5230,11 +5283,10 @@
   function abrirListaCasos() {
     document.getElementById("casos-guardar-montaje").disabled = !escenarioActual();
     renderListaCasos();
-    dlgCasos.showModal();
+    irAPantalla("casos");
   }
 
-  document.getElementById("btn-casos").addEventListener("click", abrirListaCasos);
-  document.getElementById("casos-cerrar").addEventListener("click", function () { dlgCasos.close(); });
+  document.getElementById("tile-casos").addEventListener("click", abrirListaCasos);
   ["casos-estado", "casos-desde", "casos-hasta"].forEach(function (id) {
     document.getElementById(id).addEventListener("change", renderListaCasos);
   });
@@ -6881,7 +6933,7 @@
    * etiquetado genérico de etiquetaTecMio(), así que un lote nuevo con el
    * mismo formato no necesita tocar este código.
    * ---------------------------------------------------------------- */
-  var dlgTecnicasMio = document.getElementById("dlg-tecnicas-mio");
+  var dlgTecnicasMio = document.getElementById("pantalla-tecnicas-mio");
   var tecMioRenderizada = false;
   // Término de búsqueda ya normalizado (sin acentos, minúsculas), vigente
   // durante el renderizado en curso: lo consultan pintarTextoConResaltado()
@@ -7240,21 +7292,20 @@
 
   function abrirTecnicasMio() {
     if (!tecMioRenderizada) renderTecnicasMio();
-    dlgTecnicasMio.showModal();
+    irAPantalla("tecnicas-mio");
   }
 
-  document.getElementById("btn-tecnicas-mio").addEventListener("click", abrirTecnicasMio);
+  document.getElementById("tile-tecnicas-mio").addEventListener("click", abrirTecnicasMio);
   document.getElementById("tecmio-buscar").addEventListener("input", renderTecnicasMio);
-  document.getElementById("tecmio-cerrar").addEventListener("click", function () { dlgTecnicasMio.close(); });
   document.getElementById("guia-cerrar").addEventListener("click", function () { dlgGuia.close(); });
 
   function abrirDocente() {
     renderDocente();
     renderCama();
-    dlgDocente.showModal();
+    irAPantalla("docente");
   }
 
-  document.getElementById("btn-docente").addEventListener("click", abrirDocente);
+  document.getElementById("tile-docente").addEventListener("click", abrirDocente);
 
   document.getElementById("btn-plegar").addEventListener("click", function () {
     plegarCatalogo(!document.getElementById("panel-catalogo").classList.contains("plegado"));
@@ -7297,7 +7348,7 @@
    *
    * No toca ni el montaje ni los casos: es una ventana aparte a propósito.
    * ---------------------------------------------------------------- */
-  var dlgDocente = document.getElementById("dlg-docente");
+  var dlgDocente = document.getElementById("pantalla-docente");
   var DOCENTE_KEY = "mio_ionm_docente_v1";
   var docenteNiveles = [];    // niveles marcados en la columna
   var docenteElegidos = [];   // ids de miotoma llevados a la derecha
@@ -7633,12 +7684,14 @@
     });
     document.getElementById("pane-miotomas").hidden = pane !== "miotomas";
     document.getElementById("pane-cama").hidden = pane !== "cama";
+    // Material y Teoría básica son pestañas nuevas (Fase 7, 06-09-2026),
+    // "en construcción" por ahora -sin render propio, no hace falta el
+    // "if (pane === ...) renderX()" que sí lleva "cama"-.
+    document.getElementById("pane-material").hidden = pane !== "material";
+    document.getElementById("pane-teoria").hidden = pane !== "teoria";
     if (pane === "cama") renderCama();
   });
 
-  document.getElementById("docente-cerrar").addEventListener("click", function () {
-    dlgDocente.close();
-  });
   document.getElementById("docente-limpiar-niveles").addEventListener("click", function () {
     docenteNiveles = [];
     guardarDocente();

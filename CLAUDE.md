@@ -187,6 +187,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Ventana Docente (miotomas, cama de quirófano) | `renderDocente()`, `renderCama()` | ver `grep` |
 | Puente plantilla↔caso (cargar/guardar) | `iniciarCargaPlantilla()`, `aplicarPlantillaSobreDestino()`, `guardarMontajeComoPlantilla()` | ver `grep` |
 | Biblioteca de Montajes (tarjeta, ya no diálogo — Fase 6) | `renderListaMontajesDialog()`, `montajeNuevo()`, `compararMontajesPorNombre()`, `limpiarMontajesHeredados()` | ver `grep` |
+| Pantalla de inicio y router de pantallas (Fase 7) | `irAPantalla()`, `pantallaActiva()` | ver `grep` |
 | Rótulo permanente | `renderBarraCaso()` | ver `grep` |
 | Exportación manual de casos a CSV | `casosACsv()`, `COLUMNAS_CSV_CASOS` | ver `grep` |
 | Informe en PDF (imprimible), uno o varios casos | `abrirInformeCasos()`, `construirInformeCaso()`, `seccionInforme()` y el resto de `seccion*Informe()` | ver `grep` |
@@ -1402,6 +1403,138 @@ ya no se pintan en pantalla: ahí se ven solo las claves nuevas
 `umbral_raices_izq_corto`/`_der_corto` ("I"/"D"), con el texto largo movido
 a `title` (tooltip) y `aria-label` del campo, para no perder contexto de
 accesibilidad al acortar la etiqueta visible.
+
+## Fase 7 (06-09-2026): pantalla de inicio con 6 pestañas
+
+Cambio grande de navegación, planificado con el usuario (boceto a mano) antes
+de tocar código: de una sola página con scroll más varios `<dialog>`
+colgando de un menú "⋮", a una **pantalla de inicio con 6 tarjetas grandes**
+-Organizador de Montajes, Gestión de Casos, Técnicas IONM, Docencia,
+Simulador, Bibliografía-, cada una llevando a una pantalla dedicada donde se
+trabaja "de manera pura". El logo es el único camino de vuelta al inicio; no
+hay navegación cruzada entre pantallas ni URL/historial -decisión explícita
+del usuario, no una limitación técnica-.
+
+**Alcance de esta pasada** (también acordado antes de implementar): las tres
+funciones que ya existían -Organizador de Montajes (el banco de trabajo de
+siempre), Gestión de Casos (`dlg-casos`) y Técnicas IONM (`dlg-tecnicas-mio`)-
+se migraron enteras y funcionan igual que antes. Docencia se movió también de
+verdad (Miotomas y Cama de quirófano, sin cambios), pero ganó dos pestañas
+nuevas -Material y Teoría básica de IONM- que de momento son solo "en
+construcción": cuando se construya Material de verdad, tiene que reutilizar
+las fotos que ya existen en `catalogo_material` (campo `foto`, ver
+`abrirFotoSonda()`) en vez de crear un set de contenido aparte -decisión ya
+tomada con el usuario, dejada anotada en el propio `index.html`-. Simulador y
+Bibliografía son pantallas reales pero vacías, ninguna de las dos con
+contenido ni lógica todavía.
+
+### Mecanismo de pantallas
+
+Cada una de las 7 pantallas es un elemento de nivel superior con
+`class="pantalla"` e `id="pantalla-<nombre>"`. Visibilidad por **dos clases,
+nunca por `[hidden]`**:
+
+```css
+.pantalla { display: none; }
+.pantalla.activa { display: block; }
+```
+
+Se eligió esto a propósito y no `[hidden]`: este archivo ya documentaba tres
+veces el mismo fallo de especificidad (`.campo[hidden]` el 26-08-2026,
+`.barra-caso-acciones[hidden]` el 31-08-2026, `.menu-lista[hidden]` el
+03/04-09-2026) -una clase con su propio `display` gana a un atributo
+`[hidden]` de igual especificidad si va después en la hoja-. Dos clases
+(`.pantalla.activa`) le ganan siempre a una (`.pantalla`), sin depender del
+orden del CSS, así que este patrón evita el bug entero en vez de tener que
+acotarlo cada vez que se añada una pantalla. Si una pantalla necesita un
+layout distinto a bloque simple (la de inicio, en grid, para las 6
+tarjetas), ese `display` va en un `div` de dentro, nunca en `.pantalla`
+misma -así el par se queda genérico.
+
+Router único en `app.js`, junto a `aplicarTextos()`:
+
+```js
+var PANTALLAS = ["inicio", "organizador", "casos", "tecnicas-mio", "docente", "simulador", "bibliografia"];
+function irAPantalla(nombre) { /* toggle .activa por id, scrollTo(0,0) */ }
+function pantallaActiva(nombre) { /* .classList.contains("activa") */ }
+```
+
+Las funciones que ya abrían cada ventana se reutilizaron tal cual -mismo
+nombre, misma lógica de render-, solo cambió su última línea: donde antes
+había `dlgX.showModal()` ahora hay `irAPantalla("x")`. `abrirListaCasos()`,
+`abrirTecnicasMio()` y `abrirDocente()` siguen siendo los puntos de entrada
+de siempre, ahora llamados desde las tarjetas de inicio en vez de desde un
+botón de la barra superior.
+
+### `<dialog>` → `<div class="pantalla">`: la diferencia importante con `.open`
+
+El precedente de convertir un `<dialog>` en algo permanente ya existía
+-Fase 6, `dlg-montajes` → `<details id="montajes">`-, pero ahí `.open` seguía
+siendo válido porque `<details>` también lo tiene de forma nativa. Al
+convertir `dlg-casos`/`dlg-tecnicas-mio`/`dlg-docente` en `<div>` sueltos,
+**`.open` deja de existir**: cualquier sitio que preguntaba
+`dlgCasos.open` para decidir "¿está esto visible ahora?" (el patrón de
+refresco de `sincronizarDlgMontajesSiAbierto()`, aplicado también a casos en
+`bajarCasos()`) tuvo que pasar a `pantallaActiva("casos")`. Se hizo un grep
+exhaustivo de las tres variables (`dlgCasos`, `dlgTecnicasMio`, `dlgDocente`)
+antes de tocar nada -13 sitios en total, ninguno se quedó a medias-. Los
+tres botones "Cerrar" (`casos-cerrar`, `tecmio-cerrar`, `docente-cerrar`) se
+retiraron enteros: con el logo como único camino de vuelta, un "Cerrar"
+suelto dentro de una pantalla sería una segunda salida que no llevaría a
+ningún sitio coherente.
+
+`dlg-caso` (la ficha de un caso, singular -distinta de `dlg-casos`, el
+listado-) **no se tocó**: sigue siendo un `<dialog>` real, abierto con
+`showModal()` desde dentro de Gestión de Casos, y sigue flotando bien encima
+de cualquier pantalla activa sin cambio ninguno.
+
+### Bug real evitado: `abrirMontajeDeCaso()` necesitaba navegar primero
+
+Antes de este cambio, `<main>` estaba siempre a la vista, así que "Corregir
+el material y el montaje" (desde la ficha de un caso) no necesitaba mostrar
+nada: solo activaba `body.editando-caso` y repintaba. Con `<main>` ahora
+convertido en `#pantalla-organizador` -oculta salvo que sea la pantalla
+activa-, sin una llamada a `irAPantalla("organizador")` al principio de
+`abrirMontajeDeCaso()` el usuario se habría quedado mirando la pantalla de
+Gestión de Casos mientras todo se repintaba invisible detrás, con el
+`scrollIntoView` de las cajas sin ningún efecto útil. Se detectó al planificar
+el cambio, no al probarlo -por eso no hizo falta corregirlo dos veces-, y se
+verificó explícitamente en el navegador: el flujo completo (ficha → Corregir
+montaje → Organizador visible con las cajas a la vista → Volver al caso →
+ficha reabierta → Volver a la lista → Gestión de Casos) se probó paso a paso
+con `document.getElementById(...).click()` y comprobando `.classList` en
+cada salto, no solo mirando capturas de pantalla.
+
+### Otros ajustes de la misma pasada
+
+- **Barra superior, de dos filas a una**: al salir `Gestión de casos`,
+  `Técnicas MIO` y `Docente` de ahí (pasan a ser tarjetas de inicio), ya no
+  hacía falta la segunda fila (`.barra-fila-casos`, retirada del CSS y del
+  HTML). Sincronizar y el aviso de "Guardado a las…" se quedan en la única
+  fila que queda -pedido explícito: son estado global, deben verse siempre-.
+  El menú "⋮" se queda solo con Idioma y Guía de uso.
+- **`--header-h` remedido a mano**: pasó de `82px` (dos filas) a `44px` (una
+  fila), medido con `getBoundingClientRect()` en el navegador tras el
+  cambio, no a ojo -mismo patrón de siempre para esta variable, no hay
+  cálculo automático-.
+- **El logo pasa a ser un `<button id="btn-inicio">`** envolviendo la
+  `<img class="marca">`, no la imagen misma con un listener pegado encima:
+  al ser el único camino de vuelta al inicio necesitaba foco de teclado real.
+- **`@media print` corregido**: si se imprime (botón "Imprimir" de
+  Catálogos, o Ctrl/Cmd+P nativo) estando en cualquier pantalla que no sea
+  Organizador, sin este arreglo saldría una página en blanco -el resumen y
+  las cajas, lo único que tiene sentido imprimir, estarían en
+  `display: none`-. Se fuerza `#pantalla-organizador` visible y el resto de
+  `.pantalla` ocultas solo dentro de `@media print`, sin tocar el
+  comportamiento en pantalla.
+- **`#dlg-casos { max-width: 560px; }` retirado**: una pantalla completa no
+  debe llevar el ancho de un modal. Las cinco pantallas que no son
+  Organizador comparten ahora una regla de ancho máximo a juego con
+  `<main>` (1500px).
+
+README.md y `data/guia.js` revisados en el mismo turno -misma nota de
+mantenimiento de siempre: si se toca el flujo, los dos a la vez, o se quedan
+obsoletos en silencio sin que nada avise-.
 
 ## Google Sheet (Apps Script)
 

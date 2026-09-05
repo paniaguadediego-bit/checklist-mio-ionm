@@ -44,6 +44,10 @@ window.GUIA = {
     {
       titulo: "Y además",
       texto: "Ventana Docente para practicar miotomas y colocación de cajas, castellano/inglés, funciona sin cobertura y se sincroniza sola entre el móvil y el ordenador."
+    },
+    {
+      titulo: "Pantalla de inicio",
+      texto: "El logo lleva siempre aquí: 6 tarjetas (Organizador de Montajes, Gestión de Casos, Técnicas IONM, Docencia, Simulador, Bibliografía), cada una su propia pantalla. Se trabaja solo dentro de la que elijas; el logo es el único camino de vuelta."
     }
   ],
 
@@ -105,8 +109,8 @@ window.GUIA = {
       html: "<p>Ningún dato que identifique al paciente: ni nombre, ni apellidos, ni número de historia clínica, ni fecha de nacimiento. Solo el identificador del caso, la edad, el sexo y los antecedentes relevantes.</p>"
     },
     {
-      titulo: "Ventana Docente",
-      html: "<p>Botón <b>Docente</b> de la barra superior. Dos pestañas, sin relación con la preparación de material -no tocan ningún montaje ni caso, y el ejercicio se guarda solo en ese navegador, no se sincroniza-:</p><p><b>Miotomas</b>: marcas los niveles de columna que abarca la cirugía y aparecen los músculos que dependen de esas raíces; los llevas de un lado a otro pulsándolos. Es un ejercicio, no una calculadora -no elige por ti, solo avisa de qué niveles se quedan sin ningún músculo que los cubra-.</p><p><b>Cama de quirófano</b>: eliges la posición del paciente y repartes las cajas por cabecera, laterales y pies con el mismo gesto de pulsar y colocar del resto de la herramienta. Lo que se practica es que el cable llegue.</p>"
+      titulo: "Docencia",
+      html: "<p>Tarjeta <b>Docencia</b> de la pantalla de inicio (antes botón <b>Docente</b> de la barra superior). Cuatro pestañas, sin relación con la preparación de material -no tocan ningún montaje ni caso, y Miotomas/Cama de quirófano se guardan solo en ese navegador, no se sincronizan-:</p><p><b>Miotomas</b>: marcas los niveles de columna que abarca la cirugía y aparecen los músculos que dependen de esas raíces; los llevas de un lado a otro pulsándolos. Es un ejercicio, no una calculadora -no elige por ti, solo avisa de qué niveles se quedan sin ningún músculo que los cubra-.</p><p><b>Cama de quirófano</b>: eliges la posición del paciente y repartes las cajas por cabecera, laterales y pies con el mismo gesto de pulsar y colocar del resto de la herramienta. Lo que se practica es que el cable llegue.</p><p><b>Material</b> y <b>Teoría básica de IONM</b>: pestañas nuevas, de momento en construcción.</p>"
     },
     {
       titulo: "Uso desde el móvil",

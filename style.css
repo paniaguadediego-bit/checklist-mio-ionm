@@ -17,9 +17,12 @@
   --panel-borde: #33454f;
   --panel-texto: #e7eef2;
   --panel-tenue: #8ba1af;
-  /* Alto de las DOS filas de la barra superior juntas (ver .barra-sup):
-     lo usan los sticky de debajo para no quedar tapados. */
-  --header-h: 82px;
+  /* Alto de la barra superior (ver .barra-sup): lo usan los sticky de debajo
+     para no quedar tapados. Pasó de dos filas a una sola en la Fase 7
+     (06-09-2026, pantalla de inicio) -medido a mano en el navegador, no hay
+     cálculo automático; hay que remedirlo si cambia el contenido de la
+     barra-. */
+  --header-h: 44px;
   --r: 5px;
   /* Fondo de los campos rellenables. Es una variable y no un #fff suelto
      porque en modo oscuro tiene que cambiar: un blanco fijo con la letra
@@ -44,16 +47,14 @@ body {
 }
 
 /* ------------------------------ Barra sup ------------------------------ */
-/* Dos filas: identidad/contexto arriba (marca, perfil, montaje, idioma,
-   docente) y Gestión de casos + Sincronizar abajo, aparte porque son las
-   dos cosas que se tocan a media cirugía y conviene tenerlas siempre en el
-   mismo sitio, sin que el resto de botones les quite espacio. */
+/* Una sola fila desde la Fase 7 (06-09-2026): Gestión de casos, Técnicas MIO
+   y Docente pasaron de vivir aquí a ser tarjetas de la pantalla de inicio,
+   así que ya no hace falta una segunda fila aparte para ellas. Sincronizar
+   sí se queda -es estado global, hay que verlo siempre-. */
 .barra-sup {
   position: sticky;
   top: 0;
   z-index: 30;
-  display: flex;
-  flex-direction: column;
   background: var(--panel);
   color: var(--panel-texto);
   border-bottom: 1px solid #0f1a21;
@@ -64,12 +65,21 @@ body {
   gap: 0.7rem;
   padding: 0.32rem 0.9rem;
 }
-.barra-fila-casos {
-  border-top: 1px solid var(--panel-borde);
+
+/* Envoltorio del logo: antes una <img> suelta sin comportamiento, ahora el
+   único camino de vuelta a la pantalla de inicio desde cualquier sitio -por
+   eso es un <button> de verdad, con foco de teclado, no la imagen misma. */
+.marca-boton {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  flex-shrink: 0;
 }
 
-/* El icono de la app en la cabecera. 32px de alto encaja con la primera
-   fila de .barra-sup dejando aire arriba y abajo; el archivo fuente es de
+/* El icono de la app en la cabecera. 32px de alto encaja con la fila de
+   .barra-sup dejando aire arriba y abajo; el archivo fuente es de
    180px (apple-touch-icon), así que se ve nítido incluso en pantallas
    retina. */
 .barra-sup img.marca {
@@ -146,6 +156,58 @@ main {
   max-width: 1500px;
   margin: 0 auto;
   padding: 0.7rem 0.8rem 2rem;
+}
+
+/* ------------------------------ Pantallas ------------------------------- */
+/* Fase 7 (06-09-2026): pantalla de inicio con 6 tarjetas, cada una llevando
+   a su propia pantalla dedicada. Visibilidad por DOS clases, nunca por
+   [hidden]: este proyecto ya se ha topado tres veces con el mismo fallo de
+   especificidad (.campo[hidden], .barra-caso-acciones[hidden],
+   .menu-lista[hidden] -ver más abajo-), donde una clase con su propio
+   "display" gana a un [hidden] si va después en la hoja. Dos clases
+   (.pantalla.activa) le ganan siempre a una (.pantalla) sin depender del
+   orden del CSS, así que evita el bug entero en vez de tener que acotarlo
+   cada vez. Si una pantalla necesita un layout distinto a bloque simple
+   (la de inicio, en grid), ese "display" va en un div de dentro, nunca
+   aquí -para que este par se quede genérico. */
+.pantalla { display: none; }
+.pantalla.activa { display: block; }
+
+/* Las pantallas que antes eran <dialog> (Gestión de Casos, Técnicas IONM,
+   Docencia) y las nuevas (Simulador, Bibliografía) comparten el mismo ancho
+   que <main>, para que las 6 pantallas se sientan parte de la misma app. */
+#pantalla-casos, #pantalla-tecnicas-mio, #pantalla-docente,
+#pantalla-simulador, #pantalla-bibliografia {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0.7rem 0.8rem 2rem;
+}
+
+.inicio-tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  max-width: 900px;
+  margin: 2.5rem auto;
+  padding: 0 0.8rem;
+}
+.tile {
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 2.2rem 1rem;
+  text-align: center;
+  cursor: pointer;
+}
+.tile:hover { border-color: var(--accent); color: var(--accent); }
+
+@media (max-width: 620px) {
+  .inicio-tiles { grid-template-columns: 1fr; margin: 1.2rem auto; }
+  .tile { padding: 1.4rem 1rem; }
 }
 
 .card {
@@ -1423,7 +1485,9 @@ dialog h3 {
 #dlg-sync { max-width: 470px; }
 
 /* --------------------------- Casos: listado ---------------------------- */
-#dlg-casos { max-width: 560px; }
+/* #pantalla-casos ya no lleva ancho propio -pantalla completa, ver la regla
+   compartida junto a "Pantallas" más arriba-, solo dlg-caso (la ficha,
+   sigue siendo un <dialog> de verdad) mantiene el suyo. */
 #dlg-caso { max-width: 620px; }
 
 .casos-acciones {
@@ -1884,16 +1948,24 @@ dialog h3 {
   .barra-sup #perfil-usuario { min-width: 0; flex: 1; max-width: none; }
   .barra-sup img.marca { height: 26px; width: 26px; }
   .btn-modo { font-size: 0.7rem; padding: 0.3rem 0.45rem; }
-  /* Con "Exportar casos" la fila de Gestión de casos ya no cabe entera en
-     una pantalla de 375px -desborda unos 12px sin partirse-; se deja
-     envolver en dos líneas en vez de recortarse. */
-  .barra-fila-casos { flex-wrap: wrap; row-gap: 0.3rem; }
+  /* Con todo en una sola fila desde la Fase 7, en 375px no cabe entera
+     -logo+perfil+catálogos+sync+aviso+menú-; se deja envolver en vez de
+     recortarse o desbordar. */
+  .barra-fila { flex-wrap: wrap; row-gap: 0.3rem; }
 }
 
 /* ------------------------------ Impresión ------------------------------ */
 @media print {
   .no-print, .barra-sup { display: none !important; }
   body { background: #fff; font-size: 11pt; }
+  /* Fase 7 (06-09-2026): puede imprimirse (botón "Imprimir" de Catálogos, o
+     Ctrl/Cmd+P nativo) estando en cualquier pantalla, no solo Organizador
+     -que es la única con algo que tenga sentido imprimir, el resumen y las
+     cajas-. Sin esto, imprimir desde Gestión de Casos/Técnicas IONM/Docencia
+     sacaría una página en blanco, porque #pantalla-organizador estaría en
+     display:none igual que en pantalla. */
+  .pantalla { display: none !important; }
+  #pantalla-organizador { display: block !important; }
   main { max-width: none; padding: 0; }
   .columna-principal { display: block; }
   .card { border: none; padding: 0; }

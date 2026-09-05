@@ -17,34 +17,36 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260905d">
+<link rel="stylesheet" href="style.css?v=20260906">
 </head>
 <body>
 
 <header class="barra-sup">
   <div class="barra-fila">
-    <img class="marca" src="img/favicon.png" alt="MIO-Check" width="32" height="32">
+    <!-- Fase 7 (06-09-2026): la página pasa a tener una pantalla de inicio con
+         6 tarjetas; el logo es ahora el único camino de vuelta a ella desde
+         cualquier pantalla, así que necesita ser un control real (con foco de
+         teclado), no una <img> suelta con un listener pegado encima. -->
+    <button type="button" id="btn-inicio" class="marca-boton" data-i18n-title="logo_inicio_tit">
+      <img class="marca" src="img/favicon.png" alt="MIO-Check" width="32" height="32">
+    </button>
     <select id="perfil-usuario" data-i18n-aria="perfil_usuario_aria" data-i18n-title="perfil_usuario_aria"></select>
     <button type="button" id="btn-catalogos" class="btn-modo" data-i18n="btn_catalogos" data-i18n-title="btn_catalogos_tit"></button>
     <span class="barra-flex"></span>
-    <!-- Guía de uso / Idioma / Docente son de consulta ocasional, no de cada
-         gesto: van agrupados en un desplegable para no competir en ancho con
-         Montajes/Gestión de casos/Sincronizar, que sí se tocan a diario. -->
+    <button type="button" id="btn-sync" class="btn-modo" data-i18n-title="sync_titulo">☁ <span id="sync-estado"></span></button>
+    <span class="guardado-aviso" id="guardado-aviso"></span>
+    <!-- Guía de uso / Idioma son de consulta ocasional, no de cada gesto: van
+         agrupados en un desplegable para no competir en ancho con el resto.
+         Técnicas MIO y Docente vivían aquí hasta la Fase 7; ahora son
+         tarjetas de la pantalla de inicio, no hace falta un segundo camino
+         para llegar a ellas. -->
     <div class="menu-desplegable">
       <button type="button" id="btn-menu" class="btn-modo" data-i18n-title="btn_menu_tit">⋮</button>
       <div class="menu-lista" id="menu-lista" hidden>
         <button type="button" id="btn-idioma" title="Switch to English">EN</button>
         <button type="button" id="btn-guia" data-i18n-title="btn_guia_tit" data-i18n="btn_guia"></button>
-        <button type="button" id="btn-tecnicas-mio" data-i18n-title="btn_tecnicas_mio_tit" data-i18n="btn_tecnicas_mio"></button>
-        <button type="button" id="btn-docente" data-i18n="btn_docente"></button>
       </div>
     </div>
-  </div>
-  <div class="barra-fila barra-fila-casos">
-    <button type="button" id="btn-casos" class="btn-modo" data-i18n-title="btn_casos_tit" data-i18n="btn_casos"></button>
-    <button type="button" id="btn-sync" class="btn-modo" data-i18n-title="sync_titulo">☁ <span id="sync-estado"></span></button>
-    <span class="barra-flex"></span>
-    <span class="guardado-aviso" id="guardado-aviso"></span>
   </div>
 </header>
 
@@ -66,7 +68,22 @@
   </span>
 </div>
 
-<main>
+<!-- Fase 7 (06-09-2026): pantalla de inicio con 6 tarjetas -pedido de la
+     usuaria, boceto a mano-. Cada tarjeta lleva a su propia pantalla
+     (ver ".pantalla"/".pantalla.activa" en style.css e irAPantalla() en
+     app.js); el logo de la cabecera es el único camino de vuelta aquí. -->
+<div class="pantalla activa" id="pantalla-inicio">
+  <div class="inicio-tiles">
+    <button type="button" class="tile" id="tile-organizador" data-i18n="tile_organizador"></button>
+    <button type="button" class="tile" id="tile-casos" data-i18n="tile_casos"></button>
+    <button type="button" class="tile" id="tile-tecnicas-mio" data-i18n="tile_tecnicas"></button>
+    <button type="button" class="tile" id="tile-docente" data-i18n="tile_docencia"></button>
+    <button type="button" class="tile" id="tile-simulador" data-i18n="tile_simulador"></button>
+    <button type="button" class="tile" id="tile-bibliografia" data-i18n="tile_bibliografia"></button>
+  </div>
+</div>
+
+<main class="pantalla" id="pantalla-organizador">
 
   <!--
     El banco de trabajo es único -Técnicas, Catálogo, Cajas, Resumen-, siempre
@@ -363,8 +380,12 @@
   </div>
 </dialog>
 
-<dialog id="dlg-casos" class="no-print">
-  <h3 data-i18n="dlg_casos_titulo"></h3>
+<!-- Fase 7 (06-09-2026): pasa de <dialog> a pantalla propia -mismo contenido
+     de siempre, ver el comentario equivalente en Montajes (Fase 6) más
+     arriba. Ya no lleva botón "Cerrar": el logo es el único camino de
+     vuelta al inicio. -->
+<div class="pantalla" id="pantalla-casos">
+  <h2 data-i18n="tile_casos"></h2>
 
   <div class="casos-acciones">
     <button type="button" id="casos-guardar-montaje" class="primario" data-i18n="casos_guardar_montaje"></button>
@@ -399,10 +420,8 @@
   <div class="dlg-botones">
     <button type="button" id="btn-exportar-casos-csv" data-i18n-title="btn_exportar_casos_csv_tit" data-i18n="btn_exportar_casos_csv"></button>
     <button type="button" id="btn-exportar-casos" data-i18n-title="btn_exportar_casos_tit" data-i18n="btn_exportar_casos"></button>
-    <span class="barra-flex"></span>
-    <button type="button" id="casos-cerrar" data-i18n="cerrar"></button>
   </div>
-</dialog>
+</div>
 
 <dialog id="dlg-caso" class="no-print">
   <div class="caso-cab">
@@ -501,24 +520,31 @@
   </div>
 </dialog>
 
-<dialog id="dlg-tecnicas-mio" class="no-print dlg-ancho">
-  <h3 data-i18n="dlg_tecnicas_mio_titulo"></h3>
+<!-- Fase 7 (06-09-2026): pasa de <dialog> a pantalla propia, mismo contenido.
+     Sin botón "Cerrar" -el logo es el único camino de vuelta al inicio-. -->
+<div class="pantalla" id="pantalla-tecnicas-mio">
+  <h2 data-i18n="tile_tecnicas"></h2>
   <p class="dlg-intro" id="tecmio-aviso-en" hidden data-i18n="tecnicas_mio_aviso_en"></p>
   <p class="dlg-intro" data-i18n="tecnicas_mio_intro"></p>
   <input type="search" id="tecmio-buscar" data-i18n-ph="tecmio_buscar_ph" autocomplete="off">
   <div id="tecmio-contenido"></div>
-  <div class="dlg-botones">
-    <span class="barra-flex"></span>
-    <button type="button" id="tecmio-cerrar" data-i18n="cerrar"></button>
-  </div>
-</dialog>
+</div>
 
-<dialog id="dlg-docente" class="no-print dlg-ancho">
-  <h3 data-i18n="docente_titulo_gen"></h3>
+<!-- Fase 7 (06-09-2026): pasa de <dialog> a pantalla propia, mismo contenido
+     de Miotomas/Cama. Se añaden 2 pestañas nuevas -Material y Teoría básica-
+     pedidas por la usuaria, de momento solo "en construcción": cuando se
+     construyan de verdad, Material debe reutilizar las fotos que ya existen
+     en catalogo_material (campo "foto", ver abrirFotoSonda() en app.js) en
+     vez de crear un set de contenido aparte -decisión ya tomada con la
+     usuaria, pendiente de implementar-. -->
+<div class="pantalla" id="pantalla-docente">
+  <h2 data-i18n="tile_docencia"></h2>
 
   <div class="pestanas" id="docente-pestanas">
     <button type="button" class="pestana activa" data-pane="miotomas" data-i18n="docente_tab_miotomas"></button>
     <button type="button" class="pestana" data-pane="cama" data-i18n="docente_tab_cama"></button>
+    <button type="button" class="pestana" data-pane="material" data-i18n="docente_tab_material"></button>
+    <button type="button" class="pestana" data-pane="teoria" data-i18n="docente_tab_teoria"></button>
   </div>
 
   <div id="pane-miotomas">
@@ -579,12 +605,31 @@
     <p class="docente-pista" id="cama-pista"></p>
   </div><!-- /pane-cama -->
 
+  <div id="pane-material" hidden>
+    <p data-i18n="en_construccion"></p>
+  </div><!-- /pane-material -->
+
+  <div id="pane-teoria" hidden>
+    <p data-i18n="en_construccion"></p>
+  </div><!-- /pane-teoria -->
+
   <div class="dlg-botones">
     <button type="button" id="docente-reiniciar" class="peligro" data-i18n="docente_reiniciar"></button>
-    <span class="barra-flex"></span>
-    <button type="button" id="docente-cerrar" data-i18n="cerrar"></button>
   </div>
-</dialog>
+</div>
+
+<!-- Fase 7 (06-09-2026): pantallas nuevas, sin contenido todavía -pedido de
+     la usuaria: solo la estructura de navegación en esta pasada, el
+     contenido real de cada una va en un turno aparte-. -->
+<div class="pantalla" id="pantalla-simulador">
+  <h2 data-i18n="tile_simulador"></h2>
+  <p data-i18n="en_construccion"></p>
+</div>
+
+<div class="pantalla" id="pantalla-bibliografia">
+  <h2 data-i18n="tile_bibliografia"></h2>
+  <p data-i18n="en_construccion"></p>
+</div>
 
 <dialog id="dlg-catalogos" class="no-print">
   <h3 data-i18n="dlg_cat_titulo"></h3>
@@ -622,10 +667,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260905d"></script>
-<script src="data/i18n-en.js?v=20260905d"></script>
-<script src="data/guia.js?v=20260905d"></script>
-<script src="data/tecnicas-mio.js?v=20260905d"></script>
-<script src="app.js?v=20260905d"></script>
+<script src="data/surgeries.js?v=20260906"></script>
+<script src="data/i18n-en.js?v=20260906"></script>
+<script src="data/guia.js?v=20260906"></script>
+<script src="data/tecnicas-mio.js?v=20260906"></script>
+<script src="app.js?v=20260906"></script>
 </body>
 </html>

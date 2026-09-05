@@ -3,19 +3,27 @@
 Herramienta interna, sin backend ni build step, para montar el material de
 cada cirugía monitorizada y saber exactamente qué hace falta.
 
+**Pantalla de inicio (06-09-2026):** el logo de la cabecera lleva siempre a
+una pantalla con 6 tarjetas — **Organizador de Montajes**, **Gestión de
+Casos**, **Técnicas IONM**, **Docencia**, **Simulador** y **Bibliografía**—,
+cada una su propio espacio de trabajo. Se pulsa una y se trabaja solo ahí;
+el logo es el único camino de vuelta al inicio, no hay más navegación
+cruzada entre pantallas. Las tres últimas están de momento "en
+construcción" — ver *Pantallas nuevas, pendientes de contenido* más abajo.
+
 **Flujo de uso previsto:** el día antes de la cirugía abres o creas una
-**plantilla** —un montaje tuyo o de un compañero, desde la tarjeta
-**Montajes**, la primera de la página—, ajustas las entradas de las cajas
-pulsando o arrastrando material, y el **Resumen** te dice qué tienes que
-preparar, qué cuesta y si te sobran o faltan entradas y cajas. Cuando la
-cirugía es real, guardas ese montaje como **caso**: la plantilla es el
-molde y se reutiliza, el caso es lo que pasó ese día y no cambia aunque la
+**plantilla** —un montaje tuyo o de un compañero, desde **Organizador de
+Montajes**—, ajustas las entradas de las cajas pulsando o arrastrando
+material, y el **Resumen** te dice qué tienes que preparar, qué cuesta y si
+te sobran o faltan entradas y cajas. Cuando la cirugía es real, guardas ese
+montaje como **caso** en **Gestión de Casos**: la plantilla es el molde y
+se reutiliza, el caso es lo que pasó ese día y no cambia aunque la
 plantilla cambie después. Un rótulo permanente, justo debajo de la
-cabecera, dice siempre cuál de las dos cosas estás tocando. La herramienta
-tiene además una ventana **Docente** (miotomas y colocación de cajas según
-la posición del paciente) sin relación con la preparación del material, y
-una **Guía de uso** con lo esencial para empezar sin tener que leer este
-archivo.
+cabecera, dice siempre cuál de las dos cosas estás tocando, en cualquier
+pantalla. **Docencia** trae miotomas y colocación de cajas según la
+posición del paciente, sin relación con la preparación del material, y una
+**Guía de uso** (menú **⋮**) resume lo esencial para empezar sin tener que
+leer este archivo.
 
 ## Cómo abrir la herramienta
 
@@ -71,8 +79,9 @@ cuatro pasos.
 
 ## Guía de uso, dentro de la propia herramienta
 
-Botón **⋮** de la barra superior (agrupa Idioma, Guía de uso y Docente,
-de consulta ocasional) → **Guía de uso**. Seis tarjetas cortas (qué es la
+Botón **⋮** de la barra superior (agrupa Idioma y Guía de uso, de consulta
+ocasional — Técnicas IONM y Docencia vivían aquí hasta el 06-09-2026, ahora
+son tarjetas de la pantalla de inicio) → **Guía de uso**. Seis tarjetas cortas (qué es la
 herramienta, el flujo de un día, que plantilla y caso no son lo mismo,
 catálogo/etiquetas, cajas/resumen, y lo demás) más un acordeón con quince
 puntos más detallados, todos plegados. Es la versión corta y orientada a la
@@ -81,15 +90,18 @@ README sigue siendo la documentación de referencia. Contenido estático de
 [`data/guia.js`](data/guia.js), solo en castellano por ahora: en inglés
 avisa de que todavía no está traducida en vez de mostrarla a medias.
 
-## El banco de trabajo, en el orden en que se trabaja
+## Organizador de Montajes: el banco de trabajo, en el orden en que se trabaja
 
-Montajes → Técnicas → Catálogo → Cajas → Resumen. Es un banco único: el
-mismo tanto si estás editando una plantilla suelta como si estás
-corrigiendo el material de un caso concreto — nunca hay dos copias de estas
-cinco tarjetas. Cada una se pliega sola (menos el catálogo, que en pantalla
-ancha es la columna lateral fija de siempre, y que se pliega pulsando su
-barra entera, no solo la flechita). **Arrancan todas plegadas, salvo
-Montajes** —al ser la pantalla principal, desde el 05-09-2026 se abre sola—;
+Es la primera tarjeta de la pantalla de inicio. Dentro: Montajes → Técnicas
+→ Catálogo → Cajas → Resumen. Es un banco único: el mismo tanto si estás
+editando una plantilla suelta como si estás corrigiendo el material de un
+caso concreto — nunca hay dos copias de estas cinco tarjetas (corregir el
+material de un caso desde **Gestión de Casos** te trae aquí mismo, con el
+rótulo permanente en verde sólido avisando de que estás mid-corrección).
+Cada una se pliega sola (menos el catálogo, que en pantalla ancha es la
+columna lateral fija de siempre, y que se pliega pulsando su barra entera,
+no solo la flechita). **Arrancan todas plegadas, salvo Montajes** —al ser
+lo primero que se ve al entrar aquí, desde el 05-09-2026 se abre sola—;
 despliega las demás según te interese en cada momento. El orden es el del
 flujo real: qué montaje cargas, qué técnicas vas a hacer, qué material hay, dónde va y qué
 sale de todo ello.
@@ -323,9 +335,9 @@ y borde punteado para distinguirlo del resto del grupo.
 
 ## Registrar casos
 
-El botón **Gestión de casos** de la barra superior abre tus casos —es el
-único sitio desde donde se abre, no hay otro acceso repetido en la
-herramienta—. Está siempre a mano.
+La tarjeta **Gestión de Casos** de la pantalla de inicio abre tus casos —es
+el único sitio desde donde se abre, no hay otro acceso repetido en la
+herramienta—.
 
 **Al preparar**, con el montaje hecho, pulsa *Guardar este montaje como caso*.
 El caso nace con las técnicas planificadas, el material a preparar, las cajas,
@@ -473,11 +485,12 @@ Ningún dato que identifique al paciente. Ni nombre, ni apellidos, ni NHC, ni
 fecha de nacimiento. Solo el identificador del caso, edad, sexo y antecedentes
 relevantes.
 
-## Ventana Docente
+## Docencia
 
-Botón **⋮ → Docente**. Dos pestañas, sin relación con la
-preparación de material — no tocan ningún montaje ni caso, y el ejercicio se
-guarda solo en ese navegador, no se sincroniza:
+Tarjeta **Docencia** de la pantalla de inicio (era **⋮ → Docente** hasta el
+06-09-2026). Cuatro pestañas, sin relación con la preparación de
+material — no tocan ningún montaje ni caso, y Miotomas/Cama de quirófano se
+guardan solo en ese navegador, no se sincronizan:
 
 - **Miotomas** — la columna vertebral entera (C1 a S5) en el centro, los
   músculos posibles a la izquierda y los monitorizados a la derecha. Marcas
@@ -489,10 +502,25 @@ guarda solo en ese navegador, no se sincroniza:
   marcan con `[TD/L]`, `[Sch]`, `[Lon]` en el propio tooltip) y en parte son
   cobertura de enseñanza habitual sin cita concreta detrás; la ventana explica
   cuál es cuál.
+
+## Simulador y Bibliografía
+
+Dos tarjetas nuevas de la pantalla de inicio (06-09-2026), de momento "en
+construcción". **Simulador** será un simulador de ventanas de un software de
+IONM (SEP, MEP, EMG, EEG...) para crear canales de electrodos con sus
+parámetros de estimulación/filtros/barrido según la técnica. **Bibliografía**
+serán enlaces a artículos open-access de PubMed con teoría relevante. Ninguna
+de las dos toca montajes, casos ni catálogos.
 - **Cama de quirófano** — eliges la posición del paciente (supino, supino con
   brazos extendidos, prono, sentado) y repartes las cajas por cabecera,
   laterales y pies con el mismo gesto de pulsar y colocar del resto de la
   herramienta. Lo que se practica es que el cable llegue.
+- **Material** y **Teoría básica de IONM** — pestañas nuevas del 06-09-2026,
+  de momento "en construcción". Material está pensada para reutilizar las
+  fotos que ya existen en el catálogo de material (electrodos, agujas,
+  sondas) en vez de duplicar contenido; Teoría básica cubrirá conceptos como
+  far-field/near-field, campo abierto/cerrado, reflejo H, onda F, potencial
+  de acción... Sin fecha todavía, se irán llenando en turnos aparte.
 
 ## Uso desde el móvil
 
@@ -580,7 +608,7 @@ El token se guarda solo en ese navegador. **Desconectar** lo borra del
 dispositivo (no toca ni tus montajes ni lo guardado en GitHub), y siempre
 puedes revocarlo desde GitHub.
 
-**Exportar casos**, dentro del diálogo **Gestión de casos** (barra de
+**Exportar casos**, dentro de la pantalla **Gestión de Casos** (barra de
 acciones fija), abre un **informe en PDF** —imprimible desde el propio
 diálogo "Guardar como PDF" del navegador, sin depender de ninguna librería—
 con todos los casos que tengas cargados en ese navegador en ese momento.
