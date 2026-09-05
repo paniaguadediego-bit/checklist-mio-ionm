@@ -17,7 +17,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260906h">
+<link rel="stylesheet" href="style.css?v=20260906j">
 </head>
 <body>
 
@@ -400,6 +400,17 @@
     <input type="text" id="sim-v-titulo" autocomplete="off">
   </div>
   <div class="campo">
+    <label for="sim-v-morfologia" data-i18n="sim_campo_morfologia"></label>
+    <select id="sim-v-morfologia">
+      <option value="sep" data-i18n="sim_morf_sep"></option>
+      <option value="mep" data-i18n="sim_morf_mep"></option>
+      <option value="tof" data-i18n="sim_morf_tof"></option>
+      <option value="emg" data-i18n="sim_morf_emg"></option>
+      <option value="eeg" data-i18n="sim_morf_eeg"></option>
+      <option value="generico" data-i18n="sim_morf_generico"></option>
+    </select>
+  </div>
+  <div class="campo">
     <label data-i18n="sim_campo_vista"></label>
     <div class="sim-vista-radios">
       <label><input type="radio" name="sim-vista" value="avg"> <span data-i18n="sim_vista_avg"></span></label>
@@ -749,10 +760,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260906h"></script>
-<script src="data/i18n-en.js?v=20260906h"></script>
-<script src="data/guia.js?v=20260906h"></script>
-<script src="data/tecnicas-mio.js?v=20260906h"></script>
-<script src="app.js?v=20260906h"></script>
+<script src="data/surgeries.js?v=20260906j"></script>
+<script src="data/i18n-en.js?v=20260906j"></script>
+<script src="data/guia.js?v=20260906j"></script>
+<script src="data/tecnicas-mio.js?v=20260906j"></script>
+<script src="app.js?v=20260906j"></script>
 </body>
 </html>

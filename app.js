@@ -556,6 +556,13 @@
     sim_campo_vista:     { es: "Vista", en: "View" },
     sim_vista_avg:       { es: "Promediado (Avg)", en: "Averaged (Avg)" },
     sim_vista_cascada:   { es: "Cascada", en: "Cascade" },
+    sim_campo_morfologia:{ es: "Morfología del trazo", en: "Trace morphology" },
+    sim_morf_sep:        { es: "PESS (evocado)", en: "SEP (evoked)" },
+    sim_morf_mep:        { es: "PEM (polifásico)", en: "MEP (polyphasic)" },
+    sim_morf_tof:        { es: "TOF (tren de 4)", en: "TOF (train of four)" },
+    sim_morf_emg:        { es: "EMG libre", en: "Free-run EMG" },
+    sim_morf_eeg:        { es: "EEG", en: "EEG" },
+    sim_morf_generico:   { es: "Genérico", en: "Generic" },
     sim_campo_canales:   { es: "Canales", en: "Channels" },
     sim_canal_ph:        { es: "p. ej. Cz'-C3'", en: "e.g. Cz'-C3'" },
     sim_canal_add:       { es: "Añadir", en: "Add" },
@@ -7343,29 +7350,41 @@
   document.getElementById("tile-docente").addEventListener("click", abrirDocente);
 
   /* ================================================================ *
-   * Simulador de pantalla (06-09-2026, primera versión)
+   * Simulador de pantalla (06-09-2026; layout de columnas y morfologías
+   * el 06-09-2026 noche, tras probarlo)
    *
-   * Representa de forma ESQUEMÁTICA la pantalla de monitorización: una
-   * rejilla de filas, y en cada fila varias ventanas (una por técnica) una
-   * al lado de otra. Cada ventana tiene su vista (Avg o cascada), sus
-   * canales escritos a mano, y sus parámetros de estimulación/filtros. Se
-   * arrastra una ventana para recolocarla -antes/después de otra, o a una
-   * fila nueva- y todo se reordena al soltar.
+   * Representa de forma ESQUEMÁTICA la pantalla de monitorización: una fila
+   * de COLUMNAS, y cada columna es una pila vertical de ventanas (una por
+   * técnica). Todas las columnas miden lo mismo de alto, así que una ventana
+   * sola en su columna ocupa el alto de las varias que tenga la columna de al
+   * lado -así se consigue el TOF a la derecha ocupando el alto de MEP Izq +
+   * MEP Dcho apilados-. Cuantas más ventanas apiladas, más se comprimen de
+   * alto (flex:1 reparte el alto de la columna).
    *
-   * No hay señal real: los trazos son garabatos deterministas (misma
-   * semilla -> mismo dibujo), solo para ensayar cómo queda la pantalla.
-   * Nunca se nombra la marca del equipo: es un esquema genérico.
+   * Cada ventana tiene morfología (PESS/PEM/TOF/EMG/EEG/genérico), vista (Avg
+   * o cascada), canales a mano y parámetros de estimulación/filtros/barrido.
+   * Los trazos son garabatos DETERMINISTAS por semilla (misma semilla ->
+   * mismo dibujo) con forma parecida a la real según la morfología: no hay
+   * señal de verdad, es solo para ensayar cómo queda la pantalla. Nunca se
+   * nombra la marca del equipo.
    *
-   * Se guarda en localStorage de ESTE dispositivo, no se sincroniza -como
-   * Docencia, es material de ensayo, no dato clínico-.
+   * Se arrastra una ventana por su cabecera para recolocarla -arriba/abajo de
+   * otra dentro de una columna, o a una columna nueva- y se reordena al
+   * soltar. Se guarda en localStorage de ESTE dispositivo, no se sincroniza.
+   *
+   * Los parámetros del ejemplo salen de las recomendaciones de Técnicas IONM
+   * (data/tecnicas-mio.js): PESS 40 mA / ~4.3-4.7 Hz / filtros 30-300 Hz /
+   * barrido 50-100 ms / notch off; PEM 5 pulsos / ISI 2 ms / 0.5 ms; EMG
+   * libre 30 Hz-10 kHz. No se leen en crudo de ahí (son textos con cita de
+   * fuente), se fijaron a mano los valores limpios más habituales.
    * ================================================================ */
   var SIM_KEY = "mio_ionm_simulador_v1";
   var SVG_NS = "http://www.w3.org/2000/svg";
-  var simEstado = { filas: [] };
+  var simEstado = { columnas: [] };
   var simCargado = false;
-  var simVentanaEditando = null;   // id de la ventana abierta en el diálogo
-  var simCanalesEditando = [];     // copia de trabajo de los canales del diálogo
-  var simArrastrando = null;       // id de la ventana que se arrastra ahora
+  var simVentanaEditando = null;
+  var simCanalesEditando = [];
+  var simArrastrando = null;
   var dlgSimVentana = document.getElementById("dlg-sim-ventana");
 
   function simGid(id) { return document.getElementById(id); }
@@ -7373,7 +7392,13 @@
   function simCargar() {
     try {
       var g = JSON.parse(localStorage.getItem(SIM_KEY) || "null");
-      if (g && g.filas) simEstado = g;
+      if (g && g.columnas) simEstado = g;
+      else if (g && g.filas) {
+        // Formato viejo (filas de ventanas, antes del layout de columnas):
+        // cada fila pasa a ser una columna conservando sus ventanas. Es
+        // material de ensayo, con reconvertirlo basta -no hace falta transponer.
+        simEstado = { columnas: g.filas.map(function (f) { return { ventanas: f.ventanas || [] }; }) };
+      }
     } catch (e) { /* sin persistencia */ }
     simCargado = true;
   }
@@ -7396,6 +7421,7 @@
     return {
       id: simUid(),
       titulo: titulo || T("sim_ventana_nueva"),
+      morfologia: opts.morfologia || "generico",
       vista: opts.vista || "avg",
       canales: opts.canales ? opts.canales.slice() : [],
       params: opts.params ? clonar(opts.params) : {},
@@ -7403,68 +7429,67 @@
     };
   }
 
-  // Devuelve { fila, idx, ventana } de la ventana con ese id, o null.
   function simLocalizar(id) {
-    for (var f = 0; f < simEstado.filas.length; f++) {
-      var vs = simEstado.filas[f].ventanas;
+    for (var c = 0; c < simEstado.columnas.length; c++) {
+      var vs = simEstado.columnas[c].ventanas;
       for (var i = 0; i < vs.length; i++) {
-        if (vs[i].id === id) return { fila: f, idx: i, ventana: vs[i] };
+        if (vs[i].id === id) return { col: c, idx: i, ventana: vs[i] };
       }
     }
     return null;
   }
 
   function simAnadirVentana(v) {
-    if (!simEstado.filas.length) simEstado.filas.push({ ventanas: [] });
-    simEstado.filas[simEstado.filas.length - 1].ventanas.push(v);
+    if (!simEstado.columnas.length) simEstado.columnas.push({ ventanas: [] });
+    simEstado.columnas[simEstado.columnas.length - 1].ventanas.push(v);
   }
 
-  function simLimpiarFilasVacias() {
-    simEstado.filas = simEstado.filas.filter(function (fila) { return fila.ventanas.length; });
+  function simLimpiarColumnasVacias() {
+    simEstado.columnas = simEstado.columnas.filter(function (col) { return col.ventanas.length; });
   }
 
   function simQuitarVentana(id) {
     var loc = simLocalizar(id);
     if (!loc) return;
-    simEstado.filas[loc.fila].ventanas.splice(loc.idx, 1);
-    simLimpiarFilasVacias();
+    simEstado.columnas[loc.col].ventanas.splice(loc.idx, 1);
+    simLimpiarColumnasVacias();
     simGuardar();
     renderSimulador();
   }
 
-  /* --- Mover ventanas al soltar (por id/objeto, nunca por índice fijo, que
-     se invalida al quitar la que arrastras) --- */
-  function simSoltarEnVentana(refId, despues) {
+  /* --- Mover al soltar. Por id/objeto y recalculando el índice tras quitar
+     la ventana arrastrada, que si no se invalida. --- */
+  function simSoltarEnVentana(refId, debajo) {
     var id = simArrastrando;
     if (!id || id === refId) return;
     var loc = simLocalizar(id);
     if (!loc) return;
     var v = loc.ventana;
-    simEstado.filas[loc.fila].ventanas.splice(loc.idx, 1);
-    var ref = simLocalizar(refId);           // índice recalculado ya sin v
+    simEstado.columnas[loc.col].ventanas.splice(loc.idx, 1);
+    var ref = simLocalizar(refId);
     if (!ref) { simAnadirVentana(v); }
-    else { simEstado.filas[ref.fila].ventanas.splice(ref.idx + (despues ? 1 : 0), 0, v); }
-    simLimpiarFilasVacias();
+    else { simEstado.columnas[ref.col].ventanas.splice(ref.idx + (debajo ? 1 : 0), 0, v); }
+    simLimpiarColumnasVacias();
     simGuardar();
     renderSimulador();
   }
 
-  function simSoltarEnZona(filaRefObj) {
+  function simSoltarEnColumna(colRefObj) {
     var id = simArrastrando;
     if (!id) return;
     var loc = simLocalizar(id);
     if (!loc) return;
     var v = loc.ventana;
-    simEstado.filas[loc.fila].ventanas.splice(loc.idx, 1);
-    var pos = filaRefObj ? simEstado.filas.indexOf(filaRefObj) : simEstado.filas.length;
-    if (pos < 0) pos = simEstado.filas.length;
-    simEstado.filas.splice(pos, 0, { ventanas: [v] });
-    simLimpiarFilasVacias();
+    simEstado.columnas[loc.col].ventanas.splice(loc.idx, 1);
+    var pos = colRefObj ? simEstado.columnas.indexOf(colRefObj) : simEstado.columnas.length;
+    if (pos < 0) pos = simEstado.columnas.length;
+    simEstado.columnas.splice(pos, 0, { ventanas: [v] });
+    simLimpiarColumnasVacias();
     simGuardar();
     renderSimulador();
   }
 
-  /* --- Trazos de ejemplo (deterministas por semilla) --- */
+  /* --- Trazos deterministas por semilla --- */
   function simSemilla(str) {
     var h = 2166136261;
     for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = (h * 16777619) >>> 0; }
@@ -7474,31 +7499,67 @@
     var s = seed >>> 0;
     return function () { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
   }
-  // Polilínea tipo potencial evocado dentro de la banda [y0, y0+alto].
-  function simTrazaPuntos(seed, ancho, alto, marcado, y0) {
-    y0 = y0 || 0;
-    var rand = simRand(seed);
-    var n = 44, mid = y0 + alto / 2;
-    var pPos = 0.32 + rand() * 0.34;
-    var amp = (marcado ? 0.72 : 0.5) * (alto / 2) * (0.7 + rand() * 0.5);
-    var signo = rand() > 0.5 ? -1 : 1;
-    var pts = [];
-    for (var i = 0; i <= n; i++) {
-      var t = i / n, x = t * ancho;
-      var d = t - pPos;
-      var y = mid - signo * amp * Math.exp(-(d * d) / 0.006);
-      var d2 = t - (pPos + 0.14);
-      y += signo * amp * 0.45 * Math.exp(-(d2 * d2) / 0.004);
-      y += (rand() - 0.5) * alto * (marcado ? 0.12 : 0.16);
-      if (y < y0) y = y0;
-      if (y > y0 + alto) y = y0 + alto;
-      pts.push(x.toFixed(1) + "," + y.toFixed(1));
+
+  // Deflexiones características de un PESS según el canal (N9/N13/N20/P40).
+  // dir -1 = hacia arriba (negativo, convención de EEG); +1 = hacia abajo.
+  function simPicosSEP(canal) {
+    var c = (canal || "").toUpperCase();
+    if (/ERB/.test(c)) return [{ t: 0.22, dir: -1, amp: 0.55, w: 0.0009 }];            // N9
+    if (/CV|C5S|C2/.test(c)) return [{ t: 0.30, dir: -1, amp: 0.5, w: 0.0011 }];        // N13
+    if (/CZ/.test(c)) return [{ t: 0.52, dir: 1, amp: 0.85, w: 0.0016 },                 // P40 (MMII)
+                              { t: 0.62, dir: -1, amp: 0.4, w: 0.0018 }];
+    if (/C3|C4|CP/.test(c)) return [{ t: 0.42, dir: -1, amp: 0.85, w: 0.0011 },          // N20-P25 (MMSS)
+                                    { t: 0.5, dir: 1, amp: 0.5, w: 0.0014 }];
+    return [{ t: 0.45, dir: -1, amp: 0.6, w: 0.0012 }];
+  }
+
+  // Puntos de una onda dentro de la banda [y0, y0+alto] del viewBox (ancho W).
+  function simOnda(morf, canal, seed, W, y0, alto) {
+    var rand = simRand(seed), n = 64, mid = y0 + alto / 2, amp = alto * 0.42, pts = [];
+    function push(t, y) { if (y < y0) y = y0; if (y > y0 + alto) y = y0 + alto; pts.push((t * W).toFixed(1) + "," + y.toFixed(1)); }
+    var i, t, y;
+    if (morf === "mep") {
+      // Ráfaga polifásica: plano, un tren de oscilaciones rápidas en el centro
+      // con envolvente en campana, plano. Amplitud variable por barrida.
+      var a = 0.55 + rand() * 0.6, ini = 0.34 + rand() * 0.06, wid = 0.16 + rand() * 0.06, osc = 5 + Math.floor(rand() * 4);
+      for (i = 0; i <= n; i++) {
+        t = i / n; y = mid;
+        if (t > ini && t < ini + wid) { var pp = (t - ini) / wid; y = mid - a * amp * Math.sin(pp * Math.PI) * Math.sin(pp * Math.PI * osc * 2); }
+        y += (rand() - 0.5) * alto * 0.05; push(t, y);
+      }
+    } else if (morf === "tof") {
+      // Cuatro sacudidas (T1-T4) bifásicas, equiespaciadas.
+      var cen = [0.2, 0.4, 0.6, 0.8], w1 = 0.0011;
+      for (i = 0; i <= n; i++) {
+        t = i / n; y = mid;
+        for (var k = 0; k < 4; k++) { var d = t - cen[k]; y += amp * 0.95 * (-Math.exp(-(d * d) / w1) + 0.5 * Math.exp(-((d - 0.03) * (d - 0.03)) / (w1 * 1.6))); }
+        y += (rand() - 0.5) * alto * 0.03; push(t, y);
+      }
+    } else if (morf === "emg") {
+      // EMG libre: línea casi plana con ruido bajo y a veces una racha.
+      var b = 0.35 + rand() * 0.35, racha = rand() > 0.4;
+      for (i = 0; i <= n; i++) {
+        t = i / n; y = mid + (rand() - 0.5) * alto * 0.10;
+        if (racha && Math.abs(t - b) < 0.07) { y += (rand() - 0.5) * amp * 1.4; }
+        push(t, y);
+      }
+    } else if (morf === "eeg") {
+      var f = 6 + rand() * 6, ph = rand() * 6.28;
+      for (i = 0; i <= n; i++) { t = i / n; y = mid - amp * 0.5 * Math.sin(t * 6.283 * f + ph) - amp * 0.22 * Math.sin(t * 6.283 * f * 2.4 + ph); y += (rand() - 0.5) * alto * 0.06; push(t, y); }
+    } else if (morf === "sep") {
+      var picos = simPicosSEP(canal);
+      for (i = 0; i <= n; i++) {
+        t = i / n; y = mid;
+        for (var j = 0; j < picos.length; j++) { var pk = picos[j], dd = t - pk.t; y -= pk.dir * pk.amp * amp * Math.exp(-(dd * dd) / pk.w); }
+        y += (rand() - 0.5) * alto * 0.05; push(t, y);
+      }
+    } else {
+      var pPos = 0.35 + rand() * 0.3, sg = rand() > 0.5 ? -1 : 1;
+      for (i = 0; i <= n; i++) { t = i / n; var e = t - pPos; y = mid - sg * amp * Math.exp(-(e * e) / 0.006); y += (rand() - 0.5) * alto * 0.08; push(t, y); }
     }
     return pts.join(" ");
   }
 
-  // Color del trazo: azul lo izquierdo, rojo lo derecho, turquesa lo demás
-  // -es la dualidad L/R habitual en la pantalla real, sin nombrar la marca-.
   function simColorCanal(v, canal) {
     var base = ((canal || "").trim() || (v.titulo || "").trim()).toUpperCase();
     if (base.charAt(0) === "R") return "#c0392b";
@@ -7513,6 +7574,7 @@
     poly.setAttribute("stroke", color);
     poly.setAttribute("stroke-width", ancho);
     poly.setAttribute("opacity", opacidad);
+    poly.setAttribute("vector-effect", "non-scaling-stroke");
     return poly;
   }
 
@@ -7524,31 +7586,31 @@
     etiq.textContent = canal;
     fila.appendChild(etiq);
 
+    var morf = v.morfologia || "generico";
+    var continuo = (morf === "tof" || morf === "emg" || morf === "eeg");
     var color = simColorCanal(v, canal);
-    var ancho = 240;
-    var alto = v.vista === "cascada" ? 66 : 30;
+    var W = 240, H = 100;
     var svg = document.createElementNS(SVG_NS, "svg");
     svg.setAttribute("class", "sim-svg");
-    svg.setAttribute("viewBox", "0 0 " + ancho + " " + alto);
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
     svg.setAttribute("preserveAspectRatio", "none");
-    svg.style.height = alto + "px";
 
-    if (v.vista === "cascada") {
-      var n = 7, banda = alto / n;
-      for (var k = 0; k < n; k++) {
-        var pts = simTrazaPuntos(simSemilla(canal + v.id + k), ancho, banda, false, k * banda);
-        svg.appendChild(simPolilinea(pts, color, "1", 0.85 - k * 0.05));
+    if (!continuo && v.vista === "cascada") {
+      var nS = 7, banda = H / nS;
+      for (var k = 0; k < nS; k++) {
+        svg.appendChild(simPolilinea(simOnda(morf, canal, simSemilla(canal + v.id + k), W, k * banda, banda), color, "1", 0.9 - k * 0.05));
       }
+    } else if (continuo) {
+      svg.appendChild(simPolilinea(simOnda(morf, canal, simSemilla(canal + v.id), W, 0, H), color, "1.3", 1));
     } else {
       // Avg: dos barridas superpuestas (repetibilidad de la respuesta)
-      svg.appendChild(simPolilinea(simTrazaPuntos(simSemilla(canal + v.id + "a"), ancho, alto, true, 0), color, "1.4", 1));
-      svg.appendChild(simPolilinea(simTrazaPuntos(simSemilla(canal + v.id + "b"), ancho, alto, true, 0), color, "1", 0.45));
+      svg.appendChild(simPolilinea(simOnda(morf, canal, simSemilla(canal + v.id + "a"), W, 0, H), color, "1.5", 1));
+      svg.appendChild(simPolilinea(simOnda(morf, canal, simSemilla(canal + v.id + "b"), W, 0, H), color, "1", 0.4));
     }
     fila.appendChild(svg);
     return fila;
   }
 
-  // Rail de parámetros a la izquierda de la ventana (solo si hay algo puesto).
   function simRailParams(v) {
     var p = v.params || {}, f = v.filtros || {}, lineas = [];
     if (p.intensidad) lineas.push(["I", p.intensidad + " mA"]);
@@ -7568,11 +7630,12 @@
       l.className = "sim-rail-linea";
       var k = document.createElement("span"); k.className = "sim-rail-k"; k.textContent = par[0];
       var val = document.createElement("span"); val.className = "sim-rail-v"; val.textContent = par[1];
-      l.appendChild(k); l.appendChild(val);
-      rail.appendChild(l);
+      l.appendChild(k); l.appendChild(val); rail.appendChild(l);
     });
     return rail;
   }
+
+  var SIM_MORF_TAG = { sep: "PESS", mep: "PEM", tof: "TOF", emg: "EMG", eeg: "EEG", generico: "" };
 
   function renderSimVentana(v) {
     var card = document.createElement("div");
@@ -7581,34 +7644,28 @@
     card.dataset.id = v.id;
 
     card.addEventListener("dragstart", function (e) {
-      simArrastrando = v.id;
-      card.classList.add("arrastrando");
+      simArrastrando = v.id; card.classList.add("arrastrando");
       if (e.dataTransfer) { e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", v.id); }
     });
     card.addEventListener("dragend", function () {
-      simArrastrando = null;
-      card.classList.remove("arrastrando");
-      Array.prototype.forEach.call(document.querySelectorAll(".sim-ventana"), function (c) {
-        c.classList.remove("insertar-antes", "insertar-despues");
-      });
+      simArrastrando = null; card.classList.remove("arrastrando");
+      Array.prototype.forEach.call(document.querySelectorAll(".sim-ventana"), function (c) { c.classList.remove("insertar-arriba", "insertar-abajo"); });
     });
     card.addEventListener("dragover", function (e) {
       if (!simArrastrando || simArrastrando === v.id) return;
       e.preventDefault();
       var rect = card.getBoundingClientRect();
-      var despues = (e.clientX - rect.left) > rect.width / 2;
-      card.classList.toggle("insertar-despues", despues);
-      card.classList.toggle("insertar-antes", !despues);
+      var debajo = (e.clientY - rect.top) > rect.height / 2;
+      card.classList.toggle("insertar-abajo", debajo);
+      card.classList.toggle("insertar-arriba", !debajo);
     });
-    card.addEventListener("dragleave", function () {
-      card.classList.remove("insertar-antes", "insertar-despues");
-    });
+    card.addEventListener("dragleave", function () { card.classList.remove("insertar-arriba", "insertar-abajo"); });
     card.addEventListener("drop", function (e) {
       e.preventDefault();
       var rect = card.getBoundingClientRect();
-      var despues = (e.clientX - rect.left) > rect.width / 2;
-      card.classList.remove("insertar-antes", "insertar-despues");
-      simSoltarEnVentana(v.id, despues);
+      var debajo = (e.clientY - rect.top) > rect.height / 2;
+      card.classList.remove("insertar-arriba", "insertar-abajo");
+      simSoltarEnVentana(v.id, debajo);
     });
 
     var cab = document.createElement("div");
@@ -7619,18 +7676,17 @@
     tit.textContent = v.titulo;
     var acc = document.createElement("span");
     acc.className = "sim-ventana-acc";
-    var vistaTag = document.createElement("span");
-    vistaTag.className = "sim-vista-tag";
-    vistaTag.textContent = v.vista === "cascada" ? T("sim_vista_cascada") : "Avg";
+    var tag = document.createElement("span");
+    tag.className = "sim-vista-tag";
+    var morfTag = SIM_MORF_TAG[v.morfologia] || "";
+    tag.textContent = morfTag || (v.vista === "cascada" ? T("sim_vista_cascada") : "Avg");
     var bAj = document.createElement("button");
-    bAj.type = "button"; bAj.className = "sim-icono"; bAj.textContent = "⚙";
-    bAj.title = T("sim_ajustes_tit");
+    bAj.type = "button"; bAj.className = "sim-icono"; bAj.textContent = "⚙"; bAj.title = T("sim_ajustes_tit");
     bAj.addEventListener("click", function () { simAbrirDialogo(v.id); });
     var bX = document.createElement("button");
-    bX.type = "button"; bX.className = "sim-icono"; bX.textContent = "✕";
-    bX.title = T("sim_cerrar_tit");
+    bX.type = "button"; bX.className = "sim-icono"; bX.textContent = "✕"; bX.title = T("sim_cerrar_tit");
     bX.addEventListener("click", function () { simQuitarVentana(v.id); });
-    acc.appendChild(vistaTag); acc.appendChild(bAj); acc.appendChild(bX);
+    acc.appendChild(tag); acc.appendChild(bAj); acc.appendChild(bX);
     cab.appendChild(tit); cab.appendChild(acc);
     card.appendChild(cab);
 
@@ -7653,20 +7709,12 @@
     return card;
   }
 
-  function simZonaFila(filaRefObj) {
+  function simZonaColumna(colRefObj) {
     var z = document.createElement("div");
-    z.className = "sim-zona-fila";
-    z.addEventListener("dragover", function (e) {
-      if (!simArrastrando) return;
-      e.preventDefault();
-      z.classList.add("activa");
-    });
+    z.className = "sim-zona-col";
+    z.addEventListener("dragover", function (e) { if (!simArrastrando) return; e.preventDefault(); z.classList.add("activa"); });
     z.addEventListener("dragleave", function () { z.classList.remove("activa"); });
-    z.addEventListener("drop", function (e) {
-      e.preventDefault();
-      z.classList.remove("activa");
-      simSoltarEnZona(filaRefObj);
-    });
+    z.addEventListener("drop", function (e) { e.preventDefault(); z.classList.remove("activa"); simSoltarEnColumna(colRefObj); });
     return z;
   }
 
@@ -7674,22 +7722,22 @@
     var lienzo = simGid("sim-lienzo");
     if (!lienzo) return;
     lienzo.innerHTML = "";
-    simLimpiarFilasVacias();
-    if (!simEstado.filas.length) {
+    simLimpiarColumnasVacias();
+    if (!simEstado.columnas.length) {
       var vacio = document.createElement("p");
       vacio.className = "empty-hint";
       vacio.textContent = T("sim_vacio");
       lienzo.appendChild(vacio);
       return;
     }
-    simEstado.filas.forEach(function (fila) {
-      lienzo.appendChild(simZonaFila(fila));
-      var filaEl = document.createElement("div");
-      filaEl.className = "sim-fila";
-      fila.ventanas.forEach(function (v) { filaEl.appendChild(renderSimVentana(v)); });
-      lienzo.appendChild(filaEl);
+    simEstado.columnas.forEach(function (col) {
+      lienzo.appendChild(simZonaColumna(col));
+      var colEl = document.createElement("div");
+      colEl.className = "sim-columna";
+      col.ventanas.forEach(function (v) { colEl.appendChild(renderSimVentana(v)); });
+      lienzo.appendChild(colEl);
     });
-    lienzo.appendChild(simZonaFila(null));
+    lienzo.appendChild(simZonaColumna(null));
   }
 
   /* --- Diálogo de ajustes de una ventana --- */
@@ -7709,13 +7757,8 @@
       var txt = document.createElement("span");
       txt.textContent = canal;
       var quitar = document.createElement("button");
-      quitar.type = "button";
-      quitar.className = "sim-canal-quitar";
-      quitar.textContent = "✕";
-      quitar.addEventListener("click", function () {
-        simCanalesEditando.splice(i, 1);
-        simRenderCanalesEditor();
-      });
+      quitar.type = "button"; quitar.className = "sim-canal-quitar"; quitar.textContent = "✕";
+      quitar.addEventListener("click", function () { simCanalesEditando.splice(i, 1); simRenderCanalesEditor(); });
       chip.appendChild(txt); chip.appendChild(quitar);
       cont.appendChild(chip);
     });
@@ -7726,8 +7769,7 @@
     var val = (input.value || "").trim();
     if (!val) return;
     simCanalesEditando.push(val);
-    input.value = "";
-    input.focus();
+    input.value = ""; input.focus();
     simRenderCanalesEditor();
   }
 
@@ -7738,9 +7780,8 @@
     simVentanaEditando = id;
     simCanalesEditando = v.canales.slice();
     simGid("sim-v-titulo").value = v.titulo;
-    Array.prototype.forEach.call(document.getElementsByName("sim-vista"), function (r) {
-      r.checked = (r.value === (v.vista || "avg"));
-    });
+    simGid("sim-v-morfologia").value = v.morfologia || "generico";
+    Array.prototype.forEach.call(document.getElementsByName("sim-vista"), function (r) { r.checked = (r.value === (v.vista || "avg")); });
     var p = v.params || {}, f = v.filtros || {};
     simGid("sim-p-intensidad").value = p.intensidad || "";
     simGid("sim-p-frecuencia").value = p.frecuencia || "";
@@ -7761,25 +7802,19 @@
     if (!loc) { dlgSimVentana.close(); return; }
     var v = loc.ventana;
     v.titulo = (simGid("sim-v-titulo").value || "").trim() || T("sim_ventana_nueva");
+    v.morfologia = simGid("sim-v-morfologia").value || "generico";
     var vistaSel = "avg";
-    Array.prototype.forEach.call(document.getElementsByName("sim-vista"), function (r) {
-      if (r.checked) vistaSel = r.value;
-    });
+    Array.prototype.forEach.call(document.getElementsByName("sim-vista"), function (r) { if (r.checked) vistaSel = r.value; });
     v.vista = vistaSel;
     v.canales = simCanalesEditando.slice();
     v.params = {
-      intensidad: simGid("sim-p-intensidad").value.trim(),
-      frecuencia: simGid("sim-p-frecuencia").value.trim(),
-      pulsos: simGid("sim-p-pulsos").value.trim(),
-      trenes: simGid("sim-p-trenes").value.trim(),
-      isi: simGid("sim-p-isi").value.trim(),
-      duracion: simGid("sim-p-duracion").value.trim()
+      intensidad: simGid("sim-p-intensidad").value.trim(), frecuencia: simGid("sim-p-frecuencia").value.trim(),
+      pulsos: simGid("sim-p-pulsos").value.trim(), trenes: simGid("sim-p-trenes").value.trim(),
+      isi: simGid("sim-p-isi").value.trim(), duracion: simGid("sim-p-duracion").value.trim()
     };
     v.filtros = {
-      lff: simGid("sim-f-lff").value.trim(),
-      hff: simGid("sim-f-hff").value.trim(),
-      notch: simGid("sim-f-notch").value.trim(),
-      barrido: simGid("sim-f-barrido").value.trim()
+      lff: simGid("sim-f-lff").value.trim(), hff: simGid("sim-f-hff").value.trim(),
+      notch: simGid("sim-f-notch").value.trim(), barrido: simGid("sim-f-barrido").value.trim()
     };
     simGuardar();
     dlgSimVentana.close();
@@ -7787,24 +7822,33 @@
   }
 
   // Ejemplo: cirugía de columna lumbar (tornillos, descompresión, artrodesis).
-  // Los parámetros de MEP salen de la pantalla que compartió el usuario; los
-  // canales son un montaje plausible, editable. Filtros en blanco a propósito
-  // -varían y no se inventan-.
+  // Layout que pidió el usuario: MEP Izq/Dcho apilados con el TOF a su derecha
+  // ocupando el alto de ambos. Parámetros de Técnicas IONM (ver cabecera).
   function simCargarEjemplo() {
-    simEstado = { filas: [
+    var fSEP = { lff: "30", hff: "300", notch: "off" };
+    var pSEPm = { intensidad: "40", frecuencia: "4.3", duracion: "200" };
+    var pSEPt = { intensidad: "40", frecuencia: "4.7", duracion: "300" };
+    var pMEP = { pulsos: "5", isi: "2", duracion: "500" };
+    var pTOF = { frecuencia: "2", pulsos: "4" };
+    var fEMG = { lff: "30", hff: "10000", barrido: "1000" };
+    simEstado = { columnas: [
       { ventanas: [
-        simVentana("SEP L.Cub", { vista: "avg", canales: ["Cz'-C3'", "Cz'-Fz", "Cv-Fz"] }),
-        simVentana("SEP R.Med", { vista: "avg", canales: ["Cz'-C4'", "Cz'-Fz", "Cv-Fz"] }),
-        simVentana("SEP L.TPN", { vista: "avg", canales: ["Cz'-C3'", "Cz'-Fz"] }),
-        simVentana("SEP R.TPN", { vista: "avg", canales: ["Cz'-C4'", "Cz'-Fz"] })
+        simVentana("SEP Mediano Izq", { morfologia: "sep", canales: ["L.Erb-R.Erb", "Cv2-CvAnt", "C4-Fz"], params: pSEPm, filtros: fSEP }),
+        simVentana("SEP Tibial Izq", { morfologia: "sep", canales: ["Cz'-Fz"], params: pSEPt, filtros: fSEP })
       ] },
       { ventanas: [
-        simVentana("MEP L.", { vista: "cascada", canales: ["L.Q", "L.TA", "L.AH", "L.G"],
-          params: { intensidad: "250", frecuencia: "2.1", pulsos: "7", isi: "3.0", duracion: "500" } }),
-        simVentana("MEP R.", { vista: "cascada", canales: ["R.Q", "R.TA", "R.AH", "R.G"],
-          params: { intensidad: "250", frecuencia: "2.1", pulsos: "7", isi: "3.0", duracion: "500" } }),
-        simVentana("TOF", { vista: "cascada", canales: ["APB"] }),
-        simVentana("f-EMG", { vista: "cascada", canales: ["L.Q", "R.Q", "L.TA", "R.TA"] })
+        simVentana("SEP Mediano Dcho", { morfologia: "sep", canales: ["R.Erb-L.Erb", "Cv2-CvAnt", "C3-Fz"], params: pSEPm, filtros: fSEP }),
+        simVentana("SEP Tibial Dcho", { morfologia: "sep", canales: ["Cz'-Fz"], params: pSEPt, filtros: fSEP })
+      ] },
+      { ventanas: [
+        simVentana("MEP Izq", { morfologia: "mep", vista: "cascada", canales: ["L.APB", "L.Q", "L.TA", "L.AH"], params: pMEP }),
+        simVentana("MEP Dcho", { morfologia: "mep", vista: "cascada", canales: ["R.APB", "R.Q", "R.TA", "R.AH"], params: pMEP })
+      ] },
+      { ventanas: [
+        simVentana("TOF", { morfologia: "tof", canales: ["APB"], params: pTOF })
+      ] },
+      { ventanas: [
+        simVentana("f-EMG", { morfologia: "emg", canales: ["L.VM", "L.TA", "L.PL", "L.G"], filtros: fEMG })
       ] }
     ] };
     simGuardar();
@@ -7817,30 +7861,24 @@
     simAnadirVentana(v);
     simGuardar();
     renderSimulador();
-    simAbrirDialogo(v.id);   // se abre para nombrarla y añadir canales
+    simAbrirDialogo(v.id);   // se abre para nombrarla, elegir morfología y canales
   });
   simGid("sim-ejemplo").addEventListener("click", function () {
-    if (simEstado.filas.length && !confirm(T("sim_vaciar_conf"))) return;
+    if (simEstado.columnas.length && !confirm(T("sim_vaciar_conf"))) return;
     simCargarEjemplo();
   });
   simGid("sim-vaciar").addEventListener("click", function () {
-    if (!simEstado.filas.length) return;
+    if (!simEstado.columnas.length) return;
     if (!confirm(T("sim_vaciar_conf"))) return;
-    simEstado = { filas: [] };
+    simEstado = { columnas: [] };
     simGuardar();
     renderSimulador();
   });
   simGid("sim-v-canal-add").addEventListener("click", simAnadirCanalDesdeInput);
-  simGid("sim-v-canal-nuevo").addEventListener("keydown", function (e) {
-    if (e.key === "Enter") { e.preventDefault(); simAnadirCanalDesdeInput(); }
-  });
+  simGid("sim-v-canal-nuevo").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); simAnadirCanalDesdeInput(); } });
   simGid("sim-v-guardar").addEventListener("click", simGuardarDialogo);
   simGid("sim-v-cancelar").addEventListener("click", function () { dlgSimVentana.close(); });
-  simGid("sim-v-borrar").addEventListener("click", function () {
-    var id = simVentanaEditando;
-    dlgSimVentana.close();
-    if (id) simQuitarVentana(id);
-  });
+  simGid("sim-v-borrar").addEventListener("click", function () { var id = simVentanaEditando; dlgSimVentana.close(); if (id) simQuitarVentana(id); });
 
   // Panel-catalogo es ya un <details> de verdad (06-09-2026, tarde): pulsar
   // el <summary> lo pliega/despliega solo, igual que Plantillas de

@@ -2081,10 +2081,10 @@ dialog h3 {
 }
 
 /* ================================================================ *
- * Simulador de pantalla (06-09-2026). Rejilla de filas; cada fila,
- * ventanas (técnicas) una al lado de otra. Todo con tokens de tema para
- * que valga en claro y oscuro. Trazos en rojo/azul/turquesa fijos: es la
- * dualidad L/R de la pantalla real, legible sobre cualquier fondo.
+ * Simulador de pantalla (06-09-2026). Fila de COLUMNAS; cada columna una
+ * pila vertical de ventanas que reparten su alto (flex:1), así una ventana
+ * sola ocupa el alto de las apiladas de al lado. Tokens de tema para claro
+ * y oscuro; trazos en rojo/azul/turquesa fijos (dualidad L/R).
  * ================================================================ */
 .sim-barra {
   display: flex;
@@ -2099,30 +2099,36 @@ dialog h3 {
   flex-basis: 100%;
 }
 .sim-lienzo {
-  overflow-x: auto;
-  padding-bottom: 0.5rem;
-  min-height: 3rem;
-}
-.sim-fila {
   display: flex;
+  flex-direction: row;
   align-items: stretch;
-  gap: 0.5rem;
-  min-width: min-content;
+  gap: 0.4rem;
+  overflow-x: auto;
+  height: 74vh;
+  min-height: 24rem;
+  padding-bottom: 0.4rem;
 }
-/* Banda fina entre filas: recibe una ventana para crear una fila nueva. */
-.sim-zona-fila {
-  height: 0.6rem;
-  margin: 0.15rem 0;
+.sim-columna {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1 1 300px;
+  min-width: 250px;
+}
+/* Banda fina entre columnas: recibe una ventana para crear una columna nueva. */
+.sim-zona-col {
+  flex: 0 0 0.5rem;
+  align-self: stretch;
   border-radius: var(--r);
 }
-.sim-zona-fila.activa {
-  height: 1.6rem;
+.sim-zona-col.activa {
+  flex-basis: 1.6rem;
   background: var(--accent-soft);
   outline: 2px dashed var(--accent);
 }
 .sim-ventana {
-  flex: 0 0 auto;
-  width: 300px;
+  flex: 1 1 0;
+  min-height: 5rem;
   display: flex;
   flex-direction: column;
   background: var(--card-bg);
@@ -2131,22 +2137,23 @@ dialog h3 {
   overflow: hidden;
 }
 .sim-ventana.arrastrando { opacity: 0.4; }
-.sim-ventana.insertar-antes { box-shadow: inset 3px 0 0 var(--accent); }
-.sim-ventana.insertar-despues { box-shadow: inset -3px 0 0 var(--accent); }
+.sim-ventana.insertar-arriba { box-shadow: inset 0 3px 0 var(--accent); }
+.sim-ventana.insertar-abajo { box-shadow: inset 0 -3px 0 var(--accent); }
 .sim-ventana-cab {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.35rem;
-  padding: 0.25rem 0.4rem;
+  padding: 0.2rem 0.4rem;
   background: var(--accent-soft);
   color: var(--accent);
   cursor: grab;
+  flex: 0 0 auto;
 }
 .sim-ventana-cab:active { cursor: grabbing; }
 .sim-ventana-titulo {
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2158,7 +2165,7 @@ dialog h3 {
   flex: 0 0 auto;
 }
 .sim-vista-tag {
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   background: var(--card-bg);
@@ -2179,25 +2186,27 @@ dialog h3 {
 }
 .sim-icono:hover { background: rgba(0, 0, 0, 0.06); }
 .sim-ventana-cuerpo {
+  flex: 1 1 auto;
   display: flex;
   gap: 0.3rem;
-  padding: 0.35rem;
+  padding: 0.3rem;
+  min-height: 0;
 }
 .sim-rail {
   flex: 0 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
-  padding-right: 0.35rem;
+  gap: 0.05rem;
+  padding-right: 0.3rem;
   border-right: 1px dashed var(--border-soft);
-  min-width: 4.2rem;
+  min-width: 3.8rem;
 }
 .sim-rail-linea {
   display: flex;
   justify-content: space-between;
   gap: 0.3rem;
-  font-size: 0.62rem;
-  line-height: 1.3;
+  font-size: 0.58rem;
+  line-height: 1.25;
 }
 .sim-rail-k { color: var(--text-muted); }
 .sim-rail-v { color: var(--text); font-weight: 600; white-space: nowrap; }
@@ -2205,18 +2214,21 @@ dialog h3 {
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: 0.1rem;
   min-width: 0;
+  min-height: 0;
 }
 .sim-canal {
+  flex: 1 1 0;
   display: flex;
   align-items: center;
   gap: 0.3rem;
+  min-height: 0;
 }
 .sim-canal-etiq {
   flex: 0 0 auto;
-  width: 3.6rem;
-  font-size: 0.6rem;
+  width: 4rem;
+  font-size: 0.58rem;
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
@@ -2225,6 +2237,8 @@ dialog h3 {
 .sim-svg {
   flex: 1 1 auto;
   width: 100%;
+  height: 100%;
+  min-height: 0;
   background: var(--campo-bg);
   border: 1px solid var(--border-soft);
   border-radius: 3px;

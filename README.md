@@ -530,24 +530,30 @@ Dos tarjetas de la pantalla de inicio (06-09-2026). **Bibliografía** sigue
 relevante).
 
 El **Simulador** ya tiene una primera versión: representa de forma
-**esquemática** la pantalla de monitorización, sin nombrar ninguna marca. Es
-una rejilla de **filas**, y en cada fila varias **ventanas** (una por
-técnica: SEP, MEP, TOF, f-EMG…) una al lado de otra. Cada ventana tiene:
+**esquemática** la pantalla de monitorización, sin nombrar ninguna marca. Se
+organiza en **columnas**, y cada columna es una pila de **ventanas** (una por
+técnica: SEP, MEP, TOF, f-EMG…). Todas las columnas miden lo mismo de alto,
+así que una ventana sola en su columna ocupa el alto de las que haya apiladas
+al lado —por ejemplo, el **TOF a la derecha ocupando el alto de MEP Izq + MEP
+Dcho** apilados—. Cada ventana tiene:
 
-- **Vista** *Promediado (Avg)* o *Cascada*.
-- **Canales** que se escriben a mano (p. ej. `Cz'-C3'`, `L.Q`).
+- **Morfología** del trazo (PESS, PEM, TOF, EMG libre, EEG o genérico): dibuja
+  la forma parecida a la real —N9/N13/N20 y P40 en los PESS según el canal,
+  ráfaga polifásica en los PEM, tren de 4 sacudidas en el TOF, línea con
+  rachas en el EMG libre—.
+- **Vista** *Promediado (Avg)* o *Cascada* (para PESS/PEM).
+- **Canales** que se escriben a mano (p. ej. `Cz'-Fz`, `L.Q`).
 - **Parámetros de estimulación** (intensidad, frecuencia, nº pulsos, trenes,
-  ISI, duración) que aparecen en un rail a la izquierda de la ventana, y
-  **filtros/barrido** (LFF, HFF, notch, barrido). Todo se edita con el botón
-  ⚙ de cada ventana.
+  ISI, duración) en un rail a la izquierda de la ventana, y **filtros/barrido**
+  (LFF, HFF, notch, barrido). Todo se edita con el botón ⚙ de cada ventana.
 
-Las ventanas se **arrastran** por su cabecera para recolocarlas —antes o
-después de otra, o a una fila nueva arriba/abajo— y todo se reordena al
-soltar. El botón **Ejemplo: columna lumbar** monta una pantalla típica de
-tornillos/descompresión/artrodesis para empezar. Los trazos son de ejemplo
-(no hay señal real), solo para ensayar cómo queda la pantalla. Se guarda en
-**este dispositivo** (no se sincroniza), como Docencia. No toca montajes,
-casos ni catálogos.
+Las ventanas se **arrastran** por su cabecera para recolocarlas —arriba o
+abajo de otra dentro de una columna, o a una columna nueva— y todo se reordena
+al soltar. El botón **Ejemplo: columna lumbar** monta una pantalla típica de
+tornillos/descompresión/artrodesis, con los parámetros recomendados que ya
+están en **Técnicas IONM**. Los trazos son de ejemplo (no hay señal real),
+solo para ensayar cómo queda la pantalla. Se guarda en **este dispositivo**
+(no se sincroniza), como Docencia. No toca montajes, casos ni catálogos.
 
 Pendiente: un bloque nuevo **Cirugías con IONM** (qué hace cada cirugía, sus
 pasos, técnicas, momentos críticos y criterios de alarma), aún sin construir.

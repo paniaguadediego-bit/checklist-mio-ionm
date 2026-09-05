@@ -1867,6 +1867,54 @@ apaisado, como pidió-. Todo el estado en `localStorage["mio_ionm_simulador_v1"]
   ratón sintético del entorno no dispara DnD nativo; el contrato DnD es el
   estándar, así que el arrastre real del usuario sí los dispara-.
 
+**3.b — Iteración tras probarlo (mismo día, noche): columnas + morfologías +
+params reales.** El usuario probó la v1 (filas) y pidió que una ventana
+pudiera ocupar el alto de varias apiladas al lado (p. ej. TOF a la derecha
+ocupando el alto de MEP Izq + MEP Dcho). Se cambió el modelo de **filas** a
+**columnas**: `simEstado.columnas = [{ ventanas: [] }]`, el lienzo es un flex
+`row` con `align-items: stretch`, cada columna un flex `column`, y cada
+ventana `flex: 1 1 0` -así las ventanas de una columna reparten su alto y una
+ventana sola ocupa el alto de la columna más alta de al lado, que es justo el
+efecto "TOF ocupando 2 filas"-. El arrastre pasó a ser **vertical** dentro de
+la columna (mitad superior/inferior de la ventana destino) + zonas
+`.sim-zona-col` **entre columnas** para crear columna nueva
+(`simSoltarEnVentana`/`simSoltarEnColumna`). `simCargar()` convierte el
+formato viejo `filas`→`columnas` para no perder lo que hubiera. **Pendiente
+(el usuario lo dijo como "en principio"):** EEG/f-EMG como tira ancha y baja
+arriba del todo -el modelo de columnas no hace una banda a todo lo ancho;
+queda para más adelante-.
+
+- **Morfologías por trazo** (campo nuevo `morfologia` en la ventana:
+  `sep`/`mep`/`tof`/`emg`/`eeg`/`generico`, editable con un `<select>` en el
+  diálogo): `simOnda()` dibuja la forma según la morfología, no un bulto
+  genérico. SEP: picos según el canal (`simPicosSEP` -N9 si "Erb", N13 si
+  "Cv/C2", N20 si "C3/C4/CP", P40 si "Cz"-). MEP: ráfaga polifásica (tren de
+  oscilaciones con envolvente). TOF: 4 sacudidas bifásicas T1-T4. EMG libre:
+  línea casi plana con rachas -y **un canal por músculo**, como pidió-. EEG:
+  oscilación continua. `tof`/`emg`/`eeg` son **traza continua única** (ignoran
+  Avg/cascada); `sep`/`mep`/`generico` respetan la vista (Avg superpone 2,
+  cascada apila 7). Los SVG pasaron a **alto flexible** (`viewBox` fijo +
+  `preserveAspectRatio:none` + `vector-effect:non-scaling-stroke`, `height:100%`)
+  para llenar la ventana sea cual sea su alto repartido.
+- **Parámetros del ejemplo desde Técnicas IONM** (`data/tecnicas-mio.js`), a
+  petición del usuario -"ya tenemos la info ahí"-. **No se leen en crudo**:
+  ese archivo son textos con cita de fuente (p. ej. `"40 (Boaro 2026)"`), a
+  veces rangos o `estimulacion.parametros` en prosa -parsearlos a campos
+  numéricos sería frágil y sacaría las citas-. Se leyeron a mano y se fijaron
+  los valores limpios más habituales: PESS 40 mA / 4.3-4.7 Hz / dur 200-300 µs
+  / filtros 30-300 Hz / notch off / barrido implícito; PEM 5 pulsos / ISI 2 ms
+  / 0.5 ms (500 µs); EMG libre 30 Hz-10 kHz, free-run; TOF 2 Hz / tren de 4.
+  El ejemplo quedó en 5 columnas: [SEP Med Izq / SEP Tib Izq], [SEP Med Dcho /
+  SEP Tib Dcho], [MEP Izq / MEP Dcho], [TOF] (ocupa el alto de los 2 MEP),
+  [f-EMG]. **Ojo con la unidad de `duracion`**: el rail la rotula en **µs**, así
+  que los PESS van en µs (200/300), no en ms (0.2/0.3) -se vio "0.2 µs" en la
+  primera pasada y se corrigió-.
+- Verificado en el navegador (v2): ejemplo con el TOF ocupando el alto de los
+  dos MEP, morfologías reconocibles (N9/N13/N20, P40, ráfaga MEP, tren TOF,
+  EMG plano con rachas), `<select>` de morfología, y las tres formas de
+  arrastrar (arriba/abajo dentro de columna, y a columna nueva) con
+  `DragEvent` sintéticos.
+
 **4 — Pendiente, sin construir (decisión del usuario): bloque "Cirugías con
 IONM".** Una tarjeta/pantalla nueva de inicio donde se describa cada cirugía
 (ACDF, TLIF, neurinoma del acústico…): en qué consiste, pasos, técnicas a
