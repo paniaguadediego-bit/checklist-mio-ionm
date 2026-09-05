@@ -1537,7 +1537,17 @@ README.md y `data/guia.js` revisados en el mismo turno -misma nota de
 mantenimiento de siempre: si se toca el flujo, los dos a la vez, o se quedan
 obsoletos en silencio sin que nada avise-.
 
-### Retoques posteriores, 06-09-2026: título+Inicio en cada pantalla, "Crear caso" pasa a abrir el Organizador, se suspende "Material realmente usado"
+### Retoques posteriores, 06-09-2026: título+Inicio en cada pantalla, "Crear caso" (revertido después, ver aviso), se suspende "Material realmente usado"
+
+> **AVISO DE SUPERSEDED (turno posterior, ver "Crear caso vuelve a abrir la
+> ficha" más abajo, 06-09-2026):** lo que este apartado cuenta de que "Crear
+> caso" entra **directo al Organizador** ya **NO es cierto**. Se revirtió: hoy
+> "Crear caso" crea+guarda el caso vacío y abre **la ficha** (`abrirCaso`), no
+> el Organizador; y se quitó "Guardar este montaje como plantilla…" de la
+> ficha. El resto del apartado (títulos de pantalla, unificación de los dos
+> botones viejos en uno, `casoEsNuevo` que ya no se pone a `true`, la
+> suspensión de "Material realmente usado") **sigue vigente**. Se deja el
+> texto original por el razonamiento, con esta corrección arriba.
 
 Cuatro pedidos, tras usar la Fase 7 en real. De paso, el botón que llevaba
 toda su vida llamándose *"Corregir el material y el montaje"* pasa a
@@ -1628,6 +1638,31 @@ no hace falta migrar nada.
 
 README.md y `data/guia.js` revisados en el mismo turno -misma nota de
 mantenimiento de siempre-.
+
+#### "Crear caso" vuelve a abrir la ficha (reversión del apartado de arriba)
+
+Tras probarlo, el usuario pidió lo contrario de lo que se acababa de hacer:
+que "Crear caso" **no** salte al Organizador, sino que abra **la ficha del
+propio caso** (Gestión de Casos → "GESTIÓN DE CASOS / CASO 2026-XXX"). Desde
+ahí, en el apartado 5 (Montaje/Técnicas), el botón **"Editar material y
+montaje"** es el que lleva al Organizador cuando se quiere -y solo entonces
+se pisa esa pantalla, a propósito-. Cambios:
+
+- `casos-nuevo-cero` pasa de `abrirMontajeDeCaso(uid)` a **`abrirCaso(uid)`**
+  (sigue haciendo `guardarCaso(casoVacio(), true)` antes, así el caso existe
+  ya en `casos{}` y "Editar material y montaje"/"Borrar caso" se pintan desde
+  el primer momento -ver el efecto de `casoEsNuevo` arriba, que sigue vigente-).
+- **Se quitó "Guardar este montaje como plantilla…" de la ficha** (apartado
+  5): duplicaba el botón que ya vive en la barra fija del Organizador
+  (`#barra-caso-guardar-plantilla`), donde además se ve el rótulo del caso que
+  se está corrigiendo. `guardarMontajeComoPlantilla()` se simplificó a un solo
+  modo (el de edición): ya no recibe parámetro, se llama solo desde esa barra.
+  La clave i18n `caso_guardar_plantilla` sigue usándose (la usa el botón de la
+  barra), no se retiró.
+
+Es decir: el flujo del apartado superado queda **"Crear caso" → ficha →
+(opcional) "Editar material y montaje" → Organizador**, no "Crear caso →
+Organizador".
 
 ### Retoques posteriores, 06-09-2026 (tarde): el rótulo permanente se muda dentro del Organizador, "Montajes" pasa a llamarse "Plantillas de montajes", título de pantalla sin píldora
 

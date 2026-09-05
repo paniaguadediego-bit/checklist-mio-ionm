@@ -17,9 +17,11 @@ pantallas. Las tres últimas están de momento "en construcción" — ver
 Montajes**—, ajustas las entradas de las cajas pulsando o arrastrando
 material, y el **Resumen** te dice qué tienes que preparar, qué cuesta y si
 te sobran o faltan entradas y cajas. Cuando la cirugía es real, pulsas
-**Crear caso** en **Gestión de Casos**: el caso se guarda al instante y te
-lleva directo al Organizador a construir su propio montaje —a mano, o
-cargando una plantilla encima sin tocar la plantilla original—. Un rótulo
+**Crear caso** en **Gestión de Casos**: el caso se guarda al instante y se
+abre su **ficha**. Desde el apartado *Montaje/Técnicas* de la ficha, con
+**Editar material y montaje** vas al Organizador a construir su propio montaje
+—a mano, o cargando una plantilla encima sin tocar la plantilla original—. Un
+rótulo
 permanente, justo debajo de "Plantillas de montajes" (dentro del propio
 Organizador, no en las otras pantallas), dice qué plantilla tienes cargada
 o qué caso estás corrigiendo, y solo aparece cuando hay algo que mostrar.
@@ -350,14 +352,15 @@ el único sitio desde donde se abre, no hay otro acceso repetido en la
 herramienta—.
 
 **Al preparar**, pulsa **Crear caso** (06-09-2026, antes "Caso nuevo desde
-cero"). El caso se guarda al instante, vacío, y te lleva directo al
-**Organizador de Montajes** a construir su montaje: a mano —marcando
-técnicas y colocando material como siempre—, o cargando una plantilla
-encima con **Cargar montaje…** (mantiene la plantilla original intacta, es
-una copia). Es fundamental que el montaje de un caso se toque siempre desde
-aquí, no hay otro camino. El resto de la ficha —diagnóstico, anestesia,
-resultado…— se rellena cuando quieras, pulsando **Volver al caso** en el
-rótulo permanente.
+cero"). El caso se guarda al instante, vacío, y se abre su **ficha**. Para
+construir su montaje, ve al apartado *Montaje/Técnicas* y pulsa **Editar
+material y montaje**: eso te lleva al **Organizador de Montajes** con las
+cajas de ese caso, donde lo montas a mano —marcando técnicas y colocando
+material como siempre— o cargas una plantilla encima con **Cargar montaje…**
+(mantiene la plantilla original intacta, es una copia). El montaje de un caso
+se toca siempre desde ahí, no hay otro camino. El resto de la ficha
+—diagnóstico, anestesia, resultado…— se rellena cuando quieras; desde el
+Organizador se vuelve con **Volver al caso** en el rótulo permanente.
 
 Un caso marcado como **caso destacado** (punto 8, Docencia/Meta) lleva una
 ★ ámbar junto a su identificador en el propio listado, y si además tiene
@@ -385,13 +388,12 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
    monitorizado, incidencias anestésicas.
 5. **Montaje / Técnicas** — el resumen de cajas/entradas ocupadas, la
    plantilla de origen (si el caso salió de una, resuelta en vivo — si la
-   renombras después, aquí se ve el nombre nuevo), y dos botones seguidos:
-   **Editar material y montaje** (te lleva al Organizador de
-   Montajes con las cajas de este caso concreto para cambiar dónde va cada
-   cosa — desde ahí, y solo desde ahí, se puede además *cargar un montaje*
-   sobre el caso, ver más abajo) y **Guardar este montaje como plantilla…**
-   (crea una plantilla nueva a partir de lo que hay ahora mismo en el caso).
-   Justo debajo, el **detalle canal a canal**: la misma vista de "Cajas
+   renombras después, aquí se ve el nombre nuevo), y el botón **Editar
+   material y montaje** (te lleva al Organizador de Montajes con las cajas de
+   este caso concreto para cambiar dónde va cada cosa — desde ahí, y solo
+   desde ahí, se puede además *cargar un montaje* sobre el caso o *guardar el
+   montaje del caso como plantilla nueva*, en la barra fija de corrección,
+   ver más abajo). Justo debajo, el **detalle canal a canal**: la misma vista de "Cajas
    necesarias" que hay en Resumen, de solo lectura, para saber exactamente
    qué hay puesto en cada entrada sin salir a corregir el montaje. Debajo de
    eso, **técnicas realizadas** y **material (montaje base)** —los dos,
@@ -438,14 +440,16 @@ a la izquierda (abre un PDF imprimible de ese caso, ver más abajo), y
 **Volver a la lista** y **Guardar** a la derecha — *Volver a la lista* solo
 navega, nunca guarda ni cambia el estado.
 
-**Editar material y montaje de un caso ya guardado**: el botón vive en el propio
-apartado 5 (Montaje/Técnicas), junto al de plantillas — abre las cajas de
-ese caso concreto para cambiar dónde va cada cosa, un cambio de última hora
-o un error al preparar. Se guarda en el caso, no toca el montaje del que
-salió. Mientras tanto, el rótulo permanente de arriba pasa a verde sólido y
-recuerda en qué caso estás, con tres botones a mano sin tener que volver a
-la ficha: **Cargar montaje…**, **Guardar este montaje como plantilla…** y
-**Volver al caso**.
+**Editar material y montaje de un caso ya guardado**: el botón vive en el
+propio apartado 5 (Montaje/Técnicas) — abre las cajas de ese caso concreto
+para cambiar dónde va cada cosa, un cambio de última hora o un error al
+preparar. Se guarda en el caso, no toca el montaje del que salió. Mientras
+tanto, el rótulo permanente de arriba pasa a verde sólido y recuerda en qué
+caso estás, con tres botones a mano sin tener que volver a la ficha:
+**Cargar montaje…**, **Guardar este montaje como plantilla…** y **Volver al
+caso**. Esos dos primeros (cargar / guardar plantilla) **solo** están aquí,
+en la barra fija — ya no en la ficha —, porque es donde de verdad se ve y se
+edita el montaje.
 
 **Cargar un montaje sobre un caso ya creado**: solo se puede hacer desde
 ahí —la barra fija de "Corrigiendo el material del caso", botón **Cargar
@@ -457,10 +461,11 @@ ninguna entrada que ya tuviera material). Es una copia: editar el montaje
 después no cambia nada de lo ya aplicado. Si el caso está cerrado o
 cancelado, pide una confirmación aparte antes de seguir.
 
-**Guardar el montaje de un caso como plantilla**: mismo apartado, crea
-siempre una plantilla nueva —nunca sobrescribe una existente— a partir de
-lo que hay ahora mismo en las cajas de ese caso. Disponible tenga el caso el
-estado que tenga; el caso en sí no se modifica.
+**Guardar el montaje de un caso como plantilla**: desde la misma barra fija
+de corrección (botón **Guardar este montaje como plantilla…**), crea siempre
+una plantilla nueva —nunca sobrescribe una existente— a partir de lo que hay
+ahora mismo en las cajas de ese caso. Disponible tenga el caso el estado que
+tenga; el caso en sí no se modifica.
 
 **Un caso preparado en el ordenador se cierra en el móvil**, o al revés: los
 casos viajan por la misma sincronización que el resto, cada uno en su propio
@@ -480,10 +485,10 @@ muestra cuántos casos cancelados hay en total.
 ### Casos de días pasados y correcciones
 
 - **Para registrar una cirugía que nunca pasó por el checklist**: pulsa
-  **Crear caso** igual que siempre, y en el Organizador de Montajes no
-  coloques nada —vuelve directo a la ficha con **Volver al caso**—. Rellena
-  lo que sepas y pon el **Estado** en *Cerrado* a mano (ya no hay un botón
-  aparte que lo haga por ti, ni un caso nace cerrado solo).
+  **Crear caso** igual que siempre y trabaja solo en la ficha —no hace falta
+  entrar al Organizador ni montar nada—. Rellena lo que sepas y pon el
+  **Estado** en *Cerrado* a mano (ya no hay un botón aparte que lo haga por
+  ti, ni un caso nace cerrado solo).
 - **La fecha se puede cambiar siempre**, también en un caso ya cerrado hace
   meses. Es la fecha de la cirugía y es la que cuenta para las estadísticas.
 - La herramienta guarda por su cuenta *cuándo se creó el archivo* y *cuándo lo

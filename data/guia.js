@@ -58,7 +58,7 @@ window.GUIA = {
   acordeon: [
     {
       titulo: "Plantilla y caso: cuándo usar cada una",
-      html: "<p>Usa una <b>plantilla</b> (un montaje de la biblioteca) mientras preparas o practicas: la editas, la duplicas, la reordenas sin ningún riesgo, porque no representa ninguna cirugía real todavía.</p><p>Crea un <b>caso</b> cuando la cirugía va a pasar o ya pasó de verdad, con <b>Crear caso</b> en Gestión de Casos. Te lleva directo al Organizador de Montajes a construir su montaje -a mano, o cargando una plantilla encima-. A partir de ahí es un registro clínico: cargar una plantilla sobre él siempre es una copia de su contenido, nunca un enlace — si luego cambias la plantilla, el caso ya guardado no se entera.</p>"
+      html: "<p>Usa una <b>plantilla</b> (un montaje de la biblioteca) mientras preparas o practicas: la editas, la duplicas, la reordenas sin ningún riesgo, porque no representa ninguna cirugía real todavía.</p><p>Crea un <b>caso</b> cuando la cirugía va a pasar o ya pasó de verdad, con <b>Crear caso</b> en Gestión de Casos. Se abre su <b>ficha</b>; para construir su montaje, en el apartado 5 (Montaje/Técnicas) pulsa <b>Editar material y montaje</b>, que te lleva al Organizador -a mano, o cargando una plantilla encima-. A partir de ahí es un registro clínico: cargar una plantilla sobre él siempre es una copia de su contenido, nunca un enlace — si luego cambias la plantilla, el caso ya guardado no se entera.</p>"
     },
     {
       titulo: "Preparar un montaje desde cero",
@@ -78,7 +78,7 @@ window.GUIA = {
     },
     {
       titulo: "Guardar el montaje de un caso como plantilla",
-      html: "<p>Mismo apartado 5 de la ficha, botón <b>Guardar este montaje como plantilla…</b>. Crea siempre una plantilla <b>nueva</b> a partir de lo que hay ahora mismo en las cajas de ese caso -nunca sobrescribe una existente-.</p><p>Disponible en cualquier momento, tenga el caso el estado que tenga. El caso en sí no se modifica en absoluto.</p>"
+      html: "<p>Desde <b>Corrigiendo el material del caso</b> (botón <b>Editar material y montaje</b> del apartado 5), en la barra fija de arriba, botón <b>Guardar este montaje como plantilla…</b> -ya no está en la ficha-. Crea siempre una plantilla <b>nueva</b> a partir de lo que hay ahora mismo en las cajas de ese caso -nunca sobrescribe una existente-.</p><p>Disponible en cualquier momento, tenga el caso el estado que tenga. El caso en sí no se modifica en absoluto.</p>"
     },
     {
       titulo: "Registrar un caso y cerrarlo: los 8 apartados",
