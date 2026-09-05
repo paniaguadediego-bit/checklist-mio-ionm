@@ -3177,16 +3177,23 @@
         var sr = seccionUmbralRaicesInforme(doc, c);
         if (sr) art.appendChild(sr);
       }
-      if (sec) art.appendChild(sec);
       if (g === "montaje") {
+        // Mismo orden que CAMPOS_CASO/la ficha en pantalla (06-09-2026):
+        // técnicas realizadas, cómo se hizo cada una, notas de
+        // montaje/técnicas -"sec" trae justo ese único campo, es el único
+        // que no está en CAMPOS_APARTE-, material previsto y real, el coste
+        // justo debajo del material, e imágenes al final.
         [
           seccionTecnicasInforme(doc, c),
           seccionParametrosInforme(doc, c),
+          sec,
           seccionMaterialInforme(doc, T("caso_material_previsto"), c.material_previsto),
           seccionMaterialInforme(doc, T("caso_material_real"), c.material_real),
           seccionCosteInforme(doc, c),
           seccionImagenesInforme(doc, c)
         ].filter(Boolean).forEach(function (s) { art.appendChild(s); });
+      } else if (sec) {
+        art.appendChild(sec);
       }
     });
     return art;
@@ -4383,9 +4390,29 @@
     { g: "anestesia", c: "tof_monitorizado", t: "sel", o: "sino" },
     { g: "anestesia", c: "incidencias_anestesicas", t: "area" },
 
-    // 5. Montaje / Técnicas
+    // 5. Montaje / Técnicas. Orden pedido por Pani (06-09-2026, tras ver el
+    // bloque de coste en real): técnicas realizadas, cómo se hizo cada una,
+    // notas sueltas, material previsto y el coste justo debajo -antes el
+    // coste vivía arriba del todo, pegado a "Cajas necesarias", sin relación
+    // visual con el material al que se refiere-.
     { g: "montaje", c: "tecnicas_realizadas", t: "tecnicas", ay: "caso_tecnicas_ay" },
+    // Pedido por Pani, 05-09-2026: para cada técnica ya marcada como
+    // realizada, poder anotar cómo se hizo de verdad en este caso concreto
+    // -intensidad, frecuencia, nº pulsos, trenes, ISI, filtros, promediado,
+    // barrido-. Va después de "tecnicas_realizadas" en la lista de campos
+    // por el mismo motivo que tecnicas_alteradas: depende de esa lista via
+    // oyentesTecnicasRealizadas, así que tiene que construirse después.
+    { g: "montaje", c: "tecnicas_parametros", t: "tecnicas_parametros", ay: "caso_tecnicas_parametros_ay" },
+    // Absorbe lo que antes era "Pares craneales monitorizados": ya no tiene
+    // campo propio, va aquí como una nota más de montaje.
+    { g: "montaje", c: "notas_montaje_tecnicas", t: "area" },
     { g: "montaje", c: "material_previsto", t: "material_ro", ay: "caso_material_previsto_ay" },
+    // "Coste del material" se cuelga justo después de material_previsto
+    // desde dentro del propio bucle de renderFichaCaso() -no es un campo de
+    // CAMPOS_CASO porque no hay nada que guardar, es una vista en vivo con
+    // calcularCoste(), igual que "Cajas necesarias"-. Buscar
+    // "def.c === \"material_previsto\"" en renderFichaCaso().
+    //
     // "Material realmente usado" suspendido a petición del usuario
     // (06-09-2026): con el montaje del caso editándose siempre en el
     // Organizador (ver "Crear caso"), lo que de verdad se usó ya es el
@@ -4396,16 +4423,6 @@
     // por los casos reales antiguos que ya lo tenían relleno -no se borra
     // nada, solo se deja de mostrar aquí-.
     // { g: "montaje", c: "material_real", t: "material", ay: "caso_material_real_ay" },
-    // Absorbe lo que antes era "Pares craneales monitorizados": ya no tiene
-    // campo propio, va aquí como una nota más de montaje.
-    { g: "montaje", c: "notas_montaje_tecnicas", t: "area" },
-    // Pedido por Pani, 05-09-2026: para cada técnica ya marcada como
-    // realizada, poder anotar cómo se hizo de verdad en este caso concreto
-    // -intensidad, frecuencia, nº pulsos, trenes, ISI, filtros, promediado,
-    // barrido-. Va después de "tecnicas_realizadas" en la lista de campos
-    // por el mismo motivo que tecnicas_alteradas: depende de esa lista via
-    // oyentesTecnicasRealizadas, así que tiene que construirse después.
-    { g: "montaje", c: "tecnicas_parametros", t: "tecnicas_parametros", ay: "caso_tecnicas_parametros_ay" },
     // Pedido por Pani, 05-09-2026: fotos de cómo quedó el montaje en el
     // software del equipo (p. ej. la pantalla del Inomed), para poder
     // consultarlas en un caso futuro parecido. Van dentro del propio caso
@@ -5096,19 +5113,6 @@
             contDetalle.appendChild(bloque);
           });
           cont.appendChild(contDetalle);
-
-          // Coste del material (pedido por Pani, 06-09-2026): el mismo
-          // bloque que ya existe en Resumen -bloqueCoste(), con su tabla de
-          // líneas, el total, la nota de qué material reutilizable no
-          // cuenta y qué tipos no tienen precio puesto todavía-, aquí de
-          // solo lectura para que se vea al revisar el caso. Reutiliza
-          // resDetalle (ya calculado arriba con calcularResumen() para las
-          // cajas) en vez de volver a montarlo: es el mismo montaje, así
-          // que calcularCoste() sobre él da exactamente el mismo coste que
-          // vería el usuario si abriera este montaje ahora mismo en el
-          // Organizador -precios de hoy, no los que hubiera cuando se
-          // guardó el caso-.
-          cont.appendChild(bloqueCoste(calcularCoste(resDetalle)));
         }
 
         // Editar material y montaje (antes "Corregir el material y el
@@ -5163,6 +5167,21 @@
           : def.c === "tipo_alerta" ? tipoAlertaDe(c)
           : c[def.c];
         cont.appendChild(campoCaso(def, valor));
+        // Coste del material (pedido por Pani, 06-09-2026), justo debajo de
+        // "Material (montaje base)": el mismo bloque que ya existe en
+        // Resumen -bloqueCoste(), con su tabla de líneas, el total, la nota
+        // de qué material reutilizable no cuenta y qué tipos no tienen
+        // precio puesto todavía-, aquí de solo lectura. Reutiliza resDetalle
+        // (calculado más arriba en este mismo render, con calcularResumen()
+        // para "Cajas necesarias") en vez de volver a montarlo: es el mismo
+        // montaje, así que calcularCoste() sobre él da exactamente el mismo
+        // coste que vería el usuario si abriera este montaje ahora mismo en
+        // el Organizador -precios de hoy, no los que hubiera cuando se
+        // guardó el caso-. Sin montaje (resDetalle sin definir) no hay nada
+        // que costear.
+        if (def.c === "material_previsto" && resDetalle) {
+          cont.appendChild(bloqueCoste(calcularCoste(resDetalle)));
+        }
       });
     });
 

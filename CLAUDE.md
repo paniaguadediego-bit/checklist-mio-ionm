@@ -2034,6 +2034,40 @@ Tres pedidos independientes en el mismo turno.
   ajustes para que solo falte el título definitivo y los canales. "+
   Ventana" se queda como comodín en blanco para cualquier otro tipo.
 
+### Retoques posteriores, 06-09-2026: orden del apartado 5 y el coste justo bajo el material
+
+Tras ver el bloque de "Coste del material" ya en real (pantalla y móvil), la
+usuaria pidió reordenar el apartado 5 (Montaje/Técnicas) de la ficha:
+
+- **Antes**: Técnicas realizadas → Material (montaje base) → Notas de
+  Montaje/Técnicas → Cómo se realizó cada técnica → Imágenes. El coste vivía
+  aparte, pegado a "Cajas necesarias" arriba del todo, sin relación visual
+  con el material al que se refiere.
+- **Ahora**: Técnicas realizadas → Cómo se realizó cada técnica → Notas de
+  Montaje/Técnicas → Material (montaje base) → **Coste del material** →
+  Imágenes. Solo se reordenaron las entradas `g: "montaje"` de
+  `CAMPOS_CASO` (`app.js`) -mismo array, mismos campos, ningún dato del
+  caso cambia de sitio ni de formato-. El bloque de coste
+  (`bloqueCoste(calcularCoste(resDetalle))`) se sacó del bloque especial de
+  cabecera del grupo y se cuelga ahora dentro del propio bucle genérico que
+  pinta `CAMPOS_CASO`, justo cuando `def.c === "material_previsto"` -sigue
+  reutilizando `resDetalle` (calculado una vez, arriba, para "Cajas
+  necesarias"), no se recalcula dos veces-.
+- **`construirInformeCaso()` (el PDF) tenía ya un desorden conocido y sin
+  resolver** desde el 05-09-2026 (ver más arriba, "el grupo 'montaje' tiene
+  el mismo problema en potencia"): `notas_montaje_tecnicas` se insertaba
+  siempre ANTES que técnicas/parámetros/material, aunque en `CAMPOS_CASO` ya
+  iba en medio de esos campos. Se aprovechó este mismo turno para
+  resolverlo de una vez -coincide exactamente con lo que había que arreglar
+  para el coste-: ahora el PDF sigue el mismo orden que la ficha (técnicas →
+  parámetros → notas → material previsto → material real -legado, ya no se
+  edita desde la ficha- → coste → imágenes), construido explícitamente en
+  ese orden en vez de con el `filas`/`sec` genérico insertado antes del
+  bloque especial.
+- Verificado en el navegador: la ficha muestra el orden nuevo tal cual, y el
+  HTML del informe (interceptando `window.open()` con un iframe oculto,
+  mismo truco de siempre) trae los `<h3>` en el orden esperado.
+
 ## Google Sheet (Apps Script)
 
 `apps-script/Codigo.gs` es un script de Google Apps independiente: no forma
