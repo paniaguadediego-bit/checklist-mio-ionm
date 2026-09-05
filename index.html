@@ -17,7 +17,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260906">
+<link rel="stylesheet" href="style.css?v=20260906c">
 </head>
 <body>
 
@@ -84,6 +84,11 @@
 </div>
 
 <main class="pantalla" id="pantalla-organizador">
+
+  <div class="pantalla-cab">
+    <h2 data-i18n="tile_organizador"></h2>
+    <button type="button" class="btn-pantalla-inicio" data-i18n="btn_inicio_pantalla" data-i18n-title="logo_inicio_tit"></button>
+  </div>
 
   <!--
     El banco de trabajo es único -Técnicas, Catálogo, Cajas, Resumen-, siempre
@@ -385,12 +390,13 @@
      arriba. Ya no lleva botón "Cerrar": el logo es el único camino de
      vuelta al inicio. -->
 <div class="pantalla" id="pantalla-casos">
-  <h2 data-i18n="tile_casos"></h2>
+  <div class="pantalla-cab">
+    <h2 data-i18n="tile_casos"></h2>
+    <button type="button" class="btn-pantalla-inicio" data-i18n="btn_inicio_pantalla" data-i18n-title="logo_inicio_tit"></button>
+  </div>
 
   <div class="casos-acciones">
-    <button type="button" id="casos-guardar-montaje" class="primario" data-i18n="casos_guardar_montaje"></button>
-    <small data-i18n="casos_guardar_ay"></small>
-    <button type="button" id="casos-nuevo-cero" data-i18n="casos_nuevo_cero"></button>
+    <button type="button" id="casos-nuevo-cero" class="primario" data-i18n="casos_nuevo_cero"></button>
     <small data-i18n="casos_nuevo_cero_ay"></small>
   </div>
 
@@ -523,7 +529,10 @@
 <!-- Fase 7 (06-09-2026): pasa de <dialog> a pantalla propia, mismo contenido.
      Sin botón "Cerrar" -el logo es el único camino de vuelta al inicio-. -->
 <div class="pantalla" id="pantalla-tecnicas-mio">
-  <h2 data-i18n="tile_tecnicas"></h2>
+  <div class="pantalla-cab">
+    <h2 data-i18n="tile_tecnicas"></h2>
+    <button type="button" class="btn-pantalla-inicio" data-i18n="btn_inicio_pantalla" data-i18n-title="logo_inicio_tit"></button>
+  </div>
   <p class="dlg-intro" id="tecmio-aviso-en" hidden data-i18n="tecnicas_mio_aviso_en"></p>
   <p class="dlg-intro" data-i18n="tecnicas_mio_intro"></p>
   <input type="search" id="tecmio-buscar" data-i18n-ph="tecmio_buscar_ph" autocomplete="off">
@@ -538,7 +547,10 @@
      vez de crear un set de contenido aparte -decisión ya tomada con la
      usuaria, pendiente de implementar-. -->
 <div class="pantalla" id="pantalla-docente">
-  <h2 data-i18n="tile_docencia"></h2>
+  <div class="pantalla-cab">
+    <h2 data-i18n="tile_docencia"></h2>
+    <button type="button" class="btn-pantalla-inicio" data-i18n="btn_inicio_pantalla" data-i18n-title="logo_inicio_tit"></button>
+  </div>
 
   <div class="pestanas" id="docente-pestanas">
     <button type="button" class="pestana activa" data-pane="miotomas" data-i18n="docente_tab_miotomas"></button>
@@ -622,12 +634,18 @@
      la usuaria: solo la estructura de navegación en esta pasada, el
      contenido real de cada una va en un turno aparte-. -->
 <div class="pantalla" id="pantalla-simulador">
-  <h2 data-i18n="tile_simulador"></h2>
+  <div class="pantalla-cab">
+    <h2 data-i18n="tile_simulador"></h2>
+    <button type="button" class="btn-pantalla-inicio" data-i18n="btn_inicio_pantalla" data-i18n-title="logo_inicio_tit"></button>
+  </div>
   <p data-i18n="en_construccion"></p>
 </div>
 
 <div class="pantalla" id="pantalla-bibliografia">
-  <h2 data-i18n="tile_bibliografia"></h2>
+  <div class="pantalla-cab">
+    <h2 data-i18n="tile_bibliografia"></h2>
+    <button type="button" class="btn-pantalla-inicio" data-i18n="btn_inicio_pantalla" data-i18n-title="logo_inicio_tit"></button>
+  </div>
   <p data-i18n="en_construccion"></p>
 </div>
 
@@ -667,10 +685,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260906"></script>
-<script src="data/i18n-en.js?v=20260906"></script>
-<script src="data/guia.js?v=20260906"></script>
-<script src="data/tecnicas-mio.js?v=20260906"></script>
-<script src="app.js?v=20260906"></script>
+<script src="data/surgeries.js?v=20260906c"></script>
+<script src="data/i18n-en.js?v=20260906c"></script>
+<script src="data/guia.js?v=20260906c"></script>
+<script src="data/tecnicas-mio.js?v=20260906c"></script>
+<script src="app.js?v=20260906c"></script>
 </body>
 </html>

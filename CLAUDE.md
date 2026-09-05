@@ -928,7 +928,8 @@ este proyecto, no una casualidad.
 - El rótulo permanente en modo plantilla pasó de texto gris suelto a fondo
   `--accent-soft` y nombre en `--accent`, negrita: pedido explícito de que
   el montaje activo se vea bien a simple vista.
-- *Corregir el material y el montaje* se movió de "al final de la ficha,
+- *Corregir el material y el montaje* (renombrado *Editar material y
+  montaje* el 06-09-2026, ver más abajo) se movió de "al final de la ficha,
   fuera de los 8 apartados" al apartado 5 (Montaje/Técnicas), como primera
   de las tres acciones: era la queja real -"no veo dónde tengo colocado
   cada cosa, solo técnicas y material"-, y el botón vivía lejos de donde se
@@ -1535,6 +1536,98 @@ cada salto, no solo mirando capturas de pantalla.
 README.md y `data/guia.js` revisados en el mismo turno -misma nota de
 mantenimiento de siempre: si se toca el flujo, los dos a la vez, o se quedan
 obsoletos en silencio sin que nada avise-.
+
+### Retoques posteriores, 06-09-2026: título+Inicio en cada pantalla, "Crear caso" pasa a abrir el Organizador, se suspende "Material realmente usado"
+
+Cuatro pedidos, tras usar la Fase 7 en real. De paso, el botón que llevaba
+toda su vida llamándose *"Corregir el material y el montaje"* pasa a
+llamarse **"Editar material y montaje"** (clave `caso_editar_montaje`) —
+mismo botón, misma función, solo el texto cambia.
+
+**Cada pantalla lleva ahora un `<div class="pantalla-cab">` con su título y
+un botón "Inicio"** a la derecha (mismo destino que el logo,
+`irAPantalla("inicio")`, un solo listener delegado sobre
+`.btn-pantalla-inicio` para las 6 pantallas). Organizador de Montajes no
+tenía título propio -era el único de los 6 sin uno-, así que ganó el suyo
+(`<h2 data-i18n="tile_organizador">`) igual que el resto. Mismo look de
+píldora que `.card h2`, para que las 6 pantallas se sientan consistentes.
+
+**Cambio de modelo importante: "Crear caso" ahora crea y guarda el caso al
+instante, vacío, y entra directo en el Organizador de Montajes editando su
+montaje.** Antes había dos botones en Gestión de Casos:
+
+- **"Guardar este montaje como caso"** -tomaba lo que hubiera en el banco
+  de trabajo (`escenarioActual()`, sin relación necesaria con el caso nuevo)
+  y montaba un caso a partir de su resumen ya calculado.
+- **"Caso nuevo desde cero"** -abría la ficha vacía directamente
+  (`abrirCasoNuevo()`), pensada para cirugías retrospectivas: nacía ya
+  `cerrado` y sin montaje.
+
+El usuario pidió unificarlos: **"Guardar este montaje como caso" pierde su
+sentido** (un caso nuevo debe construir SU PROPIO montaje, no heredar lo que
+hubiera suelto en el banco de trabajo) y **"Caso nuevo desde cero" pasa a
+llamarse simplemente "Crear caso"**, con un comportamiento nuevo. El
+problema real que esto resuelve: `abrirMontajeDeCaso(uid)` -la función que
+lleva a "Editar material y montaje"- necesita `casos[uid]` ya
+existente (`if (!caso) return;`), así que para un caso recién creado y sin
+guardar **ese botón ni siquiera se pintaba** en la ficha
+(`if (!casoEsNuevo) { ... }` en `renderFichaCaso()`, ~línea 5046). Un caso
+nuevo solo tenía a mano "Guardar este montaje como plantilla…" -que tampoco
+tiene nada que ver con el caso que se está creando-. Era, literalmente, el
+flujo sin sentido que describió el usuario.
+
+**Solución**: el nuevo listener de `casos-nuevo-cero` hace
+`guardarCaso(casoVacio(), true)` **antes** de `abrirMontajeDeCaso(uid)` -el
+caso existe en `casos{}` desde el primer instante, no solo tras el primer
+"Guardar" de la ficha-. A partir de ahí el usuario construye el montaje a
+mano o carga una plantilla encima (mismo `barra-caso-cargar-plantilla` de
+siempre, copia, nunca enlace vivo) directamente en el Organizador, y rellena
+el resto de la ficha cuando quiera con "Volver al caso". Se retiraron por
+completo `abrirCasoNuevo()` y `casoDesdeEscenario()` -sin más llamadas tras
+este cambio, verificado por grep antes de borrarlas- y el botón/HTML de
+"Guardar este montaje como caso" (`casos-guardar-montaje`,
+`casos_guardar_montaje`/`casos_guardar_ay` en `TEXTOS`).
+
+**Efecto colateral, consciente y no pedido explícitamente pero implícito en
+la unificación**: `casoEsNuevo` ya no se pone nunca a `true` -su único punto
+de asignación era `abrirCasoNuevo()`, ahora borrado-, así que
+`if (!casoEsNuevo)` en `renderFichaCaso()` pasa a cumplirse siempre y
+"Editar material y montaje" **se pinta siempre** que se abre un
+caso, y `caso-borrar.hidden = casoEsNuevo` deja "Borrar caso" **siempre
+visible** -correcto, porque con el flujo nuevo cualquier caso que llegue a
+la ficha ya existe de verdad en `casos{}`-. No hizo falta tocar ninguno de
+los dos condicionales para conseguir esto, solo dejó de haber ninguna
+llamada que pusiera `casoEsNuevo` a `true`.
+
+**Se perdió, sin que se pidiera conservarlo, el matiz retrospectivo** de
+"Caso nuevo desde cero" (nacía `cerrado` y sin montaje, para cirugías que
+nunca pasaron por el checklist). Con el flujo unificado sigue siendo
+perfectamente posible -"Crear caso", no colocar nada en el Organizador,
+"Volver al caso", rellenar y poner **Estado → Cerrado** a mano-, pero ya no
+hay un atajo que lo haga por defecto. Coherente con la norma ya existente
+desde el 03-09-2026 de que cerrar un caso es cambiar el campo Estado, sin
+botón aparte.
+
+**"Material realmente usado" (`material_real`), suspendido en la ficha**:
+razón dada por el usuario, "no es viable" -en la práctica, con el montaje
+del caso editándose siempre en el Organizador, lo que de verdad se usó ya
+ES el montaje real; una copia editable aparte para anotar desviaciones
+quedaba redundante y confusa-. Se comentó la línea de `CAMPOS_CASO`
+(`{ g: "montaje", c: "material_real", ... }`, dejada in situ pero comentada,
+con la razón por escrito) en vez de borrar el campo del modelo: `casoVacio()`
+sigue inicializándolo, `volcarMontajeEnCaso()` lo sigue sincronizando con
+`material_previsto` en segundo plano, y `seccionMaterialInforme()` del
+informe en PDF lo sigue leyendo -por los casos reales antiguos que ya
+tenían una divergencia real anotada ahí antes de este cambio, que no debe
+perderse-. Para cualquier caso nuevo a partir de ahora, `material_real`
+quedará simplemente idéntico a `material_previsto` para siempre -inofensivo,
+solo redundante en el informe si algún día alguien vuelve a mirarlo-. Si se
+quiere quitar también de ahí, o volver a activar el campo en la ficha, es
+un cambio de una línea (descomentar/comentar esa entrada de `CAMPOS_CASO`),
+no hace falta migrar nada.
+
+README.md y `data/guia.js` revisados en el mismo turno -misma nota de
+mantenimiento de siempre-.
 
 ## Google Sheet (Apps Script)
 

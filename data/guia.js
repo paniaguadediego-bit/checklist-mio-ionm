@@ -47,7 +47,7 @@ window.GUIA = {
     },
     {
       titulo: "Pantalla de inicio",
-      texto: "El logo lleva siempre aquí: 6 tarjetas (Organizador de Montajes, Gestión de Casos, Técnicas IONM, Docencia, Simulador, Bibliografía), cada una su propia pantalla. Se trabaja solo dentro de la que elijas; el logo es el único camino de vuelta."
+      texto: "El logo lleva siempre aquí: 6 tarjetas (Organizador de Montajes, Gestión de Casos, Técnicas IONM, Docencia, Simulador, Bibliografía), cada una su propia pantalla. Se trabaja solo dentro de la que elijas; el logo, o el botón Inicio junto al título de cada pantalla, te devuelven aquí."
     }
   ],
 
@@ -58,7 +58,7 @@ window.GUIA = {
   acordeon: [
     {
       titulo: "Plantilla y caso: cuándo usar cada una",
-      html: "<p>Usa una <b>plantilla</b> (un montaje de la biblioteca) mientras preparas o practicas: la editas, la duplicas, la reordenas sin ningún riesgo, porque no representa ninguna cirugía real todavía.</p><p>Crea un <b>caso</b> cuando la cirugía va a pasar o ya pasó de verdad. Un caso puede nacer de una plantilla (\"Guardar este montaje como caso\", con todo el material ya calculado) o registrarse a mano. A partir de ahí es un registro clínico: aplicar una plantilla sobre él siempre es una copia de su contenido, nunca un enlace — si luego cambias la plantilla, el caso ya guardado no se entera.</p>"
+      html: "<p>Usa una <b>plantilla</b> (un montaje de la biblioteca) mientras preparas o practicas: la editas, la duplicas, la reordenas sin ningún riesgo, porque no representa ninguna cirugía real todavía.</p><p>Crea un <b>caso</b> cuando la cirugía va a pasar o ya pasó de verdad, con <b>Crear caso</b> en Gestión de Casos. Te lleva directo al Organizador de Montajes a construir su montaje -a mano, o cargando una plantilla encima-. A partir de ahí es un registro clínico: cargar una plantilla sobre él siempre es una copia de su contenido, nunca un enlace — si luego cambias la plantilla, el caso ya guardado no se entera.</p>"
     },
     {
       titulo: "Preparar un montaje desde cero",
@@ -74,7 +74,7 @@ window.GUIA = {
     },
     {
       titulo: "Cargar un montaje sobre un caso ya creado",
-      html: "<p>Solo se puede hacer desde <b>Corrigiendo el material del caso</b> -el botón <b>Corregir el material y el montaje</b> del apartado 5 te lleva ahí-, en la barra fija de arriba, botón <b>Cargar montaje…</b>. No está en la ficha del caso, a propósito: desde ahí no se sabe si lo que se va a sustituir se puede editar de verdad.</p><p>Elige un montaje y <b>siempre</b> te pregunta antes de tocar nada -también con el caso vacío-, diciendo en números qué va a pasar: cuántas entradas se sobrescriben, o cuántas vacías se rellenan y cuántas se conservan. Puedes <b>Reemplazar todo</b> o <b>Añadir solo lo que falta</b> -esta segunda opción no toca ninguna entrada que ya tuviera material-.</p><p>Es una copia: cargar un montaje no crea ningún enlace con él. Si el caso está cerrado o cancelado, pide una confirmación aparte antes de seguir.</p>"
+      html: "<p>Solo se puede hacer desde <b>Corrigiendo el material del caso</b> -el botón <b>Editar material y montaje</b> del apartado 5 te lleva ahí-, en la barra fija de arriba, botón <b>Cargar montaje…</b>. No está en la ficha del caso, a propósito: desde ahí no se sabe si lo que se va a sustituir se puede editar de verdad.</p><p>Elige un montaje y <b>siempre</b> te pregunta antes de tocar nada -también con el caso vacío-, diciendo en números qué va a pasar: cuántas entradas se sobrescriben, o cuántas vacías se rellenan y cuántas se conservan. Puedes <b>Reemplazar todo</b> o <b>Añadir solo lo que falta</b> -esta segunda opción no toca ninguna entrada que ya tuviera material-.</p><p>Es una copia: cargar un montaje no crea ningún enlace con él. Si el caso está cerrado o cancelado, pide una confirmación aparte antes de seguir.</p>"
     },
     {
       titulo: "Guardar el montaje de un caso como plantilla",
@@ -82,7 +82,7 @@ window.GUIA = {
     },
     {
       titulo: "Registrar un caso y cerrarlo: los 8 apartados",
-      html: "<p>Desde <b>Gestión de casos</b>, la ficha se organiza en 8 apartados plegables, todos cerrados por defecto -se abre el que interese, no hace falta rellenar de arriba abajo-: Identificación/Trazabilidad, Paciente, Cirugía, Anestesia, Montaje/Técnicas, Desarrollo intraoperatorio, Resultado/Correlación clínica, y Docencia/Meta.</p><p>El <b>Estado</b> (apartado 1) puede ser Preparado, Cerrado o Cancelado. Un caso cancelado pide un motivo, y en el Google Sheet solo cuenta para trazabilidad y paciente -no entra en las estadísticas de técnicas ni de material, porque no llegó a monitorizarse de verdad-.</p><p>El apartado 5 (Montaje/Técnicas) muestra también el <b>detalle canal a canal</b> -qué hay puesto en cada entrada de cada caja, con el mismo aspecto que la ventana Resumen-, de solo lectura: para corregirlo hace falta el botón <b>Corregir el material y el montaje</b> del mismo apartado.</p>"
+      html: "<p>Desde <b>Gestión de casos</b>, la ficha se organiza en 8 apartados plegables, todos cerrados por defecto -se abre el que interese, no hace falta rellenar de arriba abajo-: Identificación/Trazabilidad, Paciente, Cirugía, Anestesia, Montaje/Técnicas, Desarrollo intraoperatorio, Resultado/Correlación clínica, y Docencia/Meta.</p><p>El <b>Estado</b> (apartado 1) puede ser Preparado, Cerrado o Cancelado. Un caso cancelado pide un motivo, y en el Google Sheet solo cuenta para trazabilidad y paciente -no entra en las estadísticas de técnicas ni de material, porque no llegó a monitorizarse de verdad-.</p><p>El apartado 5 (Montaje/Técnicas) muestra también el <b>detalle canal a canal</b> -qué hay puesto en cada entrada de cada caja, con el mismo aspecto que la ventana Resumen-, de solo lectura: para corregirlo hace falta el botón <b>Editar material y montaje</b>, que te lleva al Organizador de Montajes. El material que se ve aquí sale siempre del montaje real del caso -no hay una copia editable aparte-: si añades algo que no estaba previsto, colócalo en su caja y anótalo en las notas de montaje/técnicas.</p>"
     },
     {
       titulo: "Material extra, sondas y conmutador",

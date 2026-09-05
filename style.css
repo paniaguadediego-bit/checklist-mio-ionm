@@ -183,6 +183,43 @@ main {
   padding: 0.7rem 0.8rem 2rem;
 }
 
+/* Cabecera de cada pantalla: título + botón "Inicio" a su derecha -pedido
+   del usuario el 06-09-2026, para volver al inicio sin tener que ir hasta
+   el logo de la cabecera-. Mismo look de píldora que .card h2, para que las
+   6 pantallas se sientan consistentes entre sí. */
+.pantalla-cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.8rem;
+}
+.pantalla-cab h2 {
+  margin: 0;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  font-weight: 700;
+  background: var(--accent-soft);
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  display: inline-block;
+}
+.btn-pantalla-inicio {
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  border-radius: var(--r);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-pantalla-inicio:hover { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+
 .inicio-tiles {
   display: grid;
   grid-template-columns: 1fr 1fr;

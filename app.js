@@ -291,12 +291,9 @@
     btn_casos:           { es: "Gestión de casos", en: "Case management" },
     btn_casos_tit:       { es: "Registrar y consultar casos", en: "Record and review cases" },
     dlg_casos_titulo:    { es: "Gestión de casos", en: "Case management" },
-    casos_guardar_montaje:{ es: "Guardar este montaje como caso", en: "Save this montage as a case" },
-    casos_guardar_ay:    { es: "Crea el caso con las técnicas, el material, las cajas y los avisos que ya ha calculado la herramienta. No hay que teclear nada.",
-                           en: "Creates the case with the techniques, material, boxes and warnings the tool has already worked out. Nothing to type." },
-    casos_nuevo_cero:    { es: "Caso nuevo desde cero", en: "New case from scratch" },
-    casos_nuevo_cero_ay: { es: "Para registrar una cirugía pasada que no pasó por el checklist.",
-                           en: "To record a past surgery that never went through the checklist." },
+    casos_nuevo_cero:    { es: "Crear caso", en: "Create case" },
+    casos_nuevo_cero_ay: { es: "Te lleva al Organizador de Montajes para construir el montaje de este caso -a mano, o a partir de una plantilla-. Rellenas el resto de la ficha cuando quieras.",
+                           en: "Takes you to the Montage Organizer to build this case's montage -from scratch, or from a template-. Fill in the rest of the form whenever you like." },
     casos_filtro_estado: { es: "Estado", en: "Status" },
     casos_filtro_todos:  { es: "Todos", en: "All" },
     casos_filtro_desde:  { es: "Desde", en: "From" },
@@ -442,8 +439,8 @@
     caso_umbral_tornillos_pediculares_ay: { es: "Cualquier cosa que no encaje en los niveles de arriba: umbrales no testados por raíz, matices, comparaciones entre tornillos, etc.",
                            en: "Anything that doesn't fit the levels above: thresholds not tested by root, nuances, comparisons between screws, etc." },
     caso_material_previsto: { es: "Material (montaje base)", en: "Material (base montage)" },
-    caso_material_previsto_ay: { es: "El material que salió del montaje planificado. No se edita aquí: lo que se cambió de más o de menos va abajo, en «Material realmente usado».",
-                           en: "The material that came out of the planned montage. Not editable here: what was used more or less of goes below, in “Material actually used”." },
+    caso_material_previsto_ay: { es: "El material que sale del montaje de este caso -de solo lectura aquí-. Si añadiste algo que no estaba previsto, colócalo en su caja desde el Organizador de Montajes y anótalo en «Notas de Montaje/Técnicas».",
+                           en: "The material that comes out of this case's montage -read-only here-. If you added something that wasn't planned, place it in its box from the Montage Organizer and note it in “Montage/Techniques notes”." },
     caso_material_real:  { es: "Material realmente usado", en: "Material actually used" },
     caso_tipo_anestesia: { es: "Tipo de anestesia", en: "Type of anaesthesia" },
     caso_tipo_anestesia_detalle: { es: "Detalle", en: "Detail" },
@@ -527,6 +524,7 @@
     guia_aviso_en:       { es: "This guide is only written in Spanish for now.", en: "This guide is only written in Spanish for now." },
     // Fase 7 (06-09-2026): pantalla de inicio con 6 tarjetas.
     logo_inicio_tit:     { es: "Volver al inicio", en: "Back to home" },
+    btn_inicio_pantalla: { es: "Inicio", en: "Home" },
     tile_organizador:    { es: "Organizador de Montajes", en: "Montage Organizer" },
     tile_casos:          { es: "Gestión de Casos", en: "Case Management" },
     tile_tecnicas:       { es: "Técnicas IONM", en: "IONM Techniques" },
@@ -582,7 +580,7 @@
     pos_supino_brazos:   { es: "Supino con brazos extendidos", en: "Supine, arms extended" },
     pos_prono:           { es: "Prono", en: "Prone" },
     pos_sentado:         { es: "Sentado", en: "Sitting" },
-    caso_editar_montaje: { es: "Corregir el material y el montaje", en: "Correct material and montage" },
+    caso_editar_montaje: { es: "Editar material y montaje", en: "Edit material and montage" },
     caso_editar_montaje_ay: { es: "Abre las cajas de este caso para cambiar dónde va cada cosa. Lo que cambies se guarda en el caso, no en el montaje del que salió.",
                            en: "Opens this case’s boxes to change where each item goes. What you change is saved in the case, not in the montage it came from." },
     caso_cargar_plantilla: { es: "Cargar montaje…", en: "Load montage…" },
@@ -856,6 +854,11 @@
   }
 
   document.getElementById("btn-inicio").addEventListener("click", function () { irAPantalla("inicio"); });
+  // Botón "Inicio" junto al título de cada pantalla (pedido el 06-09-2026):
+  // mismo destino que el logo, para no obligar a subir hasta la cabecera.
+  document.querySelectorAll(".btn-pantalla-inicio").forEach(function (btn) {
+    btn.addEventListener("click", function () { irAPantalla("inicio"); });
+  });
   document.getElementById("tile-organizador").addEventListener("click", function () { irAPantalla("organizador"); });
   document.getElementById("tile-simulador").addEventListener("click", function () { irAPantalla("simulador"); });
   document.getElementById("tile-bibliografia").addEventListener("click", function () { irAPantalla("bibliografia"); });
@@ -3171,21 +3174,6 @@
     abrirInformeCasos(uids.map(function (uid) { return casos[uid]; }));
   });
 
-  function casoDesdeEscenario() {
-    var esc = escenarioActual();
-    var caso = casoVacio();
-    if (!esc) return caso;
-    // caso.escenario_nombre ya no se escribe -el catálogo de tipos de
-    // cirugía se retiró-, pero el campo se queda en casoVacio() tal cual:
-    // no se toca el modelo del caso, y los casos reales antiguos que ya lo
-    // tenían relleno no cambian.
-    caso.perfil = esc.nota_perfil_id || "";
-    caso.montaje_origen = esc.montaje_uid || "";
-    var res = volcarMontajeEnCaso(caso, esc);
-    caso.tecnicas_realizadas = res.tecnicas.slice();
-    return caso;
-  }
-
   /* ---------------------------------------------------------------- *
    * Fase 1: cargar una plantilla (un montaje de la biblioteca) sobre un
    * caso ya creado. "Plantilla" es cualquier montaje; aplicarla COPIA su
@@ -4333,7 +4321,16 @@
     // 5. Montaje / Técnicas
     { g: "montaje", c: "tecnicas_realizadas", t: "tecnicas", ay: "caso_tecnicas_ay" },
     { g: "montaje", c: "material_previsto", t: "material_ro", ay: "caso_material_previsto_ay" },
-    { g: "montaje", c: "material_real", t: "material", ay: "caso_material_real_ay" },
+    // "Material realmente usado" suspendido a petición del usuario
+    // (06-09-2026): con el montaje del caso editándose siempre en el
+    // Organizador (ver "Crear caso"), lo que de verdad se usó ya es el
+    // montaje real, no una copia aparte que había que corregir a mano. Si
+    // se añade algo que no estaba previsto, se coloca en su caja y se anota
+    // en "Notas de Montaje/Técnicas". El campo `material_real` sigue
+    // existiendo en el modelo (`volcarMontajeEnCaso()`, el informe en PDF)
+    // por los casos reales antiguos que ya lo tenían relleno -no se borra
+    // nada, solo se deja de mostrar aquí-.
+    // { g: "montaje", c: "material_real", t: "material", ay: "caso_material_real_ay" },
     // Absorbe lo que antes era "Pares craneales monitorizados": ya no tiene
     // campo propio, va aquí como una nota más de montaje.
     { g: "montaje", c: "notas_montaje_tecnicas", t: "area" },
@@ -5036,7 +5033,8 @@
           cont.appendChild(contDetalle);
         }
 
-        // Corregir el material y el montaje: pedido por el usuario que viva
+        // Editar material y montaje (antes "Corregir el material y el
+        // montaje", renombrado el 06-09-2026): pedido por el usuario que viva
         // aquí, en el mismo submenú donde ya se ve el resumen y se elige
         // plantilla, en vez de al final de la ficha -es la única forma de
         // ver dónde está colocado cada ítem, canal a canal, y hasta ahora
@@ -5158,13 +5156,6 @@
     dlgCaso.showModal();
   }
 
-  function abrirCasoNuevo(caso) {
-    casoEsNuevo = true;
-    casoAbierto = caso;
-    renderFichaCaso();
-    dlgCaso.showModal();
-  }
-
   function guardarFicha(cerrar) {
     var c = leerFichaCaso();
     if (!c.fecha) {
@@ -5281,7 +5272,6 @@
   }
 
   function abrirListaCasos() {
-    document.getElementById("casos-guardar-montaje").disabled = !escenarioActual();
     renderListaCasos();
     irAPantalla("casos");
   }
@@ -5291,14 +5281,19 @@
     document.getElementById(id).addEventListener("change", renderListaCasos);
   });
 
-  document.getElementById("casos-guardar-montaje").addEventListener("click", function () {
-    abrirCasoNuevo(casoDesdeEscenario());
-  });
+  // "Crear caso" (06-09-2026, antes "Caso nuevo desde cero" + un botón
+  // aparte "Guardar este montaje como caso" que se retiró: no tenía sentido
+  // -tomaba lo que hubiera en el banco de trabajo sin ninguna relación con
+  // el caso nuevo-). El caso se guarda YA, vacío, para que exista de verdad
+  // en `casos` -abrirMontajeDeCaso() lo necesita así-, y se entra directo al
+  // Organizador de Montajes a construir su montaje: a mano, o cargando una
+  // plantilla encima (mantiene la plantilla original intacta, mismo
+  // mecanismo de siempre). El resto de la ficha se rellena cuando se quiera,
+  // desde "Volver al caso" en el rótulo permanente.
   document.getElementById("casos-nuevo-cero").addEventListener("click", function () {
-    // Retrospectivo: nace cerrado y sin material ni montaje, porque no hubo
     var c = casoVacio();
-    c.estado = "cerrado";
-    abrirCasoNuevo(c);
+    guardarCaso(c, true);
+    abrirMontajeDeCaso(c.caso_uid);
   });
 
   document.getElementById("caso-crear-informe").addEventListener("click", function () {
