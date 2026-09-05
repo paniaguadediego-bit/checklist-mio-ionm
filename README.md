@@ -395,24 +395,31 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
    montaje del caso como plantilla nueva*, en la barra fija de corrección,
    ver más abajo). Justo debajo, el **detalle canal a canal**: la misma vista de "Cajas
    necesarias" que hay en Resumen, de solo lectura, para saber exactamente
-   qué hay puesto en cada entrada sin salir a corregir el montaje. Debajo de
-   eso, **técnicas realizadas** y **material (montaje base)** —los dos,
+   qué hay puesto en cada entrada sin salir a corregir el montaje.
+
+   Debajo de eso, en este orden (reordenado el 06-09-2026): **técnicas
+   realizadas** (ya vienen marcadas las que planificaste, solo ajustas — los
+   chips salen en tres bloques separados por un hueco: monitorización,
+   reflejos y mapeo), **"Cómo se realizó cada técnica"** (un bloque plegable
+   por cada técnica ya marcada como realizada, con los parámetros reales
+   usados en este caso concreto — intensidad, frecuencia, nº de pulsos,
+   trenes, ISI, filtros, promediación, barrido— y una caja de notas libres al
+   final para cualquier detalle técnico que no encaje en esos campos), notas
+   de montaje/técnicas, **material (montaje base)** (siempre de solo lectura:
+   sale del montaje real del caso, que se corrige desde el Organizador, no
+   aquí — la sección "Material realmente usado" está suspendida desde el
+   06-09-2026: si añades algo que no estaba previsto, colócalo en su caja y
+   anótalo en las notas de montaje/técnicas, justo arriba), **"Coste del
+   material"** (06-09-2026 — el mismo desglose que en Resumen: unitario ×
+   cantidad por tipo, total, qué material reutilizable queda fuera y qué
+   tipos no tienen precio todavía; se recalcula en vivo con los precios de
+   hoy, no con los que hubiera cuando se guardó el caso, y sale igual en el
+   informe en PDF) e **"Imágenes del montaje"** (capturas o fotos de cómo
+   quedó en el software del equipo, p. ej. la pantalla del Inomed, para
+   consultar si te toca un caso parecido —se comprimen solas al añadirlas, se
+   pulsan para verlas en grande). Los dos bloques de técnicas/material están
    plegados por defecto desde el 05-09-2026, se despliegan pulsando su
-   título— (ya vienen marcadas las técnicas que planificaste, solo ajustas
-   — los chips salen en tres bloques separados por un hueco: monitorización,
-   reflejos y mapeo; el material es siempre de solo lectura: sale del
-   montaje real del caso, que se corrige desde el Organizador, no aquí — la
-   sección "Material realmente usado" está suspendida desde el 06-09-2026:
-   si añades algo que no estaba previsto, colócalo en su caja y anótalo en
-   las notas de montaje/técnicas, justo debajo), notas de montaje/técnicas, **"Cómo se
-   realizó cada técnica"** (un bloque plegable por cada técnica ya marcada
-   como realizada, con los parámetros reales usados en este caso —
-   intensidad, frecuencia, nº de pulsos, trenes, ISI, filtros, promediación,
-   barrido— y una caja de notas libres al final para cualquier detalle
-   técnico que no encaje en esos campos) y **"Imágenes del montaje"**
-   (capturas o fotos de cómo quedó en el software del equipo, p. ej. la
-   pantalla del Inomed, para consultar si te toca un caso parecido —se
-   comprimen solas al añadirlas, se pulsan para verlas en grande).
+   título.
 6. **Desarrollo intraoperatorio** — resumen de la monitorización (de
    corrido qué salió al empezar, qué pasó por el medio y qué salió al
    cerrar); si se marcó la técnica "Mapeo de raíces y tornillos", un
@@ -554,9 +561,14 @@ Dcho** apilados—. Cada ventana tiene:
 
 Las ventanas se **arrastran** por su cabecera para recolocarlas —arriba o
 abajo de otra dentro de una columna, o a una columna nueva— y todo se reordena
-al soltar. El botón **Ejemplo: columna lumbar** monta una pantalla típica de
-tornillos/descompresión/artrodesis, con los parámetros recomendados que ya
-están en **Técnicas IONM**. Los trazos son de ejemplo (no hay señal real),
+al soltar. Para añadir una ventana hay dos caminos: los botones **+ SEP**,
+**+ MEP**, **+ EMG**, **+ TOF** y **+ EEG** (06-09-2026) crean la ventana con
+la morfología, la vista y los parámetros ya puestos según lo más habitual de
+**Técnicas IONM** —solo falta escribir el título definitivo y los canales—;
+**+ Ventana** la deja en blanco, para cualquier otro tipo. El botón
+**Ejemplo: columna lumbar** monta de un golpe una pantalla típica de
+tornillos/descompresión/artrodesis completa, con los parámetros recomendados
+de varias técnicas a la vez. Los trazos son de ejemplo (no hay señal real),
 solo para ensayar cómo queda la pantalla. Se guarda en **este dispositivo**
 (no se sincroniza), como Docencia. No toca montajes, casos ni catálogos.
 
