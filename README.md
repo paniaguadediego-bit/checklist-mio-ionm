@@ -482,12 +482,20 @@ archivo. No hay que exportar ni importar nada.
 
 Si marcas **Estado → Cancelado** (apartado 1, Identificación/Trazabilidad)
 aparece un campo **Motivo de cancelación** para dejar constancia de por qué
-—suspensión quirúrgica, cambio de planes, lo que sea—. Un caso cancelado no
-llegó a monitorizarse, así que en las estadísticas del Google Sheet solo
-cuenta para lo que sí es real de él: fecha, nombre del caso y centro
-(Trazabilidad) y los datos de Paciente. No entra en las hojas de técnicas ni
-de material consumido (`Tecnicas_long`, `Material_long`), y la hoja **Meta**
-muestra cuántos casos cancelados hay en total.
+—suspensión quirúrgica, cambio de planes, lo que sea—. Un caso cancelado
+puede haber llegado a usar material real o no, según en qué momento se
+suspendió la cirugía: si el paciente entró y se llegó a montar antes de
+suspenderla, el material y su coste se quedan tal cual (como cualquier otro
+caso); si se canceló antes de montar nada —una reacción alérgica antes de
+entrar a quirófano, por ejemplo—, el material se deja en blanco y el coste a
+0€, a mano, porque no hubo gasto real. En cualquiera de los dos casos, no
+llegó a **monitorizarse** de verdad, así que en las estadísticas del Google
+Sheet solo cuenta para lo que sí es real de él: fecha, nombre del caso y
+centro (Trazabilidad) y los datos de Paciente. No entra en las hojas de
+técnicas ni de material consumido (`Tecnicas_long`, `Material_long`) —haya o
+no material de por medio, es una decisión de diseño: un caso cancelado no
+cuenta como monitorización realizada—, y la hoja **Meta** muestra cuántos
+casos cancelados hay en total.
 
 ### Casos de días pasados y correcciones
 

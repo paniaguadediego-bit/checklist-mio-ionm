@@ -2068,6 +2068,54 @@ usuaria pidió reordenar el apartado 5 (Montaje/Técnicas) de la ficha:
   HTML del informe (interceptando `window.open()` con un iframe oculto,
   mismo truco de siempre) trae los `<h3>` en el orden esperado.
 
+### Retoques posteriores, 06-09-2026: precios reales de 6 materiales, recálculo de coste de los casos existentes, y matiz sobre material en casos cancelados
+
+Trabajo sobre el **repositorio de datos** (`checklist-mio-datos`), no sobre
+este código -sin cambios en `app.js`/`data/` más allá de lo ya descrito
+arriba (Coste del material, L.Cubital fosa, Simulador por tipo, c-MEP)-,
+documentado aquí porque establece precedente para la próxima vez que se
+toquen precios o coste de casos reales.
+
+- **Precios puestos** (`etiquetas_usuario` en `estado.json`): Aguja
+  trenzada 9,61€, Hook Wire 8,48€, Aguja subdérmica 2,43€, Electrodo
+  sacacorchos 4,62€, Sonda monopolar esférica 83,61€ (pasó de reutilizable a
+  fungible), Pegatinas 1,36€.
+- **Hallazgo por el camino**: un commit automático del 31-08-2026 había
+  vaciado por accidente `etiquetas_usuario` y `catalogo_usuario` -coincidía
+  con la migración de "retirar Escenario" ese mismo día, probablemente una
+  subida ☁ desde un navegador con el estado local vacío-. Se restauraron los
+  precios y el material propio que se pudieron recuperar del historial de
+  git; el resto (2-3 ítems) los ha ido retocando la propia usuaria desde
+  entonces, en vivo, sin que haga falta volver a tocarlos.
+- **Recalculado el coste de los 14 casos existentes** desde su montaje en
+  crudo (`asignaciones`/`extras`/`etiquetas_colocadas`/`conmutador`), no
+  solo desde `material_previsto` ya guardado: varios casos llevaban
+  etiquetas obsoletas de reorganizaciones de catálogo anteriores ("Electrodo
+  de grid" en vez de "Manta GRID A", "Sonda bipolar concéntrica" en vez de
+  "Sonda monopolar esférica"...) que había que reclasificar antes de aplicar
+  precio -uno de ellos venía sobrefacturado desde antes de que se corrigiera
+  el cobro de GRID por manta en vez de por electrodo (26-08-2026), y bajó de
+  1.703,50€ a 568,89€ al recalcularlo con la lógica actual-.
+  `material_real` solo se actualizó donde no había edición manual previa;
+  `montaje`/`n_cajas`/`n_canales_ocupados`/`avisos_preparacion` no se
+  tocaron -son instantánea deliberadamente congelada, no se regeneran al
+  cambiar el catálogo-.
+- **Matiz importante sobre casos cancelados y material**: un caso cancelado
+  puede haber llegado a usar material real o no, según en qué momento se
+  suspendió la cirugía -si se montó y se abrió antes de cancelarla, el
+  material y su coste son reales y se quedan tal cual (caso 2026-010); si se
+  canceló antes de montar nada -p. ej. una reacción alérgica del paciente
+  antes de entrar a quirófano (caso 2026-009)-, `material_previsto`,
+  `material_real`, `montaje`, `asignaciones` y `coste_material` se vacían a
+  mano a 0/`{}`, porque no hubo gasto real que reflejar-. Ninguno de los dos
+  casos entra en las estadísticas de técnicas/material del Sheet de todos
+  modos (ver "Cancelar un caso" en README): esa exclusión es una decisión de
+  diseño -un caso cancelado no cuenta como monitorización realizada-, no una
+  afirmación de que nunca hubo material de por medio. **Si se cancela un
+  caso a mano en el repositorio de datos en el futuro, primero hay que
+  preguntar -o mirar el motivo de cancelación- si llegó a montarse de
+  verdad, antes de decidir si su material se vacía o se conserva.**
+
 ## Google Sheet (Apps Script)
 
 `apps-script/Codigo.gs` es un script de Google Apps independiente: no forma
