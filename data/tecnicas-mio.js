@@ -39,6 +39,18 @@
  *
  * Lote 4: THR - reflejo trigémino-hipogloso (Mirallave Pescador 2022).
  *
+ * Lote 5 (06-09-2026): c-MEP - monitorización continua de PEM mediante
+ * estimulación cortical directa (grid/strip) tras identificar M1, el
+ * análogo motor de c-SEP. Se inserta justo después de c_sep_cortical_directo
+ * en el array -misma región "cirugia_cerebral", misma lógica de "localizar
+ * una vez, dejar el electrodo puesto para monitorizar de forma continua"-.
+ * Lleva su propia nota "aclaracion_nomenclatura" en notas_clinicas (mismo
+ * patrón que "aclaracion_jaw_jerk" en reflejo_masetero_rmt) porque se
+ * confunde fácilmente con comep_pares_craneales: los dos se abrevian "MEP"
+ * pero uno es estimulación transcraneal (TES) hacia pares craneales y el
+ * otro es estimulación cortical directa hacia M1, con umbrales en órdenes
+ * de magnitud distintos.
+ *
  * Reorganización del 04-09-2026, pedida por Pani al llegar el Lote 3: las
  * técnicas de mapeo/registro cortical que se hacen igual bajo anestesia
  * general (DES cortical, DES subcortical, phase-reversal, c-SEP, ECoG, PEV
@@ -90,7 +102,8 @@
  * orden de aparición de los grupos):
  *   "sep"      - PESS periférico/plexo, PESS trigeminal (TEP), c-SEP,
  *                mapeo por inversión de fase (phase-reversal)
- *   "mep"      - PEM/TcMEP miogénico, CoMEP de pares craneales
+ *   "mep"      - PEM/TcMEP miogénico, CoMEP de pares craneales, c-MEP por
+ *                grid/strip cortical directo
  *   "onda_d"   - Onda D (aparte de "mep": mismo tracto corticoespinal, pero
  *                se pidió expresamente un color distinguible del resto de
  *                motores, no promediar ni fundir con MEP)
@@ -140,7 +153,7 @@ window.TECNICAS_MIO = {
   "notas_meta": {
     "principio_fuentes": "Cada parámetro cuantitativo incluye su fuente. Cuando dos fuentes difieren, se muestran ambos valores explícitamente (nunca promediados ni combinados). Los campos sin dato verificado en las fuentes del proyecto se marcan como 'no especificado en fuentes'.",
     "convencion_claves": "snake_case sin acentos ni espacios, consistente con la convención Notion de Pani.",
-    "lote_actual": "Lote 1: Columna/médula - evocados (6) + Fosa posterior/tronco - evocados y EMG (5) = 11. Lote 2: Craneotomía despierta (4) + Plexo braquial/nervio periférico (3) + Reflejos de tronco (4) = 11. Lote 3: c-SEP, RBC, EEG, ECoG, PEV (vía anterior + cortical), H-R sóleo/gastrocnemio, PRM, ARM, LAR, mapeo IV ventrículo, mapeo columnas dorsales, mapeo nervio periférico, estimulación directa del cordón espinal = 14. Lote 4: THR (tras aporte de Mirallave Pescador 2022) = 1. Más la nota de derivaciones optimizadas ISION para PESS (MacDonald 2019, Tabla 3), añadida como entrada propia. Total 38 entradas, todas trazadas a fuente.",
+    "lote_actual": "Lote 1: Columna/médula - evocados (6) + Fosa posterior/tronco - evocados y EMG (5) = 11. Lote 2: Craneotomía despierta (4) + Plexo braquial/nervio periférico (3) + Reflejos de tronco (4) = 11. Lote 3: c-SEP, RBC, EEG, ECoG, PEV (vía anterior + cortical), H-R sóleo/gastrocnemio, PRM, ARM, LAR, mapeo IV ventrículo, mapeo columnas dorsales, mapeo nervio periférico, estimulación directa del cordón espinal = 14. Lote 4: THR (tras aporte de Mirallave Pescador 2022) = 1. Más la nota de derivaciones optimizadas ISION para PESS (MacDonald 2019, Tabla 3), añadida como entrada propia. Lote 5: c-MEP por grid/strip cortical directo (MacDonald 2013 ASNM), análogo motor de c-SEP = 1. Total 39 entradas, todas trazadas a fuente.",
     "tecnicas_solicitadas_no_disponibles_en_fuentes": [
       "Reflejo glosofaríngeo-trigeminal: mencionado por nombre en la discusión de Urriza 2025 (lista de reflejos trigémino-vagales) sin metodología ni parámetros propios - no hay fuente primaria en el proyecto que lo describa."
     ],
@@ -938,6 +951,40 @@ window.TECNICAS_MIO = {
           "Patología cerebral previa o malformación puede alterar, reducir u obliterar la respuesta, igual que en la localización inicial"
         ],
         "fuente": ["Neurophysiology in Neurosurgery 2ed cap.3"]
+      }
+    },
+    {
+      "id": "c_mep_monitorizacion_directa_grid",
+      "categoria": "c-MEP",
+      "region": "cirugia_cerebral",
+      "familia": "mep",
+      "nombre": "c-MEP - Monitorización continua de PEM mediante estimulación cortical directa (grid/strip), tras identificación de M1",
+      "descripcion": "No confundir con comep_pares_craneales (CoMEP corticobulbar por TES transcraneal para pares craneales). Aquí, una vez identificada la corteza motora primaria (M1) -por mapeo cortical directo (ver mapeo_cortical_directo_des) o por PESS de fase-reversal (ver pess_fase_reversal_cisura_central)-, el mismo electrodo de grid/strip se deja colocado sobre M1 para monitorizar el PEM de las extremidades de forma continua durante la resección, usando intensidades mucho menores que la TES transcraneal porque la corriente se aplica directamente sobre la corteza sin atravesar cuero cabelludo ni cráneo.",
+      "estimulacion": {
+        "montaje": "Monopolar - electrodo activo (ánodo) sobre un contacto de la tira/grid colocada en M1, retorno (cátodo) en cuero cabelludo o en una localización cortical distante",
+        "polaridad": "Anódica - igual que en el mapeo cortical directo (la corriente anódica es más efectiva sobre la corteza, independientemente del paradigma)",
+        "parametros_representativos_segun_serie": {
+          "taniguchi_1993": "Ánodo de 1 cm de diámetro, duración de pulso variable 0.2-0.5 ms, ISI 2-4 ms, umbral de la circunvolución motora 6-12 mA (bajo anestesia inhalatoria)",
+          "cedzich_1996": "ISI 2 ms, duración de pulso 0.2-0.4 ms, umbral medio de la circunvolución motora 12 mA",
+          "szelenyi_2007": "Trenes de 5 pulsos, duración 0.5 ms, ISI 4 ms, corriente máxima 25 mA, ánodo de 0.4 cm de diámetro desde una tira de 8 contactos, umbral medio 15 mA",
+          "simon_2010": "Trenes de 6 pulsos, ánodo tipo sonda de diámetro no especificado, umbral medio de la circunvolución motora 8.5 mA"
+        },
+        "efecto_anestesico_sobre_umbral": "Umbral ~1.3 mA mayor bajo propofol y ~4.8 mA mayor bajo anestesia inhalatoria, comparado con el estado consciente - el umbral aumenta con la profundidad anestésica",
+        "tipo_estimulador": "Corriente constante preferible para estimulación intracraneal (independiente de la resistencia variable del tejido)",
+        "fuente": ["MacDonald 2013 ASNM (sección 4.4, 'Intracranial pulse parameters')"]
+      },
+      "registro": {
+        "musculos": "Mismos que PEM/TcMEP estándar según objetivo quirúrgico (tenar/ADM para MMSS, tibial anterior/abductor hallucis para MMII)",
+        "fuente": ["MacDonald 2013 ASNM", "Neurophysiology in Neurosurgery 2ed cap.9"]
+      },
+      "notas_clinicas": {
+        "aclaracion_nomenclatura": "comep_pares_craneales = CoMEP corticobulbar, estimulación TRANSCRANEAL (TES) sobre C3/C4-Cz para activar la vía corticobulbar hacia músculos de pares craneales. c_mep_monitorizacion_directa_grid = c-MEP por estimulación CORTICAL DIRECTA sobre M1 ya identificado, vía grid/strip, intensidades mucho menores. Son técnicas distintas aunque ambas se abrevien «MEP» - no confundir.",
+        "ventaja_principal": "Intensidades mucho menores que la TES transcraneal (miliamperios en vez de cientos de voltios/decenas de mA) porque la corriente se aplica directamente sobre la corteza, sin atravesar cuero cabelludo ni cráneo - respuesta prácticamente siempre unilateral y con mínimo movimiento del paciente",
+        "uso_combinado_con_mapeo_subcortical": "Umbrales de mapeo subcortical incluso <=3 mA pueden considerarse seguros SI el c-MEP monitorizado con el mismo grid/strip permanece estable en paralelo (Seidel et al., citado en cap.9) - el c-MEP actúa como red de seguridad frente a un mapeo subcortical de umbral muy bajo",
+        "alarma_lesion_vascular_remota": "El c-MEP detecta lesión vascular remota por coagulación de perforantes que el mapeo subcortical por sí solo NO detecta, ya que el mapeo subcortical siempre puede evocar respuesta distal al punto de estimulación mientras el tracto corticoespinal distal permanezca intacto - mapeo y monitorización deben combinarse siempre, nunca usar uno sin el otro",
+        "perdida_irreversible": "Los cambios de c-MEP pueden ser abruptos e irreversibles en hasta el 40% de los casos en que ocurre un cambio - la vigilancia continua es crítica, no basta con comprobaciones puntuales",
+        "distancia_al_tracto_incierta": "La distancia exacta en milímetros desde el punto de estimulación al tracto corticoespinal permanece incierta según la fuente, igual que ocurre con el mapeo subcortical",
+        "fuente": ["Neurophysiology in Neurosurgery 2ed cap.9"]
       }
     },
     {

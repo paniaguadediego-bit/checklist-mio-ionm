@@ -348,6 +348,8 @@ window.SURGERIES_DATA = {
         { "id": "r_mediano", "nombre": "R.Mediano", "etiqueta": "pegatinas" },
         { "id": "l_cubital", "nombre": "L.Cubital", "etiqueta": "electrodo_cubital" },
         { "id": "r_cubital", "nombre": "R.Cubital", "etiqueta": "electrodo_cubital" },
+        { "id": "l_cubital_fosa", "nombre": "L.Cubital fosa", "etiqueta": "electrodo_cubital", "nota": "Fosa cubital (codo), en vez de la muñeca" },
+        { "id": "r_cubital_fosa", "nombre": "R.Cubital fosa", "etiqueta": "electrodo_cubital", "nota": "Fosa cubital (codo), en vez de la muñeca" },
         { "id": "l_ptn", "nombre": "L.Tibial post.", "etiqueta": "pegatinas" },
         { "id": "r_ptn", "nombre": "R.Tibial post.", "etiqueta": "pegatinas" },
         { "id": "l_popliteo", "nombre": "L.Poplíteo (H)", "etiqueta": "pegatinas", "nota": "Hueco poplíteo — reflejo H" },

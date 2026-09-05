@@ -2002,6 +2002,38 @@ comentario de cabecera).
   badge con su color, el filtro de búsqueda sigue abriendo solo lo que
   coincide.
 
+### Retoques posteriores, 06-09-2026: coste del material en la ficha del caso, L.Cubital fosa, Simulador con plantillas por tipo
+
+Tres pedidos independientes en el mismo turno.
+
+- **"Coste del material" en Gestión de Casos**: el mismo bloque que ya vivía
+  en Resumen (`bloqueCoste()` -tabla tipo/cantidad/unitario/importe, total,
+  nota de qué material reutilizable queda fuera, aviso de qué tipos no
+  tienen precio puesto- ahora también se pinta en la ficha del caso
+  (apartado 5, justo debajo de "Cajas necesarias") **y** en el informe en
+  PDF (`seccionCosteInforme()`, nueva, con el mismo cálculo pero maquetado
+  como el resto del informe -filas etiqueta/valor, sin tabla-). Los dos
+  sitios recalculan en vivo con `calcularCoste(calcularResumen(montajeDesdeCaso(c)))`
+  -precios de HOY, no un número congelado de cuando se guardó el caso-,
+  mismo criterio que ya usaba "Cajas necesarias" desde la Fase 1
+  (31-08-2026): es una vista de solo lectura derivada del montaje en crudo,
+  no un dato nuevo que haya que guardar en el caso. No se tocó ningún campo
+  del modelo del caso -`coste_material`/`coste_completo` (los que sí se
+  archivan, para el Sheet y el CSV) siguen igual que siempre-.
+- **"L.Cubital fosa" / "R.Cubital fosa"** en Estimulación periférica
+  (`data/surgeries.js`): mismo `electrodo_cubital` que L.Cubital/R.Cubital,
+  para poder registrar la estimulación en la fosa cubital (codo) en vez de
+  en la muñeca sin confundir ambos sitios en el material a preparar.
+- **Simulador: ventanas por tipo con parámetros recomendados** -antes solo
+  existía "+ Ventana" (en blanco) y el "Ejemplo: columna lumbar" (un layout
+  completo fijo)-. Cinco botones nuevos, "+ SEP" / "+ MEP" / "+ EMG" /
+  "+ TOF" / "+ EEG", cada uno añade la ventana con la morfología, vista y
+  parámetros ya puestos según `SIM_PLANTILLAS` (`app.js`, mismos valores que
+  ya usaba `simCargarEjemplo()` -no se inventó ninguno nuevo-, SEP con los
+  del tibial por ser el más universal en columna) y abre su diálogo de
+  ajustes para que solo falte el título definitivo y los canales. "+
+  Ventana" se queda como comodín en blanco para cualquier otro tipo.
+
 ## Google Sheet (Apps Script)
 
 `apps-script/Codigo.gs` es un script de Google Apps independiente: no forma

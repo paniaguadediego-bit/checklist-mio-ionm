@@ -17,7 +17,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260906l">
+<link rel="stylesheet" href="style.css?v=20260906m">
 </head>
 <body>
 
@@ -707,6 +707,16 @@
     <button type="button" class="btn-pantalla-inicio" data-i18n="btn_inicio_pantalla" data-i18n-title="logo_inicio_tit"></button>
   </div>
   <div class="sim-barra no-print">
+    <!-- Botones por tipo (pedido por Pani, 06-09-2026): cada uno añade una
+         ventana ya con la morfología y los parámetros más recomendados de
+         Técnicas IONM (ver SIM_PLANTILLAS en app.js), en vez de partir de
+         una ventana en blanco. "+ Ventana" se queda como comodín genérico
+         para cualquier otra cosa que no encaje en estos cinco tipos. -->
+    <button type="button" id="sim-add-sep" data-i18n="sim_add_sep"></button>
+    <button type="button" id="sim-add-mep" data-i18n="sim_add_mep"></button>
+    <button type="button" id="sim-add-emg" data-i18n="sim_add_emg"></button>
+    <button type="button" id="sim-add-tof" data-i18n="sim_add_tof"></button>
+    <button type="button" id="sim-add-eeg" data-i18n="sim_add_eeg"></button>
     <button type="button" id="sim-add" data-i18n="sim_add_ventana"></button>
     <button type="button" id="sim-ejemplo" data-i18n="sim_ejemplo"></button>
     <button type="button" id="sim-vaciar" class="peligro" data-i18n="sim_vaciar"></button>
@@ -760,10 +770,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260906l"></script>
-<script src="data/i18n-en.js?v=20260906l"></script>
-<script src="data/guia.js?v=20260906l"></script>
-<script src="data/tecnicas-mio.js?v=20260906l"></script>
-<script src="app.js?v=20260906l"></script>
+<script src="data/surgeries.js?v=20260906m"></script>
+<script src="data/i18n-en.js?v=20260906m"></script>
+<script src="data/guia.js?v=20260906m"></script>
+<script src="data/tecnicas-mio.js?v=20260906m"></script>
+<script src="app.js?v=20260906m"></script>
 </body>
 </html>

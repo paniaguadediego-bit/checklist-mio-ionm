@@ -538,6 +538,14 @@
     en_construccion:     { es: "En construcción.", en: "Under construction." },
     /* --- Simulador --- */
     sim_add_ventana:     { es: "+ Ventana", en: "+ Window" },
+    // Botones de añadir por tipo (06-09-2026): cada uno crea la ventana con
+    // la morfología y los parámetros recomendados ya puestos -ver
+    // SIM_PLANTILLAS-, no una ventana en blanco.
+    sim_add_sep:         { es: "+ SEP", en: "+ SEP" },
+    sim_add_mep:         { es: "+ MEP", en: "+ MEP" },
+    sim_add_emg:         { es: "+ EMG", en: "+ EMG" },
+    sim_add_tof:         { es: "+ TOF", en: "+ TOF" },
+    sim_add_eeg:         { es: "+ EEG", en: "+ EEG" },
     sim_ejemplo:         { es: "Ejemplo: columna lumbar", en: "Example: lumbar spine" },
     sim_vaciar:          { es: "Vaciar", en: "Clear" },
     sim_vaciar_conf:     { es: "¿Vaciar el simulador? Se quitan todas las ventanas.",
@@ -3099,6 +3107,29 @@
     return seccionInforme(doc, titulo, tipos.map(function (tipo) { return filaInforme(doc, tipo, mapa[tipo]); }));
   }
 
+  // Coste del material (pedido por Pani, 06-09-2026): mismo cálculo que
+  // bloqueCoste()/calcularCoste() del Resumen y de la ficha en pantalla,
+  // recalculado con los precios de hoy -no un número congelado de cuando
+  // se guardó el caso-, para que la ficha y el informe siempre digan lo
+  // mismo. Sin tabla (el informe no tiene esa maquetación): una fila por
+  // tipo con "cantidad x precio = importe", el total, y las mismas dos
+  // notas de bloqueCoste (material reutilizable aparte, tipos sin precio).
+  function seccionCosteInforme(doc, c) {
+    var coste = calcularCoste(calcularResumen(montajeDesdeCaso(c)));
+    if (!coste.hayPrecios) return null;
+    var filas = coste.lineas.map(function (l) {
+      return filaInforme(doc, l.tipo, l.cantidad + " x " + enEuros(l.precio) + " = " + enEuros(l.importe));
+    });
+    filas.push(filaInforme(doc, T("coste_total"), enEuros(coste.total)));
+    var sec = seccionInforme(doc, T("resumen_coste"), filas);
+    if (!sec) return null;
+    sec.appendChild(nodoInforme(doc, "p", "informe-coste-nota", T("coste_reutilizable_nota")));
+    if (coste.sinPrecio.length) {
+      sec.appendChild(nodoInforme(doc, "p", "informe-coste-falta", T("coste_sin_precio", { tipos: coste.sinPrecio.join(", ") })));
+    }
+    return sec;
+  }
+
   // Imágenes del montaje: se incrustan tal cual -ya son dataURL- para que
   // salgan en el PDF sin depender de ninguna URL externa.
   function seccionImagenesInforme(doc, c) {
@@ -3153,6 +3184,7 @@
           seccionParametrosInforme(doc, c),
           seccionMaterialInforme(doc, T("caso_material_previsto"), c.material_previsto),
           seccionMaterialInforme(doc, T("caso_material_real"), c.material_real),
+          seccionCosteInforme(doc, c),
           seccionImagenesInforme(doc, c)
         ].filter(Boolean).forEach(function (s) { art.appendChild(s); });
       }
@@ -3176,7 +3208,9 @@
     ".informe-tecpar h4{margin:0;font-size:0.85rem}" +
     ".informe-tecpar-linea,.informe-tecpar-notas{margin:0.1rem 0;font-size:0.8rem}" +
     ".informe-imagenes{display:flex;flex-wrap:wrap;gap:0.5rem}" +
-    ".informe-imagenes img{max-width:9rem;max-height:9rem;object-fit:cover;border:1px solid #cfd6dd;border-radius:4px}";
+    ".informe-imagenes img{max-width:9rem;max-height:9rem;object-fit:cover;border:1px solid #cfd6dd;border-radius:4px}" +
+    ".informe-coste-nota{margin:0.2rem 0 0;font-size:0.72rem;font-style:italic;color:#62717c}" +
+    ".informe-coste-falta{margin:0.15rem 0 0;font-size:0.72rem;color:#a63428}";
 
   // Recibe una lista de CASOS (objetos, no uids): la usan tanto "Exportar
   // casos" (todos) como "Crear informe" (uno solo, el que está abierto).
@@ -5062,6 +5096,19 @@
             contDetalle.appendChild(bloque);
           });
           cont.appendChild(contDetalle);
+
+          // Coste del material (pedido por Pani, 06-09-2026): el mismo
+          // bloque que ya existe en Resumen -bloqueCoste(), con su tabla de
+          // líneas, el total, la nota de qué material reutilizable no
+          // cuenta y qué tipos no tienen precio puesto todavía-, aquí de
+          // solo lectura para que se vea al revisar el caso. Reutiliza
+          // resDetalle (ya calculado arriba con calcularResumen() para las
+          // cajas) en vez de volver a montarlo: es el mismo montaje, así
+          // que calcularCoste() sobre él da exactamente el mismo coste que
+          // vería el usuario si abriera este montaje ahora mismo en el
+          // Organizador -precios de hoy, no los que hubiera cuando se
+          // guardó el caso-.
+          cont.appendChild(bloqueCoste(calcularCoste(resDetalle)));
         }
 
         // Editar material y montaje (antes "Corregir el material y el
@@ -7156,7 +7203,16 @@
     fpz_rara_vez_optima: "Fpz rara vez óptima", comprobar_decusacion: "Comprobar decusación",
     opcional_erb_n13: "Opcional: Erb / N13", fallback_subcortical: "Fallback subcortical",
     velocidad: "Velocidad", topografia_variable: "Topografía variable",
-    aclaracion_jaw_jerk: "Aclaración (jaw jerk)"
+    aclaracion_jaw_jerk: "Aclaración (jaw jerk)",
+    // Lote 5 (06-09-2026): c-MEP por grid/strip cortical directo.
+    parametros_representativos_segun_serie: "Parámetros representativos según la serie",
+    efecto_anestesico_sobre_umbral: "Efecto anestésico sobre el umbral",
+    aclaracion_nomenclatura: "Aclaración de nomenclatura",
+    ventaja_principal: "Ventaja principal",
+    uso_combinado_con_mapeo_subcortical: "Uso combinado con mapeo subcortical",
+    alarma_lesion_vascular_remota: "Alarma de lesión vascular remota",
+    perdida_irreversible: "Pérdida irreversible",
+    distancia_al_tracto_incierta: "Distancia al tracto (incierta)"
   };
 
   function etiquetaTecMio(clave, diccionario) {
@@ -7872,6 +7928,45 @@
     renderSimulador();
   }
 
+  // Plantillas por tipo (pedido por Pani, 06-09-2026): "+ SEP", "+ MEP"...
+  // añaden la ventana ya con la morfología y los parámetros más habituales
+  // de Técnicas IONM, en vez de una ventana en blanco que hay que rellenar
+  // a mano campo a campo. Mismos valores que ya usaba simCargarEjemplo()
+  // -no se inventa nada nuevo aquí-, con el SEP por defecto en tibial
+  // (pSEPt de aquel ejemplo): es la referencia más universal en cirugía de
+  // columna, que es el grueso de los casos de esta herramienta. El usuario
+  // sigue pudiendo cambiar canales/nervio/parámetros después desde el mismo
+  // diálogo de ajustes de siempre -esto solo pone un punto de partida
+  // realista, no sustituye la edición-.
+  var SIM_PLANTILLAS = {
+    sep: { titulo: "SEP", morfologia: "sep", vista: "avg", canales: ["Cz'-Fz"],
+           params: { intensidad: "40", frecuencia: "4.7", duracion: "300" },
+           filtros: { lff: "30", hff: "300", notch: "off" } },
+    mep: { titulo: "MEP", morfologia: "mep", vista: "cascada", canales: ["L.APB"],
+           params: { pulsos: "5", isi: "2", duracion: "500" }, filtros: {} },
+    emg: { titulo: "f-EMG", morfologia: "emg", vista: "avg", canales: ["L.TA"],
+           params: {}, filtros: { lff: "30", hff: "10000", barrido: "1000" } },
+    tof: { titulo: "TOF", morfologia: "tof", vista: "avg", canales: ["APB"],
+           params: { frecuencia: "2", pulsos: "4" }, filtros: {} },
+    eeg: { titulo: "EEG", morfologia: "eeg", vista: "avg", canales: ["EEG"],
+           params: {}, filtros: { lff: "0.5", hff: "70" } }
+  };
+
+  // Añade una ventana ya configurada según SIM_PLANTILLAS y abre su diálogo
+  // de ajustes para que solo falte el título definitivo y los canales -el
+  // mismo flujo que ya seguía "+ Ventana" (añadir y abrir), pero con los
+  // campos de parámetros ya rellenos en vez de vacíos.
+  function simAnadirPorTipo(clave) {
+    if (!simCargado) simCargar();
+    var plantilla = SIM_PLANTILLAS[clave];
+    if (!plantilla) return;
+    var v = simVentana(plantilla.titulo, plantilla);
+    simAnadirVentana(v);
+    simGuardar();
+    renderSimulador();
+    simAbrirDialogo(v.id);
+  }
+
   // Ejemplo: cirugía de columna lumbar (tornillos, descompresión, artrodesis).
   // Layout que pidió el usuario: MEP Izq/Dcho apilados con el TOF a su derecha
   // ocupando el alto de ambos. Parámetros de Técnicas IONM (ver cabecera).
@@ -7913,6 +8008,9 @@
     simGuardar();
     renderSimulador();
     simAbrirDialogo(v.id);   // se abre para nombrarla, elegir morfología y canales
+  });
+  ["sep", "mep", "emg", "tof", "eeg"].forEach(function (clave) {
+    simGid("sim-add-" + clave).addEventListener("click", function () { simAnadirPorTipo(clave); });
   });
   simGid("sim-ejemplo").addEventListener("click", function () {
     if (simEstado.columnas.length && !confirm(T("sim_vaciar_conf"))) return;
