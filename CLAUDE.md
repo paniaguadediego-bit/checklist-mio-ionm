@@ -1752,6 +1752,28 @@ el `order` de móvil.
 README.md revisado en el mismo turno -misma nota de mantenimiento de
 siempre-.
 
+### Retoques posteriores, 06-09-2026 (noche): "Músculos de tronco y periné" pasa a "Electrodos de tronco y periné", dos estimuladores nuevos
+
+**Categoría renombrada** -de "Músculos de tronco y periné" a "Electrodos de
+tronco y periné"-: los dos ítems nuevos de este mismo cambio son electrodos
+de estimulación de superficie, no agujas de registro muscular, así que
+"Músculos" ya no describía a toda la categoría. Solo cambia el texto
+`categoria` en `data/surgeries.js`; el resto de ítems y sus ids no se
+tocan. **Efecto secundario menor y sin importancia**: el plegado/desplegado
+de esta categoría se recuerda en `localStorage` por el propio texto de
+`categoria` (`categoriaAbierta()`/`recordarCategoria()`, `app.js`); al
+cambiar el nombre, la preferencia guardada bajo el nombre viejo queda
+huérfana y la categoría vuelve a su `plegada_por_defecto: true` -mismo
+comportamiento que ya tenía por defecto, no hay nada que migrar-.
+
+**Dos electrodos nuevos, ambos `"etiqueta": "pegatinas"`** -mismo tipo
+físico que Mediano/Tibial post./Poplíteo en "Estimulación periférica": son
+estimuladores de superficie, no agujas-: `n_dorsal_pene` ("Nervio Dorsal
+del Pene") y `clitoris` ("Clítoris"). Van sin pareja L./R. -son estructuras
+de la línea media, como ya pasa con "Tierra" en "Tierras y referencias"-, y
+sin `nota` clínica -mismo criterio de siempre: mejor en blanco que una
+descripción sin confirmar por el usuario-.
+
 ## Google Sheet (Apps Script)
 
 `apps-script/Codigo.gs` es un script de Google Apps independiente: no forma

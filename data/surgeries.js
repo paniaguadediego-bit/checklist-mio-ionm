@@ -497,7 +497,7 @@ window.SURGERIES_DATA = {
       ]
     },
     {
-      "categoria": "Músculos de tronco y periné",
+      "categoria": "Electrodos de tronco y periné",
       "plegada_por_defecto": true,
       "items": [
         {"id":"l_diafragma","nombre":"L.Diafragma","etiqueta":"aguja_trenzada","nota":"Diafragma — nervio frénico izquierdo"},
@@ -520,6 +520,8 @@ window.SURGERIES_DATA = {
         {"id":"r_abd","nombre":"R.Abd","etiqueta":"aguja_trenzada"},
         {"id":"l_bulbocavernoso","nombre":"L.Bulbocavernoso","etiqueta":"aguja_trenzada","nota":"Reflejo bulbocavernoso izquierdo"},
         {"id":"r_bulbocavernoso","nombre":"R.Bulbocavernoso","etiqueta":"aguja_trenzada","nota":"Reflejo bulbocavernoso derecho"},
+        {"id":"n_dorsal_pene","nombre":"Nervio Dorsal del Pene","etiqueta":"pegatinas"},
+        {"id":"clitoris","nombre":"Clítoris","etiqueta":"pegatinas"},
         {"id":"l_esfinter_anal_ext","nombre":"L.Esfínter Anal Externo","etiqueta":"hook_wire"},
         {"id":"r_esfinter_anal_ext","nombre":"R.Esfínter Anal Externo","etiqueta":"hook_wire"}
       ]
