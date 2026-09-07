@@ -1102,6 +1102,67 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
 }
 .tecmio-sin-resultados { font-size: 0.82rem; color: var(--text-muted); margin: 0.5rem 0 0; }
 
+/* Interruptor Tarjetas/Tabla (06-09-2026): mismo look que los botones de
+   pestaña ya usados en Docente (.docente-tab), para no inventar un patrón
+   visual nuevo. */
+.tecmio-vista-toggle { display: flex; gap: 0.4rem; margin-bottom: 0.6rem; }
+.tecmio-vista-toggle button {
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-muted);
+  border-radius: 999px;
+  padding: 0.25rem 0.9rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.tecmio-vista-toggle button.activo { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+/* Vista tabla: una fila por técnica, columnas genéricas -Estimulación,
+   Registro, Filtros, Barrido, Notas-. Reutiliza .tecmio-sub/.tecmio-lista
+   (mismo contenido que las tarjetas, sin resumir) dentro de cada celda, así
+   que una técnica con muchos subparámetros da una fila alta: es el precio
+   de no perder ningún dato al pasar de tarjeta a tabla. Contenedor con
+   scroll propio en las dos direcciones -la tabla es ancha (6 columnas) y
+   puede ser alta-. */
+.tecmio-tabla-cont { overflow: auto; max-height: 75vh; border: 1px solid var(--border); border-radius: 8px; }
+.tecmio-tabla { border-collapse: collapse; width: 100%; font-size: 0.78rem; }
+.tecmio-tabla th, .tecmio-tabla td {
+  border: 1px solid var(--border-soft);
+  padding: 0.4rem 0.5rem;
+  text-align: left;
+  vertical-align: top;
+}
+.tecmio-tabla th {
+  position: sticky;
+  top: 0;
+  background: var(--card-bg);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  z-index: 1;
+}
+.tecmio-tabla td.tecmio-td-tecnica { min-width: 11rem; font-weight: 600; }
+.tecmio-tabla td { min-width: 10rem; }
+.tecmio-tabla tr.tecmio-familia-sep      td.tecmio-td-tecnica { border-left: 3px solid var(--tm-sep); }
+.tecmio-tabla tr.tecmio-familia-mep      td.tecmio-td-tecnica { border-left: 3px solid var(--tm-mep); }
+.tecmio-tabla tr.tecmio-familia-onda_d   td.tecmio-td-tecnica { border-left: 3px solid var(--tm-onda_d); }
+.tecmio-tabla tr.tecmio-familia-emg      td.tecmio-td-tecnica { border-left: 3px solid var(--tm-emg); }
+.tecmio-tabla tr.tecmio-familia-reflejos td.tecmio-td-tecnica { border-left: 3px solid var(--tm-reflejos); }
+.tecmio-tabla tr.tecmio-familia-vep      td.tecmio-td-tecnica { border-left: 3px solid var(--tm-vep); }
+.tecmio-tabla tr.tecmio-familia-peatc    td.tecmio-td-tecnica { border-left: 3px solid var(--tm-peatc); }
+.tecmio-tabla tr.tecmio-familia-eeg_ecog td.tecmio-td-tecnica { border-left: 3px solid var(--tm-eeg_ecog); }
+.tecmio-tabla tr.tecmio-familia-des      td.tecmio-td-tecnica { border-left: 3px solid var(--tm-des); }
+.tecmio-tabla tr.tecmio-familia-mapeo    td.tecmio-td-tecnica { border-left: 3px solid var(--tm-mapeo); }
+.tecmio-td-subtitulo {
+  margin: 0.3rem 0 0;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+}
+.tecmio-td-subtitulo:first-child { margin-top: 0; }
+
 .docente-fuentes {
   font-size: 0.66rem;
   color: var(--text-muted);
@@ -1675,6 +1736,35 @@ dialog h3 {
 }
 .caso-etiqueta.alerta { background: var(--quitar-bg); color: var(--peligro); font-weight: 600; }
 .caso-etiqueta.sin-subir { background: var(--accent-soft); color: var(--accent); }
+
+/* ------------------------- Apuntes: fotos adjuntas ---------------------- */
+.apunte-fotos { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.4rem; }
+.apunte-foto {
+  position: relative;
+  margin: 0;
+  width: 96px;
+  height: 96px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.apunte-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.apunte-foto-quitar {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  line-height: 18px;
+  padding: 0;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.apunte-foto-quitar:hover { background: var(--peligro); }
 
 /* ---------------------------- Casos: ficha ----------------------------- */
 /* La ficha es alta -9 apartados-, así que el diálogo se parte en tres

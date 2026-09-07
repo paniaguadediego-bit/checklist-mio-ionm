@@ -304,6 +304,36 @@
     casos_sin_filtro:    { es: "Ningún caso con esos filtros.", en: "No cases match those filters." },
     casos_n:             { es: "{n} caso(s)", en: "{n} case(s)" },
     casos_sin_subir:     { es: "{n} sin subir", en: "{n} not uploaded" },
+
+    /* --- Apuntes (personales, privados) --- */
+    tile_apuntes:        { es: "Mis apuntes", en: "My notes" },
+    apuntes_intro:       { es: "Notas propias -parámetros, filtros, fotos-, no lo que ya viene en Técnicas MIO. Se guardan en tu repositorio privado, solo para ti.",
+                           en: "Your own notes -parameters, filters, photos-, not what's already in MIO Techniques. Saved to your private repository, just for you." },
+    apuntes_nuevo:       { es: "Nuevo apunte", en: "New note" },
+    apuntes_buscar:      { es: "Buscar", en: "Search" },
+    apuntes_buscar_ph:   { es: "Buscar en título, categoría o texto…", en: "Search title, category or text…" },
+    apuntes_vacio:       { es: "Todavía no hay ningún apunte.", en: "No notes yet." },
+    apuntes_sin_filtro:  { es: "Ningún apunte con esa búsqueda.", en: "No notes match that search." },
+    apuntes_n:           { es: "{n} apunte(s)", en: "{n} note(s)" },
+    apuntes_sin_subir:   { es: "{n} sin subir", en: "{n} not uploaded" },
+    btn_exportar_apuntes: { es: "Exportar apuntes", en: "Export notes" },
+    apuntes_exportado:   { es: "Apuntes exportados", en: "Notes exported" },
+    dlg_apunte_titulo:   { es: "Apunte", en: "Note" },
+    apunte_campo_titulo: { es: "Título", en: "Title" },
+    apunte_titulo_ph:    { es: "p. ej. Parámetros t-MEP en escoliosis", en: "e.g. t-MEP parameters in scoliosis" },
+    apunte_campo_categoria: { es: "Categoría", en: "Category" },
+    apunte_categoria_ph: { es: "p. ej. Filtros, Estimulación…", en: "e.g. Filters, Stimulation…" },
+    apunte_campo_texto:  { es: "Texto", en: "Text" },
+    apunte_campo_fotos:  { es: "Fotos", en: "Photos" },
+    apunte_foto_quitar_tit: { es: "Quitar esta foto", en: "Remove this photo" },
+    apunte_borrar:       { es: "Borrar apunte", en: "Delete note" },
+    apunte_borrar_conf:  { es: "¿Borrar el apunte «{titulo}»?", en: "Delete the note «{titulo}»?" },
+    apunte_borrado:      { es: "Apunte borrado", en: "Note deleted" },
+    apunte_guardado:     { es: "Apunte guardado", en: "Note saved" },
+    apunte_falta_titulo: { es: "Ponle un título al apunte antes de guardar.", en: "Give the note a title before saving." },
+    apunte_meta_creado:  { es: "Creado el {fecha}", en: "Created on {fecha}" },
+    apunte_meta_editado: { es: "· editado el {fecha}", en: "· edited on {fecha}" },
+
     caso_estado_preparado: { es: "Preparado", en: "Prepared" },
     caso_estado_cerrado: { es: "Cerrado", en: "Closed" },
     caso_estado_cancelado: { es: "Cancelado", en: "Cancelled" },
@@ -585,6 +615,10 @@
                            en: "Each quantitative parameter names its source. When two sources give different values, both are shown separately — never averaged or merged." },
     tecnicas_mio_aviso_en: { es: "This section is only written in Spanish for now.", en: "This section is only written in Spanish for now." },
     tecmio_buscar_ph:    { es: "Buscar técnica, sitio, parámetro, cifra…", en: "Search technique, site, parameter, figure…" },
+    tecmio_sin_resultados: { es: "Sin resultados para «{texto}».", en: "No results for «{texto}»." },
+    tecmio_vista_tarjetas: { es: "Tarjetas", en: "Cards" },
+    tecmio_vista_tabla:  { es: "Tabla", en: "Table" },
+    tecmio_col_tecnica:  { es: "Técnica", en: "Technique" },
     btn_docente:         { es: "Docente", en: "Teaching" },
     docente_titulo:      { es: "Miotomas: qué músculos monitorizar", en: "Myotomes: which muscles to monitor" },
     docente_intro:       { es: "Pulsa en la columna los <b>niveles</b> que abarca la cirugía. A la izquierda aparecen los músculos que dependen de esas raíces; pulsa uno para llevarlo a los <b>monitorizados</b> de la derecha, y pulsa allí para quitarlo. Los rangos son los que se enseñan habitualmente: la inervación se solapa y no todas las escuelas dan los mismos límites, así que están para discutirlos.",
@@ -878,7 +912,7 @@
    * sin depender del orden del CSS, así que este patrón evita el bug entero
    * en vez de tener que acotarlo cada vez.
    * ---------------------------------------------------------------- */
-  var PANTALLAS = ["inicio", "organizador", "casos", "tecnicas-mio", "docente", "simulador", "bibliografia"];
+  var PANTALLAS = ["inicio", "organizador", "casos", "tecnicas-mio", "docente", "simulador", "bibliografia", "apuntes"];
 
   function irAPantalla(nombre) {
     PANTALLAS.forEach(function (p) {
@@ -905,9 +939,10 @@
   document.getElementById("tile-organizador").addEventListener("click", function () { irAPantalla("organizador"); });
   document.getElementById("tile-simulador").addEventListener("click", function () { abrirSimulador(); });
   document.getElementById("tile-bibliografia").addEventListener("click", function () { irAPantalla("bibliografia"); });
-  // tile-casos, tile-tecnicas-mio y tile-docente se conectan más abajo, junto
-  // a abrirListaCasos()/abrirTecnicasMio()/abrirDocente() -esas sí necesitan
-  // pintar contenido antes de mostrarse, no son un simple cambio de pantalla-.
+  // tile-casos, tile-tecnicas-mio, tile-docente y tile-apuntes se conectan
+  // más abajo, junto a abrirListaCasos()/abrirTecnicasMio()/abrirDocente()/
+  // abrirListaApuntes() -esas sí necesitan pintar contenido antes de
+  // mostrarse, no son un simple cambio de pantalla-.
 
   function aplicarIdioma(nuevo, repintar) {
     idioma = IDIOMAS.indexOf(nuevo) === -1 ? "es" : nuevo;
@@ -2281,7 +2316,7 @@
     } else if (ultimoFallo) {
       el.textContent = T("sync_sin_subir");
       estado = "error";
-    } else if (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length) {
+    } else if (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length || apuntesPendientes().length || apuntesBorradosPendientes().length) {
       el.textContent = T("sync_guardando");
       estado = "aviso";
     } else if (sync.fecha) {
@@ -2476,7 +2511,8 @@
   function subirAuto() {
     if (!syncActivo() || subiendo) return;
     if (!sync.pendiente && !casosPendientes().length && !borradosPendientes().length &&
-        !montajesPendientes().length && !montajesBorradosPend().length) return;
+        !montajesPendientes().length && !montajesBorradosPend().length &&
+        !apuntesPendientes().length && !apuntesBorradosPendientes().length) return;
     if (navigator.onLine === false) { pintarEstadoSync(); return; }
     subiendo = true;
     pintarEstadoSync();
@@ -2496,6 +2532,8 @@
       .then(function () { return borrarCasosPendientes(); })
       .then(function () { return subirMontajesPendientes(); })
       .then(function () { return borrarMontajesPendientes(); })
+      .then(function () { return subirApuntesPendientes(); })
+      .then(function () { return borrarApuntesPendientes(); })
       .catch(function (e) { ultimoFallo = e.message || T("sync_error_subir"); })
       .then(function () {
         subiendo = false;
@@ -2509,7 +2547,7 @@
   // prepararon en el otro dispositivo.
   function bajarAuto() {
     if (!syncActivo() || navigator.onLine === false) return;
-    if (sync.pendiente) { subirAuto(); bajarCasos(); bajarMontajes(); return; }
+    if (sync.pendiente) { subirAuto(); bajarCasos(); bajarMontajes(); bajarApuntes(); return; }
     subiendo = true;
     pintarEstadoSync();
     leerRemoto()
@@ -2533,6 +2571,7 @@
         return bajarCasos();
       })
       .then(function () { return bajarMontajes(); })
+      .then(function () { return bajarApuntes(); })
       .then(function () {
         // Un caso guardado en quirófano -o sin conexión- se queda marcado en
         // `casosSinSubir`, que es una marca aparte: `sync.pendiente` es solo
@@ -2548,9 +2587,10 @@
   // Al volver la conexión se reintenta lo que quedó pendiente
   window.addEventListener("online", function () {
     ultimoFallo = null;
-    if (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length) subirAuto();
+    if (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length || apuntesPendientes().length || apuntesBorradosPendientes().length) subirAuto();
     bajarCasos();
     bajarMontajes();
+    bajarApuntes();
   });
 
   // Al volver la pestaña a primer plano, también. En el móvil el navegador
@@ -3656,6 +3696,205 @@
           if (quedan.length || yaNoExisten.length) {
             guardarCasos();
             if (pantallaActiva("casos")) renderListaCasos();
+          }
+        });
+      })
+      .catch(function (e) { ultimoFallo = e.message || T("sync_error_bajar"); })
+      .then(function () { pintarEstadoSync(); });
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Apuntes personales: notas y fotos privadas del usuario -parámetros
+   * propios, no lo que ya está en Técnicas MIO-. Van al mismo repositorio
+   * privado que casos/montajes (checklist-mio-datos), en su propia carpeta
+   * "apuntes/", un archivo por apunte -mismo motivo que casos y montajes:
+   * si fueran parte de estado.json, editar uno en el móvil y otro en el
+   * portátil antes de sincronizar perdería uno de los dos enteros-.
+   * ---------------------------------------------------------------- */
+  var APUNTES_KEY = "mio_ionm_apuntes_v1";
+  var apuntes = {};        // apunte_uid -> apunte
+  var apuntesSha = {};     // apunte_uid -> sha del archivo en GitHub
+  var apuntesSinSubir = {};
+  var apuntesBorrados = {}; // apunte_uid -> sha con el que había que borrarlo
+
+  function apuntesPendientes() { return Object.keys(apuntesSinSubir); }
+  function apuntesBorradosPendientes() { return Object.keys(apuntesBorrados); }
+
+  function cargarApuntes() {
+    apuntes = {}; apuntesSha = {}; apuntesSinSubir = {}; apuntesBorrados = {};
+    try {
+      var g = JSON.parse(localStorage.getItem(APUNTES_KEY) || "null");
+      if (g) {
+        apuntes = g.apuntes || {};
+        apuntesSha = g.sha || {};
+        apuntesSinSubir = g.sin_subir || {};
+        apuntesBorrados = g.borrados || {};
+      }
+    } catch (e) { /* sin apuntes guardados o ilegibles */ }
+  }
+
+  function guardarApuntes() {
+    try {
+      localStorage.setItem(APUNTES_KEY, JSON.stringify({
+        apuntes: apuntes, sha: apuntesSha, sin_subir: apuntesSinSubir, borrados: apuntesBorrados
+      }));
+    } catch (e) {
+      avisoGuardado(T("guardado_error", { error: e.message }), true);
+    }
+  }
+
+  function borrarApunte(uid) {
+    delete apuntes[uid];
+    delete apuntesSinSubir[uid];
+    if (apuntesSha[uid]) apuntesBorrados[uid] = apuntesSha[uid];
+    delete apuntesSha[uid];
+    guardarApuntes();
+    programarEnvio();
+    pintarEstadoSync();
+  }
+
+  function guardarApunte(apunte, esNuevo) {
+    if (!esNuevo) apunte.editado_en = (apunte.editado_en || []).concat(new Date().toISOString());
+    apuntes[apunte.apunte_uid] = apunte;
+    apuntesSinSubir[apunte.apunte_uid] = true;
+    guardarApuntes();
+    programarEnvio();
+    pintarEstadoSync();
+  }
+
+  function apunteVacio() {
+    return {
+      apunte_uid: uuid(),
+      titulo: "",
+      categoria: "",
+      texto: "",
+      fotos: [],          // [{nombre, datos}] -datos: data URL base64
+      creado_en: new Date().toISOString(),
+      editado_en: []
+    };
+  }
+
+  function rutaApunte(uid) { return "apuntes/" + uid + ".json"; }
+
+  function urlApunte(uid) {
+    return "https://api.github.com/repos/" + sync.repo + "/contents/" + rutaApunte(uid);
+  }
+
+  function subirApunte(uid, reintento) {
+    var a = apuntes[uid];
+    if (!a) { delete apuntesSinSubir[uid]; return Promise.resolve(); }
+    var cuerpo = {
+      message: "Apunte " + (a.titulo || uid),
+      content: aBase64(JSON.stringify(a, null, 2))
+    };
+    if (apuntesSha[uid]) cuerpo.sha = apuntesSha[uid];
+    return fetch(urlApunte(uid), {
+      method: "PUT",
+      headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()),
+      body: JSON.stringify(cuerpo)
+    }).then(function (resp) {
+      if ((resp.status === 409 || resp.status === 422) && !reintento) {
+        return fetch(urlApunte(uid), { headers: cabeceras(), cache: "no-store" })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (json) {
+            apuntesSha[uid] = json ? json.sha : null;
+            return subirApunte(uid, true);
+          });
+      }
+      if (!resp.ok) throw new Error(errorLegible(resp));
+      return resp.json().then(function (json) {
+        apuntesSha[uid] = json.content.sha;
+        delete apuntesSinSubir[uid];
+        guardarApuntes();
+      });
+    });
+  }
+
+  function subirApuntesPendientes() {
+    if (!syncActivo()) return Promise.resolve();
+    return apuntesPendientes().reduce(function (cadena, uid) {
+      return cadena.then(function () { return subirApunte(uid); });
+    }, Promise.resolve());
+  }
+
+  function eliminarApunteRemoto_(uid, sha, reintento) {
+    return fetch(urlApunte(uid), {
+      method: "DELETE",
+      headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()),
+      body: JSON.stringify({ message: "Borrar apunte " + uid, sha: sha })
+    }).then(function (resp) {
+      if (resp.status === 404) return;
+      if ((resp.status === 409 || resp.status === 422) && !reintento) {
+        return fetch(urlApunte(uid), { headers: cabeceras(), cache: "no-store" })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (json) {
+            if (!json) return;
+            return eliminarApunteRemoto_(uid, json.sha, true);
+          });
+      }
+      if (!resp.ok) throw new Error(errorLegible(resp));
+    });
+  }
+
+  function borrarApuntesPendientes() {
+    if (!syncActivo()) return Promise.resolve();
+    return apuntesBorradosPendientes().reduce(function (cadena, uid) {
+      return cadena.then(function () {
+        return eliminarApunteRemoto_(uid, apuntesBorrados[uid]).then(function () {
+          delete apuntesBorrados[uid];
+          guardarApuntes();
+        });
+      });
+    }, Promise.resolve());
+  }
+
+  function bajarApuntes() {
+    if (!syncActivo() || navigator.onLine === false) return Promise.resolve();
+    var url = "https://api.github.com/repos/" + sync.repo + "/contents/apuntes";
+    return fetch(url, { headers: cabeceras(), cache: "no-store" })
+      .then(function (resp) {
+        if (resp.status === 404) return [];   // todavía no hay ningún apunte
+        if (!resp.ok) throw new Error(errorLegible(resp));
+        return resp.json();
+      })
+      .then(function (listado) {
+        var presentes = {};
+        (listado || []).forEach(function (f) {
+          if (f.type === "file" && /\.json$/.test(f.name)) {
+            presentes[f.name.replace(/\.json$/, "")] = true;
+          }
+        });
+        var yaNoExisten = Object.keys(apuntes).filter(function (uid) {
+          return apuntesSha[uid] && !presentes[uid] && !apuntesSinSubir[uid] && !apuntesBorrados[uid];
+        });
+        yaNoExisten.forEach(function (uid) {
+          delete apuntes[uid];
+          delete apuntesSha[uid];
+        });
+
+        var quedan = (listado || []).filter(function (f) {
+          if (f.type !== "file" || !/\.json$/.test(f.name)) return false;
+          var uid = f.name.replace(/\.json$/, "");
+          if (apuntesSinSubir[uid]) return false;
+          if (apuntesBorrados[uid]) return false;
+          return apuntesSha[uid] !== f.sha;
+        });
+        return quedan.reduce(function (cadena, f) {
+          return cadena.then(function () {
+            return fetch(f.url, { headers: cabeceras(), cache: "no-store" })
+              .then(function (r) { return r.ok ? r.json() : null; })
+              .then(function (json) {
+                if (!json || !json.content) return;
+                var a = JSON.parse(deBase64(json.content));
+                if (!a || !a.apunte_uid) return;
+                apuntes[a.apunte_uid] = a;
+                apuntesSha[a.apunte_uid] = json.sha;
+              });
+          });
+        }, Promise.resolve()).then(function () {
+          if (quedan.length || yaNoExisten.length) {
+            guardarApuntes();
+            if (pantallaActiva("apuntes")) renderListaApuntes();
           }
         });
       })
@@ -5419,6 +5658,238 @@
     // que lo haga por su cuenta-.
     dlgCaso.close();
     abrirListaCasos();
+  });
+
+  /* ---------------------------------------------------------------- *
+   * Apuntes personales: pantalla (lista) + <dialog> para editar uno solo.
+   * Mismo patrón que Casos, pero sin estados ni filtros de fecha -es una
+   * libreta personal, no un expediente-. "Nuevo apunte" no guarda nada
+   * hasta que se pulsa "Guardar" -a diferencia de "Crear caso", aquí no
+   * hace falta un uid real de antemano para enlazar con nada más-.
+   * ---------------------------------------------------------------- */
+  var dlgApunte = document.getElementById("dlg-apunte");
+  var apunteAbierto = null;
+  var apunteEsNuevo = false;
+
+  function leerFormularioApunte() {
+    var a = apunteAbierto;
+    a.titulo = document.getElementById("apunte-titulo").value.trim();
+    a.categoria = document.getElementById("apunte-categoria").value.trim();
+    a.texto = document.getElementById("apunte-texto").value;
+    return a;
+  }
+
+  function renderFotosApunte() {
+    var cont = document.getElementById("apunte-fotos");
+    cont.innerHTML = "";
+    (apunteAbierto.fotos || []).forEach(function (foto, i) {
+      var fig = document.createElement("figure");
+      fig.className = "apunte-foto";
+      var img = document.createElement("img");
+      img.src = foto.datos;
+      img.alt = foto.nombre || "";
+      fig.appendChild(img);
+      var quitar = document.createElement("button");
+      quitar.type = "button";
+      quitar.className = "apunte-foto-quitar";
+      quitar.textContent = "×";
+      quitar.title = T("apunte_foto_quitar_tit");
+      quitar.addEventListener("click", function () {
+        apunteAbierto.fotos.splice(i, 1);
+        renderFotosApunte();
+      });
+      fig.appendChild(quitar);
+      cont.appendChild(fig);
+    });
+  }
+
+  function renderFormularioApunte() {
+    document.getElementById("dlg-apunte-titulo").textContent = apunteAbierto.titulo || T("dlg_apunte_titulo");
+    document.getElementById("apunte-titulo").value = apunteAbierto.titulo || "";
+    document.getElementById("apunte-categoria").value = apunteAbierto.categoria || "";
+    document.getElementById("apunte-texto").value = apunteAbierto.texto || "";
+    renderFotosApunte();
+    var meta = document.getElementById("apunte-meta");
+    if (apunteEsNuevo) {
+      meta.textContent = "";
+    } else {
+      var txt = T("apunte_meta_creado", { fecha: new Date(apunteAbierto.creado_en).toLocaleString(localeActual()) });
+      var eds = apunteAbierto.editado_en || [];
+      if (eds.length) {
+        txt += " " + T("apunte_meta_editado", { fecha: new Date(eds[eds.length - 1]).toLocaleString(localeActual()) });
+      }
+      meta.textContent = txt;
+    }
+    document.getElementById("apunte-borrar").hidden = apunteEsNuevo;
+    document.getElementById("apunte-error").hidden = true;
+  }
+
+  function abrirApunte(uid) {
+    apunteEsNuevo = false;
+    apunteAbierto = clonar(apuntes[uid]);
+    renderFormularioApunte();
+    dlgApunte.showModal();
+  }
+
+  function abrirApunteNuevo() {
+    apunteEsNuevo = true;
+    apunteAbierto = apunteVacio();
+    renderFormularioApunte();
+    dlgApunte.showModal();
+  }
+
+  function guardarFormularioApunte() {
+    var a = leerFormularioApunte();
+    if (!a.titulo) {
+      var err = document.getElementById("apunte-error");
+      err.textContent = T("apunte_falta_titulo");
+      err.hidden = false;
+      return false;
+    }
+    guardarApunte(a, apunteEsNuevo);
+    apunteEsNuevo = false;
+    apunteAbierto = clonar(apuntes[a.apunte_uid]);
+    avisoGuardado(T("apunte_guardado"));
+    return true;
+  }
+
+  function renderListaApuntes() {
+    var cont = document.getElementById("apuntes-lista");
+    cont.innerHTML = "";
+    var filtroCrudo = (document.getElementById("apuntes-buscar").value || "").trim();
+    var filtro = normalizarTecMio(filtroCrudo);
+
+    var lista = Object.keys(apuntes).map(function (uid) { return apuntes[uid]; })
+      .filter(function (a) {
+        if (!filtro) return true;
+        var t = normalizarTecMio((a.titulo || "") + " " + (a.categoria || "") + " " + (a.texto || ""));
+        return t.indexOf(filtro) !== -1;
+      })
+      // Más reciente primero, por fecha de creación
+      .sort(function (x, y) { return (y.creado_en || "").localeCompare(x.creado_en || ""); });
+
+    var total = Object.keys(apuntes).length;
+    var sinSubir = apuntesPendientes().length;
+    document.getElementById("apuntes-cuenta").textContent =
+      T("apuntes_n", { n: total }) + (sinSubir ? " · " + T("apuntes_sin_subir", { n: sinSubir }) : "");
+
+    if (!lista.length) {
+      var vacio = document.createElement("p");
+      vacio.className = "empty-hint";
+      vacio.textContent = total ? T("apuntes_sin_filtro") : T("apuntes_vacio");
+      cont.appendChild(vacio);
+      return;
+    }
+
+    lista.forEach(function (a) {
+      var fila = document.createElement("button");
+      fila.type = "button";
+      fila.className = "caso-fila apunte-fila";
+      fila.addEventListener("click", function () { abrirApunte(a.apunte_uid); });
+
+      var cab = document.createElement("span");
+      cab.className = "caso-fila-cab";
+      var titulo = document.createElement("b");
+      titulo.textContent = a.titulo || "—";
+      cab.appendChild(titulo);
+      var fecha = document.createElement("span");
+      fecha.className = "caso-fila-fecha";
+      fecha.textContent = (a.creado_en || "").slice(0, 10);
+      cab.appendChild(fecha);
+      fila.appendChild(cab);
+
+      if (a.texto) {
+        var det = document.createElement("span");
+        det.className = "caso-fila-det";
+        det.textContent = a.texto.length > 140 ? a.texto.slice(0, 140) + "…" : a.texto;
+        fila.appendChild(det);
+      }
+
+      var pie = document.createElement("span");
+      pie.className = "caso-fila-pie";
+      if (a.categoria) {
+        var etCat = document.createElement("span");
+        etCat.className = "caso-etiqueta";
+        etCat.textContent = a.categoria;
+        pie.appendChild(etCat);
+      }
+      if ((a.fotos || []).length) {
+        var fo = document.createElement("span");
+        fo.className = "caso-etiqueta";
+        fo.textContent = "📷 " + a.fotos.length;
+        pie.appendChild(fo);
+      }
+      if (apuntesSinSubir[a.apunte_uid]) {
+        var sub = document.createElement("span");
+        sub.className = "caso-etiqueta sin-subir";
+        sub.textContent = T("caso_pendiente_subir");
+        pie.appendChild(sub);
+      }
+      fila.appendChild(pie);
+
+      cont.appendChild(fila);
+    });
+  }
+
+  function abrirListaApuntes() {
+    renderListaApuntes();
+    irAPantalla("apuntes");
+  }
+
+  document.getElementById("tile-apuntes").addEventListener("click", abrirListaApuntes);
+  document.getElementById("apuntes-buscar").addEventListener("input", renderListaApuntes);
+  document.getElementById("apuntes-nuevo").addEventListener("click", abrirApunteNuevo);
+
+  // Cada foto se guarda como data URL dentro del propio apunte -mismo
+  // archivo que se sube a apuntes/<uid>.json-, sin servidor de imágenes
+  // aparte: para unas pocas fotos de apuntes personales es proporcionado.
+  document.getElementById("apunte-foto-input").addEventListener("change", function (e) {
+    var ficheros = Array.prototype.slice.call(e.target.files || []);
+    ficheros.forEach(function (fichero) {
+      var lector = new FileReader();
+      lector.onload = function () {
+        apunteAbierto.fotos = apunteAbierto.fotos || [];
+        apunteAbierto.fotos.push({ nombre: fichero.name, datos: lector.result });
+        renderFotosApunte();
+      };
+      lector.readAsDataURL(fichero);
+    });
+    e.target.value = "";
+  });
+
+  document.getElementById("apunte-guardar").addEventListener("click", function () {
+    guardarFormularioApunte();
+  });
+
+  document.getElementById("apunte-borrar").addEventListener("click", function () {
+    var a = apunteAbierto;
+    if (!confirm(T("apunte_borrar_conf", { titulo: a.titulo || "" }))) return;
+    borrarApunte(a.apunte_uid);
+    dlgApunte.close();
+    avisoGuardado(T("apunte_borrado"));
+    abrirListaApuntes();
+  });
+
+  document.getElementById("apunte-volver").addEventListener("click", function () {
+    dlgApunte.close();
+    abrirListaApuntes();
+  });
+
+  // Exporta todos los apuntes en un único .json, igual de sencillo que
+  // "Exportar copia" del estado general (mismo patrón Blob + <a download>).
+  document.getElementById("btn-exportar-apuntes").addEventListener("click", function () {
+    var lista = Object.keys(apuntes).map(function (uid) { return apuntes[uid]; })
+      .sort(function (x, y) { return (y.creado_en || "").localeCompare(x.creado_en || ""); });
+    var blob = new Blob([JSON.stringify(lista, null, 2)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement("a");
+    link.href = url;
+    link.download = "mio-apuntes-" + new Date().toISOString().slice(0, 10) + ".json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    avisoGuardado(T("apuntes_exportado"));
   });
 
   /* ---------------------------------------------------------------- *
@@ -7400,14 +7871,10 @@
   // técnicas que no coinciden desaparecen (junto con su región si se queda
   // sin ninguna) y lo que sí coincide se abre solo -región y técnica-, para
   // ir directo al resultado sin desplegar nada a mano.
-  function renderTecnicasMio() {
+  function renderTecnicasMioTarjetas() {
     var datos = window.TECNICAS_MIO || { tecnicas: [] };
     var cont = document.getElementById("tecmio-contenido");
     cont.innerHTML = "";
-
-    var entrada = document.getElementById("tecmio-buscar");
-    var filtroCrudo = entrada ? (entrada.value || "").trim() : "";
-    tecMioFiltro = normalizarTecMio(filtroCrudo);
 
     // Agrupación por familia de técnica (SEP, MEP, Reflejos...), no por
     // región/zona quirúrgica -reorganización del 05-09-2026, ver el
@@ -7451,12 +7918,136 @@
     if (tecMioFiltro && !ordenFamilias.length) {
       var vacio = document.createElement("p");
       vacio.className = "tecmio-sin-resultados";
-      vacio.textContent = "Sin resultados para «" + filtroCrudo + "».";
+      vacio.textContent = T("tecmio_sin_resultados", { texto: document.getElementById("tecmio-buscar").value || "" });
       cont.appendChild(vacio);
     }
+  }
 
+  // Vista "Tabla" (06-09-2026, pedida junto a los apuntes personales): una
+  // chuleta de un vistazo con todas las técnicas juntas, columnas genéricas
+  // -Estimulación / Registro / Filtros / Barrido / Notas-, en vez de abrir
+  // tarjeta por tarjeta. "estimulacion_y_registro"/"estimulacion_registro"
+  // (una sola sección para las técnicas donde ambas van juntas) se reparten
+  // en las dos columnas; las secciones raras de una sola técnica
+  // (umbrales_referencia, tecnica_colision_onda_d,
+  // mapeo_subcortical_radiacion_optica) caen en Notas para no perder el
+  // dato. Reutiliza pintarValorTecMio(): la celda puede salir alta si la
+  // técnica trae muchos subparámetros -es el mismo contenido que la
+  // tarjeta, no una versión resumida-, así que la tabla lleva scroll propio.
+  var TECMIO_TABLA_COLUMNAS = ["estimulacion", "registro", "filtros", "barrido", "notas"];
+
+  function celdaSeccionesTecMio(tr, tecnica, columna) {
+    var td = document.createElement("td");
+    td.className = "tecmio-td-" + columna;
+    var partes = [];
+    if (columna === "estimulacion") {
+      partes = ["estimulacion", "estimulacion_y_registro", "estimulacion_registro"];
+    } else if (columna === "registro") {
+      partes = ["registro", "estimulacion_y_registro", "estimulacion_registro"];
+    } else if (columna === "notas") {
+      partes = ["umbrales_referencia", "tecnica_colision_onda_d",
+        "mapeo_subcortical_radiacion_optica", "notas_clinicas"];
+    } else {
+      partes = [columna];
+    }
+    var huboAlgo = false;
+    partes.forEach(function (clave) {
+      if (!tecnica[clave]) return;
+      huboAlgo = true;
+      if (partes.length > 1) {
+        var h6 = document.createElement("h6");
+        h6.className = "tecmio-td-subtitulo";
+        pintarTextoConResaltado(h6, etiquetaTecMio(clave, TECMIO_SECCIONES));
+        td.appendChild(h6);
+      }
+      pintarValorTecMio(td, tecnica[clave]);
+    });
+    if (!huboAlgo) td.appendChild(document.createTextNode("—"));
+    tr.appendChild(td);
+  }
+
+  function renderTecnicasMioTabla() {
+    var datos = window.TECNICAS_MIO || { tecnicas: [] };
+    var cont = document.getElementById("tecmio-tabla");
+    cont.innerHTML = "";
+    // Sin esto, filtrar con la tabla ya desplazada hacia abajo deja el
+    // scroll donde estaba: como el contenedor tiene su propio scroll
+    // (overflow: auto, no la página), la lista filtrada -mucho más corta-
+    // se queda invisible por debajo del borde inferior en vez de aparecer.
+    cont.scrollTop = 0;
+
+    var lista = (datos.tecnicas || []).filter(function (t) {
+      return !tecMioFiltro || tecnicaCoincideTecMio(t, tecMioFiltro);
+    });
+
+    if (!lista.length) {
+      var vacio = document.createElement("p");
+      vacio.className = "tecmio-sin-resultados";
+      vacio.textContent = T("tecmio_sin_resultados", { texto: document.getElementById("tecmio-buscar").value || "" });
+      cont.appendChild(vacio);
+      return;
+    }
+
+    var tabla = document.createElement("table");
+    tabla.className = "tecmio-tabla";
+    var thead = document.createElement("thead");
+    var trCab = document.createElement("tr");
+    [T("tecmio_col_tecnica")].concat(TECMIO_TABLA_COLUMNAS.map(function (c) {
+      return etiquetaTecMio(c, TECMIO_SECCIONES);
+    })).forEach(function (texto) {
+      var th = document.createElement("th");
+      th.textContent = texto;
+      trCab.appendChild(th);
+    });
+    thead.appendChild(trCab);
+    tabla.appendChild(thead);
+
+    var tbody = document.createElement("tbody");
+    lista.forEach(function (t) {
+      var tr = document.createElement("tr");
+      tr.className = "tecmio-familia-" + (t.familia || "otras");
+      var tdNombre = document.createElement("td");
+      tdNombre.className = "tecmio-td-tecnica";
+      if (t.categoria) {
+        var badge = document.createElement("span");
+        badge.className = "tecmio-badge" + (t.familia ? " tecmio-badge-" + t.familia : "");
+        pintarTextoConResaltado(badge, t.categoria);
+        tdNombre.appendChild(badge);
+        tdNombre.appendChild(document.createElement("br"));
+      }
+      pintarTextoConResaltado(tdNombre, t.nombre);
+      tr.appendChild(tdNombre);
+      TECMIO_TABLA_COLUMNAS.forEach(function (columna) {
+        celdaSeccionesTecMio(tr, t, columna);
+      });
+      tbody.appendChild(tr);
+    });
+    tabla.appendChild(tbody);
+    cont.appendChild(tabla);
+  }
+
+  var tecMioVista = "tarjetas";
+
+  function renderTecnicasMio() {
+    var entrada = document.getElementById("tecmio-buscar");
+    var filtroCrudo = entrada ? (entrada.value || "").trim() : "";
+    tecMioFiltro = normalizarTecMio(filtroCrudo);
+    if (tecMioVista === "tabla") renderTecnicasMioTabla();
+    else renderTecnicasMioTarjetas();
     tecMioRenderizada = true;
   }
+
+  function elegirVistaTecMio(vista) {
+    tecMioVista = vista;
+    document.getElementById("tecmio-vista-tarjetas").classList.toggle("activo", vista === "tarjetas");
+    document.getElementById("tecmio-vista-tabla").classList.toggle("activo", vista === "tabla");
+    document.getElementById("tecmio-contenido").hidden = vista !== "tarjetas";
+    document.getElementById("tecmio-tabla").hidden = vista !== "tabla";
+    renderTecnicasMio();
+  }
+
+  document.getElementById("tecmio-vista-tarjetas").addEventListener("click", function () { elegirVistaTecMio("tarjetas"); });
+  document.getElementById("tecmio-vista-tabla").addEventListener("click", function () { elegirVistaTecMio("tabla"); });
 
   function abrirTecnicasMio() {
     if (!tecMioRenderizada) renderTecnicasMio();
@@ -8471,6 +9062,7 @@
   sembrarMontajes();
   limpiarMontajesHeredados();
   cargarCasos();
+  cargarApuntes();
   cargarSync();
   cargarPerfilUsuario();
   cargarDocente();

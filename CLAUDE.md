@@ -2331,3 +2331,112 @@ En el registro de casos hay tres fechas distintas y no deben confundirse:
 `fecha` es cuándo ocurrió la cirugía (editable siempre, y es la que cuenta para
 las estadísticas), `guardado_en` es cuándo se creó el archivo y `editado_en` es
 un array con cada edición posterior. Las dos últimas las pone la app sola.
+
+### Retoques posteriores, 07-09-2026: músculos craneales, Apuntes personales, tabla de Técnicas MIO
+
+- **Catálogo de "Músculos craneales" ampliado con variantes de material**,
+  pedido por el usuario para reflejar cómo se monitoriza de verdad. Regla
+  seguida en todos los casos: **ningún id existente cambia de etiqueta**,
+  aunque el usuario pidiera literalmente sustituir el material -se comprobó
+  a mano en `checklist-mio-datos` que `l_ooc`, `r_ooc`, `l_ment`, `r_ment`,
+  `l_mass`, `r_mass`, `l_nasalis`, `r_nasalis`, `l_trapecio`, `r_trapecio`,
+  `l_len`, `r_len`, `l_crico`, `r_crico`, `l_stcm`, `r_stcm`, `vocal_1` y
+  `vocal_2` están todos en casos y/o montajes reales-, así que cada variante
+  nueva es un **id nuevo** con el mismo nombre visible y etiqueta distinta
+  -mismo patrón que ya usaban Erb1/Erb2 o Vocal1/Vocal2-, nunca una edición
+  en el sitio. Cambios concretos en `data/surgeries.js`:
+  - `l_mass`/`r_mass` ganan una variante de agujas monopolares, **2 canales
+    por lado** (`l_mass_mono1`/`l_mass_mono2` y sus pares `r_`, etiqueta
+    `aguja_monopolar`) porque el registro monopolar necesita activa y
+    referencia como dos electrodos sueltos, a diferencia de hook-wire (que
+    ya duplica material solo con el flag `"doble"` de su etiqueta). La
+    etiqueta `aguja_monopolar` **ya existía** en `data/surgeries.js`, sin
+    usar en ningún ítem: no hizo falta crearla, solo engancharla.
+  - `l_ooc`/`r_ooc`, `l_ment`/`r_ment` ganan variante de agujas pareadas
+    (`etiqueta: "aguja_trenzada"`, ids con sufijo `_ag`).
+  - **Nuevo músculo `L.Palad`/`R.Palad`** (velo del paladar), no existía en
+    ningún catálogo: se añade con las dos variantes, hook-wire y agujas
+    pareadas, sin id previo que proteger.
+  - `l_crico`/`r_crico` y `l_stcm`/`r_stcm` ganan también su variante de
+    agujas pareadas (`l_crico_ag`/`r_crico_ag`, `l_stcm_ag`/`r_stcm_ag`,
+    pedido aparte el mismo día tras revisar el resultado): mismo patrón
+    `_ag` que el resto, ids originales sin tocar.
+  - `l_nasalis`/`r_nasalis`, `l_trapecio`/`r_trapecio` y `l_len`/`r_len`
+    **se mudan** de "Músculos craneales — ampliación" a "Músculos craneales"
+    -mismo id, mismo objeto, solo cambia en qué array de `items` viven-, y
+    ganan su variante de agujas pareadas como los anteriores. `L.Trapecio`
+    ya pedía explícitamente las dos variantes; Nasalis y Lengua se trataron
+    igual por consistencia y por la misma regla de no tocar el id existente.
+  - **4 ítems nuevos para el sensor de tubo orotraqueal multicontacto**
+    (`voc_1_3`, `voc_2_4`, `voc_5_7`, `voc_6_8` — nombres "Voc1.-3" etc.),
+    junto a los `vocal_1`/`vocal_2` que ya había, mismo patrón
+    `media_unidad: true`. Es una aproximación: ese flag asume que se
+    colocan de dos en dos y no hay forma de expresar "N canales = 1 sensor"
+    con lo que ya soporta `calcularResumen()` -no se tocó esa lógica, fuera
+    de alcance de este cambio-, así que si alguna vez se colocan los 4 a la
+    vez el recuento de sensor_tubo saldría por encima de 1. No debería
+    pasar en la práctica: Vocal1/2 y los 4 Voc*-* son tubos de fabricantes
+    distintos, no se combinan en el mismo caso.
+  - "Músculos craneales — ampliación": `L.Frontalis`/`R.Frontalis` y
+    `L.Oris`/`R.Oris` ganan también su variante de agujas pareadas (mismo
+    patrón `_ag`), sin usuarios reales que proteger -0 casos/montajes con
+    esos ids, comprobado antes de tocar nada-, así que aquí sí se podría
+    haber reescrito el id existente, pero se mantuvo el mismo patrón de
+    "añadir, no mutar" por coherencia con el resto del cambio.
+  - Verificado con un script de Node: 332 ítems en `catalogo_material`, cero
+    ids duplicados, cero etiquetas huérfanas.
+
+- **Botón nuevo "Mis apuntes"**: libreta personal del usuario -parámetros,
+  filtros, fotos propias, no lo que ya sale en Técnicas MIO ni en los
+  libros-. Pantalla propia (`pantalla-apuntes`) con lista + buscador +
+  exportar, y un `<dialog id="dlg-apunte">` para crear/editar uno, mismo
+  patrón que Casos pero sin estados. Decisión tomada con el usuario: se
+  guarda en el **mismo repositorio privado** `checklist-mio-datos` -no uno
+  nuevo-, en su propia carpeta `apuntes/<uid>.json` -un archivo por apunte,
+  misma razón que casos y montajes: evita que dos dispositivos se pisen el
+  uno al otro-, con subida **automática** igual que el resto de la app
+  (mismo `programarEnvio()`/`RETARDO_SUBIDA`). Fotos como `data:` URL
+  incrustadas dentro del propio JSON del apunte -sin servidor de imágenes
+  aparte-, razonable para unas pocas fotos personales pero no pensado para
+  volúmenes grandes. Sigue el patrón exacto de sincronización de Casos:
+  `apuntes`/`apuntesSha`/`apuntesSinSubir`/`apuntesBorrados` en
+  `localStorage["mio_ionm_apuntes_v1"]`, `subirApunte()`/
+  `subirApuntesPendientes()`/`borrarApuntesPendientes()`/`bajarApuntes()`
+  enganchados en `subirAuto()`/`bajarAuto()`/`pintarEstadoSync()` junto a
+  los de casos y montajes. "Exportar apuntes" descarga un único `.json` con
+  todos los apuntes (mismo patrón Blob + `<a download>` que "Exportar
+  copia").
+
+- **Vista "Tabla" en Técnicas MIO**, pedida junto a lo anterior: una chuleta
+  de un vistazo con todas las técnicas juntas, en vez de abrir tarjeta por
+  tarjeta. Decisión tomada con el usuario: vive **dentro** de la pantalla
+  que ya existía (interruptor "Tarjetas"/"Tabla", `tecMioVista`), y es
+  **una sola tabla** con columnas genéricas -Técnica, Estimulación,
+  Registro, Filtros, Barrido (sweep), Notas- aunque una técnica concreta
+  deje varias celdas vacías. `estimulacion_y_registro`/
+  `estimulacion_registro` (una sola sección para las técnicas donde ambas
+  van juntas) se reparten en las dos columnas Estimulación y Registro;
+  las tres secciones raras de una sola técnica
+  (`umbrales_referencia`, `tecnica_colision_onda_d`,
+  `mapeo_subcortical_radiacion_optica`) caen todas en Notas, junto a
+  `notas_clinicas`, para no perder el dato -no hay una columna "Trenes"
+  separada: ese parámetro vive dentro de `estimulacion` como subcampo
+  (`tren_pulsos`/`isi_ms`), no como sección propia, así que separarlo habría
+  exigido extraer campos concretos con heurística en vez de reutilizar la
+  estructura real de `data/tecnicas-mio.js`-. Cada celda reutiliza
+  `pintarValorTecMio()` tal cual -mismo contenido que la tarjeta, sin
+  resumir-, así que una técnica con muchos subparámetros da una fila alta:
+  es el precio de no perder ningún dato al pasar de tarjeta a tabla. El
+  contenedor (`#tecmio-tabla`) tiene su propio scroll (ancho y alto): hace
+  falta poner `scrollTop = 0` en cada render o, filtrando con la tabla ya
+  desplazada hacia abajo, el resultado filtrado -mucho más corto- queda
+  invisible por debajo del borde inferior -bug real, encontrado probando en
+  el navegador antes de dar el cambio por bueno-.
+
+- Verificado en el navegador (servidor estático local, no el `file://`
+  directo): las 40 filas nuevas de "Músculos craneales" (44 tras añadir
+  Crico/STCM el mismo día) y las 26 de "ampliación" pintan con el
+  color/borde correcto de cada etiqueta, "Mis apuntes" completa el ciclo
+  crear→guardar→reabrir→borrar sin errores de consola, y la vista Tabla de
+  Técnicas MIO filtra y resalta igual que las tarjetas. `?v=` de
+  `index.html` subido a `20260907`, luego `20260907b` al añadir Crico/STCM.

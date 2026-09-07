@@ -17,7 +17,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260906o">
+<link rel="stylesheet" href="style.css?v=20260907b">
 </head>
 <body>
 
@@ -62,6 +62,7 @@
     <button type="button" class="tile" id="tile-docente" data-i18n="tile_docencia"></button>
     <button type="button" class="tile" id="tile-simulador" data-i18n="tile_simulador"></button>
     <button type="button" class="tile" id="tile-bibliografia" data-i18n="tile_bibliografia"></button>
+    <button type="button" class="tile" id="tile-apuntes" data-i18n="tile_apuntes"></button>
   </div>
 </div>
 
@@ -554,6 +555,80 @@
   </div>
 </dialog>
 
+<!-- Apuntes personales (06-09-2026): libreta privada del usuario -parámetros
+     propios, filtros, fotos-, sincronizada en checklist-mio-datos/apuntes/,
+     no en estado.json (mismo motivo que casos y montajes: archivo por
+     apunte para que dos dispositivos no se pisen el uno al otro). Mismo
+     patrón pantalla+<dialog> que Casos, más simple porque no hay estados. -->
+<div class="pantalla" id="pantalla-apuntes">
+  <div class="pantalla-cab">
+    <h2 data-i18n="tile_apuntes"></h2>
+    <button type="button" class="btn-pantalla-inicio" data-i18n="btn_inicio_pantalla" data-i18n-title="logo_inicio_tit"></button>
+  </div>
+  <p class="dlg-intro" data-i18n="apuntes_intro"></p>
+
+  <div class="casos-acciones">
+    <button type="button" id="apuntes-nuevo" class="primario" data-i18n="apuntes_nuevo"></button>
+  </div>
+
+  <div class="casos-filtros">
+    <span>
+      <label for="apuntes-buscar" data-i18n="apuntes_buscar"></label>
+      <input type="search" id="apuntes-buscar" data-i18n-ph="apuntes_buscar_ph" autocomplete="off">
+    </span>
+  </div>
+
+  <div id="apuntes-lista" class="casos-lista"></div>
+  <p class="cat-version" id="apuntes-cuenta"></p>
+
+  <div class="dlg-botones">
+    <button type="button" id="btn-exportar-apuntes" data-i18n="btn_exportar_apuntes"></button>
+  </div>
+</div>
+
+<dialog id="dlg-apunte" class="no-print">
+  <div class="caso-cab">
+    <h3 id="dlg-apunte-titulo" data-i18n="dlg_apunte_titulo"></h3>
+  </div>
+  <div class="caso-scroll">
+    <div class="caso-grupo-campos">
+      <div class="campo">
+        <label for="apunte-titulo" data-i18n="apunte_campo_titulo"></label>
+        <input type="text" id="apunte-titulo" data-i18n-ph="apunte_titulo_ph">
+      </div>
+      <div class="campo">
+        <label for="apunte-categoria" data-i18n="apunte_campo_categoria"></label>
+        <input type="text" id="apunte-categoria" list="apunte-categorias" data-i18n-ph="apunte_categoria_ph">
+        <datalist id="apunte-categorias">
+          <option value="Estimulación">
+          <option value="Registro">
+          <option value="Filtros">
+          <option value="Barrido / trenes">
+          <option value="Material">
+          <option value="Otros">
+        </datalist>
+      </div>
+      <div class="campo">
+        <label for="apunte-texto" data-i18n="apunte_campo_texto"></label>
+        <textarea id="apunte-texto" rows="8"></textarea>
+      </div>
+      <div class="campo">
+        <label data-i18n="apunte_campo_fotos"></label>
+        <input type="file" id="apunte-foto-input" accept="image/*" multiple>
+        <div id="apunte-fotos" class="apunte-fotos"></div>
+      </div>
+    </div>
+    <p class="caso-meta" id="apunte-meta"></p>
+    <p class="dlg-error" id="apunte-error" hidden></p>
+  </div>
+  <div class="dlg-botones caso-acciones">
+    <button type="button" id="apunte-borrar" class="peligro" hidden data-i18n="apunte_borrar"></button>
+    <span class="barra-flex"></span>
+    <button type="button" id="apunte-volver" data-i18n="cerrar"></button>
+    <button type="button" id="apunte-guardar" class="primario" data-i18n="guardar"></button>
+  </div>
+</dialog>
+
 <dialog id="dlg-elegir-plantilla" class="no-print">
   <h3 data-i18n="dlg_elegir_plantilla_titulo"></h3>
   <div class="casos-filtros">
@@ -603,8 +678,13 @@
   </div>
   <p class="dlg-intro" id="tecmio-aviso-en" hidden data-i18n="tecnicas_mio_aviso_en"></p>
   <p class="dlg-intro" data-i18n="tecnicas_mio_intro"></p>
+  <div class="tecmio-vista-toggle">
+    <button type="button" id="tecmio-vista-tarjetas" class="activo" data-i18n="tecmio_vista_tarjetas"></button>
+    <button type="button" id="tecmio-vista-tabla" data-i18n="tecmio_vista_tabla"></button>
+  </div>
   <input type="search" id="tecmio-buscar" data-i18n-ph="tecmio_buscar_ph" autocomplete="off">
   <div id="tecmio-contenido"></div>
+  <div id="tecmio-tabla" class="tecmio-tabla-cont" hidden></div>
 </div>
 
 <!-- Fase 7 (06-09-2026): pasa de <dialog> a pantalla propia, mismo contenido
@@ -770,10 +850,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260906o"></script>
-<script src="data/i18n-en.js?v=20260906o"></script>
-<script src="data/guia.js?v=20260906o"></script>
-<script src="data/tecnicas-mio.js?v=20260906o"></script>
-<script src="app.js?v=20260906o"></script>
+<script src="data/surgeries.js?v=20260907b"></script>
+<script src="data/i18n-en.js?v=20260907b"></script>
+<script src="data/guia.js?v=20260907b"></script>
+<script src="data/tecnicas-mio.js?v=20260907b"></script>
+<script src="app.js?v=20260907b"></script>
 </body>
 </html>

@@ -3,14 +3,15 @@
 Herramienta interna, sin backend ni build step, para montar el material de
 cada cirugía monitorizada y saber exactamente qué hace falta.
 
-**Pantalla de inicio (06-09-2026):** el logo de la cabecera lleva siempre a
-una pantalla con 6 tarjetas — **Organizador de Montajes**, **Gestión de
-Casos**, **Técnicas IONM**, **Docencia**, **Simulador** y **Bibliografía**—,
-cada una su propio espacio de trabajo. Se pulsa una y se trabaja solo ahí;
-el logo, o el botón **Inicio** junto al título de cada pantalla, son el
-único camino de vuelta al inicio, no hay más navegación cruzada entre
-pantallas. Las tres últimas están de momento "en construcción" — ver
-*Pantallas nuevas, pendientes de contenido* más abajo.
+**Pantalla de inicio (06-09-2026, +Mis apuntes el 07-09-2026):** el logo de
+la cabecera lleva siempre a una pantalla con tarjetas — **Organizador de
+Montajes**, **Gestión de Casos**, **Técnicas IONM**, **Docencia**,
+**Simulador**, **Bibliografía** y **Mis apuntes**—, cada una su propio
+espacio de trabajo. Se pulsa una y se trabaja solo ahí; el logo, o el botón
+**Inicio** junto al título de cada pantalla, son el único camino de vuelta
+al inicio, no hay más navegación cruzada entre pantallas. Docencia,
+Simulador y Bibliografía están de momento parcialmente "en construcción" —
+ver *Pantallas nuevas, pendientes de contenido* más abajo.
 
 **Flujo de uso previsto:** el día antes de la cirugía abres o creas una
 **plantilla** —un montaje tuyo o de un compañero, desde **Organizador de
@@ -345,6 +346,15 @@ etiqueta `Electrodo Hook Wire`, y lo colocas donde quieras; el resumen sumará
 ese hook wire al total. Otro: `R.Delt` con la etiqueta *Aguja trenzada (par)*
 y borde punteado para distinguirlo del resto del grupo.
 
+**Músculos craneales, con las dos técnicas de registro a elegir (07-09-2026):**
+Maseterino, OOc, Nasalis, Mentoniano, Paladar, Cricotiroideo, STCM, Trapecio
+y Lengua aparecen dos veces en el catálogo de fábrica —una con *Electrodo
+Hook Wire* y otra con *Aguja trenzada (par)*—, para colocar la que uses de
+verdad sin tener que crear nada a mano. El Maseterino trae además una tercera
+variante con *Aguja monopolar*, con 2 canales por lado (activa y referencia
+como electrodos sueltos, a diferencia del hook-wire, que ya cuenta doble
+él solo).
+
 ## Registrar casos
 
 La tarjeta **Gestión de Casos** de la pantalla de inicio abre tus casos —es
@@ -542,6 +552,37 @@ guardan solo en ese navegador, no se sincronizan:
   marcan con `[TD/L]`, `[Sch]`, `[Lon]` en el propio tooltip) y en parte son
   cobertura de enseñanza habitual sin cita concreta detrás; la pantalla
   explica cuál es cuál.
+
+## Técnicas IONM: chuleta de parámetros
+
+La tarjeta **Técnicas IONM** trae sitios de estimulación/registro, filtros y
+barridos de cada técnica, citando siempre la fuente. Desde el 07-09-2026 hay
+dos formas de verlo, con un interruptor **Tarjetas / Tabla** arriba del
+buscador:
+
+- **Tarjetas** (la de siempre): agrupadas por familia (SEP, MEP, Reflejos…),
+  una por una, plegadas hasta que buscas algo.
+- **Tabla**: todas las técnicas juntas, una fila cada una, con columnas fijas
+  —Técnica, Estimulación, Registro, Filtros, Barrido, Notas— para verlas de
+  un vistazo sin abrir tarjeta por tarjeta. Algunas celdas quedan vacías si
+  esa técnica no trae ese dato. El buscador de arriba filtra igual en las dos
+  vistas.
+
+## Mis apuntes
+
+Tarjeta nueva del 07-09-2026, **privada**: para tus propios apuntes de
+parámetros, filtros o lo que sea —no lo que ya viene en Técnicas IONM ni en
+los libros—, con sitio para fotos. Cada apunte lleva título, categoría libre
+(con sugerencias: Estimulación, Registro, Filtros, Barrido/trenes,
+Material…), texto y las fotos que quieras adjuntar. **Nuevo apunte** no
+guarda nada hasta que pulsas **Guardar**; **Borrar apunte** pide
+confirmación y no tiene deshacer desde la app.
+
+Se guarda igual que casos y montajes —repositorio privado
+`checklist-mio-datos`, subida automática a los pocos segundos, un archivo
+por apunte en su propia carpeta `apuntes/`—, así que un apunte hecho en el
+móvil aparece también en el ordenador. **Exportar apuntes** descarga un único
+`.json` con todos, para tener copia aparte cuando quieras.
 
 ## Simulador y Bibliografía
 
