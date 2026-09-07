@@ -595,6 +595,11 @@ escribes en el móvil aparece también en el ordenador. **Exportar apuntes**
 descarga el documento entero en `.json`, para tener copia aparte cuando
 quieras.
 
+Las fotos que adjuntes se comprimen solas antes de guardarse (igual que las
+de "Imágenes del montaje" en un caso), así que una foto de cámara no infla
+el documento a varios megas — importante porque GitHub deja de dejarte
+leer un archivo de vuelta si pasa de 1 MB.
+
 ## Salir de la herramienta sin perder nada
 
 Pensado para el móvil, donde MIO-Check se usa instalado como app (sin barra

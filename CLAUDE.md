@@ -2630,3 +2630,64 @@ Verificado creando 15 casos de prueba y con el viewport en tamaño móvil
 (375×812): la lista ya no lleva scroll ni tope propios
 (`getComputedStyle().maxHeight === "none"`). `?v=` de `index.html` subido a
 `20260907f`.
+
+### Retoques posteriores, 07-09-2026 (madrugada): Apuntes no subía ni bajaba - fotos sin comprimir
+
+**Bug real, reportado por el usuario** ("pone subido correctamente al darle
+a Subir, pero salgo de ahí y vuelve a poner Sin subir" / "sigo sin ver los
+apuntes actualizados, la ventana vacía, como si no pudiera coger los datos
+de la parte de datos"). Diagnóstico:
+
+- Al migrar los 3 apuntes antiguos de la usuaria a `documento.json` (ver
+  "Apuntes personales: migra..." más arriba, mismo día), las 2 fotos de
+  cámara del móvil se copiaron **tal cual, sin comprimir** -3.07 MB y
+  4.36 MB en base64-, dejando `apuntes/documento.json` en **~10.2 MB**.
+- La API de Contenidos de GitHub (`GET .../contents/<ruta>`, la que usa
+  `bajarApunteDoc()`) **solo devuelve el campo `content` si el archivo pesa
+  1 MB o menos**; por encima de eso, la respuesta llega sin contenido
+  legible. Con 10 MB, `bajarApunteDoc()` no podía traer nunca los apuntes
+  de vuelta -de ahí la ventana vacía, "como si no pudiera coger los
+  datos"-, exactamente lo que pasaba.
+- **Manual "Subir" (del botón ☁) solo toca `estado.json`** -es
+  `enviarEstado()`, no tiene nada que ver con apuntes/casos/montajes-, así
+  que ese sí funcionaba y mostraba "Subido correctamente". Pero
+  `subirAuto()` (el automático, que sí intenta subir el documento de
+  Apuntes) volvía a fallar poco después con el archivo de 10 MB de por
+  medio -tardar demasiado o no completarse en una conexión de móvil-,
+  reponiendo "Sin subir" justo después de que el manual hubiera dado la
+  falsa sensación de que ya estaba resuelto. Se confirmó con `git log`
+  del repositorio de datos: seguían llegando commits `Actualizar
+  escenarios MIO-Check` (el mensaje de `enviarEstado()`) pero ninguno
+  nuevo de casos/montajes/apuntes, coherente con "solo lo que toca el
+  botón Subir manual llega, lo automático de todo lo demás no".
+- **Causa raíz en el código**: a diferencia de "Imágenes del montaje" en
+  la ficha del caso (que ya llama a `comprimirImagen(f, 1100, 0.72)` antes
+  de guardar cualquier foto -ver Fase de esa función y su comentario
+  original-), el manejador de `#apunte-foto-input` en Apuntes leía el
+  archivo **directo con `FileReader.readAsDataURL()`**, sin pasar por
+  `comprimirImagen()`. Se corrigió para usar exactamente la misma llamada
+  que ya usan las imágenes del caso -mismo límite de 1100 px de lado y
+  calidad 0.72-, así que una foto nueva de cámara de ahora en adelante
+  pesa unos cientos de KB, no varios MB.
+- **Recuperación de los datos ya reales**: se recomprimieron a mano, con
+  un script de Python (Pillow) y los mismos parámetros (1100 px, calidad
+  72), las 3 fotos que ya había en `apuntes/documento.json` -7.65 MB
+  combinadas antes, 288 KB después-, dejando el archivo completo en
+  **~387 KB**, muy por debajo del límite de 1 MB. El texto no se tocó.
+  Commit aparte en `checklist-mio-datos` (`de43862`), después de fusionar
+  primero los commits `Actualizar escenarios MIO-Check` que habían llegado
+  mientras tanto (`git fetch` + `git merge origin/main`, fast-forward sin
+  conflicto, antes de tocar nada -mismo hábito de siempre con este
+  repositorio-).
+- **Límite conocido, no resuelto de raíz**: el límite de 1 MB de la API de
+  Contenidos sigue ahí. Con fotos comprimidas a ~100-200 KB cada una, hacen
+  falta bastantes para volver a acercarse al límite, pero si algún día se
+  usan muchas fotos de golpe podría volver a pasar. No se añadió ninguna
+  advertencia de tamaño total en la interfaz -mismo criterio que ya acepta
+  "Imágenes del montaje" del caso, que tiene esta misma limitación de
+  fábrica y nunca ha hecho falta avisar-.
+
+Verificado en el navegador: una foto sintética de 2000×2000 subida por
+`#apunte-foto-input` queda comprimida a 1100×1100 antes de guardarse en
+`localStorage` (comprobado leyendo las dimensiones reales de la imagen
+resultante). `?v=` de `index.html` subido a `20260907g`.

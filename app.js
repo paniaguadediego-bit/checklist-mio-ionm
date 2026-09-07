@@ -5760,19 +5760,28 @@
   // Cada foto se guarda como data URL dentro del propio documento -mismo
   // archivo que se sube a apuntes/documento.json-, sin servidor de
   // imágenes aparte: proporcionado para unas pocas fotos personales.
+  // Se comprime igual que "Imágenes del montaje" en la ficha del caso
+  // (comprimirImagen(), 1100px de lado máximo, calidad 0.72) -sin esto, una
+  // foto de cámara de móvil sin comprimir son varios MB, y varias de
+  // golpe hacen que apuntes/documento.json pase con facilidad de 10 MB:
+  // por encima del límite de 1 MB que la API de Contenidos de GitHub
+  // admite para leer el archivo de vuelta, así que ni siquiera se podía
+  // volver a bajar -pasó de verdad el 07-09-2026, con 2 fotos de cámara
+  // sin comprimir metidas a mano al migrar los apuntes antiguos; ver
+  // "Retoques posteriores" de esa fecha para cómo se recuperó-.
   document.getElementById("apunte-foto-input").addEventListener("change", function (e) {
     var ficheros = Array.prototype.slice.call(e.target.files || []);
+    e.target.value = "";
     ficheros.forEach(function (fichero) {
-      var lector = new FileReader();
-      lector.onload = function () {
+      comprimirImagen(fichero, 1100, 0.72).then(function (dataUrl) {
         apunteDoc.fotos = apunteDoc.fotos || [];
-        apunteDoc.fotos.push({ nombre: fichero.name, datos: lector.result });
+        apunteDoc.fotos.push({ nombre: fichero.name, datos: dataUrl });
         renderFotosApunteDoc();
         guardarApunteDoc();
-      };
-      lector.readAsDataURL(fichero);
+      }).catch(function () {
+        alert(T("caso_imagen_error"));
+      });
     });
-    e.target.value = "";
   });
 
   // Exporta el documento entero (texto + fotos) en un .json, igual de
