@@ -595,6 +595,17 @@ escribes en el móvil aparece también en el ordenador. **Exportar apuntes**
 descarga el documento entero en `.json`, para tener copia aparte cuando
 quieras.
 
+## Salir de la herramienta sin perder nada
+
+Pensado para el móvil, donde MIO-Check se usa instalado como app (sin barra
+de navegador): el botón/gesto **atrás** del teléfono, dentro de cualquiera
+de las 7 pantallas principales, te devuelve a Inicio —igual que pulsar el
+logo—, no te saca de la app. Solo si pulsas atrás estando ya en Inicio, o si
+pulsas el botón **Cerrar MIO-Check** (debajo de la tarjeta "Mis apuntes"),
+se te pregunta si de verdad quieres salir —avisando si tienes cambios sin
+sincronizar todavía—. Así un gesto de atrás sin querer no te saca de la
+herramienta ni te hace perder lo que no se haya subido.
+
 ## Simulador y Bibliografía
 
 Dos tarjetas de la pantalla de inicio (06-09-2026). **Bibliografía** sigue

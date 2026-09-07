@@ -2557,13 +2557,62 @@ un array con cada edición posterior. Las dos últimas las pone la app sola.
     app vieja ignora ese archivo sin más (no trae `apunte_uid`), no lo
     borra ni lo rompe, así que el peor caso es ver "sin apuntes" un rato,
     nunca perder nada-.
-- **Pendiente, no hecho todavía en este turno**: el usuario pidió además
-  que el botón de "atrás" del teléfono, dentro de una de las 7 pantallas
-  principales, vuelva a Inicio en vez de salir de la herramienta; que
-  "atrás" en Inicio pida confirmación antes de salir; y un botón nuevo
-  "Cerrar MIO-Check" debajo de "Mis apuntes" con la misma confirmación -para
-  no perder nada sin sincronizar-. Se investigó el mecanismo (historial de
-  navegador con `pushState`/`popstate`, ver por qué hace falta un escalón
-  de "suelo" además de uno de "inicio" para poder interceptar el primer
-  atrás en un PWA recién abierto) pero no se llegó a escribir código: queda
-  para el próximo turno.
+### Retoques posteriores, 07-09-2026 (madrugada): atrás del teléfono y "Cerrar MIO-Check"
+
+Implementado lo que había quedado pendiente del turno anterior: en una PWA
+"standalone" no hay barra de navegador ni botón atrás propio -el
+gesto/tecla atrás de Android es lo único que hay-, y una app de una sola
+página sin historial propio no tiene nada que ese atrás pueda "hacer pop":
+el primer atrás la cierra directamente, sin avisar, aunque haya algo sin
+sincronizar. Se arma un historial de tres escalones con el History API
+(`NIVEL_SUELO`/`NIVEL_INICIO`/`NIVEL_SUBPANTALLA`, ver el comentario largo
+encima de `irAPantalla()` en app.js):
+
+- **`NIVEL_SUELO` (0)**: un escalón por debajo de Inicio que no representa
+  nada visible, solo existe para que SÍ haya algo que interceptar la
+  primera vez que se pulsa atrás estando en Inicio -sin él, un PWA recién
+  abierto no tiene nada previo en el historial y el atrás cierra sin
+  disparar ningún evento `popstate`, así que no habría manera de
+  preguntar antes de salir-.
+- **`NIVEL_INICIO` (1)**: el escalón "de descanso", vigente siempre que la
+  pantalla visible es Inicio.
+- **`NIVEL_SUBPANTALLA` (2)**: se añade (`history.pushState`) al entrar en
+  cualquiera de las 7 pantallas principales, dentro de `irAPantalla()` vía
+  la nueva `actualizarHistorialPantalla()` -único punto de enganche, así
+  que todo lo que ya llamaba a `irAPantalla()` (tiles, logo, botón Inicio de
+  cada pantalla, `abrirListaCasos()`/`abrirTecnicasMio()`/etc.) se beneficia
+  sin tocar nada más-.
+
+El listener de `popstate` interpreta `event.state.nivelMio`: si viene de
+`NIVEL_SUBPANTALLA` a `NIVEL_INICIO`, solo refleja Inicio, sin preguntar
+nada -mismo destino que pulsar el logo-. Si no trae marca (se ha bajado por
+debajo de Inicio, el intento real de salir), llama a `confirmarSalidaApp()`
+-un `confirm()` que además avisa explícitamente de cambios sin sincronizar
+si `hayPendienteSinSincronizar()` es cierto, reutilizando las mismas
+comprobaciones que ya tenía `beforeunload`- y, si se cancela, vuelve a
+empujar `NIVEL_INICIO` para "atrapar" el siguiente atrás igual que el
+primero. Si se confirma, se llama a `window.close()` como mejor esfuerzo
+-no hay forma de forzar el cierre de una pestaña/PWA desde JavaScript sin
+más; si el navegador lo ignora, el usuario cierra a mano como siempre-.
+
+**Botón nuevo "Cerrar MIO-Check"**, debajo de la tarjeta "Mis apuntes" en
+la pantalla de inicio (`#btn-cerrar-app`, fuera de `.inicio-tiles` a
+propósito: no es una pantalla más, es una acción, con estilo `--peligro`
+discreto en vez de tarjeta grande). Mismo `confirmarSalidaApp()` que el
+atrás del teléfono, sin tocar el historial -es una acción directa, no una
+navegación-.
+
+Verificado en el navegador simulando `history.back()` y sustituyendo
+`window.confirm`/`window.close` por espías: entrar en una subpantalla sube
+a nivel 2; un atrás desde ahí baja a nivel 1 y pinta Inicio sin preguntar;
+un atrás más desde nivel 1 sí pregunta -mensaje correcto- y, cancelando,
+vuelve a nivel 1; confirmando, llama a `window.close()` de verdad. El botón
+"Cerrar MIO-Check" pregunta y llama a `window.close()` igual. **Límite
+conocido, no solucionable desde una página web**: `window.close()` no
+funciona en todos los navegadores/contextos -algunos lo ignoran en
+silencio si la pestaña no se abrió por script-, así que en esos casos el
+usuario simplemente ve que no pasa nada tras confirmar y cierra la app a
+mano; la parte que sí es fiable en todos los casos es la pregunta de
+confirmación en sí, que es el objetivo real de este cambio (no perder
+nada sin sincronizar por un atrás accidental). `?v=` de `index.html` subido
+a `20260907e`.

@@ -17,7 +17,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260907d">
+<link rel="stylesheet" href="style.css?v=20260907e">
 </head>
 <body>
 
@@ -64,6 +64,11 @@
     <button type="button" class="tile" id="tile-bibliografia" data-i18n="tile_bibliografia"></button>
     <button type="button" class="tile" id="tile-apuntes" data-i18n="tile_apuntes"></button>
   </div>
+  <!-- Botón de salida (07-09-2026): junto con el atrás del teléfono en esta
+       misma pantalla, es la única forma de cerrar la app pidiendo
+       confirmación antes -para no perder nada sin sincronizar-. Fuera de
+       .inicio-tiles a propósito: no es una pantalla más, es una acción. -->
+  <button type="button" class="btn-cerrar-app" id="btn-cerrar-app" data-i18n="btn_cerrar_app"></button>
 </div>
 
 <main class="pantalla" id="pantalla-organizador">
@@ -803,10 +808,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260907d"></script>
-<script src="data/i18n-en.js?v=20260907d"></script>
-<script src="data/guia.js?v=20260907d"></script>
-<script src="data/tecnicas-mio.js?v=20260907d"></script>
-<script src="app.js?v=20260907d"></script>
+<script src="data/surgeries.js?v=20260907e"></script>
+<script src="data/i18n-en.js?v=20260907e"></script>
+<script src="data/guia.js?v=20260907e"></script>
+<script src="data/tecnicas-mio.js?v=20260907e"></script>
+<script src="app.js?v=20260907e"></script>
 </body>
 </html>

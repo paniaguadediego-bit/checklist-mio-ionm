@@ -263,6 +263,23 @@ main {
   .tile { padding: 1.4rem 1rem; }
 }
 
+/* Botón "Cerrar MIO-Check" (07-09-2026): a propósito más discreto que un
+   .tile -es una acción de salida, no una pantalla más-, en tono de
+   peligro suave para distinguirlo del resto sin gritar. */
+.btn-cerrar-app {
+  display: block;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--peligro);
+  background: none;
+  border: 1px solid var(--peligro);
+  border-radius: var(--r);
+  padding: 0.5rem 1rem;
+  margin: 0 auto 1.5rem;
+  cursor: pointer;
+}
+.btn-cerrar-app:hover { background: var(--quitar-bg); }
+
 .card {
   background: var(--card-bg);
   border: 1px solid var(--border);

@@ -247,6 +247,10 @@
                            en: "\n\nIt is placed in {n} input(s) of your scenarios; it will be removed from there too." },
     guardar:             { es: "Guardar", en: "Save" },
     cerrar:              { es: "Cerrar", en: "Close" },
+    btn_cerrar_app:      { es: "Cerrar MIO-Check", en: "Close MIO-Check" },
+    confirmar_salir:     { es: "¿Seguro que quieres salir de MIO-Check?", en: "Are you sure you want to exit MIO-Check?" },
+    confirmar_salir_pendiente: { es: "Tienes cambios sin sincronizar todavía. Si sales ahora podrías perderlos.",
+                           en: "You still have unsynced changes. If you exit now you could lose them." },
 
     /* --- Diálogo de etiquetas --- */
     dlg_et_titulo:       { es: "Etiquetas — tipos físicos de material", en: "Labels — physical material types" },
@@ -907,6 +911,7 @@
       if (el) el.classList.toggle("activa", p === nombre);
     });
     window.scrollTo(0, 0);
+    actualizarHistorialPantalla(nombre);
   }
 
   // Para el patrón "si esta pantalla está visible ahora mismo, repinta" -antes
@@ -916,6 +921,110 @@
     var el = document.getElementById("pantalla-" + nombre);
     return !!(el && el.classList.contains("activa"));
   }
+
+  /* ---------------------------------------------------------------- *
+   * Atrás del teléfono (07-09-2026): en una PWA "standalone" no hay barra
+   * de navegador ni botón atrás propio -el gesto/tecla atrás de Android es
+   * lo único que hay-, y sin nada de esto una app de una sola página no
+   * tiene ningún historial que recorrer: el primer atrás la cierra
+   * directamente, sin avisar, aunque haya algo sin sincronizar. Se arma un
+   * historial de dos escalones con el History API para poder interceptarlo:
+   *
+   *   NIVEL_SUELO (0) - un escalón por debajo de Inicio, que solo existe
+   *     para que SÍ haya algo que "hacer pop" la primera vez que se pulsa
+   *     atrás estando en Inicio -si no, un PWA recién abierto no tiene
+   *     nada previo en el historial y el atrás cierra sin disparar ningún
+   *     evento que se pueda interceptar-.
+   *   NIVEL_INICIO (1) - el escalón "de descanso": aquí se está siempre
+   *     que la pantalla visible es Inicio.
+   *   NIVEL_SUBPANTALLA (2) - se añade al entrar en cualquiera de las 7
+   *     pantallas principales.
+   *
+   * Atrás desde NIVEL_SUBPANTALLA -> NIVEL_INICIO: no se pregunta nada,
+   * solo se refleja Inicio (mismo destino que el logo).
+   * Atrás desde NIVEL_INICIO -> NIVEL_SUELO: es el intento real de salir;
+   * se pregunta, y si se cancela se vuelve a poner NIVEL_INICIO para
+   * "atrapar" el siguiente atrás igual que el primero.
+   * ---------------------------------------------------------------- */
+  var NIVEL_SUELO = 0, NIVEL_INICIO = 1, NIVEL_SUBPANTALLA = 2;
+
+  function nivelHistorialActual() {
+    return (history.state && typeof history.state.nivelMio === "number") ? history.state.nivelMio : null;
+  }
+
+  function fijarNivelHistorial(nivel, empujar) {
+    var estado = { nivelMio: nivel };
+    if (empujar) history.pushState(estado, "", location.href);
+    else history.replaceState(estado, "", location.href);
+  }
+
+  // Se llama desde irAPantalla() en cada cambio de pantalla: mantiene el
+  // historial en el escalón que toca sin que el resto del código tenga que
+  // saber nada de esto.
+  function actualizarHistorialPantalla(nombre) {
+    var nivelActual = nivelHistorialActual();
+    if (nombre === "inicio") {
+      // Si veníamos de una subpantalla, hay que deshacer ese escalón -atrás
+      // en vez de un pushState nuevo, para que el historial no crezca cada
+      // vez que se entra y se sale de una pantalla desde el propio botón
+      // Inicio-. El popstate que dispara lo resuelve el listener de abajo
+      // sin preguntar nada (nivel NIVEL_INICIO).
+      if (nivelActual === NIVEL_SUBPANTALLA) history.back();
+    } else if (nivelActual !== NIVEL_SUBPANTALLA) {
+      fijarNivelHistorial(NIVEL_SUBPANTALLA, true);
+    }
+  }
+
+  function hayPendienteSinSincronizar() {
+    return syncActivo() && (sync.pendiente || casosPendientes().length || borradosPendientes().length ||
+      montajesPendientes().length || montajesBorradosPend().length || apunteDocPendiente());
+  }
+
+  function confirmarSalidaApp() {
+    var msg = T("confirmar_salir");
+    if (hayPendienteSinSincronizar()) msg += "\n\n" + T("confirmar_salir_pendiente");
+    return confirm(msg);
+  }
+
+  // Arranque: dos escalones fijos por debajo de cualquier pantalla -"suelo"
+  // e "inicio"-, ver el porqué en el comentario de arriba. replaceState
+  // para el primero (no añade entrada al historial real del navegador,
+  // solo etiqueta la que ya había) y pushState para el segundo.
+  fijarNivelHistorial(NIVEL_SUELO, false);
+  fijarNivelHistorial(NIVEL_INICIO, true);
+
+  window.addEventListener("popstate", function (e) {
+    var nivel = e.state && typeof e.state.nivelMio === "number" ? e.state.nivelMio : null;
+    if (nivel === NIVEL_INICIO) {
+      // Atrás desde una subpantalla: solo hay que reflejar Inicio, sin
+      // preguntar nada -es exactamente lo mismo que pulsar el logo-.
+      if (!pantallaActiva("inicio")) irAPantalla("inicio");
+      return;
+    }
+    if (nivel === NIVEL_SUBPANTALLA) {
+      // No debería pasar con este router -solo se llega aquí navegando
+      // hacia alante, y aquí nunca se navega hacia alante a mano-, pero
+      // por si acaso no se hace nada especial.
+      return;
+    }
+    // Sin marca "nivelMio": el atrás ha bajado por debajo de "inicio" -el
+    // intento real de salir de la herramienta-.
+    if (confirmarSalidaApp()) {
+      // Confirmado: se intenta cerrar. window.close() solo funciona de
+      // verdad en algunos navegadores/PWA -no hay forma de forzarlo desde
+      // una página web sin más-, así que es el mejor esfuerzo posible; si
+      // no hace nada visible, el usuario cierra la app a mano como siempre.
+      window.close();
+    } else {
+      // Cancelado: se vuelve a poner el escalón de "inicio" para atrapar
+      // el siguiente atrás igual que este.
+      fijarNivelHistorial(NIVEL_INICIO, true);
+    }
+  });
+
+  document.getElementById("btn-cerrar-app").addEventListener("click", function () {
+    if (confirmarSalidaApp()) window.close();
+  });
 
   document.getElementById("btn-inicio").addEventListener("click", function () { irAPantalla("inicio"); });
   // Botón "Inicio" junto al título de cada pantalla (pedido el 06-09-2026):
