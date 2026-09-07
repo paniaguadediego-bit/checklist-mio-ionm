@@ -17,7 +17,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260907g">
+<link rel="stylesheet" href="style.css?v=20260907h">
 </head>
 <body>
 
@@ -560,9 +560,10 @@
   </div>
 </dialog>
 
-<!-- Apuntes personales (06-09-2026; rehecho el 07-09-2026 como documento
-     continuo -pedido del usuario, "como un Word que voy actualizando", no
-     una lista de notas sueltas-). Un solo archivo fijo
+<!-- Apuntes personales (06-09-2026; documento continuo desde el 07-09-2026
+     -pedido del usuario, "como un Word que voy actualizando", no una lista
+     de notas sueltas-; con varias cajas de texto con título, misma noche,
+     al ir llenándose de temas distintos). Un solo archivo fijo
      checklist-mio-datos/apuntes/documento.json, no estado.json (para no
      obligar a resubir todo el catálogo/técnicas por cada frase escrita
      aquí). -->
@@ -573,7 +574,8 @@
   </div>
   <p class="dlg-intro" data-i18n="apuntes_intro"></p>
 
-  <textarea id="apunte-texto" class="apunte-texto-doc" data-i18n-ph="apunte_texto_ph" rows="20"></textarea>
+  <div id="apunte-secciones"></div>
+  <button type="button" id="apunte-anadir-seccion" class="apunte-anadir-seccion" data-i18n="apunte_anadir_seccion"></button>
   <p class="cat-version" id="apunte-meta"></p>
 
   <div class="campo">
@@ -808,10 +810,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260907g"></script>
-<script src="data/i18n-en.js?v=20260907g"></script>
-<script src="data/guia.js?v=20260907g"></script>
-<script src="data/tecnicas-mio.js?v=20260907g"></script>
-<script src="app.js?v=20260907g"></script>
+<script src="data/surgeries.js?v=20260907h"></script>
+<script src="data/i18n-en.js?v=20260907h"></script>
+<script src="data/guia.js?v=20260907h"></script>
+<script src="data/tecnicas-mio.js?v=20260907h"></script>
+<script src="app.js?v=20260907h"></script>
 </body>
 </html>

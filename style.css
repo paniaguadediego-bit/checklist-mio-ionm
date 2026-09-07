@@ -1766,26 +1766,64 @@ dialog h3 {
 .caso-etiqueta.alerta { background: var(--quitar-bg); color: var(--peligro); font-weight: 600; }
 .caso-etiqueta.sin-subir { background: var(--accent-soft); color: var(--accent); }
 
-/* ------------------------- Apuntes: fotos adjuntas ---------------------- */
-/* Documento continuo de Apuntes (07-09-2026): un solo textarea grande,
-   ancho completo de la pantalla -no dentro de .campo, que limita el
-   ancho a la rejilla de formularios normal-, con letra algo más grande
-   para escribir cómodo. */
-.apunte-texto-doc {
-  display: block;
-  width: 100%;
-  min-height: 55vh;
-  font-family: inherit;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  padding: 0.6rem 0.7rem;
-  margin-bottom: 0.4rem;
+/* --------------------- Apuntes: cajas de texto y fotos ------------------ */
+/* Documento continuo de Apuntes hecho de varias cajas con título
+   (07-09-2026, tarde: un solo textarea; misma noche: varias cajas para
+   poder separar temas -MEP, SEP, Blink-Reflex...- cada una con su
+   título). Ancho completo de la pantalla -no dentro de .campo, que
+   limita el ancho a la rejilla de formularios normal-, con letra algo
+   más grande para escribir cómodo. */
+.apunte-seccion {
   border: 1px solid var(--border);
   border-radius: var(--r);
   background: var(--card-bg);
+  padding: 0.5rem 0.6rem;
+  margin-bottom: 0.6rem;
+}
+.apunte-seccion-titulo {
+  display: block;
+  width: 100%;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 0.3rem 0.2rem;
+  margin-bottom: 0.3rem;
+  border: none;
+  border-bottom: 1px solid var(--border-soft);
+  border-radius: 0;
+  background: none;
+  color: var(--text);
+}
+.apunte-seccion-titulo:focus { outline: none; border-bottom-color: var(--accent); }
+.apunte-seccion-texto {
+  display: block;
+  width: 100%;
+  font-family: inherit;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  padding: 0.3rem 0.2rem;
+  border: none;
+  background: none;
   color: var(--text);
   resize: vertical;
 }
+.apunte-seccion-texto:focus { outline: none; }
+.apunte-anadir-seccion {
+  display: block;
+  width: 100%;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: none;
+  border: 1px dashed var(--accent);
+  border-radius: var(--r);
+  padding: 0.6rem;
+  margin-bottom: 0.6rem;
+  cursor: pointer;
+}
+.apunte-anadir-seccion:hover { background: var(--accent-soft); }
+
 .apunte-fotos { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.4rem; }
 .apunte-foto {
   position: relative;
@@ -1796,7 +1834,7 @@ dialog h3 {
   overflow: hidden;
   border: 1px solid var(--border);
 }
-.apunte-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.apunte-foto img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: pointer; }
 .apunte-foto-quitar {
   position: absolute;
   top: 2px;

@@ -2691,3 +2691,50 @@ Verificado en el navegador: una foto sintética de 2000×2000 subida por
 `#apunte-foto-input` queda comprimida a 1100×1100 antes de guardarse en
 `localStorage` (comprobado leyendo las dimensiones reales de la imagen
 resultante). `?v=` de `index.html` subido a `20260907g`.
+
+### Retoques posteriores, 07-09-2026 (madrugada): Apuntes con varias cajas de texto, fotos con confirmación y visor
+
+Tres pedidos juntos sobre Apuntes, todos ya con uso real detrás (el
+usuario confirmó que el documento migrado se veía bien en su móvil justo
+antes de este turno):
+
+- **Varias cajas de texto con título, en vez de un solo textarea**:
+  `apunteDoc.texto` (string) pasa a `apunteDoc.secciones` (array de
+  `{id, titulo, texto}`). Sigue siendo **un solo documento** con un solo
+  autoguardado -no se vuelve al diseño de "notas sueltas, cada una con su
+  propio guardado" que se quitó esa misma tarde; sería repetir el
+  problema que motivó el cambio a documento continuo-. Botón **"+ Añadir
+  caja de texto"** (`#apunte-anadir-seccion`) empuja una sección vacía y
+  enfoca su título; no hay botón para borrar una caja -no se pidió, y una
+  caja vacía de sobra no hace daño-.
+  - **Migración de los datos reales**: el `texto` único que ya había (13
+    párrafos separados por línea en blanco, con formato "Título: resto" en
+    la mayoría) se repartió en 13 secciones con un script de Python -separa
+    por párrafo y aplica una regex `^([^:\n]{1,60}):\s?(.*)$` a la primera
+    línea de cada uno-. Ningún contenido se reescribió, solo se
+    reestructuró. Commit aparte en `checklist-mio-datos` (`6bd7506`).
+  - **Compatibilidad hacia atrás en el propio código**:
+    `migrarSeccionesApunteDoc()` convierte sobre la marcha cualquier
+    documento que todavía traiga la forma vieja (`texto` en vez de
+    `secciones`) -se llama tanto al cargar de `localStorage`
+    (`cargarApunteDoc()`) como al bajar de GitHub (`bajarApunteDoc()`)-,
+    para que un dispositivo que no hubiera sincronizado todavía no se
+    quede con el texto invisible en vez de perderlo -mismo espíritu que el
+    aviso de "no repetir el mismo susto dos veces" del bug de las fotos sin
+    comprimir, más arriba-.
+- **Confirmación antes de borrar una foto** (`apunte_foto_borrar_conf`,
+  `confirm()` dentro del listener de `.apunte-foto-quitar`): antes se
+  borraba al primer toque, sin poder deshacerlo.
+- **Ver una foto a tamaño completo al pulsarla**: reutiliza
+  `abrirFotoSonda()`, el mismo visor -un único `<dialog>`- que ya usan las
+  fotos de sondas del catálogo y "Imágenes del montaje" de la ficha del
+  caso; no se creó ningún visor nuevo.
+
+Verificado en el navegador con un documento de prueba de 2 secciones + 1
+foto: las cajas migradas renderizan con su título y texto correctos,
+"+ Añadir caja de texto" crea una tercera y enfoca su título, pulsar la
+foto abre `dlg-foto-sonda` con la imagen correcta, y el botón de quitar
+foto pregunta antes -cancelando no borra nada, confirmando sí-. Probada
+también la migración hacia atrás: un documento con la forma vieja
+(`texto` suelto) se convierte en una sola sección al cargar, en vez de
+desaparecer. `?v=` de `index.html` subido a `20260907h`.

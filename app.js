@@ -314,9 +314,14 @@
     tile_apuntes:        { es: "Mis apuntes", en: "My notes" },
     apuntes_intro:       { es: "Tu documento continuo de parámetros, filtros y fotos propias -no lo que ya viene en Técnicas MIO-, como un Word que vas actualizando. Se guarda solo, en tu repositorio privado.",
                            en: "Your running document of your own parameters, filters and photos -not what's already in MIO Techniques-, like a Word file you keep updating. Saves itself, to your private repository." },
-    apunte_texto_ph:     { es: "Escribe aquí tus apuntes: parámetros, filtros, ideas propias…", en: "Write your notes here: parameters, filters, your own ideas…" },
+    apunte_seccion_titulo_ph: { es: "Título (opcional)", en: "Title (optional)" },
+    apunte_secciones_vacio: { es: "Todavía no hay ninguna caja de texto. Añade la primera.",
+                           en: "No text box yet. Add the first one." },
+    apunte_anadir_seccion: { es: "+ Añadir caja de texto", en: "+ Add text box" },
     apunte_campo_fotos:  { es: "Fotos", en: "Photos" },
+    apunte_foto_ver_tit: { es: "Ver a tamaño completo", en: "View full size" },
     apunte_foto_quitar_tit: { es: "Quitar esta foto", en: "Remove this photo" },
+    apunte_foto_borrar_conf: { es: "¿Quitar esta foto?", en: "Remove this photo?" },
     apunte_meta_editado: { es: "Última edición: {fecha}", en: "Last edited: {fecha}" },
     btn_exportar_apuntes: { es: "Exportar apuntes", en: "Export notes" },
     apuntes_exportado:   { es: "Apuntes exportados", en: "Notes exported" },
@@ -3810,20 +3815,37 @@
    * automática que el resto (programarEnvio()).
    * ---------------------------------------------------------------- */
   var APUNTE_DOC_KEY = "mio_ionm_apunte_doc_v1";
-  var apunteDoc = { texto: "", fotos: [], editado_en: null };
+  var apunteDoc = { secciones: [], fotos: [], editado_en: null };
   var apunteDocSha = null;
   var apunteDocSinSubir = false;
 
   function apunteDocPendiente() { return apunteDocSinSubir; }
 
+  // Migra la forma antigua (un solo "texto" de cuando el documento era un
+  // único textarea, 07-09-2026 tarde) a la de varias secciones con título
+  // (misma noche): sin esto, un dispositivo que todavía tuviera guardado
+  // el formato viejo -en localStorage o recién bajado de GitHub- se
+  // quedaría con el texto invisible en vez de perderlo del todo, que es
+  // justo lo que ya pasó una vez este mismo día con las fotos sin
+  // comprimir -no repetir el mismo susto dos veces-.
+  function migrarSeccionesApunteDoc(doc) {
+    if (!doc) return doc;
+    if (!doc.secciones && typeof doc.texto === "string") {
+      doc.secciones = doc.texto ? [{ id: uuid(), titulo: "", texto: doc.texto }] : [];
+      delete doc.texto;
+    }
+    if (!doc.secciones) doc.secciones = [];
+    return doc;
+  }
+
   function cargarApunteDoc() {
-    apunteDoc = { texto: "", fotos: [], editado_en: null };
+    apunteDoc = { secciones: [], fotos: [], editado_en: null };
     apunteDocSha = null;
     apunteDocSinSubir = false;
     try {
       var g = JSON.parse(localStorage.getItem(APUNTE_DOC_KEY) || "null");
       if (g) {
-        apunteDoc = g.doc || apunteDoc;
+        apunteDoc = migrarSeccionesApunteDoc(g.doc) || apunteDoc;
         apunteDocSha = g.sha || null;
         apunteDocSinSubir = !!g.sin_subir;
       }
@@ -3900,7 +3922,7 @@
       .then(function (json) {
         if (!json || json.sha === apunteDocSha) return;
         var doc = JSON.parse(deBase64(json.content));
-        apunteDoc = doc || apunteDoc;
+        apunteDoc = migrarSeccionesApunteDoc(doc) || apunteDoc;
         apunteDocSha = json.sha;
         guardarApunteDocLocal();
         if (pantallaActiva("apuntes")) renderApunteDoc();
@@ -5689,14 +5711,17 @@
   });
 
   /* ---------------------------------------------------------------- *
-   * Apuntes personales: un solo documento continuo (pedido el 07-09-2026,
-   * en vez de la libreta de notas sueltas de la primera versión, misma
-   * tarde). Un textarea grande con autoguardado en cada tecla -mismo
-   * patrón que el resto de la app: guardar dispara "pendiente" y reinicia
-   * la cuenta atrás de subida, así que escribir de corrido no manda una
-   * subida por tecla, solo cuando de verdad hay una pausa-, más una lista
-   * de fotos adjuntas al documento entero (no a una "entrada" suelta:
-   * aquí no hay entradas).
+   * Apuntes personales: un documento continuo hecho de varias cajas de
+   * texto con título (pedido el 07-09-2026, tarde: al principio era un
+   * único textarea, pero según se iba llenando de temas distintos -MEP,
+   * SEP, Blink-Reflex...- hacía falta poder separarlos con su propio
+   * título y añadir uno nuevo cuando toque). Sigue siendo **un solo
+   * documento** -no una lista de notas sueltas con su propio guardado y
+   * sincronización cada una, que es justo lo que se quitó en el diseño
+   * anterior-: `apunteDoc.secciones` es un array de `{id, titulo, texto}`
+   * dentro del mismo `apuntes/documento.json` de siempre, con el mismo
+   * autoguardado de todo el documento en cada tecla. Más la lista de
+   * fotos adjuntas, igual que antes.
    * ---------------------------------------------------------------- */
   function renderFotosApunteDoc() {
     var cont = document.getElementById("apunte-fotos");
@@ -5707,6 +5732,11 @@
       var img = document.createElement("img");
       img.src = foto.datos;
       img.alt = foto.nombre || "";
+      img.title = T("apunte_foto_ver_tit");
+      // Verla a tamaño completo: mismo visor que ya usan las fotos de
+      // sondas y las de "Imágenes del montaje" en la ficha del caso, sin
+      // montar un diálogo propio para esto.
+      img.addEventListener("click", function () { abrirFotoSonda(foto.datos, foto.nombre || ""); });
       fig.appendChild(img);
       var quitar = document.createElement("button");
       quitar.type = "button";
@@ -5714,6 +5744,7 @@
       quitar.textContent = "×";
       quitar.title = T("apunte_foto_quitar_tit");
       quitar.addEventListener("click", function () {
+        if (!confirm(T("apunte_foto_borrar_conf"))) return;
         apunteDoc.fotos.splice(i, 1);
         renderFotosApunteDoc();
         guardarApunteDoc();
@@ -5734,13 +5765,55 @@
     });
   }
 
+  function crearSeccionApunte(seccion) {
+    var div = document.createElement("div");
+    div.className = "apunte-seccion";
+
+    var titulo = document.createElement("input");
+    titulo.type = "text";
+    titulo.className = "apunte-seccion-titulo";
+    titulo.placeholder = T("apunte_seccion_titulo_ph");
+    titulo.value = seccion.titulo || "";
+    titulo.addEventListener("input", function () {
+      seccion.titulo = titulo.value;
+      guardarApunteDoc();
+    });
+
+    var texto = document.createElement("textarea");
+    texto.className = "apunte-seccion-texto";
+    texto.rows = 5;
+    texto.value = seccion.texto || "";
+    texto.addEventListener("input", function () {
+      seccion.texto = texto.value;
+      guardarApunteDoc();
+    });
+
+    div.appendChild(titulo);
+    div.appendChild(texto);
+    return div;
+  }
+
   // Se llama al abrir la pantalla y al bajar una versión más nueva desde
-  // GitHub mientras está abierta (ver bajarApunteDoc()): repinta el
-  // textarea entero, así que si el usuario está escribiendo justo cuando
-  // llega una bajada se perdería el cursor -no debería pasar en el uso
-  // normal (un solo dispositivo escribe a la vez), documentado y ya está.
+  // GitHub mientras está abierta (ver bajarApunteDoc()): repinta todas las
+  // cajas, así que si el usuario está escribiendo justo cuando llega una
+  // bajada se perdería el cursor -no debería pasar en el uso normal (un
+  // solo dispositivo escribe a la vez), documentado y ya está.
+  function renderSeccionesApunte() {
+    var cont = document.getElementById("apunte-secciones");
+    cont.innerHTML = "";
+    var secciones = apunteDoc.secciones || [];
+    if (!secciones.length) {
+      var vacio = document.createElement("p");
+      vacio.className = "empty-hint";
+      vacio.textContent = T("apunte_secciones_vacio");
+      cont.appendChild(vacio);
+      return;
+    }
+    secciones.forEach(function (s) { cont.appendChild(crearSeccionApunte(s)); });
+  }
+
   function renderApunteDoc() {
-    document.getElementById("apunte-texto").value = apunteDoc.texto || "";
+    renderSeccionesApunte();
     renderFotosApunteDoc();
     renderApunteMeta();
   }
@@ -5752,9 +5825,15 @@
 
   document.getElementById("tile-apuntes").addEventListener("click", abrirApunteDoc);
 
-  document.getElementById("apunte-texto").addEventListener("input", function (e) {
-    apunteDoc.texto = e.target.value;
+  document.getElementById("apunte-anadir-seccion").addEventListener("click", function () {
+    apunteDoc.secciones = apunteDoc.secciones || [];
+    apunteDoc.secciones.push({ id: uuid(), titulo: "", texto: "" });
+    renderSeccionesApunte();
     guardarApunteDoc();
+    // El foco va al título de la caja recién creada -la última del
+    // contenedor-, para escribir directo sin tener que buscarla.
+    var cajas = document.querySelectorAll("#apunte-secciones .apunte-seccion-titulo");
+    if (cajas.length) cajas[cajas.length - 1].focus();
   });
 
   // Cada foto se guarda como data URL dentro del propio documento -mismo
@@ -5784,7 +5863,7 @@
     });
   });
 
-  // Exporta el documento entero (texto + fotos) en un .json, igual de
+  // Exporta el documento entero (secciones + fotos) en un .json, igual de
   // sencillo que "Exportar copia" del estado general (mismo patrón Blob +
   // <a download>).
   document.getElementById("btn-exportar-apuntes").addEventListener("click", function () {

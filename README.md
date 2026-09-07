@@ -584,9 +584,10 @@ buscador:
 Tarjeta nueva del 07-09-2026, **privada**: un único documento continuo para
 tus propios apuntes de parámetros, filtros o lo que sea —no lo que ya viene
 en Técnicas IONM ni en los libros—, como un Word que vas actualizando, no
-una lista de notas sueltas. Un solo cuadro de texto grande con sitio para
-fotos debajo; escribes y se guarda solo, sin botón "Guardar" ni "Nuevo
-apunte" de por medio.
+una lista de notas sueltas. Hecho de **cajas de texto con título**: pulsa
+**"+ Añadir caja de texto"** cada vez que empieces un tema nuevo (p. ej.
+"MEP", "Blink-Reflex"…) y ponle el título que quieras; escribes y se
+guarda solo, sin botón "Guardar" de por medio.
 
 Se guarda igual que casos y montajes —repositorio privado
 `checklist-mio-datos`, subida automática a los pocos segundos de dejar de
@@ -598,7 +599,9 @@ quieras.
 Las fotos que adjuntes se comprimen solas antes de guardarse (igual que las
 de "Imágenes del montaje" en un caso), así que una foto de cámara no infla
 el documento a varios megas — importante porque GitHub deja de dejarte
-leer un archivo de vuelta si pasa de 1 MB.
+leer un archivo de vuelta si pasa de 1 MB. Pulsa una foto para verla a
+tamaño completo; la **×** para quitarla pide confirmación antes de
+borrarla.
 
 ## Salir de la herramienta sin perder nada
 
