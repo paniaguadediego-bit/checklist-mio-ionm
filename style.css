@@ -1713,12 +1713,14 @@ dialog h3 {
   color: var(--text);
 }
 
+/* Sin max-height/overflow propio a propósito (pedido el 07-09-2026): con
+   un tope fijo de 42vh la lista se cortaba a media pantalla en el móvil,
+   dejando hueco vacío debajo hasta "Exportar". Crece con el contenido y es
+   la página la que hace scroll, como el resto de la pantalla. */
 .casos-lista {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
-  max-height: 42vh;
-  overflow-y: auto;
 }
 .caso-fila {
   display: flex;

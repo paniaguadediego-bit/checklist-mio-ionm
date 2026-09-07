@@ -2616,3 +2616,17 @@ mano; la parte que sí es fiable en todos los casos es la pregunta de
 confirmación en sí, que es el objetivo real de este cambio (no perder
 nada sin sincronizar por un atrás accidental). `?v=` de `index.html` subido
 a `20260907e`.
+
+### Retoques posteriores, 07-09-2026 (madrugada): lista de casos sin recorte
+
+`.casos-lista` traía `max-height: 42vh; overflow-y: auto` sin motivo
+documentado -probablemente un valor de cuando se diseñó el listado por
+primera vez-, así que en el móvil el listado de "Gestión de Casos" se
+cortaba a media pantalla, con hueco vacío debajo hasta llegar a "Exportar
+casos"/"Exportar CSV", en vez de ocupar el resto de la pantalla. Se quita
+el `max-height`/`overflow-y`: la lista crece con el contenido y es la
+propia página la que hace scroll, igual que el resto de la pantalla.
+Verificado creando 15 casos de prueba y con el viewport en tamaño móvil
+(375×812): la lista ya no lleva scroll ni tope propios
+(`getComputedStyle().maxHeight === "none"`). `?v=` de `index.html` subido a
+`20260907f`.
