@@ -305,34 +305,17 @@
     casos_n:             { es: "{n} caso(s)", en: "{n} case(s)" },
     casos_sin_subir:     { es: "{n} sin subir", en: "{n} not uploaded" },
 
-    /* --- Apuntes (personales, privados) --- */
+    /* --- Apuntes (personales, privados): un documento continuo, no una
+       lista de notas sueltas -rehecho el 07-09-2026-. */
     tile_apuntes:        { es: "Mis apuntes", en: "My notes" },
-    apuntes_intro:       { es: "Notas propias -parámetros, filtros, fotos-, no lo que ya viene en Técnicas MIO. Se guardan en tu repositorio privado, solo para ti.",
-                           en: "Your own notes -parameters, filters, photos-, not what's already in MIO Techniques. Saved to your private repository, just for you." },
-    apuntes_nuevo:       { es: "Nuevo apunte", en: "New note" },
-    apuntes_buscar:      { es: "Buscar", en: "Search" },
-    apuntes_buscar_ph:   { es: "Buscar en título, categoría o texto…", en: "Search title, category or text…" },
-    apuntes_vacio:       { es: "Todavía no hay ningún apunte.", en: "No notes yet." },
-    apuntes_sin_filtro:  { es: "Ningún apunte con esa búsqueda.", en: "No notes match that search." },
-    apuntes_n:           { es: "{n} apunte(s)", en: "{n} note(s)" },
-    apuntes_sin_subir:   { es: "{n} sin subir", en: "{n} not uploaded" },
-    btn_exportar_apuntes: { es: "Exportar apuntes", en: "Export notes" },
-    apuntes_exportado:   { es: "Apuntes exportados", en: "Notes exported" },
-    dlg_apunte_titulo:   { es: "Apunte", en: "Note" },
-    apunte_campo_titulo: { es: "Título", en: "Title" },
-    apunte_titulo_ph:    { es: "p. ej. Parámetros t-MEP en escoliosis", en: "e.g. t-MEP parameters in scoliosis" },
-    apunte_campo_categoria: { es: "Categoría", en: "Category" },
-    apunte_categoria_ph: { es: "p. ej. Filtros, Estimulación…", en: "e.g. Filters, Stimulation…" },
-    apunte_campo_texto:  { es: "Texto", en: "Text" },
+    apuntes_intro:       { es: "Tu documento continuo de parámetros, filtros y fotos propias -no lo que ya viene en Técnicas MIO-, como un Word que vas actualizando. Se guarda solo, en tu repositorio privado.",
+                           en: "Your running document of your own parameters, filters and photos -not what's already in MIO Techniques-, like a Word file you keep updating. Saves itself, to your private repository." },
+    apunte_texto_ph:     { es: "Escribe aquí tus apuntes: parámetros, filtros, ideas propias…", en: "Write your notes here: parameters, filters, your own ideas…" },
     apunte_campo_fotos:  { es: "Fotos", en: "Photos" },
     apunte_foto_quitar_tit: { es: "Quitar esta foto", en: "Remove this photo" },
-    apunte_borrar:       { es: "Borrar apunte", en: "Delete note" },
-    apunte_borrar_conf:  { es: "¿Borrar el apunte «{titulo}»?", en: "Delete the note «{titulo}»?" },
-    apunte_borrado:      { es: "Apunte borrado", en: "Note deleted" },
-    apunte_guardado:     { es: "Apunte guardado", en: "Note saved" },
-    apunte_falta_titulo: { es: "Ponle un título al apunte antes de guardar.", en: "Give the note a title before saving." },
-    apunte_meta_creado:  { es: "Creado el {fecha}", en: "Created on {fecha}" },
-    apunte_meta_editado: { es: "· editado el {fecha}", en: "· edited on {fecha}" },
+    apunte_meta_editado: { es: "Última edición: {fecha}", en: "Last edited: {fecha}" },
+    btn_exportar_apuntes: { es: "Exportar apuntes", en: "Export notes" },
+    apuntes_exportado:   { es: "Apuntes exportados", en: "Notes exported" },
 
     caso_estado_preparado: { es: "Preparado", en: "Prepared" },
     caso_estado_cerrado: { es: "Cerrado", en: "Closed" },
@@ -945,7 +928,7 @@
   document.getElementById("tile-bibliografia").addEventListener("click", function () { irAPantalla("bibliografia"); });
   // tile-casos, tile-tecnicas-mio, tile-docente y tile-apuntes se conectan
   // más abajo, junto a abrirListaCasos()/abrirTecnicasMio()/abrirDocente()/
-  // abrirListaApuntes() -esas sí necesitan pintar contenido antes de
+  // abrirApunteDoc() -esas sí necesitan pintar contenido antes de
   // mostrarse, no son un simple cambio de pantalla-.
 
   function aplicarIdioma(nuevo, repintar) {
@@ -2320,7 +2303,7 @@
     } else if (ultimoFallo) {
       el.textContent = T("sync_sin_subir");
       estado = "error";
-    } else if (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length || apuntesPendientes().length || apuntesBorradosPendientes().length) {
+    } else if (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length || apunteDocPendiente()) {
       el.textContent = T("sync_guardando");
       estado = "aviso";
     } else if (sync.fecha) {
@@ -2516,7 +2499,7 @@
     if (!syncActivo() || subiendo) return;
     if (!sync.pendiente && !casosPendientes().length && !borradosPendientes().length &&
         !montajesPendientes().length && !montajesBorradosPend().length &&
-        !apuntesPendientes().length && !apuntesBorradosPendientes().length) return;
+        !apunteDocPendiente()) return;
     if (navigator.onLine === false) { pintarEstadoSync(); return; }
     subiendo = true;
     pintarEstadoSync();
@@ -2536,8 +2519,7 @@
       .then(function () { return borrarCasosPendientes(); })
       .then(function () { return subirMontajesPendientes(); })
       .then(function () { return borrarMontajesPendientes(); })
-      .then(function () { return subirApuntesPendientes(); })
-      .then(function () { return borrarApuntesPendientes(); })
+      .then(function () { return subirApunteDoc(); })
       .catch(function (e) { ultimoFallo = e.message || T("sync_error_subir"); })
       .then(function () {
         subiendo = false;
@@ -2551,7 +2533,7 @@
   // prepararon en el otro dispositivo.
   function bajarAuto() {
     if (!syncActivo() || navigator.onLine === false) return;
-    if (sync.pendiente) { subirAuto(); bajarCasos(); bajarMontajes(); bajarApuntes(); return; }
+    if (sync.pendiente) { subirAuto(); bajarCasos(); bajarMontajes(); bajarApunteDoc(); return; }
     subiendo = true;
     pintarEstadoSync();
     leerRemoto()
@@ -2575,7 +2557,7 @@
         return bajarCasos();
       })
       .then(function () { return bajarMontajes(); })
-      .then(function () { return bajarApuntes(); })
+      .then(function () { return bajarApunteDoc(); })
       .then(function () {
         // Un caso guardado en quirófano -o sin conexión- se queda marcado en
         // `casosSinSubir`, que es una marca aparte: `sync.pendiente` es solo
@@ -2591,10 +2573,10 @@
   // Al volver la conexión se reintenta lo que quedó pendiente
   window.addEventListener("online", function () {
     ultimoFallo = null;
-    if (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length || apuntesPendientes().length || apuntesBorradosPendientes().length) subirAuto();
+    if (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length || apunteDocPendiente()) subirAuto();
     bajarCasos();
     bajarMontajes();
-    bajarApuntes();
+    bajarApunteDoc();
   });
 
   // Al volver la pestaña a primer plano, también. En el móvil el navegador
@@ -2605,12 +2587,12 @@
   document.addEventListener("visibilitychange", function () {
     if (document.visibilityState !== "visible") return;
     if (!syncActivo()) return;
-    if (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length) subirAuto();
+    if (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length || apunteDocPendiente()) subirAuto();
   });
 
   // Cerrar la pestaña con algo sin subir: avisa antes de perderlo de vista
   window.addEventListener("beforeunload", function (e) {
-    if (syncActivo() && (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length)) {
+    if (syncActivo() && (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length || apunteDocPendiente())) {
       e.preventDefault();
       e.returnValue = "";
     }
@@ -3259,7 +3241,7 @@
     ".informe-tecpar h4{margin:0;font-size:0.85rem}" +
     ".informe-tecpar-linea,.informe-tecpar-notas{margin:0.1rem 0;font-size:0.8rem}" +
     ".informe-imagenes{display:flex;flex-wrap:wrap;gap:0.5rem}" +
-    ".informe-imagenes img{max-width:9rem;max-height:9rem;object-fit:cover;border:1px solid #cfd6dd;border-radius:4px}" +
+    ".informe-imagenes img{max-width:18rem;max-height:18rem;object-fit:cover;border:1px solid #cfd6dd;border-radius:4px}" +
     ".informe-coste-nota{margin:0.2rem 0 0;font-size:0.72rem;font-style:italic;color:#62717c}" +
     ".informe-coste-falta{margin:0.15rem 0 0;font-size:0.72rem;color:#a63428}";
 
@@ -3708,199 +3690,111 @@
   }
 
   /* ---------------------------------------------------------------- *
-   * Apuntes personales: notas y fotos privadas del usuario -parámetros
-   * propios, no lo que ya está en Técnicas MIO-. Van al mismo repositorio
-   * privado que casos/montajes (checklist-mio-datos), en su propia carpeta
-   * "apuntes/", un archivo por apunte -mismo motivo que casos y montajes:
-   * si fueran parte de estado.json, editar uno en el móvil y otro en el
-   * portátil antes de sincronizar perdería uno de los dos enteros-.
+   * Apuntes personales: un único documento continuo -como un Word que se
+   * va actualizando, no una lista de notas sueltas- con parámetros e
+   * ideas propias, no lo que ya está en Técnicas MIO. Va al mismo
+   * repositorio privado que casos/montajes (checklist-mio-datos), en un
+   * solo archivo fijo "apuntes/documento.json" -no uno por entrada: no hay
+   * "entradas", es un documento vivo con un solo autor, así que no aplica
+   * el motivo por el que casos/montajes van repartidos en archivos
+   * sueltos (dos personas editando a la vez). Mismo mecanismo de subida
+   * automática que el resto (programarEnvio()).
    * ---------------------------------------------------------------- */
-  var APUNTES_KEY = "mio_ionm_apuntes_v1";
-  var apuntes = {};        // apunte_uid -> apunte
-  var apuntesSha = {};     // apunte_uid -> sha del archivo en GitHub
-  var apuntesSinSubir = {};
-  var apuntesBorrados = {}; // apunte_uid -> sha con el que había que borrarlo
+  var APUNTE_DOC_KEY = "mio_ionm_apunte_doc_v1";
+  var apunteDoc = { texto: "", fotos: [], editado_en: null };
+  var apunteDocSha = null;
+  var apunteDocSinSubir = false;
 
-  function apuntesPendientes() { return Object.keys(apuntesSinSubir); }
-  function apuntesBorradosPendientes() { return Object.keys(apuntesBorrados); }
+  function apunteDocPendiente() { return apunteDocSinSubir; }
 
-  function cargarApuntes() {
-    apuntes = {}; apuntesSha = {}; apuntesSinSubir = {}; apuntesBorrados = {};
+  function cargarApunteDoc() {
+    apunteDoc = { texto: "", fotos: [], editado_en: null };
+    apunteDocSha = null;
+    apunteDocSinSubir = false;
     try {
-      var g = JSON.parse(localStorage.getItem(APUNTES_KEY) || "null");
+      var g = JSON.parse(localStorage.getItem(APUNTE_DOC_KEY) || "null");
       if (g) {
-        apuntes = g.apuntes || {};
-        apuntesSha = g.sha || {};
-        apuntesSinSubir = g.sin_subir || {};
-        apuntesBorrados = g.borrados || {};
+        apunteDoc = g.doc || apunteDoc;
+        apunteDocSha = g.sha || null;
+        apunteDocSinSubir = !!g.sin_subir;
       }
     } catch (e) { /* sin apuntes guardados o ilegibles */ }
   }
 
-  function guardarApuntes() {
+  function guardarApunteDocLocal() {
     try {
-      localStorage.setItem(APUNTES_KEY, JSON.stringify({
-        apuntes: apuntes, sha: apuntesSha, sin_subir: apuntesSinSubir, borrados: apuntesBorrados
+      localStorage.setItem(APUNTE_DOC_KEY, JSON.stringify({
+        doc: apunteDoc, sha: apunteDocSha, sin_subir: apunteDocSinSubir
       }));
     } catch (e) {
       avisoGuardado(T("guardado_error", { error: e.message }), true);
     }
   }
 
-  function borrarApunte(uid) {
-    delete apuntes[uid];
-    delete apuntesSinSubir[uid];
-    if (apuntesSha[uid]) apuntesBorrados[uid] = apuntesSha[uid];
-    delete apuntesSha[uid];
-    guardarApuntes();
+  // Se llama en cada "input" del textarea/al añadir o quitar una foto: es
+  // el mismo patrón que el resto de la app (guardar deja "pendiente" y
+  // reinicia la cuenta atrás de subida), así que escribir de corrido no
+  // dispara una subida por tecla -solo cuando de verdad hay una pausa-.
+  function guardarApunteDoc() {
+    apunteDoc.editado_en = new Date().toISOString();
+    apunteDocSinSubir = true;
+    guardarApunteDocLocal();
     programarEnvio();
     pintarEstadoSync();
   }
 
-  function guardarApunte(apunte, esNuevo) {
-    if (!esNuevo) apunte.editado_en = (apunte.editado_en || []).concat(new Date().toISOString());
-    apuntes[apunte.apunte_uid] = apunte;
-    apuntesSinSubir[apunte.apunte_uid] = true;
-    guardarApuntes();
-    programarEnvio();
-    pintarEstadoSync();
+  function rutaApunteDoc() { return "apuntes/documento.json"; }
+
+  function urlApunteDoc() {
+    return "https://api.github.com/repos/" + sync.repo + "/contents/" + rutaApunteDoc();
   }
 
-  function apunteVacio() {
-    return {
-      apunte_uid: uuid(),
-      titulo: "",
-      categoria: "",
-      texto: "",
-      fotos: [],          // [{nombre, datos}] -datos: data URL base64
-      creado_en: new Date().toISOString(),
-      editado_en: []
-    };
-  }
-
-  function rutaApunte(uid) { return "apuntes/" + uid + ".json"; }
-
-  function urlApunte(uid) {
-    return "https://api.github.com/repos/" + sync.repo + "/contents/" + rutaApunte(uid);
-  }
-
-  function subirApunte(uid, reintento) {
-    var a = apuntes[uid];
-    if (!a) { delete apuntesSinSubir[uid]; return Promise.resolve(); }
+  function subirApunteDoc(reintento) {
+    if (!apunteDocSinSubir) return Promise.resolve();
     var cuerpo = {
-      message: "Apunte " + (a.titulo || uid),
-      content: aBase64(JSON.stringify(a, null, 2))
+      message: "Apuntes personales",
+      content: aBase64(JSON.stringify(apunteDoc, null, 2))
     };
-    if (apuntesSha[uid]) cuerpo.sha = apuntesSha[uid];
-    return fetch(urlApunte(uid), {
+    if (apunteDocSha) cuerpo.sha = apunteDocSha;
+    return fetch(urlApunteDoc(), {
       method: "PUT",
       headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()),
       body: JSON.stringify(cuerpo)
     }).then(function (resp) {
       if ((resp.status === 409 || resp.status === 422) && !reintento) {
-        return fetch(urlApunte(uid), { headers: cabeceras(), cache: "no-store" })
+        return fetch(urlApunteDoc(), { headers: cabeceras(), cache: "no-store" })
           .then(function (r) { return r.ok ? r.json() : null; })
           .then(function (json) {
-            apuntesSha[uid] = json ? json.sha : null;
-            return subirApunte(uid, true);
+            apunteDocSha = json ? json.sha : null;
+            return subirApunteDoc(true);
           });
       }
       if (!resp.ok) throw new Error(errorLegible(resp));
       return resp.json().then(function (json) {
-        apuntesSha[uid] = json.content.sha;
-        delete apuntesSinSubir[uid];
-        guardarApuntes();
+        apunteDocSha = json.content.sha;
+        apunteDocSinSubir = false;
+        guardarApunteDocLocal();
       });
     });
   }
 
-  function subirApuntesPendientes() {
-    if (!syncActivo()) return Promise.resolve();
-    return apuntesPendientes().reduce(function (cadena, uid) {
-      return cadena.then(function () { return subirApunte(uid); });
-    }, Promise.resolve());
-  }
-
-  function eliminarApunteRemoto_(uid, sha, reintento) {
-    return fetch(urlApunte(uid), {
-      method: "DELETE",
-      headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()),
-      body: JSON.stringify({ message: "Borrar apunte " + uid, sha: sha })
-    }).then(function (resp) {
-      if (resp.status === 404) return;
-      if ((resp.status === 409 || resp.status === 422) && !reintento) {
-        return fetch(urlApunte(uid), { headers: cabeceras(), cache: "no-store" })
-          .then(function (r) { return r.ok ? r.json() : null; })
-          .then(function (json) {
-            if (!json) return;
-            return eliminarApunteRemoto_(uid, json.sha, true);
-          });
-      }
-      if (!resp.ok) throw new Error(errorLegible(resp));
-    });
-  }
-
-  function borrarApuntesPendientes() {
-    if (!syncActivo()) return Promise.resolve();
-    return apuntesBorradosPendientes().reduce(function (cadena, uid) {
-      return cadena.then(function () {
-        return eliminarApunteRemoto_(uid, apuntesBorrados[uid]).then(function () {
-          delete apuntesBorrados[uid];
-          guardarApuntes();
-        });
-      });
-    }, Promise.resolve());
-  }
-
-  function bajarApuntes() {
+  function bajarApunteDoc() {
     if (!syncActivo() || navigator.onLine === false) return Promise.resolve();
-    var url = "https://api.github.com/repos/" + sync.repo + "/contents/apuntes";
-    return fetch(url, { headers: cabeceras(), cache: "no-store" })
+    // Con cambios locales sin subir, no se pisan: igual que casos/montajes.
+    if (apunteDocSinSubir) return Promise.resolve();
+    return fetch(urlApunteDoc(), { headers: cabeceras(), cache: "no-store" })
       .then(function (resp) {
-        if (resp.status === 404) return [];   // todavía no hay ningún apunte
+        if (resp.status === 404) return null;   // todavía no hay apuntes
         if (!resp.ok) throw new Error(errorLegible(resp));
         return resp.json();
       })
-      .then(function (listado) {
-        var presentes = {};
-        (listado || []).forEach(function (f) {
-          if (f.type === "file" && /\.json$/.test(f.name)) {
-            presentes[f.name.replace(/\.json$/, "")] = true;
-          }
-        });
-        var yaNoExisten = Object.keys(apuntes).filter(function (uid) {
-          return apuntesSha[uid] && !presentes[uid] && !apuntesSinSubir[uid] && !apuntesBorrados[uid];
-        });
-        yaNoExisten.forEach(function (uid) {
-          delete apuntes[uid];
-          delete apuntesSha[uid];
-        });
-
-        var quedan = (listado || []).filter(function (f) {
-          if (f.type !== "file" || !/\.json$/.test(f.name)) return false;
-          var uid = f.name.replace(/\.json$/, "");
-          if (apuntesSinSubir[uid]) return false;
-          if (apuntesBorrados[uid]) return false;
-          return apuntesSha[uid] !== f.sha;
-        });
-        return quedan.reduce(function (cadena, f) {
-          return cadena.then(function () {
-            return fetch(f.url, { headers: cabeceras(), cache: "no-store" })
-              .then(function (r) { return r.ok ? r.json() : null; })
-              .then(function (json) {
-                if (!json || !json.content) return;
-                var a = JSON.parse(deBase64(json.content));
-                if (!a || !a.apunte_uid) return;
-                apuntes[a.apunte_uid] = a;
-                apuntesSha[a.apunte_uid] = json.sha;
-              });
-          });
-        }, Promise.resolve()).then(function () {
-          if (quedan.length || yaNoExisten.length) {
-            guardarApuntes();
-            if (pantallaActiva("apuntes")) renderListaApuntes();
-          }
-        });
+      .then(function (json) {
+        if (!json || json.sha === apunteDocSha) return;
+        var doc = JSON.parse(deBase64(json.content));
+        apunteDoc = doc || apunteDoc;
+        apunteDocSha = json.sha;
+        guardarApunteDocLocal();
+        if (pantallaActiva("apuntes")) renderApunteDoc();
       })
       .catch(function (e) { ultimoFallo = e.message || T("sync_error_bajar"); })
       .then(function () { pintarEstadoSync(); });
@@ -4791,7 +4685,7 @@
     // tres listas más largas de la ficha y no hace falta verlas siempre
     // abiertas. Por eso no llevan la etiqueta <label> normal -su summary la
     // sustituye-.
-    var esPlegableMontaje = def.t === "tecnicas" || def.t === "material_ro" || def.t === "material";
+    var esPlegableMontaje = def.t === "tecnicas" || def.t === "material_ro" || def.t === "material" || def.t === "tecnicas_parametros";
     if (!esPlegableMontaje) {
       var lab2 = document.createElement("label");
       lab2.textContent = T("caso_" + def.c);
@@ -4890,9 +4784,21 @@
       // "tecnicas_realizadas": es texto escrito a mano, más caro de rehacer
       // que un simple chip, así que solo se deja de mostrar -reaparece si se
       // vuelve a marcar la técnica-.
+      // El campo entero va ahora también dentro de su propio <details>
+      // (pedido el 07-09-2026, junto al resto de "montaje": técnicas,
+      // material previsto...), con los desplegables de cada técnica ya
+      // existentes anidados dentro -mismo patrón que "tecnicas"/
+      // "material_ro" de aquí abajo-.
       var CAMPOS_TECPAR = ["intensidad", "frecuencia", "num_pulsos", "trenes", "isi", "filtros", "promediacion", "barrido"];
       var mapaParam = Object.assign({}, valor || {});
       camposCaso[def.c] = mapaParam;
+      var detParam = document.createElement("details");
+      detParam.className = "caso-grupo";
+      var sumParam = document.createElement("summary");
+      sumParam.textContent = T("caso_" + def.c);
+      detParam.appendChild(sumParam);
+      var campParam = document.createElement("div");
+      campParam.className = "caso-grupo-campos";
       var contParam = document.createElement("div");
       contParam.className = "tecpar-lista";
       var pintarParametros = function () {
@@ -4952,7 +4858,9 @@
       };
       pintarParametros();
       oyentesTecnicasRealizadas.push(pintarParametros);
-      div.appendChild(contParam);
+      campParam.appendChild(contParam);
+      detParam.appendChild(campParam);
+      div.appendChild(detParam);
       if (def.ay) div.appendChild(ayudaCampo(def.ay));
       return div;
     }
@@ -5409,21 +5317,28 @@
           : def.c === "resumen_monitorizacion" ? resumenMonitorizacionDe(c)
           : def.c === "tipo_alerta" ? tipoAlertaDe(c)
           : c[def.c];
-        cont.appendChild(campoCaso(def, valor));
-        // Coste del material (pedido por Pani, 06-09-2026), justo debajo de
-        // "Material (montaje base)": el mismo bloque que ya existe en
-        // Resumen -bloqueCoste(), con su tabla de líneas, el total, la nota
-        // de qué material reutilizable no cuenta y qué tipos no tienen
-        // precio puesto todavía-, aquí de solo lectura. Reutiliza resDetalle
-        // (calculado más arriba en este mismo render, con calcularResumen()
-        // para "Cajas necesarias") en vez de volver a montarlo: es el mismo
-        // montaje, así que calcularCoste() sobre él da exactamente el mismo
-        // coste que vería el usuario si abriera este montaje ahora mismo en
-        // el Organizador -precios de hoy, no los que hubiera cuando se
-        // guardó el caso-. Sin montaje (resDetalle sin definir) no hay nada
-        // que costear.
+        var elCampo = campoCaso(def, valor);
+        cont.appendChild(elCampo);
+        // Coste del material (pedido por Pani, 06-09-2026; metido dentro
+        // del propio pliegue de "Material (montaje base)" el 07-09-2026,
+        // para que abrir/cerrar uno abra/cierre el otro): el mismo bloque
+        // que ya existe en Resumen -bloqueCoste(), con su tabla de líneas,
+        // el total, la nota de qué material reutilizable no cuenta y qué
+        // tipos no tienen precio puesto todavía-, aquí de solo lectura.
+        // Reutiliza resDetalle (calculado más arriba en este mismo render,
+        // con calcularResumen() para "Cajas necesarias") en vez de volver a
+        // montarlo: es el mismo montaje, así que calcularCoste() sobre él
+        // da exactamente el mismo coste que vería el usuario si abriera
+        // este montaje ahora mismo en el Organizador -precios de hoy, no
+        // los que hubiera cuando se guardó el caso-. Sin montaje
+        // (resDetalle sin definir) no hay nada que costear. Se cuelga
+        // dentro de ".caso-grupo-campos" -el contenido del <details> que
+        // arma el propio campoCaso() para "material_ro"-, no en `cont`:
+        // así comparte pliegue con la tabla de material en vez de quedarse
+        // siempre visible debajo.
         if (def.c === "material_previsto" && resDetalle) {
-          cont.appendChild(bloqueCoste(calcularCoste(resDetalle)));
+          var campoInterior = elCampo.querySelector(".caso-grupo-campos") || elCampo;
+          campoInterior.appendChild(bloqueCoste(calcularCoste(resDetalle)));
         }
       });
     });
@@ -5665,28 +5580,19 @@
   });
 
   /* ---------------------------------------------------------------- *
-   * Apuntes personales: pantalla (lista) + <dialog> para editar uno solo.
-   * Mismo patrón que Casos, pero sin estados ni filtros de fecha -es una
-   * libreta personal, no un expediente-. "Nuevo apunte" no guarda nada
-   * hasta que se pulsa "Guardar" -a diferencia de "Crear caso", aquí no
-   * hace falta un uid real de antemano para enlazar con nada más-.
+   * Apuntes personales: un solo documento continuo (pedido el 07-09-2026,
+   * en vez de la libreta de notas sueltas de la primera versión, misma
+   * tarde). Un textarea grande con autoguardado en cada tecla -mismo
+   * patrón que el resto de la app: guardar dispara "pendiente" y reinicia
+   * la cuenta atrás de subida, así que escribir de corrido no manda una
+   * subida por tecla, solo cuando de verdad hay una pausa-, más una lista
+   * de fotos adjuntas al documento entero (no a una "entrada" suelta:
+   * aquí no hay entradas).
    * ---------------------------------------------------------------- */
-  var dlgApunte = document.getElementById("dlg-apunte");
-  var apunteAbierto = null;
-  var apunteEsNuevo = false;
-
-  function leerFormularioApunte() {
-    var a = apunteAbierto;
-    a.titulo = document.getElementById("apunte-titulo").value.trim();
-    a.categoria = document.getElementById("apunte-categoria").value.trim();
-    a.texto = document.getElementById("apunte-texto").value;
-    return a;
-  }
-
-  function renderFotosApunte() {
+  function renderFotosApunteDoc() {
     var cont = document.getElementById("apunte-fotos");
     cont.innerHTML = "";
-    (apunteAbierto.fotos || []).forEach(function (foto, i) {
+    (apunteDoc.fotos || []).forEach(function (foto, i) {
       var fig = document.createElement("figure");
       fig.className = "apunte-foto";
       var img = document.createElement("img");
@@ -5699,192 +5605,72 @@
       quitar.textContent = "×";
       quitar.title = T("apunte_foto_quitar_tit");
       quitar.addEventListener("click", function () {
-        apunteAbierto.fotos.splice(i, 1);
-        renderFotosApunte();
+        apunteDoc.fotos.splice(i, 1);
+        renderFotosApunteDoc();
+        guardarApunteDoc();
       });
       fig.appendChild(quitar);
       cont.appendChild(fig);
     });
   }
 
-  function renderFormularioApunte() {
-    document.getElementById("dlg-apunte-titulo").textContent = apunteAbierto.titulo || T("dlg_apunte_titulo");
-    document.getElementById("apunte-titulo").value = apunteAbierto.titulo || "";
-    document.getElementById("apunte-categoria").value = apunteAbierto.categoria || "";
-    document.getElementById("apunte-texto").value = apunteAbierto.texto || "";
-    renderFotosApunte();
+  function renderApunteMeta() {
     var meta = document.getElementById("apunte-meta");
-    if (apunteEsNuevo) {
+    if (!apunteDoc.editado_en) {
       meta.textContent = "";
-    } else {
-      var txt = T("apunte_meta_creado", { fecha: new Date(apunteAbierto.creado_en).toLocaleString(localeActual()) });
-      var eds = apunteAbierto.editado_en || [];
-      if (eds.length) {
-        txt += " " + T("apunte_meta_editado", { fecha: new Date(eds[eds.length - 1]).toLocaleString(localeActual()) });
-      }
-      meta.textContent = txt;
-    }
-    document.getElementById("apunte-borrar").hidden = apunteEsNuevo;
-    document.getElementById("apunte-error").hidden = true;
-  }
-
-  function abrirApunte(uid) {
-    apunteEsNuevo = false;
-    apunteAbierto = clonar(apuntes[uid]);
-    renderFormularioApunte();
-    dlgApunte.showModal();
-  }
-
-  function abrirApunteNuevo() {
-    apunteEsNuevo = true;
-    apunteAbierto = apunteVacio();
-    renderFormularioApunte();
-    dlgApunte.showModal();
-  }
-
-  function guardarFormularioApunte() {
-    var a = leerFormularioApunte();
-    if (!a.titulo) {
-      var err = document.getElementById("apunte-error");
-      err.textContent = T("apunte_falta_titulo");
-      err.hidden = false;
-      return false;
-    }
-    guardarApunte(a, apunteEsNuevo);
-    apunteEsNuevo = false;
-    apunteAbierto = clonar(apuntes[a.apunte_uid]);
-    avisoGuardado(T("apunte_guardado"));
-    return true;
-  }
-
-  function renderListaApuntes() {
-    var cont = document.getElementById("apuntes-lista");
-    cont.innerHTML = "";
-    var filtroCrudo = (document.getElementById("apuntes-buscar").value || "").trim();
-    var filtro = normalizarTecMio(filtroCrudo);
-
-    var lista = Object.keys(apuntes).map(function (uid) { return apuntes[uid]; })
-      .filter(function (a) {
-        if (!filtro) return true;
-        var t = normalizarTecMio((a.titulo || "") + " " + (a.categoria || "") + " " + (a.texto || ""));
-        return t.indexOf(filtro) !== -1;
-      })
-      // Más reciente primero, por fecha de creación
-      .sort(function (x, y) { return (y.creado_en || "").localeCompare(x.creado_en || ""); });
-
-    var total = Object.keys(apuntes).length;
-    var sinSubir = apuntesPendientes().length;
-    document.getElementById("apuntes-cuenta").textContent =
-      T("apuntes_n", { n: total }) + (sinSubir ? " · " + T("apuntes_sin_subir", { n: sinSubir }) : "");
-
-    if (!lista.length) {
-      var vacio = document.createElement("p");
-      vacio.className = "empty-hint";
-      vacio.textContent = total ? T("apuntes_sin_filtro") : T("apuntes_vacio");
-      cont.appendChild(vacio);
       return;
     }
-
-    lista.forEach(function (a) {
-      var fila = document.createElement("button");
-      fila.type = "button";
-      fila.className = "caso-fila apunte-fila";
-      fila.addEventListener("click", function () { abrirApunte(a.apunte_uid); });
-
-      var cab = document.createElement("span");
-      cab.className = "caso-fila-cab";
-      var titulo = document.createElement("b");
-      titulo.textContent = a.titulo || "—";
-      cab.appendChild(titulo);
-      var fecha = document.createElement("span");
-      fecha.className = "caso-fila-fecha";
-      fecha.textContent = (a.creado_en || "").slice(0, 10);
-      cab.appendChild(fecha);
-      fila.appendChild(cab);
-
-      if (a.texto) {
-        var det = document.createElement("span");
-        det.className = "caso-fila-det";
-        det.textContent = a.texto.length > 140 ? a.texto.slice(0, 140) + "…" : a.texto;
-        fila.appendChild(det);
-      }
-
-      var pie = document.createElement("span");
-      pie.className = "caso-fila-pie";
-      if (a.categoria) {
-        var etCat = document.createElement("span");
-        etCat.className = "caso-etiqueta";
-        etCat.textContent = a.categoria;
-        pie.appendChild(etCat);
-      }
-      if ((a.fotos || []).length) {
-        var fo = document.createElement("span");
-        fo.className = "caso-etiqueta";
-        fo.textContent = "📷 " + a.fotos.length;
-        pie.appendChild(fo);
-      }
-      if (apuntesSinSubir[a.apunte_uid]) {
-        var sub = document.createElement("span");
-        sub.className = "caso-etiqueta sin-subir";
-        sub.textContent = T("caso_pendiente_subir");
-        pie.appendChild(sub);
-      }
-      fila.appendChild(pie);
-
-      cont.appendChild(fila);
+    meta.textContent = T("apunte_meta_editado", {
+      fecha: new Date(apunteDoc.editado_en).toLocaleString(localeActual())
     });
   }
 
-  function abrirListaApuntes() {
-    renderListaApuntes();
+  // Se llama al abrir la pantalla y al bajar una versión más nueva desde
+  // GitHub mientras está abierta (ver bajarApunteDoc()): repinta el
+  // textarea entero, así que si el usuario está escribiendo justo cuando
+  // llega una bajada se perdería el cursor -no debería pasar en el uso
+  // normal (un solo dispositivo escribe a la vez), documentado y ya está.
+  function renderApunteDoc() {
+    document.getElementById("apunte-texto").value = apunteDoc.texto || "";
+    renderFotosApunteDoc();
+    renderApunteMeta();
+  }
+
+  function abrirApunteDoc() {
+    renderApunteDoc();
     irAPantalla("apuntes");
   }
 
-  document.getElementById("tile-apuntes").addEventListener("click", abrirListaApuntes);
-  document.getElementById("apuntes-buscar").addEventListener("input", renderListaApuntes);
-  document.getElementById("apuntes-nuevo").addEventListener("click", abrirApunteNuevo);
+  document.getElementById("tile-apuntes").addEventListener("click", abrirApunteDoc);
 
-  // Cada foto se guarda como data URL dentro del propio apunte -mismo
-  // archivo que se sube a apuntes/<uid>.json-, sin servidor de imágenes
-  // aparte: para unas pocas fotos de apuntes personales es proporcionado.
+  document.getElementById("apunte-texto").addEventListener("input", function (e) {
+    apunteDoc.texto = e.target.value;
+    guardarApunteDoc();
+  });
+
+  // Cada foto se guarda como data URL dentro del propio documento -mismo
+  // archivo que se sube a apuntes/documento.json-, sin servidor de
+  // imágenes aparte: proporcionado para unas pocas fotos personales.
   document.getElementById("apunte-foto-input").addEventListener("change", function (e) {
     var ficheros = Array.prototype.slice.call(e.target.files || []);
     ficheros.forEach(function (fichero) {
       var lector = new FileReader();
       lector.onload = function () {
-        apunteAbierto.fotos = apunteAbierto.fotos || [];
-        apunteAbierto.fotos.push({ nombre: fichero.name, datos: lector.result });
-        renderFotosApunte();
+        apunteDoc.fotos = apunteDoc.fotos || [];
+        apunteDoc.fotos.push({ nombre: fichero.name, datos: lector.result });
+        renderFotosApunteDoc();
+        guardarApunteDoc();
       };
       lector.readAsDataURL(fichero);
     });
     e.target.value = "";
   });
 
-  document.getElementById("apunte-guardar").addEventListener("click", function () {
-    guardarFormularioApunte();
-  });
-
-  document.getElementById("apunte-borrar").addEventListener("click", function () {
-    var a = apunteAbierto;
-    if (!confirm(T("apunte_borrar_conf", { titulo: a.titulo || "" }))) return;
-    borrarApunte(a.apunte_uid);
-    dlgApunte.close();
-    avisoGuardado(T("apunte_borrado"));
-    abrirListaApuntes();
-  });
-
-  document.getElementById("apunte-volver").addEventListener("click", function () {
-    dlgApunte.close();
-    abrirListaApuntes();
-  });
-
-  // Exporta todos los apuntes en un único .json, igual de sencillo que
-  // "Exportar copia" del estado general (mismo patrón Blob + <a download>).
+  // Exporta el documento entero (texto + fotos) en un .json, igual de
+  // sencillo que "Exportar copia" del estado general (mismo patrón Blob +
+  // <a download>).
   document.getElementById("btn-exportar-apuntes").addEventListener("click", function () {
-    var lista = Object.keys(apuntes).map(function (uid) { return apuntes[uid]; })
-      .sort(function (x, y) { return (y.creado_en || "").localeCompare(x.creado_en || ""); });
-    var blob = new Blob([JSON.stringify(lista, null, 2)], { type: "application/json" });
+    var blob = new Blob([JSON.stringify(apunteDoc, null, 2)], { type: "application/json" });
     var url = URL.createObjectURL(blob);
     var link = document.createElement("a");
     link.href = url;
@@ -9173,7 +8959,7 @@
   sembrarMontajes();
   limpiarMontajesHeredados();
   cargarCasos();
-  cargarApuntes();
+  cargarApunteDoc();
   cargarSync();
   cargarPerfilUsuario();
   cargarDocente();

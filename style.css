@@ -448,7 +448,7 @@ main {
    El scroll propio y el alto acotado se conservan en los dos casos: es ese
    scroll el que plegarCatalogo() guarda y restaura. */
 .panel-catalogo {
-  max-height: 50vh;
+  max-height: 65vh;
   overflow-y: auto;
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -1748,6 +1748,25 @@ dialog h3 {
 .caso-etiqueta.sin-subir { background: var(--accent-soft); color: var(--accent); }
 
 /* ------------------------- Apuntes: fotos adjuntas ---------------------- */
+/* Documento continuo de Apuntes (07-09-2026): un solo textarea grande,
+   ancho completo de la pantalla -no dentro de .campo, que limita el
+   ancho a la rejilla de formularios normal-, con letra algo más grande
+   para escribir cómodo. */
+.apunte-texto-doc {
+  display: block;
+  width: 100%;
+  min-height: 55vh;
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  padding: 0.6rem 0.7rem;
+  margin-bottom: 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--card-bg);
+  color: var(--text);
+  resize: vertical;
+}
 .apunte-fotos { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.4rem; }
 .apunte-foto {
   position: relative;
@@ -2164,26 +2183,20 @@ dialog h3 {
 
 /* Pantallas estrechas */
 @media (max-width: 900px) {
-  .panel-catalogo { max-height: 40vh; }
-  /* Pedido el 06-09-2026 (tarde): el catálogo no es parte de una plantilla
-     de montaje, es lo que nutre a las cajas -así que en móvil, donde todo
-     va en una sola columna sin sitio para un lateral, tiene que verse antes
-     que "Plantillas de montajes", no después-. Solo visual: el HTML no se
-     toca, en escritorio .panel-catalogo sigue mandado a su propia columna
-     por "grid-column: 2" más abajo, sin relación con este order. */
-  #panel-catalogo { order: -1; }
+  .panel-catalogo { max-height: 55vh; }
   #dlg-montajes-lista, #plantilla-elegir-lista { grid-template-columns: 1fr; }
 }
 
 /* Pantalla ancha: el catálogo vuelve a la columna lateral fija. El HTML no
-   cambia -sigue siendo la cuarta tarjeta; el "order: -1" de la media query
-   de arriba es solo para el apilado de móvil y no afecta aquí-; aquí solo
-   se le manda a la segunda columna, ocupando todas las filas, y se queda
-   pegado al hacer scroll para tenerlo a la vista mientras miras las cajas. */
+   cambia -sigue siendo la tercera tarjeta-; aquí solo se le manda a la
+   segunda columna, ocupando todas las filas, y se queda pegado al hacer
+   scroll para tenerlo a la vista mientras miras las cajas. Columna más
+   ancha que antes (340px, antes 260px) para que el recuadro se vea más
+   grande, pedido el 07-09-2026. */
 @media (min-width: 901px) {
   .columna-principal {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 260px;
+    grid-template-columns: minmax(0, 1fr) 340px;
     align-items: start;
     column-gap: 0.7rem;
   }

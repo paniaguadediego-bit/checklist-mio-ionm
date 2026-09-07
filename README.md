@@ -410,23 +410,28 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
    Debajo de eso, en este orden (reordenado el 06-09-2026): **técnicas
    realizadas** (ya vienen marcadas las que planificaste, solo ajustas — los
    chips salen en tres bloques separados por un hueco: monitorización,
-   reflejos y mapeo), **"Cómo se realizó cada técnica"** (un bloque plegable
-   por cada técnica ya marcada como realizada, con los parámetros reales
-   usados en este caso concreto — intensidad, frecuencia, nº de pulsos,
+   reflejos y mapeo), **"Cómo se realizó cada técnica"** (07-09-2026: el
+   bloque entero es ahora también plegable, con los desplegables de cada
+   técnica ya marcada como realizada anidados dentro — parámetros reales
+   usados en este caso concreto: intensidad, frecuencia, nº de pulsos,
    trenes, ISI, filtros, promediación, barrido— y una caja de notas libres al
    final para cualquier detalle técnico que no encaje en esos campos), notas
    de montaje/técnicas, **material (montaje base)** (siempre de solo lectura:
    sale del montaje real del caso, que se corrige desde el Organizador, no
    aquí — la sección "Material realmente usado" está suspendida desde el
    06-09-2026: si añades algo que no estaba previsto, colócalo en su caja y
-   anótalo en las notas de montaje/técnicas, justo arriba), **"Coste del
-   material"** (06-09-2026 — el mismo desglose que en Resumen: unitario ×
+   anótalo en las notas de montaje/técnicas, justo arriba). **"Coste del
+   material"** vive ahora dentro de ese mismo desplegable (07-09-2026: antes
+   estaba siempre visible debajo, sin relación con el pliegue de la tabla a
+   la que se refiere) — el mismo desglose que en Resumen: unitario ×
    cantidad por tipo, total, qué material reutilizable queda fuera y qué
    tipos no tienen precio todavía; se recalcula en vivo con los precios de
    hoy, no con los que hubiera cuando se guardó el caso, y sale igual en el
-   informe en PDF) e **"Imágenes del montaje"** (capturas o fotos de cómo
-   quedó en el software del equipo, p. ej. la pantalla del Inomed, para
-   consultar si te toca un caso parecido —se comprimen solas al añadirlas, se
+   informe en PDF. Por último, **"Imágenes del montaje"** (capturas o fotos
+   de cómo quedó en el software del equipo, p. ej. la pantalla del Inomed,
+   al doble de tamaño desde el 07-09-2026 al exportarlas en el informe en
+   PDF — para consultar si te toca un caso parecido —se comprimen solas al
+   añadirlas, se
    pulsan para verlas en grande). Los dos bloques de técnicas/material están
    plegados por defecto desde el 05-09-2026, se despliegan pulsando su
    título.
@@ -576,19 +581,19 @@ buscador:
 
 ## Mis apuntes
 
-Tarjeta nueva del 07-09-2026, **privada**: para tus propios apuntes de
-parámetros, filtros o lo que sea —no lo que ya viene en Técnicas IONM ni en
-los libros—, con sitio para fotos. Cada apunte lleva título, categoría libre
-(con sugerencias: Estimulación, Registro, Filtros, Barrido/trenes,
-Material…), texto y las fotos que quieras adjuntar. **Nuevo apunte** no
-guarda nada hasta que pulsas **Guardar**; **Borrar apunte** pide
-confirmación y no tiene deshacer desde la app.
+Tarjeta nueva del 07-09-2026, **privada**: un único documento continuo para
+tus propios apuntes de parámetros, filtros o lo que sea —no lo que ya viene
+en Técnicas IONM ni en los libros—, como un Word que vas actualizando, no
+una lista de notas sueltas. Un solo cuadro de texto grande con sitio para
+fotos debajo; escribes y se guarda solo, sin botón "Guardar" ni "Nuevo
+apunte" de por medio.
 
 Se guarda igual que casos y montajes —repositorio privado
-`checklist-mio-datos`, subida automática a los pocos segundos, un archivo
-por apunte en su propia carpeta `apuntes/`—, así que un apunte hecho en el
-móvil aparece también en el ordenador. **Exportar apuntes** descarga un único
-`.json` con todos, para tener copia aparte cuando quieras.
+`checklist-mio-datos`, subida automática a los pocos segundos de dejar de
+escribir—, en un único archivo `apuntes/documento.json`, así que lo que
+escribes en el móvil aparece también en el ordenador. **Exportar apuntes**
+descarga el documento entero en `.json`, para tener copia aparte cuando
+quieras.
 
 ## Simulador y Bibliografía
 

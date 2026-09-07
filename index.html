@@ -17,7 +17,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260907c">
+<link rel="stylesheet" href="style.css?v=20260907d">
 </head>
 <body>
 
@@ -91,7 +91,7 @@
          está. Mismo contenido que antes (buscador, acciones, lista), solo
          cambia el envoltorio: de <dialog> a <details> igual que el resto de
          tarjetas. -->
-    <details class="card no-print" id="montajes" open>
+    <details class="card no-print" id="montajes">
       <summary class="card-cab">
         <h2 data-i18n="dlg_montajes_titulo"></h2>
       </summary>
@@ -555,11 +555,12 @@
   </div>
 </dialog>
 
-<!-- Apuntes personales (06-09-2026): libreta privada del usuario -parámetros
-     propios, filtros, fotos-, sincronizada en checklist-mio-datos/apuntes/,
-     no en estado.json (mismo motivo que casos y montajes: archivo por
-     apunte para que dos dispositivos no se pisen el uno al otro). Mismo
-     patrón pantalla+<dialog> que Casos, más simple porque no hay estados. -->
+<!-- Apuntes personales (06-09-2026; rehecho el 07-09-2026 como documento
+     continuo -pedido del usuario, "como un Word que voy actualizando", no
+     una lista de notas sueltas-). Un solo archivo fijo
+     checklist-mio-datos/apuntes/documento.json, no estado.json (para no
+     obligar a resubir todo el catálogo/técnicas por cada frase escrita
+     aquí). -->
 <div class="pantalla" id="pantalla-apuntes">
   <div class="pantalla-cab">
     <h2 data-i18n="tile_apuntes"></h2>
@@ -567,67 +568,19 @@
   </div>
   <p class="dlg-intro" data-i18n="apuntes_intro"></p>
 
-  <div class="casos-acciones">
-    <button type="button" id="apuntes-nuevo" class="primario" data-i18n="apuntes_nuevo"></button>
-  </div>
+  <textarea id="apunte-texto" class="apunte-texto-doc" data-i18n-ph="apunte_texto_ph" rows="20"></textarea>
+  <p class="cat-version" id="apunte-meta"></p>
 
-  <div class="casos-filtros">
-    <span>
-      <label for="apuntes-buscar" data-i18n="apuntes_buscar"></label>
-      <input type="search" id="apuntes-buscar" data-i18n-ph="apuntes_buscar_ph" autocomplete="off">
-    </span>
+  <div class="campo">
+    <label data-i18n="apunte_campo_fotos"></label>
+    <input type="file" id="apunte-foto-input" accept="image/*" multiple>
+    <div id="apunte-fotos" class="apunte-fotos"></div>
   </div>
-
-  <div id="apuntes-lista" class="casos-lista"></div>
-  <p class="cat-version" id="apuntes-cuenta"></p>
 
   <div class="dlg-botones">
     <button type="button" id="btn-exportar-apuntes" data-i18n="btn_exportar_apuntes"></button>
   </div>
 </div>
-
-<dialog id="dlg-apunte" class="no-print">
-  <div class="caso-cab">
-    <h3 id="dlg-apunte-titulo" data-i18n="dlg_apunte_titulo"></h3>
-  </div>
-  <div class="caso-scroll">
-    <div class="caso-grupo-campos">
-      <div class="campo">
-        <label for="apunte-titulo" data-i18n="apunte_campo_titulo"></label>
-        <input type="text" id="apunte-titulo" data-i18n-ph="apunte_titulo_ph">
-      </div>
-      <div class="campo">
-        <label for="apunte-categoria" data-i18n="apunte_campo_categoria"></label>
-        <input type="text" id="apunte-categoria" list="apunte-categorias" data-i18n-ph="apunte_categoria_ph">
-        <datalist id="apunte-categorias">
-          <option value="Estimulación">
-          <option value="Registro">
-          <option value="Filtros">
-          <option value="Barrido / trenes">
-          <option value="Material">
-          <option value="Otros">
-        </datalist>
-      </div>
-      <div class="campo">
-        <label for="apunte-texto" data-i18n="apunte_campo_texto"></label>
-        <textarea id="apunte-texto" rows="8"></textarea>
-      </div>
-      <div class="campo">
-        <label data-i18n="apunte_campo_fotos"></label>
-        <input type="file" id="apunte-foto-input" accept="image/*" multiple>
-        <div id="apunte-fotos" class="apunte-fotos"></div>
-      </div>
-    </div>
-    <p class="caso-meta" id="apunte-meta"></p>
-    <p class="dlg-error" id="apunte-error" hidden></p>
-  </div>
-  <div class="dlg-botones caso-acciones">
-    <button type="button" id="apunte-borrar" class="peligro" hidden data-i18n="apunte_borrar"></button>
-    <span class="barra-flex"></span>
-    <button type="button" id="apunte-volver" data-i18n="cerrar"></button>
-    <button type="button" id="apunte-guardar" class="primario" data-i18n="guardar"></button>
-  </div>
-</dialog>
 
 <dialog id="dlg-elegir-plantilla" class="no-print">
   <h3 data-i18n="dlg_elegir_plantilla_titulo"></h3>
@@ -850,10 +803,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260907c"></script>
-<script src="data/i18n-en.js?v=20260907c"></script>
-<script src="data/guia.js?v=20260907c"></script>
-<script src="data/tecnicas-mio.js?v=20260907c"></script>
-<script src="app.js?v=20260907c"></script>
+<script src="data/surgeries.js?v=20260907d"></script>
+<script src="data/i18n-en.js?v=20260907d"></script>
+<script src="data/guia.js?v=20260907d"></script>
+<script src="data/tecnicas-mio.js?v=20260907d"></script>
+<script src="app.js?v=20260907d"></script>
 </body>
 </html>

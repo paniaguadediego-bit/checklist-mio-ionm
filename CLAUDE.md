@@ -2481,3 +2481,89 @@ un array con cada edición posterior. Las dos últimas las pone la app sola.
   Sheet. La vista Tabla de Técnicas MIO es solo pantalla, no toca ningún
   dato. **No hizo falta volver a pegar nada** en el editor de Apps Script
   real.
+
+### Retoques posteriores, 07-09-2026 (noche): Organizador, ficha del caso, Apuntes como documento continuo
+
+- **Organizador de Montajes, orden y tamaño de vuelta a como pedía el
+  usuario**: "Plantillas de montajes" pierde el `open` que traía desde la
+  Fase 6 -plegada por defecto otra vez, como Técnicas-; se retira la regla
+  `#panel-catalogo { order: -1; }` (06-09-2026, tarde) que en móvil pintaba
+  Catálogo el primero por delante de Plantillas de montajes -vuelve al
+  orden natural del HTML: Plantillas, Técnicas, Catálogo-. El recuadro de
+  Catálogo se agranda: `max-height` de 50vh a 65vh (escritorio) y de 40vh a
+  55vh (móvil), y la columna lateral fija de escritorio pasa de 260px a
+  340px.
+- **Ficha del caso, apartado 5 (Montaje/Técnicas)**: "Cómo se realizó cada
+  técnica" (`tecnicas_parametros`) entra en la lista `esPlegableMontaje`
+  -antes solo `tecnicas`/`material_ro`/`material`- y se envuelve en su
+  propio `<details>`, con los desplegables por técnica que ya existían
+  anidados dentro -mismo patrón que "Técnicas realizadas" y "Material
+  (montaje base)", visualmente ya no destaca por comportarse distinto-.
+  "Coste del material" deja de colgarse como hermano de "Material (montaje
+  base)" -siempre visible, sin relación visual con la tabla a la que se
+  refiere- y pasa a vivir **dentro** de su `.caso-grupo-campos`: abrir o
+  cerrar uno abre o cierra el otro. Cambio de una línea en el bucle de
+  `renderFichaCaso()` (buscar `elCampo.querySelector(".caso-grupo-campos")`
+  en vez de `cont.appendChild(bloqueCoste(...))`), sin tocar `bloqueCoste()`
+  -la reutilizan también Resumen y el informe en PDF, con sus propios
+  contenedores-.
+- **Fotos del montaje al doble de grandes en el informe en PDF**:
+  `.informe-imagenes img{max-width/max-height}` de `9rem` a `18rem` (la
+  hoja de estilos embebida de `construirInformeCaso()`, no `style.css`: el
+  informe se abre en su propia ventana de impresión).
+
+- **Apuntes personales: de notas sueltas a un documento continuo**, pedido
+  a mitad de la tarde ("como un Word que voy actualizando", no una lista de
+  entradas) -sustituye por completo el diseño de "libreta con varias notas"
+  de la tarde anterior, mismo día-. Cambios:
+  - **Modelo de datos**: un único objeto `{texto, fotos, editado_en}` en
+    vez de un mapa `apunte_uid -> apunte`. Un solo archivo remoto,
+    `apuntes/documento.json` -ya no un archivo por nota-, con
+    `apunteDocSha`/`apunteDocSinSubir` (booleano, no mapas) y
+    `subirApunteDoc()`/`bajarApunteDoc()` calcados de `subirCaso()`/
+    `bajarCasos()` pero para un id fijo. Sin "borrado": no hay entradas que
+    borrar, solo un texto que se vacía si se quiere.
+  - **Pantalla**: un solo `<textarea>` grande (`#apunte-texto`,
+    `.apunte-texto-doc`, min-height 55vh) que guarda en cada `input` -mismo
+    patrón de siempre: guardar marca "pendiente" y reinicia la cuenta atrás
+    de subida, así que escribir seguido no dispara una subida por tecla-,
+    más la lista de fotos adjuntas (`#apunte-fotos`, sin cambios de CSS) y
+    la fecha de la última edición. Desaparecen: lista de notas, buscador,
+    "Nuevo apunte", título/categoría por nota, borrar nota, y el
+    `<dialog id="dlg-apunte">` entero -ya no hace falta, no hay "una nota"
+    que abrir aparte de la pantalla-.
+  - **Migración de datos reales**: al ponerse a esto se descubrió que el
+    usuario ya había estado usando la Apuntes de la tarde **en su
+    dispositivo real** mientras se trabajaba en otra cosa -3 notas ya
+    subidas a `checklist-mio-datos` cuando se hizo `git fetch` antes de
+    tocar nada, seis commits después del último `git log` de esta sesión:
+    "Filtros PEV" (texto), "Ejemplos canales SEP" (con foto) y "Tabla
+    12-11..." (con foto)-. Se siguió el mismo patrón que "Reflejo H
+    dividido"/"hr_masetero unificados" de días anteriores: el código
+    cambia y los datos reales se migran con él, en el mismo turno. Las 3
+    notas se fusionaron en el nuevo `apuntes/documento.json` -el texto de
+    "Filtros PEV" se fundió en la sección de PEV/c-PEV del documento, y las
+    2 fotos se copiaron tal cual a la nueva lista plana `fotos`, con una
+    referencia en el texto a qué era cada una-, y los 3 archivos antiguos
+    se borraron. Se aprovechó para sembrar el documento con los primeros
+    apuntes reales que el usuario fue dictando en la propia conversación
+    -parámetros de estimulación y filtros de MEP, SEP, MEP CoBuBu's,
+    Free-EMG, PEATC, PEV/c-PEV, Blink-Reflex, TCR, TVcR, c-MEP con GRID y
+    H-Reflex de sóleo-. Commit y push aparte en `checklist-mio-datos`
+    (`db4f9cf`), antes del despliegue del código nuevo en
+    `checklist-mio-ionm`, para minimizar cuánto tiempo pasa con el archivo
+    nuevo (`documento.json`) en el repo de datos mientras el `app.js` que
+    todavía no sabe leerlo pueda estar sirviéndose desde GitHub Pages -la
+    app vieja ignora ese archivo sin más (no trae `apunte_uid`), no lo
+    borra ni lo rompe, así que el peor caso es ver "sin apuntes" un rato,
+    nunca perder nada-.
+- **Pendiente, no hecho todavía en este turno**: el usuario pidió además
+  que el botón de "atrás" del teléfono, dentro de una de las 7 pantallas
+  principales, vuelva a Inicio en vez de salir de la herramienta; que
+  "atrás" en Inicio pida confirmación antes de salir; y un botón nuevo
+  "Cerrar MIO-Check" debajo de "Mis apuntes" con la misma confirmación -para
+  no perder nada sin sincronizar-. Se investigó el mecanismo (historial de
+  navegador con `pushState`/`popstate`, ver por qué hace falta un escalón
+  de "suelo" además de uno de "inicio" para poder interceptar el primer
+  atrás en un PWA recién abierto) pero no se llegó a escribir código: queda
+  para el próximo turno.
