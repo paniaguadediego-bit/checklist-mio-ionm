@@ -561,12 +561,18 @@ dos formas de verlo, con un interruptor **Tarjetas / Tabla** arriba del
 buscador:
 
 - **Tarjetas** (la de siempre): agrupadas por familia (SEP, MEP, Reflejos…),
-  una por una, plegadas hasta que buscas algo.
-- **Tabla**: todas las técnicas juntas, una fila cada una, con columnas fijas
-  —Técnica, Estimulación, Registro, Filtros, Barrido, Notas— para verlas de
-  un vistazo sin abrir tarjeta por tarjeta. Algunas celdas quedan vacías si
-  esa técnica no trae ese dato. El buscador de arriba filtra igual en las dos
-  vistas.
+  una por una, plegadas hasta que buscas algo. Trae también la teoría —
+  descripción, notas clínicas, umbrales de referencia…—.
+- **Tabla**: una tabla por familia, cada una en su propio desplegable
+  **plegado por defecto**, con solo 3 columnas de datos —Estimulación,
+  Registro, y **Filtros y barrido** en una sola columna— para ver de un
+  vistazo los parámetros de verdad, sin la teoría (esa se queda en las
+  Tarjetas). El filtro **notch** no sale nunca: no se usa. Las fuentes no
+  ocupan sitio en la celda —salen como un numerito enlazado (¹, ²…) que
+  lleva a una lista **Fuentes** al final de toda la vista, una sola vez por
+  cita aunque la usen varias técnicas—. Letra más pequeña a propósito, para
+  que quepa bien con el móvil en horizontal. El buscador de arriba filtra
+  igual en las dos vistas, y en Tabla abre solo las familias con resultado.
 
 ## Mis apuntes
 

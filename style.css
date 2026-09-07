@@ -1117,51 +1117,61 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
 }
 .tecmio-vista-toggle button.activo { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-/* Vista tabla: una fila por técnica, columnas genéricas -Estimulación,
-   Registro, Filtros, Barrido, Notas-. Reutiliza .tecmio-sub/.tecmio-lista
-   (mismo contenido que las tarjetas, sin resumir) dentro de cada celda, así
-   que una técnica con muchos subparámetros da una fila alta: es el precio
-   de no perder ningún dato al pasar de tarjeta a tabla. Contenedor con
-   scroll propio en las dos direcciones -la tabla es ancha (6 columnas) y
-   puede ser alta-. */
-.tecmio-tabla-cont { overflow: auto; max-height: 75vh; border: 1px solid var(--border); border-radius: 8px; }
-.tecmio-tabla { border-collapse: collapse; width: 100%; font-size: 0.78rem; }
+/* Vista tabla (rehecha 07-09-2026): una tabla por familia, dentro de un
+   <details> plegado por defecto -reutiliza .caso-grupo/.tecmio-familia-<f>
+   tal cual, así que el borde de color de su <summary> ya viene gratis de
+   las reglas de la vista Tarjetas (más arriba en este archivo), sin
+   duplicar una regla por familia aquí-. Solo 3 columnas de datos
+   -Estimulación, Registro, Filtros y barrido fusionados-, sin la columna
+   de Notas/teoría que había antes: de ahí que cada tabla sea bastante más
+   estrecha que la primera versión y cueste menos que quepa en el móvil en
+   horizontal. Tamaño de letra reducido a propósito, mismo motivo. */
+.tecmio-tabla-scroll { overflow-x: auto; }
+.tecmio-tabla { border-collapse: collapse; width: 100%; font-size: 0.7rem; }
 .tecmio-tabla th, .tecmio-tabla td {
   border: 1px solid var(--border-soft);
-  padding: 0.4rem 0.5rem;
+  padding: 0.3rem 0.4rem;
   text-align: left;
   vertical-align: top;
 }
 .tecmio-tabla th {
-  position: sticky;
-  top: 0;
   background: var(--card-bg);
-  font-size: 0.72rem;
+  font-size: 0.66rem;
   text-transform: uppercase;
   letter-spacing: 0.02em;
   color: var(--text-muted);
-  z-index: 1;
 }
-.tecmio-tabla td.tecmio-td-tecnica { min-width: 11rem; font-weight: 600; }
-.tecmio-tabla td { min-width: 10rem; }
-.tecmio-tabla tr.tecmio-familia-sep      td.tecmio-td-tecnica { border-left: 3px solid var(--tm-sep); }
-.tecmio-tabla tr.tecmio-familia-mep      td.tecmio-td-tecnica { border-left: 3px solid var(--tm-mep); }
-.tecmio-tabla tr.tecmio-familia-onda_d   td.tecmio-td-tecnica { border-left: 3px solid var(--tm-onda_d); }
-.tecmio-tabla tr.tecmio-familia-emg      td.tecmio-td-tecnica { border-left: 3px solid var(--tm-emg); }
-.tecmio-tabla tr.tecmio-familia-reflejos td.tecmio-td-tecnica { border-left: 3px solid var(--tm-reflejos); }
-.tecmio-tabla tr.tecmio-familia-vep      td.tecmio-td-tecnica { border-left: 3px solid var(--tm-vep); }
-.tecmio-tabla tr.tecmio-familia-peatc    td.tecmio-td-tecnica { border-left: 3px solid var(--tm-peatc); }
-.tecmio-tabla tr.tecmio-familia-eeg_ecog td.tecmio-td-tecnica { border-left: 3px solid var(--tm-eeg_ecog); }
-.tecmio-tabla tr.tecmio-familia-des      td.tecmio-td-tecnica { border-left: 3px solid var(--tm-des); }
-.tecmio-tabla tr.tecmio-familia-mapeo    td.tecmio-td-tecnica { border-left: 3px solid var(--tm-mapeo); }
+.tecmio-tabla td.tecmio-td-tecnica { min-width: 8rem; font-weight: 600; }
+.tecmio-tabla td { min-width: 9rem; }
 .tecmio-td-subtitulo {
-  margin: 0.3rem 0 0;
-  font-size: 0.68rem;
+  margin: 0.25rem 0 0;
+  font-size: 0.62rem;
   text-transform: uppercase;
   letter-spacing: 0.02em;
   color: var(--text-muted);
 }
 .tecmio-td-subtitulo:first-child { margin-top: 0; }
+
+/* Notas al pie de la vista Tabla: sustituyen el "Fuente: ..." que se
+   pintaba dentro de cada celda -pedido explícito, para no gastar espacio
+   de la tabla en texto de cita-. Un superíndice enlazado por cita, y una
+   lista única al final de toda la vista (no una por familia): el mismo
+   texto citado por varias técnicas comparte número, ver
+   indiceFuenteTabla() en app.js. */
+.tecmio-nota-fuente { font-size: 0.68em; margin-left: 0.1rem; }
+.tecmio-nota-fuente a { color: var(--accent); text-decoration: none; }
+.tecmio-nota-fuente a:hover { text-decoration: underline; }
+.tecmio-tabla-fuentes {
+  margin-top: 1rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--border-soft);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+.tecmio-tabla-fuentes h5 { margin: 0 0 0.3rem; font-size: 0.78rem; color: var(--text); }
+.tecmio-tabla-fuentes ol { margin: 0; padding-left: 1.3rem; }
+.tecmio-tabla-fuentes li { margin-bottom: 0.15rem; }
+.tecmio-tabla-fuentes li:target { color: var(--accent); font-weight: 600; }
 
 .docente-fuentes {
   font-size: 0.66rem;

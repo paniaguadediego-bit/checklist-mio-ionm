@@ -2408,35 +2408,76 @@ un array con cada edición posterior. Las dos últimas las pone la app sola.
   copia").
 
 - **Vista "Tabla" en Técnicas MIO**, pedida junto a lo anterior: una chuleta
-  de un vistazo con todas las técnicas juntas, en vez de abrir tarjeta por
-  tarjeta. Decisión tomada con el usuario: vive **dentro** de la pantalla
-  que ya existía (interruptor "Tarjetas"/"Tabla", `tecMioVista`), y es
-  **una sola tabla** con columnas genéricas -Técnica, Estimulación,
-  Registro, Filtros, Barrido (sweep), Notas- aunque una técnica concreta
-  deje varias celdas vacías. `estimulacion_y_registro`/
-  `estimulacion_registro` (una sola sección para las técnicas donde ambas
-  van juntas) se reparten en las dos columnas Estimulación y Registro;
-  las tres secciones raras de una sola técnica
-  (`umbrales_referencia`, `tecnica_colision_onda_d`,
-  `mapeo_subcortical_radiacion_optica`) caen todas en Notas, junto a
-  `notas_clinicas`, para no perder el dato -no hay una columna "Trenes"
-  separada: ese parámetro vive dentro de `estimulacion` como subcampo
-  (`tren_pulsos`/`isi_ms`), no como sección propia, así que separarlo habría
-  exigido extraer campos concretos con heurística en vez de reutilizar la
-  estructura real de `data/tecnicas-mio.js`-. Cada celda reutiliza
-  `pintarValorTecMio()` tal cual -mismo contenido que la tarjeta, sin
-  resumir-, así que una técnica con muchos subparámetros da una fila alta:
-  es el precio de no perder ningún dato al pasar de tarjeta a tabla. El
-  contenedor (`#tecmio-tabla`) tiene su propio scroll (ancho y alto): hace
-  falta poner `scrollTop = 0` en cada render o, filtrando con la tabla ya
-  desplazada hacia abajo, el resultado filtrado -mucho más corto- queda
-  invisible por debajo del borde inferior -bug real, encontrado probando en
-  el navegador antes de dar el cambio por bueno-.
+  de un vistazo, en vez de abrir tarjeta por tarjeta. Vive **dentro** de la
+  pantalla que ya existía (interruptor "Tarjetas"/"Tabla", `tecMioVista`).
+  **Primera versión** (misma tarde): una sola tabla larga, columnas
+  Técnica/Estimulación/Registro/Filtros/Barrido/Notas, con scroll propio.
+  Al probarla de verdad se pidieron varios ajustes -ver el rediseño justo
+  abajo, mismo día-.
+
+- **Vista "Tabla" rediseñada** (misma noche, tras usarla): cuatro cambios
+  pedidos explícitamente, todos en `renderTecnicasMioTabla()` y funciones
+  vecinas:
+  - **Una tabla por familia** (`tablaFamiliaTecMio()`), cada una en su
+    propio `<details class="caso-grupo tecmio-familia tecmio-familia-<f>
+    tecmio-tabla-familia">` -reutiliza tal cual las reglas de color por
+    familia que ya pintaban el `<summary>` de las Tarjetas, sin duplicar
+    ninguna regla CSS nueva por familia-, **plegada por defecto** (mismo
+    criterio que Tarjetas: se abre sola si hay búsqueda activa).
+  - **Solo información técnica, sin teoría**: se quita la columna Notas
+    entera -`notas_clinicas`, `umbrales_referencia`,
+    `tecnica_colision_onda_d`, `mapeo_subcortical_radiacion_optica` ya no
+    salen en la Tabla, solo en la Tarjeta-, y **Filtros y barrido** se
+    funden en una sola columna (`TECMIO_TABLA_FILTROS_BARRIDO`), con
+    subtítulo interno "Filtros"/"Barrido (sweep)" solo cuando la técnica
+    trae las dos secciones a la vez -si solo trae una, no hace falta
+    aclarar cuál es-. El campo **`notch`** se excluye explícitamente al
+    pintar `filtros` (`excluir: ["notch"]` en la definición de la columna):
+    pedido porque no se usa nunca, así que solo era ruido en todas las
+    filas.
+  - **Fuentes fuera de la celda, como notas al pie**: `datos.fuente` ya no
+    se pinta como texto "Fuente: ..." dentro de la celda -es lo que más
+    espacio quitaba-, sino como un `<sup>` con un enlace por cita
+    (`notaFuentesTabla()`), a `#tecmio-nota-N`. La numeración es **única
+    para toda la vista Tabla**, no por familia ni por técnica
+    (`indiceFuenteTabla()` deduplica por el texto exacto de la cita): si
+    "Costa 2015" lo citan cinco técnicas de familias distintas, comparten
+    el mismo número. La lista de fuentes se pinta una sola vez, al final
+    de todas las tablas (`.tecmio-tabla-fuentes`, con `<li id="tecmio-nota-
+    N">`), con la entrada resaltada (`:target` en CSS) al llegar desde el
+    enlace.
+  - **Letra más pequeña** (`.tecmio-tabla` de 0.78rem a 0.7rem, cabecera a
+    0.66rem, menos padding): pedido para que quepa mejor con el móvil en
+    horizontal, ahora que además cada tabla es más estrecha -3 columnas de
+    datos en vez de 5-.
+
+  De paso desaparece el bug de scroll de la primera versión (`cont.scrollTop
+  = 0` en cada render): ya no hace falta, `#tecmio-tabla` deja de ser un
+  único contenedor con scroll vertical propio -ahora es la página quien
+  hace scroll, como en Tarjetas-, y cada tabla individual solo tiene
+  scroll horizontal (`.tecmio-tabla-scroll`) si hace falta.
 
 - Verificado en el navegador (servidor estático local, no el `file://`
-  directo): las 40 filas nuevas de "Músculos craneales" (44 tras añadir
-  Crico/STCM el mismo día) y las 26 de "ampliación" pintan con el
-  color/borde correcto de cada etiqueta, "Mis apuntes" completa el ciclo
-  crear→guardar→reabrir→borrar sin errores de consola, y la vista Tabla de
-  Técnicas MIO filtra y resalta igual que las tarjetas. `?v=` de
-  `index.html` subido a `20260907`, luego `20260907b` al añadir Crico/STCM.
+  directo): las 44 filas de "Músculos craneales" y las 26 de "ampliación"
+  pintan con el color/borde correcto de cada etiqueta; "Mis apuntes"
+  completa el ciclo crear→guardar→reabrir→borrar sin errores de consola; la
+  vista Tabla (ya rediseñada) muestra 10 tablas por familia plegadas,
+  ninguna mención de "notch" en las 10 con el texto entero comprobado por
+  script, el buscador abre solo las familias con resultado, y un enlace de
+  fuente comprobado apunta a un `<li>` que existe de verdad en la lista
+  final. `?v=` de `index.html`: `20260907` → `20260907b` (Crico/STCM) →
+  `20260907c` (rediseño de la Tabla).
+
+- **`apps-script/Codigo.gs` revisado, sin cambios**: el usuario pidió
+  actualizarlo "con los cambios de hoy", pero ninguno de los tres afecta a
+  lo que sube al Sheet. Comprobado con `grep` -cero coincidencias- que el
+  script no menciona ninguna etiqueta, id de músculo ni nada de Técnicas
+  MIO o Apuntes. `construirMaterialLong_()` es genérico: recorre las
+  claves que haya en `material_previsto`/`material_real` (nombres de
+  etiqueta, no ids de ítem), así que los ids nuevos del catálogo de
+  músculos craneales no necesitan ninguna columna nueva -ya usan etiquetas
+  que existían de antes (`aguja_trenzada`, `aguja_monopolar`, `hook_wire`)-.
+  Apuntes personales vive fuera del modelo de caso, no llega nunca al
+  Sheet. La vista Tabla de Técnicas MIO es solo pantalla, no toca ningún
+  dato. **No hizo falta volver a pegar nada** en el editor de Apps Script
+  real.

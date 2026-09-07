@@ -619,6 +619,10 @@
     tecmio_vista_tarjetas: { es: "Tarjetas", en: "Cards" },
     tecmio_vista_tabla:  { es: "Tabla", en: "Table" },
     tecmio_col_tecnica:  { es: "Técnica", en: "Technique" },
+    tecmio_col_estimulacion: { es: "Estimulación", en: "Stimulation" },
+    tecmio_col_registro: { es: "Registro", en: "Recording" },
+    tecmio_col_filtros_barrido: { es: "Filtros y barrido", en: "Filters and sweep" },
+    tecmio_fuentes_titulo: { es: "Fuentes", en: "Sources" },
     btn_docente:         { es: "Docente", en: "Teaching" },
     docente_titulo:      { es: "Miotomas: qué músculos monitorizar", en: "Myotomes: which muscles to monitor" },
     docente_intro:       { es: "Pulsa en la columna los <b>niveles</b> que abarca la cirugía. A la izquierda aparecen los músculos que dependen de esas raíces; pulsa uno para llevarlo a los <b>monitorizados</b> de la derecha, y pulsa allí para quitarlo. Los rangos son los que se enseñan habitualmente: la inervación se solapa y no todas las escuelas dan los mismos límites, así que están para discutirlos.",
@@ -7923,89 +7927,141 @@
     }
   }
 
-  // Vista "Tabla" (06-09-2026, pedida junto a los apuntes personales): una
-  // chuleta de un vistazo con todas las técnicas juntas, columnas genéricas
-  // -Estimulación / Registro / Filtros / Barrido / Notas-, en vez de abrir
-  // tarjeta por tarjeta. "estimulacion_y_registro"/"estimulacion_registro"
-  // (una sola sección para las técnicas donde ambas van juntas) se reparten
-  // en las dos columnas; las secciones raras de una sola técnica
-  // (umbrales_referencia, tecnica_colision_onda_d,
-  // mapeo_subcortical_radiacion_optica) caen en Notas para no perder el
-  // dato. Reutiliza pintarValorTecMio(): la celda puede salir alta si la
-  // técnica trae muchos subparámetros -es el mismo contenido que la
-  // tarjeta, no una versión resumida-, así que la tabla lleva scroll propio.
-  var TECMIO_TABLA_COLUMNAS = ["estimulacion", "registro", "filtros", "barrido", "notas"];
+  // Vista "Tabla" (06-09-2026, pedida junto a los apuntes personales;
+  // rehecha el 07-09-2026 tras probarla de verdad). Chuleta de un vistazo,
+  // pero solo con **parámetros**, no teoría -eso ya está en las Tarjetas-:
+  // 3 columnas (Estimulación, Registro, Filtros y barrido fusionados en
+  // una sola), sin la columna de Notas que había antes
+  // (umbrales_referencia/tecnica_colision_onda_d/
+  // mapeo_subcortical_radiacion_optica/notas_clinicas se quedan solo en la
+  // tarjeta). "notch" se omite dentro de Filtros -pedido explícito: no se
+  // usa nunca, así que no aporta nada verlo en todas las filas-.
+  // "estimulacion_y_registro"/"estimulacion_registro" (una sola sección
+  // para las técnicas donde ambas van juntas) se reparten en las dos
+  // columnas Estimulación y Registro.
+  //
+  // Una tabla por familia (SEP, MEP, Reflejos...), cada una en su propio
+  // <details> plegado por defecto -mismo agrupado que las Tarjetas, mismo
+  // criterio "se abre solo si hay búsqueda activa"-, en vez de una tabla
+  // única larguísima.
+  //
+  // Las fuentes ("fuente": [...] en cada sección) ya no se pintan en la
+  // celda -"Fuente: Costa 2015, MacDonald 2019..." ocupaba más que el dato
+  // en sí-: se sustituyen por superíndices numerados, enlazados a una
+  // lista de fuentes única al final de toda la vista Tabla (no una por
+  // familia: el mismo texto citado por varias técnicas comparte número).
+  var TECMIO_TABLA_ESTIMULACION = [
+    { clave: "estimulacion" }, { clave: "estimulacion_y_registro" }, { clave: "estimulacion_registro" }
+  ];
+  var TECMIO_TABLA_REGISTRO = [
+    { clave: "registro" }, { clave: "estimulacion_y_registro" }, { clave: "estimulacion_registro" }
+  ];
+  var TECMIO_TABLA_FILTROS_BARRIDO = [
+    { clave: "filtros", excluir: ["notch"] }, { clave: "barrido" }
+  ];
 
-  function celdaSeccionesTecMio(tr, tecnica, columna) {
-    var td = document.createElement("td");
-    td.className = "tecmio-td-" + columna;
-    var partes = [];
-    if (columna === "estimulacion") {
-      partes = ["estimulacion", "estimulacion_y_registro", "estimulacion_registro"];
-    } else if (columna === "registro") {
-      partes = ["registro", "estimulacion_y_registro", "estimulacion_registro"];
-    } else if (columna === "notas") {
-      partes = ["umbrales_referencia", "tecnica_colision_onda_d",
-        "mapeo_subcortical_radiacion_optica", "notas_clinicas"];
-    } else {
-      partes = [columna];
+  // Estado de las notas al pie, vigente durante un render de la Tabla: se
+  // reinicia al principio de renderTecnicasMioTabla() y lo consultan
+  // notaFuentesTabla() (que añade/reutiliza una entrada) y el bloque de
+  // fuentes que se pinta al final.
+  var tecMioTablaFuentes = [];
+  var tecMioTablaFuentesIndice = {};
+
+  function indiceFuenteTabla(texto) {
+    if (Object.prototype.hasOwnProperty.call(tecMioTablaFuentesIndice, texto)) {
+      return tecMioTablaFuentesIndice[texto];
     }
+    tecMioTablaFuentes.push(texto);
+    var n = tecMioTablaFuentes.length;
+    tecMioTablaFuentesIndice[texto] = n;
+    return n;
+  }
+
+  // Superíndice con un enlace por cada cita de la lista, para que "Costa
+  // 2015, MacDonald 2019 ISION" salga como dos números independientes -no
+  // se puede saber si comprobar solo una de las dos sin poder pulsarlas
+  // por separado-.
+  function notaFuentesTabla(lista) {
+    var sup = document.createElement("sup");
+    sup.className = "tecmio-nota-fuente";
+    lista.forEach(function (texto, i) {
+      if (i) sup.appendChild(document.createTextNode(","));
+      var a = document.createElement("a");
+      a.href = "#tecmio-nota-" + indiceFuenteTabla(texto);
+      a.textContent = String(indiceFuenteTabla(texto));
+      sup.appendChild(a);
+    });
+    return sup;
+  }
+
+  // Pinta los campos de una sección (sin "fuente" ni las claves excluidas)
+  // dentro de una celda, con la nota al pie al final si trae fuente.
+  // Devuelve true si pintó algo, para que la celda pueda caer en "—".
+  function pintarSeccionTablaTecMio(contenedor, datos, excluir) {
+    if (!datos) return false;
+    var fuera = (excluir || []).concat(["fuente"]);
+    var claves = Object.keys(datos).filter(function (k) { return fuera.indexOf(k) === -1; });
+    if (!claves.length) return false;
+    var dl = document.createElement("dl");
+    dl.className = "tecmio-campos";
+    claves.forEach(function (k) {
+      var dt = document.createElement("dt");
+      pintarTextoConResaltado(dt, etiquetaTecMio(k, TECMIO_CAMPOS) + ":");
+      var dd = document.createElement("dd");
+      pintarValorTecMio(dd, datos[k]);
+      dl.appendChild(dt);
+      dl.appendChild(dd);
+    });
+    contenedor.appendChild(dl);
+    if (datos.fuente && datos.fuente.length) {
+      contenedor.appendChild(notaFuentesTabla(datos.fuente));
+    }
+    return true;
+  }
+
+  function celdaTablaTecMio(tr, tecnica, seccionesDef) {
+    var td = document.createElement("td");
+    var presentes = seccionesDef.filter(function (s) { return !!tecnica[s.clave]; });
     var huboAlgo = false;
-    partes.forEach(function (clave) {
-      if (!tecnica[clave]) return;
-      huboAlgo = true;
-      if (partes.length > 1) {
+    presentes.forEach(function (s) {
+      if (presentes.length > 1) {
         var h6 = document.createElement("h6");
         h6.className = "tecmio-td-subtitulo";
-        pintarTextoConResaltado(h6, etiquetaTecMio(clave, TECMIO_SECCIONES));
+        pintarTextoConResaltado(h6, etiquetaTecMio(s.clave, TECMIO_SECCIONES));
         td.appendChild(h6);
       }
-      pintarValorTecMio(td, tecnica[clave]);
+      if (pintarSeccionTablaTecMio(td, tecnica[s.clave], s.excluir)) huboAlgo = true;
     });
     if (!huboAlgo) td.appendChild(document.createTextNode("—"));
     tr.appendChild(td);
   }
 
-  function renderTecnicasMioTabla() {
-    var datos = window.TECNICAS_MIO || { tecnicas: [] };
-    var cont = document.getElementById("tecmio-tabla");
-    cont.innerHTML = "";
-    // Sin esto, filtrar con la tabla ya desplazada hacia abajo deja el
-    // scroll donde estaba: como el contenedor tiene su propio scroll
-    // (overflow: auto, no la página), la lista filtrada -mucho más corta-
-    // se queda invisible por debajo del borde inferior en vez de aparecer.
-    cont.scrollTop = 0;
+  function tablaFamiliaTecMio(familia, lista) {
+    var det = document.createElement("details");
+    det.className = "caso-grupo tecmio-familia tecmio-familia-" + familia + " tecmio-tabla-familia";
+    if (tecMioFiltro) det.open = true;
+    var summary = document.createElement("summary");
+    pintarTextoConResaltado(summary, TECMIO_FAMILIAS[familia] || etiquetaTecMio(familia, TECMIO_FAMILIAS));
+    det.appendChild(summary);
 
-    var lista = (datos.tecnicas || []).filter(function (t) {
-      return !tecMioFiltro || tecnicaCoincideTecMio(t, tecMioFiltro);
-    });
-
-    if (!lista.length) {
-      var vacio = document.createElement("p");
-      vacio.className = "tecmio-sin-resultados";
-      vacio.textContent = T("tecmio_sin_resultados", { texto: document.getElementById("tecmio-buscar").value || "" });
-      cont.appendChild(vacio);
-      return;
-    }
-
+    var scroll = document.createElement("div");
+    scroll.className = "tecmio-tabla-scroll";
     var tabla = document.createElement("table");
     tabla.className = "tecmio-tabla";
     var thead = document.createElement("thead");
     var trCab = document.createElement("tr");
-    [T("tecmio_col_tecnica")].concat(TECMIO_TABLA_COLUMNAS.map(function (c) {
-      return etiquetaTecMio(c, TECMIO_SECCIONES);
-    })).forEach(function (texto) {
-      var th = document.createElement("th");
-      th.textContent = texto;
-      trCab.appendChild(th);
-    });
+    [T("tecmio_col_tecnica"), T("tecmio_col_estimulacion"), T("tecmio_col_registro"), T("tecmio_col_filtros_barrido")]
+      .forEach(function (texto) {
+        var th = document.createElement("th");
+        th.textContent = texto;
+        trCab.appendChild(th);
+      });
     thead.appendChild(trCab);
     tabla.appendChild(thead);
 
     var tbody = document.createElement("tbody");
     lista.forEach(function (t) {
       var tr = document.createElement("tr");
-      tr.className = "tecmio-familia-" + (t.familia || "otras");
       var tdNombre = document.createElement("td");
       tdNombre.className = "tecmio-td-tecnica";
       if (t.categoria) {
@@ -8017,13 +8073,68 @@
       }
       pintarTextoConResaltado(tdNombre, t.nombre);
       tr.appendChild(tdNombre);
-      TECMIO_TABLA_COLUMNAS.forEach(function (columna) {
-        celdaSeccionesTecMio(tr, t, columna);
-      });
+      celdaTablaTecMio(tr, t, TECMIO_TABLA_ESTIMULACION);
+      celdaTablaTecMio(tr, t, TECMIO_TABLA_REGISTRO);
+      celdaTablaTecMio(tr, t, TECMIO_TABLA_FILTROS_BARRIDO);
       tbody.appendChild(tr);
     });
     tabla.appendChild(tbody);
-    cont.appendChild(tabla);
+    scroll.appendChild(tabla);
+    det.appendChild(scroll);
+    return det;
+  }
+
+  function renderTecnicasMioTabla() {
+    var datos = window.TECNICAS_MIO || { tecnicas: [] };
+    var cont = document.getElementById("tecmio-tabla");
+    cont.innerHTML = "";
+    tecMioTablaFuentes = [];
+    tecMioTablaFuentesIndice = {};
+
+    var porFamilia = {};
+    var familiasEncontradas = [];
+    (datos.tecnicas || []).forEach(function (t) {
+      if (tecMioFiltro && !tecnicaCoincideTecMio(t, tecMioFiltro)) return;
+      var f = t.familia || "otras";
+      if (!porFamilia[f]) { porFamilia[f] = []; familiasEncontradas.push(f); }
+      porFamilia[f].push(t);
+    });
+
+    if (!familiasEncontradas.length) {
+      var vacio = document.createElement("p");
+      vacio.className = "tecmio-sin-resultados";
+      vacio.textContent = T("tecmio_sin_resultados", { texto: document.getElementById("tecmio-buscar").value || "" });
+      cont.appendChild(vacio);
+      return;
+    }
+
+    var ordenFamilias = TECMIO_ORDEN_FAMILIAS.filter(function (f) { return porFamilia[f]; });
+    familiasEncontradas.forEach(function (f) {
+      if (ordenFamilias.indexOf(f) === -1) ordenFamilias.push(f);
+    });
+    ordenFamilias.forEach(function (f) {
+      cont.appendChild(tablaFamiliaTecMio(f, porFamilia[f]));
+    });
+
+    // Fuentes al pie, una sola lista para toda la vista Tabla -no una por
+    // familia-: el mismo texto citado por dos técnicas de familias
+    // distintas comparte número (indiceFuenteTabla lo deduplica por texto).
+    if (tecMioTablaFuentes.length) {
+      var bloque = document.createElement("div");
+      bloque.className = "tecmio-tabla-fuentes";
+      var h5 = document.createElement("h5");
+      h5.textContent = T("tecmio_fuentes_titulo");
+      bloque.appendChild(h5);
+      var ol = document.createElement("ol");
+      tecMioTablaFuentes.forEach(function (texto, i) {
+        var li = document.createElement("li");
+        li.id = "tecmio-nota-" + (i + 1);
+        pintarTextoConResaltado(li, texto);
+        ol.appendChild(li);
+      });
+      bloque.appendChild(ol);
+      cont.appendChild(bloque);
+    }
   }
 
   var tecMioVista = "tarjetas";
