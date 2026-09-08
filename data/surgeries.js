@@ -368,6 +368,8 @@ window.SURGERIES_DATA = {
       "items": [
         { "id": "l_mass", "nombre": "L.Mass", "etiqueta": "hook_wire", "nota": "Maseterino izquierdo — V par craneal" },
         { "id": "r_mass", "nombre": "R.Mass", "etiqueta": "hook_wire", "nota": "Maseterino derecho — V par craneal" },
+        { "id": "l_mass_ag", "nombre": "L.Mass", "etiqueta": "aguja_trenzada", "nota": "Maseterino izquierdo — V par craneal, con agujas pareadas en vez de hook wire" },
+        { "id": "r_mass_ag", "nombre": "R.Mass", "etiqueta": "aguja_trenzada", "nota": "Maseterino derecho — V par craneal, con agujas pareadas en vez de hook wire" },
         { "id": "l_mass_mono1", "nombre": "L.Mass 1", "etiqueta": "aguja_monopolar", "nota": "Maseterino izquierdo con agujas monopolares en vez de hook wire — canal 1 de 2 por defecto (activa/referencia)" },
         { "id": "l_mass_mono2", "nombre": "L.Mass 2", "etiqueta": "aguja_monopolar", "nota": "Maseterino izquierdo con agujas monopolares en vez de hook wire — canal 2 de 2 por defecto (activa/referencia)" },
         { "id": "r_mass_mono1", "nombre": "R.Mass 1", "etiqueta": "aguja_monopolar", "nota": "Maseterino derecho con agujas monopolares en vez de hook wire — canal 1 de 2 por defecto (activa/referencia)" },

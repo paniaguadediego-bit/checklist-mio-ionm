@@ -2738,3 +2738,19 @@ foto pregunta antes -cancelando no borra nada, confirmando sí-. Probada
 también la migración hacia atrás: un documento con la forma vieja
 (`texto` suelto) se convierte en una sola sección al cargar, en vez de
 desaparecer. `?v=` de `index.html` subido a `20260907h`.
+
+### Retoques posteriores, 08-09-2026: variante de agujas pareadas para el Masetero
+
+`L.Mass`/`R.Mass` (Maseterino, V par craneal) en `data/surgeries.js` ya
+tenían variante de agujas monopolares (`l_mass_mono1/2`,
+`r_mass_mono1/2`, dos canales) pero les faltaba la variante de **agujas
+pareadas** (`aguja_trenzada`) que sí tienen otros músculos craneales
+-Crico, STCM, OOc, Nasalis, Ment, Palad, Trapecio, LEN-. Añadidos
+`l_mass_ag`/`r_mass_ag` justo después del hook wire, mismo patrón que
+esos: un único ítem por lado -no dos canales, a diferencia de la
+variante monopolar-, `nota` describiendo "con agujas pareadas en vez de
+hook wire", sin `nota_en` -tampoco lo tienen los demás `_ag`, no es un
+descuido-. Verificado en el navegador: el catálogo muestra los 8 chips
+de "Mass" (hook wire, agujas pareadas, monopolar×2 y lado), con el
+tooltip correcto "Tipo: Aguja trenzada (par)" en los dos nuevos. `?v=`
+de `index.html` subido a `20260907i`.
