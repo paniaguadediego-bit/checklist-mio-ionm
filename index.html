@@ -17,23 +17,21 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260909a">
+<link rel="stylesheet" href="style.css?v=20260909b">
 </head>
 <body>
 
 <header class="barra-sup">
-  <div class="barra-fila">
+  <!-- Dos filas (09-09-2026, pedido del usuario -antes una sola desde la
+       Fase 7-): arriba el menú "⋮" -a la izquierda del todo- junto con el
+       logo y el selector de perfil; abajo, aparte, todo lo de
+       sincronización -botón ☁ y el aviso de guardado-, que no hace falta
+       tener a la vista todo el rato. -->
+  <div class="barra-fila barra-fila-top">
     <!-- Fase 7 (06-09-2026): la página pasa a tener una pantalla de inicio con
          6 tarjetas; el logo es ahora el único camino de vuelta a ella desde
          cualquier pantalla, así que necesita ser un control real (con foco de
          teclado), no una <img> suelta con un listener pegado encima. -->
-    <button type="button" id="btn-inicio" class="marca-boton" data-i18n-title="logo_inicio_tit">
-      <img class="marca" src="img/favicon.png" alt="MIO-Check" width="32" height="32">
-    </button>
-    <select id="perfil-usuario" data-i18n-aria="perfil_usuario_aria" data-i18n-title="perfil_usuario_aria"></select>
-    <span class="barra-flex"></span>
-    <button type="button" id="btn-sync" class="btn-modo" data-i18n-title="sync_titulo">☁ <span id="sync-estado"></span></button>
-    <span class="guardado-aviso" id="guardado-aviso"></span>
     <!-- Guía de uso / Idioma / Catálogos son de consulta ocasional, no de
          cada gesto: van agrupados en un desplegable para no competir en
          ancho con el resto. Técnicas MIO y Docente vivían aquí hasta la
@@ -48,6 +46,14 @@
         <button type="button" id="btn-guia" data-i18n-title="btn_guia_tit" data-i18n="btn_guia"></button>
       </div>
     </div>
+    <button type="button" id="btn-inicio" class="marca-boton" data-i18n-title="logo_inicio_tit">
+      <img class="marca" src="img/favicon.png" alt="MIO-Check" width="32" height="32">
+    </button>
+    <select id="perfil-usuario" data-i18n-aria="perfil_usuario_aria" data-i18n-title="perfil_usuario_aria"></select>
+  </div>
+  <div class="barra-fila barra-fila-sync">
+    <button type="button" id="btn-sync" class="btn-modo" data-i18n-title="sync_titulo">☁ <span id="sync-estado"></span></button>
+    <span class="guardado-aviso" id="guardado-aviso"></span>
   </div>
 </header>
 
@@ -811,10 +817,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260909a"></script>
-<script src="data/i18n-en.js?v=20260909a"></script>
-<script src="data/guia.js?v=20260909a"></script>
-<script src="data/tecnicas-mio.js?v=20260909a"></script>
-<script src="app.js?v=20260909a"></script>
+<script src="data/surgeries.js?v=20260909b"></script>
+<script src="data/i18n-en.js?v=20260909b"></script>
+<script src="data/guia.js?v=20260909b"></script>
+<script src="data/tecnicas-mio.js?v=20260909b"></script>
+<script src="app.js?v=20260909b"></script>
 </body>
 </html>

@@ -2796,14 +2796,13 @@ Cinco pedidos sueltos en el mismo turno:
   fábrica equivalentes para no dejarla rota, y solo entonces se
   borraron los 5 ítems de `estado.json` -commit aparte en
   `checklist-mio-datos`-.
-  - **Encontrado de paso, sin tocar**: en `etiquetas_usuario` de
-    `estado.json` hay una entrada con `"id": "electrodo_cubital"` pero
-    `"nombre": "R. Periférico Cubital2"` -probable error al crear el
-    material duplicado, editó el nombre de la etiqueta de fábrica
-    "Electrodo cubital" en vez de crear un ítem nuevo-. Ahora mismo
-    L.Cubital, R.Cubital, L.Cubital fosa y R.Cubital fosa se muestran
-    con ese nombre equivocado en el catálogo. No se tocó porque no se
-    pidió; queda pendiente de que el usuario decida.
+  - **Encontrado de paso**: en `etiquetas_usuario` de `estado.json`
+    había una entrada con `"id": "electrodo_cubital"` pero `"nombre":
+    "R. Periférico Cubital2"` -probable error al crear el material
+    duplicado, editó el nombre de la etiqueta de fábrica "Electrodo
+    cubital" en vez de crear un ítem nuevo-. El usuario confirmó que
+    se arreglara; corregido de vuelta a "Electrodo cubital" en un
+    commit aparte de `checklist-mio-datos` el mismo día.
 
 Verificado en el navegador: "Catálogos" aparece y abre su diálogo desde
 el menú "⋮"; "Ancho de pulso" se guarda correctamente en
@@ -2812,3 +2811,30 @@ el menú "⋮"; "Ancho de pulso" se guarda correctamente en
 D-Wave"; `calcularCoste()` confirmado por lectura de código que
 excluye "Puente" al ser `fungible: false`. `?v=` de `index.html`
 subido a `20260909a`.
+
+### Retoques posteriores, 09-09-2026: cabecera en dos filas, "⋮" arriba a la izquierda
+
+Pedido: menú "⋮" arriba a la izquierda, sincronización (botón ☁ + aviso
+de guardado) a su propia fila debajo. `.barra-sup` vuelve a dos filas
+-había pasado a una sola en la Fase 7, 06-09-2026-: `.barra-fila-top`
+(menú, logo, selector de perfil) y `.barra-fila-sync` (☁ + aviso), cada
+una su propio `<div class="barra-fila ...">` dentro de la misma
+cabecera `sticky`. Se quitó el `<span class="barra-flex">` que antes
+empujaba sync/menú al extremo derecho -ya no hace falta, todo va
+alineado a la izquierda en su fila-; esa clase se queda intacta para
+el resto de cabeceras de pantalla que la siguen usando.
+
+**Bug real encontrado al verificar, no al pedirlo**: `.menu-lista`
+tenía `right: 0` -pensado para cuando el botón "⋮" vivía en el extremo
+derecho-. Con el botón ahora en el extremo izquierdo, alinear el
+desplegable por la derecha lo empujaba fuera de la pantalla hacia la
+izquierda (`getBoundingClientRect().x` negativo, comprobado por
+consola): se veía un rectángulo negro vacío en vez del menú. Cambiado
+a `left: 0`. Sin este arreglo "Catálogos" habría quedado inalcanzable
+en la práctica pese a que el código lo abría bien.
+
+`--header-h` (usada por los paneles `sticky` de debajo, catálogo
+incluido) remedida a mano en el navegador: 44px → 72px, igual en
+escritorio y en 375px de móvil -ninguna de las dos filas envuelve a
+ese ancho-. Verificado sticky del catálogo sin solape ni hueco en
+ambos anchos. `?v=` de `index.html` subido a `20260909b`.

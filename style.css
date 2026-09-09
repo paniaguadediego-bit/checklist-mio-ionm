@@ -19,10 +19,11 @@
   --panel-tenue: #8ba1af;
   /* Alto de la barra superior (ver .barra-sup): lo usan los sticky de debajo
      para no quedar tapados. Pasó de dos filas a una sola en la Fase 7
-     (06-09-2026, pantalla de inicio) -medido a mano en el navegador, no hay
-     cálculo automático; hay que remedirlo si cambia el contenido de la
-     barra-. */
-  --header-h: 44px;
+     (06-09-2026, pantalla de inicio) y volvió a dos el 09-09-2026 (menú "⋮"
+     arriba a la izquierda, sincronización en su propia fila debajo)
+     -medido a mano en el navegador, no hay cálculo automático; hay que
+     remedirlo si cambia el contenido de la barra-. */
+  --header-h: 72px;
   --r: 5px;
   /* Fondo de los campos rellenables. Es una variable y no un #fff suelto
      porque en modo oscuro tiene que cambiar: un blanco fijo con la letra
@@ -83,6 +84,10 @@ body {
   gap: 0.7rem;
   padding: 0.32rem 0.9rem;
 }
+/* Dos filas dentro de .barra-sup (09-09-2026): se recorta el padding
+   vertical que se junta entre ambas para que no quede un hueco doble. */
+.barra-fila-top { padding-bottom: 0.18rem; }
+.barra-fila-sync { padding-top: 0.1rem; gap: 0.5rem; }
 
 /* Envoltorio del logo: antes una <img> suelta sin comportamiento, ahora el
    único camino de vuelta a la pantalla de inicio desde cualquier sitio -por
@@ -141,7 +146,11 @@ body {
 .menu-lista {
   position: absolute;
   top: calc(100% + 0.3rem);
-  right: 0;
+  /* Antes "right: 0" -el botón "⋮" vivía en el extremo derecho de la
+     barra-. Ahora vive en el extremo izquierdo (09-09-2026), así que
+     alinear por la derecha empujaba el desplegable fuera de la pantalla
+     hacia la izquierda; se abre hacia la derecha en su lugar. */
+  left: 0;
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
@@ -2204,14 +2213,11 @@ dialog h3 {
 @media (max-width: 620px) {
   main { padding: 0.5rem 0.45rem 3rem; }
   .cajas-grid { grid-template-columns: 1fr; }
-  /* El hueco flexible robaba ancho al selector: en móvil se anula */
-  .barra-sup .barra-flex { display: none; }
   .barra-sup #perfil-usuario { min-width: 0; flex: 1; max-width: none; }
   .barra-sup img.marca { height: 26px; width: 26px; }
   .btn-modo { font-size: 0.7rem; padding: 0.3rem 0.45rem; }
-  /* Con todo en una sola fila desde la Fase 7, en 375px no cabe entera
-     -logo+perfil+catálogos+sync+aviso+menú-; se deja envolver en vez de
-     recortarse o desbordar. */
+  /* Dos filas ya de por sí (09-09-2026); esto es solo red de seguridad si
+     aun así una de las dos no cupiera entera en una pantalla muy estrecha. */
   .barra-fila { flex-wrap: wrap; row-gap: 0.3rem; }
 }
 
