@@ -146,11 +146,11 @@ body {
 .menu-lista {
   position: absolute;
   top: calc(100% + 0.3rem);
-  /* Antes "right: 0" -el botón "⋮" vivía en el extremo derecho de la
-     barra-. Ahora vive en el extremo izquierdo (09-09-2026), así que
-     alinear por la derecha empujaba el desplegable fuera de la pantalla
-     hacia la izquierda; se abre hacia la derecha en su lugar. */
-  left: 0;
+  /* El botón "⋮" pasó un rato al extremo izquierdo de la barra (09-09-2026)
+     y por eso esto pasó un rato a "left: 0"; vuelto a la derecha ese mismo
+     día, así que el desplegable se alinea otra vez por la derecha -si no,
+     se saldría de la pantalla por ahí en vez de por la izquierda-. */
+  right: 0;
   display: flex;
   flex-direction: column;
   gap: 0.2rem;

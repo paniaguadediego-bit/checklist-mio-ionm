@@ -2838,3 +2838,14 @@ incluido) remedida a mano en el navegador: 44px → 72px, igual en
 escritorio y en 375px de móvil -ninguna de las dos filas envuelve a
 ese ancho-. Verificado sticky del catálogo sin solape ni hueco en
 ambos anchos. `?v=` de `index.html` subido a `20260909b`.
+
+**Vuelta atrás el mismo día**: el usuario pidió el "⋮" otra vez a la
+derecha -donde vivía antes de la Fase 7-. Vuelto: logo + selector de
+perfil a la izquierda, `<span class="barra-flex">` de por medio, "⋮" a
+la derecha, misma fila de arriba; la fila de sincronización de abajo
+no cambia. `.menu-lista` vuelve a `right: 0` -el bug de que se saliera
+de la pantalla era justo por lo contrario, con el botón a la
+izquierda-. Sigue en dos filas -eso no se pidió deshacer-, solo cambió
+de lado el menú dentro de la fila de arriba. Verificado en escritorio
+y en 375px de móvil: el desplegable abre dentro de la pantalla en
+ambos. `?v=` de `index.html` subido a `20260909c`.
