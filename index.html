@@ -17,7 +17,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260907i">
+<link rel="stylesheet" href="style.css?v=20260909a">
 </head>
 <body>
 
@@ -31,18 +31,19 @@
       <img class="marca" src="img/favicon.png" alt="MIO-Check" width="32" height="32">
     </button>
     <select id="perfil-usuario" data-i18n-aria="perfil_usuario_aria" data-i18n-title="perfil_usuario_aria"></select>
-    <button type="button" id="btn-catalogos" class="btn-modo" data-i18n="btn_catalogos" data-i18n-title="btn_catalogos_tit"></button>
     <span class="barra-flex"></span>
     <button type="button" id="btn-sync" class="btn-modo" data-i18n-title="sync_titulo">☁ <span id="sync-estado"></span></button>
     <span class="guardado-aviso" id="guardado-aviso"></span>
-    <!-- Guía de uso / Idioma son de consulta ocasional, no de cada gesto: van
-         agrupados en un desplegable para no competir en ancho con el resto.
-         Técnicas MIO y Docente vivían aquí hasta la Fase 7; ahora son
-         tarjetas de la pantalla de inicio, no hace falta un segundo camino
-         para llegar a ellas. -->
+    <!-- Guía de uso / Idioma / Catálogos son de consulta ocasional, no de
+         cada gesto: van agrupados en un desplegable para no competir en
+         ancho con el resto. Técnicas MIO y Docente vivían aquí hasta la
+         Fase 7; ahora son tarjetas de la pantalla de inicio, no hace falta
+         un segundo camino para llegar a ellas. Catálogos se unió al grupo
+         el 09-09-2026 -pedido del usuario, sobraba en la barra fija-. -->
     <div class="menu-desplegable">
       <button type="button" id="btn-menu" class="btn-modo" data-i18n-title="btn_menu_tit">⋮</button>
       <div class="menu-lista" id="menu-lista" hidden>
+        <button type="button" id="btn-catalogos" data-i18n="btn_catalogos" data-i18n-title="btn_catalogos_tit"></button>
         <button type="button" id="btn-idioma" title="Switch to English">EN</button>
         <button type="button" id="btn-guia" data-i18n-title="btn_guia_tit" data-i18n="btn_guia"></button>
       </div>
@@ -810,10 +811,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260907i"></script>
-<script src="data/i18n-en.js?v=20260907i"></script>
-<script src="data/guia.js?v=20260907i"></script>
-<script src="data/tecnicas-mio.js?v=20260907i"></script>
-<script src="app.js?v=20260907i"></script>
+<script src="data/surgeries.js?v=20260909a"></script>
+<script src="data/i18n-en.js?v=20260909a"></script>
+<script src="data/guia.js?v=20260909a"></script>
+<script src="data/tecnicas-mio.js?v=20260909a"></script>
+<script src="app.js?v=20260909a"></script>
 </body>
 </html>

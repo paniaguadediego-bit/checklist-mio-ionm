@@ -214,6 +214,11 @@ window.SURGERIES_DATA = {
     { "id": "discos_visuales",      "nombre": "Discos visuales",           "borde": "punteado",    "color": "morado",   "fondo": "ninguno",   "fungible": false },
     { "id": "bipolar_barra",        "nombre": "Bipolar barra / superficie ENG", "borde": "punteado", "color": "verde",  "fondo": "ninguno",   "fungible": false },
     { "id": "conmutador_sw",        "nombre": "Conmutador",                "borde": "solido",      "color": "gris",     "fondo": "ninguno",   "fungible": false },
+    // Puente: cable/conector reutilizable que enlaza dos entradas -no se
+    // gasta ni se compra por caso-, así que no debe sumar al coste de
+    // material aunque sí tenga que aparecer en las cajas a preparar
+    // (pedido el 09-09-2026).
+    { "id": "puente",               "nombre": "Puente",                    "borde": "solido",      "color": "gris",     "fondo": "gris",      "fungible": false },
 
     { "id": "sin_determinar",       "nombre": "Sin determinar",            "borde": "punteado",    "color": "rojo",     "fondo": "ninguno" }
   ],
@@ -466,7 +471,8 @@ window.SURGERIES_DATA = {
         { "id": "grid2_6", "nombre": "GRID B.6", "etiqueta": "electrodo_grid_mantaB" },
         { "id": "grid2_7", "nombre": "GRID B.7", "etiqueta": "electrodo_grid_mantaB" },
         { "id": "grid2_8", "nombre": "GRID B.8", "etiqueta": "electrodo_grid_mantaB" },
-        { "id": "epidural_dwave", "nombre": "Electrodo epidural (D-Wave)", "etiqueta": "electrodo_epidural_dwave", "nota": "Kit 3 Platinum Contacts" }
+        { "id": "epidural_dwave", "nombre": "Electrodo epidural (D-Wave)", "etiqueta": "electrodo_epidural_dwave", "nota": "Kit 3 Platinum Contacts" },
+        { "id": "ref_grid", "nombre": "Referencia GRID", "etiqueta": "electrodo_sacacorchos" }
       ]
     },
     {
@@ -687,6 +693,13 @@ window.SURGERIES_DATA = {
       "items": [
         { "id": "auriculares_peatc", "nombre": "Auriculares PEATC", "etiqueta": "auriculares", "nota": "Estimulación auditiva para los PEATC (A1/A2). Se conectan al conector amarillo de REF-AEP, no ocupan entrada" },
         { "id": "gafas_vep", "nombre": "Gafas VEP", "etiqueta": "gafas", "nota": "Estimulación visual para los potenciales visuales (O1/O2). No ocupan entrada" }
+      ]
+    },
+    {
+      "categoria": "Puentes",
+      "plegada_por_defecto": true,
+      "items": [
+        { "id": "puente", "nombre": "Puente", "etiqueta": "puente", "nota": "Material reutilizable: sale en las cajas a preparar pero no cuenta en el coste" }
       ]
     }
   ],

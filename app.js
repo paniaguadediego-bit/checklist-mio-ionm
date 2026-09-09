@@ -436,6 +436,7 @@
     caso_sin_tecnicas_parametros: { es: "Marca primero las técnicas realizadas, arriba.",
                                      en: "First tick the techniques performed, above." },
     tecpar_intensidad:   { es: "Intensidad", en: "Intensity" },
+    tecpar_ancho_pulso:  { es: "Ancho de pulso", en: "Pulse width" },
     tecpar_frecuencia:   { es: "Frecuencia", en: "Frequency" },
     tecpar_num_pulsos:   { es: "Nº de pulsos", en: "Pulse count" },
     tecpar_trenes:       { es: "Trenes (facilitación)", en: "Trains (facilitation)" },
@@ -3205,7 +3206,7 @@
   // con sus parámetros en línea y la nota libre debajo.
   function seccionParametrosInforme(doc, c) {
     var mapa = c.tecnicas_parametros || {};
-    var CAMPOS_TECPAR = ["intensidad", "frecuencia", "num_pulsos", "trenes", "isi", "filtros", "promediacion", "barrido"];
+    var CAMPOS_TECPAR = ["intensidad", "ancho_pulso", "frecuencia", "num_pulsos", "trenes", "isi", "filtros", "promediacion", "barrido"];
     var ids = (c.tecnicas_realizadas || []).filter(function (id) {
       var d = mapa[id];
       return d && (CAMPOS_TECPAR.some(function (k) { return d[k]; }) || d.notas);
@@ -4920,7 +4921,7 @@
       // material previsto...), con los desplegables de cada técnica ya
       // existentes anidados dentro -mismo patrón que "tecnicas"/
       // "material_ro" de aquí abajo-.
-      var CAMPOS_TECPAR = ["intensidad", "frecuencia", "num_pulsos", "trenes", "isi", "filtros", "promediacion", "barrido"];
+      var CAMPOS_TECPAR = ["intensidad", "ancho_pulso", "frecuencia", "num_pulsos", "trenes", "isi", "filtros", "promediacion", "barrido"];
       var mapaParam = Object.assign({}, valor || {});
       camposCaso[def.c] = mapaParam;
       var detParam = document.createElement("details");

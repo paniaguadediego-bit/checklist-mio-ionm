@@ -85,9 +85,10 @@ cuatro pasos.
 
 ## Guía de uso, dentro de la propia herramienta
 
-Botón **⋮** de la barra superior (agrupa Idioma y Guía de uso, de consulta
-ocasional — Técnicas IONM y Docencia vivían aquí hasta el 06-09-2026, ahora
-son tarjetas de la pantalla de inicio) → **Guía de uso**. Seis tarjetas cortas (qué es la
+Botón **⋮** de la barra superior (agrupa Catálogos, Idioma y Guía de uso,
+de consulta ocasional — Técnicas IONM y Docencia vivían aquí hasta el
+06-09-2026, ahora son tarjetas de la pantalla de inicio; Catálogos se unió
+al grupo el 09-09-2026) → **Guía de uso**. Seis tarjetas cortas (qué es la
 herramienta, el flujo de un día, que plantilla y caso no son lo mismo,
 catálogo/etiquetas, cajas/resumen, y lo demás) más un acordeón con quince
 puntos más detallados, todos plegados. Es la versión corta y orientada a la
@@ -198,12 +199,18 @@ veces como haga falta (el catálogo no se "gasta"):
 - **Arrastrar y soltar**: arrastra el ítem hasta la entrada. Si te acercas
   al borde superior o inferior de la ventana, la página hace scroll sola.
 
-**Material extra**: la última categoría del catálogo (auriculares PEATC,
-gafas VEP...) es material que se prepara pero no se conecta a ninguna
+**Material extra**: una categoría del catálogo (auriculares PEATC,
+gafas VEP...) con material que se prepara pero no se conecta a ninguna
 entrada. Esos ítems no se arrastran: funcionan como interruptor — pulsas
 para activarlos (☑) y aparecen en el resumen; pulsas otra vez para
 quitarlos. En el JSON se marcan con `"sin_entrada": true`, en el ítem o en
 la categoría entera.
+
+**Puentes** (09-09-2026): categoría plegada de fábrica, justo debajo de
+Material extra, con el material reutilizable que enlaza dos entradas
+—no se compra por caso, así que no suma al coste, pero sí hay que
+sacarlo a la caja—. Etiqueta propia "Puente", no fungible (ver
+*Etiquetas* justo abajo).
 
 #### Etiquetas (tipos físicos)
 
@@ -285,7 +292,8 @@ aunque la tengas plegada en pantalla en ese momento.
 
 ## Catálogos: técnicas, servicios, intervenciones, perfiles y usuarios
 
-El botón **Catálogos**, en la barra superior junto al selector de perfil,
+El botón **Catálogos**, dentro del menú **⋮** de la barra superior
+(09-09-2026: antes iba suelto en la barra, junto al selector de perfil),
 abre una ventana con cinco pestañas. En todas funciona igual: **▲▼** para
 reordenar, el nombre para editarlo, y **☑** para activar o desactivar.
 Arriba del todo, dentro de ese mismo diálogo, están **Importar copia,
@@ -413,8 +421,9 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
    reflejos y mapeo), **"Cómo se realizó cada técnica"** (07-09-2026: el
    bloque entero es ahora también plegable, con los desplegables de cada
    técnica ya marcada como realizada anidados dentro — parámetros reales
-   usados en este caso concreto: intensidad, frecuencia, nº de pulsos,
-   trenes, ISI, filtros, promediación, barrido— y una caja de notas libres al
+   usados en este caso concreto: intensidad, ancho de pulso (09-09-2026),
+   frecuencia, nº de pulsos, trenes, ISI, filtros, promediación, barrido—
+   y una caja de notas libres al
    final para cualquier detalle técnico que no encaje en esos campos), notas
    de montaje/técnicas, **material (montaje base)** (siempre de solo lectura:
    sale del montaje real del caso, que se corrige desde el Organizador, no

@@ -2754,3 +2754,61 @@ descuido-. Verificado en el navegador: el catálogo muestra los 8 chips
 de "Mass" (hook wire, agujas pareadas, monopolar×2 y lado), con el
 tooltip correcto "Tipo: Aguja trenzada (par)" en los dos nuevos. `?v=`
 de `index.html` subido a `20260907i`.
+
+### Retoques posteriores, 09-09-2026: menú, ancho de pulso, Puentes, GRID y limpieza de catálogo propio
+
+Cinco pedidos sueltos en el mismo turno:
+
+- **"Catálogos" al menú "⋮"**: vivía como botón suelto en la barra fija
+  (`#btn-catalogos`, junto a "Sin conectar"); sobraba ahí -uso ocasional,
+  no de cada gesto-. Se movió dentro de `#menu-lista`, primero de los
+  tres botones (antes de Idioma y Guía de uso). Sin cambios en
+  `app.js`: el listener sigue enganchado al mismo id.
+- **"Ancho de pulso" en "Cómo se realizó cada técnica"**: nuevo campo en
+  `CAMPOS_TECPAR` (había que tocarlo en dos sitios que se repiten a
+  propósito -el informe PDF y el editor de la ficha-, entre
+  `intensidad` y `frecuencia`), con su texto `tecpar_ancho_pulso`. Al
+  ser una lista genérica que ya alimenta tanto el editor como el
+  informe, no hizo falta tocar nada más -ni la rejilla CSS, que ya usa
+  `auto-fill`-.
+- **Etiqueta "Puente"**, material reutilizable (`fungible: false`,
+  mismo mecanismo que sondas/auriculares: `calcularCoste()` ya excluye
+  toda etiqueta con `fungible === false`, así que no hizo falta tocar
+  esa función) para los puentes -cable/conector que enlaza dos
+  entradas, no se compra por caso pero sí hay que sacarlo a la caja-.
+  Categoría nueva "Puentes" con un único ítem genérico, plegada por
+  defecto, justo debajo de "Material extra (no ocupa entrada)".
+- **"Referencia GRID"**: nuevo sacacorchos (`electrodo_sacacorchos`) al
+  final de "GRID y D-Wave", junto al resto de electrodos GRID/D-Wave.
+- **Borrado de "Registro cervical / plexo"**: no era una categoría de
+  fábrica -no vive en `data/surgeries.js`-, sino material propio del
+  propio usuario (`catalogo_usuario` en `estado.json`, la lista que
+  alimenta el editor "+ Añadir material nuevo al catálogo"). Sus 5
+  ítems (L./R. Periférico Cubital1/2, más un "L. Periférico Cubital2"
+  duplicado sin usar) duplicaban lo que ya cubre "Registro cervical /
+  periférico" de fábrica (`l_cubital_periferico`/`r_cubital_periferico`).
+  Antes de borrar se comprobó uso real en `checklist-mio-datos`: 4 de
+  los 5 ítems estaban colocados en un caso real ("ECC - Inestabilidad
+  C1-C2. Mielopatía.") y en la plantilla de montaje que lo generó
+  (entradas 9-12 de registro cortical). El usuario corrigió el caso a
+  mano desde el móvil mientras tanto; la plantilla de montaje
+  (`montajes/cf0168cc-...json`) se reasignó a mano a los ítems de
+  fábrica equivalentes para no dejarla rota, y solo entonces se
+  borraron los 5 ítems de `estado.json` -commit aparte en
+  `checklist-mio-datos`-.
+  - **Encontrado de paso, sin tocar**: en `etiquetas_usuario` de
+    `estado.json` hay una entrada con `"id": "electrodo_cubital"` pero
+    `"nombre": "R. Periférico Cubital2"` -probable error al crear el
+    material duplicado, editó el nombre de la etiqueta de fábrica
+    "Electrodo cubital" en vez de crear un ítem nuevo-. Ahora mismo
+    L.Cubital, R.Cubital, L.Cubital fosa y R.Cubital fosa se muestran
+    con ese nombre equivocado en el catálogo. No se tocó porque no se
+    pidió; queda pendiente de que el usuario decida.
+
+Verificado en el navegador: "Catálogos" aparece y abre su diálogo desde
+el menú "⋮"; "Ancho de pulso" se guarda correctamente en
+`tecnicas_parametros` de un caso de prueba; "Puentes" sale plegado tras
+"Material extra" con su chip; "Referencia GRID" sale en "GRID y
+D-Wave"; `calcularCoste()` confirmado por lectura de código que
+excluye "Puente" al ser `fungible: false`. `?v=` de `index.html`
+subido a `20260909a`.
