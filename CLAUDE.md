@@ -2990,3 +2990,31 @@ al no existir "frecuencia" en c-MEP, notas y filtros combinados en
 un campo de multiselección con `permite_otro` funciona en los dos
 sentidos; "Crear informe" no lanza ningún error con datos migrados.
 `?v=` de `index.html` subido a `20260910a`.
+
+### Retoques posteriores, 10-09-2026: "Material" sin pliegue anidado
+
+Pedido: al abrir el sub-apartado "Material" (dentro de "Montaje /
+Técnicas"), que "Material (montaje base)", "Coste del material" y "Notas
+del material" salgan directamente, sin el `<details>` propio que tenía
+"Material (montaje base)" -antes había que abrir dos pliegues (el de
+"Material" y luego el de la tabla) para ver algo-.
+
+`campoCaso()`/`def.t === "material_ro"` ya no crea un `<details
+class="caso-grupo">`: ahora es un `<div class="caso-material-bloque">`
+con un `<h4 class="caso-cajas-detalle-titulo">` -misma clase que ya usaba
+"Cajas necesarias" en "Cajas y entradas", que tampoco es su propio
+pliegue, para que las dos queden con el mismo aspecto- y la tabla debajo.
+`renderFichaCaso()` cuelga el coste buscando `.caso-material-bloque` en
+vez de `.caso-grupo-campos` -mismo sitio de siempre, justo debajo de la
+tabla y antes de la ayuda-, así que el orden visual no cambia: título,
+tabla, coste, ayuda, Notas del material. Sin tocar "Cajas y entradas" ni
+"Técnicas" -no se pidió quitarles su propio pliegue, y "Cómo se realizó
+cada técnica" sí necesita seguir siendo plegable, son muchos campos por
+técnica-.
+
+Verificado en el navegador, con y sin montaje real: sin montaje sale
+"Material (montaje base)" + la ayuda + "Notas del material" seguidos, sin
+pliegue de por medio; con un montaje de prueba (una entrada colocada,
+"Pegatinas (par)": 1), "Coste del material" aparece justo debajo de la
+tabla, dentro del mismo bloque. `?v=` de `index.html` subido a
+`20260910b`.

@@ -5556,13 +5556,21 @@
       // cual salió del cálculo, no se edita aquí -para eso está "Material
       // realmente usado"-, así que no entra en camposCaso ni se lee en
       // leerFichaCaso().
-      var detRo = document.createElement("details");
-      detRo.className = "caso-grupo";
-      var sumRo = document.createElement("summary");
-      sumRo.textContent = T("caso_" + def.c);
-      detRo.appendChild(sumRo);
-      var campRo = document.createElement("div");
-      campRo.className = "caso-grupo-campos";
+      // Antes era su propio <details> anidado dentro del sub-apartado
+      // "Material" de la ficha; desde el 10-09-2026 (pedido del usuario)
+      // ya no es un pliegue aparte, vive directamente dentro de "Material"
+      // -mismo nivel que el coste y "Notas del material", mismo aspecto
+      // que el título de "Cajas necesarias" en "Cajas y entradas", que
+      // tampoco es su propio pliegue-. El coste se sigue colgando dentro
+      // de este mismo bloque desde renderFichaCaso() -busca
+      // ".caso-material-bloque" en vez de ".caso-grupo-campos"-, así que
+      // queda justo debajo de la tabla y antes de la ayuda.
+      var contRo = document.createElement("div");
+      contRo.className = "caso-material-bloque";
+      var tituloRo = document.createElement("h4");
+      tituloRo.className = "caso-cajas-detalle-titulo";
+      tituloRo.textContent = T("caso_" + def.c);
+      contRo.appendChild(tituloRo);
       var tablaRo = document.createElement("div");
       tablaRo.className = "caso-material";
       var tiposRo = Object.keys(valor || {}).sort();
@@ -5584,9 +5592,8 @@
         f.appendChild(cant);
         tablaRo.appendChild(f);
       });
-      campRo.appendChild(tablaRo);
-      detRo.appendChild(campRo);
-      div.appendChild(detRo);
+      contRo.appendChild(tablaRo);
+      div.appendChild(contRo);
       if (def.ay) div.appendChild(ayudaCampo(def.ay));
       return div;
     }
@@ -5912,23 +5919,23 @@
         destino.appendChild(elCampo);
         // Coste del material (pedido por Pani, 06-09-2026; metido dentro
         // del propio pliegue de "Material (montaje base)" el 07-09-2026,
-        // para que abrir/cerrar uno abra/cierre el otro): el mismo bloque
-        // que ya existe en Resumen -bloqueCoste(), con su tabla de líneas,
-        // el total, la nota de qué material reutilizable no cuenta y qué
-        // tipos no tienen precio puesto todavía-, aquí de solo lectura.
-        // Reutiliza resDetalle (calculado más arriba en este mismo render,
-        // con calcularResumen() para "Cajas necesarias") en vez de volver a
-        // montarlo: es el mismo montaje, así que calcularCoste() sobre él
-        // da exactamente el mismo coste que vería el usuario si abriera
-        // este montaje ahora mismo en el Organizador -precios de hoy, no
-        // los que hubiera cuando se guardó el caso-. Sin montaje
-        // (resDetalle sin definir) no hay nada que costear. Se cuelga
-        // dentro de ".caso-grupo-campos" -el contenido del <details> que
-        // arma el propio campoCaso() para "material_ro"-, no en `cont`:
-        // así comparte pliegue con la tabla de material en vez de quedarse
-        // siempre visible debajo.
+        // para que abrir/cerrar uno abra/cierre el otro, y desde el
+        // 10-09-2026 sin pliegue propio: comparte el de "Material" entero-):
+        // el mismo bloque que ya existe en Resumen -bloqueCoste(), con su
+        // tabla de líneas, el total, la nota de qué material reutilizable
+        // no cuenta y qué tipos no tienen precio puesto todavía-, aquí de
+        // solo lectura. Reutiliza resDetalle (calculado más arriba en este
+        // mismo render, con calcularResumen() para "Cajas necesarias") en
+        // vez de volver a montarlo: es el mismo montaje, así que
+        // calcularCoste() sobre él da exactamente el mismo coste que vería
+        // el usuario si abriera este montaje ahora mismo en el Organizador
+        // -precios de hoy, no los que hubiera cuando se guardó el caso-.
+        // Sin montaje (resDetalle sin definir) no hay nada que costear. Se
+        // cuelga dentro de ".caso-material-bloque" -el bloque que arma el
+        // propio campoCaso() para "material_ro"-, justo debajo de la tabla
+        // y antes de la ayuda, no en `cont`.
         if (def.c === "material_previsto" && resDetalle) {
-          var campoInterior = elCampo.querySelector(".caso-grupo-campos") || elCampo;
+          var campoInterior = elCampo.querySelector(".caso-material-bloque") || elCampo;
           campoInterior.appendChild(bloqueCoste(calcularCoste(resDetalle)));
         }
       });

@@ -422,7 +422,9 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
      ahí, y solo desde ahí, se puede además *cargar un montaje* sobre el
      caso o *guardar el montaje del caso como plantilla nueva*, en la barra
      fija de corrección, ver más abajo) y una caja de **Notas del montaje**.
-   - **Material**: **"Material (montaje base)"** (siempre de solo lectura:
+   - **Material**: sin pliegue propio dentro de "Material" (10-09-2026: se
+     ve entero en cuanto abres el sub-apartado, ya no hace falta desplegar
+     dos veces). **"Material (montaje base)"** (siempre de solo lectura:
      sale del montaje real del caso, que se corrige desde el Organizador, no
      aquí — la sección "Material realmente usado" está suspendida desde el
      06-09-2026: si añades algo que no estaba previsto, colócalo en su caja
