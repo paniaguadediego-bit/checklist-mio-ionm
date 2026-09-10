@@ -1746,8 +1746,13 @@ dialog h3 {
   cursor: pointer;
 }
 .caso-fila:hover { border-color: var(--accent); background: var(--accent-soft); }
-.caso-fila.estado-preparado { border-left-color: var(--accent); }
-.caso-fila.estado-cerrado { border-left-color: var(--text-muted); }
+/* 10-09-2026, pedido del usuario: preparado pasa de verde a amarillo,
+   cerrado pasa de gris a verde -cancelado se queda igual, en rojo-. Se
+   reutilizan tokens ya existentes (con su propia variante de modo oscuro)
+   en vez de inventar colores nuevos: --aviso-border es el ámbar que ya usa
+   el resto de avisos de la app, --accent es el verde de acento de siempre. */
+.caso-fila.estado-preparado { border-left-color: var(--aviso-border); }
+.caso-fila.estado-cerrado { border-left-color: var(--accent); }
 .caso-fila.estado-cancelado { border-left-color: var(--peligro); }
 
 .caso-fila-cab { display: flex; justify-content: space-between; font-size: 0.82rem; }
@@ -1936,11 +1941,22 @@ dialog h3 {
 }
 .caso-cajas-detalle { margin-bottom: 0.6rem; }
 
-/* Parámetros reales por técnica (apartado 5): un .caso-grupo por técnica
-   -mismo aspecto que el resto de bloques plegables de la ficha-, con una
-   rejilla de 8 campos cortos dentro. */
+/* Parámetros reales por técnica (apartado 5, rediseñado el 10-09-2026 con
+   campos propios por técnica -PARAMETROS_TECNICAS- en vez de la rejilla
+   fija de 8 genéricos de antes): un .caso-grupo por técnica -mismo aspecto
+   que el resto de bloques plegables de la ficha-, con sus secciones
+   general/estimulación/registro dentro. */
 .tecpar-lista { display: flex; flex-direction: column; gap: 0.3rem; }
 .tecpar-tecnica { margin-bottom: 0; }
+.tecpar-campos { display: flex; flex-direction: column; gap: 0.5rem; }
+.tecpar-titulo-seccion {
+  margin: 0 0 0.3rem;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 700;
+}
 .tecpar-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
@@ -1948,7 +1964,7 @@ dialog h3 {
 }
 .tecpar-campo { display: flex; flex-direction: column; gap: 0.15rem; font-size: 0.72rem; }
 .tecpar-campo span { color: var(--text-muted); }
-.tecpar-campo input {
+.tecpar-campo input, .tecpar-campo select, .tecpar-campo textarea {
   font: inherit;
   font-size: 0.78rem;
   padding: 0.2rem 0.35rem;
@@ -1957,25 +1973,40 @@ dialog h3 {
   background: var(--campo-bg);
   color: var(--text);
 }
-/* Nota libre al final de cada técnica: ocupa toda la anchura de la rejilla
-   en vez de una celda estrecha como los 8 campos cortos de arriba. */
-.tecpar-notas {
-  grid-column: 1 / -1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  font-size: 0.72rem;
-}
-.tecpar-notas span { color: var(--text-muted); }
-.tecpar-notas textarea {
+.tecpar-campo textarea { resize: vertical; }
+/* Campos anchos (texto libre, multiselección, la nota de técnicas sin
+   definición propia): ocupan toda la rejilla en vez de una celda estrecha
+   como los campos cortos. */
+.tecpar-campo-ancho { grid-column: 1 / -1; }
+/* "numero" con varias unidades posibles (p. ej. intensidad en mA o V):
+   input + select de unidad en la misma fila. */
+.tecpar-campo-fila { display: flex; gap: 0.3rem; }
+.tecpar-campo-fila input { flex: 1; min-width: 0; }
+.tecpar-unidad { flex: 0 0 auto; max-width: 4.5rem; padding: 0.2rem 0.15rem; }
+.tecpar-chips { gap: 0.3rem; }
+/* "permite_otro" en multiselección: miniforma para añadir un chip propio
+   suelto, aparte de las opciones fijas. */
+.tecpar-otro { display: flex; gap: 0.3rem; margin-top: 0.3rem; }
+.tecpar-otro input {
+  flex: 1;
+  min-width: 0;
   font: inherit;
-  font-size: 0.78rem;
-  padding: 0.3rem 0.4rem;
+  font-size: 0.76rem;
+  padding: 0.18rem 0.35rem;
   border: 1px solid var(--border);
   border-radius: var(--r);
   background: var(--campo-bg);
   color: var(--text);
-  resize: vertical;
+}
+.tecpar-otro button {
+  font: inherit;
+  font-size: 0.78rem;
+  padding: 0.15rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--campo-bg);
+  color: var(--text);
+  cursor: pointer;
 }
 
 /* Umbrales EMG por raíz (mapeo de tornillos), apartado 6: chips de nivel

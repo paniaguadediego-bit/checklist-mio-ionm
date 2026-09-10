@@ -15,6 +15,18 @@
   var USUARIOS_BASE = [];
   // Solo para la ventana docente: qué músculo depende de qué raíces
   var MIOTOMAS = DATA.miotomas || [];
+  // "Cómo se realizó cada técnica" (10-09-2026): campos propios por técnica,
+  // en vez de la rejilla fija de 8 genéricos que había antes. Ver la
+  // cabecera de data/parametros-tecnicas.js para el porqué de
+  // TECPAR_ID_MAP -esta tabla usa sus propios ids, no siempre iguales a los
+  // de TECNICAS_BASE- y para el significado de cada "tipo" de campo.
+  var PARAMETROS_TECNICAS = (window.PARAMETROS_TECNICAS || {}).tecnicas || [];
+  var TECPAR_ID_MAP = window.TECPAR_ID_MAP || {};
+  var TECPAR_INDICE = {};
+  PARAMETROS_TECNICAS.forEach(function (t) { TECPAR_INDICE[t.id] = t; });
+  function definicionTecPar(tecId) {
+    return TECPAR_INDICE[TECPAR_ID_MAP[tecId] || tecId] || null;
+  }
   var STORAGE_KEY = "mio_ionm_escenarios_v1";
 
   /* ---------------------------------------------------------------- *
@@ -429,12 +441,22 @@
     caso_anatomia_patologica_ay: { es: "El resultado de anatomía patológica si lo hay (p. ej. «Meningioma», «GBM»), o el nivel intervenido si es columna (p. ej. «C5-C6-C7»).",
                            en: "The pathology result if there is one (e.g. “Meningioma”, “GBM”), or the operated level if it's a spine case (e.g. “C5-C6-C7”)." },
     caso_otros_datos_quirurgicos: { es: "Otros datos quirúrgicos", en: "Other surgical details" },
-    caso_notas_montaje_tecnicas: { es: "Notas de Montaje/Técnicas", en: "Montage/Techniques notes" },
+    caso_notas_montaje_tecnicas: { es: "Notas de las Técnicas", en: "Techniques notes" },
+    caso_notas_montaje: { es: "Notas del montaje", en: "Montage notes" },
+    caso_notas_material: { es: "Notas del material", en: "Material notes" },
+    caso_sub_cajas:      { es: "Cajas y entradas", en: "Boxes and inputs" },
+    caso_sub_material:   { es: "Material", en: "Material" },
+    caso_sub_tecnicas:   { es: "Técnicas", en: "Techniques" },
     caso_tecnicas_parametros: { es: "Cómo se realizó cada técnica", en: "How each technique was performed" },
-    caso_tecnicas_parametros_ay: { es: "Para cada técnica marcada como realizada arriba: parámetros reales usados en este caso concreto (intensidad, frecuencia...). Queda plegado y vacío hasta que abras una técnica y escribas algo.",
-                                    en: "For each technique ticked as performed above: the actual parameters used in this specific case (intensity, frequency...). Stays collapsed and empty until you open a technique and write something." },
+    caso_tecnicas_parametros_ay: { es: "Para cada técnica marcada como realizada arriba: sus propios parámetros reales usados en este caso concreto -cada técnica trae los suyos, no son los mismos para todas-. Queda plegado y vacío hasta que abras una técnica y escribas algo.",
+                                    en: "For each technique ticked as performed above: its own actual parameters used in this specific case -each technique has its own set, not the same for all-. Stays collapsed and empty until you open a technique and write something." },
     caso_sin_tecnicas_parametros: { es: "Marca primero las técnicas realizadas, arriba.",
                                      en: "First tick the techniques performed, above." },
+    // Estos 9 "tecpar_*" ya no rotulan campos en vivo (10-09-2026: cada
+    // técnica trae ahora los suyos propios, ver data/parametros-tecnicas.js)
+    // -se quedan solo como etiqueta de "de qué campo venía" cuando
+    // migrarTecnicasParametros() no encuentra un sitio claro donde meter un
+    // dato ya escrito con la forma vieja-.
     tecpar_intensidad:   { es: "Intensidad", en: "Intensity" },
     tecpar_ancho_pulso:  { es: "Ancho de pulso", en: "Pulse width" },
     tecpar_frecuencia:   { es: "Frecuencia", en: "Frequency" },
@@ -444,8 +466,18 @@
     tecpar_filtros:      { es: "Filtros", en: "Filters" },
     tecpar_promediacion: { es: "Promediación", en: "Averaging" },
     tecpar_barrido:      { es: "Tiempo de barrido", en: "Sweep time" },
+    // Notas de la técnica sin definición propia (histórica/desactivada:
+    // reflejo_h, jaw jerk, silent period, Material Qx) -las demás usan el
+    // campo "Desviaciones o incidencias técnicas" de su propia sección
+    // "general", ya traducido dentro de data/parametros-tecnicas.js-.
     tecpar_notas:        { es: "Notas técnicas de esta técnica", en: "Technical notes for this technique" },
-    caso_imagenes_montaje: { es: "Imágenes del montaje", en: "Montage images" },
+    tecpar_si:           { es: "Sí", en: "Yes" },
+    tecpar_sec_estimulacion: { es: "Estimulación", en: "Stimulation" },
+    tecpar_sec_registro:     { es: "Registro", en: "Recording" },
+    tecpar_otro_ph:      { es: "Añadir otro…", en: "Add other…" },
+    tecpar_otro_anadir:  { es: "＋", en: "＋" },
+    tecpar_quitar_tit:   { es: "Quitar", en: "Remove" },
+    caso_imagenes_montaje: { es: "Imágenes del montaje, material y técnicas del caso", en: "Images of the case's montage, material and techniques" },
     caso_imagenes_montaje_ay: { es: "Capturas o fotos de cómo quedó el montaje en el software del equipo (pantalla del Inomed, por ejemplo), para consultarlas si en el futuro te toca un caso parecido. Se comprimen solas al añadirlas.",
                                  en: "Screenshots or photos of how the montage ended up on the equipment's software (e.g. the Inomed screen), to look up if a similar case comes up in the future. They get compressed automatically when added." },
     caso_imagen_anadir:  { es: "＋ Añadir imagen", en: "＋ Add image" },
@@ -464,8 +496,8 @@
     caso_umbral_tornillos_pediculares_ay: { es: "Cualquier cosa que no encaje en los niveles de arriba: umbrales no testados por raíz, matices, comparaciones entre tornillos, etc.",
                            en: "Anything that doesn't fit the levels above: thresholds not tested by root, nuances, comparisons between screws, etc." },
     caso_material_previsto: { es: "Material (montaje base)", en: "Material (base montage)" },
-    caso_material_previsto_ay: { es: "El material que sale del montaje de este caso -de solo lectura aquí-. Si añadiste algo que no estaba previsto, colócalo en su caja desde el Organizador de Montajes y anótalo en «Notas de Montaje/Técnicas».",
-                           en: "The material that comes out of this case's montage -read-only here-. If you added something that wasn't planned, place it in its box from the Montage Organizer and note it in “Montage/Techniques notes”." },
+    caso_material_previsto_ay: { es: "El material que sale del montaje de este caso -de solo lectura aquí-. Si añadiste algo que no estaba previsto, colócalo en su caja desde el Organizador de Montajes y anótalo en «Notas del material».",
+                           en: "The material that comes out of this case's montage -read-only here-. If you added something that wasn't planned, place it in its box from the Montage Organizer and note it in “Material notes”." },
     caso_material_real:  { es: "Material realmente usado", en: "Material actually used" },
     caso_tipo_anestesia: { es: "Tipo de anestesia", en: "Type of anaesthesia" },
     caso_tipo_anestesia_detalle: { es: "Detalle", en: "Detail" },
@@ -654,7 +686,7 @@
     pos_supino_brazos:   { es: "Supino con brazos extendidos", en: "Supine, arms extended" },
     pos_prono:           { es: "Prono", en: "Prone" },
     pos_sentado:         { es: "Sentado", en: "Sitting" },
-    caso_editar_montaje: { es: "Editar material y montaje", en: "Edit material and montage" },
+    caso_editar_montaje: { es: "Editar montaje", en: "Edit montage" },
     caso_editar_montaje_ay: { es: "Abre las cajas de este caso para cambiar dónde va cada cosa. Lo que cambies se guarda en el caso, no en el montaje del que salió.",
                            en: "Opens this case’s boxes to change where each item goes. What you change is saved in the case, not in the montage it came from." },
     caso_cargar_plantilla: { es: "Cargar montaje…", en: "Load montage…" },
@@ -3202,27 +3234,123 @@
     return seccionInforme(doc, T("caso_tecnicas_realizadas"), filas);
   }
 
-  // "Cómo se realizó cada técnica": una fila por técnica con algo escrito,
+  /* ---------------------------------------------------------------- *
+   * "Cómo se realizó cada técnica" (10-09-2026): campos propios por
+   * técnica -PARAMETROS_TECNICAS/TECPAR_ID_MAP, ver data/parametros-
+   * tecnicas.js-, en vez de la rejilla fija de 8 genéricos que había
+   * antes (intensidad/frecuencia/nº pulsos/trenes/ISI/filtros/
+   * promediación/barrido para TODAS las técnicas por igual).
+   *
+   * Guardado: c.tecnicas_parametros[id] = { general:{}, estimulacion:{},
+   * registro:{} }, con las claves de cada sección siendo el id del campo
+   * -mismo id que en PARAMETROS_TECNICAS-. "general.incidencias" hace de
+   * nota libre por técnica -sustituye a lo que antes era un textarea
+   * suelto fuera de la rejilla-.
+   * ---------------------------------------------------------------- */
+  var TECPAR_CAMPOS_ANTIGUOS = ["intensidad", "ancho_pulso", "frecuencia", "num_pulsos", "isi", "trenes", "filtros", "promediacion", "barrido"];
+
+  function tecParCampoExiste(tecDef, sec, campoId) {
+    return !!(tecDef && (tecDef.secciones[sec] || []).some(function (c) { return c.id === campoId; }));
+  }
+
+  // Un objeto de la forma vieja no trae "general"/"estimulacion"/"registro":
+  // trae los 8 campos sueltos directamente, o "notas".
+  function esTecParFormaAntigua(datos) {
+    if (!datos || datos.general || datos.estimulacion || datos.registro) return false;
+    return TECPAR_CAMPOS_ANTIGUOS.some(function (k) { return datos[k]; }) || !!datos.notas;
+  }
+
+  // De campo suelto de antes a { sección, campo } de ahora, solo si la
+  // técnica en cuestión de verdad tiene ese campo nuevo -si no, el dato no
+  // se inventa un sitio: se preserva tal cual en general.incidencias más
+  // abajo, con una etiqueta que dice de qué campo venía-.
+  var TECPAR_MIGRACION_DIRECTA = {
+    intensidad: [["estimulacion", "intensidad"]],
+    ancho_pulso: [["estimulacion", "ancho_pulso"]],
+    frecuencia: [["estimulacion", "frecuencia"], ["estimulacion", "cadencia_trenes"]],
+    num_pulsos: [["estimulacion", "n_pulsos"]],
+    isi: [["estimulacion", "isi"]]
+  };
+
+  function migrarUnaTecnicaParametros(tecId, datos) {
+    if (!esTecParFormaAntigua(datos)) return datos || {};
+    var tecDef = definicionTecPar(tecId);
+    var nuevo = { general: {}, estimulacion: {}, registro: {} };
+    var notasExtra = [];
+    Object.keys(TECPAR_MIGRACION_DIRECTA).forEach(function (k) {
+      if (!datos[k]) return;
+      var candidatos = TECPAR_MIGRACION_DIRECTA[k].filter(function (par) {
+        return tecParCampoExiste(tecDef, par[0], par[1]);
+      });
+      if (candidatos.length) nuevo[candidatos[0][0]][candidatos[0][1]] = datos[k];
+      else notasExtra.push(T("tecpar_" + k) + ": " + datos[k]);
+    });
+    // "trenes"/"filtros"/"promediación"/"barrido" eran texto libre y ahora
+    // se reparten en varios campos tipados -partirlos solos sería adivinar
+    // una estructura que no se sabe si es correcta-, así que se preservan
+    // enteros como nota en vez de repartirse a ciegas.
+    ["trenes", "filtros", "promediacion", "barrido"].forEach(function (k) {
+      if (datos[k]) notasExtra.push(T("tecpar_" + k) + ": " + datos[k]);
+    });
+    if (datos.notas) notasExtra.push(datos.notas);
+    if (notasExtra.length) nuevo.general.incidencias = notasExtra.join(" · ");
+    return nuevo;
+  }
+
+  // Aplicada cada vez que se abre la ficha de un caso y cada vez que se
+  // genera su informe: cubre tanto lo que ya está en este dispositivo como
+  // lo recién bajado de GitHub, sin necesitar un paso de migración aparte
+  // -mismo espíritu que migrarSeccionesApunteDoc() con los apuntes-.
+  function migrarTecnicasParametros(mapaParam) {
+    var salida = {};
+    Object.keys(mapaParam || {}).forEach(function (tecId) {
+      salida[tecId] = migrarUnaTecnicaParametros(tecId, mapaParam[tecId]);
+    });
+    return salida;
+  }
+
+  function tecParValorLegible(v) {
+    if (Array.isArray(v)) return v.length ? v.join(", ") : "";
+    if (v === true) return T("tecpar_si");
+    if (v === false || v == null) return "";
+    return String(v);
+  }
+
+  // Una línea "Etiqueta: valor · Etiqueta: valor..." con todo lo que tenga
+  // contenido -salvo general.incidencias, que hace de nota libre y se
+  // muestra aparte, igual que antes hacía "notas"-.
+  function tecParLinea(tecDef, datos) {
+    var partes = [];
+    ["general", "estimulacion", "registro"].forEach(function (sec) {
+      (tecDef ? tecDef.secciones[sec] || [] : []).forEach(function (cdef) {
+        if (sec === "general" && cdef.id === "incidencias") return;
+        var v = tecParValorLegible((datos[sec] || {})[cdef.id]);
+        if (v) partes.push(cdef.etiqueta + ": " + v);
+      });
+    });
+    return partes.join(" · ");
+  }
+
+  // "Cómo se realizó cada técnica": una ficha por técnica con algo escrito,
   // con sus parámetros en línea y la nota libre debajo.
   function seccionParametrosInforme(doc, c) {
-    var mapa = c.tecnicas_parametros || {};
-    var CAMPOS_TECPAR = ["intensidad", "ancho_pulso", "frecuencia", "num_pulsos", "trenes", "isi", "filtros", "promediacion", "barrido"];
+    var mapa = migrarTecnicasParametros(c.tecnicas_parametros);
     var ids = (c.tecnicas_realizadas || []).filter(function (id) {
       var d = mapa[id];
-      return d && (CAMPOS_TECPAR.some(function (k) { return d[k]; }) || d.notas);
+      return d && (tecParLinea(definicionTecPar(id), d) || (d.general || {}).incidencias);
     });
     if (!ids.length) return null;
     var sec = nodoInforme(doc, "section", "informe-seccion");
     sec.appendChild(nodoInforme(doc, "h3", null, T("caso_tecnicas_parametros")));
     ids.forEach(function (id) {
       var t = TECNICAS.filter(function (x) { return x.id === id; })[0];
+      var tecDef = definicionTecPar(id);
       var d = mapa[id];
       var bloque = nodoInforme(doc, "div", "informe-tecpar");
       bloque.appendChild(nodoInforme(doc, "h4", null, t ? campo(t, "etiqueta") : id));
-      var linea = CAMPOS_TECPAR.filter(function (k) { return d[k]; })
-        .map(function (k) { return T("tecpar_" + k) + ": " + d[k]; }).join(" · ");
+      var linea = tecParLinea(tecDef, d);
       if (linea) bloque.appendChild(nodoInforme(doc, "p", "informe-tecpar-linea", linea));
-      if (d.notas) bloque.appendChild(nodoInforme(doc, "p", "informe-tecpar-notas", d.notas));
+      if ((d.general || {}).incidencias) bloque.appendChild(nodoInforme(doc, "p", "informe-tecpar-notas", d.general.incidencias));
       sec.appendChild(bloque);
     });
     return sec;
@@ -4659,39 +4787,49 @@
     { g: "anestesia", c: "tof_monitorizado", t: "sel", o: "sino" },
     { g: "anestesia", c: "incidencias_anestesicas", t: "area" },
 
-    // 5. Montaje / Técnicas. Orden pedido por Pani (06-09-2026, tras ver el
-    // bloque de coste en real): técnicas realizadas, cómo se hizo cada una,
-    // notas sueltas, material previsto y el coste justo debajo -antes el
-    // coste vivía arriba del todo, pegado a "Cajas necesarias", sin relación
-    // visual con el material al que se refiere-.
-    { g: "montaje", c: "tecnicas_realizadas", t: "tecnicas", ay: "caso_tecnicas_ay" },
+    // 5. Montaje / Técnicas, reestructurado en 3 sub-apartados el
+    // 10-09-2026 (pedido del usuario) -"Cajas y entradas", "Material" y
+    // "Técnicas", ver el HTML a mano de cada uno en renderFichaCaso()-.
+    // "sub" dice a cuál de los tres pertenece cada campo; el orden dentro
+    // de cada sub-apartado es el orden de este array.
+    { g: "montaje", sub: "tecnicas", c: "tecnicas_realizadas", t: "tecnicas", ay: "caso_tecnicas_ay" },
     // Pedido por Pani, 05-09-2026: para cada técnica ya marcada como
     // realizada, poder anotar cómo se hizo de verdad en este caso concreto
-    // -intensidad, frecuencia, nº pulsos, trenes, ISI, filtros, promediado,
-    // barrido-. Va después de "tecnicas_realizadas" en la lista de campos
-    // por el mismo motivo que tecnicas_alteradas: depende de esa lista via
-    // oyentesTecnicasRealizadas, así que tiene que construirse después.
-    { g: "montaje", c: "tecnicas_parametros", t: "tecnicas_parametros", ay: "caso_tecnicas_parametros_ay" },
-    // Absorbe lo que antes era "Pares craneales monitorizados": ya no tiene
-    // campo propio, va aquí como una nota más de montaje.
-    { g: "montaje", c: "notas_montaje_tecnicas", t: "area" },
-    { g: "montaje", c: "material_previsto", t: "material_ro", ay: "caso_material_previsto_ay" },
+    // -campos propios por técnica desde el 10-09-2026, ver
+    // PARAMETROS_TECNICAS-. Va después de "tecnicas_realizadas" en la
+    // lista de campos por el mismo motivo que tecnicas_alteradas: depende
+    // de esa lista via oyentesTecnicasRealizadas, así que tiene que
+    // construirse después.
+    { g: "montaje", sub: "tecnicas", c: "tecnicas_parametros", t: "tecnicas_parametros", ay: "caso_tecnicas_parametros_ay" },
+    // Antes "Notas de Montaje/Técnicas" -absorbía lo que era "Pares
+    // craneales monitorizados"-, renombrada "Notas de las Técnicas" el
+    // 10-09-2026 al mudarse dentro del sub-apartado "Técnicas".
+    { g: "montaje", sub: "tecnicas", c: "notas_montaje_tecnicas", t: "area" },
+    // Nueva el 10-09-2026, pedida junto con el resto de la reestructuración:
+    // por si hay algo que decir del montaje en sí -no de una técnica
+    // concreta ni del material-, sin tener que forzarlo dentro de
+    // "Notas de las Técnicas".
+    { g: "montaje", sub: "cajas", c: "notas_montaje", t: "area" },
+    { g: "montaje", sub: "material", c: "material_previsto", t: "material_ro", ay: "caso_material_previsto_ay" },
     // "Coste del material" se cuelga justo después de material_previsto
     // desde dentro del propio bucle de renderFichaCaso() -no es un campo de
     // CAMPOS_CASO porque no hay nada que guardar, es una vista en vivo con
     // calcularCoste(), igual que "Cajas necesarias"-. Buscar
     // "def.c === \"material_previsto\"" en renderFichaCaso().
+    // Nueva el 10-09-2026, mismo motivo que "Notas del montaje" pero para
+    // el material.
+    { g: "montaje", sub: "material", c: "notas_material", t: "area" },
     //
     // "Material realmente usado" suspendido a petición del usuario
     // (06-09-2026): con el montaje del caso editándose siempre en el
     // Organizador (ver "Crear caso"), lo que de verdad se usó ya es el
     // montaje real, no una copia aparte que había que corregir a mano. Si
     // se añade algo que no estaba previsto, se coloca en su caja y se anota
-    // en "Notas de Montaje/Técnicas". El campo `material_real` sigue
-    // existiendo en el modelo (`volcarMontajeEnCaso()`, el informe en PDF)
-    // por los casos reales antiguos que ya lo tenían relleno -no se borra
-    // nada, solo se deja de mostrar aquí-.
-    // { g: "montaje", c: "material_real", t: "material", ay: "caso_material_real_ay" },
+    // en "Notas del material". El campo `material_real` sigue existiendo
+    // en el modelo (`volcarMontajeEnCaso()`, el informe en PDF) por los
+    // casos reales antiguos que ya lo tenían relleno -no se borra nada,
+    // solo se deja de mostrar aquí-.
+    // { g: "montaje", sub: "material", c: "material_real", t: "material", ay: "caso_material_real_ay" },
     // Pedido por Pani, 05-09-2026: fotos de cómo quedó el montaje en el
     // software del equipo (p. ej. la pantalla del Inomed), para poder
     // consultarlas en un caso futuro parecido. Van dentro del propio caso
@@ -4700,7 +4838,9 @@
     // por archivo que sí necesitan los montajes compartidos (ver "El
     // repositorio de datos" en CLAUDE.md). Cada imagen se comprime en el
     // navegador antes de guardarse (ver comprimirImagen()) para no disparar
-    // el tamaño de lo que viaja a GitHub en cada sincronización.
+    // el tamaño de lo que viaja a GitHub en cada sincronización. Sin "sub"
+    // a propósito -renombrada el 10-09-2026 para dejar claro que cubre las
+    // tres cosas, así que se queda fuera de los tres sub-apartados-.
     { g: "montaje", c: "imagenes_montaje", t: "imagenes_montaje", ay: "caso_imagenes_montaje_ay" },
 
     // 6. Desarrollo intraoperatorio
@@ -4782,6 +4922,295 @@
       primero = false;
       grupo.forEach(function (t) { contenedor.appendChild(crearChip(t)); });
     });
+  }
+
+  /* ---------------------------------------------------------------- *
+   * Campos de "Cómo se realizó cada técnica" (10-09-2026), uno por tipo
+   * de PARAMETROS_TECNICAS ("numero", "texto", "seleccion",
+   * "multiseleccion", "si_no" -ver la cabecera de data/parametros-
+   * tecnicas.js-). Cada uno deja registrado su control en mapaControles
+   * -{ el, evento } por campo.id- para que pintarCamposTecnicaReal()
+   * pueda enganchar ahí los campos que dependan de él vía "visible_si".
+   * ---------------------------------------------------------------- */
+  function tecParRegistrarControl(mapaControles, campoId, el, evento) {
+    mapaControles[campoId] = { el: el, evento: evento };
+  }
+
+  function tecParTitulo(cdef) {
+    return [cdef.nota, cdef.fuente].filter(Boolean).join("\n") || null;
+  }
+
+  function tecParCampoNumero(almacen, cdef, mapaControles) {
+    var wrap = document.createElement("label");
+    wrap.className = "tecpar-campo";
+    var tit = tecParTitulo(cdef);
+    if (tit) wrap.title = tit;
+    var etq = document.createElement("span");
+    etq.textContent = cdef.etiqueta + (cdef.unidad ? " (" + cdef.unidad + ")" : "");
+    wrap.appendChild(etq);
+    var fila = document.createElement("span");
+    fila.className = "tecpar-campo-fila";
+    var inp = document.createElement("input");
+    inp.type = "text";
+    inp.value = almacen[cdef.id] || "";
+    inp.addEventListener("input", function () { almacen[cdef.id] = inp.value; });
+    fila.appendChild(inp);
+    if (cdef.unidades) {
+      var sel = document.createElement("select");
+      sel.className = "tecpar-unidad";
+      cdef.unidades.forEach(function (u) {
+        var o = document.createElement("option");
+        o.value = u; o.textContent = u;
+        sel.appendChild(o);
+      });
+      sel.value = almacen[cdef.id + "_unidad"] || cdef.unidades[0];
+      almacen[cdef.id + "_unidad"] = sel.value;
+      sel.addEventListener("change", function () { almacen[cdef.id + "_unidad"] = sel.value; });
+      fila.appendChild(sel);
+    }
+    wrap.appendChild(fila);
+    tecParRegistrarControl(mapaControles, cdef.id, inp, "input");
+    return wrap;
+  }
+
+  function tecParCampoTexto(almacen, cdef, mapaControles) {
+    var wrap = document.createElement("label");
+    wrap.className = "tecpar-campo tecpar-campo-ancho";
+    var tit = tecParTitulo(cdef);
+    if (tit) wrap.title = tit;
+    var etq = document.createElement("span");
+    etq.textContent = cdef.etiqueta;
+    wrap.appendChild(etq);
+    // "incidencias" es la nota libre de cada técnica -sucesora directa del
+    // textarea suelto que había antes de este rediseño, y donde
+    // migrarTecnicasParametros() aterriza lo que no encuentra un campo
+    // tipado claro-: más cómoda como textarea que como input de una línea,
+    // aunque su "tipo" siga siendo "texto" como cualquier otro campo libre.
+    var inp = document.createElement(cdef.id === "incidencias" ? "textarea" : "input");
+    if (cdef.id === "incidencias") inp.rows = 2; else inp.type = "text";
+    inp.value = almacen[cdef.id] || "";
+    inp.addEventListener("input", function () { almacen[cdef.id] = inp.value; });
+    wrap.appendChild(inp);
+    tecParRegistrarControl(mapaControles, cdef.id, inp, "input");
+    return wrap;
+  }
+
+  function tecParCampoSeleccion(almacen, cdef, mapaControles) {
+    var wrap = document.createElement("label");
+    wrap.className = "tecpar-campo";
+    var tit = tecParTitulo(cdef);
+    if (tit) wrap.title = tit;
+    var etq = document.createElement("span");
+    etq.textContent = cdef.etiqueta;
+    wrap.appendChild(etq);
+    var control, evento;
+    if (cdef.permite_otro) {
+      control = document.createElement("input");
+      control.type = "text";
+      var dlId = "dl-tecpar-" + cdef.id + "-" + Math.random().toString(36).slice(2, 8);
+      control.setAttribute("list", dlId);
+      var dl = document.createElement("datalist");
+      dl.id = dlId;
+      (cdef.opciones || []).forEach(function (op) {
+        var o = document.createElement("option");
+        o.value = op;
+        dl.appendChild(o);
+      });
+      control.value = almacen[cdef.id] || "";
+      control.addEventListener("input", function () { almacen[cdef.id] = control.value; });
+      wrap.appendChild(control);
+      wrap.appendChild(dl);
+      evento = "input";
+    } else {
+      control = document.createElement("select");
+      var blank = document.createElement("option");
+      blank.value = "";
+      blank.textContent = "—";
+      control.appendChild(blank);
+      (cdef.opciones || []).forEach(function (op) {
+        var o = document.createElement("option");
+        o.value = op; o.textContent = op;
+        control.appendChild(o);
+      });
+      control.value = almacen[cdef.id] || "";
+      control.addEventListener("change", function () { almacen[cdef.id] = control.value; });
+      wrap.appendChild(control);
+      evento = "change";
+    }
+    tecParRegistrarControl(mapaControles, cdef.id, control, evento);
+    return wrap;
+  }
+
+  function tecParCampoSiNo(almacen, cdef, mapaControles) {
+    var wrap = document.createElement("label");
+    wrap.className = "tecpar-campo check";
+    var tit = tecParTitulo(cdef);
+    if (tit) wrap.title = tit;
+    var control = document.createElement("input");
+    control.type = "checkbox";
+    control.checked = !!almacen[cdef.id];
+    control.addEventListener("change", function () { almacen[cdef.id] = control.checked; });
+    wrap.appendChild(control);
+    var etq = document.createElement("span");
+    etq.textContent = cdef.etiqueta;
+    wrap.appendChild(etq);
+    tecParRegistrarControl(mapaControles, cdef.id, control, "change");
+    return wrap;
+  }
+
+  // Mismos chips activables que "Técnicas realizadas"/"tecnicas_alt", más
+  // -si permite_otro- una miniforma para añadir chips propios sueltos
+  // (mismo patrón de quitar con × que el resto de la app).
+  function tecParCampoMultiseleccion(almacen, cdef) {
+    var valorArr = Array.isArray(almacen[cdef.id]) ? almacen[cdef.id] : (almacen[cdef.id] = []);
+    var wrap = document.createElement("div");
+    wrap.className = "tecpar-campo tecpar-campo-ancho";
+    var tit = tecParTitulo(cdef);
+    if (tit) wrap.title = tit;
+    var etq = document.createElement("span");
+    etq.textContent = cdef.etiqueta;
+    wrap.appendChild(etq);
+    var fila = document.createElement("div");
+    fila.className = "chip-fila tecpar-chips";
+    var pintar = function () {
+      fila.textContent = "";
+      (cdef.opciones || []).forEach(function (op) {
+        var chip = document.createElement("span");
+        chip.className = "chip chip-extra" + (valorArr.indexOf(op) !== -1 ? " activo" : "");
+        chip.textContent = op;
+        chip.addEventListener("click", function () {
+          var i = valorArr.indexOf(op);
+          if (i === -1) valorArr.push(op); else valorArr.splice(i, 1);
+          pintar();
+        });
+        fila.appendChild(chip);
+      });
+      valorArr.filter(function (v) { return (cdef.opciones || []).indexOf(v) === -1; }).forEach(function (extra) {
+        var chip = document.createElement("span");
+        chip.className = "chip chip-extra activo";
+        chip.textContent = extra;
+        var x = document.createElement("button");
+        x.type = "button";
+        x.className = "chip-quitar";
+        x.textContent = "✕";
+        x.title = T("tecpar_quitar_tit");
+        x.addEventListener("click", function (e) {
+          e.stopPropagation();
+          var i = valorArr.indexOf(extra);
+          if (i !== -1) valorArr.splice(i, 1);
+          pintar();
+        });
+        chip.appendChild(x);
+        fila.appendChild(chip);
+      });
+    };
+    pintar();
+    wrap.appendChild(fila);
+    if (cdef.permite_otro) {
+      var filaOtro = document.createElement("span");
+      filaOtro.className = "tecpar-otro";
+      var inpOtro = document.createElement("input");
+      inpOtro.type = "text";
+      inpOtro.placeholder = T("tecpar_otro_ph");
+      var btnOtro = document.createElement("button");
+      btnOtro.type = "button";
+      btnOtro.textContent = T("tecpar_otro_anadir");
+      var anadir = function () {
+        var v = inpOtro.value.trim();
+        if (v && valorArr.indexOf(v) === -1) { valorArr.push(v); inpOtro.value = ""; pintar(); }
+      };
+      btnOtro.addEventListener("click", anadir);
+      inpOtro.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); anadir(); } });
+      filaOtro.appendChild(inpOtro);
+      filaOtro.appendChild(btnOtro);
+      wrap.appendChild(filaOtro);
+    }
+    return wrap;
+  }
+
+  function tecParCampo(almacen, cdef, mapaControles) {
+    if (cdef.tipo === "numero") return tecParCampoNumero(almacen, cdef, mapaControles);
+    if (cdef.tipo === "seleccion") return tecParCampoSeleccion(almacen, cdef, mapaControles);
+    if (cdef.tipo === "si_no") return tecParCampoSiNo(almacen, cdef, mapaControles);
+    if (cdef.tipo === "multiseleccion") return tecParCampoMultiseleccion(almacen, cdef);
+    return tecParCampoTexto(almacen, cdef, mapaControles);
+  }
+
+  // Todos los campos de una técnica, agrupados en sus 3 secciones
+  // (general/estimulación/registro -sin encabezado para "general", es la
+  // que menos campos trae-). "visible_si" se resuelve en vivo: cuando el
+  // campo del que depende cambia, se reevalúa si el dependiente se
+  // muestra u oculta -"igual_a" compara texto tal cual, "mayor_que"
+  // compara como número; un valor no numérico da "false", nunca rompe-.
+  function pintarCamposTecnicaReal(tecId, datos) {
+    var tecDef = definicionTecPar(tecId);
+    var cont = document.createElement("div");
+    cont.className = "tecpar-campos";
+
+    if (!tecDef) {
+      // Técnica sin definición propia: histórica o desactivada (reflejo_h,
+      // jaw jerk, silent period, Material Qx). Una sola nota libre en vez
+      // de una rejilla que no se puede rellenar de fábrica.
+      var labN = document.createElement("label");
+      labN.className = "tecpar-campo tecpar-campo-ancho";
+      var etqN = document.createElement("span");
+      etqN.textContent = T("tecpar_notas");
+      var areaN = document.createElement("textarea");
+      areaN.rows = 2;
+      areaN.value = datos.general.incidencias || "";
+      areaN.addEventListener("input", function () { datos.general.incidencias = areaN.value; });
+      labN.appendChild(etqN);
+      labN.appendChild(areaN);
+      cont.appendChild(labN);
+      return cont;
+    }
+
+    var mapaControles = {};
+    var condicionales = [];
+
+    function valorTecActual(campoId) {
+      if (datos.general[campoId] !== undefined) return datos.general[campoId];
+      if (datos.estimulacion[campoId] !== undefined) return datos.estimulacion[campoId];
+      return datos.registro[campoId];
+    }
+
+    ["general", "estimulacion", "registro"].forEach(function (secId) {
+      var campos = tecDef.secciones[secId] || [];
+      if (!campos.length) return;
+      var secDiv = document.createElement("div");
+      secDiv.className = "tecpar-seccion";
+      if (secId !== "general") {
+        var h = document.createElement("h5");
+        h.className = "tecpar-titulo-seccion";
+        h.textContent = T("tecpar_sec_" + secId);
+        secDiv.appendChild(h);
+      }
+      var grid = document.createElement("div");
+      grid.className = "tecpar-grid";
+      var almacen = datos[secId];
+      campos.forEach(function (cdef) {
+        var el = tecParCampo(almacen, cdef, mapaControles);
+        if (cdef.visible_si) condicionales.push({ el: el, condicion: cdef.visible_si });
+        grid.appendChild(el);
+      });
+      secDiv.appendChild(grid);
+      cont.appendChild(secDiv);
+    });
+
+    condicionales.forEach(function (item) {
+      var ctrl = mapaControles[item.condicion.campo];
+      var evaluar = function () {
+        var v = valorTecActual(item.condicion.campo);
+        var mostrar = "igual_a" in item.condicion ? v === item.condicion.igual_a
+          : "mayor_que" in item.condicion ? Number(v) > item.condicion.mayor_que
+          : true;
+        item.el.hidden = !mostrar;
+      };
+      if (ctrl) ctrl.el.addEventListener(ctrl.evento, evaluar);
+      evaluar();
+    });
+
+    return cont;
   }
 
   /* Construye un campo del formulario y deja el control en camposCaso.
@@ -4910,19 +5339,18 @@
     }
 
     if (def.t === "tecnicas_parametros") {
-      // Un <details> plegable por técnica realizada, con los 8 parámetros
-      // reales usados en este caso. A diferencia de tecnicas_alt, aquí NO se
-      // borra el dato si la técnica se desmarca por error de
-      // "tecnicas_realizadas": es texto escrito a mano, más caro de rehacer
-      // que un simple chip, así que solo se deja de mostrar -reaparece si se
-      // vuelve a marcar la técnica-.
-      // El campo entero va ahora también dentro de su propio <details>
-      // (pedido el 07-09-2026, junto al resto de "montaje": técnicas,
-      // material previsto...), con los desplegables de cada técnica ya
-      // existentes anidados dentro -mismo patrón que "tecnicas"/
-      // "material_ro" de aquí abajo-.
-      var CAMPOS_TECPAR = ["intensidad", "ancho_pulso", "frecuencia", "num_pulsos", "trenes", "isi", "filtros", "promediacion", "barrido"];
-      var mapaParam = Object.assign({}, valor || {});
+      // Un <details> plegable por técnica realizada, con sus propios campos
+      // -PARAMETROS_TECNICAS, ver data/parametros-tecnicas.js y las
+      // funciones tecParCampo*() más arriba en este archivo-. A diferencia
+      // de tecnicas_alt, aquí NO se borra el dato si la técnica se
+      // desmarca por error de "tecnicas_realizadas": es texto escrito a
+      // mano, más caro de rehacer que un simple chip, así que solo se deja
+      // de mostrar -reaparece si se vuelve a marcar la técnica-.
+      // El campo entero va también dentro de su propio <details> (pedido
+      // el 07-09-2026, junto al resto de "montaje"), con los desplegables
+      // de cada técnica ya existentes anidados dentro -mismo patrón que
+      // "tecnicas"/"material_ro" de aquí abajo-.
+      var mapaParam = migrarTecnicasParametros(valor);
       camposCaso[def.c] = mapaParam;
       var detParam = document.createElement("details");
       detParam.className = "caso-grupo";
@@ -4949,42 +5377,20 @@
         realizadasTec.forEach(function (t) {
           if (!mapaParam[t.id]) mapaParam[t.id] = {};
           var datos = mapaParam[t.id];
+          datos.general = datos.general || {};
+          datos.estimulacion = datos.estimulacion || {};
+          datos.registro = datos.registro || {};
+          var tecDef = definicionTecPar(t.id);
           var det = document.createElement("details");
           det.className = "caso-grupo tecpar-tecnica";
-          det.open = CAMPOS_TECPAR.some(function (k) { return datos[k]; }) || !!datos.notas;
+          det.open = !!(tecParLinea(tecDef, datos) || datos.general.incidencias);
           var sum = document.createElement("summary");
           sum.textContent = campo(t, "etiqueta");
           det.appendChild(sum);
-          var grid = document.createElement("div");
-          grid.className = "caso-grupo-campos tecpar-grid";
-          CAMPOS_TECPAR.forEach(function (k) {
-            var lab3 = document.createElement("label");
-            lab3.className = "tecpar-campo";
-            var etq = document.createElement("span");
-            etq.textContent = T("tecpar_" + k);
-            var inp = document.createElement("input");
-            inp.type = "text";
-            inp.value = datos[k] || "";
-            inp.addEventListener("input", function () { datos[k] = inp.value; });
-            lab3.appendChild(etq);
-            lab3.appendChild(inp);
-            grid.appendChild(lab3);
-          });
-          det.appendChild(grid);
-          // Notas libres, aparte de la rejilla: detalles que no encajan en
-          // ningún parámetro fijo (p. ej. "facilitación cortical previa al
-          // tren periférico"), pedido por Pani el 05-09-2026.
-          var labNotas = document.createElement("label");
-          labNotas.className = "tecpar-notas";
-          var etqNotas = document.createElement("span");
-          etqNotas.textContent = T("tecpar_notas");
-          var areaNotas = document.createElement("textarea");
-          areaNotas.rows = 2;
-          areaNotas.value = datos.notas || "";
-          areaNotas.addEventListener("input", function () { datos.notas = areaNotas.value; });
-          labNotas.appendChild(etqNotas);
-          labNotas.appendChild(areaNotas);
-          grid.appendChild(labNotas);
+          var campos = document.createElement("div");
+          campos.className = "caso-grupo-campos";
+          campos.appendChild(pintarCamposTecnicaReal(t.id, datos));
+          det.appendChild(campos);
           contParam.appendChild(det);
         });
       };
@@ -5323,12 +5729,56 @@
       var cont = document.getElementById("caso-c-" + g);
       cont.innerHTML = "";
       if (g === "montaje") {
+        // Reestructurado en 3 sub-apartados el 10-09-2026 (pedido del
+        // usuario): "Cajas y entradas" (resumen, detalle canal a canal,
+        // Editar montaje y sus notas), "Material" (material previsto,
+        // coste y sus notas) y "Técnicas" (técnicas realizadas, cómo se
+        // realizó cada una y sus notas). Los tres abiertos por defecto
+        // -organizan lo que ya se veía, no añaden nada que esconder-;
+        // "Imágenes del montaje, material y técnicas del caso" se queda
+        // fuera de los tres, al final, porque su nombre ya dice que cubre
+        // las tres cosas a la vez. Qué sub-apartado le toca a cada campo
+        // de CAMPOS_CASO lo dice "def.sub", ver el bucle de más abajo.
+        var detCajas = document.createElement("details");
+        detCajas.className = "caso-grupo";
+        detCajas.open = true;
+        var sumCajas = document.createElement("summary");
+        sumCajas.textContent = T("caso_sub_cajas");
+        detCajas.appendChild(sumCajas);
+        var contCajas = document.createElement("div");
+        contCajas.className = "caso-grupo-campos";
+        detCajas.appendChild(contCajas);
+
+        var detMaterial = document.createElement("details");
+        detMaterial.className = "caso-grupo";
+        detMaterial.open = true;
+        var sumMaterial = document.createElement("summary");
+        sumMaterial.textContent = T("caso_sub_material");
+        detMaterial.appendChild(sumMaterial);
+        var contMaterial = document.createElement("div");
+        contMaterial.className = "caso-grupo-campos";
+        detMaterial.appendChild(contMaterial);
+
+        var detTecnicas = document.createElement("details");
+        detTecnicas.className = "caso-grupo";
+        detTecnicas.open = true;
+        var sumTecnicas = document.createElement("summary");
+        sumTecnicas.textContent = T("caso_sub_tecnicas");
+        detTecnicas.appendChild(sumTecnicas);
+        var contTecnicas = document.createElement("div");
+        contTecnicas.className = "caso-grupo-campos";
+        detTecnicas.appendChild(contTecnicas);
+
+        cont.appendChild(detCajas);
+        cont.appendChild(detMaterial);
+        cont.appendChild(detTecnicas);
+
         var res = document.createElement("p");
         res.className = "caso-resumen-linea";
         res.textContent = c.n_cajas
           ? T("caso_montaje_res", { cajas: c.n_cajas, canales: c.n_canales_ocupados })
           : T("caso_sin_montaje");
-        cont.appendChild(res);
+        contCajas.appendChild(res);
 
         // Fase 2: de qué plantilla salió, resuelto en vivo -si se renombra la
         // plantilla, el nombre que se ve aquí cambia con ella; congelarlo
@@ -5342,7 +5792,7 @@
           origenP.textContent = T("caso_montaje_origen", {
             nombre: mOrigen ? campo(mOrigen, "nombre") : T("caso_montaje_origen_no_disponible")
           });
-          cont.appendChild(origenP);
+          contCajas.appendChild(origenP);
         }
 
         // Detalle canal a canal, pedido por el usuario: la misma vista que
@@ -5356,7 +5806,7 @@
           tituloDetalle.className = "caso-cajas-detalle-titulo";
           var resDetalle = calcularResumen(montajeDesdeCaso(c));
           tituloDetalle.textContent = T("resumen_cajas", { n: resDetalle.cajas.length });
-          cont.appendChild(tituloDetalle);
+          contCajas.appendChild(tituloDetalle);
 
           var contDetalle = document.createElement("div");
           contDetalle.className = "caso-cajas-detalle";
@@ -5395,17 +5845,19 @@
             bloque.appendChild(lista);
             contDetalle.appendChild(bloque);
           });
-          cont.appendChild(contDetalle);
+          contCajas.appendChild(contDetalle);
         }
 
-        // Editar material y montaje (antes "Corregir el material y el
-        // montaje", renombrado el 06-09-2026): pedido por el usuario que viva
-        // aquí, en el mismo submenú donde ya se ve el resumen y se elige
-        // plantilla, en vez de al final de la ficha -es la única forma de
-        // ver dónde está colocado cada ítem, canal a canal, y hasta ahora
-        // había que bajar del todo para encontrarla-. Necesita el caso ya
-        // guardado en `casos` -uno recién creado y sin guardar aún no
-        // existe ahí, no hay qué abrir-.
+        // Editar montaje (antes "Corregir el material y el montaje",
+        // renombrado a "Editar material y montaje" el 06-09-2026, y a
+        // secas "Editar montaje" el 10-09-2026 -pedido del usuario-):
+        // pedido por el usuario que viva aquí, en el mismo submenú donde
+        // ya se ve el resumen y se elige plantilla, en vez de al final de
+        // la ficha -es la única forma de ver dónde está colocado cada
+        // ítem, canal a canal, y hasta ahora había que bajar del todo
+        // para encontrarla-. Necesita el caso ya guardado en `casos` -uno
+        // recién creado y sin guardar aún no existe ahí, no hay qué
+        // abrir-.
         if (!casoEsNuevo) {
           var filaCorregir = document.createElement("p");
           filaCorregir.className = "caso-montaje-fila";
@@ -5426,7 +5878,7 @@
           ayCorregir.textContent = T("caso_editar_montaje_ay");
           filaCorregir.appendChild(btnCorregir);
           filaCorregir.appendChild(ayCorregir);
-          cont.appendChild(filaCorregir);
+          contCajas.appendChild(filaCorregir);
         }
 
         // "Cargar montaje…" (antes "Cargar plantilla…") ya no vive aquí:
@@ -5450,7 +5902,14 @@
           : def.c === "tipo_alerta" ? tipoAlertaDe(c)
           : c[def.c];
         var elCampo = campoCaso(def, valor);
-        cont.appendChild(elCampo);
+        // "montaje" reparte sus campos entre los 3 sub-apartados de arriba
+        // según "def.sub"; el resto de grupos, y los campos de "montaje"
+        // sin "sub" (imágenes), van directos a `cont` como siempre.
+        var destino = def.sub === "cajas" ? contCajas
+          : def.sub === "material" ? contMaterial
+          : def.sub === "tecnicas" ? contTecnicas
+          : cont;
+        destino.appendChild(elCampo);
         // Coste del material (pedido por Pani, 06-09-2026; metido dentro
         // del propio pliegue de "Material (montaje base)" el 07-09-2026,
         // para que abrir/cerrar uno abra/cierre el otro): el mismo bloque

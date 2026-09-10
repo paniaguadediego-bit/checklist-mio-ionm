@@ -19,10 +19,11 @@ Montajes**—, ajustas las entradas de las cajas pulsando o arrastrando
 material, y el **Resumen** te dice qué tienes que preparar, qué cuesta y si
 te sobran o faltan entradas y cajas. Cuando la cirugía es real, pulsas
 **Crear caso** en **Gestión de Casos**: el caso se guarda al instante y se
-abre su **ficha**. Desde el apartado *Montaje/Técnicas* de la ficha, con
-**Editar material y montaje** vas al Organizador a construir su propio montaje
-—a mano, o cargando una plantilla encima sin tocar la plantilla original—. Un
-rótulo
+abre su **ficha**. Desde el sub-apartado *Cajas y entradas*, dentro de
+*Montaje / Técnicas* (10-09-2026: el apartado se reparte en tres —*Cajas y
+entradas*, *Material* y *Técnicas*, ver más abajo—), con **Editar montaje**
+vas al Organizador a construir su propio montaje —a mano, o cargando una
+plantilla encima sin tocar la plantilla original—. Un rótulo
 permanente, justo debajo de "Plantillas de montajes" (dentro del propio
 Organizador, no en las otras pantallas), dice qué plantilla tienes cargada
 o qué caso estás corrigiendo, y solo aparece cuando hay algo que mostrar.
@@ -163,19 +164,7 @@ desplegable, escribiendo tu nombre — no hay contraseña ni registro. El
 perfil elegido se recuerda en ese navegador y no viaja en la sincronización:
 es de tu dispositivo, no del equipo.
 
-### 1. Técnicas
-
-Lista las técnicas de monitorización y de mapeo. Se marcan pulsándolas y
-salen en el resumen. Son informativas: no calculan material por sí solas,
-pero dejan constancia de qué se va a hacer.
-
-> Hasta el 05-09-2026 esta tarjeta tenía además un desplegable **Perfil** que
-> resaltaba las técnicas habituales por tipo de procedimiento. Se retiró a
-> petición del usuario, que ya no lo necesitaba. El catálogo *Perfiles* de
-> Catálogos sigue existiendo (ver más abajo) pero ya no lo usa nada de la
-> interfaz.
-
-### 2. Catálogo
+### 1. Catálogo
 
 `catalogo_material` es la lista de **todo** el material que se puede colocar
 en una entrada: electrodos corticales, músculos, estimulaciones periféricas,
@@ -255,7 +244,7 @@ la clave opcional `"foto"` del ítem en `data/surgeries.js` apuntando a un
 archivo dentro de `img/` (ver *Añadir material al catálogo editando el
 archivo* más abajo).
 
-### 3. Cajas
+### 2. Cajas
 
 `cajas_material` describe las cajas reales del INOMED. Cada caja se dibuja
 con sus entradas y conectores. Para quitar material de una entrada: pulsa la
@@ -267,6 +256,20 @@ Las cajas 3 a 6 ("Caja etiqueta 3"… "Caja etiqueta 6") son de refuerzo, para
 cirugías más amplias que necesiten más canales de registro muscular de los
 habituales — se usan poco, así que cada una **se pliega aparte y arranca
 cerrada**: solo se despliega la que vayas a usar en ese caso.
+
+### 3. Técnicas
+
+Lista las técnicas de monitorización y de mapeo. Se marcan pulsándolas y
+salen en el resumen. Son informativas: no calculan material por sí solas,
+pero dejan constancia de qué se va a hacer. Va debajo de Cajas desde el
+10-09-2026 (pedido del usuario) — antes iba justo debajo de Plantillas de
+montajes, la primera tarjeta del banco de trabajo.
+
+> Hasta el 05-09-2026 esta tarjeta tenía además un desplegable **Perfil** que
+> resaltaba las técnicas habituales por tipo de procedimiento. Se retiró a
+> petición del usuario, que ya no lo necesitaba. El catálogo *Perfiles* de
+> Catálogos sigue existiendo (ver más abajo) pero ya no lo usa nada de la
+> interfaz.
 
 ### 4. Resumen de técnicas y material
 
@@ -404,46 +407,56 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
    detalle, otros datos quirúrgicos.
 4. **Anestesia** — tipo (TIVA, R-TIVA, DXM, ALO, Gas), detalle, TOF
    monitorizado, incidencias anestésicas.
-5. **Montaje / Técnicas** — el resumen de cajas/entradas ocupadas, la
-   plantilla de origen (si el caso salió de una, resuelta en vivo — si la
-   renombras después, aquí se ve el nombre nuevo), y el botón **Editar
-   material y montaje** (te lleva al Organizador de Montajes con las cajas de
-   este caso concreto para cambiar dónde va cada cosa — desde ahí, y solo
-   desde ahí, se puede además *cargar un montaje* sobre el caso o *guardar el
-   montaje del caso como plantilla nueva*, en la barra fija de corrección,
-   ver más abajo). Justo debajo, el **detalle canal a canal**: la misma vista de "Cajas
-   necesarias" que hay en Resumen, de solo lectura, para saber exactamente
-   qué hay puesto en cada entrada sin salir a corregir el montaje.
+5. **Montaje / Técnicas** — repartido en tres sub-apartados desde el
+   10-09-2026 (pedido del usuario; antes era todo un único bloque), cada uno
+   su propio `<details>` abierto por defecto dentro del apartado:
 
-   Debajo de eso, en este orden (reordenado el 06-09-2026): **técnicas
-   realizadas** (ya vienen marcadas las que planificaste, solo ajustas — los
-   chips salen en tres bloques separados por un hueco: monitorización,
-   reflejos y mapeo), **"Cómo se realizó cada técnica"** (07-09-2026: el
-   bloque entero es ahora también plegable, con los desplegables de cada
-   técnica ya marcada como realizada anidados dentro — parámetros reales
-   usados en este caso concreto: intensidad, ancho de pulso (09-09-2026),
-   frecuencia, nº de pulsos, trenes, ISI, filtros, promediación, barrido—
-   y una caja de notas libres al
-   final para cualquier detalle técnico que no encaje en esos campos), notas
-   de montaje/técnicas, **material (montaje base)** (siempre de solo lectura:
-   sale del montaje real del caso, que se corrige desde el Organizador, no
-   aquí — la sección "Material realmente usado" está suspendida desde el
-   06-09-2026: si añades algo que no estaba previsto, colócalo en su caja y
-   anótalo en las notas de montaje/técnicas, justo arriba). **"Coste del
-   material"** vive ahora dentro de ese mismo desplegable (07-09-2026: antes
-   estaba siempre visible debajo, sin relación con el pliegue de la tabla a
-   la que se refiere) — el mismo desglose que en Resumen: unitario ×
-   cantidad por tipo, total, qué material reutilizable queda fuera y qué
-   tipos no tienen precio todavía; se recalcula en vivo con los precios de
-   hoy, no con los que hubiera cuando se guardó el caso, y sale igual en el
-   informe en PDF. Por último, **"Imágenes del montaje"** (capturas o fotos
-   de cómo quedó en el software del equipo, p. ej. la pantalla del Inomed,
-   al doble de tamaño desde el 07-09-2026 al exportarlas en el informe en
-   PDF — para consultar si te toca un caso parecido —se comprimen solas al
-   añadirlas, se
-   pulsan para verlas en grande). Los dos bloques de técnicas/material están
-   plegados por defecto desde el 05-09-2026, se despliegan pulsando su
-   título.
+   - **Cajas y entradas**: el resumen de cajas/entradas ocupadas, la
+     plantilla de origen (si el caso salió de una, resuelta en vivo — si la
+     renombras después, aquí se ve el nombre nuevo), el **detalle canal a
+     canal** (la misma vista de "Cajas necesarias" que hay en Resumen, de
+     solo lectura, para saber exactamente qué hay puesto en cada entrada sin
+     salir a corregir el montaje), el botón **Editar montaje** (antes
+     "Editar material y montaje"; te lleva al Organizador de Montajes con
+     las cajas de este caso concreto para cambiar dónde va cada cosa — desde
+     ahí, y solo desde ahí, se puede además *cargar un montaje* sobre el
+     caso o *guardar el montaje del caso como plantilla nueva*, en la barra
+     fija de corrección, ver más abajo) y una caja de **Notas del montaje**.
+   - **Material**: **"Material (montaje base)"** (siempre de solo lectura:
+     sale del montaje real del caso, que se corrige desde el Organizador, no
+     aquí — la sección "Material realmente usado" está suspendida desde el
+     06-09-2026: si añades algo que no estaba previsto, colócalo en su caja
+     y anótalo en **Notas del material**, justo debajo) con **"Coste del
+     material"** dentro de ese mismo desplegable (07-09-2026) — el mismo
+     desglose que en Resumen: unitario × cantidad por tipo, total, qué
+     material reutilizable queda fuera y qué tipos no tienen precio todavía;
+     se recalcula en vivo con los precios de hoy, no con los que hubiera
+     cuando se guardó el caso, y sale igual en el informe en PDF.
+   - **Técnicas**: **técnicas realizadas** (ya vienen marcadas las que
+     planificaste, solo ajustas — los chips salen en tres bloques separados
+     por un hueco: monitorización, reflejos y mapeo), **"Cómo se realizó
+     cada técnica"** (rediseñada por completo el 10-09-2026: cada técnica
+     trae ahora sus **propios campos** — no los mismos 8 genéricos para
+     todas como antes —, agrupados en *Estimulación* y *Registro* según
+     corresponda, con el tipo de control que le toca a cada uno: número con
+     su unidad, texto, una opción de una lista cerrada o con hueco para
+     escribir otra cosa, varias opciones a la vez con chips -también con
+     hueco para añadir una propia-, o una casilla sí/no. Algunos campos solo
+     aparecen si otro campo de la misma técnica tiene cierto valor -p. ej.
+     el ISI del tren de pulsos solo si hay más de un pulso-. Un dato ya
+     escrito con la forma vieja se traduce solo al abrir la ficha; lo que no
+     tiene un sitio nuevo claro se conserva como nota en vez de perderse.
+     Queda plegado y vacío hasta que abras una técnica y escribas algo), y
+     **Notas de las Técnicas** (antes "Notas de Montaje/Técnicas").
+
+   Fuera de los tres sub-apartados, al final: **"Imágenes del montaje,
+   material y técnicas del caso"** (antes "Imágenes del montaje", renombrada
+   el 10-09-2026 porque su nombre nuevo ya dice que cubre las tres cosas a
+   la vez — capturas o fotos de cómo quedó en el software del equipo, p. ej.
+   la pantalla del Inomed, al doble de tamaño desde el 07-09-2026 al
+   exportarlas en el informe en PDF — para consultar si te toca un caso
+   parecido —se comprimen solas al añadirlas, se pulsan para verlas en
+   grande).
 6. **Desarrollo intraoperatorio** — resumen de la monitorización (de
    corrido qué salió al empezar, qué pasó por el medio y qué salió al
    cerrar); si se marcó la técnica "Mapeo de raíces y tornillos", un
@@ -471,8 +484,9 @@ a la izquierda (abre un PDF imprimible de ese caso, ver más abajo), y
 **Volver a la lista** y **Guardar** a la derecha — *Volver a la lista* solo
 navega, nunca guarda ni cambia el estado.
 
-**Editar material y montaje de un caso ya guardado**: el botón vive en el
-propio apartado 5 (Montaje/Técnicas) — abre las cajas de ese caso concreto
+**Editar montaje de un caso ya guardado**: el botón vive en el sub-apartado
+"Cajas y entradas", dentro del apartado 5 (Montaje/Técnicas) — abre las
+cajas de ese caso concreto
 para cambiar dónde va cada cosa, un cambio de última hora o un error al
 preparar. Se guarda en el caso, no toca el montaje del que salió. Mientras
 tanto, el rótulo permanente de arriba pasa a verde sólido y recuerda en qué

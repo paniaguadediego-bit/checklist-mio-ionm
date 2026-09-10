@@ -17,7 +17,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260909c">
+<link rel="stylesheet" href="style.css?v=20260910a">
 </head>
 <body>
 
@@ -150,13 +150,6 @@
       </span>
     </div>
 
-    <details class="card tecnicas-card no-print" id="tecnicas">
-      <summary class="card-cab">
-        <h2 data-i18n="tecnicas_titulo"></h2>
-      </summary>
-      <div id="tecnicas-contenido"></div>
-    </details>
-
     <!-- Conserva la clase panel-catalogo: es a lo que apunta el soltar
          material encima para quitarlo de una entrada. Pasa de <div> a
          <details> el 06-09-2026 (tarde), para que en móvil se comporte
@@ -180,6 +173,15 @@
         <span class="card-pista" id="cajas-pista"></span>
       </summary>
       <section id="cajas-contenido"></section>
+    </details>
+
+    <!-- Técnicas va debajo de Cajas desde el 10-09-2026 -pedido del
+         usuario-; antes iba justo debajo de Plantillas de montajes. -->
+    <details class="card tecnicas-card no-print" id="tecnicas">
+      <summary class="card-cab">
+        <h2 data-i18n="tecnicas_titulo"></h2>
+      </summary>
+      <div id="tecnicas-contenido"></div>
     </details>
 
     <details class="card resumen-card" id="resumen">
@@ -820,10 +822,11 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260909c"></script>
-<script src="data/i18n-en.js?v=20260909c"></script>
-<script src="data/guia.js?v=20260909c"></script>
-<script src="data/tecnicas-mio.js?v=20260909c"></script>
-<script src="app.js?v=20260909c"></script>
+<script src="data/surgeries.js?v=20260910a"></script>
+<script src="data/i18n-en.js?v=20260910a"></script>
+<script src="data/guia.js?v=20260910a"></script>
+<script src="data/tecnicas-mio.js?v=20260910a"></script>
+<script src="data/parametros-tecnicas.js?v=20260910a"></script>
+<script src="app.js?v=20260910a"></script>
 </body>
 </html>

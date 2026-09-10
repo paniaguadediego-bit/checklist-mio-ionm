@@ -2849,3 +2849,144 @@ izquierda-. Sigue en dos filas -eso no se pidió deshacer-, solo cambió
 de lado el menú dentro de la fila de arriba. Verificado en escritorio
 y en 375px de móvil: el desplegable abre dentro de la pantalla en
 ambos. `?v=` de `index.html` subido a `20260909c`.
+
+### Retoques posteriores, 10-09-2026: campos propios por técnica, reestructuración de Montaje/Técnicas, GRID a 890€, colores de estado
+
+Varios pedidos en el mismo turno:
+
+- **Precios**: GRID a 890€/manta (sube desde 400€ -`electrodo_grid_mantaA`/
+  `electrodo_grid_mantaB` en `etiquetas_usuario`, `checklist-mio-datos`-),
+  nuevo precio para "Sensor de tubo orotraqueal" (9,8€: 98€ la caja de 10) y
+  para "Electrodo epidural (D-Wave)" (351€). Como el coste se calcula en
+  vivo con `calcularCoste()` a partir del precio de la etiqueta -no se
+  guarda un total fijo por caso, ver `res.coste = calcularCoste(res)` en
+  `calcularResumen()`-, no hizo falta tocar ningún caso ni montaje: el
+  cambio de precio ya afecta a todas las cirugías, pasadas y futuras, que
+  usen esa etiqueta.
+- **Colores de estado en Gestión de Casos**: preparado pasa de verde
+  (`--accent`) a amarillo (`--aviso-border`, el mismo ámbar que ya usan los
+  demás avisos de la app), cerrado pasa de gris (`--text-muted`) a verde
+  (`--accent`). Cancelado se queda en rojo (`--peligro`). Los tres tokens
+  ya tenían su propia variante de modo oscuro, así que no hizo falta CSS
+  nuevo.
+- **Técnicas debajo de Cajas** en Organizador de Montajes: orden nuevo
+  Plantillas → Catálogo → Cajas → Técnicas → Resumen -antes Técnicas iba
+  justo después de Plantillas-. Solo reordenado en `index.html`; sin CSS de
+  `order` que dependiera de la posición en el DOM, así que no hizo falta
+  tocar nada más.
+
+**El cambio grande: "Cómo se realizó cada técnica" con campos propios por
+técnica.** El usuario compartió un JSON (`parametros_tecnicas_mio.json`,
+38 técnicas, 790 campos en total, con respaldo en fuentes del proyecto
+donde lo hay) para sustituir la rejilla fija de 8 campos genéricos
+-intensidad/frecuencia/nº pulsos/trenes/ISI/filtros/promediación/barrido,
+los mismos para TODAS las técnicas por igual- por los campos reales de
+cada una: nervios estimulados, montaje de estimulación, criterio de
+alarma, músculos registrados, filtros HP/LP por separado, etc., cada uno
+del tipo que le corresponde (número con su unidad, texto libre, una
+opción cerrada o con hueco para escribir otra, varias opciones a la vez
+con chips, o sí/no), algunos visibles solo si otro campo de la misma
+técnica tiene cierto valor (p. ej. el ISI del tren de pulsos, solo si hay
+más de un pulso).
+
+- **`data/parametros-tecnicas.js`** (nuevo, generado del JSON con un
+  script de Python, no escrito a mano): `window.PARAMETROS_TECNICAS.tecnicas`
+  -un objeto por técnica con `id`, `nombre`, `secciones: {general,
+  estimulacion, registro}`, cada sección una lista de campos `{id,
+  etiqueta, tipo, opciones, unidad/unidades, permite_otro, visible_si,
+  fuente, nota}`- y `window.TECPAR_ID_MAP`.
+  - **Por qué hace falta un mapa de ids aparte**: el JSON trae sus propios
+    ids (`t_sep`, `c_mep`...), que no siempre coinciden con el id de la
+    técnica en `data/surgeries.js` (`t_pess`, `c_pem`...) -no se tocó
+    `surgeries.js` para hacerlos coincidir, habría roto
+    `tecnicas_realizadas` de casos ya guardados-. `TECPAR_ID_MAP` traduce
+    17 de los 44 ids de `surgeries.js` al id que le corresponde en
+    `PARAMETROS_TECNICAS`; los demás coinciden tal cual.
+  - **Dos fusiones a propósito**: el JSON trae una sola definición
+    "erg_retinograma" para ERG y Retino, y una sola "prm_arm" para PRM y
+    ARM -mismos parámetros técnicos en la práctica-. El catálogo de
+    técnicas de `surgeries.js` NO se tocó -siguen siendo 4 técnicas
+    marcables por separado en "Técnicas realizadas"-, `TECPAR_ID_MAP` hace
+    que las dos de cada pareja resuelvan al mismo bloque de campos.
+  - **4 técnicas sin definición** (inactivas: `reflejo_h`, `rx_mandibular`,
+    `rx_inhib_maseterino`, `mapeo_material_qx`): si un caso antiguo las
+    tiene marcadas, "Cómo se realizó" les muestra una sola nota libre en
+    vez de una rejilla que no se puede rellenar de fábrica.
+- **`app.js`**: `PARAMETROS_TECNICAS`/`TECPAR_ID_MAP`/`TECPAR_INDICE`/
+  `definicionTecPar()` cerca del resto de constantes `*_BASE`. Renderer
+  genérico nuevo -`tecParCampo*()`, `pintarCamposTecnicaReal()`- que
+  sustituye la rejilla fija de `CAMPOS_TECPAR` dentro de
+  `campoCaso()`/`def.t === "tecnicas_parametros"`. `visible_si` se
+  resuelve en vivo: cada campo controlador (numero/seleccion/si_no; ningún
+  multiseleccion ni texto actúa nunca como controlador, comprobado contra
+  los 42 usos reales del JSON) dispara un reevalúe de los campos que
+  dependen de él al cambiar.
+  - **Guardado**: `tecnicas_parametros[id_surgeries] = { general: {},
+    estimulacion: {}, registro: {} }`, claves = id del campo. La nota
+    libre por técnica ahora es `general.incidencias` -reemplaza al
+    textarea suelto que había antes fuera de la rejilla-.
+  - **Migración automática hacia atrás**
+    (`migrarTecnicasParametros()`/`migrarUnaTecnicaParametros()`, mismo
+    espíritu que `migrarSeccionesApunteDoc()` con los apuntes): se aplica
+    sola cada vez que se abre la ficha de un caso y cada vez que se genera
+    su informe, cubriendo tanto lo que ya hay en el dispositivo como lo
+    recién bajado de GitHub, sin paso de migración aparte. Campos con
+    correspondencia clara y directa (`intensidad`, `ancho_pulso`,
+    `num_pulsos`→`n_pulsos`, `isi`) se trasladan al campo nuevo si la
+    técnica lo tiene; `frecuencia` prueba primero `frecuencia` y si no
+    existe, `cadencia_trenes` -las técnicas de tren de pulsos llamaban
+    "frecuencia" a lo que ahora se llama cadencia entre trenes-. Lo que no
+    tiene una correspondencia clara -`trenes`, `filtros`, `promediacion`,
+    `barrido`, que eran texto libre y ahora se reparten en varios campos
+    tipados- **no se reparte a ciegas**: se preserva entero como nota en
+    `general.incidencias`, con una etiqueta que dice de qué campo venía,
+    para no perder ni un dato real ya escrito adivinando una estructura
+    que podría estar mal. Probado contra los 8 datos reales que había en
+    `checklist-mio-datos` con la forma vieja (intensidad, notas,
+    filtros...): todos migran a un sitio sensato, ninguno se pierde.
+  - **`seccionParametrosInforme()`** (informe en PDF) reescrita para el
+    nuevo esquema anidado -misma migración aplicada antes de leer, por si
+    el informe se genera sin haber abierto antes la ficha-.
+- **CSS**: bloque `.tecpar-*` de `style.css` reescrito -secciones con
+  título (Estimulación/Registro; "general" sin título, es la que menos
+  campos trae), campos anchos para texto/multiselección, fila con select
+  de unidad para "numero" con varias `unidades`, miniforma "Añadir otro…"
+  para multiselección con `permite_otro` reutilizando el patrón `.chip`/
+  `.chip-quitar` que ya usan "Técnicas realizadas" y el catálogo-.
+
+**Reestructuración de "Montaje / Técnicas"** en la ficha del caso, pedida
+junto con lo anterior: pasa de un único bloque a tres sub-apartados
+-cada uno su propio `<details class="caso-grupo">` abierto por defecto,
+construidos a mano en `renderFichaCaso()`, con "def.sub" en `CAMPOS_CASO`
+diciendo a cuál pertenece cada campo-:
+
+1. **Cajas y entradas**: resumen de cajas/canales, plantilla de origen,
+   detalle canal a canal, el botón **Editar montaje** (antes "Editar
+   material y montaje" -acortado, pedido del usuario-) y una caja nueva
+   **Notas del montaje**.
+2. **Material**: "Material (montaje base)" + coste (sin cambios) y una
+   caja nueva **Notas del material**.
+3. **Técnicas**: técnicas realizadas, "Cómo se realizó cada técnica" y
+   **Notas de las Técnicas** (antes "Notas de Montaje/Técnicas" -mismo
+   campo `notas_montaje_tecnicas`, solo cambia el rótulo y de qué
+   sub-apartado cuelga-).
+
+"Imágenes del montaje" pasa a llamarse **"Imágenes del montaje, material y
+técnicas del caso"** y se queda fuera de los tres sub-apartados -su
+nombre nuevo ya dice que cubre las tres cosas a la vez, así que no
+pertenece a ninguno en particular-.
+
+Verificado en el navegador: los 20 campos de t-MEP renderizan con la
+etiqueta correcta en sus 3 secciones; ISI/Intervalo entre trenes/Nº de
+pulsos del tren acondicionante empiezan ocultos y aparecen en vivo al
+poner nº de pulsos > 1 y facilitación = "Doble tren"; guardado y
+recargado, el caso persiste con la forma nueva
+(`tecnicas_parametros.t_pem.estimulacion.n_pulsos === "2"`); un caso de
+prueba sembrado a mano con la forma vieja de c-MEP (intensidad, notas,
+frecuencia, num_pulsos, filtros) migra solo al abrir la ficha -intensidad
+y nº de pulsos a sus campos nuevos, frecuencia a "Cadencia entre trenes"
+al no existir "frecuencia" en c-MEP, notas y filtros combinados en
+"Desviaciones o incidencias técnicas"-; añadir y quitar un chip propio en
+un campo de multiselección con `permite_otro` funciona en los dos
+sentidos; "Crear informe" no lanza ningún error con datos migrados.
+`?v=` de `index.html` subido a `20260910a`.
