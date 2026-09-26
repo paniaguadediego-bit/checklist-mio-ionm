@@ -1,0 +1,1608 @@
+# MIO-Check
+
+Herramienta interna, sin backend ni build step, para montar el material de
+cada cirugía monitorizada y saber exactamente qué hace falta.
+
+**Pantalla de inicio (06-09-2026; al 26-09-2026 son 10 tarjetas, en dos columnas):** el logo
+de la cabecera lleva siempre a una pantalla con tarjetas — **Organizador de
+Montajes**, **Gestión de Casos**, **Checklist pre-quirúrgico**, **Registro
+intraoperatorio**, **Material**, **Técnicas IONM**, **Docencia**, **Simulador**,
+**Bibliografía** y **Mis apuntes**—, cada una su propio espacio de trabajo. Se
+pulsa una y se trabaja solo ahí; el logo, o el botón **Inicio** junto al
+título de cada pantalla, son el único camino de vuelta al inicio, no hay más
+navegación cruzada entre pantallas. Bibliografía y la pestaña *Teoría básica*
+de Docencia siguen "en construcción" (ver *Simulador y Bibliografía* más
+abajo); el resto está en uso.
+
+**Resumen de las pantallas añadidas después del flujo de abajo:**
+**Checklist pre-quirúrgico** (lista de 5 momentos, suelta o ligada a un caso),
+**Registro intraoperatorio** (la hoja de papel de quirófano, en pantalla y sobre
+todo **imprimible**, prerrellenada desde el caso), **Mis apuntes** (documento
+con carpetas de colores, negrita/cursiva, fotos dentro de cada caja y
+**Exportar como Word**) y la pantalla **Material** (todo el catálogo
+de material en filas, con una breve descripción de uso de cada uno; desde el
+24-09-2026 tiene tarjeta propia bajo el Registro intraoperatorio).
+
+**Novedades del 25-26/09/2026:** dos **equipos** (Inomed y Cadwell, cada uno con
+sus cajas; ver *Equipos*), **basales** de apertura, post-posición y cierre en la
+ficha del caso, compartidas con el Registro (ver *Basales*), **modo
+demostración** con `?demo` (ver *Modo demostración*) y **licencia** de todos los
+derechos reservados (ver *Licencia*).
+
+**Flujo de uso previsto:** el día antes de la cirugía abres o creas una
+**plantilla** —un montaje tuyo o de un compañero, desde **Organizador de
+Montajes**—, ajustas las entradas de las cajas pulsando o arrastrando
+material, y el **Resumen** te dice qué tienes que preparar, qué cuesta y si
+te sobran o faltan entradas y cajas. Cuando la cirugía es real, pulsas
+**Crear caso** en **Gestión de Casos**: el caso se guarda al instante y se
+abre su **ficha**. Desde el sub-apartado *Cajas y entradas*, dentro de
+*Montaje / Técnicas* (10-09-2026: el apartado se reparte en tres —*Cajas y
+entradas*, *Material* y *Técnicas*, ver más abajo—), con **Editar montaje**
+vas al Organizador a construir su propio montaje —a mano, o cargando una
+plantilla encima sin tocar la plantilla original—. Un rótulo
+permanente, justo debajo de "Plantillas de montajes" (dentro del propio
+Organizador, no en las otras pantallas), dice qué plantilla tienes cargada
+o qué caso estás corrigiendo, y solo aparece cuando hay algo que mostrar.
+**Docencia** trae miotomas y colocación de cajas según la posición del
+paciente, sin relación con la preparación del material, y una **Guía de
+uso** (menú **⋮**) resume lo esencial para empezar sin tener que leer este
+archivo.
+
+## Cómo abrir la herramienta
+
+Haz doble clic en `index.html`. Se abre en el navegador y funciona sin
+conexión a internet (no hace ninguna petición de red).
+
+> **Nota técnica:** los datos no están en un `.json` puro porque Chrome/Edge
+> bloquean `fetch()` de archivos locales cuando abres una página con doble
+> clic (protocolo `file://`). Por eso viven en
+> [`data/surgeries.js`](data/surgeries.js), que es JSON válido envuelto en
+> `window.SURGERIES_DATA = { ... };`. Se edita exactamente igual que un JSON.
+
+## Estructura del proyecto
+
+- `index.html` — interfaz
+- `style.css` — estilos
+- `app.js` — toda la lógica, en un único archivo
+- `data/surgeries.js` — los datos de fábrica: `cajas_material`, `etiquetas`,
+  `catalogo_material`, `tecnicas`, `servicios`, `intervenciones`,
+  `perfiles_procedimiento`, `escenarios_tipo` (los tipos de cirugía, inerte)
+  y `miotomas` (para la pantalla Docencia). `escenarios` (montajes de fábrica)
+  está vacío a propósito desde el 03-09-2026 — ver *Añadir un montaje de
+  fábrica a mano en el JSON* más abajo. Casi todo esto ya se edita desde la
+  propia web; este archivo es lo que viene de serie
+- `data/i18n-en.js` — la traducción al inglés de todo lo anterior
+- `data/guia.js` — el texto de la Guía de uso dentro de la propia
+  herramienta (menú **⋮** de la barra superior); solo en castellano por ahora
+- `data/tecnicas-mio.js` — la tabla de referencia de la pantalla **Técnicas
+  IONM**: parámetros teóricos por técnica y familia (estimulación, registro,
+  filtros/barrido), con sus fuentes en pie de tabla. Es contenido de consulta,
+  no se guarda nada del usuario aquí
+- `data/parametros-tecnicas.js` — los campos propios de **"Cómo se realizó
+  cada técnica"** dentro de la ficha de un caso (10-09-2026): 38 técnicas,
+  cada una con sus secciones general/estimulación/registro y el tipo de cada
+  campo (número, texto, selección, multiselección, sí/no), algunos visibles
+  solo si otro campo de la misma técnica tiene cierto valor. `TECPAR_ID_MAP`
+  en el mismo archivo traduce el id de aquí al id de la técnica en
+  `surgeries.js`, que no siempre coincide — ver la cabecera del propio
+  archivo para el porqué
+- `img/` — el icono de la app (favicon, icono de "añadir a pantalla de
+  inicio", logo de la cabecera), `img/sondas/` (fotos de referencia de
+  algunas sondas, ver *Fotos de referencia del material* más abajo) y
+  `manifest.json` para el acceso directo en Android
+- `apps-script/Codigo.gs` — el script de Google Apps que reconstruye el
+  Google Sheet (ver más abajo); no se sirve por GitHub Pages, se pega a mano
+  en el editor de Apps Script
+
+## Idioma
+
+El botón **EN / ES** de la barra superior cambia entre castellano e inglés al
+instante, sin recargar ni perder nada. Se recuerda en ese navegador, y en la
+primera visita se propone el del sistema.
+
+Cambia toda la interfaz y también los datos: nombres y descripciones de las
+cajas, etiquetas, categorías del catálogo, notas de los ítems, técnicas,
+perfiles y los montajes de fábrica. **Lo que escribes tú se queda como lo
+escribiste** —tus montajes, tus etiquetas y tu material propio— porque no
+hay forma de traducirlo solo.
+
+El inglés vive en [`data/i18n-en.js`](data/i18n-en.js), separado de
+`data/surgeries.js` para que este siga siendo el archivo de trabajo. Allí solo
+hay texto, localizado por el `id` de cada cosa; lo que no esté traducido se
+queda en castellano. Para añadir otro idioma, ese mismo archivo explica los
+cuatro pasos.
+
+## Guía de uso, dentro de la propia herramienta
+
+Botón **⋮** de la barra superior (agrupa Catálogos, Idioma y Guía de uso,
+de consulta ocasional — Técnicas IONM y Docencia vivían aquí hasta el
+06-09-2026, ahora son tarjetas de la pantalla de inicio; Catálogos se unió
+al grupo el 09-09-2026) → **Guía de uso**. Seis tarjetas cortas (qué es la
+herramienta, el flujo de un día, que plantilla y caso no son lo mismo,
+catálogo/etiquetas, cajas/resumen, y lo demás) más un acordeón con quince
+puntos más detallados, todos plegados. Es la versión corta y orientada a la
+tarea —pensada para el móvil, a las 7:30 antes de entrar a quirófano—; este
+README sigue siendo la documentación de referencia. Contenido estático de
+[`data/guia.js`](data/guia.js), solo en castellano por ahora: en inglés
+avisa de que todavía no está traducida en vez de mostrarla a medias.
+
+## Organizador de Montajes: el banco de trabajo, en el orden en que se trabaja
+
+Es la primera tarjeta de la pantalla de inicio. Dentro: Plantillas de
+montajes → Técnicas → Catálogo → Cajas → Resumen —en móvil, donde todo va
+en una sola columna sin sitio para un lateral, Catálogo se ve el primero de
+todos (06-09-2026): no es parte de una plantilla de montaje, es lo que
+nutre a las cajas—. Es un banco único: el mismo tanto si estás editando una
+plantilla suelta como si estás corrigiendo el material de un caso concreto
+— nunca hay dos copias de estas cinco tarjetas (corregir el material de un
+caso desde **Gestión de Casos** te trae aquí mismo, con el rótulo
+permanente en dorado sólido avisando de que estás mid-corrección). Las
+cinco son `<details>` plegables por igual, cada una a su aire (menos el
+catálogo, que en pantalla ancha es la columna lateral fija de siempre).
+**Arrancan todas plegadas, salvo Plantillas de montajes** —al ser lo
+primero que se ve al entrar aquí, desde el 05-09-2026 se abre sola—;
+despliega las demás según te interese en cada momento. El orden es el del
+flujo real: qué montaje cargas, qué técnicas vas a hacer,
+qué material hay, dónde va y qué sale de todo ello.
+
+Qué montaje hay cargado en ese banco de trabajo se elige aparte, desde la
+tarjeta **Plantillas de montajes** o desde la ficha de un caso. Justo
+debajo de esa tarjeta, un **rótulo permanente** (06-09-2026: vive aquí
+dentro, no en las otras 5 pantallas, y solo aparece si hay algo que
+mostrar) dice cuál de las dos cosas estás tocando: *«Plantilla: ECL con
+mapeo»* en dorado suave, o *«CASO 2026-011, Meningioma APC»* en dorado
+sólido con los botones de corrección en su lugar, cuando estás dentro de
+un caso.
+
+### La tarjeta Plantillas de montajes (la biblioteca de plantillas)
+
+Primera tarjeta de la pantalla Organizador de Montajes, y la única que
+empieza **desplegada** —para que las plantillas estén a la vista nada más
+entrar, sin tener que pulsar nada—. Lista plana con buscador por nombre o
+autor, siempre en
+**orden alfabético** —da
+igual de quién sea cada montaje, y también para los que vayas creando—, y
+cuántas entradas tiene ocupadas cada uno. **+ Montaje en blanco**, fijo
+arriba de la lista, crea uno nuevo y vacío al momento. Elegir un montaje
+**lo carga directo en el banco de trabajo y pliega la tarjeta sola, sin
+preguntar** — no hay ningún riesgo: cada montaje es su propio archivo y el
+anterior se queda guardado tal cual.
+
+**Duplicar, Renombrar, Vaciar y Borrar** actúan sobre el montaje que tengas
+cargado en ese momento. **Guardar montaje** pregunta cada vez si quieres
+sobrescribir el activo o guardarlo como uno nuevo — una confirmación
+explícita, aparte del guardado automático de siempre en cada colocación.
+Cada montaje muestra su **autor**: los tuyos llevan una marca lateral para
+reconocerlos entre los de un compañero, y **solo el autor puede renombrar,
+vaciar o borrar el suyo** (tampoco puede sobrescribirlo con *Guardar
+montaje* si no es suyo) — cualquiera puede *duplicarlo* (es la forma de
+partir del molde de otro para hacerte el tuyo; la copia nace a tu nombre).
+**Esto no es seguridad de verdad**: cambiar de perfil (ver abajo) salta el
+candado sin más, porque la herramienta no tiene backend que pueda
+impedirlo. Es solo para no pisarse el trabajo entre compañeros sin querer.
+
+> No vienen montajes de fábrica desde el 03-09-2026 (decisión del usuario):
+> la biblioteca empieza vacía y se llena con lo que tú y tus compañeros
+> guardéis. Ver *Añadir un montaje de fábrica a mano en el JSON* más abajo
+> si alguna vez hace falta volver a sembrar alguno.
+
+**Perfil de usuario** (arriba a la izquierda, junto al logo): quién eres.
+Sirve para firmar tus montajes. Se crea la primera vez desde ese mismo
+desplegable, escribiendo tu nombre — no hay contraseña ni registro. El
+perfil elegido se recuerda en ese navegador y no viaja en la sincronización:
+es de tu dispositivo, no del equipo.
+
+### 1. Catálogo
+
+`catalogo_material` es la lista de **todo** el material que se puede colocar
+en una entrada: electrodos corticales, músculos, estimulaciones periféricas,
+GRID, sondas, tierras... Agrupado en categorías plegables con buscador,
+cada una abierta o cerrada de fábrica según se use más o menos a menudo. En
+pantalla ancha es la **columna lateral fija** de siempre, así que siempre lo
+tienes a mano aunque estés mirando la última caja; en el móvil es una
+tarjeta plegable más (06-09-2026), la primera de todas —se pliega solo al
+colocar material para dejar ver las cajas, y se despliega solo otra vez al
+terminar—.
+
+Hay dos formas de colocar material, y un mismo ítem se puede usar tantas
+veces como haga falta (el catálogo no se "gasta"):
+
+- **Pulsar y colocar** (recomendado, sin arrastrar): pulsa el ítem del
+  catálogo — se queda resaltado y aparece una barra abajo — y luego pulsa la
+  entrada donde va. Sigue seleccionado, así que puedes colocarlo en varias
+  entradas seguidas. `Esc` o el botón *Cancelar* lo suelta. También al
+  revés: pulsa una entrada vacía y elige el material desde ahí, con el mismo
+  catálogo filtrado a lo que ocupa entrada.
+- **Arrastrar y soltar**: arrastra el ítem hasta la entrada. Si te acercas
+  al borde superior o inferior de la ventana, la página hace scroll sola.
+
+**Material extra**: una categoría del catálogo (auriculares PEATC,
+gafas VEP...) con material que se prepara pero no se conecta a ninguna
+entrada. Esos ítems no se arrastran: funcionan como interruptor — pulsas
+para activarlos (☑) y aparecen en el resumen; pulsas otra vez para
+quitarlos. En el JSON se marcan con `"sin_entrada": true`, en el ítem o en
+la categoría entera.
+
+**Puentes** (09-09-2026): categoría plegada de fábrica, justo debajo de
+Material extra, con el material reutilizable que enlaza dos entradas
+—no se compra por caso, así que no suma al coste, pero sí hay que
+sacarlo a la caja—. Etiqueta propia "Puente", no fungible (ver
+*Etiquetas* justo abajo).
+
+**Enlazar un Puente a su cork de referencia** (22-09-2026): un Puente
+puentea un electrodo que hace de referencia, y el resto de Puentes se
+enlazan a esa misma referencia. Con un Puente ya colocado, pulsa el icono
+🔗 de su chip —queda resaltado, y aparece una barra fija abajo— y luego
+pulsa la entrada del cork de referencia, en cualquier caja del montaje.
+El chip del Puente muestra entonces "→ 5" (el canal del cork), con el
+nombre completo de la caja en el tooltip. Pulsar el mismo 🔗 otra vez,
+`Esc` o el botón *Cancelar* de la barra suelta el enlace sin completarlo.
+Si quitas el cork de referencia, la etiqueta desaparece sola.
+
+#### Etiquetas (tipos físicos)
+
+Una **etiqueta** es de qué está hecho el ítem: aguja trenzada, sacacorchos,
+pegatina, hook wire… Hace tres cosas a la vez:
+
+- **Es lo que se cuenta** en «Material a preparar». Dos ítems con la misma
+  etiqueta se suman juntos.
+- **Es lo que se ve**: cada etiqueta tiene forma de borde (sólido, punteado,
+  discontinuo, doble, grueso), color de borde y tinte de fondo, así que
+  reconoces el tipo de material de un vistazo sin leer el nombre.
+- **Es de donde sale el coste**: `precio` por unidad y si es `fungible` (se
+  gasta) o no (se prepara, no se gasta, no cuenta en el coste). Ver *Coste
+  del material* más abajo.
+
+El botón **Etiquetas** de la cabecera del catálogo abre el gestor: crear
+nuevas, editar cualquiera —también las de fábrica— y borrarlas. Cada etiqueta
+muestra cuántos materiales la usan. Al borrar una, el material que la tenía
+se reasigna a otra en vez de quedarse huérfano; se avisa antes.
+
+**Cada ítem tiene un tipo físico fijo**, el de su etiqueta habitual — no se
+cambia por colocación. Si un mismo material (un A1, por ejemplo) necesita ir
+con sacacorchos en una cirugía y con aguja en otra, la forma de hacerlo es
+tener dos ítems en el catálogo, uno para cada tipo, no cambiar el tipo de uno
+sobre la marcha.
+
+**Excepciones por ítem.** En el editor de material (botón **+**), el bloque
+*Aspecto* deja sobreescribir borde, color o fondo para un ítem concreto
+dejando el resto heredado de la etiqueta. Así, con pegatinas de estímulo
+puedes tener `L.Mediano` con borde rojo y `R.Mediano` con borde negro,
+aunque las dos cuenten como «Pegatinas (par)».
+
+#### Fotos de referencia del material
+
+Algunos ítems —de momento, varias de las sondas— llevan un icono **📷** junto
+al nombre del chip. Lo pulsas y abre una foto de referencia en un visor
+propio, sin salir de la herramienta ni depender de conexión: útil para
+identificar a simple vista cuál es cuál antes de una cirugía. Funciona igual
+en el catálogo, en el selector que se abre desde una entrada, y ya colocado
+en una caja. No hay editor desde la interfaz todavía: se añade a mano, con
+la clave opcional `"foto"` del ítem en `data/surgeries.js` apuntando a un
+archivo dentro de `img/` (ver *Añadir material al catálogo editando el
+archivo* más abajo).
+
+### 2. Cajas
+
+`cajas_material` describe las cajas reales del INOMED. Cada caja se dibuja
+con sus entradas y conectores. Para quitar material de una entrada: pulsa la
+✕ del chip, arrástralo de vuelta al panel del catálogo, o pulsa la entrada
+y elige "Dejar la entrada vacía". Para moverlo: arrástralo a otra entrada,
+aunque sea de otra caja.
+
+Las cajas 3 a 6 ("Caja etiqueta 3"… "Caja etiqueta 6") son de refuerzo, para
+cirugías más amplias que necesiten más canales de registro muscular de los
+habituales — se usan poco, así que cada una **se pliega aparte y arranca
+cerrada**: solo se despliega la que vayas a usar en ese caso.
+
+### 3. Técnicas
+
+Lista las técnicas de monitorización y de mapeo. Se marcan pulsándolas y
+salen en el resumen. Son informativas: no calculan material por sí solas,
+pero dejan constancia de qué se va a hacer. Va debajo de Cajas desde el
+10-09-2026 (pedido del usuario) — antes iba justo debajo de Plantillas de
+montajes, la primera tarjeta del banco de trabajo.
+
+> Hasta el 05-09-2026 esta tarjeta tenía además un desplegable **Perfil** que
+> resaltaba las técnicas habituales por tipo de procedimiento. Se retiró a
+> petición del usuario, que ya no lo necesitaba. El catálogo *Perfiles* de
+> Catálogos sigue existiendo (ver más abajo) pero ya no lo usa nada de la
+> interfaz.
+
+### 4. Resumen de técnicas y material
+
+Se recalcula solo con cada cambio y es el objetivo de la herramienta:
+
+- **Material a preparar** — recuento por tipo (agujas subdérmicas, agujas
+  trenzadas, pegatinas, sacacorchos...)
+- **Coste del material** — unitario × cantidad por tipo y total de la
+  intervención, solo del material fungible (lo reutilizable —sondas, gafas,
+  auriculares— se prepara pero no se gasta, y no cuenta). Los precios se
+  ponen uno por uno en el botón **Etiquetas**; un tipo sin precio se lista
+  aparte en vez de contar como cero, para que el total no parezca completo
+  sin serlo. Alguna etiqueta —la manta de electrodos GRID, por ejemplo— viene
+  marcada **"Se cobra por manta"**: cuenta 1 unidad de coste sin importar
+  cuántas de sus entradas se coloquen, porque el conjunto entero se abre
+  igual se use una tira o las ocho.
+- **Cajas necesarias** — cuáles, con entradas usadas / totales y el detalle
+  de qué va en cada entrada
+- **Revisión del montaje** — avisos orientativos, en una lista aparte: caja de
+  registro con entradas ocupadas y el GND vacío, técnica marcada sin el
+  material que necesita (p. ej. SEP de mediano sin registro en Erb ni
+  cervical) y material colocado que ninguna técnica marcada usa. No bloquean
+  nada ni se guardan en el caso. Las reglas están en `material_tecnicas`
+  (`data/surgeries.js`).
+- **Avisos** — notas del montaje y cosas pendientes de confirmar
+
+El botón **Imprimir resumen** saca solo esta sección en papel — sale entera
+aunque la tengas plegada en pantalla en ese momento.
+
+## Catálogos: técnicas, servicios, intervenciones, perfiles y usuarios
+
+El botón **Catálogos**, dentro del menú **⋮** de la barra superior
+(09-09-2026: antes iba suelto en la barra, junto al selector de perfil),
+abre una ventana con cinco pestañas. En todas funciona igual: **▲▼** para
+reordenar, el nombre para editarlo, y **☑** para activar o desactivar.
+Arriba del todo, dentro de ese mismo diálogo, están **Importar copia,
+Exportar copia, Imprimir y Restablecer** (ver *Dónde se guarda todo* más
+abajo).
+
+- **Técnicas** — las de partida (monitorización y mapeo) y las que añadas.
+  Lo que ves y cambias es la *etiqueta*; por dentro cada técnica tiene un
+  identificador fijo que no cambia nunca. Por eso **renombrar una técnica
+  actualiza también los casos que ya la usaban**, en vez de dejarlos
+  colgando.
+- **Servicios** — Neurocirugía, COT, ORL, Vascular, Endocrino, Maxilofacial y
+  Urología, más los que quieras.
+- **Intervenciones** — la descripción de la cirugía concreta, con su
+  **código del hospital**. El código puede quedarse vacío: cuando lo
+  rellenes se aplicará solo a todos los casos anteriores de ese tipo, sin
+  tocarlos uno a uno. Es independiente del campo *Intervención* del caso
+  (texto libre, ver más abajo).
+- **Perfiles** — las combinaciones de técnicas que antes alimentaban el
+  desplegable *Perfil* de la tarjeta Técnicas (retirado el 05-09-2026, ver
+  más arriba). Se pueden seguir creando, editando y borrando, pero de
+  momento no los usa ninguna otra parte de la interfaz.
+- **Usuarios** — quién puede firmar montajes (ver la tarjeta *Plantillas de
+  montajes* arriba). Vacío de fábrica a propósito: los nombres de personas reales no
+  se escriben en el repositorio público del código, se crean desde la app y
+  viven en el repositorio privado de datos.
+
+> El catálogo de **tipos de cirugía** (antes una pestaña más, "Escenarios",
+> y la primera ventana de la página) se retiró: duplicaba casi literalmente
+> al *Diagnóstico* de la ficha del caso, que además es más completo. Sigue
+> existiendo en `data/surgeries.js` (`escenarios_tipo`), inerte, y los
+> montajes/casos antiguos conservan el dato que ya tuvieran — no se tocó
+> ningún archivo real al retirarlo, solo el código y la interfaz.
+
+**Desactivar no borra.** Un elemento desactivado deja de ofrecerse para
+casos nuevos, pero sigue existiendo: lo que ya lo tenía lo conserva, y se
+sigue viendo (tachado) para poder quitarlo si hace falta. Por eso técnicas,
+servicios e intervenciones no tienen botón de borrar: borrarlos dejaría
+casos antiguos apuntando a algo inexistente. Perfiles sí se puede borrar.
+
+Todo esto se guarda y se sincroniza igual que tus montajes y tu material.
+
+## Añadir material propio desde la interfaz
+
+El botón **+** de la cabecera del catálogo abre un formulario para crear
+material nuevo sin tocar ningún archivo: nombre, categoría, **etiqueta**,
+excepciones de aspecto, nota y si ocupa entrada o no. La categoría tiene
+sugerencias de las existentes — conviene reutilizarlas. Si te falta un tipo
+físico, **Gestionar…** abre el gestor de etiquetas sin cerrar el formulario.
+
+El material propio lleva un lápiz (✎) para editarlo o borrarlo. Al borrarlo,
+avisa de en cuántas entradas está colocado y lo quita también de ahí. Un ítem
+propio con el mismo `id` que uno de fábrica lo **sustituye** en su sitio, así
+que también puedes retocar el material que viene de serie.
+
+Ejemplo: añades `L.Frontalis` en la categoría *Músculos craneales* con la
+etiqueta `Electrodo Hook Wire`, y lo colocas donde quieras; el resumen sumará
+ese hook wire al total. Otro: `R.Delt` con la etiqueta *Aguja trenzada (par)*
+y borde punteado para distinguirlo del resto del grupo.
+
+**Músculos craneales, con las dos técnicas de registro a elegir (07-09-2026):**
+Maseterino, OOc, Nasalis, Mentoniano, Paladar, Cricotiroideo, STCM, Trapecio
+y Lengua aparecen dos veces en el catálogo de fábrica —una con *Electrodo
+Hook Wire* y otra con *Aguja trenzada (par)*—, para colocar la que uses de
+verdad sin tener que crear nada a mano. El Maseterino trae además una tercera
+variante con *Aguja monopolar*, con 2 canales por lado (activa y referencia
+como electrodos sueltos, a diferencia del hook-wire, que ya cuenta doble
+él solo).
+
+## Registrar casos
+
+La tarjeta **Gestión de Casos** de la pantalla de inicio abre tus casos —es
+el único sitio desde donde se abre, no hay otro acceso repetido en la
+herramienta—.
+
+**Al preparar**, pulsa **Crear caso** (06-09-2026, antes "Caso nuevo desde
+cero"). El caso se guarda al instante, vacío, y se abre su **ficha**. Para
+construir su montaje, ve al apartado *Montaje/Técnicas* y pulsa **Editar
+material y montaje**: eso te lleva al **Organizador de Montajes** con las
+cajas de ese caso, donde lo montas a mano —marcando técnicas y colocando
+material como siempre— o cargas una plantilla encima con **Cargar montaje…**
+(mantiene la plantilla original intacta, es una copia). El montaje de un caso
+se toca siempre desde ahí, no hay otro camino. El resto de la ficha
+—diagnóstico, anestesia, resultado…— se rellena cuando quieras; desde el
+Organizador se vuelve con **Volver al caso** en el rótulo permanente.
+
+Un caso marcado como **caso destacado** (punto 8, Docencia/Meta) lleva una
+★ ámbar junto a su identificador en el propio listado, y uno marcado
+**hacer seguimiento** —para acordarte de revisar cómo evoluciona el
+paciente— lleva un 👁; si además tiene puesta la **dificultad** aparece
+justo al lado como "N/5" — las tres cosas para verlas de un vistazo sin
+abrir cada caso ni mirar la hoja de cálculo.
+
+Encima del listado, los filtros **Estado / Desde / Hasta / Ordenar por**
+—fecha (recientes o antiguos primero) o dificultad (mayor o menor
+primero)— y, debajo, **Destacados / Seguimiento** (dos casillas, marca la
+que te interese para ver solo esos casos). Los mismos filtros deciden qué
+casos entran al exportar (ver *Exportar casos* más abajo): filtra primero,
+luego exporta lo que se ve.
+
+**Al cerrar**, abre el caso desde la lista. La ficha son **8 apartados
+plegables, cronológicos, todos cerrados por defecto**: despliega el que te
+interese según el punto del caso en el que estés, no hay que rellenar de
+arriba abajo. Debajo del título ("Gestión de casos") sale el identificador
+del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
+
+1. **Identificación / Trazabilidad** — identificador (fijo), estado (con
+   **Cancelado** como opción, que muestra un motivo de cancelación en
+   cuanto se marca — ver más abajo), fecha de la cirugía, nombre del caso
+   (opcional, para reconocerlo tú de un vistazo — nunca el nombre del
+   paciente), centro, hora de inicio/fin.
+2. **Paciente** — edad, sexo, servicio, resumen de historia clínica (antes
+   "Antecedentes relevantes" — mismo campo, también para exploración física
+   o cualquier otro dato del paciente que quieras dejar anotado), e
+   **pruebas de imagen**: galería de fotos o capturas de informes de
+   imagen (RM, TC…) que te resulten interesantes para el caso, con el mismo
+   mecanismo que "Imágenes del montaje" del apartado 5 (se comprimen solas
+   al añadirlas, se ven a tamaño grande al pulsarlas). **Encuadra solo la
+   imagen o el hallazgo, nunca la cabecera del informe** — suele traer el
+   nombre, NHC o fecha de nacimiento del paciente, y ningún dato
+   identificativo puede entrar en este sistema (ver la regla 1 de
+   `CLAUDE.md`).
+3. **Cirugía** — diagnóstico, anatomía patológica (el resultado real, o el
+   nivel intervenido si es columna), intervención (texto libre — no un
+   catálogo cerrado; escríbela tal cual), posición (con las variantes de
+   volteo separadas: supino→prono, prono→supino, y los dos dobles) y su
+   detalle, si se usó **navegación** (neuronavegador; Sí / No / sin especificar -los casos anteriores al 23-09-2026 se quedaron «sin registrar»-), otros datos
+   quirúrgicos.
+4. **Anestesia** — tipo (TIVA, R-TIVA, DXM, ALO, Gas), detalle, TOF
+   monitorizado, incidencias anestésicas.
+5. **Montaje / Técnicas** — repartido en tres sub-apartados desde el
+   10-09-2026 (pedido del usuario; antes era todo un único bloque), cada uno
+   su propio `<details>` abierto por defecto dentro del apartado:
+
+   - **Cajas y entradas**: el resumen de cajas/entradas ocupadas, la
+     plantilla de origen (si el caso salió de una, resuelta en vivo — si la
+     renombras después, aquí se ve el nombre nuevo), el **detalle canal a
+     canal** (la misma vista de "Cajas necesarias" que hay en Resumen, de
+     solo lectura, para saber exactamente qué hay puesto en cada entrada sin
+     salir a corregir el montaje), el botón **Editar montaje** (antes
+     "Editar material y montaje"; te lleva al Organizador de Montajes con
+     las cajas de este caso concreto para cambiar dónde va cada cosa — desde
+     ahí, y solo desde ahí, se puede además *cargar un montaje* sobre el
+     caso o *guardar el montaje del caso como plantilla nueva*, en la barra
+     fija de corrección, ver más abajo) y una caja de **Notas del montaje**.
+   - **Material**: sin pliegue propio dentro de "Material" (10-09-2026: se
+     ve entero en cuanto abres el sub-apartado, ya no hace falta desplegar
+     dos veces). **"Material (montaje base)"** (siempre de solo lectura:
+     sale del montaje real del caso, que se corrige desde el Organizador, no
+     aquí — la sección "Material realmente usado" está suspendida desde el
+     06-09-2026: si añades algo que no estaba previsto, colócalo en su caja
+     y anótalo en **Notas del material**, justo debajo) con **"Coste del
+     material"** dentro de ese mismo desplegable (07-09-2026) — el mismo
+     desglose que en Resumen: unitario × cantidad por tipo, total, qué
+     material reutilizable queda fuera y qué tipos no tienen precio todavía;
+     se recalcula en vivo con los precios de hoy, no con los que hubiera
+     cuando se guardó el caso, y sale igual en el informe en PDF.
+   - **Técnicas**: **técnicas realizadas** (ya vienen marcadas las que
+     planificaste, solo ajustas — los chips salen en tres bloques separados
+     por un hueco: monitorización, reflejos y mapeo), **"Cómo se realizó
+     cada técnica"** (rediseñada por completo el 10-09-2026: cada técnica
+     trae ahora sus **propios campos** — no los mismos 8 genéricos para
+     todas como antes —, agrupados en *Estimulación* y *Registro* según
+     corresponda, con el tipo de control que le toca a cada uno: número con
+     su unidad, texto, una opción de una lista cerrada o con hueco para
+     escribir otra cosa, varias opciones a la vez con chips -también con
+     hueco para añadir una propia-, o una casilla sí/no. Algunos campos solo
+     aparecen si otro campo de la misma técnica tiene cierto valor -p. ej.
+     el ISI del tren de pulsos solo si hay más de un pulso-. Un dato ya
+     escrito con la forma vieja se traduce solo al abrir la ficha; lo que no
+     tiene un sitio nuevo claro se conserva como nota en vez de perderse.
+     Queda plegado y vacío hasta que abras una técnica y escribas algo), y
+     **Notas de las Técnicas** (antes "Notas de Montaje/Técnicas").
+
+   Fuera de los tres sub-apartados, al final: **"Imágenes del montaje,
+   material y técnicas del caso"** (antes "Imágenes del montaje", renombrada
+   el 10-09-2026 porque su nombre nuevo ya dice que cubre las tres cosas a
+   la vez — capturas o fotos de cómo quedó en el software del equipo, p. ej.
+   la pantalla del Inomed, al doble de tamaño desde el 07-09-2026 al
+   exportarlas en el informe en PDF — para consultar si te toca un caso
+   parecido —se comprimen solas al añadirlas, se pulsan para verlas en
+   grande).
+6. **Desarrollo intraoperatorio** — resumen de la monitorización (de
+   corrido qué salió al empezar, qué pasó por el medio y qué salió al
+   cerrar); si se marcó la técnica "Mapeo de raíces y tornillos", un
+   selector de niveles C1–S2 (marca los que mapeaste y aparece una fila
+   "I [caja] — nivel — D [caja]" por cada uno, con el umbral izquierdo y
+   derecho en sus propios extremos) más una caja de notas libres de umbral
+   EMG de tornillos pediculares para lo que
+   no encaje en una raíz concreta; si hubo cambios respecto al plan y, si
+   los hubo, su detalle; si hubo alerta y, si la hubo, tipo de alerta,
+   medida correctora y recuperación de la señal; resultado esperable;
+   técnicas con alteración (un chip-fila con solo las técnicas ya marcadas
+   como realizadas —se actualiza solo si las tocas en el punto 5—);
+   incidencias técnicas; equipo.
+7. **Resultado / Correlación clínica** — evolución postquirúrgica,
+   concordancia (VP, FP, VN, FN o **PR — positivo reversible**: hubo un
+   cambio significativo que se recuperó tras actuar y no quedó déficit nuevo).
+   La lista de casos se puede filtrar por concordancia.
+8. **Docencia / Meta** — mi papel (Adjunto 1 / Adjunto 2 / Residente),
+   supervisor, dificultad, aprendizaje clave, caso destacado, **hacer
+   seguimiento** (para acordarte de revisar la evolución del paciente),
+   notas.
+
+Se rellena lo que haga falta y pulsa **Guardar**. Para cerrar el caso,
+cambia el propio campo **Estado** (apartado 1, Identificación/Trazabilidad)
+a *Cerrado* y guarda — no hay un botón aparte que lo haga por ti. La barra
+de acciones fija de abajo del diálogo, siempre visible aunque hayas bajado
+en el scroll de los 8 apartados, tiene **Borrar caso** y **Crear informe**
+a la izquierda (abre un PDF imprimible de ese caso, ver más abajo), y
+**Volver a la lista** y **Guardar** a la derecha — *Volver a la lista* solo
+navega, nunca guarda ni cambia el estado.
+
+**Editar montaje de un caso ya guardado**: el botón vive en el sub-apartado
+"Cajas y entradas", dentro del apartado 5 (Montaje/Técnicas) — abre las
+cajas de ese caso concreto
+para cambiar dónde va cada cosa, un cambio de última hora o un error al
+preparar. Se guarda en el caso, no toca el montaje del que salió. Mientras
+tanto, el rótulo permanente de arriba pasa a dorado sólido y recuerda en qué
+caso estás, con tres botones a mano sin tener que volver a la ficha:
+**Cargar montaje…**, **Guardar este montaje como plantilla…** y **Volver al
+caso**. Esos dos primeros (cargar / guardar plantilla) **solo** están aquí,
+en la barra fija — ya no en la ficha —, porque es donde de verdad se ve y se
+edita el montaje.
+
+**Cargar un montaje sobre un caso ya creado**: solo se puede hacer desde
+ahí —la barra fija de "Corrigiendo el material del caso", botón **Cargar
+montaje…**—, nunca desde la ficha: así siempre sabes que lo que vas a
+sustituir se puede editar de verdad. Elige un montaje y siempre te pregunta
+antes de tocar nada —también con el caso vacío—, diciendo en números qué va
+a pasar. Puedes **Reemplazar todo** o **Añadir solo lo que falta** (no toca
+ninguna entrada que ya tuviera material). Es una copia: editar el montaje
+después no cambia nada de lo ya aplicado. Si el caso está cerrado o
+cancelado, pide una confirmación aparte antes de seguir.
+
+**Guardar el montaje de un caso como plantilla**: desde la misma barra fija
+de corrección (botón **Guardar este montaje como plantilla…**), crea siempre
+una plantilla nueva —nunca sobrescribe una existente— a partir de lo que hay
+ahora mismo en las cajas de ese caso. Disponible tenga el caso el estado que
+tenga; el caso en sí no se modifica.
+
+**Un caso preparado en el ordenador se cierra en el móvil**, o al revés: los
+casos viajan por la misma sincronización que el resto, cada uno en su propio
+archivo. No hay que exportar ni importar nada.
+
+### Estados de un caso
+
+El **Estado** (apartado 1) puede ser **Pendiente de planificar** (negro:
+apuntado, pero sin preparar todavía), **Preparado** (amarillo), **Cerrado**
+(verde) o **Cancelado** (rojo). El color sale en el borde y en la etiqueta
+de cada caso de la lista de Gestión de Casos, y como círculo (⚫🟡🟢🔴) en
+los selectores de caso del Checklist y del Registro. Un caso nuevo nace
+*Pendiente de planificar*.
+
+### Cancelar un caso
+
+Si marcas **Estado → Cancelado** (apartado 1, Identificación/Trazabilidad)
+aparece un campo **Motivo de cancelación** para dejar constancia de por qué
+—suspensión quirúrgica, cambio de planes, lo que sea—. Un caso cancelado
+puede haber llegado a usar material real o no, según en qué momento se
+suspendió la cirugía: si el paciente entró y se llegó a montar antes de
+suspenderla, el material y su coste se quedan tal cual (como cualquier otro
+caso); si se canceló antes de montar nada —una reacción alérgica antes de
+entrar a quirófano, por ejemplo—, el material se deja en blanco y el coste a
+0€, a mano, porque no hubo gasto real. En cualquiera de los dos casos, no
+llegó a **monitorizarse** de verdad, así que en las estadísticas del Google
+Sheet solo cuenta para lo que sí es real de él: fecha, nombre del caso y
+centro (Trazabilidad) y los datos de Paciente. No entra en las hojas de
+técnicas ni de material consumido (`Tecnicas_long`, `Material_long`) —haya o
+no material de por medio, es una decisión de diseño: un caso cancelado no
+cuenta como monitorización realizada—, y la hoja **Meta** muestra cuántos
+casos cancelados hay en total.
+
+### Casos de días pasados y correcciones
+
+- **Para registrar una cirugía que nunca pasó por el checklist**: pulsa
+  **Crear caso** igual que siempre y trabaja solo en la ficha —no hace falta
+  entrar al Organizador ni montar nada—. Rellena lo que sepas y pon el
+  **Estado** en *Cerrado* a mano (ya no hay un botón aparte que lo haga por
+  ti, ni un caso nace cerrado solo).
+- **La fecha se puede cambiar siempre**, también en un caso ya cerrado hace
+  meses. Es la fecha de la cirugía y es la que cuenta para las estadísticas.
+- La herramienta guarda por su cuenta *cuándo se creó el archivo* y *cuándo lo
+  has tocado después*, sin que puedas editarlos. Así un caso de hace un mes
+  registrado hoy no se confunde con uno de hoy.
+- Cualquier caso cerrado se sigue pudiendo abrir y corregir, sin límite de
+  tiempo.
+- **Borrar caso**, abajo a la izquierda dentro de la ficha, quita un caso de
+  en medio para siempre — un caso de prueba, uno duplicado, uno que no
+  debiste registrar. Pide confirmación porque no se puede deshacer desde la
+  propia herramienta. (El repositorio de datos sí guarda historial de git,
+  así que en el peor de los casos sigue siendo recuperable a mano, igual que
+  con el resto de tus datos — ver *Red de seguridad* en `CLAUDE.md`.) El
+  botón solo aparece en un caso que ya guardaste al menos una vez.
+
+### Qué NO se guarda
+
+Ningún dato que identifique al paciente. Ni nombre, ni apellidos, ni NHC, ni
+fecha de nacimiento. Solo el identificador del caso, edad, sexo y antecedentes
+relevantes.
+
+## Docencia
+
+Tarjeta **Docencia** de la pantalla de inicio (era **⋮ → Docente** hasta el
+06-09-2026). Tres pestañas, sin relación con la preparación de
+material — no tocan ningún montaje ni caso, y Miotomas/Cama de quirófano se
+guardan solo en ese navegador, no se sincronizan:
+
+- **Miotomas** — la columna vertebral entera (C1 a S5) en el centro, los
+  músculos posibles a la izquierda y los monitorizados a la derecha. Marcas
+  los niveles que abarca la cirugía y aparecen los músculos que dependen de
+  esas raíces; los llevas de un lado a otro pulsándolos. Es un ejercicio, no
+  una calculadora: la herramienta no elige por ti, solo avisa de qué niveles
+  se quedan sin ningún músculo que los cubra. Los rangos de `data/surgeries.js`
+  vienen en parte citados (Toleikis/Deletis, Leppänen, Schirmer, London — se
+  marcan con `[TD/L]`, `[Sch]`, `[Lon]` en el propio tooltip) y en parte son
+  cobertura de enseñanza habitual sin cita concreta detrás; la pantalla
+  explica cuál es cuál.
+
+## Técnicas IONM: chuleta de parámetros
+
+La tarjeta **Técnicas IONM** trae sitios de estimulación/registro, filtros y
+barridos de cada técnica, citando siempre la fuente. Desde el 07-09-2026 hay
+dos formas de verlo, con un interruptor **Tarjetas / Tabla** arriba del
+buscador:
+
+- **Tarjetas** (la de siempre): agrupadas por familia (SEP, MEP, Reflejos…),
+  una por una, plegadas hasta que buscas algo. Trae también la teoría —
+  descripción, notas clínicas, umbrales de referencia…—.
+- **Tabla**: una tabla por familia, cada una en su propio desplegable
+  **plegado por defecto**, con solo 3 columnas de datos —Estimulación,
+  Registro, y **Filtros y barrido** en una sola columna— para ver de un
+  vistazo los parámetros de verdad, sin la teoría (esa se queda en las
+  Tarjetas). El filtro **notch** no sale nunca: no se usa. Las fuentes no
+  ocupan sitio en la celda —salen como un numerito enlazado (¹, ²…) que
+  lleva a una lista **Fuentes** al final de toda la vista, una sola vez por
+  cita aunque la usen varias técnicas—. Letra más pequeña a propósito, para
+  que quepa bien con el móvil en horizontal. El buscador de arriba filtra
+  igual en las dos vistas, y en Tabla abre solo las familias con resultado.
+
+## Mis apuntes
+
+Tarjeta nueva del 07-09-2026, **privada**: un único documento continuo para
+tus propios apuntes de parámetros, filtros o lo que sea —no lo que ya viene
+en Técnicas IONM ni en los libros—, como un Word que vas actualizando, no
+una lista de notas sueltas. Hecho de **cajas de texto con título**: pulsa
+**"+ Añadir caja de texto"** cada vez que empieces un tema nuevo (p. ej.
+"MEP", "Blink-Reflex"…) y ponle el título que quieras; escribes y se
+guarda solo, sin botón "Guardar" de por medio.
+
+**Carpetas** (22-09-2026, opcionales): pulsa **"+ Nueva carpeta"** para
+crear una y organizar tus cajas dentro —el selector que aparece en cada
+caja ("Sin carpeta" / el nombre de cada carpeta) la mueve de una a otra en
+el momento—. Cada carpeta se puede renombrar (✎) o borrar (✕) desde su
+propia cabecera; borrarla nunca borra las cajas de dentro, vuelven a "Sin
+carpeta". Si no creas ninguna, la pantalla se ve exactamente igual que
+antes —sin carpetas, no aparece ningún selector de más—.
+
+Desde el 24-09-2026: cada carpeta tiene **su propio color** (el cuadradito de
+su cabecera pasa al siguiente color al pulsarlo); las carpetas y las cajas se
+pueden **reordenar con las flechas ▲ ▼** (una caja solo se mueve dentro de su
+carpeta; para cambiarla de carpeta, el selector); cada caja lleva un botón
+**B** (y Ctrl+B) para escribir en **negrita**, y es bastante más alta que
+antes —además se puede estirar desde la esquina inferior derecha—. Al pegar
+texto se pega siempre sin formato.
+
+**Exportar como Word** (24-09-2026): el botón **Exportar como Word** de la
+pantalla genera un archivo **.docx** que se abre y se edita en Word (o LibreOffice
+y Google Docs): título, cada carpeta como Título 1 en su color, cada caja como
+Título 2 con su texto —con la negrita y la cursiva— y sus fotos debajo, y al
+final las fotos sueltas. Se descarga al momento, sin subir nada a ningún sitio.
+Las fotos que todavía no se hayan bajado a este dispositivo no salen. **Exportar
+apuntes** (el de siempre) sigue generando el `.json` de copia de seguridad.
+
+**Fotos dentro de cada caja** (24-09-2026): cada caja tiene sus botones
+**＋ Añadir foto** y **📷** bajo el texto; las miniaturas se pulsan para verlas
+grandes y se quitan con la ×. Cada foto se guarda como **archivo aparte**
+(`apuntes/fotos/` del repositorio privado) y se comprime al añadirla, así que no
+hay límite práctico de cuántas puedes tener; en cada dispositivo las fotos se
+descargan solas la primera vez. La lista de fotos suelta del final de la pantalla
+sigue existiendo y funciona igual.
+
+Se guarda igual que casos y montajes —repositorio privado
+de datos, subida automática a los pocos segundos de dejar de
+escribir—, en un único archivo `apuntes/documento.json`, así que lo que
+escribes en el móvil aparece también en el ordenador. **Exportar apuntes**
+descarga el documento entero en `.json`, para tener copia aparte cuando
+quieras.
+
+Las fotos que adjuntes se comprimen solas antes de guardarse (igual que las
+de "Imágenes del montaje" en un caso), así que una foto de cámara no infla
+el documento a varios megas — importante porque GitHub deja de dejarte
+leer un archivo de vuelta si pasa de 1 MB. Pulsa una foto para verla a
+tamaño completo; la **×** para quitarla pide confirmación antes de
+borrarla.
+
+**Dónde se guardan las fotos** (24-09-2026): las fotos de Imágenes del
+montaje, Pruebas de imagen, Planificación del caso y Mis apuntes viven en el
+móvil dentro de **IndexedDB**, no en el almacenamiento de siempre (que se
+llenaba con 5-10 MB y hacía fallar el guardado de casos y hasta del
+catálogo). A GitHub siguen subiendo incrustadas en el caso, sin cambios; lo
+que ya tenías guardado se pasa solo la primera vez que abres la versión
+nueva. Junto a "Añadir imagen" hay un botón **📷** que abre la cámara
+directamente, y quitar una foto siempre pide confirmación.
+
+## Salir de la herramienta sin perder nada
+
+Pensado para el móvil, donde MIO-Check se usa instalado como app (sin barra
+de navegador): el botón/gesto **atrás** del teléfono, dentro de cualquiera
+de las 7 pantallas principales, te devuelve a Inicio —igual que pulsar el
+logo—, no te saca de la app. Solo si pulsas atrás estando ya en Inicio, o si
+pulsas el botón **Cerrar MIO-Check** (debajo de la tarjeta "Mis apuntes"),
+se te pregunta si de verdad quieres salir —avisando si tienes cambios sin
+sincronizar todavía—. Así un gesto de atrás sin querer no te saca de la
+herramienta ni te hace perder lo que no se haya subido.
+
+**Excepción**: si el atrás te pilla dentro de **Editar montaje** (Organizador
+de Montajes, abierto desde un caso en Gestión de Casos), no te lleva a
+Inicio, sino de vuelta a la ficha de ese caso —lo mismo que el botón
+**Volver al caso** de la barra fija—. Solo si vuelves a pulsar atrás desde
+ahí, ya sin estar editando el montaje, sales hacia Inicio con normalidad.
+
+## Registro intraoperatorio
+
+Tarjeta de la pantalla de inicio (24-09-2026), justo después del Checklist
+pre-quirúrgico: la **hoja de registro intraoperatorio** de papel de la
+usuaria (dos páginas), en versión digital. La hoja sigue en desarrollo, así
+que esta es una primera versión pensada para irla ajustando.
+
+Mismo patrón que el Checklist: el desplegable de arriba elige **Modelo 0 —
+sin caso** (hoja suelta en este navegador, sin sincronizar) o un **caso**
+(la hoja vive dentro del caso, `registro_intraop`, y se sincroniza con él).
+Las secciones son desplegables (recuerdan cuáles dejaste abiertas):
+
+- **Hoja 1**: A identificación y estado prequirúrgico · B modalidades y
+  mapeo · C anestesia · D cronograma de hitos (con botón **Ahora**) · E
+  basales y comparativa (basal / post-posición / final) · E2 mapeo (filas
+  que se van añadiendo) · esquema (fotos del grid/craneotomía).
+- **Hoja 2**: F registro de eventos (**+ Evento** añade una fila con la hora
+  actual) · G alarmas (5 filas, con checklist de respuesta NRF/An/Cir) · H
+  zona modular (rejilla libre 10 columnas) · I cierre.
+
+**Lo que pasa solo desde el caso** (si hay uno vinculado): fecha,
+diagnóstico, procedimiento, nivel/localización, hora de inicio, el tipo de
+anestesia (TIVA/halogenado/dexmedetomidina) y las casillas de B con
+equivalente exacto en las técnicas del caso (PEV, Onda D, EMG libre, Blink,
+BCR, LAR, TCR, trigémino-vocal, reflejo H, inversión de fase, mapeo
+cortical/subcortical, suelo IV v., lenguaje, EEG, ECoG, tornillos/raíces).
+El detalle que la técnica no dice (nervio, lado) se marca a mano. Mientras
+no toques un campo muestra el valor del caso; en cuanto lo tocas, manda el
+tuyo.
+
+**Imprimir hoja** (y **Hoja de registro** en la ficha de un caso) es el uso
+principal: genera **2 páginas A4** para llevar en papel a quirófano,
+prerrellenadas con lo que ya está en Gestión de Casos y con filas en blanco
+para escribir a mano. Hoja 1: identificación, técnicas/modalidades (casillas
+ya marcadas), anestesia, hitos, **basales y comparativa** (basal /
+post-posición / final), **mapeo** con la línea de la **sonda Raabe** (y dónde
+está montada en el caso) y un **esquema** pequeño. Hoja 2: **eventos y
+alarmas en una sola tabla** -con la leyenda de respuesta NRF / Anest. / Cir.
+y los códigos F/E/A/M/An/T de la hoja original-, cierre, y los parámetros de
+cada técnica y las notas del caso. Lo que hayas tecleado en la pantalla del
+Registro sale impreso en su fila. Sin caso vinculado sale la hoja en blanco.
+
+**Pasar al caso** hace el camino contrario, solo con un caso vinculado:
+hora de inicio y fin, alerta/tipo/medidas (desde las alarmas),
+recuperación de la señal (desde el resultado del cierre), incidencias
+técnicas y perla docente. Solo rellena los campos que el caso tiene
+**vacíos** y antes enseña exactamente cuáles.
+
+No lleva la "etiqueta del paciente" ni el "NHC" de la hoja en papel: regla
+1, ningún dato identificativo. Sin columna en el Sheet ni en el CSV.
+
+## Checklist pre-quirúrgico
+
+Tarjeta de la pantalla de inicio (19/20-09-2026), entre Gestión de Casos y
+Técnicas IONM. Repasa en **5 momentos** —planificación días antes, el día
+antes de entrar en quirófano, tras la inducción, tras el posicionamiento, y
+comunicación de equipo con el campo ya abierto— para no olvidar nada antes
+de empezar a monitorizar. Contenido clínico dado por la usuaria; fuentes:
+Møller cap.18, MacDonald 2013 (ASNM), Neurophysiology in Neurosurgery 2ed
+cap.19/41.
+
+El desplegable de arriba elige **dónde se guardan las marcas**:
+
+- **Modelo 0 — sin caso**: una checklist de trabajo suelta, en este
+  navegador, sin sincronizar —mismo criterio que el Simulador o Docencia—.
+  Sirve para repasar sin más, sin dejar ningún registro.
+- **Vinculada a un caso** (eligiéndolo en el propio desplegable): las
+  marcas se guardan dentro de ese caso (`checklist_prequirurgico`) y viajan
+  con él como el resto de la ficha —se sincronizan, y dos cirugías que
+  estés preparando la misma semana no se pisan entre sí—.
+
+Debajo del último grupo hay una caja de texto libre, **Planificación del
+caso** —pensada para pegar ahí el plan que hayas preparado
+(montaje, estructuras en riesgo, parámetros, alarmas...) y
+tenerlo a mano justo antes de entrar a quirófano—. Vive en el mismo sitio
+que las marcas (Modelo 0 o el caso vinculado), con letra monoespaciada
+para que las tablas en markdown se lean alineadas.
+
+Debajo de esa caja se puede adjuntar además una **imagen-resumen** —por
+ejemplo, la infografía de una página que te dé alguna skill—, con el mismo
+mecanismo que "Imágenes del montaje" (se comprime sola, se ve a tamaño
+grande al pulsarla), pero comprimida algo menos (para no perder legibilidad
+en texto pequeño) y pidiendo confirmación antes de borrarla.
+
+**Guardar** da una confirmación visible de que no se ha perdido nada,
+aunque todo ya se autoguarda solo en cuanto lo tocas —igual que "Guardar
+montaje" en el Organizador—. **Vaciar** desmarca todo lo que tengas abierto
+en ese momento (Modelo 0 o el caso elegido) y borra también el texto y la
+imagen, pidiendo confirmación antes. Nada de esto tiene columna propia en el
+Google Sheet ni en el CSV —es una ayuda de preparación, no un dato clínico
+de la monitorización en sí—.
+
+## Simulador y Bibliografía
+
+Dos tarjetas de la pantalla de inicio (06-09-2026). **Bibliografía** sigue
+"en construcción" (serán enlaces a artículos open-access de PubMed con teoría
+relevante).
+
+El **Simulador** (rehecho el 26-09-2026) imita de forma **esquemática** una
+pantalla de monitorización real, sin nombrar ninguna marca: barra lateral a
+la izquierda (Inicio, **Ventanas ▾**, TODOS, ▶ ■ ❚❚, pantalla completa,
+vaciar), las ventanas en mosaico, un **muelle abajo** con las minimizadas y
+una barra de estado con la hora. En el **móvil solo se usa en horizontal**:
+en vertical sale un aviso para girarlo, y en horizontal se esconde la
+cabecera de la app y la barra lateral se queda solo con iconos. **Pantalla
+completa** además intenta fijar el giro en horizontal (Chrome de Android sí
+lo permite; el iPhone no).
+
+**Mover y acoplar ventanas.** Arrastra una ventana por su cabecera (con el
+ratón o con el dedo) y salen las guías:
+
+- sobre la ventana que tengas debajo, una **cruz de 5 destinos**: acoplarla
+  **arriba, abajo, a la izquierda o a la derecha** de esa ventana, o **⇄
+  intercambiar** las dos;
+- en los **4 bordes** de la pantalla: **fila entera arriba o abajo**, o
+  **columna entera a la izquierda o a la derecha** (p. ej. el EMG libre a lo
+  ancho arriba, o los corticobulbares en una columna a toda altura).
+
+Un recuadro dorado enseña dónde quedará antes de soltar. Las rayas entre
+ventanas se **arrastran para cambiar el tamaño**. Cada ventana tiene en su
+cabecera ⚙ ajustes, – minimizar (queda en el muelle; pulsarla la devuelve a
+su sitio), □ ampliar a toda la pantalla y ✕ quitar.
+
+Cada ventana tiene:
+
+- **Morfología** del trazo, con **latencias y amplitudes reales** (en ms y
+  µV, así que cada onda cae donde toca según el barrido y la sensibilidad):
+  - **SEP**: de mediano (o cubital, si el título lo dice), N9 en Erb (~9,5 ms),
+    N13 en el canal cervical (~13 ms) y N20/P25 en cortical (~19,5/25 ms); de
+    tibial (título con «tib» o «PTN»), N8 en poplíteo, N22 lumbar, N30
+    cervical y P37/N45 cortical.
+  - **AEP/PEATC**: ondas I-V a ~1,7 / 2,8 / 3,9 / 5,1 / 5,8 ms.
+  - **MEP**: ráfaga polifásica con la latencia de cada músculo (masetero ~7,
+    faciales ~12, deltoides ~11, APB/FDI ~20, cuádriceps ~23, TA ~29,
+    abductor del primer dedo ~40 ms…).
+  - **Reflejo**, según el título: blink (R1 ~10,5 ms; R2 ~32 ms, que a menudo
+    no sale con anestesia), TCR (~16 ms), TVcR (R1 ~29, R2 ~65 ms), LAR
+    (~22 ms), THR (~42 ms).
+  - **H-reflex**: onda M pequeña y onda H grande: sóleo M ~6 / H ~30 ms
+    (<35 ms), masetero M 2,6 / H 5,4 ms, cuádriceps y FCR.
+  - **TOF**: 4 respuestas a la frecuencia del tren (2 Hz = una cada 500 ms).
+  - **EMG libre** y **EEG/ECoG**: trazas continuas (RAW) con el cursor rojo de
+    barrido; el EMG con base de pocos µV y rachas de 50-250 µV.
+
+  Son valores **orientativos de adulto**, para docencia: los que tienen ficha
+  en Técnicas IONM salen de ahí (TCR, TVcR, LAR, THR, reflejo maseterino,
+  H-reflejo); el resto son los valores normativos clásicos. El barrido y la
+  sensibilidad por defecto se eligen para que se vea lo que importa (50 ms en
+  un SEP de mediano, 100 ms en uno de tibial…).
+- **Vista** *Promediado (AVG)*: la basal en gris y la actual en color; o
+  *Cascada (CAS)*: la barrida más reciente arriba en color y las anteriores
+  en gris debajo.
+- **Canales** escritos a mano; los de la izquierda (L…) en rojo y los de la
+  derecha (R…) en azul, con su punto de color al lado del nombre.
+- **Parámetros de estimulación** y **filtros, barrido y sensibilidad**
+  (µV/Div): la sensibilidad sale en el eje vertical, el barrido en las marcas
+  de tiempo de abajo y los parámetros en una línea pequeña arriba.
+
+**Teclas de cada ventana.** A la izquierda, **+** y **−** cambian la
+sensibilidad (pasos habituales: …1, 2, 3, 5, 10, 20… µV/Div, y mV a partir de
+1000): con más ganancia el trazo crece y se recorta si se sale, como en el
+aparato. Abajo, **◀** y **▶** acortan o alargan el barrido; con un barrido más
+largo las mismas latencias quedan más a la izquierda. En las ventanas en
+cascada, el botón **⇆ / ⇅** de la cabecera pone la cascada en **horizontal**
+(barridas una al lado de otra, la más reciente a la derecha) o en
+**vertical** (una debajo de otra, la más reciente arriba).
+
+**Reproducir por ventana o por grupo.** ▶ ■ ❚❚ mandan sobre lo que diga el
+rótulo de encima (TODOS al empezar). **Pulsa dentro de una ventana** para
+elegirla (marco dorado): entonces ▶ ❚❚ ■ solo la mueven a ella; pulsando el
+rótulo vuelves a TODOS. Debajo hay un botón por tipo presente (**SEP**, AEP,
+MEP…) que pone en marcha o pausa **todo su grupo** de un toque. Las ventanas
+en marcha llevan ▶ junto a su número.
+
+**Repaso (🎓): casos con alarmas.** Casos clínicos para practicar la
+interpretación: eliges uno, se monta su pantalla, pulsas ▶ y, a partir de
+cierta barrida, algo empieza a cambiar poco a poco (o no: también hay un caso
+sin alarma, para practicar no dar falsas alarmas). En los promediados el trazo
+gris es siempre la basal y el de color el actual; en las cascadas se ve la
+evolución barrida a barrida. **Mediciones** enseña la latencia y la amplitud
+del componente principal de cada canal (N9, N13, N20, P37, onda V, MEP, T4/T1)
+con el % de cambio respecto a la basal. **Valorar** para y pregunta qué está
+pasando; si no, al final se para solo. La respuesta dice si has acertado, en
+qué barrida lo has visto respecto a cuándo empezó, **por qué** (el criterio,
+con su fuente de Técnicas IONM: PESS caída >50% y/o latencia >10%; PEM sin
+umbral universal, MacDonald 2013 ASNM; PEATC pérdida de III/V o latencia de V
+>1 ms) y **qué hacer**. Casos: SEP tibial que cae de un lado; caída global
+por anestesia; SEP de mediano por el brazo mal colocado; electrodo con ruido;
+MEP que se pierden tras la maniobra; relajante (con el TOF); onda V retrasada
+en un neurinoma; y una fluctuación sin alarma. El menú marca cada caso con ✓
+(acertado), ✗ (fallado) u ○ (sin hacer). Los casos están en castellano.
+
+**Presets (★).** Guarda la pantalla tal como la tienes con un nombre
+(*Guardar como nuevo…*), vuelve a ella cuando quieras (pulsa su nombre),
+guarda encima los cambios (*Guardar cambios en «…»*), y renómbralos ✎,
+duplícalos ⧉ o bórralos 🗑. La barra de estado dice qué preset está cargado y
+si tiene cambios sin guardar. Los presets **se sincronizan** con el
+repositorio de datos (un archivo por preset en `simulador/`), así que los
+tienes en el móvil y en el ordenador; la pantalla que tengas abierta en cada
+momento, en cambio, sigue siendo de cada dispositivo.
+
+**Ventanas ▾** añade ventanas por tipo (+ SEP, + AEP, + MEP, + Reflejo, +
+EMG libre, + TOF, + EEG/ECoG, + Genérica), ya con la morfología, la vista y
+los parámetros habituales de **Técnicas IONM**, y carga dos **ejemplos**:
+*Columna lumbar* y *Fosa posterior (pares craneales)*, este a imagen de una
+pantalla real con AEP, SEP, MEP de miembros, blink, corticobulbares a la
+derecha y el resto minimizado. **▶** genera barridas nuevas cada segundo,
+**❚❚** pausa y **■** vuelve a la primera. Los trazos son de ejemplo (no hay
+señal real). Se guarda en **este dispositivo** (no se sincroniza), como
+Docencia. No toca montajes, casos ni catálogos.
+
+Pendiente: un bloque nuevo **Cirugías con IONM** (qué hace cada cirugía, sus
+pasos, técnicas, momentos críticos y criterios de alarma), aún sin construir.
+- **Cama de quirófano** — eliges la posición del paciente (supino, supino con
+  brazos extendidos, prono, sentado) y repartes las cajas por cabecera,
+  laterales y pies con el mismo gesto de pulsar y colocar del resto de la
+  herramienta. Lo que se practica es que el cable llegue.
+- **Material** (24-09-2026, ahora pantalla propia de Inicio, no pestaña de Docencia) — todo el catálogo de material, el de fábrica más el
+  tuyo, **en filas, una debajo de otra y agrupado por categoría**, con un
+  buscador y el icono 📷 para ver la foto cuando la hay. La descripción de cada
+  uno es la *nota* del catálogo, seguida del tipo físico y de lo que ya dice el
+  dato (reutilizable, comparte paquete, cuenta doble, no ocupa entrada); no se
+  inventa ninguna descripción clínica, así que si rellenas la nota de un ítem
+  en el catálogo mejora aquí sola.
+- **Teoría básica de IONM** — pestaña del 06-09-2026, de momento "en
+  construcción": cubrirá conceptos como far-field/near-field, campo
+  abierto/cerrado, reflejo H, onda F, potencial de acción... Sin fecha todavía.
+
+## Uso desde el móvil
+
+La interfaz es táctil. Lo cómodo en el móvil es **pulsar y colocar**:
+tocas el material, el catálogo se pliega solo para dejar ver las cajas, y
+tocas la entrada de destino. En cuanto lo colocas, se suelta la selección y
+el catálogo se despliega solo otra vez, listo para el siguiente ítem —un
+material colocado no puede estar a la vez en otra entrada. Arrastrar no
+funciona bien en pantallas táctiles, así que ese es el flujo recomendado.
+
+**Sin pellizco de zoom** (22-09-2026), a propósito: es una herramienta, no
+contenido para leer con zoom, y un pellizco accidental durante el uso real
+—con el móvil en la mano, en quirófano— podía dejar los diálogos
+descuadrados hasta recargar la página. Si necesitas letra más grande, usa
+el ajuste de accesibilidad del propio teléfono.
+
+**Al elegir material o cargar un montaje**, el diálogo ya no abre el
+teclado solo (22-09-2026): antes el buscador se enfocaba automáticamente
+al abrirse la ventana y tapaba el material con el teclado antes de poder
+verlo. Ahora el buscador sigue ahí, tócalo cuando quieras usarlo.
+
+La web está publicada con **GitHub Pages**:
+
+**https://paniaguadediego-bit.github.io/checklist-mio-ionm/**
+
+Cada `git push` a `main` la actualiza sola en un par de minutos. Merece la pena
+guardarla en la pantalla de inicio del móvil (en Chrome, *⋮ → Añadir a pantalla
+de inicio*): se abre como una app, a pantalla completa y sin barra del
+navegador.
+
+> La web y el repositorio del código son **públicos**. No contienen ningún dato
+> de paciente, ningún token, ningún nombre de usuario ni ninguna referencia al
+> centro. Tus montajes, etiquetas y material propio **no viajan ahí**: viven
+> en tu navegador y se sincronizan con un repositorio de datos **privado**
+> aparte (ver abajo).
+
+## Dónde se guarda todo, y cómo pasarlo de un dispositivo a otro
+
+Los cambios se guardan **automáticamente en ese navegador y ese
+dispositivo** (localStorage; las **fotos** —de casos, checklist, apuntes— van
+aparte, a IndexedDB, que no tiene el techo de espacio de localStorage). No
+tocan `data/surgeries.js`. Con la sincronización conectada, en el repositorio
+privado quedan `estado.json`, `casos/`, `montajes/` y `apuntes/` (el
+documento de apuntes más una carpeta `apuntes/fotos/` con **una foto por
+archivo**). Si conectas la
+sincronización (siguiente apartado), además viajan solos entre dispositivos;
+si no, el navegador del móvil y el del ordenador son almacenes distintos.
+
+Para pasar tu trabajo de uno a otro a mano:
+
+1. **Exportar copia** descarga un `.json` con tu material propio, tus
+   etiquetas y los catálogos editables (técnicas, servicios, intervenciones,
+   perfiles, usuarios). **No incluye tus montajes ni tus
+   casos** — desde que pasaron a un archivo por montaje/caso, este volcado
+   dejó de cubrirlos; para esos dos, la sincronización con GitHub es la
+   única copia de verdad. Pendiente de decidir si merece la pena ampliarlo.
+2. Pasa ese archivo al otro dispositivo (correo, nube, cable…).
+3. **Importar copia** allí. Avisa de cuántos elementos trae, y sustituye lo
+   que hubiera en ese navegador.
+
+Ese mismo archivo sirve de copia de seguridad de lo que cubre: si el
+navegador borra los datos del sitio, ese material y esas etiquetas se
+recuperan importándolo — los montajes y los casos, solo si estaban
+sincronizados con GitHub.
+
+### Sincronización automática con GitHub
+
+El botón **☁** de la barra superior conecta la herramienta con un repositorio
+privado de GitHub que hace de nube. Es gratis: los repos privados, los tokens
+y la API de GitHub no cuestan nada.
+
+Preparación, una sola vez y en un solo dispositivo:
+
+1. Crea un repositorio **privado y vacío** solo para los datos, por ejemplo
+   `mio-datos`. **No uses el del código**: es público, dejaría los
+   montajes a la vista, y así el token tampoco puede tocar el código.
+2. En GitHub: *Settings → Developer settings → Personal access tokens →
+   Fine-grained tokens → Generate new token*.
+3. En *Repository access*, **Only select repositories** → solo el de datos.
+4. En *Permissions → Repository permissions*, **Contents: Read and write**.
+   Nada más.
+5. Pega el token y `usuario/repositorio` en el diálogo del botón ☁.
+
+Repite el paso 5 con el mismo token en el móvil, y los dos quedan conectados.
+
+**A partir de ahí funciona solo:**
+
+- Al abrir la web **baja** lo último que haya en el repositorio.
+- Unos segundos después de cada cambio, lo **sube**.
+- **Sin conexión** sigue funcionando con normalidad y reintenta cuando vuelve.
+- Si has tocado algo en el móvil sin subirlo y abres el ordenador, **no se
+  pisa nada**: sube lo tuyo en vez de bajar.
+- Si dos dispositivos han cambiado cosas distintas, avisa de **Conflicto** y
+  decides tú con **Subir** o **Bajar** desde el diálogo. Nunca sobrescribe sin
+  preguntar.
+
+El estado se ve en el propio botón: *Sin conectar*, *Guardando…*,
+*Sinc. 12/08 19:30*, *Sin subir* o *Conflicto*.
+
+El token se guarda solo en ese navegador. **Desconectar** lo borra del
+dispositivo (no toca ni tus montajes ni lo guardado en GitHub), y siempre
+puedes revocarlo desde GitHub.
+
+**Exportar casos**, dentro de la pantalla **Gestión de Casos** (barra de
+acciones fija), abre un **informe en PDF** —imprimible desde el propio
+diálogo "Guardar como PDF" del navegador, sin depender de ninguna librería—
+con los casos que cumplan los filtros activos en ese momento (ver más abajo:
+Estado/Desde/Hasta/Destacados/Seguimiento). Si no tienes ningún filtro
+puesto, salen todos. **Crear informe**, dentro de la ficha de un caso
+concreto, genera el mismo tipo de informe pero solo de ese caso. Es una
+función del 05-09-2026, primera versión pendiente de irse afinando con el
+uso real.
+
+Junto a él, un botón aparte **Exportar CSV** descarga un CSV con esos mismos
+casos filtrados —mismas columnas que la hoja *Casos* del Google Sheet, sin
+las columnas por técnica—. Ninguno de los dos depende de la sincronización
+automática ni del disparador diario de Apps Script: son vías manuales para
+tener los datos a mano cuando quieras, sin esperar a nada. El orden de las
+filas del CSV y del PDF es siempre cronológico (por fecha de cirugía),
+aunque en pantalla tengas puesto otro orden — así coincide siempre con el
+Sheet.
+
+Los montajes de fábrica están desactivados a propósito desde el 03-09-2026
+(ver la nota de la tarjeta *Plantillas de montajes* más arriba). Si algún día hace falta
+volver a sembrar uno, no basta con rellenar `"escenarios"` en
+`data/surgeries.js` — ver el aviso en *Añadir un montaje de fábrica a mano
+en el JSON* más abajo antes de hacerlo.
+
+**Restablecer** borra lo guardado en el navegador y vuelve a los montajes
+y al catálogo del archivo.
+
+## Añadir material al catálogo editando el archivo
+
+Se puede hacer desde la interfaz con el botón **+** (ver arriba); esto es
+para material que quieras que venga de fábrica en el repositorio. Dentro de
+`catalogo_material`, en la categoría que corresponda (o crea una nueva),
+añade un objeto:
+
+```json
+{ "id": "l_gluteo", "nombre": "L.Glúteo", "etiqueta": "aguja_trenzada", "nota": "Glúteo izquierdo" }
+```
+
+- `id` — identificador único, sin espacios. Es lo que se guarda en los presets.
+- `nombre` — lo que se ve en el chip.
+- `etiqueta` — el `id` de una etiqueta del bloque `etiquetas`. Es **lo que se
+  cuenta en el resumen** y de dónde saca el chip su aspecto.
+- `color` *(opcional)* — sobreescribe el color del borde que pone la etiqueta.
+  `rojo`, `azul`, `verde`, `amarillo`, `negro`, `naranja`, `morado`,
+  `turquesa`, `gris` o un hex `#c04a2b`. Código del INOMED: C1/C5 verde,
+  C2/C6 amarillo, C3 y C3' rojo, C4 y C4' azul.
+- `borde` / `fondo` *(opcionales)* — igual, para la forma del borde y el tinte.
+- `nota` *(opcional)* — texto que sale al pasar el ratón.
+- `foto` *(opcional)* — ruta a una imagen de referencia, relativa a la raíz
+  del proyecto (por ejemplo `img/sondas/sonda_tripolar.png`). Añade el icono
+  **📷** al chip; ver *Fotos de referencia del material* más arriba. Guarda
+  el archivo dentro de `img/` antes de referenciarlo.
+
+## Añadir una etiqueta editando el archivo
+
+Se hace desde la interfaz con el botón **Etiquetas**; esto es para las que
+quieras de fábrica. Dentro de `etiquetas`:
+
+```json
+{ "id": "electrodo_copa", "nombre": "Electrodo de copa", "borde": "punteado", "color": "naranja", "fondo": "amarillo" }
+```
+
+- `borde` — `solido`, `punteado`, `discontinuo`, `doble`, `grueso` o `ninguno`.
+- `color` — color del borde, del juego de arriba o un hex.
+- `fondo` — tinte suave de fondo, o `ninguno`.
+
+## Añadir o ajustar una caja
+
+Dentro de `cajas_material`:
+
+```json
+"mi_caja": {
+  "nombre": "Nombre visible",
+  "descripcion": "Para qué se usa",
+  "canales": 8,
+  "numeracion_inicio": 1,
+  "conector": "par",
+  "especiales": [
+    { "clave": "gnd", "nombre": "GND", "conector": "individual", "color": "verde" }
+  ]
+}
+```
+
+Tipos de `conector`:
+
+- `"par"` — una entrada roja+negra por número (agujas trenzadas/pareadas).
+- `"individual"` — un círculo por número, una sola columna.
+- `"individual_2col"` — individual repartido en 2 columnas (REF-AEP: 1-8 y 9-16).
+- `"anodal_catodal"` — 2 columnas **independientes** con numeración compartida
+  (TES MEP): izquierda anodal/roja, derecha catodal/negra.
+
+`numeracion_inicio` sirve para que la caja 2 empiece en 9 en vez de en 1, como
+en el equipo real. `especiales` son entradas fuera de la numeración (Ref, GND,
+PEATC, DNS...), con `clave`, `nombre`, `conector` y opcionalmente `color` y
+`nota`.
+
+Los valores de `canales`/`conector` son aproximados a partir de fotos del
+equipo — ajústalos si no cuadran.
+
+## Añadir un montaje de fábrica a mano en el JSON
+
+Esto es el bloque `"escenarios"` de `data/surgeries.js` — un nombre heredado
+de la versión original de la herramienta, cuando un "escenario" era lo que
+ahora es un montaje (el catálogo de tipos de cirugía que llegó a llamarse
+así también más adelante ya no existe, ver *Catálogos* más arriba). Cada
+clave de ahí sería un **montaje** de fábrica: al arrancar, la app lo
+convertiría en un montaje normal con el id `fab_<clave>`, sin autor,
+editable por cualquiera.
+
+> **Está vacío a propósito** desde el 03-09-2026 (decisión del usuario: no
+> quería ningún montaje de fábrica) — y no basta con volver a rellenarlo
+> para que reaparezcan. `limpiarMontajesHeredados()` (`app.js`) se ejecuta
+> en cada arranque y borra cualquier montaje marcado `de_fabrica: true`,
+> justo después de que `sembrarMontajes()` lo hubiera creado — así que hoy
+> por hoy sembrar uno nuevo aquí no tiene ningún efecto visible, se crea y
+> se borra en el mismo arranque. Si algún día hace falta que vuelvan a
+> funcionar los montajes de fábrica, hay que tocar también esa función (o
+> quitar su llamada en el arranque), no solo este bloque.
+
+```json
+"clave_montaje": {
+  "nombre": "Nombre visible del montaje",
+  "modalidades": ["PESS", "PEM"],
+  "asignaciones": {
+    "registro_muscular_mmii": { "9": "l_ta", "10": "l_ah", "gnd": "tierra" },
+    "tes_mep": { "6:anodal": "conmutador", "8:catodal": "grid8" }
+  },
+  "etiquetas": { "registro_cortical/1": "aguja_subdermica" },
+  "notas": "Texto que aparece en los avisos del resumen",
+  "pendiente": "Algo sin confirmar; se muestra destacado"
+}
+```
+
+Formato de las claves de entrada: `"3"` para un canal normal,
+`"6:anodal"` / `"8:catodal"` en TES MEP, y la `clave` del especial
+(`"ref"`, `"gnd"`, `"peatc"`, `"dns"`, `"extra_par"`).
+
+`etiquetas` es opcional y solo hace falta cuando una colocación concreta lleva
+un tipo físico distinto del habitual del ítem. La clave es
+`"caja/entrada"` y el valor, el `id` de la etiqueta:
+`{ "registro_cortical/1": "aguja_subdermica" }`.
+
+## El dashboard: Google Sheet actualizado solo
+
+El repositorio de datos es la fuente de verdad; el Google Sheet es
+**desechable y se reconstruye entero cada vez**, nunca fila a fila. De ahí
+sale gratis que una técnica nueva cree su columna sola, que renombrar una
+técnica se propague a todo el histórico, y que no existan duplicados.
+
+El código vive en [`apps-script/Codigo.gs`](apps-script/Codigo.gs). Se instala
+una sola vez, en un Google Sheet tuyo:
+
+1. **Crea un Google Sheet nuevo y vacío.** El nombre da igual.
+2. **Extensiones → Apps Script.** Se abre un editor en una pestaña nueva.
+3. Borra el contenido de `Código.gs` que trae por defecto y pega ahí todo el
+   contenido de [`apps-script/Codigo.gs`](apps-script/Codigo.gs). Guarda
+   (el icono del disquete, o Ctrl/Cmd+S).
+4. **Un segundo token de GitHub**, distinto del que usa la app — ese token
+   solo puede leer, y solo el repositorio de datos:
+   - En GitHub: *Settings → Developer settings → Personal access tokens →
+     Fine-grained tokens → Generate new token*.
+   - *Repository access* → **Only select repositories** → el repositorio de
+     datos.
+   - *Permissions → Repository permissions* → **Contents: Read-only**. Nada
+     más.
+   - Genera el token y cópialo.
+5. En el editor de Apps Script: el icono de engranaje **Configuración del
+   proyecto** (barra lateral izquierda) → **Script Properties** → **Add
+   script property**, y añade dos:
+   - `GITHUB_TOKEN` — el token que acabas de crear.
+   - `REPO_DATOS` — `<tu-usuario>/<repo-de-datos>`.
+   
+   (Hay una tercera, `REPO_CODIGO`, para el repositorio público de la app;
+   no hace falta tocarla, ya trae el valor correcto por defecto.)
+6. Arriba del editor, en el desplegable de funciones, elige
+   **`crearDisparadorDiario`** y pulsa **▶ Ejecutar**. La primera vez Google
+   pedirá autorizar el script — es tu propio script corriendo con tu propia
+   cuenta, no una app externa pidiendo tus datos; pulsa *Avanzado* → *Ir a
+   [nombre del proyecto] (no seguro)* → *Permitir*. Ese aviso lo da Google
+   con cualquier script propio la primera vez, no es una señal de alarma.
+   Esto deja el disparador diario instalado; no hace falta repetirlo.
+7. Elige ahora **`reconstruirTodo`** en el mismo desplegable y pulsa
+   **▶ Ejecutar**, para la primera reconstrucción. Al terminar, vuelve a la
+   pestaña del Sheet: deberían haber aparecido las hojas `Casos`,
+   `Tecnicas_long`, `Material_long`, `Listas` y `Meta`.
+
+A partir de aquí funciona solo, una vez al día. Para forzarlo a mano sin
+entrar al editor: recarga el Sheet y usa el menú **MIO-Check → Reconstruir
+ahora** que aparece arriba.
+
+> **El token caduca — no es un aviso, es una certeza.** Los *fine-grained
+> personal access tokens* de GitHub llevan caducidad obligatoria (máximo 1
+> año, y si no elegiste una fecha larga a mano, GitHub suele poner 30 días
+> por defecto). Cuando caduca, el Sheet deja de actualizarse **en
+> silencio** -el propio diseño del script evita tocar el Sheet si no puede
+> leer de GitHub, así que no hay ningún aviso visible hasta que abres el
+> Sheet y notas que faltan casos recientes-. Si eso pasa, menú **MIO-Check
+> → Reconstruir ahora** te dará el motivo exacto (algo como *"GitHub
+> respondió 401 ... Bad credentials"* si es el token); la solución es
+> repetir el paso 4 de aquí arriba -token nuevo, misma caducidad larga- y
+> pegar el valor nuevo en la Script Property `GITHUB_TOKEN` del paso 5.
+> Pasó de verdad el 04-09-2026: el Sheet estuvo 12 días sin enterarse de 7
+> casos nuevos hasta que se detectó.
+
+**Actualizar el script si ya lo tenías instalado:** a diferencia de la app
+—que se actualiza sola con cada `git push`—, este código **no se actualiza
+solo**: lo pegaste a mano una vez, y se queda tal cual hasta que lo vuelvas a
+pegar. Si notas que falta una columna nueva (por ejemplo
+`TEC_<etiqueta> - alteración`, o cualquier campo añadido después de tu
+instalación), el Sheet no tiene ningún bug: tiene una copia vieja del
+script. Para ponerlo al día: *Extensiones → Apps Script*, selecciona todo el
+contenido de `Código.gs` (Ctrl/Cmd+A) y sustitúyelo entero por el contenido
+actual de [`apps-script/Codigo.gs`](apps-script/Codigo.gs) de este
+repositorio. Guarda, y pulsa **MIO-Check → Reconstruir ahora** en el Sheet
+para verlo reflejado al momento, sin esperar al disparador diario. Los
+`Script Properties` (`GITHUB_TOKEN`, `REPO_DATOS`) no se tocan al actualizar,
+solo el código.
+
+**Si sale «API rate limit exceeded» leyendo `data/surgeries.js`:** ese error
+no es cosa tuya — la lectura del repositorio público, sin autenticar, usa un
+cupo de 60 peticiones/hora que **comparten todos los scripts de Apps Script
+del mundo que salen por la misma IP de Google**, así que se agota con muy
+poco. Si ves esto, asegúrate de tener la versión del código de este
+repositorio: lee ese archivo por `raw.githubusercontent.com` en vez de por
+la API, que tiene un cupo aparte y mucho más alto. Si aun así te sale,
+espera unos minutos y pulsa *Reconstruir ahora* de nuevo.
+
+**Cuando añadas una técnica nueva** desde el catálogo de la app, no hace
+falta hacer nada aquí: en la siguiente reconstrucción (al día siguiente, o
+al momento si pulsas *Reconstruir ahora*) su columna `TEC_<etiqueta>`
+aparece sola, con su columna hermana `TEC_<etiqueta> - alteración` justo al
+lado (marca con `1` los casos donde esa técnica tuvo algún cambio o aviso, ver
+*Registrar casos* más arriba). Igual si la renombras: el histórico entero se
+actualiza solo, porque la columna se genera resolviendo el id contra el
+catálogo actual, no guardando el nombre de cuando se creó el caso.
+
+La hoja **Meta** muestra el número total de casos y de casos cancelados, y
+avisa, sin romper nada, de: correlativos `ID_Caso` duplicados, casos en
+estado *preparado* que llevan tiempo sin cerrarse, e ids de técnica usados en
+algún caso que ya no existen en el catálogo.
+
+## El dashboard: Looker Studio
+
+Looker Studio se conecta directamente al Google Sheet de la fase anterior.
+No hay nada que instalar ni ningún token nuevo — es la misma cuenta de
+Google, y Looker vuelve a leer el Sheet cada vez que abres el informe (o
+cuando pulsas el botón de actualizar).
+
+### 0. Conectar las tres hojas
+
+Cada tabla del Sheet (`Casos`, `Tecnicas_long`, `Material_long`) se conecta
+como una **fuente de datos separada**, aunque las tres vivan en el mismo
+documento — es así como funciona el conector de Hojas de cálculo de Looker
+Studio.
+
+1. Entra en [lookerstudio.google.com](https://lookerstudio.google.com) con
+   la misma cuenta de Google del Sheet.
+2. **Crear → Fuente de datos → Hojas de cálculo de Google.**
+3. Elige tu Sheet y, dentro, la pestaña **`Casos`**. **Conectar.**
+4. Comprueba el campo **`Fecha`**: en la lista de campos que aparece, su
+   tipo debe salir como **Fecha**. Si sale como *Texto*, haz clic en el
+   campo y cambia el tipo a *Fecha* a mano — a veces Looker no lo detecta
+   bien la primera vez, y todos los gráficos por mes dependen de que este
+   campo sea de tipo fecha de verdad.
+5. **Crear informe** (o, si ya tienes uno, añade esta fuente a él).
+6. Repite los pasos 2-4 dos veces más, una para la pestaña **`Tecnicas_long`**
+   y otra para **`Material_long`**. Al final tendrás tres fuentes de datos
+   en el mismo informe.
+
+### 1. Total de casos, casos por mes, casos por servicio
+
+Los tres usan la fuente **`Casos`**.
+
+- **Total de casos** — inserta un **Marcador** (Scorecard). Métrica:
+  **Recuento de registros**.
+- **Casos por mes** — **Gráfico de columnas**. Dimensión: **Fecha**; haz
+  clic en el campo dentro del gráfico y cambia su granularidad a
+  **Año y mes**. Métrica: **Recuento de registros**. Ordena por la propia
+  Fecha, ascendente.
+- **Casos por servicio** — **Gráfico de columnas**. Dimensión: **servicio**.
+  Métrica: **Recuento de registros**. Ordena por la métrica, descendente,
+  para ver primero el servicio con más casos.
+
+### 2. Técnicas más usadas y su evolución mensual
+
+Los dos usan la fuente **`Tecnicas_long`** — está en formato largo (una fila
+por técnica realmente marcada en cada caso), que es justo lo que necesita
+Looker para contar y agrupar sin que tengas que tocar nada.
+
+- **Técnicas más usadas** — **Gráfico de barras** (horizontal, se lee mejor
+  con muchas categorías). Dimensión: **Tecnica**. Métrica: **Recuento de
+  registros**. Ordena por la métrica, descendente.
+- **Evolución mensual** — **Gráfico de series temporales**. Dimensión de
+  tiempo: **Fecha** (granularidad Año y mes). Métrica: **Recuento de
+  registros**. Campo de desglose (*Breakdown dimension*): **Tecnica**.
+
+  Con 22 técnicas o más, una línea por cada una es ilegible de un vistazo.
+  Te recomiendo añadir, junto a este gráfico, un **Control de filtro**
+  (desplegable de selección múltiple) sobre el campo **Tecnica**, para poder
+  elegir tú a mano las 3 o 4 que quieras comparar cada vez, en vez de verlas
+  todas encima unas de otras.
+
+### 3. Tasa de alertas y concordancia VP/FP/VN/FN
+
+Los dos usan la fuente **`Casos`**.
+
+- **Tasa de alertas** — **Marcador**. Métrica: **alerta**, pero cambia su
+  **agregación por defecto de Suma a Media** (clic en el campo de la
+  métrica dentro del gráfico → *Tipo de agregación* → *Media*). Como
+  `alerta` ya es `1`/`0` por caso, la media de esa columna **es** la tasa de
+  alertas directamente — un 0,18 significa 18 % de los casos con alerta. En
+  el estilo del marcador, pon el formato de número en **Porcentaje**.
+- **Concordancia VP/FP/VN/FN/PR** — **Gráfico circular** (donut). Dimensión:
+  **concordancia**. Métrica: **Recuento de registros**. Añade un filtro al
+  propio gráfico (*Añadir un filtro* en el panel derecho) con la condición
+  **concordancia — No es nulo**, para que los casos sin ese dato relleno no
+  aparezcan como una porción más.
+
+### 4. Evolución de mi rol
+
+Fuente **`Casos`**. **Gráfico de columnas apiladas.** Dimensión: **Fecha**
+(granularidad Año y mes). Campo de desglose: **rol**. Métrica: **Recuento
+de registros**. Cada barra mensual se reparte entre *observo*,
+*supervisado* y *autonomo* según lo que marcaste en cada caso de ese mes —
+así se ve, mes a mes, cómo se va corriendo el peso hacia la autonomía.
+
+*(Opcional, solo si te importa que el orden dentro de cada barra sea
+siempre observo → supervisado → autónomo y no el alfabético que pone Looker
+por defecto: crea un **Campo calculado** en la fuente `Casos` llamado
+`Orden_rol` con la fórmula
+`CASE WHEN rol="observo" THEN 1 WHEN rol="supervisado" THEN 2 WHEN rol="autonomo" THEN 3 END`,
+y ordena el desglose del gráfico por ese campo. No afecta a los datos, solo
+al orden visual.)*
+
+### 5. Material consumido acumulado
+
+Fuente **`Material_long`**. **Gráfico de barras** (horizontal). Dimensión:
+**Tipo**. Métrica: **Cantidad_real**, con agregación **Suma**. Ordena por
+la métrica, descendente. Si quieres comparar lo previsto contra lo
+realmente gastado, añade una segunda métrica **Cantidad_prevista** (también
+en Suma): salen las dos barras una junto a la otra por tipo de material.
+
+### 6. Filtros por fecha y por servicio
+
+Estos dos van sueltos en la parte de arriba del informe, no dentro de un
+gráfico concreto, para que afecten a todos a la vez:
+
+1. **Insertar → Control → Control de intervalo de fechas.** No importa qué
+   fuente de datos elijas al crearlo (usa `Casos`, por ejemplo): como las
+   tres fuentes tienen un campo llamado exactamente **Fecha**, el filtro
+   alcanza a los gráficos de las tres.
+2. **Insertar → Control → Control de filtro**, tipo *Lista desplegable*.
+   Campo: **servicio**. Por el mismo motivo —el campo se llama igual en
+   `Casos` y en `Tecnicas_long`— este filtro alcanza también al gráfico de
+   técnicas más usadas.
+
+   `Material_long` **no tiene** columna de servicio —por diseño: el gasto de
+   material se cuenta por caso y por tipo, no por servicio—, así que este
+   filtro concreto no toca el gráfico de material consumido. No es un fallo,
+   es que esa hoja no distingue por servicio.
+
+### Cuando añadas una técnica nueva
+
+**No hace falta tocar nada en Looker** para los gráficos de arriba: viven
+sobre `Tecnicas_long`, que guarda las técnicas como texto en una columna
+(`Tecnica`), no como columnas separadas. Una técnica nueva es, sencillamente,
+un valor de texto más que puede aparecer en esa columna, y Looker lo recoge
+solo la próxima vez que refresque los datos.
+
+Donde sí hace falta un paso manual es si algún día quieres montar **un
+gráfico nuevo que use directamente una columna `TEC_<etiqueta>` de la hoja
+`Casos`** (por ejemplo, un marcador para el uso de una sola técnica muy
+concreta). Esas columnas se generan solas en el Sheet, pero Looker Studio
+memorizó la lista de columnas que había el día que conectaste la fuente, y
+no vigila el Sheet para ver si han aparecido nuevas. Para que las vea:
+
+1. **Recursos → Gestionar las fuentes de datos** (o el icono de fuentes de
+   la barra lateral).
+2. Elige la fuente **`Casos`** → **Editar**.
+3. Pulsa **Actualizar campos** (el icono de refrescar junto a la lista de
+   campos, arriba a la derecha del editor de campos).
+4. Guarda. La columna `TEC_<etiqueta>` nueva ya aparece en la lista, lista
+   para usarla en cualquier gráfico. Los gráficos que ya tenías no cambian
+   solos: hay que añadirla tú a mano al gráfico en el que quieras usarla.
+
+## Retomar el proyecto desde otro ordenador
+
+Clonar por primera vez:
+
+```bash
+git clone https://github.com/paniaguadediego-bit/checklist-mio-ionm.git
+```
+
+Antes de empezar a trabajar:
+
+```bash
+git pull
+```
+
+Al terminar tus cambios:
+
+```bash
+git add -A
+git commit -m "Describe brevemente el cambio"
+git push
+```
+
+## Equipos (Inomed y Cadwell)
+
+Cada plantilla y cada caso son de un **equipo**: Inomed (I) o Cadwell (C) en
+este servicio (ver «Adaptarlo a otro servicio» para otros equipos). El
+material, el catálogo, los precios y todo el cálculo son los mismos; lo único
+que cambia son las **cajas** donde se coloca.
+
+- Al pulsar **Crear caso** o **Montaje en blanco** se elige el equipo (propone
+  el último usado en ese dispositivo). Lo anterior a este cambio es Inomed.
+- En la ficha, **Equipo** (Identificación) solo se puede cambiar mientras el
+  montaje esté vacío. La conversión de un montaje de un equipo a otro llegará
+  más adelante.
+- **Cargar montaje…** sobre un caso solo ofrece plantillas de su mismo equipo.
+- **Plantillas de montajes** tiene un filtro **Equipo** (empieza en el último que
+  usaste y recuerda lo que elijas; «Todos» las enseña todas).
+- El rótulo del Organizador, la lista de casos (marca I/C y filtro) y el
+  informe indican el equipo. La columna `equipo` del CSV y del Sheet pasa a ser
+  este equipo (el antiguo campo de texto libre «Equipo» se retiró).
+- El **conmutador** solo existe en Inomed: en Cadwell la polaridad de la
+  estimulación transcraneal se decide por software.
+- Cajas de Cadwell (Cascade IOMAX): módulo cortical en una sola caja (estímulo
+  TCS H1-H9 a la izquierda; registro E1-E13, 1A/1R-3A/3R y GND a la derecha; abajo
+  las salidas 1-5, cuya luz se enciende en verde cuando el módulo de extremidad
+  enchufado ahí tiene material), LCSwap en rejilla de 4×3 con los puertos de sonda
+  P1-P3 partidos en − (cátodo) y + (ánodo), (salidas 1-12, sondas en P1/P2) y cuatro
+  módulos de extremidad (1A/1R-8A/8R, ES1-ES5, GND; el 3 y el 4 plegados), más el
+  amplificador de 32 canales (plegado, enchufado a la salida 5).
+  Un canal diferencial lleva activo y referencia juntos: ocupa una entrada.
+- `"por_defecto": true` en `equipos` marca el equipo que se propone para lo
+  **nuevo** (hoy Inomed). Lo que no trae equipo se sigue leyendo como Inomed.
+- El equipo **Genérico (ejemplo)** está desactivado (`"activo": false`): solo se
+  ve en `?demo`, como punto de partida para describir el equipo de otro servicio.
+
+## Adaptarlo a otro servicio
+
+Todo lo que es propio de un servicio está en los datos, no en el código. En
+este orden:
+
+1. **Equipos y cajas** (`data/surgeries.js`, bloques `equipos` y
+   `cajas_<id>`). Copia `cajas_generico`, cambia el prefijo de las claves de caja
+   por el de tu equipo (no pueden repetirse entre equipos) y ajusta canales,
+   conectores y entradas especiales (ver «Añadir o ajustar una caja»). En
+   `equipos`, pon tu equipo con `"por_defecto": true` y desactiva con
+   `"activo": false` los que no uses. Si solo queda uno activo, la app no
+   pregunta ni rotula el equipo.
+2. **Catálogo de material y etiquetas** (`catalogo_material`, `etiquetas`): se
+   puede ampliar también desde la interfaz. El material exclusivo de un equipo
+   lleva `"equipos": ["<id>"]`.
+3. **Técnicas y reglas de material** (`tecnicas` y `material_tecnicas`): las
+   reglas alimentan la «Revisión del montaje» del Resumen.
+4. **Servicios, intervenciones, perfiles y usuarios**: desde **Catálogos**, en
+   la propia app. Vienen vacíos o genéricos de fábrica.
+5. **Centro**: texto libre en la ficha del caso; cada dispositivo recuerda el
+   último usado.
+6. **Opcional**: sincronización con un repositorio privado de datos y el
+   Google Sheet (ver «Sincronización automática con GitHub» y «El dashboard»).
+
+Nada de esto toca los casos ya guardados: no hay migraciones.
+
+## Basales (apertura, post-posición y cierre)
+
+En la ficha del caso, **Desarrollo intraoperatorio → Basales**, encima del Resumen,
+está la misma tabla que en el **Registro intraoperatorio**: lo que escribas en un
+sitio sale en el otro y en la hoja impresa. Tres momentos: apertura, tras
+posicionar y cierre. Filas de t-SEP y t-MEP de cada extremidad, TOF y, según las
+técnicas del caso, c-SEP, c-MEP, GRID (con el electrodo de estímulo y el contacto
+de la inversión de fase), corticobulbares, Onda D proximal y distal, PEATC, H-R y
+umbral del MEP. Más filas libres para lo que haga falta.
+
+## Modo demostración
+
+Para enseñar la herramienta (un congreso, una sesión) sin tocar ningún dato
+real, se abre con `?demo` al final de la dirección:
+
+<https://paniaguadediego-bit.github.io/checklist-mio-ionm/?demo>
+
+- Arranca con **casos, plantillas y apuntes ficticios** (cinco casos en
+  estados distintos, cuatro plantillas de montaje, apuntes de ejemplo).
+- Todo se guarda **aparte** de los datos normales de ese navegador: se
+  puede usar en tu propio móvil sin ver ni pisar tus casos.
+- **No se sincroniza nunca** con GitHub: el botón de la nube dice «Modo demo ·
+  sin nube» y no abre la configuración.
+- En Inicio hay un botón **Restablecer demo** que borra lo que se haya hecho
+  y vuelve a los datos de ejemplo.
+- No hay botón para salir del modo demo, a propósito: para volver a tus
+  datos abre la dirección normal, sin `?demo`.
+- Los precios y el material propio **no** aparecen: están en tu repositorio
+  privado, no en el código público.
+- **Recorrido «Empieza aquí»** (6 pasos): se ofrece la primera vez y se
+  relanza desde Inicio. Lleva de la plantilla al Resumen, al caso estrella
+  (ependimoma D8-D9, con todo relleno), a sus basales y alerta, y a la hoja de
+  registro. Se puede saltar y no bloquea la app.
+- Entra con **«Usuario demo»** ya elegido; Bibliografía y Teoría básica
+  (en construcción) no se enseñan; el Simulador abre con un ejemplo cargado;
+  aparece el equipo de ejemplo **Genérico**.
+- **Sin red**: además de no sincronizar, en `?demo` cualquier petición a otro
+  sitio se corta. En Inicio lo dice el aviso de privacidad, junto al de
+  autoría.
+
+## Licencia
+
+Todos los derechos reservados (ver [LICENSE](LICENSE)). Que el repositorio sea
+público no da permiso de uso: la herramienta solo puede usarla quien tenga
+autorización expresa del autor, que puede retirarla en cualquier momento. No se
+permite copiar, modificar ni redistribuir el código sin permiso por escrito.

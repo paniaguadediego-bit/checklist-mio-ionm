@@ -1,0 +1,3663 @@
+:root {
+  --bg: #eef1f4;
+  --card-bg: #ffffff;
+  --border: #cfd6dd;
+  --border-soft: #e3e8ec;
+  --text: #1a2229;
+  --text-muted: #62717c;
+  /* Acento dorado a juego con el logo (26-09-2026; antes verde #14705a). En
+     claro es un dorado oscuro para que el texto se lea sobre blanco; en
+     oscuro, más claro y parecido al del logo (ver el bloque de abajo). */
+  --accent: #8a6a1c;
+  --accent-soft: #f4ecd8;
+  /* Texto sobre fondo --accent (botones principales, chips elegidos...). */
+  --accent-texto: #ffffff;
+  /* Barra "Corrigiendo el material del caso": algo más apagada que el
+     acento (25-09-2026), para que no deslumbre ni se confunda con los botones. */
+  --barra-caso-bg: #6f5518;
+  --aviso-bg: #fdf3e3;
+  --aviso-border: #d99a2b;
+  --aviso-text: #7a520e;
+  --tag-bg: #eaeef1;
+  --peligro: #a63428;
+  --quitar-bg: #fae9e7;
+  /* Cabecera en negro neutro, como el fondo del logo (26-09-2026; antes gris
+     azulado, y un rato negro cálido, que no gustó). */
+  --panel: #111111;
+  --panel-borde: #333333;
+  --panel-texto: #ececec;
+  --panel-tenue: #a0a0a0;
+  /* Colores del estado del caso (lista de Gestión de Casos, selectores del
+     Checklist y del Registro). Propios y muy saturados a propósito
+     (26-09-2026): con el acento dorado, "cerrado" (antes --accent) y
+     "preparado" (antes el ámbar de avisos) se confundían. */
+  --estado-pendiente: #111111;
+  --estado-preparado: #ffd400;
+  --estado-cerrado: #178a32;
+  --estado-cancelado: #d7261e;
+  /* Alto de la barra superior (ver .barra-sup): lo usan los sticky de debajo
+     para no quedar tapados. Pasó de dos filas a una sola en la Fase 7
+     (06-09-2026, pantalla de inicio) y volvió a dos el 09-09-2026 (menú "⋮"
+     arriba a la izquierda, sincronización en su propia fila debajo)
+     -medido a mano en el navegador, no hay cálculo automático; hay que
+     remedirlo si cambia el contenido de la barra-. */
+  --header-h: 72px;
+  --r: 5px;
+  /* Fondo de los campos rellenables. Es una variable y no un #fff suelto
+     porque en modo oscuro tiene que cambiar: un blanco fijo con la letra
+     clara encima deja el campo ilegible. */
+  --campo-bg: #ffffff;
+
+  /* Color por familia de técnica en "Técnicas IONM" (pedido por Pani,
+     05-09-2026): un tono de texto y un fondo suave por familia, mismo patrón
+     que --accent/--accent-soft. Diez familias -ver TECMIO_FAMILIAS en
+     app.js-, elegidas para distinguirse entre sí incluso las que comparten
+     "familia de color" (mep/onda_d ambas rojizas, reflejos/mapeo ambas
+     cálidas): mep en granate frío, onda_d en rojo más vivo/cálido; reflejos
+     en naranja, mapeo en un marrón apagado, sin confundirse en pantalla. */
+  --tm-sep: #7c3aed;         --tm-sep-soft: #efe7fc;
+  --tm-mep: #7a1f3d;         --tm-mep-soft: #f8e2e8;
+  --tm-onda_d: #c62828;      --tm-onda_d-soft: #fbe0df;
+  --tm-emg: #157347;         --tm-emg-soft: #e1f3ea;
+  --tm-reflejos: #b5590a;    --tm-reflejos-soft: #fbead2;
+  --tm-vep: #0f7d8c;         --tm-vep-soft: #dcf3f5;
+  --tm-peatc: #4338ca;       --tm-peatc-soft: #e6e5fb;
+  --tm-eeg_ecog: #1d4ed8;    --tm-eeg_ecog-soft: #e2eafd;
+  --tm-des: #a3145c;         --tm-des-soft: #fbe1ec;
+  --tm-mapeo: #6b5842;       --tm-mapeo-soft: #ece5db;
+}
+
+/* Le dice al navegador que la página entiende los dos modos, para que los
+   controles nativos -calendario, flechas del número, lista del desplegable-
+   se pinten acordes y no salgan claros sobre fondo oscuro. */
+:root { color-scheme: light dark; }
+
+/* Letra Inter (28-09-2026, elegida por el usuario entre cuatro para un
+   aspecto más profesional), servida desde fonts/ -no desde Google Fonts-
+   para que la app y la demo sigan funcionando sin conexión. Licencia SIL OFL
+   en fonts/Inter-OFL.txt. Si falta, se usa la letra del sistema. */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("fonts/inter-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("fonts/inter-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Inter", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 14px;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.4;
+}
+
+/* ------------------------------ Barra sup ------------------------------ */
+/* Una sola fila desde la Fase 7 (06-09-2026): Gestión de casos, Técnicas MIO
+   y Docente pasaron de vivir aquí a ser tarjetas de la pantalla de inicio,
+   así que ya no hace falta una segunda fila aparte para ellas. Sincronizar
+   sí se queda -es estado global, hay que verlo siempre-. */
+.barra-sup {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: var(--panel);
+  color: var(--panel-texto);
+  border-bottom: 1px solid #0f1a21;
+}
+.barra-fila {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.32rem 0.9rem;
+}
+/* Dos filas dentro de .barra-sup (09-09-2026): se recorta el padding
+   vertical que se junta entre ambas para que no quede un hueco doble. */
+.barra-fila-top { padding-bottom: 0.18rem; }
+.barra-fila-sync { padding-top: 0.1rem; gap: 0.5rem; }
+
+/* Envoltorio del logo: antes una <img> suelta sin comportamiento, ahora el
+   único camino de vuelta a la pantalla de inicio desde cualquier sitio -por
+   eso es un <button> de verdad, con foco de teclado, no la imagen misma. */
+.marca-boton {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  flex-shrink: 0;
+}
+
+/* El icono de la app en la cabecera. 32px de alto encaja con la fila de
+   .barra-sup dejando aire arriba y abajo; el archivo fuente es de
+   180px (apple-touch-icon), así que se ve nítido incluso en pantallas
+   retina. */
+.barra-sup img.marca {
+  height: 32px;
+  width: 32px;
+  border-radius: 7px;
+  display: block;
+  flex-shrink: 0;
+}
+
+.barra-flex { flex: 1; }
+
+.barra-sup #perfil-usuario {
+  min-width: 130px;
+  max-width: 190px;
+  padding: 0.22rem 0.45rem;
+  font: inherit;
+  font-size: 0.84rem;
+  background: #24343e;
+  color: var(--panel-texto);
+  border: 1px solid var(--panel-borde);
+  border-radius: var(--r);
+}
+
+.btn-modo {
+  font: inherit;
+  font-size: 0.78rem;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid var(--panel-borde);
+  background: #24343e;
+  color: var(--panel-texto);
+  border-radius: var(--r);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-modo:hover { background: #2f434f; }
+
+/* Guía de uso / Idioma / Docente, agrupados: de consulta ocasional, no
+   compiten en ancho con los botones que se tocan a diario. */
+.menu-desplegable { position: relative; }
+.menu-lista {
+  position: absolute;
+  top: calc(100% + 0.3rem);
+  /* El botón "⋮" pasó un rato al extremo izquierdo de la barra (09-09-2026)
+     y por eso esto pasó un rato a "left: 0"; vuelto a la derecha ese mismo
+     día, así que el desplegable se alinea otra vez por la derecha -si no,
+     se saldría de la pantalla por ahí en vez de por la izquierda-. */
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  background: var(--panel);
+  border: 1px solid var(--panel-borde);
+  border-radius: var(--r);
+  padding: 0.35rem;
+  z-index: 40;
+  min-width: 150px;
+}
+/* Mismo empate de especificidad que .campo[hidden]: display:flex puesto a
+   mano gana al [hidden] nativo si no se acota así. */
+.menu-lista[hidden] { display: none; }
+.menu-lista button {
+  font: inherit;
+  font-size: 0.78rem;
+  text-align: left;
+  padding: 0.4rem 0.6rem;
+  border: none;
+  background: transparent;
+  color: var(--panel-texto);
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.menu-lista button:hover { background: #2f434f; }
+
+/* -------------------------------- Main --------------------------------- */
+main {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0.7rem 0.8rem 2rem;
+}
+
+/* ------------------------------ Pantallas ------------------------------- */
+/* Fase 7 (06-09-2026): pantalla de inicio con 6 tarjetas, cada una llevando
+   a su propia pantalla dedicada. Visibilidad por DOS clases, nunca por
+   [hidden]: este proyecto ya se ha topado tres veces con el mismo fallo de
+   especificidad (.campo[hidden], .barra-caso-acciones[hidden],
+   .menu-lista[hidden] -ver más abajo-), donde una clase con su propio
+   "display" gana a un [hidden] si va después en la hoja. Dos clases
+   (.pantalla.activa) le ganan siempre a una (.pantalla) sin depender del
+   orden del CSS, así que evita el bug entero en vez de tener que acotarlo
+   cada vez. Si una pantalla necesita un layout distinto a bloque simple
+   (la de inicio, en grid), ese "display" va en un div de dentro, nunca
+   aquí -para que este par se quede genérico. */
+.pantalla { display: none; }
+.pantalla.activa { display: block; }
+
+/* Las pantallas que antes eran <dialog> (Gestión de Casos, Técnicas IONM,
+   Docencia) y las nuevas (Simulador, Bibliografía) comparten el mismo ancho
+   que <main>, para que las 6 pantallas se sientan parte de la misma app. */
+#pantalla-casos, #pantalla-tecnicas-mio, #pantalla-docente,
+#pantalla-simulador, #pantalla-bibliografia, #pantalla-checklist, #pantalla-registro, #pantalla-material,
+#pantalla-apuntes {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0.7rem 0.8rem 2rem;
+}
+
+/* Cabecera de cada pantalla: título + botón "Inicio" a su derecha -pedido
+   del usuario el 06-09-2026, para volver al inicio sin tener que ir hasta
+   el logo de la cabecera-. Mismo look de píldora que .card h2, para que las
+   6 pantallas se sientan consistentes entre sí. */
+.pantalla-cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.8rem;
+}
+/* Negrita simple, sin la píldora de color de .card h2 -pedido explícito el
+   06-09-2026: el título de pantalla se confundía con los submenús de
+   dentro (Plantillas de montajes, Técnicas, Cajas...), que sí llevan esa
+   píldora. Tienen que distinguirse de un vistazo. */
+.pantalla-cab h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.btn-pantalla-inicio {
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  border-radius: var(--r);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-pantalla-inicio:hover { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+
+/* Inicio en tres bloques (demo-congreso B2.F1): "Antes de quirófano", "En
+   quirófano" y "Después / consulta", cada uno con su rejilla de tarjetas, y
+   en cada tarjeta el nombre y una línea corta de para qué sirve. */
+.inicio-grupo {
+  max-width: 900px;
+  margin: 1.6rem auto 0;
+  padding: 0 0.8rem;
+}
+.inicio-grupo-tit {
+  margin: 0 0 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.inicio-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 0.8rem;
+}
+.tile {
+  font: inherit;
+  color: var(--text);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 1.3rem 0.9rem;
+  min-height: 7rem;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+.tile-nombre { font-size: 1.05rem; font-weight: 600; }
+.tile-sub { font-size: 0.8rem; font-weight: 400; line-height: 1.3; color: var(--text-muted); }
+.tile:hover { border-color: var(--accent); color: var(--accent); }
+
+@media (max-width: 620px) {
+  /* 24-09-2026: sigue en 2 columnas también en el móvil (10 tarjetas en una
+     sola columna obligaban a hacer scroll); el texto se ajusta y parte en
+     dos líneas si hace falta. */
+  .inicio-grupo { margin-top: 1.1rem; padding: 0 0.6rem; }
+  .inicio-tiles { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .tile { padding: 0.8rem 0.45rem; min-height: 5.4rem; gap: 0.3rem; }
+  .tile-nombre { font-size: 0.9rem; }
+  .tile-sub { font-size: 0.72rem; }
+}
+
+/* Botón "Cerrar MIO-Check" (07-09-2026): a propósito más discreto que un
+   .tile -es una acción de salida, no una pantalla más-, en tono de
+   peligro suave para distinguirlo del resto sin gritar. */
+.btn-cerrar-app {
+  display: block;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--peligro);
+  background: none;
+  border: 1px solid var(--peligro);
+  border-radius: var(--r);
+  padding: 0.5rem 1rem;
+  margin: 1.4rem auto 1.5rem;
+  cursor: pointer;
+}
+.btn-cerrar-app:hover { background: var(--quitar-bg); }
+
+.card {
+  /* Relleno en variables para que la cabecera plegable (summary.card-cab) pueda
+     sangrar hasta los bordes de la tarjeta, como la barra de .caso-grupo. */
+  --card-py: 0.6rem;
+  --card-px: 0.75rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: var(--card-py) var(--card-px);
+  margin-bottom: 0.7rem;
+}
+
+.card-cab {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.4rem;
+}
+
+/* Título de cada ventana principal: más grande y con un resalte de color
+   detrás -una "píldora"- para que se distinga de un vistazo de los
+   subtítulos internos (grupo de técnicas, caja física, bloque del resumen…),
+   que se quedan con el estilo pequeño y sin fondo de siempre. */
+/* 24-09-2026: a petición del usuario, los títulos de las tarjetas del
+   Organizador (Plantillas, Catálogo, Cajas, Técnicas, Resumen) dejan la
+   píldora en mayúsculas y pasan al mismo estilo que los apartados del resto
+   de la herramienta (.caso-grupo > summary: negrita, color de acento, tamaño
+   pequeño, sin mayúsculas ni fondo, flecha a la izquierda). */
+.card h2 {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--accent);
+  font-weight: 600;
+  display: inline-block;
+}
+
+.guardado-aviso {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.guardado-aviso.error { color: var(--peligro); }
+/* Ahora vive en la cabecera oscura (antes en la barra clara sobre <main>):
+   --text-muted es gris sobre gris ahí, casi ilegible. */
+.barra-sup .guardado-aviso { color: var(--panel-tenue); }
+/* En el móvil puede partir en dos líneas: el aviso largo de la demo desbordaba
+   la pantalla de 360 px (demo-congreso B2.F1). */
+@media (max-width: 620px) { .guardado-aviso { white-space: normal; min-width: 0; } }
+
+/* -------------------------------- Layout ------------------------------- */
+/* display:flex (no grid) para poder usar "order" y ponerlo distinto en Modo
+   quirófano sin tener que reordenar el propio HTML. */
+.columna-principal { min-width: 0; display: flex; flex-direction: column; }
+
+/* .chip-escenario: nombre heredado de cuando existía el catálogo de tipos
+   de cirugía (retirado en la Fase 4). Se queda como clase reutilizable para
+   los chips de posición de la ventana Docente -misma pastilla con marco
+   discontinuo-, no tiene relación con la biblioteca de montajes. */
+.chip-escenario {
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border: 1px dashed var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.chip-escenario.activo {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  border-style: solid;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Pista en la cabecera de la tarjeta: dice lo esencial con la tarjeta
+   plegada, que con varias apiladas es como se va a usar la mayor parte del
+   rato */
+.card-pista {
+  margin-left: auto;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* --- Diálogo Montajes (Fase 4.1) --- */
+.montajes-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+#dlg-montajes-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 0.35rem;
+  max-height: 46vh;
+  overflow-y: auto;
+}
+/* Fija en primera posición, distinta de una fila real: es una acción -crea
+   un montaje nuevo-, no un elemento de la biblioteca. */
+.montaje-en-blanco {
+  border-style: dashed;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Selector de plantillas (Fase 1: cargar una plantilla sobre un caso).
+   Mismas filas que el diálogo Montajes (.montaje-fila), pero con su propio
+   scroll: puede haber muchas más plantillas de las que caben a la vista. */
+#plantilla-elegir-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 0.35rem;
+  max-height: 46vh;
+  overflow-y: auto;
+}
+.montaje-fila {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--card-bg);
+  color: var(--text);
+}
+.montaje-fila.activo { border-color: var(--accent); background: var(--accent-soft); }
+/* Los que puedes editar llevan una marca lateral: con montajes de varios
+   autores a la vista, saber cuáles son tuyos antes de pulsar ahorra el aviso */
+.montaje-fila.mio { border-left: 3px solid var(--accent); }
+.montaje-nombre { font-weight: 600; font-size: 0.86rem; }
+.montaje-autor { font-size: 0.68rem; color: var(--text-muted); }
+
+/* El montaje abierto, en la barra de arriba */
+.montaje-actual {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--panel-texto);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
+}
+
+#cajas-contenido { margin-bottom: 0.7rem; }
+
+/* Técnicas y resumen son <details>: el título hace de <summary>. Se quita
+   la flechita nativa del navegador y se pone una propia (▾/▸), coherente
+   con la que ya usa el catálogo para plegarse.
+   .card-cab trae "justify-content: space-between" para repartir 2
+   elementos (título y, en técnicas, el selector de perfil); con la flecha
+   como tercer elemento eso la dejaría descolocada en el medio en vez de al
+   final. Se cambia a flex-start y se empuja solo la flecha con margin-left:
+   auto, así el título y el selector de perfil quedan juntos a la izquierda
+   pase lo que pase, y la flecha siempre pegada al borde derecho. */
+.card > summary.card-cab {
+  cursor: pointer;
+  list-style: none;
+  justify-content: flex-start;
+  /* Misma barra de cabecera que los apartados de Gestión de Casos
+     (.caso-grupo > summary): fondo propio, sangrada hasta el borde de la
+     tarjeta y con una línea debajo al abrir. Pedido del usuario, 24-09-2026:
+     "el aspecto de Gestión de casos es el que me gusta". */
+  gap: 0.4rem;
+  margin: calc(-1 * var(--card-py)) calc(-1 * var(--card-px)) 0.6rem;
+  padding: 0.5rem 0.7rem;
+  background: var(--tag-bg);
+  border-bottom: 1px solid var(--border-soft);
+  border-radius: var(--r) var(--r) 0 0;
+}
+.card > summary.card-cab::-webkit-details-marker { display: none; }
+/* La flecha va a la izquierda, como en .caso-grupo > summary: ▸ que gira al
+   abrir (antes ▾/▸ a la derecha). Los botones y la pista de la cabecera se
+   empujan a la derecha con su propio margin-left: auto. */
+.card > summary.card-cab::before {
+  content: "▸";
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: transform 0.12s;
+}
+.card[open] > summary.card-cab::before { transform: rotate(90deg); }
+.card:not([open]) { padding: 0; }
+.card:not([open]) > summary.card-cab { margin: 0; border-bottom: none; border-radius: var(--r); }
+
+/* El catálogo es la cuarta ventana en el orden del HTML, pero en pantalla
+   ancha vuelve a la columna lateral fija (ver la media query de más abajo):
+   en el móvil se trabaja en vertical y va bien en el flujo, mientras que en
+   el ordenador tenerlo siempre a la vista mientras miras las cajas es lo que
+   hace cómodo el "pulsar y colocar".
+   El scroll propio y el alto acotado se conservan en los dos casos: es ese
+   scroll el que plegarCatalogo() guarda y restaura. */
+.panel-catalogo {
+  max-height: 65vh;
+  overflow-y: auto;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  --card-py: 0.55rem;
+  --card-px: 0.65rem;
+  padding: var(--card-py) var(--card-px);
+}
+.panel-catalogo.sobre { border-color: var(--peligro); background: var(--quitar-bg); }
+
+.panel-cab {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+/* Los tres botones (Etiquetas, +, ▾/▸) tienen su propia acción: no heredan
+   el cursor de "pliega la barra entera" del resto de la fila. */
+.panel-cab button { cursor: pointer; }
+.panel-cab h2 {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--accent);
+  font-weight: 600;
+  display: inline-block;
+}
+
+.panel-ayuda {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin: 0.35rem 0 0.15rem;
+  line-height: 1.3;
+}
+
+#catalogo-buscar,
+#elegir-buscar,
+#tecmio-buscar {
+  width: 100%;
+  margin-top: 0.35rem;
+  padding: 0.25rem 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  font: inherit;
+  font-size: 0.8rem;
+  background: var(--campo-bg);
+  color: var(--text);
+}
+
+.catalogo-grupo { margin-top: 0.5rem; }
+.grupo-titulo {
+  margin: 0 0 0.22rem;
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 600;
+  /* Es un <summary>: cabecera plegable, no solo un rótulo */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.18rem 0;
+  list-style: none;
+}
+.grupo-titulo::-webkit-details-marker { display: none; }
+/* Flecha propia: el triángulo del navegador no hereda el color del tema */
+.grupo-titulo::before {
+  content: "▸";
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1;
+  transition: transform 0.12s;
+}
+.catalogo-grupo[open] > .grupo-titulo::before { transform: rotate(90deg); }
+.grupo-titulo:hover { color: var(--accent); }
+/* Cuántos ítems hay dentro, para no tener que abrir a ciegas */
+.grupo-cuenta {
+  margin-left: auto;
+  font-size: 0.6rem;
+  padding: 0.05rem 0.28rem;
+  border-radius: 999px;
+  background: var(--border);
+  color: var(--text-muted);
+}
+
+.chip-fila { display: flex; flex-wrap: wrap; gap: 0.2rem; }
+/* Fila de espacio entre bloques de técnicas (monitorización/reflejos/mapeo)
+   en la ficha del caso: flex-basis:100% la fuerza a ocupar toda la fila
+   -salto de línea dentro del flex-wrap-, y su altura abre el hueco. */
+.chip-espacio { flex-basis: 100%; height: 0.35rem; }
+
+/* -------------------------------- Chips -------------------------------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.24rem;
+  background: var(--tag-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: 4px;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.72rem;
+  cursor: grab;
+  white-space: nowrap;
+  user-select: none;
+}
+.chip:active { cursor: grabbing; }
+.chip.arrastrando { opacity: 0.35; }
+
+.chip-extra { cursor: pointer; border-style: dashed; }
+.chip-extra::before { content: "☐"; font-size: 0.76rem; line-height: 1; }
+.chip-extra.activo {
+  background: var(--accent-soft) !important;
+  border-color: var(--accent) !important;
+  border-style: solid !important;
+  color: var(--accent);
+  font-weight: 600;
+}
+.chip-extra.activo::before { content: "☑"; }
+
+/* Selector de material abierto desde una entrada. Scroll propio y alto
+   acotado: el catálogo entero no cabe en la pantalla de un móvil, y el
+   diálogo tiene que dejar ver siempre a qué entrada va lo que elijas. */
+.elegir-contenido {
+  max-height: 65vh;
+  overflow-y: auto;
+  margin-top: 0.5rem;
+}
+
+/* Apartado económico del resumen */
+.tabla-coste th {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-align: left;
+  padding-bottom: 0.2rem;
+}
+.tabla-coste th.num, .tabla-coste td.num { text-align: right; }
+.tabla-coste tfoot td {
+  border-top: 1px solid var(--border);
+  padding-top: 0.25rem;
+  font-weight: 600;
+}
+.coste-nota, .coste-falta {
+  font-size: 0.68rem;
+  line-height: 1.35;
+  margin: 0.35rem 0 0;
+  color: var(--text-muted);
+}
+.coste-falta { color: var(--peligro); }
+.resumen-nota-conmutador {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.campo-ayuda {
+  font-size: 0.68rem;
+  line-height: 1.35;
+  color: var(--text-muted);
+  margin: 0.2rem 0 0.4rem;
+}
+
+/* Gana al estilo de la etiqueta, que va en el atributo style del chip */
+.chip.seleccionado {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  border-style: solid !important;
+  color: var(--accent-texto);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+.chip.seleccionado .color-dot { border-color: rgba(255,255,255,0.7); }
+
+.chip-quitar {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  line-height: 1;
+  padding: 0 0 0 0.05rem;
+  cursor: pointer;
+}
+.chip-quitar:hover { color: var(--peligro); }
+
+.color-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  border: 1px solid rgba(0,0,0,0.3);
+}
+.color-dot.color-rojo { background: #cc2f24; }
+.color-dot.color-azul { background: #2565c4; }
+.color-dot.color-verde { background: #248a3c; }
+.color-dot.color-amarillo { background: #d3a800; }
+.color-dot.color-negro { background: #14171a; border-color: rgba(255,255,255,0.7); }
+
+/* Barra flotante de selección */
+.barra-seleccion {
+  position: fixed;
+  left: 50%;
+  bottom: 0.8rem;
+  transform: translateX(-50%);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  background: var(--accent);
+  color: var(--accent-texto);
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--r);
+  box-shadow: 0 3px 12px rgba(0,0,0,0.32);
+  font-size: 0.8rem;
+}
+.barra-seleccion[hidden] { display: none; }
+.barra-seleccion button {
+  font: inherit;
+  font-size: 0.74rem;
+  background: rgba(255,255,255,0.16);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 4px;
+  padding: 0.1rem 0.5rem;
+  cursor: pointer;
+}
+.barra-seleccion button:hover { background: rgba(255,255,255,0.3); }
+
+body.hay-seleccion .slot { border-color: rgba(90,200,150,0.55); cursor: pointer; }
+body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,150,0.2); }
+
+/* ------------------------------- Técnicas ------------------------------ */
+.tecnicas-grupo { margin-top: 0.4rem; }
+
+/* ------------------------------- Resumen ------------------------------- */
+.resumen-card { border-left: 3px solid var(--accent); }
+
+.resumen-titulo {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.resumen-cols {
+  display: grid;
+  grid-template-columns: minmax(200px, 300px) minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: start;
+}
+@media (max-width: 820px) {
+  .resumen-cols { grid-template-columns: 1fr; }
+}
+
+.resumen-bloque { margin-top: 0.6rem; }
+.resumen-bloque h3 {
+  margin: 0 0 0.3rem;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.tabla-resumen {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+.tabla-resumen td {
+  padding: 0.16rem 0.35rem;
+  border-bottom: 1px solid var(--border-soft);
+}
+.tabla-resumen td.num {
+  text-align: right;
+  font-weight: 600;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  width: 2.6rem;
+}
+.tabla-resumen tr:last-child td { border-bottom: none; }
+
+.resumen-caja { margin-bottom: 0.4rem; }
+.resumen-caja-cab { display: flex; justify-content: space-between; gap: 0.5rem; align-items: baseline; }
+.resumen-caja-nombre { font-weight: 600; font-size: 0.8rem; }
+.resumen-caja-cnt {
+  font-size: 0.7rem;
+  color: var(--accent);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.resumen-caja-cnt.llena { color: var(--aviso-text); font-weight: 600; }
+
+.resumen-entradas { display: flex; flex-wrap: wrap; gap: 0.2rem; margin-top: 0.15rem; }
+.resumen-entrada {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.72rem;
+  background: var(--tag-bg);
+  border-radius: 3px;
+  padding: 0.05rem 0.35rem;
+}
+.re-num {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.66rem;
+  color: var(--text-muted);
+  border-right: 1px solid var(--border);
+  padding-right: 0.25rem;
+}
+
+.avisos { margin: 0; padding: 0; list-style: none; font-size: 0.78rem; }
+.avisos li {
+  background: var(--aviso-bg);
+  border-left: 3px solid var(--aviso-border);
+  color: var(--aviso-text);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0 3px 3px 0;
+  margin-bottom: 0.2rem;
+}
+
+.modalidades { display: flex; flex-wrap: wrap; gap: 0.2rem; margin-bottom: 0.3rem; }
+.modalidad-chip {
+  font-size: 0.68rem;
+  background: var(--tag-bg);
+  color: var(--text-muted);
+  padding: 0.05rem 0.4rem;
+  border-radius: 3px;
+}
+
+/* -------------------------------- Cajas -------------------------------- */
+.cajas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
+  gap: 0.6rem;
+  align-items: start;
+}
+
+.caja-card { padding: 0.5rem 0.6rem; margin-bottom: 0; }
+
+.caja-cab {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  margin-bottom: 0.35rem;
+}
+.caja-card h3 {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--accent);
+  font-weight: 600;
+  flex: 1;
+  min-width: 0;
+}
+.caja-contador {
+  font-size: 0.68rem;
+  color: var(--accent);
+  font-weight: 600;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.caja-contador.vacia { color: var(--text-muted); font-weight: 400; }
+
+/* Cajas 3-6: plegables aparte, con el mismo patrón ▸/▾ del resto de la
+   herramienta. Empiezan cerradas -sin "open" en el HTML/JS-. */
+.caja-plegable > summary.caja-cab { cursor: pointer; list-style: none; }
+.caja-plegable > summary.caja-cab::-webkit-details-marker { display: none; }
+.caja-flecha {
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  flex: 0 0 auto;
+}
+.caja-flecha::before { content: "▸"; }
+.caja-plegable[open] > summary.caja-cab .caja-flecha::before { content: "▾"; }
+
+.caja-info {
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 0.95rem;
+  height: 0.95rem;
+  font-size: 0.6rem;
+  line-height: 0.85rem;
+  text-align: center;
+  color: var(--text-muted);
+  cursor: help;
+  flex: 0 0 auto;
+  background: var(--card-bg);
+}
+
+.caja-fisica {
+  background: var(--panel);
+  border-radius: var(--r);
+  padding: 0.4rem 0.4rem 0.35rem;
+  color: var(--panel-texto);
+}
+
+.caja-tab {
+  width: 2.4rem;
+  margin: 0 auto 0.3rem;
+  background: #24343e;
+  border-radius: 0 0 5px 5px;
+  text-align: center;
+  font-size: 0.6rem;
+  padding: 0.05rem 0;
+  color: var(--panel-tenue);
+}
+
+.canales-wrap { display: flex; flex-direction: column; gap: 0.16rem; }
+.canales-wrap.dos-columnas { flex-direction: row; gap: 0.5rem; align-items: flex-start; }
+.columna { flex: 1; display: flex; flex-direction: column; gap: 0.16rem; min-width: 0; }
+
+.canal-row { display: flex; align-items: center; gap: 0.25rem; }
+.canal-row.doble { gap: 0.35rem; }
+
+.canal-num {
+  width: 1.9rem;
+  font-size: 0.58rem;
+  color: var(--panel-tenue);
+  text-align: right;
+  flex: 0 0 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
+}
+
+.canal-conectores { display: flex; gap: 0.1rem; flex: 0 0 auto; }
+
+.conector {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  border: 2px solid;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+}
+.conector.rojo { border-color: #d64236; background: #38130f; }
+/* Negro de verdad (activo en los pares, cátodo en TES): antes llevaba el borde
+   gris claro para verse sobre el fondo oscuro y parecía blanco. El anillo fino
+   de fuera lo mantiene visible en modo oscuro sin cambiarle el color. */
+.conector.negro { border-color: #000; background: #000; box-shadow: 0 0 0 1px #56616a; }
+.conector.individual { border-color: #c6d2da; background: transparent; }
+.conector.verde { border-color: #2f9e44; background: #12261a; }
+.conector.amarillo { border-color: #d3a800; background: #322a0c; }
+.conector.azul { border-color: #3b7ddd; background: #10213a; }
+
+.canal-mitad { flex: 1; display: flex; align-items: center; gap: 0.22rem; min-width: 0; }
+.mitad-titulo {
+  flex: 1;
+  font-size: 0.54rem;
+  color: var(--panel-tenue);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.slot {
+  flex: 1;
+  min-width: 0;
+  min-height: 1.15rem;
+  border: 1px dashed rgba(255,255,255,0.22);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  padding: 0.05rem 0.18rem;
+  /* La entrada también es punto de partida: pulsarla abre el catálogo */
+  cursor: pointer;
+}
+.slot.sobre { border-color: #5ac896; border-style: solid; background: rgba(90,200,150,0.22); }
+
+.slot .chip {
+  background: rgba(90,200,150,0.16);
+  border-color: rgba(90,200,150,0.5);
+  color: var(--panel-texto);
+  font-size: 0.66rem;
+  padding: 0.02rem 0.25rem;
+  white-space: normal;
+  line-height: 1.2;
+}
+.slot .chip-quitar { color: #9db1bf; }
+
+.canal-nota {
+  font-size: 0.54rem;
+  color: var(--panel-tenue);
+  font-style: italic;
+  flex: 0 0 auto;
+  max-width: 4.5rem;
+  line-height: 1.15;
+}
+
+.canales-especiales {
+  margin-top: 0.3rem;
+  padding-top: 0.25rem;
+  border-top: 1px dashed rgba(255,255,255,0.16);
+  display: flex;
+  flex-direction: column;
+  gap: 0.16rem;
+}
+.canales-especiales .canal-num { font-weight: 600; text-align: left; }
+
+.caja-plate {
+  margin-top: 0.35rem;
+  background: #dde4e9;
+  color: #16232f;
+  text-align: center;
+  border-radius: 3px;
+  padding: 0.12rem;
+  font-weight: 600;
+  font-size: 0.66rem;
+}
+
+.empty-hint { color: var(--text-muted); font-style: italic; font-size: 0.82rem; }
+
+/* --------------------------- Ventana docente --------------------------- */
+.dlg-ancho { max-width: 62rem; width: calc(100vw - 2rem); }
+
+/* --------------------------- Guía de uso (Fase 5) ------------------------ */
+.guia-tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 0.9rem;
+}
+.guia-tarjeta {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r);
+  background: var(--card-bg);
+  padding: 0.6rem 0.7rem;
+}
+.guia-tarjeta h4 {
+  margin: 0 0 0.3rem;
+  font-size: 0.82rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+.guia-tarjeta p {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--text);
+  line-height: 1.35;
+}
+/* La tarjeta 3 ("Plantilla y caso no son lo mismo") es la más importante de
+   las seis -pedido explícito-: un marco de acento la distingue sin gritar. */
+.guia-tarjeta.guia-destacada { border-color: var(--accent); border-width: 2px; }
+#guia-acordeon p { font-size: 0.8rem; line-height: 1.45; margin: 0 0 0.5rem; }
+#guia-acordeon p:last-child { margin-bottom: 0; }
+
+/* ------------------------- Técnicas MIO (Lote 1) ------------------------ */
+/* Familia de técnica (SEP, MEP, Reflejos... - ver TECMIO_FAMILIAS en app.js)
+   reutiliza .caso-grupo tal cual, con la clase .tecmio-familia-<familia>
+   encima para el acento de color; .tecmio-tecnica es la misma caja anidada
+   un nivel dentro. */
+.tecmio-tecnica { margin: 0 0 0.4rem; }
+.tecmio-tecnica:last-child { margin-bottom: 0; }
+.tecmio-badge {
+  display: inline-block;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.62rem;
+  font-weight: 600;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  margin-right: 0.4rem;
+  white-space: nowrap;
+}
+/* Un colorcito por etiqueta/familia (pedido por Pani, 05-09-2026): morado en
+   SEP, granate en MEP, un rojo distinto en Onda D, verde en EMG, azul en
+   EEG/ECoG, naranja en Reflejos, y el resto de familias con su propio tono
+   -ver la tabla --tm-* al principio del archivo-. Mismo patrón visual que
+   .tecmio-badge de siempre (fondo suave + texto de color), solo cambia qué
+   variable de color usa cada una. */
+.tecmio-badge-sep      { background: var(--tm-sep-soft);      color: var(--tm-sep); }
+.tecmio-badge-mep      { background: var(--tm-mep-soft);      color: var(--tm-mep); }
+.tecmio-badge-onda_d   { background: var(--tm-onda_d-soft);   color: var(--tm-onda_d); }
+.tecmio-badge-emg      { background: var(--tm-emg-soft);      color: var(--tm-emg); }
+.tecmio-badge-reflejos { background: var(--tm-reflejos-soft); color: var(--tm-reflejos); }
+.tecmio-badge-vep      { background: var(--tm-vep-soft);      color: var(--tm-vep); }
+.tecmio-badge-peatc    { background: var(--tm-peatc-soft);    color: var(--tm-peatc); }
+.tecmio-badge-eeg_ecog { background: var(--tm-eeg_ecog-soft); color: var(--tm-eeg_ecog); }
+.tecmio-badge-des      { background: var(--tm-des-soft);      color: var(--tm-des); }
+.tecmio-badge-mapeo    { background: var(--tm-mapeo-soft);    color: var(--tm-mapeo); }
+/* Cabecera de cada grupo (la familia entera, no la técnica suelta): una
+   franja de color a la izquierda del <summary>, mismo color que sus
+   etiquetas, para reconocer el bloque de un vistazo al hacer scroll sin
+   tener que leer el título. */
+.tecmio-familia > summary { border-left: 4px solid transparent; }
+.tecmio-familia-sep      > summary { border-left-color: var(--tm-sep); }
+.tecmio-familia-mep      > summary { border-left-color: var(--tm-mep); }
+.tecmio-familia-onda_d   > summary { border-left-color: var(--tm-onda_d); }
+.tecmio-familia-emg      > summary { border-left-color: var(--tm-emg); }
+.tecmio-familia-reflejos > summary { border-left-color: var(--tm-reflejos); }
+.tecmio-familia-vep      > summary { border-left-color: var(--tm-vep); }
+.tecmio-familia-peatc    > summary { border-left-color: var(--tm-peatc); }
+.tecmio-familia-eeg_ecog > summary { border-left-color: var(--tm-eeg_ecog); }
+.tecmio-familia-des      > summary { border-left-color: var(--tm-des); }
+.tecmio-familia-mapeo    > summary { border-left-color: var(--tm-mapeo); }
+/* Títulos de sección (Estimulación, Registro, Filtros...): antes todos
+   salían en el mismo gris apagado -text-muted-, indistinguibles a golpe de
+   vista. Ahora llevan un borde inferior de color propio, y Estimulación /
+   Filtros / Barrido -lo que más se consulta a media cirugía- se pintan en
+   --accent para que salten primero al escanear la ficha; Registro,
+   Umbrales y Notas clínicas quedan en un segundo nivel, más oscuro que
+   antes pero sin competir con los tres de arriba (pedido por Pani,
+   04-09-2026). */
+.tecmio-tecnica .caso-grupo-campos h5.tecmio-titulo-seccion {
+  margin: 0.7rem 0 0.3rem;
+  padding-bottom: 0.15rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  border-bottom: 1px solid var(--border-soft);
+}
+.tecmio-tecnica .caso-grupo-campos h5.tecmio-titulo-seccion:first-child { margin-top: 0; }
+.tecmio-tecnica .caso-grupo-campos h5.tecmio-titulo-estimulacion,
+.tecmio-tecnica .caso-grupo-campos h5.tecmio-titulo-estimulacion_y_registro,
+.tecmio-tecnica .caso-grupo-campos h5.tecmio-titulo-estimulacion_registro,
+.tecmio-tecnica .caso-grupo-campos h5.tecmio-titulo-filtros,
+.tecmio-tecnica .caso-grupo-campos h5.tecmio-titulo-barrido {
+  color: var(--accent);
+  border-bottom-color: var(--accent-soft);
+}
+.tecmio-campos, .tecmio-sub { margin: 0; }
+.tecmio-campos dt, .tecmio-sub dt {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 0.3rem;
+}
+.tecmio-campos dt:first-child, .tecmio-sub dt:first-child { margin-top: 0; }
+.tecmio-campos dd, .tecmio-sub dd {
+  font-size: 0.78rem;
+  line-height: 1.4;
+  margin: 0.05rem 0 0;
+}
+.tecmio-sub {
+  margin: 0.2rem 0 0.2rem 0.6rem;
+  padding-left: 0.5rem;
+  border-left: 2px solid var(--border-soft);
+}
+.tecmio-lista { margin: 0.1rem 0 0; padding-left: 1.1rem; font-size: 0.78rem; line-height: 1.4; }
+.tecmio-fuente { font-size: 0.68rem; font-style: italic; color: var(--text-muted); margin: 0.35rem 0 0.5rem; }
+.tecmio-descripcion { font-size: 0.8rem; line-height: 1.4; margin: 0 0 0.5rem; }
+#tecmio-buscar { margin-bottom: 0.5rem; }
+/* Coincidencias del buscador: fondo de acento, con el color de fondo
+   general como texto -así se invierte solo en el tema oscuro, sin
+   necesidad de una regla aparte-. */
+.tecmio-resaltado {
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 0.15rem;
+  padding: 0 0.1rem;
+}
+.tecmio-sin-resultados { font-size: 0.82rem; color: var(--text-muted); margin: 0.5rem 0 0; }
+
+/* Interruptor Tarjetas/Tabla (06-09-2026): mismo look que los botones de
+   pestaña ya usados en Docente (.docente-tab), para no inventar un patrón
+   visual nuevo. */
+.tecmio-vista-toggle { display: flex; gap: 0.4rem; margin-bottom: 0.6rem; }
+.tecmio-vista-toggle button {
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-muted);
+  border-radius: 999px;
+  padding: 0.25rem 0.9rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.tecmio-vista-toggle button.activo { background: var(--accent); color: var(--accent-texto); border-color: var(--accent); }
+
+/* Vista tabla (rehecha 07-09-2026): una tabla por familia, dentro de un
+   <details> plegado por defecto -reutiliza .caso-grupo/.tecmio-familia-<f>
+   tal cual, así que el borde de color de su <summary> ya viene gratis de
+   las reglas de la vista Tarjetas (más arriba en este archivo), sin
+   duplicar una regla por familia aquí-. Solo 3 columnas de datos
+   -Estimulación, Registro, Filtros y barrido fusionados-, sin la columna
+   de Notas/teoría que había antes: de ahí que cada tabla sea bastante más
+   estrecha que la primera versión y cueste menos que quepa en el móvil en
+   horizontal. Tamaño de letra reducido a propósito, mismo motivo. */
+.tecmio-tabla-scroll { overflow-x: auto; }
+.tecmio-tabla { border-collapse: collapse; width: 100%; font-size: 0.7rem; }
+.tecmio-tabla th, .tecmio-tabla td {
+  border: 1px solid var(--border-soft);
+  padding: 0.3rem 0.4rem;
+  text-align: left;
+  vertical-align: top;
+}
+.tecmio-tabla th {
+  background: var(--card-bg);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+}
+.tecmio-tabla td.tecmio-td-tecnica { min-width: 8rem; font-weight: 600; }
+.tecmio-tabla td { min-width: 9rem; }
+.tecmio-td-subtitulo {
+  margin: 0.25rem 0 0;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+}
+.tecmio-td-subtitulo:first-child { margin-top: 0; }
+
+/* Notas al pie de la vista Tabla: sustituyen el "Fuente: ..." que se
+   pintaba dentro de cada celda -pedido explícito, para no gastar espacio
+   de la tabla en texto de cita-. Un superíndice enlazado por cita, y una
+   lista única al final de toda la vista (no una por familia): el mismo
+   texto citado por varias técnicas comparte número, ver
+   indiceFuenteTabla() en app.js. */
+.tecmio-nota-fuente { font-size: 0.68em; margin-left: 0.1rem; }
+.tecmio-nota-fuente a { color: var(--accent); text-decoration: none; }
+.tecmio-nota-fuente a:hover { text-decoration: underline; }
+.tecmio-tabla-fuentes {
+  margin-top: 1rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--border-soft);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+.tecmio-tabla-fuentes h5 { margin: 0 0 0.3rem; font-size: 0.78rem; color: var(--text); }
+.tecmio-tabla-fuentes ol { margin: 0; padding-left: 1.3rem; }
+.tecmio-tabla-fuentes li { margin-bottom: 0.15rem; }
+.tecmio-tabla-fuentes li:target { color: var(--accent); font-weight: 600; }
+
+.docente-fuentes {
+  font-size: 0.66rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin: -0.3rem 0 0.6rem;
+}
+
+.docente-cols {
+  display: grid;
+  /* La columna vertebral en el centro y estrecha, con los músculos a los dos
+     lados: es la disposición que pidió el usuario y la que hace evidente que
+     lo de la izquierda "pasa" a la derecha. */
+  grid-template-columns: 1fr auto 1fr;
+  gap: 0.8rem;
+  align-items: start;
+}
+.docente-col { min-width: 0; }
+.docente-cols h4 {
+  margin: 0 0 0.35rem;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.docente-pista { font-size: 0.7rem; color: var(--text-muted); margin: 0 0 0.35rem; min-height: 1rem; }
+.docente-pista.falta { color: var(--peligro); font-weight: 600; }
+.docente-pista.ok { color: var(--accent); font-weight: 600; }
+
+.docente-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  max-height: 46vh;
+  overflow-y: auto;
+}
+
+.miotoma {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.05rem;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--card-bg);
+  color: var(--text);
+}
+.miotoma.elegido { border-color: var(--accent); background: var(--accent-soft); }
+.miotoma-nombre { font-size: 0.82rem; font-weight: 600; }
+.miotoma-niveles { font-size: 0.66rem; color: var(--text-muted); letter-spacing: 0.03em; }
+
+/* La columna: una pila estrecha de vértebras, como se ve en un esquema */
+.vertebras {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 46vh;
+  overflow-y: auto;
+  padding: 0.15rem;
+}
+.vertebra {
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 3.1rem;
+  padding: 0.16rem 0.3rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--card-bg);
+  color: var(--text-muted);
+}
+.vertebra.marcada { background: var(--accent); border-color: var(--accent); color: var(--accent-texto); }
+/* Un nivel marcado que además ya tiene músculo que lo cubre: el hueco que
+   queda es justo lo que el ejercicio quiere que se vea. */
+.vertebra.marcada.cubierta { background: var(--accent-soft); color: var(--accent); }
+
+#docente-limpiar-niveles { font-size: 0.68rem; margin-top: 0.3rem; width: 100%; }
+
+/* --- Cama de quirófano --- */
+.cama-posiciones { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.6rem; }
+
+.cama-tablero {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.7rem;
+}
+.cama-fila { display: flex; gap: 0.4rem; align-items: stretch; }
+.cama-fila .cama-zona { flex: 1; }
+
+.cama-zona {
+  border: 1px dashed var(--border);
+  border-radius: var(--r);
+  padding: 0.35rem 0.45rem;
+  min-height: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+/* Mientras hay una caja elegida, las zonas se marcan como destino posible */
+.cama-zona.recibe { border-color: var(--accent); border-style: solid; cursor: pointer; }
+.cama-zona-nombre {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+.cama-zona-cajas { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+
+.cama-mesa { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; }
+.cama-svg { width: 108px; height: auto; max-height: 250px; }
+.cama-svg .mesa { fill: var(--card-bg); stroke: var(--border); stroke-width: 2; }
+.cama-svg .soporte { fill: var(--card-bg); stroke: var(--border); stroke-width: 1.5; }
+.cama-svg .cuerpo { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+/* En prono el cuerpo va hueco: se distingue del supino sin leer la etiqueta */
+.cama-svg .cuerpo.prono { fill: none; stroke-dasharray: 4 3; }
+.cama-svg .marca { fill: var(--accent); }
+
+.cama-caja {
+  font: inherit;
+  font-size: 0.7rem;
+  cursor: pointer;
+  padding: 0.15rem 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card-bg);
+  color: var(--text);
+}
+.cama-caja.seleccionada { background: var(--accent); border-color: var(--accent); color: var(--accent-texto); }
+.cama-disponibles { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+
+@media (max-width: 700px) {
+  .docente-cols { grid-template-columns: 1fr; }
+  .vertebras { flex-direction: row; flex-wrap: wrap; max-height: none; }
+  .cama-svg { width: 74px; }
+}
+
+/* --------------------- Rótulo permanente (Fase 4.2) --------------------- */
+/* Reubicado a la Fase 7.1 (06-09-2026): antes vivía fuera de las 6
+   pantallas, siempre visible; sobraba en las 5 que no tienen ningún montaje
+   que editar. Ahora es parte del Organizador, justo debajo de Plantillas de
+   montajes, y oculto del todo si no hay plantilla cargada ni caso en
+   corrección (ver renderBarraCaso()). Fondo --accent-soft y nombre en
+   --accent en modo plantilla -el usuario pidió que el montaje activo se
+   viera bien a simple vista, no solo como texto suelto-; en modo de
+   corrección de un caso pasa a --accent sólido, para que además se note el
+   cambio de contexto de un vistazo. */
+.barra-caso {
+  position: sticky;
+  top: var(--header-h);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  background: var(--accent-soft);
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  padding: 0.45rem 0.7rem;
+  font-size: 0.86rem;
+}
+/* Mismo empate de especificidad que .campo[hidden]: .barra-caso ya trae su
+   propio "display", así que el [hidden] nativo necesita este empujón para
+   ganar -si no, el rótulo se quedaría visible y vacío. */
+.barra-caso[hidden] { display: none; }
+.barra-caso b { font-weight: 600; color: var(--accent); }
+/* Rótulo de plantilla más diferenciado (24-09-2026): marco y borde
+   izquierdo grueso en el color de acento, nombre más grande. El de caso
+   (body.editando-caso) mantiene su barra sólida. */
+body:not(.editando-caso) .barra-caso {
+  border: 1px solid var(--accent);
+  border-left-width: 6px;
+  border-radius: var(--r);
+  margin: 0.15rem 0 0.6rem;
+  padding: 0.55rem 0.8rem;
+}
+body:not(.editando-caso) .barra-caso b { font-size: 1.08rem; }
+body.editando-caso .barra-caso b { color: #fff; }
+.barra-caso small { display: block; opacity: 0.85; font-size: 0.7rem; }
+.barra-caso-acciones { margin-left: auto; display: flex; gap: 0.4rem; }
+/* Mismo empate de especificidad que .campo[hidden]: una clase con su propio
+   display gana al [hidden] nativo si no se acota así -no basta con poner el
+   atributo-. */
+.barra-caso-acciones[hidden] { display: none; }
+body.editando-caso .barra-caso {
+  background: var(--barra-caso-bg);
+  color: #fff;
+  border-bottom-color: transparent;
+  /* Separada de Plantillas (arriba) y de Catálogo (abajo): antes iba pegada
+     y casi se montaba encima del Catálogo. */
+  border-radius: var(--r);
+  margin: 0.15rem 0 0.7rem;
+}
+/* En este modo el rótulo lleva además los tres botones y ocupa más alto
+   -medido a mano, ver el comentario junto a .panel-catalogo-. */
+body.editando-caso { --barra-caso-h: 48px; }
+/* Oculto del todo (ni plantilla ni caso): el catálogo -que reserva sitio
+   fijo para el rótulo en su desplazamiento sticky- no debe dejar un hueco
+   vacío donde iría. */
+body.barra-caso-oculta { --barra-caso-h: 0px; }
+/* Rótulo de plantilla, ya con marco y más alto: medido a mano (ver arriba). */
+body:not(.editando-caso):not(.barra-caso-oculta) { --barra-caso-h: 54px; }
+
+.caso-montaje-fila {
+  margin: 0.5rem 0 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.caso-montaje-fila small { color: var(--text-muted); font-size: 0.7rem; flex: 1; min-width: 12rem; }
+
+/* ------------------------ Material propio y diálogo -------------------- */
+.chip-propio { border-style: solid; border-color: var(--accent); }
+
+.chip-editar {
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  font-size: 0.66rem;
+  line-height: 1;
+  padding: 0 0 0 0.1rem;
+  cursor: pointer;
+}
+.chip-editar:hover { color: var(--text); }
+
+.chip-foto {
+  border: none;
+  background: transparent;
+  font-size: 0.72rem;
+  line-height: 1;
+  padding: 0 0 0 0.15rem;
+  cursor: pointer;
+  opacity: 0.85;
+}
+.chip-foto:hover { opacity: 1; }
+
+/* Enlace de un Puente a su cork de referencia (22-09-2026). */
+.chip-enlazar {
+  border: none;
+  background: transparent;
+  font-size: 0.72rem;
+  line-height: 1;
+  padding: 0 0 0 0.15rem;
+  cursor: pointer;
+  opacity: 0.85;
+}
+.chip-enlazar:hover { opacity: 1; }
+/* El Puente que espera el segundo toque, resaltado -mismo acento que
+   ".chip.seleccionado" del catálogo, para que se lea como "en curso" del
+   mismo modo-. */
+.chip.chip-enlazando { box-shadow: 0 0 0 2px var(--accent); }
+.chip-enlace-etiqueta {
+  font-size: 0.66rem;
+  font-weight: 600;
+  color: var(--accent);
+  padding-left: 0.15rem;
+}
+
+#foto-sonda-img {
+  display: block;
+  max-width: 100%;
+  max-height: 70vh;
+  margin: 0 auto;
+  border-radius: var(--r);
+}
+
+#btn-nuevo-material {
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1;
+  border: 1px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 0.08rem 0.4rem;
+  margin-left: auto;
+  margin-right: 0.3rem;
+}
+#btn-nuevo-material:hover { background: var(--accent); color: var(--accent-texto); }
+
+/* Estado de la sincronización en el botón ☁ de la barra superior */
+#btn-sync[data-estado="aviso"] { border-color: var(--aviso-border); color: #ffd89a; }
+#btn-sync[data-estado="error"] { border-color: #e0736a; color: #ffb3ac; }
+
+#btn-etiquetas {
+  font: inherit;
+  font-size: 0.66rem;
+  font-weight: 600;
+  line-height: 1;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 0.22rem 0.4rem;
+  margin-left: auto;
+}
+#btn-etiquetas:hover { background: var(--accent-soft); border-color: var(--accent); }
+/* Con dos botones, el que empuja hacia la derecha es el primero */
+#btn-nuevo-material { margin-left: 0.25rem; }
+
+/* --------------------------------- Etiquetas --------------------------- */
+/* Distintivo del tipo físico en la tabla «Material a preparar» */
+.muestra-etiqueta {
+  display: inline-block;
+  width: 0.85rem;
+  height: 0.62rem;
+  border-radius: 2px;
+  margin-right: 0.35rem;
+  vertical-align: -0.05rem;
+  flex: 0 0 auto;
+}
+
+#dlg-etiquetas { max-width: 520px; }
+
+.etiquetas-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  max-height: 32vh;
+  overflow-y: auto;
+  padding: 0.15rem;
+}
+.chip-etiqueta-lista {
+  font: inherit;
+  font-size: 0.72rem;
+  cursor: pointer;
+  color: var(--text);
+}
+.chip-etiqueta-lista.editando {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+.etiqueta-usos {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  background: rgba(0, 0, 0, 0.07);
+  border-radius: 6px;
+  padding: 0 0.25rem;
+  margin-left: 0.15rem;
+}
+
+.dlg-sep { border: none; border-top: 1px solid var(--border-soft); margin: 0.9rem 0 0.7rem; }
+#dlg-etiquetas h4 { margin: 0 0 0.5rem; font-size: 0.8rem; }
+
+.campo-con-boton { display: flex; gap: 0.3rem; align-items: stretch; }
+.campo-con-boton select { flex: 1 1 auto; }
+.campo-con-boton button {
+  font: inherit;
+  font-size: 0.85rem;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 0 0.45rem;
+}
+.campo-con-boton button:hover { background: var(--accent-soft); border-color: var(--accent); }
+
+/* La fila de tres desplegables se usa suelta, fuera de un .campo */
+.campo-fila { display: flex; margin-bottom: 0.6rem; }
+.campo-fila > span > label { font-size: 0.76rem; font-weight: 600; }
+.campo-fila > span > select,
+.campo-fila > span > input[type="color"] {
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.3rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--campo-bg);
+  color: var(--text);
+}
+.campo-fila > span > input[type="color"] { padding: 0.1rem; height: 1.85rem; width: 2.8rem; }
+
+.campo-estilo {
+  border: 1px solid var(--border-soft);
+  border-radius: 5px;
+  padding: 0.5rem 0.6rem 0.2rem;
+  margin: 0 0 0.7rem;
+}
+.campo-estilo legend { font-size: 0.7rem; color: var(--text-muted); padding: 0 0.3rem; }
+
+.vista-previa { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.5rem; }
+.vp-label { font-size: 0.7rem; color: var(--text-muted); }
+.vista-previa .chip { cursor: default; }
+
+dialog {
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 1rem 1.1rem;
+  max-width: 420px;
+  width: calc(100% - 1.5rem);
+  background: var(--card-bg);
+  color: var(--text);
+}
+dialog::backdrop { background: rgba(10, 16, 20, 0.55); }
+
+dialog h3 {
+  margin: 0 0 0.7rem;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  font-weight: 600;
+  background: var(--accent-soft);
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.campo { margin-bottom: 0.6rem; display: flex; flex-direction: column; gap: 0.18rem; }
+/* [hidden] y ".campo" empatan en especificidad (0,0,1,0 los dos): sin esto,
+   ".campo { display:flex }" -que viene después en la hoja- le gana al
+   "display:none" del navegador y el campo condicional se seguiría viendo
+   aunque el atributo "hidden" esté puesto. Pasa con los campos que dependen
+   de una casilla (alerta, cambios respecto al plan). */
+.campo[hidden] { display: none; }
+.campo label { font-size: 0.76rem; font-weight: 600; }
+.campo small { font-size: 0.68rem; color: var(--text-muted); line-height: 1.3; }
+.campo .req { color: var(--peligro); }
+
+/* Todos los tipos que se usan de verdad. Antes solo estaban text/search y
+   los de fecha, hora y número se quedaban con el estilo del navegador. */
+.campo input[type="text"],
+.campo input[type="date"],
+.campo input[type="time"],
+.campo input[type="number"],
+.campo input[type="password"],
+.campo input[type="search"],
+.campo input:not([type]),
+.campo select,
+.campo textarea {
+  font: inherit;
+  font-size: 0.84rem;
+  padding: 0.3rem 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--campo-bg);
+  color: var(--text);
+  width: 100%;
+}
+.campo textarea { resize: vertical; }
+
+.campo-fila { flex-direction: row; align-items: flex-end; gap: 0.9rem; }
+.campo-fila > span { display: flex; flex-direction: column; gap: 0.18rem; }
+.campo-fila select { width: auto; }
+.check {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 400 !important;
+  font-size: 0.78rem !important;
+  padding-bottom: 0.3rem;
+}
+.check input { width: auto; }
+
+.dlg-error {
+  margin: 0 0 0.5rem;
+  font-size: 0.76rem;
+  color: var(--peligro);
+}
+.dlg-error[hidden] { display: none; }
+
+.dlg-ok {
+  margin: 0 0 0.5rem;
+  font-size: 0.76rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+.dlg-ok[hidden] { display: none; }
+
+.dlg-intro {
+  margin: 0 0 0.6rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+.dlg-ayuda {
+  margin-bottom: 0.7rem;
+  font-size: 0.76rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.35rem 0.5rem;
+  background: var(--tag-bg);
+}
+.dlg-ayuda summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+.dlg-ayuda ol { margin: 0.45rem 0 0.15rem; padding-left: 1.1rem; line-height: 1.4; }
+.dlg-ayuda li { margin-bottom: 0.3rem; }
+.dlg-ayuda code {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.92em;
+  background: var(--card-bg);
+  padding: 0 0.2rem;
+  border-radius: 3px;
+}
+
+#dlg-sync { max-width: 470px; }
+
+/* --------------------------- Casos: listado ---------------------------- */
+/* #pantalla-casos ya no lleva ancho propio -pantalla completa, ver la regla
+   compartida junto a "Pantallas" más arriba-, solo dlg-caso (la ficha,
+   sigue siendo un <dialog> de verdad) mantiene el suyo. */
+#dlg-caso { max-width: 620px; }
+
+.casos-acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-bottom: 0.8rem;
+}
+.casos-acciones button {
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: left;
+}
+.casos-acciones button.primario {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-texto);
+  font-weight: 600;
+}
+.casos-acciones button:hover { filter: brightness(1.07); }
+.casos-acciones small {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  line-height: 1.3;
+  margin: 0 0 0.4rem;
+}
+
+.casos-filtros {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.6rem;
+}
+/* Gestión de Casos mete sus filtros en dos ".casos-filtros-fila" -Estado/
+   Desde/Hasta/Ordenar por arriba, Destacados/Seguimiento debajo, pedido
+   el 23-09-2026-; "flex: 0 0 100%" fuerza a cada fila a ocupar el ancho
+   entero del contenedor, así que la segunda cae siempre en su propia
+   línea sin depender de que el contenido desborde -mismo truco que ya usa
+   ".chip-espacio" en otro sitio de la app-. Los otros dos usos de
+   ".casos-filtros" (buscador de Plantillas y de "Cargar montaje…") no
+   llevan filas -un único <span> suelto-, así que no se ven afectados.
+   El selector de más abajo pasó de "> span" a "span" a secas para seguir
+   alcanzando también los que ahora quedan un nivel más adentro. */
+.casos-filtros-fila { display: flex; gap: 0.6rem; flex-wrap: wrap; flex: 0 0 100%; }
+.casos-filtros span { display: flex; flex-direction: column; gap: 0.15rem; }
+.casos-filtros label { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); }
+.casos-filtros select,
+.casos-filtros input {
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.35rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--campo-bg);
+  color: var(--text);
+}
+/* "Solo destacados ★": checkbox de fila, no la caja con borde/padding que
+   llevan select/date -esa regla de arriba también alcanza a los input, así
+   que aquí se pisa a propósito, mismo criterio que ".check" en los
+   diálogos. */
+.casos-filtros .casos-filtro-check {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.35rem;
+  justify-content: flex-end;
+}
+.casos-filtros .casos-filtro-check input {
+  width: auto;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+.casos-filtros .casos-filtro-check label { font-size: 0.8rem; font-weight: 400; color: var(--text); }
+
+/* Checklist pre-quirúrgico: selector de caso aparte de .casos-filtros -que
+   comparten los filtros de Gestión de Casos- porque aquí el texto de las
+   opciones (ID_Caso + nombre del caso) puede ser largo, y el <select> sin
+   tope propio crecía hasta desbordar la pantalla en vez de quedarse dentro. */
+.checklist-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  max-width: 26rem;
+  margin-bottom: 0.6rem;
+}
+.checklist-selector label { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); }
+/* Caja de planificación pegada (20-09-2026): monoespaciada a propósito -lo
+   que se pega suele traer tablas en markdown (pipes "|"), que solo se leen
+   alineadas con una fuente de ancho fijo-. */
+.checklist-notas-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--campo-bg);
+  color: var(--text);
+  resize: vertical;
+}
+.checklist-selector select {
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.35rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--campo-bg);
+  color: var(--text);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Sin max-height/overflow propio a propósito (pedido el 07-09-2026): con
+   un tope fijo de 42vh la lista se cortaba a media pantalla en el móvil,
+   dejando hueco vacío debajo hasta "Exportar". Crece con el contenido y es
+   la página la que hace scroll, como el resto de la pantalla. */
+.casos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.caso-fila {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font: inherit;
+  text-align: left;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--border-soft);
+  border-left: 3px solid var(--text-muted);
+  border-radius: 5px;
+  background: var(--card-bg);
+  color: var(--text);
+  cursor: pointer;
+}
+.caso-fila:hover { border-color: var(--accent); background: var(--accent-soft); }
+/* Color por estado (26-09-2026): pendiente de planificar en negro,
+   preparado en amarillo chillón, cerrado en verde, cancelado en rojo. Con
+   sus propias variables --estado-* (no --accent ni el ámbar de avisos, que
+   con el acento dorado se confundían), y borde más grueso para que se vea.
+   La etiqueta del pie lleva el mismo color de fondo. */
+.caso-fila[class*="estado-"] { border-left-width: 5px; }
+.caso-fila.estado-pendiente_planificar { border-left-color: var(--estado-pendiente); }
+.caso-fila.estado-preparado { border-left-color: var(--estado-preparado); }
+.caso-fila.estado-cerrado { border-left-color: var(--estado-cerrado); }
+.caso-fila.estado-cancelado { border-left-color: var(--estado-cancelado); }
+
+.caso-fila-cab { display: flex; justify-content: space-between; font-size: 0.82rem; }
+.caso-fila-id-grupo { display: flex; align-items: center; gap: 0.3rem; }
+.caso-fila-destacado { color: var(--aviso-border); font-size: 0.9rem; line-height: 1; }
+.caso-fila-seguimiento { color: var(--accent); font-size: 0.85rem; line-height: 1; }
+.caso-fila-dificultad {
+  font-size: 0.62rem;
+  font-weight: 600;
+  padding: 0.05rem 0.3rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.07);
+  color: var(--text-muted);
+}
+.caso-fila-fecha { color: var(--text-muted); font-size: 0.75rem; }
+.caso-fila-det { font-size: 0.78rem; color: var(--text); }
+.caso-fila-pie { display: flex; gap: 0.25rem; flex-wrap: wrap; margin-top: 0.1rem; }
+
+.caso-etiqueta {
+  font-size: 0.62rem;
+  padding: 0.05rem 0.3rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.07);
+  color: var(--text-muted);
+}
+.caso-etiqueta.alerta { background: var(--quitar-bg); color: var(--peligro); font-weight: 600; }
+/* Etiqueta de estado con el color de su borde (ver .caso-fila.estado-*).
+   El negro lleva un filo claro para verse también en modo oscuro. */
+.caso-etiqueta.estado-pendiente_planificar { background: var(--estado-pendiente); color: #fff; font-weight: 600; box-shadow: 0 0 0 1px #8a8374; }
+.caso-etiqueta.estado-preparado { background: var(--estado-preparado); color: #1a1600; font-weight: 600; }
+.caso-etiqueta.estado-cerrado { background: var(--estado-cerrado); color: #fff; font-weight: 600; }
+.caso-etiqueta.estado-cancelado { background: var(--estado-cancelado); color: #fff; font-weight: 600; }
+.caso-etiqueta.sin-subir { background: var(--accent-soft); color: var(--accent); }
+
+/* --------------------- Apuntes: cajas de texto y fotos ------------------ */
+/* Documento continuo de Apuntes hecho de varias cajas con título
+   (07-09-2026, tarde: un solo textarea; misma noche: varias cajas para
+   poder separar temas -MEP, SEP, Blink-Reflex...- cada una con su
+   título). Ancho completo de la pantalla -no dentro de .campo, que
+   limita el ancho a la rejilla de formularios normal-, con letra algo
+   más grande para escribir cómodo. */
+.apunte-seccion {
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--card-bg);
+  padding: 0.5rem 0.6rem;
+  margin-bottom: 0.6rem;
+}
+.apunte-seccion-titulo {
+  display: block;
+  width: 100%;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.3rem 0.2rem;
+  margin-bottom: 0.3rem;
+  border: none;
+  border-bottom: 1px solid var(--border-soft);
+  border-radius: 0;
+  background: none;
+  color: var(--text);
+}
+.apunte-seccion-titulo:focus { outline: none; border-bottom-color: var(--accent); }
+/* Editor de cada caja (24-09-2026): contenteditable con negrita. Más alto
+   de fábrica y redimensionable a mano -las cajas de antes eran demasiado
+   pequeñas-. */
+.apunte-editor {
+  display: block;
+  width: 100%;
+  min-height: 16rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  background: var(--campo-bg);
+  color: var(--text);
+  overflow: auto;
+  resize: vertical;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.apunte-editor:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+.apunte-editor:empty::before { content: attr(data-ph); color: var(--text-muted); }
+.apunte-seccion-cab { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.3rem; flex-wrap: wrap; }
+.apunte-seccion-cab .apunte-seccion-titulo { flex: 1 1 12rem; margin-bottom: 0; }
+.apunte-seccion-cab .apunte-seccion-carpeta { margin-bottom: 0; }
+.apunte-flechas { display: inline-flex; gap: 0.15rem; }
+.apunte-flecha {
+  font: inherit;
+  font-size: 0.7rem;
+  line-height: 1;
+  padding: 0.3rem 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--card-bg);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.apunte-flecha:hover:not(:disabled) { color: var(--accent); border-color: var(--accent); }
+.apunte-flecha:disabled { opacity: 0.35; cursor: default; }
+.apunte-formato { display: flex; gap: 0.3rem; margin-bottom: 0.3rem; }
+.apunte-formato-btn {
+  font: inherit;
+  font-size: 0.85rem;
+  min-width: 2rem;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--card-bg);
+  color: var(--text);
+  cursor: pointer;
+}
+.apunte-formato-btn:hover { border-color: var(--accent); color: var(--accent); }
+.apunte-anadir-seccion {
+  display: block;
+  width: 100%;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: none;
+  border: 1px dashed var(--accent);
+  border-radius: var(--r);
+  padding: 0.6rem;
+  margin-bottom: 0.6rem;
+  cursor: pointer;
+}
+.apunte-anadir-seccion:hover { background: var(--accent-soft); }
+
+/* "+ Añadir caja de texto" y "+ Nueva carpeta" en fila, mismo aspecto que
+   cada botón tenía suelto -por eso .apunte-anadir-seccion pasa de
+   width:100% a flex:1 solo dentro de este contenedor-. */
+.apunte-acciones-secciones { display: flex; gap: 0.5rem; margin-bottom: 0.6rem; }
+.apunte-acciones-secciones .apunte-anadir-seccion { flex: 1; margin-bottom: 0; }
+
+/* Carpetas de Mis apuntes (22-09-2026): reutilizan el aspecto de
+   .caso-grupo tal cual (borde, fondo, flecha ▸/▾), solo se añade lo propio
+   -nombre que crece, contador, botones renombrar/borrar a la derecha en la
+   cabecera, y el selector para mover una caja a otra carpeta-. */
+/* Carpetas: cada una con su color (--carpeta-color, puesto desde JS), para
+   distinguirlas de un vistazo: borde izquierdo grueso, cabecera teñida, icono
+   y contador del mismo tono. */
+.apunte-carpeta {
+  border-color: var(--carpeta-color, var(--border));
+  border-left: 6px solid var(--carpeta-color, var(--border));
+  margin-bottom: 0.9rem;
+}
+/* .caso-grupo.apunte-carpeta: la regla .caso-grupo > summary va más abajo en la
+   hoja y, con la misma especificidad, ganaría a esta. */
+.caso-grupo.apunte-carpeta > summary { font-size: 0.95rem; color: var(--text); padding: 0.6rem 0.7rem; }
+.caso-grupo.apunte-carpeta > summary::before { color: var(--carpeta-color, var(--accent)); }
+.apunte-carpeta-icono { font-size: 1.1rem; line-height: 1; }
+.apunte-carpeta-nombre { flex: 1; font-weight: 600; }
+.apunte-carpeta-cuenta {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--carpeta-color, var(--text-muted));
+  border-radius: 999px;
+  padding: 0.05rem 0.5rem;
+}
+.apunte-carpeta-accion {
+  font: inherit;
+  font-size: 0.8rem;
+  line-height: 1;
+  padding: 0.25rem 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--card-bg);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.apunte-carpeta-accion:hover:not(:disabled) { color: var(--peligro); }
+.apunte-carpeta-accion:disabled { opacity: 0.35; cursor: default; }
+.apunte-carpeta-color { width: 1.3rem; height: 1.3rem; padding: 0; border-color: rgba(0, 0, 0, 0.25); }
+.apunte-carpeta-contenido { padding: 0.6rem 0.6rem 0.1rem; }
+.apunte-carpeta-contenido .apunte-seccion { border-left: 4px solid var(--carpeta-color, var(--border)); }
+.apunte-carpeta-contenido .apunte-seccion:last-child { margin-bottom: 0; }
+
+.apunte-seccion-carpeta {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  font: inherit;
+  font-size: 0.72rem;
+  padding: 0.15rem 0.3rem;
+  margin-bottom: 0.35rem;
+  border: 1px solid var(--border-soft);
+  border-radius: 4px;
+  background: var(--tag-bg);
+  color: var(--text-muted);
+}
+
+.apunte-fotos { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.4rem; }
+.apunte-foto {
+  position: relative;
+  margin: 0;
+  width: 96px;
+  height: 96px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.apunte-foto img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: pointer; }
+.apunte-foto-quitar {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  line-height: 18px;
+  padding: 0;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.apunte-foto-quitar:hover { background: var(--peligro); }
+
+/* ---------------------------- Casos: ficha ----------------------------- */
+/* La ficha es alta -9 apartados-, así que el diálogo se parte en tres
+   franjas: cabecera fija, contenido con su propio scroll, y la barra de
+   acciones (Guardar/Cerrar/Borrar/Volver) fija abajo -el punto 9 del
+   esquema-, siempre a mano sin tener que bajar del todo. */
+/* [open] es obligatorio aquí: un <dialog> sin abrir ya viene oculto por el
+   navegador (display:none de fábrica), pero un "display:flex" sin más en
+   "#dlg-caso" pisaría ese valor por especificidad -exactamente el mismo
+   fallo que ".campo[hidden]" más arriba- y el diálogo se quedaría metido en
+   el flujo normal de la página en vez de oculto hasta abrirse. */
+#dlg-caso[open] {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 2rem);
+  overflow: hidden;
+  padding: 0;
+}
+.caso-cab { flex: 0 0 auto; padding: 1rem 1.1rem 0.5rem; }
+.caso-cab h3 { margin-bottom: 0.2rem; }
+.caso-subtitulo { margin: 0; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem; }
+/* Equipo del caso, pegado a la derecha de "CASO 2026-001". */
+.caso-equipo-marca { margin-left: auto; padding: 0.1rem 0.55rem; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-weight: 600; white-space: nowrap; }
+.caso-equipo-marca[hidden] { display: none; }
+.caso-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 0 1.1rem 0.4rem; }
+.caso-acciones {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0.65rem 1.1rem;
+  border-top: 1px solid var(--border-soft);
+  background: var(--card-bg);
+}
+
+/* Los 8 apartados: mismo patrón ▸/▾ que el resto de la herramienta, pero a
+   escala de diálogo -más compacto que las ventanas principales- y todos
+   plegados por defecto (ver el HTML: sin "open"). */
+.caso-grupo {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r);
+  margin-bottom: 0.5rem;
+  background: var(--tag-bg);
+}
+.caso-grupo > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+.caso-grupo > summary::-webkit-details-marker { display: none; }
+.caso-grupo > summary::before {
+  content: "▸";
+  font-size: 0.85rem;
+  transition: transform 0.12s;
+}
+.caso-grupo[open] > summary::before { transform: rotate(90deg); }
+.caso-grupo[open] > summary { border-bottom: 1px solid var(--border-soft); }
+.caso-grupo-campos { padding: 0.7rem 0.7rem 0.2rem; background: var(--card-bg); }
+
+.caso-ro { font-size: 0.82rem; color: var(--text-muted); padding: 0.2rem 0; }
+.caso-meta { font-size: 0.65rem; color: var(--text-muted); margin: 0.6rem 0 0; }
+.caso-resumen-linea { font-size: 0.72rem; color: var(--text-muted); margin: 0 0 0.4rem; }
+
+/* Detalle canal a canal dentro de la ficha (apartado 5): mismas filas
+   .resumen-caja/.resumen-entrada que la ventana Resumen, solo lectura. */
+.caso-cajas-detalle-titulo {
+  margin: 0.4rem 0 0.3rem;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.caso-cajas-detalle { margin-bottom: 0.6rem; }
+
+/* Parámetros reales por técnica (apartado 5, rediseñado el 10-09-2026 con
+   campos propios por técnica -PARAMETROS_TECNICAS- en vez de la rejilla
+   fija de 8 genéricos de antes): un .caso-grupo por técnica -mismo aspecto
+   que el resto de bloques plegables de la ficha-, con sus secciones
+   general/estimulación/registro dentro. */
+.tecpar-lista { display: flex; flex-direction: column; gap: 0.3rem; }
+.tecpar-tecnica { margin-bottom: 0; }
+.tecpar-campos { display: flex; flex-direction: column; gap: 0.5rem; }
+.tecpar-titulo-seccion {
+  margin: 0 0 0.3rem;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.tecpar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  gap: 0.5rem 0.6rem;
+}
+.tecpar-campo { display: flex; flex-direction: column; gap: 0.15rem; font-size: 0.72rem; }
+.tecpar-campo span { color: var(--text-muted); }
+.tecpar-campo input, .tecpar-campo select, .tecpar-campo textarea {
+  font: inherit;
+  font-size: 0.78rem;
+  padding: 0.2rem 0.35rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--campo-bg);
+  color: var(--text);
+}
+.tecpar-campo textarea { resize: vertical; }
+/* Campos anchos (texto libre, multiselección, la nota de técnicas sin
+   definición propia): ocupan toda la rejilla en vez de una celda estrecha
+   como los campos cortos. */
+.tecpar-campo-ancho { grid-column: 1 / -1; }
+/* "numero" con varias unidades posibles (p. ej. intensidad en mA o V):
+   input + select de unidad en la misma fila. */
+.tecpar-campo-fila { display: flex; gap: 0.3rem; }
+.tecpar-campo-fila input { flex: 1; min-width: 0; }
+.tecpar-unidad { flex: 0 0 auto; max-width: 4.5rem; padding: 0.2rem 0.15rem; }
+.tecpar-chips { gap: 0.3rem; }
+/* "permite_otro" en multiselección: miniforma para añadir un chip propio
+   suelto, aparte de las opciones fijas. */
+.tecpar-otro { display: flex; gap: 0.3rem; margin-top: 0.3rem; }
+.tecpar-otro input {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  font-size: 0.76rem;
+  padding: 0.18rem 0.35rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--campo-bg);
+  color: var(--text);
+}
+.tecpar-otro button {
+  font: inherit;
+  font-size: 0.78rem;
+  padding: 0.15rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--campo-bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+/* Umbrales EMG por raíz (mapeo de tornillos), apartado 6: chips de nivel
+   arriba, y debajo una fila por nivel marcado con sus dos umbrales
+   (izquierdo/derecho). Cada fila es "I (caja) - nivel - D (caja)": la caja
+   izquierda pegada al borde izquierdo, la raíz centrada, la caja derecha
+   pegada al borde derecho -pedido del usuario el 05-09-2026, para
+   distinguir de un vistazo qué lado es cada umbral-. Grid en vez de flex
+   para que el nivel quede centrado de verdad, sin importar si las dos cajas
+   tienen distinta anchura. */
+.umbral-raices-valores { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.5rem; }
+.umbral-raices-fila {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r);
+  background: var(--tag-bg);
+}
+.umbral-raices-nivel { font-weight: 600; font-size: 0.8rem; text-align: center; }
+.umbral-raices-campo { display: flex; align-items: center; gap: 0.3rem; font-size: 0.72rem; }
+.umbral-raices-campo.izq { justify-self: start; }
+.umbral-raices-campo.der { justify-self: end; }
+.umbral-raices-campo span { color: var(--text-muted); }
+.umbral-raices-campo input {
+  font: inherit;
+  font-size: 0.78rem;
+  width: 3rem;
+  padding: 0.2rem 0.35rem;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--campo-bg);
+  color: var(--text);
+}
+
+/* Imágenes del montaje (apartado 5): miniaturas en rejilla, click abre el
+   visor de fotos que ya usan las sondas (mismo <dialog>, distinta fuente). */
+.caso-imagenes-galeria {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.caso-imagen-marco {
+  position: relative;
+  width: 5.5rem;
+  height: 5.5rem;
+}
+.caso-imagen-mini {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  display: block;
+}
+.caso-imagen-quitar {
+  position: absolute;
+  top: -0.35rem;
+  right: -0.35rem;
+  width: 1.3rem;
+  height: 1.3rem;
+  line-height: 1;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--peligro);
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+.caso-imagen-anadir { font-size: 0.78rem; }
+
+/* Botón "tomar foto" (23-09-2026): compacto a propósito, junto al de
+   galería -no una interfaz de cámara nueva, solo un atajo al selector de
+   archivos con "capture" puesto (ver crearBotonCamara() en app.js)-. */
+.caso-imagen-acciones { display: flex; gap: 0.4rem; align-items: center; margin-bottom: 0.5rem; }
+.caso-imagen-acciones .caso-imagen-anadir { margin-bottom: 0; }
+.boton-camara { font-size: 0.85rem; padding: 0.28rem 0.5rem; cursor: pointer; }
+.apunte-foto-entrada { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+
+.caso-material { display: flex; flex-direction: column; gap: 0.2rem; }
+.caso-material-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+}
+/* Con .campo delante para ganarle al ancho del 100% de los campos normales */
+.campo .caso-material-fila input { width: 4.5rem; text-align: right; }
+
+/* ------------------------- Diálogo de catálogos ------------------------ */
+#dlg-catalogos { max-width: 560px; }
+
+.pestanas {
+  display: flex;
+  gap: 0.2rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.7rem;
+  overflow-x: auto;
+}
+.pestana {
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.6rem;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.pestana:hover { color: var(--text); }
+.pestana.activa {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+
+.cat-lista {
+  max-height: 34vh;
+  overflow-y: auto;
+  border: 1px solid var(--border-soft);
+  border-radius: 5px;
+}
+.cat-fila {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.3rem;
+  border-bottom: 1px solid var(--border-soft);
+}
+.cat-fila:last-child { border-bottom: none; }
+.cat-fila.editando { background: var(--accent-soft); }
+/* Desactivada: se ve, pero se nota que ya no se ofrece */
+.cat-fila.desactivada .cat-nombre { opacity: 0.5; text-decoration: line-through; }
+
+.cat-mover { display: flex; flex-direction: column; gap: 1px; }
+.cat-mover button {
+  font: inherit;
+  font-size: 0.55rem;
+  line-height: 1;
+  padding: 0.12rem 0.25rem;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  border-radius: 3px;
+  cursor: pointer;
+}
+.cat-mover button:hover:not(:disabled) { background: var(--accent-soft); border-color: var(--accent); }
+.cat-mover button:disabled { opacity: 0.25; cursor: default; }
+
+.cat-nombre {
+  font: inherit;
+  font-size: 0.82rem;
+  flex: 1 1 auto;
+  text-align: left;
+  border: none;
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+  padding: 0.3rem 0.15rem;
+}
+.cat-nombre:hover { color: var(--accent); }
+
+.cat-extra {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-align: right;
+  max-width: 45%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cat-activa {
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0.25rem 0.2rem;
+  color: var(--accent);
+}
+.cat-fila.desactivada .cat-activa { color: var(--text-muted); }
+
+.cat-version {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin: 0.3rem 0 0;
+  text-align: right;
+}
+
+#dlg-catalogos .chip-fila { max-height: 22vh; overflow-y: auto; }
+#dlg-catalogos h4 { margin: 0 0 0.5rem; font-size: 0.8rem; }
+
+/* Técnica desactivada que sigue marcada en un escenario: se puede quitar,
+   pero se ve que ya no es de las que se ofrecen. */
+.chip-extra.desactivada { opacity: 0.55; border-style: dashed; }
+
+.dlg-botones { display: flex; align-items: center; gap: 0.35rem; margin-top: 0.4rem; }
+.dlg-botones button {
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.dlg-botones button:hover { background: var(--accent-soft); }
+.dlg-botones button.primario {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-texto);
+  font-weight: 600;
+}
+.dlg-botones button.peligro { color: var(--peligro); border-color: var(--border); }
+.dlg-botones button.peligro:hover { background: var(--quitar-bg); border-color: var(--peligro); }
+.dlg-botones button[hidden] { display: none; }
+
+/* ---------------------- Táctil / pantallas pequeñas -------------------- */
+@media (pointer: coarse) {
+  .chip { padding: 0.28rem 0.5rem; font-size: 0.78rem; }
+  .slot { min-height: 1.7rem; }
+  .chip-quitar, .chip-editar, .chip-foto, .chip-enlazar { padding: 0.1rem 0.25rem; font-size: 0.8rem; }
+  .btn-modo { padding: 0.4rem 0.7rem; }
+  .barra-seleccion { font-size: 0.85rem; padding: 0.5rem 0.9rem; bottom: 0.5rem; }
+  .barra-seleccion button { padding: 0.25rem 0.7rem; }
+  /* Objetivos táctiles del diálogo de catálogos: se usa desde el móvil */
+  .pestana { padding: 0.55rem 0.7rem; }
+  .cat-nombre { padding: 0.5rem 0.15rem; }
+  .cat-mover button { padding: 0.22rem 0.4rem; font-size: 0.6rem; }
+  .cat-activa { padding: 0.4rem 0.35rem; font-size: 1.05rem; }
+}
+
+@media (max-width: 620px) {
+  main { padding: 0.5rem 0.45rem 3rem; }
+  .cajas-grid { grid-template-columns: 1fr; }
+  .barra-sup #perfil-usuario { min-width: 0; flex: 1; max-width: none; }
+  .barra-sup img.marca { height: 26px; width: 26px; }
+  .btn-modo { font-size: 0.7rem; padding: 0.3rem 0.45rem; }
+  /* Dos filas ya de por sí (09-09-2026); esto es solo red de seguridad si
+     aun así una de las dos no cupiera entera en una pantalla muy estrecha. */
+  .barra-fila { flex-wrap: wrap; row-gap: 0.3rem; }
+}
+
+/* ------------------------------ Impresión ------------------------------ */
+@media print {
+  .no-print, .barra-sup { display: none !important; }
+  body { background: #fff; font-size: 11pt; }
+  /* Fase 7 (06-09-2026): puede imprimirse (botón "Imprimir" de Catálogos, o
+     Ctrl/Cmd+P nativo) estando en cualquier pantalla, no solo Organizador
+     -que es la única con algo que tenga sentido imprimir, el resumen y las
+     cajas-. Sin esto, imprimir desde Gestión de Casos/Técnicas IONM/Docencia
+     sacaría una página en blanco, porque #pantalla-organizador estaría en
+     display:none igual que en pantalla. */
+  .pantalla { display: none !important; }
+  #pantalla-organizador { display: block !important; }
+  main { max-width: none; padding: 0; }
+  .columna-principal { display: block; }
+  .card { border: none; padding: 0; }
+  /* Cajas es la vista de trabajo canal por canal; el resumen ya trae el
+     material a preparar en una lista compacta, así que no hace falta
+     repetirlo en el papel. */
+  #cajas { display: none !important; }
+  .resumen-card { border-left: none; }
+  .avisos li { background: none; border-left: 2px solid #888; color: #000; }
+}
+
+/* Pantallas estrechas */
+@media (max-width: 900px) {
+  /* 80vh (antes 55vh): el recuadro para elegir material se quedaba pequeño
+     en el móvil (pedido del usuario, 26-09-2026). */
+  .panel-catalogo { max-height: 80vh; }
+  #dlg-montajes-lista, #plantilla-elegir-lista { grid-template-columns: 1fr; }
+}
+
+/* Pantalla ancha: el catálogo vuelve a la columna lateral fija. El HTML no
+   cambia -sigue siendo la tercera tarjeta-; aquí solo se le manda a la
+   segunda columna, ocupando todas las filas, y se queda pegado al hacer
+   scroll para tenerlo a la vista mientras miras las cajas. Columna más
+   ancha que antes (340px, antes 260px) para que el recuadro se vea más
+   grande, pedido el 07-09-2026. */
+@media (min-width: 901px) {
+  .columna-principal {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    align-items: start;
+    column-gap: 0.7rem;
+  }
+  .columna-principal > * { grid-column: 1; }
+  .panel-catalogo {
+    grid-column: 2;
+    /* span 99 y no "1 / -1": con filas implícitas, -1 no llega al final */
+    grid-row: 1 / span 99;
+    position: sticky;
+    /* --barra-caso-h: alto del rótulo permanente (Fase 4.2), que ahora está
+       siempre encima -no solo mientras se corrige un caso-, así que el
+       catálogo tiene que dejarle sitio siempre, no solo a la cabecera.
+       Medido a mano en el navegador, igual que --header-h: 32px en modo
+       plantilla (una línea de texto), 48px en modo caso (con los tres
+       botones). Se remide igual que --header-h si cambia el contenido. */
+    top: calc(var(--header-h) + var(--barra-caso-h, 32px) + 0.5rem);
+    max-height: calc(100vh - var(--header-h) - var(--barra-caso-h, 32px) - 1rem);
+  }
+}
+
+/* -------------------------------- Oscuro ------------------------------- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Fondos en negro neutro, a juego con el logo (26-09-2026). */
+    --bg: #0f0f0f;
+    --card-bg: #1a1a1a;
+    --border: #333333;
+    --border-soft: #262626;
+    --text: #e8e8e8;
+    --text-muted: #a0a0a0;
+    --accent: #d8b45c;
+    --accent-soft: #2a2515;
+    /* Sobre el dorado claro del modo oscuro, texto oscuro: el blanco no se lee. */
+    --accent-texto: #1a1507;
+    --barra-caso-bg: #6f5a24;
+    --estado-pendiente: #000000;
+    --estado-preparado: #ffd60a;
+    --estado-cerrado: #34c759;
+    --estado-cancelado: #ff5147;
+    --aviso-bg: #2e2412;
+    --aviso-border: #a8792a;
+    --aviso-text: #dfb265;
+    --tag-bg: #242424;
+    --peligro: #d98276;
+    --quitar-bg: #33201d;
+    --panel: #080808;
+    --panel-borde: #2b2b2b;
+    /* Los campos rellenables se oscurecen aquí, en un solo sitio. No hace
+       falta repetir selectores por tipo: todos leen la misma variable. */
+    --campo-bg: #141414;
+
+    /* Mismos diez colores por familia de técnica, aclarados para leerse
+       sobre fondo oscuro (mismo criterio que --accent más arriba). */
+    --tm-sep: #b794f6;         --tm-sep-soft: #2f2350;
+    --tm-mep: #e2879a;         --tm-mep-soft: #3a1620;
+    --tm-onda_d: #f0897a;      --tm-onda_d-soft: #3a2018;
+    --tm-emg: #6fd9a6;         --tm-emg-soft: #123423;
+    --tm-reflejos: #f0b45c;    --tm-reflejos-soft: #3a2a10;
+    --tm-vep: #6fd0dc;         --tm-vep-soft: #113338;
+    --tm-peatc: #a5a1f0;       --tm-peatc-soft: #262254;
+    --tm-eeg_ecog: #8fb2f5;    --tm-eeg_ecog-soft: #17233c;
+    --tm-des: #ec8dbb;         --tm-des-soft: #3a1729;
+    --tm-mapeo: #c9b697;       --tm-mapeo-soft: #322a1f;
+  }
+  #perfil-usuario, #catalogo-buscar, #perfil-select { background: #1b2226; color: var(--text); }
+  .caja-plate { background: #c8d2d8; }
+}
+
+/* ================================================================ *
+ * Simulador de pantalla (rehecho el 26-09-2026). Aspecto de pantalla de
+ * monitorización: barra lateral pizarra, ventanas con cabecera de color y
+ * gráfica blanca con rejilla, muelle de minimizadas y barra de estado.
+ * Colores FIJOS a propósito (no los del tema): imita la pantalla del
+ * aparato, que es igual de día y de noche. Distribución en mosaico: ver el
+ * comentario del bloque "Simulador" en app.js.
+ * ================================================================ */
+#pantalla-simulador { max-width: none; padding: 0.4rem; }
+.sim-app {
+  display: flex;
+  height: calc(100vh - var(--header-h) - 0.8rem);
+  height: calc(100dvh - var(--header-h) - 0.8rem);
+  min-height: 20rem;
+  background: #2f3e48;
+  border-radius: 6px;
+  overflow: hidden;
+  color: #e9eef1;
+  font-size: 0.8rem;
+}
+.sim-app:fullscreen { height: 100vh; border-radius: 0; }
+
+/* Barra lateral */
+.sim-lateral {
+  flex: 0 0 7.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.4rem;
+  background: #1f2b33;
+  min-height: 0;
+}
+.sim-lat-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 0.35rem 0.45rem;
+  border: 1px solid #36474f;
+  border-radius: 4px;
+  background: #2b3a44;
+  color: #e9eef1;
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+.sim-lat-btn:hover { background: #36505e; }
+.sim-lat-ico { flex: 0 0 auto; width: 1.1em; text-align: center; }
+.sim-lat-txt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sim-lat-peligro { color: #ffb3aa; }
+.sim-lat-menu { position: relative; }
+.sim-menu {
+  position: absolute;
+  left: calc(100% + 0.4rem);
+  top: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  min-width: 13rem;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 0.3rem;
+  background: #26343d;
+  border: 1px solid #4a5f6c;
+  border-radius: 5px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+.sim-menu[hidden] { display: none; }
+.sim-menu-tit {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9fb2bd;
+  padding: 0.35rem 0.4rem 0.15rem;
+}
+.sim-menu button {
+  border: none;
+  background: transparent;
+  color: #e9eef1;
+  font: inherit;
+  text-align: left;
+  padding: 0.35rem 0.5rem;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.sim-menu button:hover { background: #36505e; }
+.sim-menu-vacio { font-size: 0.72rem; color: #9fb2bd; padding: 0.2rem 0.5rem 0.4rem; }
+.sim-preset-fila { display: flex; align-items: center; gap: 2px; border-radius: 3px; }
+.sim-preset-fila.activo { background: rgba(216, 180, 92, 0.18); }
+.sim-menu .sim-preset-nombre { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sim-preset-fila.activo .sim-preset-nombre { color: #d8b45c; font-weight: 600; }
+.sim-menu .sim-preset-acc { flex: 0 0 auto; padding: 0.3rem 0.35rem; }
+.sim-preset-rotulo { color: #d8b45c; }
+/* Selección de ▶ ■ ❚❚ (TODOS, una ventana o un grupo) y botones de grupo. */
+.sim-lat-sel {
+  width: 100%;
+  margin-top: 0.3rem;
+  border: none;
+  background: transparent;
+  color: #e9eef1;
+  font: inherit;
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.sim-lat-sel.elegida { color: #d8b45c; font-size: 0.85rem; }
+.sim-grupos { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; }
+.sim-grupo {
+  border: none;
+  padding: 0.15rem 0.3rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+.sim-grupo.corriendo { box-shadow: inset 0 0 0 2px #fff; }
+.sim-grupo.elegido { outline: 2px solid #d8b45c; outline-offset: 1px; }
+.sim-ventana.seleccionada { outline: 2px solid #d8b45c; outline-offset: -2px; }
+.sim-ventana.corriendo .sim-num::before { content: "▶"; margin-right: 2px; font-size: 0.55rem; color: #d8ff9e; }
+.sim-transporte { display: flex; justify-content: space-between; gap: 0.25rem; }
+.sim-transporte button {
+  flex: 1 1 0;
+  aspect-ratio: 1;
+  max-width: 2.2rem;
+  border-radius: 50%;
+  border: none;
+  background: #e9eef1;
+  color: #1f2b33;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+#sim-play.activo { background: #3fb24a; color: #fff; }
+
+/* Zona principal */
+.sim-principal { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.sim-lienzo {
+  position: relative;
+  flex: 1 1 auto;
+  display: flex;
+  min-height: 0;
+  padding: 3px;
+}
+.sim-vacio { margin: auto; max-width: 26rem; text-align: center; color: #c5d2d9; }
+.sim-split { display: flex; min-width: 0; min-height: 0; }
+.sim-split-h { flex-direction: row; }
+.sim-split-v { flex-direction: column; }
+.sim-divisor { flex: 0 0 4px; touch-action: none; border-radius: 2px; }
+.sim-divisor-h { cursor: col-resize; }
+.sim-divisor-v { cursor: row-resize; }
+.sim-divisor:hover, .sim-divisor.activo { background: #d8b45c; }
+
+/* Ventana */
+.sim-ventana {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: #fbfcf9;
+  border: 1px solid #1b262d;
+  overflow: hidden;
+}
+.sim-ventana.arrastrando { opacity: 0.35; }
+.sim-ventana-cab {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.1rem 0.25rem;
+  background: #465b68;
+  color: #fff;
+  font-size: 0.68rem;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.sim-ventana-cab.activa { background: #6ea832; }
+.sim-ventana-cab:active { cursor: grabbing; }
+.sim-num { font-weight: 600; min-width: 1em; text-align: right; }
+.sim-badge {
+  font-weight: 800;
+  font-size: 0.62rem;
+  padding: 0 0.3rem;
+  border-radius: 2px;
+  background: #777;
+  color: #fff;
+}
+.sim-badge-sep, .sim-badge-mep, .sim-badge-reflejo, .sim-badge-hreflex { background: #d8342c; }
+.sim-badge-aep { background: #f2b200; color: #1d1600; }
+.sim-badge-tof { background: #3fa535; }
+.sim-badge-emg { background: #2f7fd0; }
+.sim-badge-eeg { background: #1f9a8a; }
+.sim-ventana-titulo {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sim-ventana-acc { flex: 0 0 auto; display: flex; gap: 0.1rem; }
+.sim-icono {
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 0.75rem;
+  line-height: 1;
+  padding: 0.1rem 0.2rem;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.sim-icono:hover { background: rgba(255, 255, 255, 0.2); }
+.sim-ventana-cuerpo { flex: 1 1 auto; display: flex; min-height: 0; }
+/* Teclas de la ventana: sensibilidad a la izquierda, barrido abajo. */
+.sim-sens {
+  flex: 0 0 1.05rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background: #eef1ec;
+  border-right: 1px solid #dfe6de;
+}
+.sim-tecla {
+  flex: 0 0 auto;
+  border: none;
+  background: #465b68;
+  color: #fff;
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1;
+  min-width: 1.05rem;
+  min-height: 1.05rem;
+  padding: 0;
+  cursor: pointer;
+}
+.sim-tecla:hover { background: #5d7686; }
+.sim-tecla:active { background: #d8b45c; color: #1f2b33; }
+.sim-ylabel {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  text-align: center;
+  font-size: 0.52rem;
+  color: #56636a;
+  white-space: nowrap;
+}
+.sim-derecha { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; min-height: 0; container-type: inline-size; }
+.sim-plot { position: relative; flex: 1 1 auto; min-width: 0; min-height: 0; }
+.sim-barr {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: #eef1ec;
+  border-top: 1px solid #dfe6de;
+}
+/* Ventana estrecha: solo 3 marcas de tiempo (20/60/100), que no se pisen. */
+@container (max-width: 160px) { .sim-xejes span:nth-child(even) { visibility: hidden; } .sim-params { display: none; } }
+.sim-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.sim-rejilla { stroke: #dfe6de; stroke-width: 1; }
+.sim-etiq {
+  position: absolute;
+  right: 2px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.52rem;
+  color: #3b4a52;
+  background: rgba(251, 252, 249, 0.75);
+  padding: 0 1px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.sim-etiq-punto { width: 0.6rem; height: 0.6rem; border-radius: 50%; border: 1px solid rgba(0, 0, 0, 0.35); }
+.sim-params {
+  position: absolute;
+  top: 1px;
+  left: 3px;
+  right: 3rem;
+  font-size: 0.5rem;
+  color: #56636a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+.sim-modo {
+  position: absolute;
+  left: 1px;
+  bottom: 1px;
+  font-size: 0.5rem;
+  font-weight: 600;
+  color: #fff;
+  background: #7f8b91;
+  padding: 0 0.2rem;
+  pointer-events: none;
+}
+.sim-xejes {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.5rem;
+  color: #56636a;
+  padding: 0 2px;
+  overflow: hidden;
+}
+.sim-separador { stroke: #7f8b91; stroke-width: 1; stroke-dasharray: 3 3; }
+.sim-xdiv { margin: 0 auto; }
+.sim-sin-canales { font-size: 0.7rem; color: #6b7479; margin: 0.4rem; }
+
+/* Guías de acople al arrastrar */
+.sim-guias { position: absolute; inset: 0; z-index: 40; pointer-events: none; }
+.sim-guia-borde, .sim-cruz > div {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 5px;
+  background: rgba(31, 43, 51, 0.88);
+  border: 2px solid #d8b45c;
+  color: #d8b45c;
+  font-size: 0.85rem;
+  pointer-events: auto;
+}
+.sim-guia-borde.activa, .sim-cruz > div.activa { background: #d8b45c; color: #1f2b33; }
+.sim-guia-arriba { top: 4px; left: calc(50% - 1rem); }
+.sim-guia-abajo { bottom: 4px; left: calc(50% - 1rem); }
+.sim-guia-izq { left: 4px; top: calc(50% - 1rem); }
+.sim-guia-der { right: 4px; top: calc(50% - 1rem); }
+.sim-cruz { position: absolute; width: 0; height: 0; }
+.sim-cruz[hidden] { display: none; }
+.sim-cruz-centro { left: -1rem; top: -1rem; }
+.sim-cruz-arriba { left: -1rem; top: -3.2rem; }
+.sim-cruz-abajo { left: -1rem; top: 1.2rem; }
+.sim-cruz-izq { left: -3.2rem; top: -1rem; }
+.sim-cruz-der { left: 1.2rem; top: -1rem; }
+.sim-previa {
+  position: absolute;
+  background: rgba(216, 180, 92, 0.28);
+  border: 2px solid #d8b45c;
+  border-radius: 3px;
+  pointer-events: none;
+}
+.sim-previa[hidden] { display: none; }
+.sim-arrastre-rotulo {
+  position: absolute;
+  padding: 0.15rem 0.4rem;
+  background: #465b68;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border-radius: 3px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Muelle de minimizadas y barra de estado */
+.sim-dock {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  padding: 0.25rem 0.35rem;
+  background: #26343d;
+  border-top: 1px solid #1b262d;
+}
+.sim-dock[hidden] { display: none; }
+.sim-dock-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.1rem 0.4rem;
+  border: 1px solid #4a5f6c;
+  border-radius: 3px;
+  background: #2f3e48;
+  color: #e9eef1;
+  font: inherit;
+  font-size: 0.68rem;
+  cursor: pointer;
+}
+.sim-dock-item:hover { background: #36505e; }
+.sim-estado {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.15rem 0.5rem;
+  background: #1b262d;
+  color: #9fb2bd;
+  font-size: 0.62rem;
+}
+
+/* En vertical en el móvil no se usa: aviso para girarlo. */
+.sim-girar { display: none; }
+@media (orientation: portrait) and (max-width: 700px) {
+  .sim-app { display: none; }
+  .sim-girar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    min-height: 60vh;
+    text-align: center;
+  }
+  .sim-girar-icono { font-size: 3rem; }
+}
+/* Móvil en horizontal: sin la cabecera de la app, todo el alto para el
+   simulador, y barra lateral estrecha solo con iconos. */
+@media (orientation: landscape) and (max-height: 520px) {
+  body:has(#pantalla-simulador.activa) .barra-sup { display: none; }
+  #pantalla-simulador { padding: 0; }
+  .sim-app { height: 100vh; height: 100dvh; border-radius: 0; }
+  .sim-lateral { flex-basis: 2.6rem; padding: 0.25rem; gap: 0.25rem; }
+  .sim-lat-txt { display: none; }
+  .sim-lat-sel { font-size: 0.5rem; }
+  .sim-lat-sel.elegida { font-size: 0.5rem; }
+  .sim-grupos { flex-direction: column; align-items: stretch; }
+  .sim-grupo { font-size: 0.5rem; padding: 0.1rem 0; }
+  .sim-lat-btn { justify-content: center; padding: 0.3rem 0; }
+  .sim-transporte { flex-direction: column; align-items: center; }
+  .sim-transporte button { width: 1.7rem; height: 1.7rem; flex: 0 0 auto; }
+}
+
+/* Diálogo de ajustes de la ventana */
+.sim-vista-radios { display: flex; gap: 1rem; }
+.sim-vista-radios label { display: flex; align-items: center; gap: 0.3rem; }
+.sim-canales-editor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-bottom: 0.4rem;
+  min-height: 1.5rem;
+}
+.sim-canal-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: var(--tag-bg);
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.75rem;
+}
+.sim-canal-quitar {
+  border: none;
+  background: transparent;
+  color: var(--peligro);
+  cursor: pointer;
+  font-size: 0.7rem;
+  padding: 0;
+}
+.sim-canal-add { display: flex; gap: 0.4rem; }
+.sim-canal-add input { flex: 1 1 auto; }
+.sim-dlg-grupo { margin: 0.5rem 0; }
+.sim-dlg-grupo > summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--accent);
+}
+.sim-params-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+.sim-params-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+@media (max-width: 560px) {
+  .sim-params-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---- Registro intraoperatorio (24-09-2026) ---------------------------- */
+.reg-hoja {
+  margin: 1.1rem 0 0.4rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+.reg-seccion > summary { display: flex; align-items: center; gap: 0.5rem; }
+.reg-cuenta:not(:empty) {
+  margin-left: auto;
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 999px;
+  padding: 0.05rem 0.5rem;
+}
+.reg-ayuda { margin: 0 0 0.5rem; font-size: 0.72rem; color: var(--text-muted); line-height: 1.35; }
+.reg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 0.1rem 0.7rem;
+  align-items: end;
+}
+.reg-grid-compacto { grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); }
+.reg-campo.reg-ancho { grid-column: 1 / -1; }
+.reg-hora { display: flex; gap: 0.3rem; align-items: stretch; }
+.reg-hora input { flex: 1 1 auto; min-width: 0; }
+.reg-ahora {
+  flex: 0 0 auto;
+  font-size: 0.72rem;
+  padding: 0 0.5rem;
+  border-radius: 4px;
+}
+.reg-tecnicas-caso { margin: 0 0 0.3rem; font-size: 0.82rem; }
+.reg-mod-fila {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 0.5rem;
+  padding: 0.4rem 0;
+  border-top: 1px solid var(--border-soft);
+}
+.reg-mod-rotulo { font-size: 0.78rem; font-weight: 600; color: var(--accent); }
+.reg-mod-rotulo-suelto { margin: 0.6rem 0 0.2rem; border-top: 1px solid var(--border-soft); padding-top: 0.4rem; }
+.reg-mod-cuerpo { display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; align-items: center; }
+.reg-mod-grupo { display: flex; flex-wrap: wrap; gap: 0.2rem 0.7rem; align-items: center; }
+.reg-mod-grupo-l { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); }
+.reg-mod-item { font-size: 0.82rem; }
+.reg-mod-cuerpo .reg-campo { margin: 0; min-width: 9rem; }
+.reg-basales { display: grid; grid-template-columns: 1fr; gap: 0.8rem; }
+@media (min-width: 900px) { .reg-basales { grid-template-columns: 1fr 1fr 1fr; } }
+.reg-basal-titulo { font-size: 0.68rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.2rem; }
+.reg-basal-tornillos .reg-basal-fila { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.reg-basal-fila {
+  display: grid;
+  grid-template-columns: 5.2rem repeat(3, minmax(0, 1fr));
+  gap: 0.25rem;
+  margin-bottom: 0.25rem;
+  align-items: center;
+}
+.reg-basal-cab { font-size: 0.68rem; font-weight: 600; color: var(--text-muted); }
+.reg-basal-rotulo { font-size: 0.78rem; font-weight: 600; }
+.reg-basal-fila input, .reg-modular input, .reg-fila input[type="text"], .reg-fila input[type="number"],
+.reg-fila input[type="time"], .reg-fila select, .reg-fila textarea {
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.35rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--campo-bg);
+  color: var(--text);
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+.reg-lista-acciones { margin-bottom: 0.6rem; }
+.reg-fila {
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  padding: 0.4rem 0.5rem 0.1rem;
+  margin-bottom: 0.5rem;
+}
+.reg-fila-cab { display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; margin-bottom: 0.2rem; }
+.reg-fila-quitar { border: none; background: transparent; color: var(--peligro); cursor: pointer; font-size: 0.9rem; }
+.reg-fila-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+  gap: 0.05rem 0.5rem;
+  align-items: end;
+}
+.reg-fila .campo { margin-bottom: 0.35rem; }
+.reg-fila .campo label { font-size: 0.68rem; }
+.reg-modular-scroll { overflow-x: auto; margin-bottom: 0.5rem; }
+.reg-modular { min-width: 46rem; }
+.reg-modular-fila { display: grid; grid-template-columns: repeat(10, minmax(4rem, 1fr)); gap: 0.2rem; margin-bottom: 0.2rem; }
+.reg-modular-cab input { font-weight: 600; background: var(--accent-soft); }
+@media (max-width: 600px) {
+  .reg-mod-fila { grid-template-columns: 1fr; gap: 0.2rem; }
+}
+
+/* ---- Docencia > Material (24-09-2026): una fila por material ------------ */
+.mat-fila {
+  display: grid;
+  grid-template-columns: minmax(8rem, 13rem) 1fr auto;
+  gap: 0.3rem 0.7rem;
+  align-items: center;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: 0.8rem;
+}
+.mat-fila:last-child { border-bottom: none; }
+.mat-chip { cursor: default; justify-self: start; }
+.mat-desc { color: var(--text); line-height: 1.35; }
+@media (max-width: 700px) {
+  .mat-fila { grid-template-columns: 1fr auto; }
+  .mat-desc { grid-column: 1 / -1; }
+}
+
+/* Barra de guardado de Mis apuntes: pegada al borde inferior de la pantalla
+   mientras se hace scroll por las cajas. */
+.apunte-guardar-barra {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  margin: 0.6rem -0.8rem 0;
+  padding: 0.5rem 0.8rem;
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+}
+.apunte-estado-guardado { flex: 1; font-size: 0.72rem; color: var(--text-muted); }
+
+/* Fotos dentro de cada caja de Mis apuntes (24-09-2026): las mismas
+   miniaturas que la lista suelta de abajo, bajo el editor de la caja. */
+.apunte-fotos-seccion { margin-top: 0.5rem; }
+.apunte-fotos-seccion .apunte-fotos { margin-top: 0; }
+.apunte-foto-anadir {
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.7rem;
+  border: 1px dashed var(--accent);
+  border-radius: 6px;
+  background: none;
+  color: var(--accent);
+  cursor: pointer;
+}
+.apunte-foto-anadir:hover { background: var(--accent-soft); }
+.apunte-foto-pendiente {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  background: var(--tag-bg);
+}
+
+/* Modo demostración (?demo, 25-09-2026): aviso en Inicio y botón de la nube
+   en color de aviso, para que se vea siempre que no son datos reales. */
+.demo-inicio {
+  max-width: 900px;
+  margin: 0 auto 1.5rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px dashed var(--aviso-border);
+  border-radius: var(--r);
+  text-align: center;
+  font-size: 0.85rem;
+}
+.demo-inicio[hidden] { display: none; }
+.demo-inicio p { margin: 0 0 0.6rem; }
+body.modo-demo #btn-sync { border-color: var(--aviso-border); color: var(--aviso-border); font-weight: 600; }
+
+/* Equipos (25-09-2026): diálogo de elección y marca en la lista de casos. */
+.equipo-opciones { display: flex; flex-direction: column; gap: 0.5rem; margin: 0.6rem 0 0.2rem; }
+.equipo-opcion { font: inherit; font-weight: 600; font-size: 1.05rem; padding: 0.8rem 1rem; text-align: left; background: var(--card-bg); color: var(--text); border: 1px solid var(--border); border-radius: var(--r); cursor: pointer; }
+.equipo-opcion.principal { border: 2px solid var(--accent); }
+.caso-fila-fecha-col { display: flex; flex-direction: column; align-items: flex-end; gap: 0.1rem; }
+.caso-fila-equipo { font-size: 0.72rem; font-weight: 600; color: var(--accent); }
+#casos-equipo-filtro[hidden], #montajes-equipo-filtro[hidden] { display: none; }
+
+/* Salidas de la caja principal (módulo cortical de Cadwell): triángulos azules
+   como en el equipo, con la luz en verde si el módulo enchufado está en uso. */
+.caja-puertos { display: flex; gap: 0.35rem; justify-content: center; align-items: flex-end; margin: 0.5rem 0 0.2rem; }
+.puerto { position: relative; width: 2.6rem; height: 2.2rem; background: #1f8fd6; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.puerto.base { background: #1fa37a; }
+.puerto i { position: absolute; left: calc(50% - 0.25rem); top: 0.7rem; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: #0c3a5a; }
+.puerto.encendido i { background: #5cff7a; box-shadow: 0 0 0.3rem 0.1rem #39d353; }
+.puerto b { position: absolute; left: 0; right: 0; bottom: 0.12rem; font-size: 0.7rem; text-align: center; color: #fff; }
+
+/* LCSwap de Cadwell: salidas en rejilla y puertos de sonda en recuadros
+   grises, con la misma disposición que el aparato. */
+.canales-wrap.rejilla-entradas { display: grid; gap: 0.3rem 0.4rem; }
+.rejilla-celda { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.rejilla-cab { display: flex; align-items: center; gap: 0.25rem; }
+.rejilla-celda .slot { min-height: 1.7rem; }
+.sonda-recuadros { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin-top: 0.55rem; }
+.sonda-recuadro { background: var(--tag-bg); border: 2px solid var(--border); border-radius: 0.55rem; padding: 0.35rem 0.4rem; display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
+.sonda-recuadro-cab { display: flex; align-items: center; justify-content: center; gap: 0.3rem; font-size: 0.75rem; }
+.sonda-recuadro-cab b { margin: 0 0.25rem; }
+.sonda-polo { color: var(--text-muted); font-weight: 600; }
+
+/* Nombre del equipo con una letra parecida a su logotipo (solo fuentes del
+   sistema). Cadwell: mayúsculas muy gruesas y anchas. Inomed: minúsculas
+   gruesas y redondeadas, en su rojo. */
+.marca-equipo { font-weight: 900; letter-spacing: 0.01em; }
+.marca-cadwell { font-family: "Arial Black", "Arial Bold", Gadget, "Helvetica Neue", Arial, sans-serif; text-transform: uppercase; letter-spacing: 0.06em; font-stretch: expanded; color: var(--text); }
+.marca-inomed { font-family: "Arial Rounded MT Bold", "Nunito", "Varela Round", "Trebuchet MS", Arial, sans-serif; text-transform: lowercase; color: #e2001a; letter-spacing: 0; }
+.sonda-polo-fila { display: flex; align-items: center; gap: 0.3rem; min-width: 0; }
+.sonda-polo-fila .slot { flex: 1; min-width: 0; }
+.sonda-polo { width: 0.7rem; text-align: center; }
+
+/* Basales en la ficha del caso (misma tabla que el Registro). */
+.caso-basales .reg-basales { margin-top: 0.2rem; }
+/* En la ficha (diálogo de ~620 px) siempre en una columna: las tres columnas
+   de la media query de la pantalla Registro dejaban celdas de 20 px en una
+   tablet apaisada (demo-congreso B5.F2). */
+.caso-basales .reg-basales { grid-template-columns: 1fr; }
+.caso-basales-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin-top: 0.5rem; }
+.caso-basales-grid-campo { display: flex; flex-direction: column; gap: 0.15rem; font-size: 0.8rem; }
+@media (max-width: 620px) { .caso-basales-grid { grid-template-columns: 1fr; } }
+
+/* Basales: solo se escriben números, así que letra y casillas más pequeñas
+   (pedido del usuario, 25-09-2026), en la ficha y en el Registro. */
+.reg-basal-fila { grid-template-columns: 6.4rem repeat(3, minmax(0, 1fr)); gap: 0.2rem; margin-bottom: 0.15rem; }
+.reg-basal-rotulo { font-size: 0.7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.reg-basal-cab { font-size: 0.62rem; }
+.reg-basales .reg-basal-fila input[type="text"] { font-size: 0.72rem; line-height: 1.2; padding: 0.12rem 0.3rem; min-width: 0; }
+
+/* Filtros de fecha de Gestión de Casos con su botón para quitarla. */
+.casos-filtros .fecha-filtro { display: flex; flex-direction: row; align-items: center; gap: 0.25rem; }
+.btn-quitar-fecha { font: inherit; font-size: 0.8rem; line-height: 1; padding: 0.3rem 0.45rem; border: 1px solid var(--border); border-radius: 4px; background: var(--card-bg); color: var(--text-muted); cursor: pointer; }
+.btn-quitar-fecha[hidden] { display: none; }
+
+/* Con una ventana abierta (la ficha de un caso, elegir material...) la página
+   de detrás no se desplaza (pedido del usuario, 26-09-2026): antes, al llegar
+   al final de la ficha, el desplazamiento seguía por el listado de casos. */
+html:has(dialog[open]), html:has(dialog[open]) body { overflow: hidden; }
+dialog, .caso-scroll { overscroll-behavior: contain; }
+
+/* El diálogo recibe el foco en pantalla táctil para no sacar el teclado
+   (ver el parche de showModal al principio de app.js): sin recuadro. */
+dialog:focus { outline: none; }
+
+/* Repaso del Simulador: barra del caso, mediciones y diálogo de respuesta. */
+.sim-caso-barra {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.5rem;
+  background: #3a3218;
+  border-bottom: 2px solid #d8b45c;
+  font-size: 0.72rem;
+}
+.sim-caso-barra[hidden] { display: none; }
+.sim-caso-icono { font-size: 1.1rem; }
+.sim-caso-textos { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+.sim-caso-textos strong { color: #d8b45c; }
+.sim-caso-textos span { color: #e9eef1; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.sim-caso-barrida { color: #9fb2bd; white-space: nowrap; }
+.sim-caso-barra button {
+  border: 1px solid #6b5a2a;
+  background: #2b2512;
+  color: #e9eef1;
+  font: inherit;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.sim-caso-barra button.primario { background: #d8b45c; color: #1f2b33; border-color: #d8b45c; font-weight: 600; }
+.sim-caso-barra button.activo { background: #6ea832; border-color: #6ea832; }
+.sim-etiq-med { font-weight: 600; color: #1f2b33; background: #f6e7b8; padding: 0 2px; border-radius: 2px; }
+.sim-etiq-med[hidden] { display: none; }
+#dlg-sim-caso { max-width: 34rem; }
+.sim-caso-pregunta { font-weight: 600; }
+.sim-caso-opcion {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin: 0.35rem 0;
+  padding: 0.55rem 0.7rem;
+  font: inherit;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--card-bg);
+  color: var(--text);
+  cursor: pointer;
+}
+.sim-caso-opcion:hover { border-color: var(--accent); background: var(--accent-soft); }
+.sim-caso-veredicto { font-weight: 600; font-size: 1rem; }
+.sim-caso-veredicto.ok { color: var(--estado-cerrado); }
+.sim-caso-veredicto.mal { color: var(--estado-cancelado); }
+.sim-caso-tiempo { color: var(--text-muted); font-size: 0.85rem; }
+#dlg-sim-caso h4 { margin: 0.6rem 0 0.2rem; color: var(--accent); }
+@media (orientation: landscape) and (max-height: 520px) {
+  .sim-caso-barra { font-size: 0.62rem; padding: 0.2rem 0.3rem; gap: 0.3rem; }
+  .sim-caso-textos span { -webkit-line-clamp: 1; }
+}
+
+/* Barra de acciones de la ficha (demo-congreso B1.F1): "Borrar caso" en un
+   menú ⋮ que se abre hacia arriba; en el móvil, dos filas (informe, hoja y ⋮
+   arriba; Volver y un Guardar ancho abajo) para que Guardar no se corte. */
+.caso-acciones { position: relative; z-index: 2; }
+.caso-acciones button { min-height: 44px; }
+.caso-mas { position: relative; }
+.caso-mas[hidden] { display: none; }
+.caso-mas-btn { min-width: 44px; font-weight: 600; }
+.caso-mas-lista {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 0.35rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 11rem;
+  padding: 0.35rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+.caso-mas-lista[hidden] { display: none; }
+.caso-mas-lista button { text-align: left; }
+@media (max-width: 520px) {
+  .caso-acciones { flex-wrap: wrap; padding: 0.5rem 0.7rem; }
+  .caso-acciones .caso-acciones-salto { flex: 0 0 100%; height: 0; }
+  #caso-crear-informe, #caso-hoja-registro { flex: 1 1 0; }
+  #caso-volver { flex: 0 0 auto; }
+  #caso-guardar { flex: 1 1 auto; font-size: 0.95rem; }
+}
+
+/* Tarjetas y pestañas ocultas (p. ej. lo "en construcción" en la demo):
+   .tile lleva display propio en el móvil, así que [hidden] necesita su regla. */
+.tile[hidden], .pestana[hidden] { display: none; }
+
+/* Recorrido guiado "Empieza aquí" (demo-congreso B2.F2): tarjeta flotante
+   abajo -o arriba si lo resaltado queda en la mitad de abajo-, sin velo que
+   tape la app, y un contorno dorado en lo que se está explicando. */
+.tour-lanzar-fila { max-width: 900px; margin: 1.2rem auto 0; padding: 0 0.8rem; }
+.tour-lanzar-fila[hidden] { display: none; }
+.tour-lanzar {
+  width: 100%;
+  min-height: 44px;
+  font: inherit;
+  font-weight: 600;
+  color: var(--accent-texto);
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--r);
+  cursor: pointer;
+}
+.tour-card {
+  position: fixed;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  width: calc(100% - 24px);
+  max-width: 420px;
+  z-index: 1000;
+  padding: 0.8rem 0.9rem 0.7rem;
+  color: var(--text);
+  background: var(--card-bg);
+  border: 2px solid var(--accent);
+  border-radius: var(--r);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+  text-align: left;
+}
+.tour-card.tour-arriba { bottom: auto; top: 12px; }
+.tour-card[hidden] { display: none; }
+.tour-card p { margin: 0; }
+.tour-num { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.tour-tit { font-size: 1rem; font-weight: 600; color: var(--accent); margin-top: 0.15rem !important; }
+.tour-texto { font-size: 0.9rem; line-height: 1.4; margin-top: 0.35rem !important; }
+.tour-botones { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.7rem; }
+.tour-botones button {
+  min-height: 44px;
+  padding: 0 0.9rem;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  cursor: pointer;
+}
+.tour-botones button[hidden] { display: none; }
+.tour-botones .tour-saltar { border-color: transparent; color: var(--text-muted); padding: 0 0.4rem; }
+.tour-botones .tour-sig { color: var(--accent-texto); background: var(--accent); border-color: var(--accent); font-weight: 600; }
+.tour-foco { outline: 3px solid var(--accent) !important; outline-offset: 2px; border-radius: var(--r); }
+
+/* Revisión del montaje (demo-congreso B3.F1): avisos orientativos, aparte
+   de los "Avisos" que se guardan con el caso. */
+.resumen-revision-ay { margin: -0.2rem 0 0.4rem; font-size: 0.78rem; color: var(--text-muted); }
+
+/* Privacidad y autoría en el bloque de la demo (demo-congreso B4.F2/F4.3). */
+.demo-privacidad { font-weight: 600; }
+.demo-inicio .demo-autoria { margin: 0.7rem 0 0; font-size: 0.75rem; color: var(--text-muted); }
+#demo-restablecer { min-height: 44px; }
+
+/* Controles de 44 px en la ficha del caso y el Registro (demo-congreso
+   B5.F1), solo en pantallas táctiles o estrechas: botones, desplegables,
+   casillas (toda la etiqueta es la zona de toque) y cabeceras plegables.
+   Las celdas numéricas densas (basales, zona modular) se quedan compactas a
+   propósito, igual que los campos de texto. */
+@media (pointer: coarse), (max-width: 900px) {
+  #dlg-caso button, #pantalla-registro button,
+  #dlg-caso select, #pantalla-registro select,
+  #dlg-caso summary, #pantalla-registro summary { min-height: 44px; }
+  #dlg-caso label.check, #pantalla-registro label.check { min-height: 44px; align-items: center; }
+  #dlg-caso input[type="checkbox"], #pantalla-registro input[type="checkbox"] { width: 20px; height: 20px; flex: 0 0 auto; }
+  #pantalla-registro .reg-fila-quitar { min-width: 44px; }
+  #dlg-caso .reg-hora input, #pantalla-registro .reg-hora input { min-height: 44px; }
+}
+
+/* Rótulo de la plantilla cargada, más sobrio (28-09-2026, pedido del
+   usuario: el nombre en dorado grande y el "Plantilla seleccionada:" en
+   blanco no encajaban con el resto). Mismo aspecto que una tarjeta: una
+   etiqueta pequeña en mayúsculas, el nombre en el color del texto y el
+   equipo como una etiqueta discreta. El modo "corrigiendo un caso" no cambia. */
+body:not(.editando-caso) .barra-caso {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  padding: 0.5rem 0.8rem;
+}
+body:not(.editando-caso) #barra-caso-prefijo {
+  display: block;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+body:not(.editando-caso) .barra-caso b {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.barra-caso-equipo {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.05rem 0.45rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  vertical-align: 0.1em;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+body.editando-caso .barra-caso-equipo { color: #fff; border-color: rgba(255, 255, 255, 0.5); }
+button, input, select, textarea { font-family: inherit; }
+
+/* Acciones de Plantillas de montajes (28-09-2026): Guardar montaje como
+   botón principal y el resto en un menú desplegable, con el mismo aspecto
+   que los demás botones de la app (antes salían con el gris del navegador). */
+.montajes-acciones button {
+  font: inherit;
+  font-size: 0.85rem;
+  min-height: 40px;
+  padding: 0.35rem 0.9rem;
+  color: var(--text);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  cursor: pointer;
+}
+.montajes-acciones button:hover { border-color: var(--accent); }
+.montajes-acciones button.primario {
+  color: var(--accent-texto);
+  background: var(--accent);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+.montajes-mas { position: relative; }
+.montajes-mas-lista {
+  position: absolute;
+  top: calc(100% + 0.3rem);
+  left: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 11rem;
+  padding: 0.35rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+.montajes-mas-lista[hidden] { display: none; }
+.montajes-mas-lista button { text-align: left; border-color: transparent; }
+.montajes-mas-lista button.peligro { color: var(--peligro); border-top: 1px solid var(--border); border-radius: 0 0 var(--r) var(--r); }

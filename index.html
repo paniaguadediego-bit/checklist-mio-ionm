@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<!-- Sin zoom por pellizco: es una herramienta, no contenido para leer con
+     zoom, y un pellizco accidental durante el uso real en quirófano deja el
+     viewport visual desplazado del viewport de layout -los <dialog>
+     centrados con position:fixed (SINCRONIZAR CON GITHUB, la ficha del
+     caso...) se posicionan respecto al de layout, así que tras un zoom sin
+     querer aparecen descentrados/cortados por el lado derecho, sin
+     "mantener la verticalidad". Reportado en real, 22-09-2026. -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MIO-Check</title>
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0b0d0e">
+<!--
+  El ?v= de los archivos no es decorativo: GitHub Pages los cachea 10 minutos
+  cada uno por su cuenta, así que el navegador puede quedarse con el HTML
+  nuevo y el app.js viejo. Cuando eso pasa, la página se dibuja con botones
+  que no responden, porque el código que los escucha no ha llegado.
+  Cambiar el número hace que la URL sea otra y el navegador la pida de nuevo.
+
+  AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
+-->
+<link rel="stylesheet" href="style.css?v=20260928h">
+</head>
+<body>
+
+<header class="barra-sup">
+  <!-- Dos filas (09-09-2026, pedido del usuario -antes una sola desde la
+       Fase 7-): arriba el logo, el selector de perfil y el menú "⋮" -a la
+       derecha del todo, ver más abajo por qué-; debajo, aparte, todo lo de
+       sincronización -botón ☁ y el aviso de guardado-, que no hace falta
+       tener a la vista todo el rato. -->
+  <div class="barra-fila barra-fila-top">
+    <!-- Fase 7 (06-09-2026): la página pasa a tener una pantalla de inicio con
+         6 tarjetas; el logo es ahora el único camino de vuelta a ella desde
+         cualquier pantalla, así que necesita ser un control real (con foco de
+         teclado), no una <img> suelta con un listener pegado encima. -->
+    <button type="button" id="btn-inicio" class="marca-boton" data-i18n-title="logo_inicio_tit">
+      <img class="marca" src="img/favicon.png" alt="MIO-Check" width="32" height="32">
+    </button>
+    <select id="perfil-usuario" data-i18n-aria="perfil_usuario_aria" data-i18n-title="perfil_usuario_aria"></select>
+    <span class="barra-flex"></span>
+    <!-- Guía de uso / Idioma / Catálogos son de consulta ocasional, no de
+         cada gesto: van agrupados en un desplegable para no competir en
+         ancho con el resto. Técnicas MIO y Docente vivían aquí hasta la
+         Fase 7; ahora son tarjetas de la pantalla de inicio, no hace falta
+         un segundo camino para llegar a ellas. Catálogos se unió al grupo
+         el 09-09-2026 -pedido del usuario, sobraba en la barra fija-. Pasó
+         un rato a la izquierda del todo ese mismo día y volvió a la
+         derecha -pedido del usuario otra vez-. -->
+    <div class="menu-desplegable">
+      <button type="button" id="btn-menu" class="btn-modo" data-i18n-title="btn_menu_tit">⋮</button>
+      <div class="menu-lista" id="menu-lista" hidden>
+        <button type="button" id="btn-catalogos" data-i18n="btn_catalogos" data-i18n-title="btn_catalogos_tit"></button>
+        <button type="button" id="btn-idioma" title="Switch to English">EN</button>
+        <button type="button" id="btn-guia" data-i18n-title="btn_guia_tit" data-i18n="btn_guia"></button>
+      </div>
+    </div>
+  </div>
+  <div class="barra-fila barra-fila-sync">
+    <button type="button" id="btn-sync" class="btn-modo" data-i18n-title="sync_titulo">☁ <span id="sync-estado"></span></button>
+    <span class="guardado-aviso" id="guardado-aviso"></span>
+  </div>
+</header>
+
+<!-- Fase 7 (06-09-2026): pantalla de inicio con 6 tarjetas -pedido de la
+     usuaria, boceto a mano-. Cada tarjeta lleva a su propia pantalla
+     (ver ".pantalla"/".pantalla.activa" en style.css e irAPantalla() en
+     app.js); el logo de la cabecera es el único camino de vuelta aquí. -->
+<div class="pantalla activa" id="pantalla-inicio">
+  <!-- Recorrido guiado "Empieza aquí": solo en ?demo (demo-congreso B2.F2). -->
+  <div class="tour-lanzar-fila" id="tour-lanzar-fila" hidden>
+    <button type="button" id="tour-lanzar" class="tour-lanzar" data-i18n="tour_lanzar"></button>
+  </div>
+  <!-- Inicio en tres bloques según el momento de la cirugía (demo-congreso
+       B2.F1), cada tarjeta con una línea que dice para qué sirve. -->
+  <section class="inicio-grupo">
+    <h2 class="inicio-grupo-tit" data-i18n="inicio_grupo_antes"></h2>
+    <div class="inicio-tiles">
+      <button type="button" class="tile" id="tile-organizador"><span class="tile-nombre" data-i18n="tile_organizador"></span><span class="tile-sub" data-i18n="tile_organizador_sub"></span></button>
+      <button type="button" class="tile" id="tile-casos"><span class="tile-nombre" data-i18n="tile_casos"></span><span class="tile-sub" data-i18n="tile_casos_sub"></span></button>
+      <button type="button" class="tile" id="tile-checklist"><span class="tile-nombre" data-i18n="tile_checklist"></span><span class="tile-sub" data-i18n="tile_checklist_sub"></span></button>
+      <button type="button" class="tile" id="tile-material"><span class="tile-nombre" data-i18n="tile_material"></span><span class="tile-sub" data-i18n="tile_material_sub"></span></button>
+    </div>
+  </section>
+  <section class="inicio-grupo">
+    <h2 class="inicio-grupo-tit" data-i18n="inicio_grupo_en"></h2>
+    <div class="inicio-tiles">
+      <button type="button" class="tile" id="tile-registro"><span class="tile-nombre" data-i18n="tile_registro"></span><span class="tile-sub" data-i18n="tile_registro_sub"></span></button>
+      <button type="button" class="tile" id="tile-tecnicas-mio"><span class="tile-nombre" data-i18n="tile_tecnicas"></span><span class="tile-sub" data-i18n="tile_tecnicas_sub"></span></button>
+    </div>
+  </section>
+  <section class="inicio-grupo">
+    <h2 class="inicio-grupo-tit" data-i18n="inicio_grupo_despues"></h2>
+    <div class="inicio-tiles">
+      <button type="button" class="tile" id="tile-docente"><span class="tile-nombre" data-i18n="tile_docencia"></span><span class="tile-sub" data-i18n="tile_docencia_sub"></span></button>
+      <button type="button" class="tile" id="tile-simulador"><span class="tile-nombre" data-i18n="tile_simulador"></span><span class="tile-sub" data-i18n="tile_simulador_sub"></span></button>
+      <button type="button" class="tile" id="tile-apuntes"><span class="tile-nombre" data-i18n="tile_apuntes"></span><span class="tile-sub" data-i18n="tile_apuntes_sub"></span></button>
+      <button type="button" class="tile" id="tile-bibliografia"><span class="tile-nombre" data-i18n="tile_bibliografia"></span><span class="tile-sub" data-i18n="tile_bibliografia_sub"></span></button>
+    </div>
+  </section>
+  <!-- Botón de salida (07-09-2026): junto con el atrás del teléfono en esta
+       misma pantalla, es la única forma de cerrar la app pidiendo
+       confirmación antes -para no perder nada sin sincronizar-. Fuera de
+       .inicio-tiles a propósito: no es una pantalla más, es una acción. -->
+  <button type="button" class="btn-cerrar-app" id="btn-cerrar-app" data-i18n="btn_cerrar_app"></button>
+  <!-- Solo en modo demostración (?demo), ver MODO_DEMO en app.js. -->
+  <div class="demo-inicio" id="demo-inicio" hidden>
+    <p data-i18n="demo_inicio_nota"></p>
+    <p class="demo-privacidad" data-i18n="demo_privacidad"></p>
+    <button type="button" id="demo-restablecer" data-i18n="demo_restablecer"></button>
+    <p class="demo-autoria" data-i18n="demo_autoria"></p>
+  </div>
+</div>
+
+<main class="pantalla" id="pantalla-organizador">
+
+  <div class="pantalla-cab">
+    <h2 data-i18n="tile_organizador"></h2>
+    <button type="button" class="btn-pantalla-inicio" data-i18n="btn_inicio_pantalla" data-i18n-title="logo_inicio_tit"></button>
+  </div>
+
+  <!--
+    El banco de trabajo es único -Técnicas, Catálogo, Cajas, Resumen-, siempre
+    el mismo tanto si se edita una plantilla suelta como si se corrige el
+    material de un caso. Qué montaje hay cargado se elige aparte, en la
+    tarjeta Plantillas de montajes de aquí abajo o desde la ficha de un
+    caso; el rótulo permanente, justo debajo de esa tarjeta, dice siempre
+    cuál de los dos se está tocando -oculto si no hay ninguno de los dos-.
+  -->
+  <div class="columna-principal">
+
+    <!-- Fase 6: Montajes es ahora la pantalla principal, no un diálogo -es
+         la primera tarjeta, encima de Técnicas-. Se dejó plegada de fábrica
+         igual que el resto el 04-09-2026, pero al ser la pantalla principal
+         se corrigió al pedirlo el usuario el 05-09-2026: abierta por
+         defecto, es la única de las tarjetas del banco de trabajo que lo
+         está. Mismo contenido que antes (buscador, acciones, lista), solo
+         cambia el envoltorio: de <dialog> a <details> igual que el resto de
+         tarjetas. -->
+    <details class="card no-print" id="montajes">
+      <summary class="card-cab">
+        <h2 data-i18n="dlg_montajes_titulo"></h2>
+      </summary>
+
+      <div class="casos-filtros">
+        <span>
+          <label for="montajes-buscar" data-i18n="plantilla_filtro_buscar"></label>
+          <input type="search" id="montajes-buscar" data-i18n-ph="plantilla_buscar_ph" autocomplete="off">
+        </span>
+        <span id="montajes-equipo-filtro" hidden>
+          <label for="montajes-equipo" data-i18n="casos_filtro_equipo"></label>
+          <select id="montajes-equipo"></select>
+        </span>
+      </div>
+
+      <!-- Acciones agrupadas (28-09-2026, pedido del usuario: los cinco botones
+           sueltos no pegaban con el estilo): Guardar montaje a la vista como
+           acción principal y el resto en el menú "Más acciones". -->
+      <div class="montajes-acciones no-print">
+        <button type="button" id="btn-guardar-montaje" class="primario" data-i18n="btn_guardar_montaje"></button>
+        <div class="montajes-mas" id="montajes-mas">
+          <button type="button" id="montajes-mas-btn" class="montajes-mas-btn" aria-haspopup="true" aria-expanded="false"><span data-i18n="montajes_mas"></span> ▾</button>
+          <div class="montajes-mas-lista" id="montajes-mas-lista" hidden>
+            <button type="button" id="btn-duplicar" data-i18n="btn_duplicar"></button>
+            <button type="button" id="btn-renombrar" data-i18n="btn_renombrar"></button>
+            <button type="button" id="btn-vaciar" data-i18n="btn_vaciar"></button>
+            <button type="button" id="btn-borrar" class="peligro" data-i18n="btn_borrar"></button>
+          </div>
+        </div>
+      </div>
+
+      <div id="dlg-montajes-lista"></div>
+      <p class="cat-version" id="montajes-cuenta"></p>
+    </details>
+
+    <!-- Rótulo permanente (Fase 4.2, reubicado a la Fase 7.1 -06-09-2026-):
+         dice qué plantilla está cargada, o qué caso se está corrigiendo.
+         Antes vivía fuera de <main>, visible en las 6 pantallas -sobraba en
+         las otras 5, donde no hay ningún montaje que editar-. Ahora es parte
+         del propio Organizador, justo debajo de Plantillas de montajes, y
+         oculto del todo si no hay ninguna plantilla cargada -ver
+         renderBarraCaso()-. -->
+    <div class="barra-caso no-print" id="barra-caso" hidden>
+      <span class="barra-caso-info">
+        <span id="barra-caso-prefijo"></span>
+        <b id="barra-caso-nombre"></b>
+        <small id="barra-caso-ay"></small>
+      </span>
+      <span class="barra-caso-acciones" id="barra-caso-acciones" hidden>
+        <button type="button" id="barra-caso-cargar-plantilla" data-i18n="caso_cargar_plantilla"></button>
+        <button type="button" id="barra-caso-guardar-plantilla" data-i18n="caso_guardar_plantilla"></button>
+        <button type="button" id="barra-caso-volver" class="primario" data-i18n="barra_caso_volver"></button>
+      </span>
+    </div>
+
+    <!-- Conserva la clase panel-catalogo: es a lo que apunta el soltar
+         material encima para quitarlo de una entrada. Pasa de <div> a
+         <details> el 06-09-2026 (tarde), para que en móvil se comporte
+         exactamente igual que el resto de tarjetas al desplegarse -ocupa
+         toda la pantalla, las demás se quedan plegadas-. En escritorio
+         sigue siendo la columna lateral fija de siempre, sin cambios ahí. -->
+    <details class="card panel-catalogo no-print" id="panel-catalogo" open>
+      <summary class="panel-cab card-cab">
+        <h2 data-i18n="catalogo_titulo"></h2>
+        <button type="button" id="btn-etiquetas" data-i18n-title="btn_etiquetas_tit" data-i18n="btn_etiquetas"></button>
+        <button type="button" id="btn-nuevo-material" data-i18n-title="btn_nuevo_mat_tit">+</button>
+      </summary>
+      <input type="search" id="catalogo-buscar" data-i18n-ph="catalogo_buscar" autocomplete="off">
+      <p class="panel-ayuda" data-i18n-html="catalogo_ayuda"></p>
+      <div id="catalogo-contenido"></div>
+    </details>
+
+    <details class="card" id="cajas">
+      <summary class="card-cab">
+        <h2 data-i18n="cajas_titulo"></h2>
+        <span class="card-pista" id="cajas-pista"></span>
+      </summary>
+      <section id="cajas-contenido"></section>
+    </details>
+
+    <!-- Técnicas va debajo de Cajas desde el 10-09-2026 -pedido del
+         usuario-; antes iba justo debajo de Plantillas de montajes. -->
+    <details class="card tecnicas-card no-print" id="tecnicas">
+      <summary class="card-cab">
+        <h2 data-i18n="tecnicas_titulo"></h2>
+      </summary>
+      <div id="tecnicas-contenido"></div>
+    </details>
+
+    <details class="card resumen-card" id="resumen">
+      <summary class="card-cab">
+        <h2 data-i18n="resumen_titulo"></h2>
+      </summary>
+      <div id="resumen-contenido"></div>
+    </details>
+
+    <!-- Notas del montaje, al final del todo (después de Resumen): las de la
+         plantilla activa o, si se está corrigiendo su montaje, las del caso.
+         Se copian al caso al cargar una plantilla. -->
+    <details class="card no-print" id="montaje-notas" hidden>
+      <summary class="card-cab">
+        <h2 data-i18n="caso_notas_montaje"></h2>
+      </summary>
+      <div class="campo">
+        <textarea id="montaje-notas-texto" rows="4" aria-labelledby="montaje-notas"></textarea>
+      </div>
+    </details>
+
+  </div>
+
+</main>
+
+<div class="barra-seleccion no-print" id="barra-seleccion" hidden>
+  <span><span data-i18n="colocando"></span> <b id="bs-nombre"></b> <span data-i18n="colocando_ayuda"></span></span>
+  <button type="button" id="bs-cancelar" data-i18n="cancelar"></button>
+</div>
+
+<!-- Enlace de un Puente a su cork de referencia (22-09-2026): mismo aspecto
+     que barra-seleccion, mutuamente excluyente con ella -ver seleccionar()/
+     iniciarEnlacePuente() en app.js-, nunca las dos visibles a la vez. -->
+<div class="barra-seleccion no-print" id="barra-enlace-puente" hidden>
+  <span><span data-i18n="puente_enlazando"></span> <span data-i18n="puente_enlazando_ayuda"></span></span>
+  <button type="button" id="be-cancelar" data-i18n="cancelar"></button>
+</div>
+
+<dialog id="dlg-sync" class="no-print">
+  <h3 data-i18n="dlg_sync_titulo"></h3>
+  <p class="dlg-intro" data-i18n-html="dlg_sync_intro"></p>
+
+  <details class="dlg-ayuda">
+    <summary data-i18n="dlg_sync_ayuda"></summary>
+    <ol>
+      <li data-i18n-html="sync_paso1"></li>
+      <li data-i18n-html="sync_paso2"></li>
+      <li data-i18n-html="sync_paso3"></li>
+      <li data-i18n-html="sync_paso4"></li>
+      <li data-i18n-html="sync_paso5"></li>
+    </ol>
+  </details>
+
+  <div class="campo">
+    <label for="sync-repo"><span data-i18n="campo_repo"></span> <span class="req">*</span></label>
+    <input id="sync-repo" placeholder="usuario/checklist-mio-datos" autocomplete="off">
+    <small data-i18n-html="campo_repo_ayuda"></small>
+  </div>
+  <div class="campo">
+    <label for="sync-token"><span data-i18n="campo_token"></span> <span class="req">*</span></label>
+    <input id="sync-token" type="password" placeholder="github_pat_…" autocomplete="off">
+    <small data-i18n="campo_token_ayuda"></small>
+  </div>
+
+  <p class="dlg-error" id="sync-error" hidden></p>
+  <p class="dlg-ok" id="sync-ok" hidden></p>
+
+  <div class="dlg-botones">
+    <button type="button" id="sync-olvidar" class="peligro" data-i18n="btn_desconectar"></button>
+    <span class="barra-flex"></span>
+    <button type="button" id="sync-cerrar" data-i18n="cerrar"></button>
+    <button type="button" id="sync-bajar" data-i18n="btn_bajar"></button>
+    <button type="button" id="sync-subir" class="primario" data-i18n="btn_subir"></button>
+  </div>
+</dialog>
+
+<dialog id="dlg-material" class="no-print">
+  <h3 id="dlg-titulo" data-i18n="dlg_mat_nuevo"></h3>
+  <div class="campo">
+    <label for="mat-nombre"><span data-i18n="campo_nombre"></span> <span class="req">*</span></label>
+    <input id="mat-nombre" maxlength="40" data-i18n-ph="mat_ph_nombre">
+  </div>
+  <div class="campo">
+    <label for="mat-categoria"><span data-i18n="campo_categoria"></span> <span class="req">*</span></label>
+    <input id="mat-categoria" list="lista-categorias" data-i18n-ph="mat_ph_categoria">
+    <datalist id="lista-categorias"></datalist>
+  </div>
+  <div class="campo">
+    <label for="mat-etiqueta"><span data-i18n="campo_etiqueta"></span> <span class="req">*</span></label>
+    <span class="campo-con-boton">
+      <select id="mat-etiqueta"></select>
+      <button type="button" id="mat-nueva-etiqueta" data-i18n-title="campo_gestionar_t" data-i18n="campo_gestionar"></button>
+    </span>
+    <small data-i18n="campo_etiqueta_ay"></small>
+  </div>
+
+  <fieldset class="campo-estilo">
+    <legend data-i18n="grupo_aspecto"></legend>
+    <div class="campo-fila">
+      <span>
+        <label for="mat-borde" data-i18n="campo_borde"></label>
+        <select id="mat-borde" class="select-borde"></select>
+      </span>
+      <span>
+        <label for="mat-color" data-i18n="campo_color_borde"></label>
+        <select id="mat-color" class="select-color"></select>
+      </span>
+      <span>
+        <label for="mat-fondo" data-i18n="campo_fondo"></label>
+        <select id="mat-fondo" class="select-color"></select>
+      </span>
+    </div>
+    <div class="vista-previa">
+      <span class="vp-label" data-i18n="vista_previa"></span>
+      <span class="chip" id="mat-previa"></span>
+    </div>
+  </fieldset>
+
+  <div class="campo">
+    <label class="check">
+      <input type="checkbox" id="mat-sinentrada">
+      <span data-i18n="campo_sin_entrada"></span>
+    </label>
+  </div>
+  <div class="campo">
+    <label for="mat-nota" data-i18n="campo_nota"></label>
+    <textarea id="mat-nota" rows="2" data-i18n-ph="campo_nota_ph"></textarea>
+  </div>
+  <p class="dlg-error" id="mat-error" hidden></p>
+  <div class="dlg-botones">
+    <button type="button" id="mat-borrar" class="peligro" data-i18n="btn_borrar"></button>
+    <span class="barra-flex"></span>
+    <button type="button" id="mat-cancelar" data-i18n="cancelar"></button>
+    <button type="button" id="mat-guardar" class="primario" data-i18n="guardar"></button>
+  </div>
+</dialog>
+
+<dialog id="dlg-etiquetas" class="no-print">
+  <h3 data-i18n="dlg_et_titulo"></h3>
+  <p class="dlg-intro" data-i18n-html="dlg_et_intro"></p>
+
+  <div id="etiquetas-lista" class="etiquetas-lista"></div>
+
+  <hr class="dlg-sep">
+
+  <h4 id="et-titulo" data-i18n="et_nueva"></h4>
+  <div class="campo">
+    <label for="et-nombre"><span data-i18n="campo_nombre"></span> <span class="req">*</span></label>
+    <input id="et-nombre" maxlength="40" data-i18n-ph="et_ph_nombre">
+    <small data-i18n="et_nombre_ayuda"></small>
+  </div>
+  <div class="campo-fila">
+    <span>
+      <label for="et-borde" data-i18n="campo_borde"></label>
+      <select id="et-borde" class="select-borde"></select>
+    </span>
+    <span>
+      <label for="et-color" data-i18n="campo_color_borde"></label>
+      <select id="et-color" class="select-color"></select>
+    </span>
+    <span>
+      <label for="et-fondo" data-i18n="campo_fondo"></label>
+      <select id="et-fondo" class="select-color"></select>
+    </span>
+  </div>
+  <div class="campo-fila">
+    <span>
+      <label for="et-precio" data-i18n="campo_precio"></label>
+      <input id="et-precio" type="number" min="0" step="0.01" placeholder="—">
+    </span>
+    <span>
+      <label class="check">
+        <input type="checkbox" id="et-fungible" checked>
+        <span data-i18n="campo_fungible"></span>
+      </label>
+    </span>
+    <span>
+      <label class="check">
+        <input type="checkbox" id="et-manta">
+        <span data-i18n="campo_manta"></span>
+      </label>
+    </span>
+    <span>
+      <label class="check">
+        <input type="checkbox" id="et-doble">
+        <span data-i18n="campo_doble"></span>
+      </label>
+    </span>
+  </div>
+  <p class="campo-ayuda" data-i18n="campo_precio_ay"></p>
+  <p class="campo-ayuda" data-i18n="campo_manta_ay"></p>
+  <p class="campo-ayuda" data-i18n="campo_doble_ay"></p>
+
+  <div class="campo-fila">
+    <span>
+      <label for="et-color-libre" data-i18n="campo_color_medida"></label>
+      <input id="et-color-libre" type="color" value="#8896a2">
+    </span>
+    <span class="vista-previa">
+      <span class="vp-label" data-i18n="vista_previa"></span>
+      <span class="chip" id="et-previa"></span>
+    </span>
+  </div>
+
+  <p class="dlg-error" id="et-error" hidden></p>
+
+  <div class="dlg-botones">
+    <button type="button" id="et-borrar" class="peligro" hidden data-i18n="btn_borrar"></button>
+    <span class="barra-flex"></span>
+    <button type="button" id="et-cerrar" data-i18n="cerrar"></button>
+    <button type="button" id="et-nueva" data-i18n="et_btn_nueva"></button>
+    <button type="button" id="et-guardar" class="primario" data-i18n="guardar"></button>
+  </div>
+</dialog>
+
+<dialog id="dlg-elegir" class="no-print">
+  <h3 data-i18n="dlg_elegir_titulo"></h3>
+  <!-- tabindex="-1": el <dialog> nativo enfoca solo al abrirse el primer
+       elemento enfocable de dentro -aquí sería "elegir-buscar", y en móvil
+       eso abre el teclado tapando el material antes de que se pueda ver
+       nada-. abrirElegir() enfoca este párrafo a mano justo después de
+       showModal() para que sea él quien "gane" ese foco automático en vez
+       del buscador -sigue siendo tocable a mano cuando sí se quiera
+       buscar-. -->
+  <p class="dlg-intro" id="elegir-destino" tabindex="-1"></p>
+  <input id="elegir-buscar" type="search" data-i18n-ph="catalogo_buscar" autocomplete="off">
+  <div id="elegir-contenido" class="elegir-contenido"></div>
+  <div class="dlg-botones">
+    <button type="button" id="elegir-quitar" class="peligro" hidden data-i18n="elegir_quitar"></button>
+    <span class="barra-flex"></span>
+    <button type="button" id="elegir-cerrar" data-i18n="cerrar"></button>
+  </div>
+</dialog>
+
+<dialog id="dlg-guardar-montaje" class="no-print">
+  <h3 data-i18n="dlg_guardar_montaje_titulo"></h3>
+  <p class="dlg-intro" id="guardar-montaje-nombre"></p>
+  <div class="dlg-botones">
+    <button type="button" id="guardar-montaje-cancelar" data-i18n="cancelar"></button>
+    <span class="barra-flex"></span>
+    <button type="button" id="guardar-montaje-nuevo" data-i18n="guardar_montaje_nuevo"></button>
+    <button type="button" id="guardar-montaje-sobrescribir" class="primario" data-i18n="guardar_montaje_sobrescribir"></button>
+  </div>
+</dialog>
+
+<dialog id="dlg-foto-sonda" class="no-print dlg-ancho">
+  <h3 id="foto-sonda-nombre"></h3>
+  <img id="foto-sonda-img" alt="">
+  <div class="dlg-botones">
+    <span class="barra-flex"></span>
+    <button type="button" id="foto-sonda-cerrar" data-i18n="cerrar"></button>
+  </div>
+</dialog>
+
+<!-- Ajustes de una ventana del Simulador (06-09-2026): título, vista
+     Avg/cascada, canales, parámetros de estimulación y filtros. -->
+<!-- Pregunta y respuesta de un caso de Repaso del Simulador (26-09-2026). -->
+<dialog id="dlg-sim-caso" class="no-print">
+  <h3 id="sim-caso-dlg-titulo"></h3>
+  <div id="sim-caso-dlg-cuerpo"></div>
+  <div class="dlg-botones"><span class="barra-flex"></span><button type="button" id="sim-caso-dlg-cerrar" data-i18n="cerrar"></button></div>
+</dialog>
+
+<dialog id="dlg-sim-ventana" class="no-print">
+  <h3 data-i18n="sim_dlg_titulo"></h3>
+  <div class="campo">
+    <label for="sim-v-titulo" data-i18n="sim_campo_titulo"></label>
+    <input type="text" id="sim-v-titulo" autocomplete="off">
+  </div>
+  <div class="campo">
+    <label for="sim-v-morfologia" data-i18n="sim_campo_morfologia"></label>
+    <select id="sim-v-morfologia">
+      <option value="sep" data-i18n="sim_morf_sep"></option>
+      <option value="aep" data-i18n="sim_morf_aep"></option>
+      <option value="mep" data-i18n="sim_morf_mep"></option>
+      <option value="reflejo" data-i18n="sim_morf_reflejo"></option>
+      <option value="hreflex" data-i18n="sim_morf_hreflex"></option>
+      <option value="tof" data-i18n="sim_morf_tof"></option>
+      <option value="emg" data-i18n="sim_morf_emg"></option>
+      <option value="eeg" data-i18n="sim_morf_eeg"></option>
+      <option value="generico" data-i18n="sim_morf_generico"></option>
+    </select>
+  </div>
+  <div class="campo">
+    <label data-i18n="sim_campo_vista"></label>
+    <div class="sim-vista-radios">
+      <label><input type="radio" name="sim-vista" value="avg"> <span data-i18n="sim_vista_avg"></span></label>
+      <label><input type="radio" name="sim-vista" value="cascada"> <span data-i18n="sim_vista_cascada"></span></label>
+    </div>
+  </div>
+  <div class="campo">
+    <label data-i18n="sim_campo_canales"></label>
+    <div id="sim-v-canales" class="sim-canales-editor"></div>
+    <div class="sim-canal-add">
+      <input type="text" id="sim-v-canal-nuevo" autocomplete="off" data-i18n-ph="sim_canal_ph">
+      <button type="button" id="sim-v-canal-add" data-i18n="sim_canal_add"></button>
+    </div>
+  </div>
+  <details class="sim-dlg-grupo">
+    <summary data-i18n="sim_grupo_estimulo"></summary>
+    <div class="sim-params-grid">
+      <label>Int. (mA)<input type="text" id="sim-p-intensidad" autocomplete="off"></label>
+      <label>Frec. (Hz)<input type="text" id="sim-p-frecuencia" autocomplete="off"></label>
+      <label>Nº pulsos<input type="text" id="sim-p-pulsos" autocomplete="off"></label>
+      <label>Trenes<input type="text" id="sim-p-trenes" autocomplete="off"></label>
+      <label>ISI (ms)<input type="text" id="sim-p-isi" autocomplete="off"></label>
+      <label>Dur. (µs)<input type="text" id="sim-p-duracion" autocomplete="off"></label>
+    </div>
+  </details>
+  <details class="sim-dlg-grupo">
+    <summary data-i18n="sim_grupo_filtros"></summary>
+    <div class="sim-params-grid">
+      <label>LFF (Hz)<input type="text" id="sim-f-lff" autocomplete="off"></label>
+      <label>HFF (Hz)<input type="text" id="sim-f-hff" autocomplete="off"></label>
+      <label>Notch<input type="text" id="sim-f-notch" autocomplete="off"></label>
+      <label>Barrido (ms)<input type="text" id="sim-f-barrido" autocomplete="off"></label>
+      <label>Sensib. (µV/Div)<input type="text" id="sim-f-sens" autocomplete="off" placeholder="3 µV/Div"></label>
+    </div>
+  </details>
+  <div class="dlg-botones">
+    <button type="button" id="sim-v-borrar" class="peligro" data-i18n="sim_v_borrar"></button>
+    <span class="barra-flex"></span>
+    <button type="button" id="sim-v-cancelar" data-i18n="cancelar"></button>
+    <button type="button" id="sim-v-guardar" class="primario" data-i18n="guardar"></button>
+  </div>
+</dialog>
+
+<!-- Fase 7 (06-09-2026): pasa de <dialog> a pantalla propia -mismo contenido
+     de siempre, ver el comentario equivalente en Montajes (Fase 6) más
+     arriba. Ya no lleva botón "Cerrar": el logo es el único camino de
+     vuelta al inicio. -->
+<div class="pantalla" id="pantalla-casos">
+  <div class="pantalla-cab">
+    <h2 data-i18n="tile_casos"></h2>
+    <button type="button" class="btn-pantalla-inicio" data-i18n="btn_inicio_pantalla" data-i18n-title="logo_inicio_tit"></button>
+  </div>
+
+  <div class="casos-acciones">
+    <button type="button" id="casos-nuevo-cero" class="primario" data-i18n="casos_nuevo_cero"></button>
+    <small data-i18n="casos_nuevo_cero_ay"></small>
+  </div>
+
+  <div class="casos-filtros">
+    <div class="casos-filtros-fila">
+      <span>
+        <label for="casos-estado" data-i18n="casos_filtro_estado"></label>
+        <select id="casos-estado">
+          <option value="" data-i18n="casos_filtro_todos"></option>
+          <option value="pendiente_planificar" data-i18n="caso_estado_pendiente_planificar"></option>
+          <option value="preparado" data-i18n="caso_estado_preparado"></option>
+          <option value="cerrado" data-i18n="caso_estado_cerrado"></option>
+          <option value="cancelado" data-i18n="caso_estado_cancelado"></option>
+        </select>
+      </span>
+      <!-- Filtro por concordancia (demo-congreso B3.F2), con PR incluido. -->
+      <span>
+        <label for="casos-concordancia" data-i18n="casos_filtro_concordancia"></label>
+        <select id="casos-concordancia">
+          <option value="" data-i18n="casos_filtro_todos"></option>
+          <option value="VP" data-i18n="opc_concordancia_VP"></option>
+          <option value="FP" data-i18n="opc_concordancia_FP"></option>
+          <option value="VN" data-i18n="opc_concordancia_VN"></option>
+          <option value="FN" data-i18n="opc_concordancia_FN"></option>
+          <option value="PR" data-i18n="opc_concordancia_PR"></option>
+        </select>
+      </span>
+      <span id="casos-equipo-filtro" hidden>
+        <label for="casos-equipo" data-i18n="casos_filtro_equipo"></label>
+        <select id="casos-equipo"></select>
+      </span>
+      <span>
+        <label for="casos-desde" data-i18n="casos_filtro_desde"></label>
+        <span class="fecha-filtro"><input type="date" id="casos-desde"><button type="button" class="btn-quitar-fecha" data-para="casos-desde" data-i18n-title="casos_quitar_fecha" hidden>✕</button></span>
+      </span>
+      <span>
+        <label for="casos-hasta" data-i18n="casos_filtro_hasta"></label>
+        <span class="fecha-filtro"><input type="date" id="casos-hasta"><button type="button" class="btn-quitar-fecha" data-para="casos-hasta" data-i18n-title="casos_quitar_fecha" hidden>✕</button></span>
+      </span>
+      <span>
+        <label for="casos-orden" data-i18n="casos_filtro_orden"></label>
+        <select id="casos-orden">
+          <option value="fecha" data-i18n="casos_orden_fecha"></option>
+          <option value="fecha_asc" data-i18n="casos_orden_fecha_asc"></option>
+          <option value="dificultad" data-i18n="casos_orden_dificultad"></option>
+          <option value="dificultad_asc" data-i18n="casos_orden_dificultad_asc"></option>
+        </select>
+      </span>
+    </div>
+    <div class="casos-filtros-fila">
+      <span class="casos-filtro-check">
+        <input type="checkbox" id="casos-destacado">
+        <label for="casos-destacado" data-i18n="casos_filtro_destacados"></label>
+      </span>
+      <span class="casos-filtro-check">
+        <input type="checkbox" id="casos-seguimiento">
+        <label for="casos-seguimiento" data-i18n="casos_filtro_seguimiento"></label>
+      </span>
+    </div>
+  </div>
+
+  <div id="casos-lista" class="casos-lista"></div>
+  <p class="cat-version" id="casos-cuenta"></p>
+
+  <div class="dlg-botones">
+    <button type="button" id="btn-exportar-casos-csv" data-i18n-title="btn_exportar_casos_csv_tit" data-i18n="btn_exportar_casos_csv"></button>
+    <button type="button" id="btn-exportar-casos" data-i18n-title="btn_exportar_casos_tit" data-i18n="btn_exportar_casos"></button>
+  </div>
+</div>
+
+<dialog id="dlg-caso" class="no-print">
+  <div class="caso-cab">
+    <h3 data-i18n="dlg_caso_titulo"></h3>
+    <p class="caso-subtitulo"><span id="caso-subtitulo"></span><span class="caso-equipo-marca" id="caso-subtitulo-equipo" hidden></span></p>
+  </div>
+
+  <!-- Los 9 puntos de la ficha: 8 apartados plegables (uno por punto, todos
+       cerrados por defecto -ver renderFichaCaso()-) más la barra de
+       acciones fija de abajo, que queda fuera de este scroll a propósito
+       para que Guardar/Cerrar siempre estén a mano sin bajar del todo. -->
+  <div class="caso-scroll">
+    <details class="caso-grupo" id="caso-g-traza">
+      <summary data-i18n="caso_g_traza"></summary>
+      <div class="caso-grupo-campos" id="caso-c-traza"></div>
+    </details>
+    <details class="caso-grupo" id="caso-g-paciente">
+      <summary data-i18n="caso_g_paciente"></summary>
+      <div class="caso-grupo-campos" id="caso-c-paciente"></div>
+    </details>
+    <details class="caso-grupo" id="caso-g-cirugia">
+      <summary data-i18n="caso_g_cirugia"></summary>
+      <div class="caso-grupo-campos" id="caso-c-cirugia"></div>
+    </details>
+    <details class="caso-grupo" id="caso-g-anestesia">
+      <summary data-i18n="caso_g_anestesia"></summary>
+      <div class="caso-grupo-campos" id="caso-c-anestesia"></div>
+    </details>
+    <details class="caso-grupo" id="caso-g-montaje">
+      <summary data-i18n="caso_g_montaje"></summary>
+      <div class="caso-grupo-campos" id="caso-c-montaje"></div>
+    </details>
+    <details class="caso-grupo" id="caso-g-desarrollo">
+      <summary data-i18n="caso_g_desarrollo"></summary>
+      <div class="caso-grupo-campos" id="caso-c-desarrollo"></div>
+    </details>
+    <details class="caso-grupo" id="caso-g-resultado">
+      <summary data-i18n="caso_g_resultado"></summary>
+      <div class="caso-grupo-campos" id="caso-c-resultado"></div>
+    </details>
+    <details class="caso-grupo" id="caso-g-formacion">
+      <summary data-i18n="caso_g_formacion"></summary>
+      <div class="caso-grupo-campos" id="caso-c-formacion"></div>
+    </details>
+
+    <p class="caso-meta" id="caso-meta"></p>
+    <p class="dlg-error" id="caso-error" hidden></p>
+  </div>
+
+  <!-- Barra de acciones (demo-congreso B1.F1): "Borrar caso" vive en el menú
+       ⋮ para dejar sitio; en el móvil la barra va en dos filas y Guardar ocupa
+       todo el ancho que quede, siempre visible (ver .caso-acciones en style.css). -->
+  <div class="dlg-botones caso-acciones">
+    <div class="caso-mas" id="caso-mas">
+      <button type="button" id="caso-mas-btn" class="caso-mas-btn" aria-haspopup="true" aria-expanded="false" data-i18n-title="caso_mas_tit">⋮</button>
+      <div class="caso-mas-lista" id="caso-mas-lista" hidden>
+        <button type="button" id="caso-borrar" class="peligro" hidden data-i18n="caso_borrar"></button>
+      </div>
+    </div>
+    <button type="button" id="caso-crear-informe" data-i18n="caso_crear_informe"></button>
+    <button type="button" id="caso-hoja-registro" data-i18n="caso_hoja_registro"></button>
+    <span class="barra-flex caso-acciones-salto"></span>
+    <button type="button" id="caso-volver" data-i18n="caso_volver"></button>
+    <button type="button" id="caso-guardar" class="primario" data-i18n="guardar"></button>
+  </div>
+</dialog>
+
+<!-- Apuntes personales (06-09-2026; documento continuo desde el 07-09-2026
+     -pedido del usuario, "como un Word que voy actualizando", no una lista
+     de notas sueltas-; con varias cajas de texto con título, misma noche,
+     al ir llenándose de temas distintos). Un solo archivo fijo
+     checklist-mio-datos/apuntes/documento.json, no estado.json (para no
+     obligar a resubir todo el catálogo/técnicas por cada frase escrita
+     aquí). -->
+<div class="pantalla" id="pantalla-apuntes">
+  <div class="pantalla-cab">
+    <h2 data-i18n="tile_apuntes"></h2>
+    <button type="button" class="btn-pantalla-inicio" data-i18n="btn_inicio_pantalla" data-i18n-title="logo_inicio_tit"></button>
+  </div>
+  <p class="dlg-intro" data-i18n="apuntes_intro"></p>
+
+  <div id="apunte-secciones"></div>
+  <div class="apunte-acciones-secciones">
+    <button type="button" id="apunte-anadir-seccion" class="apunte-anadir-seccion" data-i18n="apunte_anadir_seccion"></button>
+    <button type="button" id="apunte-anadir-carpeta" class="apunte-anadir-seccion" data-i18n="apunte_anadir_carpeta"></button>
+  </div>
+  <p class="cat-version" id="apunte-meta"></p>
+
+  <div class="campo">
+    <label data-i18n="apunte_campo_fotos"></label>
+    <div class="apunte-foto-entrada">
+      <input type="file" id="apunte-foto-input" accept="image/*" multiple>
+      <span id="apunte-foto-camara-slot"></span>
+    </div>
+    <div id="apunte-fotos" class="apunte-fotos"></div>
+  </div>
+
+  <div class="dlg-botones">
+    <button type="button" id="btn-exportar-apuntes-word" class="primario" data-i18n="btn_exportar_apuntes_word"></button>
+    <button type="button" id="btn-exportar-apuntes" data-i18n="btn_exportar_apuntes"></button>
+  </div>
+
+  <!-- Barra pegada abajo (24-09-2026): botón Guardar visible mientras se
+       escribe, con el estado del último guardado. -->
+  <div class="apunte-guardar-barra no-print">
+    <span id="apunte-estado-guardado" class="apunte-estado-guardado"></span>
+    <button type="button" id="apunte-guardar" class="primario" data-i18n="apunte_guardar"></button>
+  </div>
+</div>
+
+<dialog id="dlg-elegir-plantilla" class="no-print">
+  <!-- tabindex="-1": mismo motivo que en dlg-elegir -sin esto, showModal()
+       enfoca solo "plantilla-buscar" y abre el teclado en móvil de
+       entrada-. iniciarCargaPlantilla() lo enfoca a mano tras showModal(). -->
+  <h3 id="elegir-plantilla-titulo" data-i18n="dlg_elegir_plantilla_titulo" tabindex="-1"></h3>
+  <div class="casos-filtros">
+    <span>
+      <label for="plantilla-buscar" data-i18n="plantilla_filtro_buscar"></label>
+      <input type="search" id="plantilla-buscar" data-i18n-ph="plantilla_buscar_ph" autocomplete="off">
+    </span>
+  </div>
+  <div id="plantilla-elegir-lista"></div>
+  <p class="empty-hint" id="plantilla-elegir-vacio" hidden></p>
+  <div class="dlg-botones">
+    <span class="barra-flex"></span>
+    <button type="button" id="plantilla-elegir-cerrar" data-i18n="cerrar"></button>
+  </div>
+</dialog>
+
+<!-- Con qué equipo se monta (25-09-2026), ver elegirEquipo() en app.js. -->
+<dialog id="dlg-equipo" class="no-print">
+  <h3 data-i18n="equipo_elegir_titulo"></h3>
+  <p class="dlg-intro" data-i18n="equipo_elegir_intro"></p>
+  <div class="equipo-opciones" id="equipo-opciones"></div>
+  <div class="dlg-botones">
+    <button type="button" id="equipo-cancelar" data-i18n="cancelar"></button>
+  </div>
+</dialog>
+
+<dialog id="dlg-aplicar-plantilla" class="no-print">
+  <h3 data-i18n="dlg_aplicar_plantilla_titulo"></h3>
+  <p class="dlg-intro" id="aplicar-plantilla-nombre"></p>
+  <p class="dlg-intro" id="aplicar-plantilla-msg"></p>
+  <p class="dlg-intro" id="aplicar-plantilla-msg2"></p>
+  <div class="dlg-botones">
+    <button type="button" id="aplicar-plantilla-cancelar" data-i18n="cancelar"></button>
+    <span class="barra-flex"></span>
+    <button type="button" id="aplicar-plantilla-anadir" data-i18n="plantilla_btn_anadir"></button>
+    <button type="button" id="aplicar-plantilla-reemplazar" class="primario" data-i18n="plantilla_btn_reemplazar"></button>
+  </div>
+</dialog>
+
+<dialog id="dlg-guia" class="no-print dlg-ancho">
+  <h3 data-i18n="dlg_guia_titulo"></h3>
+  <p class="dlg-intro" id="guia-aviso-en" hidden data-i18n="guia_aviso_en"></p>
+  <div id="guia-tarjetas" class="guia-tarjetas"></div>
+  <div id="guia-acordeon"></div>
+  <div class="dlg-botones">
+    <span class="barra-flex"></span>
+    <button type="button" id="guia-cerrar" data-i18n="cerrar"></button>
+  </div>
+</dialog>
+
+<!-- Checklist pre-quirúrgico (19/20-09-2026, pedido por el usuario): dos
+     modos elegidos con el desplegable -"Modelo 0" suelto (localStorage, sin
+     sincronizar, como el Simulador) o vinculado a un caso concreto (vive
+     dentro del propio caso, se sincroniza con él). Ver CHECKLIST_ITEMS en
+     app.js para el contenido y las fuentes citadas. -->
+<div class="pantalla" id="pantalla-checklist">
+  <div class="pantalla-cab">
+    <h2 data-i18n="tile_checklist"></h2>
+    <button type="button" class="btn-pantalla-inicio" data-i18n="btn_inicio_pantalla" data-i18n-title="logo_inicio_tit"></button>
+  </div>
+  <p class="dlg-intro" data-i18n="checklist_intro"></p>
+  <div class="checklist-selector">
+    <label for="checklist-caso-select" data-i18n="checklist_vincular"></label>
+    <select id="checklist-caso-select"></select>
+  </div>
+  <p class="cat-version" id="checklist-progreso"></p>
+  <div id="checklist-contenido"></div>
+  <!-- Planificación pegada del caso (20-09-2026, pedido por la usuaria): caja
+       de texto libre, debajo del último grupo, para pegar el plan
+       del caso y poder leerlo antes de entrar a quirófano. Vive en checklist_prequirurgico.notas -o
+       checklistModeloCero.notas en Modelo 0-, junto a las marcas, sin tocar
+       su formato de mapa id->boolean. -->
+  <details class="caso-grupo" id="checklist-notas-grupo" open>
+    <summary data-i18n="checklist_notas_titulo"></summary>
+    <div class="caso-grupo-campos">
+      <textarea id="checklist-notas" class="checklist-notas-textarea" rows="16" data-i18n-ph="checklist_notas_ph"></textarea>
+      <!-- Imagen-resumen del caso (20-09-2026): mismo mecanismo genérico que
+           "Imágenes del montaje"/"Pruebas de imagen" -galería con
+           comprimirImagen()/abrirFotoSonda(), construida entera en JS-, para
+           el resumen visual de una página que da alguna skill. Vive en
+           checklist_prequirurgico.imagenes o checklistModeloCero.imagenes. -->
+      <div id="checklist-imagenes"></div>
+    </div>
+  </details>
+  <div class="dlg-botones no-print">
+    <button type="button" id="checklist-vaciar" class="peligro" data-i18n="checklist_vaciar"></button>
+    <span class="barra-flex"></span>
+    <button type="button" id="checklist-guardar" class="primario" data-i18n="checklist_guardar"></button>
+  </div>
+</div>
+
+<!-- Registro intraoperatorio (24-09-2026): versión digital de la hoja de
+     papel de dos páginas del usuario, en desarrollo. Mismo patrón que el
+     Checklist: "Modelo 0" suelto o vinculado a un caso (dentro del caso,
+     registro_intraop). Todo el contenido sale de datos -ver REG_SECCIONES
+     en app.js-, no de HTML escrito aquí. -->
+<div class="pantalla" id="pantalla-registro">
+  <div class="pantalla-cab">
+    <h2 data-i18n="tile_registro"></h2>
+    <button type="button" class="btn-pantalla-inicio" data-i18n="btn_inicio_pantalla" data-i18n-title="logo_inicio_tit"></button>
+  </div>
+  <p class="dlg-intro" data-i18n="registro_intro"></p>
+  <div class="checklist-selector">
+    <label for="registro-caso-select" data-i18n="checklist_vincular"></label>
+    <select id="registro-caso-select"></select>
+  </div>
+  <div id="registro-contenido"></div>
+  <div class="dlg-botones no-print">
+    <button type="button" id="registro-vaciar" class="peligro" data-i18n="registro_vaciar"></button>
+    <span class="barra-flex"></span>
+    <button type="button" id="registro-pasar-caso" hidden data-i18n="registro_pasar_caso"></button>
+    <button type="button" id="registro-imprimir" data-i18n="registro_imprimir"></button>
+    <button type="button" id="registro-guardar" class="primario" data-i18n="registro_guardar"></button>
+  </div>
+</div>
+
+<!-- Fase 7 (06-09-2026): pasa de <dialog> a pantalla propia, mismo contenido.
+     Sin botón "Cerrar" -el logo es el único camino de vuelta al inicio-. -->
+<div class="pantalla" id="pantalla-tecnicas-mio">
+  <div class="pantalla-cab">
+    <h2 data-i18n="tile_tecnicas"></h2>
+    <button type="button" class="btn-pantalla-inicio" data-i18n="btn_inicio_pantalla" data-i18n-title="logo_inicio_tit"></button>
+  </div>
+  <p class="dlg-intro" id="tecmio-aviso-en" hidden data-i18n="tecnicas_mio_aviso_en"></p>
+  <p class="dlg-intro" data-i18n="tecnicas_mio_intro"></p>
+  <div class="tecmio-vista-toggle">
+    <button type="button" id="tecmio-vista-tarjetas" class="activo" data-i18n="tecmio_vista_tarjetas"></button>
+    <button type="button" id="tecmio-vista-tabla" data-i18n="tecmio_vista_tabla"></button>
+  </div>
+  <input type="search" id="tecmio-buscar" data-i18n-ph="tecmio_buscar_ph" autocomplete="off">
+  <div id="tecmio-contenido"></div>
+  <div id="tecmio-tabla" hidden></div>
+</div>
+
+<div class="pantalla" id="pantalla-material">
+  <div class="pantalla-cab">
+    <h2 data-i18n="tile_material"></h2>
+    <button type="button" class="btn-pantalla-inicio" data-i18n="btn_inicio_pantalla" data-i18n-title="logo_inicio_tit"></button>
+  </div>
+  <p class="dlg-intro" data-i18n="docente_material_intro"></p>
+  <div class="casos-filtros">
+    <span>
+      <label for="docente-material-buscar" data-i18n="plantilla_filtro_buscar"></label>
+      <input type="search" id="docente-material-buscar" data-i18n-ph="docente_material_buscar_ph" autocomplete="off">
+    </span>
+  </div>
+  <p class="cat-version" id="docente-material-cuenta"></p>
+  <div id="docente-material-lista"></div>
+</div>
+
+<!-- Fase 7 (06-09-2026): pasa de <dialog> a pantalla propia, mismo contenido
+     de Miotomas/Cama. Se añaden 2 pestañas nuevas -Material y Teoría básica-
+     pedidas por la usuaria, de momento solo "en construcción": cuando se
+     construyan de verdad, Material debe reutilizar las fotos que ya existen
+     en catalogo_material (campo "foto", ver abrirFotoSonda() en app.js) en
+     vez de crear un set de contenido aparte -decisión ya tomada con la
+     usuaria, pendiente de implementar-. -->
+<div class="pantalla" id="pantalla-docente">
+  <div class="pantalla-cab">
+    <h2 data-i18n="tile_docencia"></h2>
+    <button type="button" class="btn-pantalla-inicio" data-i18n="btn_inicio_pantalla" data-i18n-title="logo_inicio_tit"></button>
+  </div>
+
+  <div class="pestanas" id="docente-pestanas">
+    <button type="button" class="pestana activa" data-pane="miotomas" data-i18n="docente_tab_miotomas"></button>
+    <button type="button" class="pestana" data-pane="cama" data-i18n="docente_tab_cama"></button>
+    <button type="button" class="pestana" data-pane="teoria" data-i18n="docente_tab_teoria"></button>
+  </div>
+
+  <div id="pane-miotomas">
+  <p class="dlg-intro" data-i18n-html="docente_intro"></p>
+  <p class="docente-fuentes" data-i18n-html="docente_fuentes"></p>
+
+  <div class="docente-cols">
+    <div class="docente-col">
+      <h4 data-i18n="docente_posibles"></h4>
+      <p class="docente-pista" id="docente-nivel-pista"></p>
+      <div id="docente-posibles" class="docente-lista"></div>
+    </div>
+
+    <div class="docente-columna-vert">
+      <h4 data-i18n="docente_columna"></h4>
+      <div id="docente-vertebras" class="vertebras"></div>
+      <button type="button" id="docente-limpiar-niveles" data-i18n="docente_limpiar"></button>
+    </div>
+
+    <div class="docente-col">
+      <h4 data-i18n="docente_elegidos"></h4>
+      <p class="docente-pista" id="docente-cobertura"></p>
+      <div id="docente-elegidos" class="docente-lista"></div>
+    </div>
+  </div>
+
+  </div><!-- /pane-miotomas -->
+
+  <div id="pane-cama" hidden>
+    <p class="dlg-intro" data-i18n-html="cama_intro"></p>
+
+    <div class="cama-posiciones" id="cama-posiciones"></div>
+
+    <div class="cama-tablero">
+      <div class="cama-zona" data-zona="cabecera">
+        <span class="cama-zona-nombre" data-i18n="cama_cabecera"></span>
+        <div class="cama-zona-cajas"></div>
+      </div>
+      <div class="cama-fila">
+        <div class="cama-zona" data-zona="izq">
+          <span class="cama-zona-nombre" data-i18n="cama_izq"></span>
+          <div class="cama-zona-cajas"></div>
+        </div>
+        <div class="cama-mesa" id="cama-mesa"></div>
+        <div class="cama-zona" data-zona="der">
+          <span class="cama-zona-nombre" data-i18n="cama_der"></span>
+          <div class="cama-zona-cajas"></div>
+        </div>
+      </div>
+      <div class="cama-zona" data-zona="pies">
+        <span class="cama-zona-nombre" data-i18n="cama_pies"></span>
+        <div class="cama-zona-cajas"></div>
+      </div>
+    </div>
+
+    <h4 data-i18n="cama_sin_colocar"></h4>
+    <div id="cama-disponibles" class="cama-disponibles"></div>
+    <p class="docente-pista" id="cama-pista"></p>
+  </div><!-- /pane-cama -->
+
+  <div id="pane-teoria" hidden>
+    <p data-i18n="en_construccion"></p>
+  </div><!-- /pane-teoria -->
+
+  <div class="dlg-botones">
+    <button type="button" id="docente-reiniciar" class="peligro" data-i18n="docente_reiniciar"></button>
+  </div>
+</div>
+
+<!-- Fase 7 (06-09-2026): pantallas nuevas, sin contenido todavía -pedido de
+     la usuaria: solo la estructura de navegación en esta pasada, el
+     contenido real de cada una va en un turno aparte-. -->
+<div class="pantalla" id="pantalla-simulador">
+  <!-- Rehecho el 26-09-2026 a imagen de una pantalla de monitorización:
+       barra lateral, ventanas en mosaico (ver renderSimulador() en app.js),
+       muelle con las minimizadas y barra de estado. En el móvil solo se usa
+       en horizontal: en vertical sale el aviso .sim-girar. -->
+  <div class="sim-girar">
+    <span class="sim-girar-icono" aria-hidden="true">📱↻</span>
+    <p data-i18n="sim_girar"></p>
+    <button type="button" class="btn-pantalla-inicio" data-i18n="btn_inicio_pantalla"></button>
+  </div>
+  <div class="sim-app no-print">
+    <aside class="sim-lateral">
+      <button type="button" class="btn-pantalla-inicio sim-lat-btn" data-i18n-title="logo_inicio_tit"><span class="sim-lat-ico">⌂</span><span class="sim-lat-txt" data-i18n="btn_inicio_pantalla"></span></button>
+      <div class="sim-lat-menu">
+        <button type="button" id="sim-btn-ventanas" class="sim-lat-btn"><span class="sim-lat-ico">▦</span><span class="sim-lat-txt" data-i18n="sim_ventanas"></span></button>
+        <div id="sim-menu" class="sim-menu" hidden>
+          <div class="sim-menu-tit" data-i18n="sim_menu_anadir"></div>
+          <button type="button" data-sim-add="sep" data-i18n="sim_add_sep"></button>
+          <button type="button" data-sim-add="aep" data-i18n="sim_add_aep"></button>
+          <button type="button" data-sim-add="mep" data-i18n="sim_add_mep"></button>
+          <button type="button" data-sim-add="reflejo" data-i18n="sim_add_reflejo"></button>
+          <button type="button" data-sim-add="hreflex" data-i18n="sim_add_hreflex"></button>
+          <button type="button" data-sim-add="emg" data-i18n="sim_add_emg"></button>
+          <button type="button" data-sim-add="tof" data-i18n="sim_add_tof"></button>
+          <button type="button" data-sim-add="eeg" data-i18n="sim_add_eeg"></button>
+          <button type="button" data-sim-add="generico" data-i18n="sim_add_ventana"></button>
+          <div class="sim-menu-tit" data-i18n="sim_ejemplos"></div>
+          <button type="button" id="sim-ejemplo" data-i18n="sim_ejemplo"></button>
+          <button type="button" id="sim-ejemplo-fosa" data-i18n="sim_ejemplo_fosa"></button>
+        </div>
+      </div>
+      <div class="sim-lat-menu">
+        <button type="button" id="sim-btn-repaso" class="sim-lat-btn"><span class="sim-lat-ico">🎓</span><span class="sim-lat-txt" data-i18n="sim_repaso"></span></button>
+        <div id="sim-menu-repaso" class="sim-menu" hidden></div>
+      </div>
+      <div class="sim-lat-menu">
+        <button type="button" id="sim-btn-presets" class="sim-lat-btn"><span class="sim-lat-ico">★</span><span class="sim-lat-txt" data-i18n="sim_presets"></span></button>
+        <div id="sim-menu-presets" class="sim-menu" hidden></div>
+      </div>
+      <button type="button" id="sim-sel" class="sim-lat-sel" data-i18n="sim_todos" data-i18n-title="sim_sel_tit"></button>
+      <div id="sim-grupos" class="sim-grupos"></div>
+      <div class="sim-transporte">
+        <button type="button" id="sim-play" data-i18n-title="sim_play_tit">▶</button>
+        <button type="button" id="sim-stop" data-i18n-title="sim_stop_tit">■</button>
+        <button type="button" id="sim-pausa" data-i18n-title="sim_pausa_tit">❚❚</button>
+      </div>
+      <span class="barra-flex"></span>
+      <button type="button" id="sim-completa" class="sim-lat-btn"><span class="sim-lat-ico">⛶</span><span class="sim-lat-txt" data-i18n="sim_completa"></span></button>
+      <button type="button" id="sim-vaciar" class="sim-lat-btn sim-lat-peligro"><span class="sim-lat-ico">🗑</span><span class="sim-lat-txt" data-i18n="sim_vaciar"></span></button>
+    </aside>
+    <div class="sim-principal">
+      <div id="sim-caso-barra" class="sim-caso-barra" hidden>
+        <span class="sim-caso-icono">🎓</span>
+        <div class="sim-caso-textos">
+          <strong id="sim-caso-titulo"></strong>
+          <span id="sim-caso-contexto"></span>
+        </div>
+        <span id="sim-caso-barrida" class="sim-caso-barrida"></span>
+        <button type="button" id="sim-caso-mediciones" data-i18n="sim_caso_mediciones" data-i18n-title="sim_caso_mediciones_tit"></button>
+        <button type="button" id="sim-caso-valorar" class="primario" data-i18n="sim_caso_valorar" data-i18n-title="sim_caso_valorar_tit"></button>
+        <button type="button" id="sim-caso-salir" data-i18n="sim_caso_salir"></button>
+      </div>
+      <div id="sim-lienzo" class="sim-lienzo"></div>
+      <div id="sim-dock" class="sim-dock" hidden></div>
+      <div class="sim-estado">
+        <span data-i18n="sim_aviso_corto"></span>
+        <span id="sim-preset-rotulo" class="sim-preset-rotulo"></span>
+        <span class="barra-flex"></span>
+        <span id="sim-reloj"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="pantalla" id="pantalla-bibliografia">
+  <div class="pantalla-cab">
+    <h2 data-i18n="tile_bibliografia"></h2>
+    <button type="button" class="btn-pantalla-inicio" data-i18n="btn_inicio_pantalla" data-i18n-title="logo_inicio_tit"></button>
+  </div>
+  <p data-i18n="en_construccion"></p>
+</div>
+
+<dialog id="dlg-catalogos" class="no-print">
+  <h3 data-i18n="dlg_cat_titulo"></h3>
+
+  <div class="dlg-botones">
+    <button type="button" id="btn-exportar" data-i18n="btn_exportar"></button>
+    <button type="button" id="btn-importar" data-i18n="btn_importar"></button>
+    <button type="button" id="btn-imprimir" data-i18n="btn_imprimir"></button>
+    <button type="button" id="btn-restablecer" class="peligro" data-i18n="btn_restablecer"></button>
+    <input type="file" id="fichero-importar" accept=".json,application/json" hidden>
+  </div>
+
+  <hr class="dlg-sep">
+
+  <div class="pestanas" id="cat-pestanas"></div>
+
+  <p class="dlg-intro" id="cat-intro"></p>
+
+  <div id="cat-lista" class="cat-lista"></div>
+  <p class="cat-version" id="cat-version"></p>
+
+  <hr class="dlg-sep">
+
+  <h4 id="cat-form-titulo"></h4>
+  <div id="cat-form"></div>
+
+  <p class="dlg-error" id="cat-error" hidden></p>
+
+  <div class="dlg-botones">
+    <button type="button" id="cat-borrar" class="peligro" hidden data-i18n="btn_borrar"></button>
+    <span class="barra-flex"></span>
+    <button type="button" id="cat-cerrar" data-i18n="cerrar"></button>
+    <button type="button" id="cat-nueva" data-i18n="et_btn_nueva"></button>
+    <button type="button" id="cat-guardar" class="primario" data-i18n="guardar"></button>
+  </div>
+</dialog>
+
+<script src="data/surgeries.js?v=20260928c"></script>
+<script src="data/i18n-en.js?v=20260925a"></script>
+<script src="data/guia.js?v=20260928c"></script>
+<script src="data/tecnicas-mio.js?v=20260928a"></script>
+<script src="data/parametros-tecnicas.js?v=20260917a"></script>
+<script src="app.js?v=20260928m"></script>
+</body>
+</html>

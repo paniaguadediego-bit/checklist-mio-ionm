@@ -1,0 +1,64 @@
+MIO-Check
+Copyright (c) 2026 Pablo Paniagua de Diego (github.com/paniaguadediego-bit)
+Todos los derechos reservados. / All rights reserved.
+
+-------------------------------------------------------------------------------
+ESPAÑOL
+-------------------------------------------------------------------------------
+
+1. Titularidad. El código fuente, el diseño y los contenidos de este
+   repositorio (incluidos los catálogos y textos de data/ y las imágenes de
+   img/) son propiedad del autor. Que el repositorio sea visible públicamente
+   no concede ningún permiso de uso.
+
+2. Uso con autorización. Solo puede usar la herramienta quien tenga
+   autorización expresa del autor. La autorización es personal, no se puede
+   ceder a terceros y el autor puede retirarla en cualquier momento y sin
+   necesidad de justificarlo. Retirada la autorización, debe dejar de usarse
+   la herramienta y cualquier copia de ella.
+
+3. Prohibiciones. Salvo autorización previa y por escrito del autor, no está
+   permitido copiar, modificar, adaptar, redistribuir, publicar, alojar en
+   otro sitio, sublicenciar ni vender este código o sus contenidos, ni en
+   todo ni en parte.
+
+4. Datos de cada usuario. Los datos que cada usuario introduce se guardan en
+   su propio navegador y, si la configura, en su propia cuenta y repositorio.
+   Son responsabilidad de ese usuario, que debe cumplir la normativa de
+   protección de datos aplicable. La herramienta no debe recibir nunca datos
+   identificativos de pacientes.
+
+5. Sin garantía. La herramienta se ofrece "tal cual", sin garantía de ningún
+   tipo. No es un producto sanitario ni sustituye el criterio clínico: las
+   decisiones de monitorización y clínicas son responsabilidad exclusiva del
+   profesional que la usa. El autor no responde de ningún daño derivado de su
+   uso.
+
+-------------------------------------------------------------------------------
+ENGLISH
+-------------------------------------------------------------------------------
+
+1. Ownership. The source code, design and content of this repository
+   (including the catalogues and texts in data/ and the images in img/) are
+   the property of the author. Public visibility of the repository grants no
+   permission of any kind.
+
+2. Use by permission only. The tool may only be used by people expressly
+   authorised by the author. Authorisation is personal, non-transferable and
+   may be withdrawn by the author at any time without giving reasons. Once it
+   is withdrawn, use of the tool and of any copy of it must stop.
+
+3. Restrictions. Without the author's prior written permission, you may not
+   copy, modify, adapt, redistribute, publish, host elsewhere, sublicense or
+   sell this code or its content, in whole or in part.
+
+4. Users' data. Data entered by each user is stored in their own browser and,
+   if they set it up, in their own account and repository. It is that user's
+   responsibility, and they must comply with applicable data protection law.
+   The tool must never receive patient-identifying data.
+
+5. No warranty. The tool is provided "as is", without warranty of any kind.
+   It is not a medical device and does not replace clinical judgement:
+   monitoring and clinical decisions are solely the responsibility of the
+   professional using it. The author accepts no liability for any damage
+   arising from its use.
