@@ -3364,10 +3364,13 @@ body.modo-demo #btn-sync { border-color: var(--aviso-border); color: var(--aviso
 .rejilla-cab { display: flex; align-items: center; gap: 0.25rem; }
 .rejilla-celda .slot { min-height: 1.7rem; }
 .sonda-recuadros { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin-top: 0.55rem; }
-.sonda-recuadro { background: var(--tag-bg); border: 2px solid var(--border); border-radius: 0.55rem; padding: 0.35rem 0.4rem; display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
+/* Colores de la caja física (siempre oscura), no del tema: con --tag-bg en
+   modo claro el recuadro salía gris claro y sus rótulos (P1-P3), claros,
+   no se veían (28-09-2026, visto en el móvil del usuario). */
+.sonda-recuadro { background: rgba(255, 255, 255, 0.05); border: 2px solid var(--panel-borde); border-radius: 0.55rem; padding: 0.35rem 0.4rem; display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
 .sonda-recuadro-cab { display: flex; align-items: center; justify-content: center; gap: 0.3rem; font-size: 0.75rem; }
 .sonda-recuadro-cab b { margin: 0 0.25rem; }
-.sonda-polo { color: var(--text-muted); font-weight: 600; }
+.sonda-polo { color: var(--panel-tenue); font-weight: 600; }
 
 /* Nombre del equipo con una letra parecida a su logotipo (solo fuentes del
    sistema). Cadwell: mayúsculas muy gruesas y anchas. Inomed: minúsculas
