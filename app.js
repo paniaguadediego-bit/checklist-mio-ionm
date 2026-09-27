@@ -14288,6 +14288,25 @@
     });
   }
 
+  // Series de contactos que en Material van en una sola fila. "re" saca la
+  // clave de la serie (grupo 1) del nombre de cada contacto; "nombre" y
+  // "desc" rehacen el rótulo y la descripción del primero para la serie.
+  var SERIES_MATERIAL = [
+    // Mantas GRID: "GRID A.1".."GRID A.8" -> "GRID A (1–8)"
+    { re: /^(GRID [A-Z])\.(\d+)$/,
+      nombre: function (k, n) { return k + " (1–" + n + ")"; },
+      desc: function (d, n) { return d.replace(/^Contacto \d+/, "Contactos 1–" + n).replace(/^Contact \d+/, "Contacts 1–" + n); } },
+    // Onda D: "Px.1DW".."Px.3DW" -> "Px.1–3DW" (igual el distal, Dst)
+    { re: /^((?:Px|Dst)\.)\d+DW$/,
+      nombre: function (k, n) { return k + "1–" + n + "DW"; },
+      // El paréntesis "(Px.1DW + Px.2DW + Px.3DW = 1 kit)" sobra: lo dice ya
+      // la frase de tercio_unidad que va detrás.
+      desc: function (d, n) {
+        return d.replace(/contacto \d+ de \d+/, "contactos 1–" + n).replace(/contact \d+ of \d+/, "contacts 1–" + n)
+          .replace(/\s*\([^)]*= 1 kit\)/, "");
+      } }
+  ];
+
   function renderDocenteMaterial() {
     pintarLeyendaMaterial();
     var cont = document.getElementById("docente-material-lista");
@@ -14309,14 +14328,18 @@
         var etq = etiquetaDe(item, null);
         var nombre = campo(item, "nombre");
         var desc = descripcionMaterial(item);
-        // Mantas GRID (pedido del usuario): una fila por manta -"GRID A",
-        // "GRID B"- en vez de una por contacto; la descripción es la misma.
-        var mg = /^(GRID [A-Z])\.(\d+)$/.exec(nombre);
-        if (mg) {
-          var fg = mantas[mg[1]];
+        // Series de contactos de un mismo electrodo (pedido del usuario):
+        // una fila por serie en vez de una por contacto, ver SERIES_MATERIAL.
+        var serie = null, ms = null;
+        for (var si = 0; si < SERIES_MATERIAL.length && !ms; si++) {
+          ms = SERIES_MATERIAL[si].re.exec(nombre);
+          if (ms) serie = SERIES_MATERIAL[si];
+        }
+        if (ms) {
+          var fg = mantas[ms[1]];
           if (fg) { fg.contactos.push(item); return; }
-          fg = mantas[mg[1]] = { item: item, par: null, contactos: [item], manta: mg[1],
-            nombre: mg[1], tipo: etq ? campo(etq, "nombre") : "", desc: desc };
+          fg = mantas[ms[1]] = { item: item, par: null, contactos: [item], serie: serie, clave: ms[1],
+            nombre: nombre, tipo: etq ? campo(etq, "nombre") : "", desc: desc };
           filas.push(fg);
           return;
         }
@@ -14329,8 +14352,8 @@
       Object.keys(mantas).forEach(function (k) {
         var fg = mantas[k], n = fg.contactos.length;
         if (n < 2) return;
-        fg.nombre = k + " (1–" + n + ")";
-        fg.desc = String(fg.desc).replace(/^Contacto \d+/, "Contactos 1–" + n).replace(/^Contact \d+/, "Contacts 1–" + n);
+        fg.nombre = fg.serie.nombre(k, n);
+        fg.desc = fg.serie.desc(String(fg.desc), n);
       });
       total += filas.length;
       filas = filas.filter(function (f) {

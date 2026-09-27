@@ -16,8 +16,9 @@ pulsa una y se trabaja solo ahí; el logo, o el botón **Inicio** junto al
 título de cada pantalla, son el único camino de vuelta al inicio, no hay más
 navegación cruzada entre pantallas. La pestaña *Teoría básica* de Docencia
 sigue "en construcción"; el resto está en uso. En **Material**, cada par
-izquierda/derecha sale en una sola fila («L./R.APB») y cada manta GRID en una
-(«GRID A (1–8)»), en vez de una fila por lado o por contacto. Las tarjetas de cada bloque van centradas: si
+izquierda/derecha sale en una sola fila («L./R.APB»), cada manta GRID en una
+(«GRID A (1–8)») y los tres contactos de cada kit de onda D en una
+(«Px.1–3DW», «Dst.1–3DW»), en vez de una fila por lado o por contacto. Las tarjetas de cada bloque van centradas: si
 un bloque no llena la fila, quedan en el medio.
 
 **Desplegables**: todos los de la app abren una lista propia, con la letra y
