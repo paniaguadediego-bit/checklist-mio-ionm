@@ -341,7 +341,7 @@ distinta a la anterior, no importa el formato exacto.
 >   Antes: Organizador de Montajes, Gestión de Casos, Checklist pre-quirúrgico.
 >   En quirófano: Registro intraoperatorio, Técnicas IONM (solo con token).
 >   Después: Material (catálogo con descripción; pares L./R. y mantas GRID en una
->   fila, `descripcionSinLado()`, `SERIES_MATERIAL` (GRID y contactos Px/Dst de onda D); leyenda de tipos físicos, `pintarLeyendaMaterial()`), Docencia (Miotomas, Cama, Teoría básica
+>   fila, `descripcionSinLado()`, `SERIES_MATERIAL` (GRID y contactos Px/Dst de onda D); leyenda de tipos físicos, `pintarLeyendaMaterial()`; raíces de `MIOTOMAS` o `par` craneal, `inervacionMaterial()`), Docencia (Miotomas, Cama, Teoría básica
 >   pendiente), Simulador, Mis apuntes y Bibliografía recomendada (`BIBLIOGRAFIA`,
 >   `renderBibliografia()`: solo nombres de fuentes, tal como se citan).
 > - **Dos equipos** (25-09-2026): `equipo_id` "inomed" | "cadwell" en plantillas y

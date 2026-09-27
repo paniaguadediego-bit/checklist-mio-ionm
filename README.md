@@ -1030,7 +1030,10 @@ pasos, técnicas, momentos críticos y criterios de alarma), aún sin construir.
   buscador y el icono 📷 para ver la foto cuando la hay. Debajo del buscador,
   una **leyenda de tipos físicos**: cada tipo con el color y el borde que llevan
   sus ítems, más «×2» si cada colocación gasta dos unidades y «reutilizable»
-  si no se gasta (desde el 27-09-2026 eso ya no se repite en cada fila). La
+  si no se gasta (desde el 27-09-2026 eso ya no se repite en cada fila). Junto
+  al nombre de cada músculo, sus **raíces** («C5–C6», las mismas del miotoma de
+  Docencia) o su **par craneal** («VII par», campo `par` del catálogo), cuando
+  la herramienta tiene el dato; el buscador también las encuentra («C8»). La
   descripción de cada ítem es su *nota* del catálogo y lo propio del ítem
   (comparte paquete, no ocupa entrada, solo en un equipo); no se inventa
   ninguna descripción clínica, así que si rellenas la nota de un ítem en el

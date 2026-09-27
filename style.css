@@ -3368,7 +3368,7 @@ dialog h3 {
 /* ---- Docencia > Material (24-09-2026): una fila por material ------------ */
 .mat-fila {
   display: grid;
-  grid-template-columns: minmax(8rem, 13rem) 1fr auto;
+  grid-template-columns: minmax(8rem, 13rem) 4.2rem 1fr auto;
   gap: 0.3rem 0.7rem;
   align-items: center;
   padding: 0.35rem 0;
@@ -3379,7 +3379,7 @@ dialog h3 {
 .mat-chip { cursor: default; justify-self: start; }
 .mat-desc { color: var(--text); line-height: 1.35; }
 @media (max-width: 700px) {
-  .mat-fila { grid-template-columns: 1fr auto; }
+  .mat-fila { grid-template-columns: 1fr auto auto; }
   .mat-desc { grid-column: 1 / -1; }
 }
 
@@ -3800,3 +3800,6 @@ button, input, select, textarea { font-family: inherit; }
 .mat-leyenda-tit { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); margin-right: 0.2rem; }
 .mat-leyenda-chip { font-size: 0.72rem; padding: 0.1rem 0.45rem; cursor: default; }
 .mat-leyenda-marca { margin-left: 0.3rem; font-size: 0.65rem; color: var(--text-muted); }
+
+/* Raíces o par craneal de cada músculo en Material (27-09-2026) */
+.mat-inerv { font-size: 0.72rem; font-weight: 600; color: var(--accent); white-space: nowrap; }

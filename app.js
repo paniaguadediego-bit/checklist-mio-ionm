@@ -928,6 +928,9 @@
     docente_material_cuenta: { es: "{n} de {total} materiales", en: "{n} of {total} items" },
     docente_material_sin: { es: "Ningún material con ese filtro.", en: "No material matches that filter." },
     mat_leyenda:         { es: "Tipos físicos", en: "Physical types" },
+    mat_par:             { es: "{par} par", en: "CN {par}" },
+    mat_par_tit:         { es: "Par craneal", en: "Cranial nerve" },
+    mat_raices_tit:      { es: "Raíces (miotoma, el mismo de Docencia)", en: "Roots (myotome, the same as in Teaching)" },
     mat_leyenda_doble:   { es: "×2", en: "×2" },
     mat_leyenda_doble_tit: { es: "Cada colocación gasta 2 unidades (activo y referencia)", en: "Each placement uses 2 units (active and reference)" },
     mat_leyenda_reutilizable: { es: "reutilizable", en: "reusable" },
@@ -14320,6 +14323,24 @@
       } }
   ];
 
+  // Inervación que se enseña en Material (27-09-2026, pedido del usuario):
+  // las raíces salen de MIOTOMAS (el mismo dato de Docencia, enlazado por
+  // "item" al músculo izquierdo; el derecho usa el de su L.) y el par
+  // craneal del campo "par" del catálogo. Sin dato, no se pinta nada.
+  function inervacionMaterial(item) {
+    if (!item) return null;
+    if (item.par) return { texto: T("mat_par", { par: item.par }), tit: T("mat_par_tit") };
+    var id = String(item.id || "").replace(/^r_/, "l_");
+    for (var i = 0; i < MIOTOMAS.length; i++) {
+      var m = MIOTOMAS[i];
+      if (m.item === id && (m.niveles || []).length) {
+        var n = m.niveles;
+        return { texto: n.length > 1 ? n[0] + "–" + n[n.length - 1] : n[0], tit: T("mat_raices_tit") };
+      }
+    }
+    return null;
+  }
+
   function renderDocenteMaterial() {
     pintarLeyendaMaterial();
     var cont = document.getElementById("docente-material-lista");
@@ -14360,7 +14381,8 @@
           nombre = nombre.replace(/^L\.\s*/, "L./R.");
           desc = descripcionSinLado(desc);
         }
-        filas.push({ item: item, par: par, nombre: nombre, tipo: etq ? campo(etq, "nombre") : "", desc: desc });
+        filas.push({ item: item, par: par, nombre: nombre, tipo: etq ? campo(etq, "nombre") : "", desc: desc,
+                     inerv: inervacionMaterial(item) });
       });
       Object.keys(mantas).forEach(function (k) {
         var fg = mantas[k], n = fg.contactos.length;
@@ -14372,7 +14394,8 @@
       filas = filas.filter(function (f) {
         if (!busq) return true;
         var texto = f.nombre + " " + campo(f.item, "nombre") + " " + (f.par ? campo(f.par, "nombre") : "") + " " +
-          (f.contactos || []).map(function (x) { return campo(x, "nombre"); }).join(" ") + " " + f.tipo + " " + f.desc;
+          (f.contactos || []).map(function (x) { return campo(x, "nombre"); }).join(" ") + " " + f.tipo + " " + f.desc +
+          (f.inerv ? " " + f.inerv.texto : "");
         return texto.toLowerCase().indexOf(busq) !== -1;
       });
       if (!filas.length) return;
@@ -14409,6 +14432,10 @@
         }
         nom.appendChild(document.createTextNode(f.nombre));
         fila.appendChild(nom);
+        var inerv = document.createElement("span");
+        inerv.className = "mat-inerv";
+        if (f.inerv) { inerv.textContent = f.inerv.texto; inerv.title = f.inerv.tit; }
+        fila.appendChild(inerv);
         var desc = document.createElement("span");
         desc.className = "mat-desc";
         desc.textContent = f.desc;
