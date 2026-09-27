@@ -6,15 +6,18 @@ cada cirugía monitorizada y saber exactamente qué hace falta.
 **Pantalla de inicio (06-09-2026; desde el 28-09-2026, 10 tarjetas en tres bloques):** el logo
 de la cabecera lleva siempre a una pantalla con tarjetas agrupadas por el
 momento de la cirugía — *Antes de quirófano*: **Organizador de Montajes**,
-**Gestión de Casos**, **Checklist pre-quirúrgico** y **Material**; *En
-quirófano*: **Registro intraoperatorio** y **Técnicas IONM**; *Después /
-consulta*: **Docencia**, **Simulador**, **Mis apuntes** y **Bibliografía**—,
+**Gestión de Casos** y **Checklist pre-quirúrgico**; *En quirófano*:
+**Registro intraoperatorio** y **Técnicas IONM** (esta solo con la
+sincronización configurada); *Después / consulta*: **Material**,
+**Docencia**, **Simulador**, **Mis apuntes** y **Bibliografía
+recomendada**—,
 cada una con una línea que dice para qué sirve y su propio espacio de trabajo. Se
 pulsa una y se trabaja solo ahí; el logo, o el botón **Inicio** junto al
 título de cada pantalla, son el único camino de vuelta al inicio, no hay más
-navegación cruzada entre pantallas. Bibliografía y la pestaña *Teoría básica*
-de Docencia siguen "en construcción" (ver *Simulador y Bibliografía* más
-abajo); el resto está en uso. Las tarjetas de cada bloque van centradas: si
+navegación cruzada entre pantallas. La pestaña *Teoría básica* de Docencia
+sigue "en construcción"; el resto está en uso. En **Material**, cada par
+izquierda/derecha sale en una sola fila («L./R.APB») y cada manta GRID en una
+(«GRID A (1–8)»), en vez de una fila por lado o por contacto. Las tarjetas de cada bloque van centradas: si
 un bloque no llena la fila, quedan en el medio.
 
 **Desplegables**: todos los de la app abren una lista propia, con la letra y
@@ -896,9 +899,10 @@ de la monitorización en sí—.
 
 ## Simulador y Bibliografía
 
-Dos tarjetas de la pantalla de inicio (06-09-2026). **Bibliografía** sigue
-"en construcción" (serán enlaces a artículos open-access de PubMed con teoría
-relevante).
+Dos tarjetas de la pantalla de inicio (06-09-2026). **Bibliografía
+recomendada** (27-09-2026) nombra las fuentes usadas para construir la
+herramienta —libros, guías de sociedades y artículos— tal como se citan
+dentro de ella (muchas solo como «Autor año»); no reproduce contenido.
 
 El **Simulador** (rehecho el 26-09-2026) imita de forma **esquemática** una
 pantalla de monitorización real, sin nombrar ninguna marca: barra lateral a
@@ -1649,8 +1653,8 @@ real, se abre con `?demo` al final de la dirección:
   el informe; y la exportación desde Gestión de Casos. La tarjeta se puede
   **minimizar**, y mientras está abajo la página reserva su altura para que
   no tape el final.
-- Entra con **«Usuario demo»** ya elegido; Bibliografía y Teoría básica
-  (en construcción) no se enseñan, y **Técnicas IONM** tampoco (son apuntes
+- Entra con **«Usuario demo»** ya elegido; Teoría básica (en construcción)
+  no se enseña, y **Técnicas IONM** tampoco (son apuntes
   personales del autor); el Simulador abre con un ejemplo cargado;
   aparece el equipo de ejemplo **Genérico**.
 - **Sin red**: además de no sincronizar, en `?demo` cualquier petición a otro

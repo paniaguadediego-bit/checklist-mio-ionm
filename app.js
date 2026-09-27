@@ -823,7 +823,11 @@
     tile_docencia_sub:    { es: "Miotomas y colocación de cajas en la mesa", en: "Myotomes and box placement on the table" },
     tile_simulador_sub:   { es: "Pantalla de monitorización para practicar alarmas", en: "Monitoring screen to practise alarms" },
     tile_apuntes_sub:     { es: "Tus notas y fotos, en todos tus dispositivos", en: "Your notes and photos, on all your devices" },
-    tile_bibliografia_sub: { es: "Artículos de referencia", en: "Reference articles" },
+    tile_bibliografia_sub: { es: "Libros, guías y artículos en los que se basa", en: "Books, guidelines and papers it is based on" },
+    biblio_intro:        { es: "Las fuentes usadas para construir MIO-Check, tal como se citan dentro de la herramienta.", en: "The sources used to build MIO-Check, as they are cited within the tool." },
+    biblio_libros:       { es: "Libros", en: "Books" },
+    biblio_guias:        { es: "Guías y recomendaciones de sociedades", en: "Society guidelines and recommendations" },
+    biblio_articulos:    { es: "Artículos", en: "Papers" },
     // Recorrido guiado "Empieza aquí", solo en la demo (demo-congreso B2.F2).
     // Visita guiada opcional (27-09-2026): antes "▶ Empieza aquí", que parecía
     // un paso obligatorio para poder usar la herramienta.
@@ -913,7 +917,7 @@
     demo_restablecer_conf: { es: "¿Borrar todo lo hecho en la demo y volver a los datos de ejemplo?", en: "Delete everything done in the demo and go back to the sample data?" },
     demo_centro:         { es: "Hospital de demostración", en: "Demo hospital" },
     tile_simulador:      { es: "Simulador", en: "Simulator" },
-    tile_bibliografia:   { es: "Bibliografía", en: "Bibliography" },
+    tile_bibliografia:   { es: "Bibliografía recomendada", en: "Recommended reading" },
     docente_tab_material:{ es: "Material", en: "Material" },
     docente_tab_teoria:  { es: "Teoría básica de IONM", en: "IONM basic theory" },
     en_construccion:     { es: "En construcción.", en: "Under construction." },
@@ -1676,7 +1680,59 @@
   });
   document.getElementById("tile-organizador").addEventListener("click", function () { irAPantalla("organizador"); });
   document.getElementById("tile-simulador").addEventListener("click", function () { abrirSimulador(); });
-  document.getElementById("tile-bibliografia").addEventListener("click", function () { irAPantalla("bibliografia"); });
+  /* Bibliografía recomendada (27-09-2026, pedido del usuario): solo los
+     nombres de las fuentes usadas para construir la herramienta, tal como se
+     citan dentro de ella (Técnicas IONM, Checklist, Simulador, Registro...).
+     Sin títulos completos inventados: donde la herramienta solo dice "Autor
+     año", aquí también. Nada de contenido de las obras. */
+  var BIBLIOGRAFIA = [
+    { g: "libros", t: "Møller AR. Intraoperative Neurophysiological Monitoring." },
+    { g: "libros", t: "Deletis V, Shils JL, Sala F, Seidel K (eds.). Neurophysiology in Neurosurgery: A Modern Approach. 2.ª ed.",
+      t_en: "Deletis V, Shils JL, Sala F, Seidel K (eds.). Neurophysiology in Neurosurgery: A Modern Approach. 2nd ed." },
+    { g: "guias", t: "MacDonald et al. 2013 (ASNM) — potenciales evocados motores", t_en: "MacDonald et al. 2013 (ASNM) — motor evoked potentials" },
+    { g: "guias", t: "MacDonald et al. 2019 (ISION) — potenciales evocados somatosensoriales", t_en: "MacDonald et al. 2019 (ISION) — somatosensory evoked potentials" },
+    { g: "guias", t: "Leppänen 2005/2006 (ASNM) — EMG de raíces y nervios", t_en: "Leppänen 2005/2006 (ASNM) — root and nerve EMG" },
+    { g: "guias", t: "Legatt et al. 2016 (ACNS) — MEP por estimulación transcraneal", t_en: "Legatt et al. 2016 (ACNS) — transcranial electrical MEP" },
+    { g: "guias", t: "Toleikis 2024 (ASNM)" },
+    { g: "articulos", t: "Acharya 2017" },
+    { g: "articulos", t: "Álvarez 2023" },
+    { g: "articulos", t: "Boaro 2026" },
+    { g: "articulos", t: "Costa 2015" },
+    { g: "articulos", t: "Deletis y Fernández-Conejero (J Clin Neurol)", t_en: "Deletis and Fernández-Conejero (J Clin Neurol)" },
+    { g: "articulos", t: "Lima Medeiros 2024" },
+    { g: "articulos", t: "London 2022 (J Neurosurg Spine)" },
+    { g: "articulos", t: "Mirallave Pescador 2022" },
+    { g: "articulos", t: "Romstock 2000" },
+    { g: "articulos", t: "Schirmer 2011" },
+    { g: "articulos", t: "Sloan 2012" },
+    { g: "articulos", t: "Szelényi 2022" },
+    { g: "articulos", t: "Ulkatan 2017" },
+    { g: "articulos", t: "Urriza et al. 2025" }
+  ];
+
+  function renderBibliografia() {
+    var cont = document.getElementById("bibliografia-lista");
+    cont.textContent = "";
+    ["libros", "guias", "articulos"].forEach(function (g) {
+      var h = document.createElement("h3");
+      h.className = "biblio-grupo";
+      h.textContent = T("biblio_" + g);
+      cont.appendChild(h);
+      var ul = document.createElement("ul");
+      ul.className = "biblio-lista";
+      BIBLIOGRAFIA.filter(function (b) { return b.g === g; }).forEach(function (b) {
+        var li = document.createElement("li");
+        li.textContent = campo(b, "t");
+        ul.appendChild(li);
+      });
+      cont.appendChild(ul);
+    });
+  }
+
+  document.getElementById("tile-bibliografia").addEventListener("click", function () {
+    renderBibliografia();
+    irAPantalla("bibliografia");
+  });
   // tile-casos, tile-tecnicas-mio, tile-docente y tile-apuntes se conectan
   // más abajo, junto a abrirListaCasos()/abrirTecnicasMio()/abrirDocente()/
   // abrirApunteDoc() -esas sí necesitan pintar contenido antes de
@@ -14165,19 +14221,65 @@
     return partes.join(" ");
   }
 
+  // "Abductor pollicis brevis izquierdo" -> "Abductor pollicis brevis"; y en
+  // inglés "Left abductor..." -> "Abductor...". Para la fila L./R. de Material.
+  function descripcionSinLado(d) {
+    var r = String(d || "")
+      .replace(/\s+(izquierd|derech)[oa]s?\b/gi, "")
+      .replace(/\b(left|right)\s+/gi, "")
+      .replace(/\s{2,}/g, " ").trim();
+    return r.charAt(0).toUpperCase() + r.slice(1);
+  }
+
   function renderDocenteMaterial() {
     var cont = document.getElementById("docente-material-lista");
     cont.textContent = "";
     var busq = (document.getElementById("docente-material-buscar").value || "").toLowerCase();
     var total = 0, mostrados = 0;
     CATALOGO.forEach(function (grupo) {
-      total += grupo.items.length;
-      var filas = grupo.items.map(function (item) {
+      // L. y R. en una sola fila (27-09-2026, pedido del usuario): los pares
+      // l_<x>/r_<x> de una misma categoría salen como "L./R.<x>" con la
+      // descripción sin el lado, para no repetir cada concepto dos veces.
+      var ids = {};
+      grupo.items.forEach(function (item) { ids[item.id] = item; });
+      var filas = [];
+      var mantas = {};
+      grupo.items.forEach(function (item) {
+        var m = /^([lr])_(.+)$/.exec(item.id || "");
+        var par = m ? ids[(m[1] === "l" ? "r_" : "l_") + m[2]] : null;
+        if (par && m[1] === "r") return;   // ya va en la fila de su L.
         var etq = etiquetaDe(item, null);
-        return { item: item, tipo: etq ? campo(etq, "nombre") : "", desc: descripcionMaterial(item) };
-      }).filter(function (f) {
+        var nombre = campo(item, "nombre");
+        var desc = descripcionMaterial(item);
+        // Mantas GRID (pedido del usuario): una fila por manta -"GRID A",
+        // "GRID B"- en vez de una por contacto; la descripción es la misma.
+        var mg = /^(GRID [A-Z])\.(\d+)$/.exec(nombre);
+        if (mg) {
+          var fg = mantas[mg[1]];
+          if (fg) { fg.contactos.push(item); return; }
+          fg = mantas[mg[1]] = { item: item, par: null, contactos: [item], manta: mg[1],
+            nombre: mg[1], tipo: etq ? campo(etq, "nombre") : "", desc: desc };
+          filas.push(fg);
+          return;
+        }
+        if (par) {
+          nombre = nombre.replace(/^L\.\s*/, "L./R.");
+          desc = descripcionSinLado(desc);
+        }
+        filas.push({ item: item, par: par, nombre: nombre, tipo: etq ? campo(etq, "nombre") : "", desc: desc });
+      });
+      Object.keys(mantas).forEach(function (k) {
+        var fg = mantas[k], n = fg.contactos.length;
+        if (n < 2) return;
+        fg.nombre = k + " (1–" + n + ")";
+        fg.desc = String(fg.desc).replace(/^Contacto \d+/, "Contactos 1–" + n).replace(/^Contact \d+/, "Contacts 1–" + n);
+      });
+      total += filas.length;
+      filas = filas.filter(function (f) {
         if (!busq) return true;
-        return (campo(f.item, "nombre") + " " + f.tipo + " " + f.desc).toLowerCase().indexOf(busq) !== -1;
+        var texto = f.nombre + " " + campo(f.item, "nombre") + " " + (f.par ? campo(f.par, "nombre") : "") + " " +
+          (f.contactos || []).map(function (x) { return campo(x, "nombre"); }).join(" ") + " " + f.tipo + " " + f.desc;
+        return texto.toLowerCase().indexOf(busq) !== -1;
       });
       if (!filas.length) return;
       mostrados += filas.length;
@@ -14206,19 +14308,20 @@
           dot.className = "color-dot color-" + f.item.color;
           nom.appendChild(dot);
         }
-        nom.appendChild(document.createTextNode(campo(f.item, "nombre")));
+        nom.appendChild(document.createTextNode(f.nombre));
         fila.appendChild(nom);
         var desc = document.createElement("span");
         desc.className = "mat-desc";
         desc.textContent = f.desc;
         fila.appendChild(desc);
-        if (f.item.foto) {
+        var fotoItem = f.item.foto ? f.item : (f.par && f.par.foto ? f.par : null);
+        if (fotoItem) {
           var foto = document.createElement("button");
           foto.type = "button";
           foto.className = "chip-foto";
           foto.textContent = "📷";
           foto.title = T("chip_foto_tit");
-          foto.addEventListener("click", function () { abrirFotoSonda(f.item.foto, campo(f.item, "nombre")); });
+          foto.addEventListener("click", function () { abrirFotoSonda(fotoItem.foto, campo(fotoItem, "nombre")); });
           fila.appendChild(foto);
         }
         cuerpo.appendChild(fila);
@@ -16975,8 +17078,9 @@
     // Lo que sigue "en construcción" no se enseña en la demo (B1.F4): la
     // tarjeta Bibliografía y la pestaña Teoría básica de Docencia. Fuera de la
     // demo no cambian.
-    document.getElementById("tile-bibliografia").hidden = true;
-    // Técnicas IONM tampoco (27-09-2026, pedido del usuario): son apuntes
+    // Bibliografía sí se enseña desde el 27-09-2026 (ya no está en
+    // construcción: es la bibliografía recomendada).
+    // Técnicas IONM no (27-09-2026, pedido del usuario): son apuntes
     // suyos sacados de libros, capítulos y artículos, no para enseñarlos.
     // abrirTecnicasMio() además no abre nada en la demo.
     document.getElementById("tile-tecnicas-mio").hidden = true;

@@ -47,7 +47,7 @@ window.GUIA = {
     },
     {
       titulo: "Pantalla de inicio",
-      texto: "El logo lleva siempre aquí: 10 tarjetas agrupadas por el momento de la cirugía -Antes de quirófano (Organizador de Montajes, Gestión de Casos, Checklist pre-quirúrgico, Material), En quirófano (Registro intraoperatorio, Técnicas IONM) y Después / consulta (Docencia, Simulador, Mis apuntes, Bibliografía)-, cada una con una línea que dice para qué sirve. Se trabaja solo dentro de la que elijas; el logo, o el botón Inicio junto al título de cada pantalla, te devuelven aquí."
+      texto: "El logo lleva siempre aquí: 10 tarjetas agrupadas por el momento de la cirugía -Antes de quirófano (Organizador de Montajes, Gestión de Casos, Checklist pre-quirúrgico), En quirófano (Registro intraoperatorio, Técnicas IONM) y Después / consulta (Material, Docencia, Simulador, Mis apuntes, Bibliografía recomendada)-, cada una con una línea que dice para qué sirve. Se trabaja solo dentro de la que elijas; el logo, o el botón Inicio junto al título de cada pantalla, te devuelven aquí."
     }
   ],
 

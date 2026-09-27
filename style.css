@@ -3773,3 +3773,8 @@ button, input, select, textarea { font-family: inherit; }
 .montajes-mas-lista[hidden] { display: none; }
 .montajes-mas-lista button { text-align: left; border-color: transparent; }
 .montajes-mas-lista button.peligro { color: var(--peligro); border-top: 1px solid var(--border); border-radius: 0 0 var(--r) var(--r); }
+
+/* Bibliografía recomendada (27-09-2026) */
+.biblio-grupo { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent); margin: 1.1rem 0 0.4rem; }
+.biblio-lista { margin: 0; padding-left: 1.2rem; }
+.biblio-lista li { margin: 0.3rem 0; line-height: 1.4; }

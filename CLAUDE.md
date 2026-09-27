@@ -338,10 +338,12 @@ distinta a la anterior, no importa el formato exacto.
 > repositorio privado, ver al final de este archivo).**
 > - **Pantallas (10 tarjetas de Inicio en tres bloques -Antes de quirófano, En
 >   quirófano, Después / consulta-, cada una con una línea bajo el nombre):**
->   Organizador de Montajes, Gestión de Casos, Checklist pre-quirúrgico, Material
->   (catálogo entero con descripción de uso de cada ítem), Registro
->   intraoperatorio, Técnicas IONM, Docencia (Miotomas, Cama, Teoría básica
->   pendiente), Simulador, Mis apuntes y Bibliografía (vacía, pendiente).
+>   Antes: Organizador de Montajes, Gestión de Casos, Checklist pre-quirúrgico.
+>   En quirófano: Registro intraoperatorio, Técnicas IONM (solo con token).
+>   Después: Material (catálogo con descripción; pares L./R. y mantas GRID en una
+>   fila, `descripcionSinLado()`), Docencia (Miotomas, Cama, Teoría básica
+>   pendiente), Simulador, Mis apuntes y Bibliografía recomendada (`BIBLIOGRAFIA`,
+>   `renderBibliografia()`: solo nombres de fuentes, tal como se citan).
 > - **Dos equipos** (25-09-2026): `equipo_id` "inomed" | "cadwell" en plantillas y
 >   casos (sin el campo = Inomed). Cajas por equipo (`cajas_material` = Inomed,
 >   `cajas_cadwell`), `cajasDe()`/`CAJAS_TODAS`; se elige al crear caso o montaje en
@@ -388,7 +390,7 @@ distinta a la anterior, no importa el formato exacto.
 >   Cadwell (y al revés); fusionar eventos y alarmas en la pantalla del Registro
 >   (solo la hoja impresa los fusiona); rellenar la tabla de tornillos de la hoja
 >   desde `umbral_raices_niveles`; sección del Registro en el Sheet; bloque
->   "Cirugías con IONM"; Bibliografía y Teoría básica.
+>   "Cirugías con IONM"; Teoría básica.
 > - **Convenciones que han fallado antes:** subir el `?v=` de `index.html` en
 >   cada cambio de `app.js`/`style.css`/`data/`; `git fetch`+`pull --ff-only` antes
 >   de tocar `checklist-mio-datos` (y otro `fetch` antes del push: la app escribe
