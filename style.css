@@ -1954,22 +1954,6 @@ dialog h3 {
 @media (pointer: coarse), (max-width: 900px) {
   .sel-caso-boton, .sel-caso-item { min-height: 44px; }
 }
-/* Caja de planificación pegada (20-09-2026): monoespaciada a propósito -lo
-   que se pega suele traer tablas en markdown (pipes "|"), que solo se leen
-   alineadas con una fuente de ancho fijo-. */
-.checklist-notas-textarea {
-  width: 100%;
-  box-sizing: border-box;
-  font-family: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-  font-size: 0.78rem;
-  line-height: 1.45;
-  padding: 0.6rem 0.7rem;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--campo-bg);
-  color: var(--text);
-  resize: vertical;
-}
 .checklist-selector select {
   font: inherit;
   font-size: 0.8rem;

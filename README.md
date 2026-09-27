@@ -755,7 +755,7 @@ tamaño completo; la **×** para quitarla pide confirmación antes de
 borrarla.
 
 **Dónde se guardan las fotos** (24-09-2026): las fotos de Imágenes del
-montaje, Pruebas de imagen, Planificación del caso y Mis apuntes viven en el
+montaje, Pruebas de imagen y Mis apuntes viven en el
 móvil dentro de **IndexedDB**, no en el almacenamiento de siempre (que se
 llenaba con 5-10 MB y hacía fallar el guardado de casos y hasta del
 catálogo). A GitHub siguen subiendo incrustadas en el caso, sin cambios; lo
@@ -884,24 +884,13 @@ El desplegable de arriba elige **dónde se guardan las marcas**:
   con él como el resto de la ficha —se sincronizan, y dos cirugías que
   estés preparando la misma semana no se pisan entre sí—.
 
-Debajo del último grupo hay una caja de texto libre, **Planificación del
-caso** —pensada para pegar ahí el plan que hayas preparado
-(montaje, estructuras en riesgo, parámetros, alarmas...) y
-tenerlo a mano justo antes de entrar a quirófano—. Vive en el mismo sitio
-que las marcas (Modelo 0 o el caso vinculado), con letra monoespaciada
-para que las tablas en markdown se lean alineadas.
-
-Debajo de esa caja se puede adjuntar además una **imagen-resumen** —por
-ejemplo, la infografía de una página que te dé alguna skill—, con el mismo
-mecanismo que "Imágenes del montaje" (se comprime sola, se ve a tamaño
-grande al pulsarla), pero comprimida algo menos (para no perder legibilidad
-en texto pequeño) y pidiendo confirmación antes de borrarla.
+La caja **Planificación del caso** (texto pegado e imagen-resumen) se retiró
+el 27-09-2026: no se usaba.
 
 **Guardar** da una confirmación visible de que no se ha perdido nada,
 aunque todo ya se autoguarda solo en cuanto lo tocas —igual que "Guardar
 montaje" en el Organizador—. **Vaciar** desmarca todo lo que tengas abierto
-en ese momento (Modelo 0 o el caso elegido) y borra también el texto y la
-imagen, pidiendo confirmación antes. Nada de esto tiene columna propia en el
+en ese momento (Modelo 0 o el caso elegido), pidiendo confirmación antes. Nada de esto tiene columna propia en el
 Google Sheet ni en el CSV —es una ayuda de preparación, no un dato clínico
 de la monitorización en sí—.
 

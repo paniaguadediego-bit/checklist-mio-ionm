@@ -1130,11 +1130,8 @@
     checklist_modelo_cero: { es: "Modelo 0 — sin caso", en: "Model 0 — no case" },
     checklist_progreso:  { es: "{n} de {total} revisados", en: "{n} of {total} checked" },
     checklist_vaciar:    { es: "Vaciar", en: "Clear" },
-    checklist_vaciar_conf: { es: "¿Vaciar esta checklist? Se desmarcan todos los ítems y se borran el texto y las imágenes de planificación.",
-                           en: "Clear this checklist? All items will be unchecked and the planning text and images will be deleted." },
-    checklist_notas_titulo: { es: "Planificación del caso", en: "Case planning" },
-    checklist_notas_ph:  { es: "Pega aquí el plan de montaje o la planificación del caso para tenerla a mano antes de entrar a quirófano.",
-                           en: "Paste the montage plan or case planning here to have it at hand before entering the OR." },
+    checklist_vaciar_conf: { es: "¿Vaciar esta checklist? Se desmarcan todos los ítems.",
+                           en: "Clear this checklist? All items will be unchecked." },
     checklist_guardar:   { es: "Guardar", en: "Save" },
     checklist_guardado:  { es: "Checklist guardada.", en: "Checklist saved." },
     tile_registro:       { es: "Registro intraoperatorio", en: "Intraoperative record" },
@@ -14316,23 +14313,9 @@
       if (g && g.valores) checklistModeloCero = g;
     } catch (e) { /* sin persistencia */ }
     checklistCargado = true;
-    // Las fotos de Modelo 0 se guardaron sin dataUrl (ver
-    // checklistGuardarModeloCero) -se recuperan de IndexedDB en segundo
-    // plano; si para cuando terminan seguimos mirando esta pantalla, se
-    // repinta la galería con las fotos ya puestas-.
-    hidratarFotosIDB("checklist0", checklistModeloCero.imagenes, "dataUrl").then(function () {
-      if (pantallaActiva("checklist") && !checklistCasoUid) renderChecklistImagenes();
-    });
   }
   function checklistGuardarModeloCero() {
-    try {
-      var ligero = Object.assign({}, checklistModeloCero);
-      if ((checklistModeloCero.imagenes || []).length) {
-        guardarFotosIDB("checklist0", checklistModeloCero.imagenes, "dataUrl");
-        ligero.imagenes = quitarDataUrls(checklistModeloCero.imagenes, "dataUrl");
-      }
-      localStorage.setItem(CHECKLIST_KEY, JSON.stringify(ligero));
-    } catch (e) { /* sin persistencia */ }
+    try { localStorage.setItem(CHECKLIST_KEY, JSON.stringify(checklistModeloCero)); } catch (e) { /* sin persistencia */ }
   }
 
   // Único punto que decide dónde viven los valores -Modelo 0 o el caso
@@ -14354,120 +14337,10 @@
     renderChecklistProgreso();
   }
 
-  // Planificación pegada del caso (20-09-2026): texto libre aparte de las
-  // marcas -mismo contenedor (checklist_prequirurgico o checklistModeloCero),
-  // una clave "notas" más junto al mapa id->boolean, sin cambiar su forma-.
-  function checklistNotas() {
-    checklistValores(); // se llama solo por el efecto: crea checklist_prequirurgico si el caso no lo tenía aún
-    if (checklistCasoUid && casos[checklistCasoUid]) {
-      return casos[checklistCasoUid].checklist_prequirurgico.notas || "";
-    }
-    return checklistModeloCero.notas || "";
-  }
-
-  function checklistGuardarNotas(texto) {
-    checklistValores();
-    if (checklistCasoUid && casos[checklistCasoUid]) {
-      casos[checklistCasoUid].checklist_prequirurgico.notas = texto;
-      guardarCaso(casos[checklistCasoUid]);
-    } else {
-      checklistModeloCero.notas = texto;
-      checklistGuardarModeloCero();
-    }
-  }
-
-  // Imagen-resumen del caso (20-09-2026): mismo patrón que "notas" -una
-  // clave más en el mismo contenedor-, array de {id, nombre, dataUrl, fecha}
-  // como "Imágenes del montaje"/"Pruebas de imagen".
-  function checklistImagenes() {
-    checklistValores();
-    if (checklistCasoUid && casos[checklistCasoUid]) {
-      var cp = casos[checklistCasoUid].checklist_prequirurgico;
-      if (!cp.imagenes) cp.imagenes = [];
-      return cp.imagenes;
-    }
-    if (!checklistModeloCero.imagenes) checklistModeloCero.imagenes = [];
-    return checklistModeloCero.imagenes;
-  }
-
-  function checklistGuardarImagenes() {
-    if (checklistCasoUid && casos[checklistCasoUid]) guardarCaso(casos[checklistCasoUid]);
-    else checklistGuardarModeloCero();
-  }
-
-  // Comprimida menos a fondo que el resto de galerías del caso (1600px/0,85
-  // en vez de 1100px/0,72): lo que se guarda aquí suele ser un resumen
-  // visual denso en texto pequeño (tablas, varias columnas), y a la
-  // compresión habitual perdía legibilidad.
-  function renderChecklistImagenes() {
-    var cont = document.getElementById("checklist-imagenes");
-    cont.innerHTML = "";
-    var lista = checklistImagenes();
-    var galeria = document.createElement("div");
-    galeria.className = "caso-imagenes-galeria";
-    var pintarGaleria = function () {
-      galeria.textContent = "";
-      lista.forEach(function (im) {
-        var marco = document.createElement("div");
-        marco.className = "caso-imagen-marco";
-        var mini = document.createElement("img");
-        mini.src = im.dataUrl;
-        mini.alt = im.nombre || "";
-        mini.className = "caso-imagen-mini";
-        mini.addEventListener("click", function () { abrirFotoSonda(im.dataUrl, im.nombre || ""); });
-        var quitar = document.createElement("button");
-        quitar.type = "button";
-        quitar.className = "caso-imagen-quitar";
-        quitar.textContent = "✕";
-        quitar.title = T("caso_imagen_quitar_tit");
-        quitar.addEventListener("click", function () {
-          if (!confirm(T("apunte_foto_borrar_conf"))) return;
-          var i = lista.indexOf(im);
-          if (i !== -1) lista.splice(i, 1);
-          checklistGuardarImagenes();
-          pintarGaleria();
-        });
-        marco.appendChild(mini);
-        marco.appendChild(quitar);
-        galeria.appendChild(marco);
-      });
-    };
-    pintarGaleria();
-    var procesarImgs = function (files) {
-      Array.prototype.slice.call(files).forEach(function (f) {
-        comprimirImagen(f, 1600, 0.85).then(function (dataUrl) {
-          lista.push({ id: uuid(), nombre: f.name, dataUrl: dataUrl, fecha: new Date().toISOString() });
-          checklistGuardarImagenes();
-          pintarGaleria();
-        }).catch(function () {
-          alert(T("caso_imagen_error"));
-        });
-      });
-    };
-    var entradaImg = document.createElement("input");
-    entradaImg.type = "file";
-    entradaImg.accept = "image/*";
-    entradaImg.multiple = true;
-    entradaImg.hidden = true;
-    entradaImg.addEventListener("change", function () {
-      procesarImgs(entradaImg.files);
-      entradaImg.value = "";
-    });
-    var btnAddImg = document.createElement("button");
-    btnAddImg.type = "button";
-    btnAddImg.className = "caso-imagen-anadir";
-    btnAddImg.textContent = T("caso_imagen_anadir");
-    btnAddImg.addEventListener("click", function () { entradaImg.click(); });
-    var camaraImg = crearBotonCamara(procesarImgs);
-    var accionesImg = document.createElement("div");
-    accionesImg.className = "caso-imagen-acciones";
-    accionesImg.appendChild(btnAddImg);
-    accionesImg.appendChild(camaraImg.boton);
-    cont.appendChild(galeria);
-    cont.appendChild(accionesImg);
-    cont.appendChild(entradaImg);
-    cont.appendChild(camaraImg.entrada);
-  }
+  // "Planificación del caso" (texto pegado e imagen-resumen, 20-09-2026)
+  // retirada el 27-09-2026: el usuario no la usaba y ningún caso tenía nada.
+  // Las claves "notas"/"imagenes" que pudieran quedar en checklist_prequirurgico
+  // se ignoran (las fotos las sigue tratando la parte genérica de IndexedDB).
 
   // Mismos colores que el borde de ".caso-fila.estado-*" (negro/amarillo/
   // verde/rojo). Un <option> no admite color de forma fiable -el selector nativo
@@ -14778,8 +14651,6 @@
       det.appendChild(campos);
       cont.appendChild(det);
     });
-    document.getElementById("checklist-notas").value = checklistNotas();
-    renderChecklistImagenes();
     renderChecklistProgreso();
   }
 
@@ -14800,19 +14671,11 @@
     checklistCasoUid = e.target.value || null;
     renderChecklistContenido();
   });
-  // Guardado en cada tecla -mismo patrón que las secciones de Apuntes-: el
-  // debounce real de la subida ya lo hace programarEnvio() dentro de
-  // guardarCaso()/checklistGuardarModeloCero(), así que escribir seguido no
-  // dispara una subida por tecla.
-  document.getElementById("checklist-notas").addEventListener("input", function (e) {
-    checklistGuardarNotas(e.target.value);
-  });
   // "Guardar" explícito (20-09-2026, pedido por la usuaria): todo en esta
   // pantalla ya se autoguarda al momento -cada checkbox, cada tecla del
   // texto-, pero este botón da la confirmación visible de que no se ha
   // perdido nada, mismo motivo que "Guardar montaje" en el Organizador.
   document.getElementById("checklist-guardar").addEventListener("click", function () {
-    checklistGuardarNotas(document.getElementById("checklist-notas").value);
     avisoGuardado(T("checklist_guardado"));
   });
   document.getElementById("checklist-vaciar").addEventListener("click", function () {
@@ -16965,8 +16828,7 @@
       material_disponible: true, electrodos_antes_drapeado: true, bloque_mordida: true, impedancias: true,
       estado_estable_anestesico: true, registro_basal_supino: true, registro_tras_posicionamiento: true,
       nervios_perifericos_riesgo: true, basal_definitiva: true, confirmar_decusacion: true,
-      aviso_bolo_anestesia: true, timing_maniobras_cirujano: true,
-      notas: "Plan:\n- SEP de tibiales y medianos (control).\n- MEP por TES C3/C4 a los cuatro miembros.\n- Onda D con electrodo epidural proximal y distal a la lesión.\n- TIVA sin relajante tras la inducción; TAM > 80 mmHg."
+      aviso_bolo_anestesia: true, timing_maniobras_cirujano: true
     };
     cEpend.registro_intraop = {
       v: {
@@ -17049,8 +16911,7 @@
       tipo_anestesia: "tiva"
     }, mGRID);
     cGRID.checklist_prequirurgico = {
-      hist_clinica: true, examen_neuro: true, consentimiento: true, definir_modalidades: true,
-      notas: "Plan de ejemplo:\n- Phase-reversal con mediano derecho para localizar el surco central.\n- MEP por GRID y por TES como control.\n- EEG del GRID para vigilar postdescargas durante el mapeo."
+      hist_clinica: true, examen_neuro: true, consentimiento: true, definir_modalidades: true
     };
     guardarCaso(cGRID, true);
 

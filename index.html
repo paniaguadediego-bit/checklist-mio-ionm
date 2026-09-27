@@ -24,7 +24,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260928m">
+<link rel="stylesheet" href="style.css?v=20260928n">
 </head>
 <body>
 
@@ -820,23 +820,6 @@
   </div>
   <p class="cat-version" id="checklist-progreso"></p>
   <div id="checklist-contenido"></div>
-  <!-- Planificación pegada del caso (20-09-2026, pedido por la usuaria): caja
-       de texto libre, debajo del último grupo, para pegar el plan
-       del caso y poder leerlo antes de entrar a quirófano. Vive en checklist_prequirurgico.notas -o
-       checklistModeloCero.notas en Modelo 0-, junto a las marcas, sin tocar
-       su formato de mapa id->boolean. -->
-  <details class="caso-grupo" id="checklist-notas-grupo" open>
-    <summary data-i18n="checklist_notas_titulo"></summary>
-    <div class="caso-grupo-campos">
-      <textarea id="checklist-notas" class="checklist-notas-textarea" rows="16" data-i18n-ph="checklist_notas_ph"></textarea>
-      <!-- Imagen-resumen del caso (20-09-2026): mismo mecanismo genérico que
-           "Imágenes del montaje"/"Pruebas de imagen" -galería con
-           comprimirImagen()/abrirFotoSonda(), construida entera en JS-, para
-           el resumen visual de una página que da alguna skill. Vive en
-           checklist_prequirurgico.imagenes o checklistModeloCero.imagenes. -->
-      <div id="checklist-imagenes"></div>
-    </div>
-  </details>
   <div class="dlg-botones no-print">
     <button type="button" id="checklist-vaciar" class="peligro" data-i18n="checklist_vaciar"></button>
     <span class="barra-flex"></span>
@@ -1114,6 +1097,6 @@
 <script src="data/i18n-en.js?v=20260925a"></script>
 <script src="data/guia.js?v=20260928f"></script>
 <script src="data/parametros-tecnicas.js?v=20260917a"></script>
-<script src="app.js?v=20260928t"></script>
+<script src="app.js?v=20260928v"></script>
 </body>
 </html>
