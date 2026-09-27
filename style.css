@@ -3778,3 +3778,18 @@ button, input, select, textarea { font-family: inherit; }
 .biblio-grupo { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent); margin: 1.1rem 0 0.4rem; }
 .biblio-lista { margin: 0; padding-left: 1.2rem; }
 .biblio-lista li { margin: 0.3rem 0; line-height: 1.4; }
+
+/* Separador de los músculos de ampliación (27-09-2026, ver separadorAmpliacion()) */
+.chip-separador, .mat-separador {
+  flex-basis: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.35rem 0 0.15rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.chip-separador::after, .mat-separador::after { content: ""; flex: 1; border-top: 1px solid var(--border); }

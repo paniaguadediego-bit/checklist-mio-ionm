@@ -385,6 +385,7 @@
     dlg_mat_editar:      { es: "Editar material", en: "Edit material" },
     campo_nombre:        { es: "Nombre", en: "Name" },
     campo_categoria:     { es: "Categoría", en: "Category" },
+    catalogo_ampliacion: { es: "Ampliación", en: "More" },
     campo_etiqueta:      { es: "Etiqueta (tipo físico)", en: "Label (physical type)" },
     campo_etiqueta_ay:   { es: "Es lo que se suma en el recuento del resumen y lo que da el aspecto al chip.",
                            en: "This is what gets counted in the summary and what gives the chip its look." },
@@ -1895,6 +1896,7 @@
     catalogoUsuario.forEach(function (item) {
       var completo = Object.assign({}, item, { propio: true });
       var previo = ITEMS[item.id];
+      if (previo && previo.ampliacion && completo.ampliacion === undefined) completo.ampliacion = true;
       ITEMS[item.id] = completo;
       var grupo = CATALOGO.filter(function (g) { return g.categoria === item.categoria; })[0];
       if (!grupo) {
@@ -3285,6 +3287,14 @@
     try { localStorage.setItem(CATS_KEY, JSON.stringify(g)); } catch (e) { /* sin persistencia */ }
   }
 
+  function separadorAmpliacion(clase) {
+    var sep = document.createElement("div");
+    sep.className = clase;
+    sep.setAttribute("role", "separator");
+    sep.textContent = T("catalogo_ampliacion");
+    return sep;
+  }
+
   function pintarCatalogoEn(cont, filtro, opciones) {
     opciones = opciones || {};
     cont.innerHTML = "";
@@ -3325,7 +3335,15 @@
 
       var fila = document.createElement("div");
       fila.className = "chip-fila";
-      items.forEach(function (it) {
+      // Músculos de ampliación (27-09-2026): antes eran categorías aparte
+      // ("Músculos MMSS — ampliación"...); ahora van en la suya, detrás de
+      // una línea, para no tener dos desplegables por grupo muscular.
+      var yaSeparado = false;
+      items.forEach(function (it, i) {
+        if (!yaSeparado && i > 0 && ITEMS[it.id] && ITEMS[it.id].ampliacion) {
+          yaSeparado = true;
+          fila.appendChild(separadorAmpliacion("chip-separador"));
+        }
         fila.appendChild(crearChip(ITEMS[it.id], { alElegir: opciones.alElegir }));
       });
       bloque.appendChild(fila);
@@ -11302,11 +11320,11 @@
     ausente_en: "Ausente en", utilidad_diferencial: "Utilidad diferencial",
     robustez_bajo_anestesia: "Robustez bajo anestesia",
     principio: "Principio",
-    mmss_mediano_cubital_decusacion_normal: "MMSS mediano/cubital — decusación normal",
-    mmss_no_decusacion: "MMSS — sin decusación",
-    mmii_tibial_decusacion_normal: "MMII tibial — decusación normal",
-    mmii_no_decusacion: "MMII — sin decusación",
-    mmii_posicion_sentada: "MMII — posición sentada (fosa posterior)",
+    mmss_mediano_cubital_decusacion_normal: "Miembros superiores, mediano/cubital — decusación normal",
+    mmss_no_decusacion: "Miembros superiores — sin decusación",
+    mmii_tibial_decusacion_normal: "Miembros inferiores, tibial — decusación normal",
+    mmii_no_decusacion: "Miembros inferiores — sin decusación",
+    mmii_posicion_sentada: "Miembros inferiores — posición sentada (fosa posterior)",
     fpz_rara_vez_optima: "Fpz rara vez óptima", comprobar_decusacion: "Comprobar decusación",
     opcional_erb_n13: "Opcional: Erb / N13", fallback_subcortical: "Fallback subcortical",
     velocidad: "Velocidad", topografia_variable: "Topografía variable",
@@ -11319,7 +11337,11 @@
     uso_combinado_con_mapeo_subcortical: "Uso combinado con mapeo subcortical",
     alarma_lesion_vascular_remota: "Alarma de lesión vascular remota",
     perdida_irreversible: "Pérdida irreversible",
-    distancia_al_tracto_incierta: "Distancia al tracto (incierta)"
+    distancia_al_tracto_incierta: "Distancia al tracto (incierta)",
+    // Claves de tiempo de análisis del PESS (27-09-2026: MMSS/MMII se
+    // escriben enteros en toda la app).
+    MMII: "Miembros inferiores",
+    MMSS_referencia_cruzada: "Miembros superiores (referencia cruzada)"
   };
 
   function etiquetaTecMio(clave, diccionario) {
@@ -12065,7 +12087,7 @@
   // Nervio estimulado de un SEP, por el título de la ventana.
   function simNervioSEP(v) {
     var t = (v.titulo || "").toUpperCase();
-    if (/TIB|PTN|MMII|PIERNA|POPL/.test(t)) return "tibial";
+    if (/TIB|PTN|MMII|MIEMBROS INF|PIERNA|POPL/.test(t)) return "tibial";
     if (/CUB|ULN/.test(t)) return "cubital";
     return "mediano";
   }
@@ -14297,7 +14319,12 @@
       det.appendChild(sum);
       var cuerpo = document.createElement("div");
       cuerpo.className = "caso-grupo-campos";
-      filas.forEach(function (f) {
+      var matSeparado = false;
+      filas.forEach(function (f, i) {
+        if (!matSeparado && i > 0 && f.item.ampliacion) {
+          matSeparado = true;
+          cuerpo.appendChild(separadorAmpliacion("mat-separador"));
+        }
         var fila = document.createElement("div");
         fila.className = "mat-fila";
         var nom = document.createElement("span");
@@ -14932,8 +14959,8 @@
     ] },
     { l: "Motoras", l_en: "Motor", grupos: [
       { l: "MEP", items: [
-        { id: "m_pem_mmss", l: "MMSS", l_en: "Upper limbs" },
-        { id: "m_pem_mmii", l: "MMII", l_en: "Lower limbs" },
+        { id: "m_pem_mmss", l: "Miembros superiores", l_en: "Upper limbs" },
+        { id: "m_pem_mmii", l: "Miembros inferiores", l_en: "Lower limbs" },
         { id: "m_pem_esf", l: "Esfínter anal", l_en: "Anal sphincter" }] },
       { l: "Corticobulbares", l_en: "Corticobulbar", items: [
         { id: "m_cb_vii", l: "VII" },
@@ -16840,7 +16867,7 @@
         registro_muscular_mmss: { "1": "l_apb", "2": "r_apb" },
         registro_muscular_mmii: mmii
       }, [],
-      "Plantilla de ejemplo. Mediano como control de SEP; APB como control de MEP. Sonda monopolar para estimular tornillos y raíces. La caja de MMSS va sin tierra a propósito, para ver el aviso de la Revisión del montaje en el Resumen.");
+      "Plantilla de ejemplo. Mediano como control de SEP; APB como control de MEP. Sonda monopolar para estimular tornillos y raíces. La caja de miembros superiores va sin tierra a propósito, para ver el aviso de la Revisión del montaje en el Resumen.");
 
     var mMedular = montajeDemo("Demo · Tumor medular (Onda D)",
       ["t_pess", "t_pem", "onda_d", "emg"],
@@ -16901,7 +16928,7 @@
       nombre_caso: "Demo · Ependimoma medular D8-D9", estado: "cerrado",
       hora_inicio: "08:15", hora_fin: "14:30",
       edad: "47", sexo: "mujer", servicio_id: "neurocirugia",
-      antecedentes_relevantes: "Parestesias en ambos MMII de 6 meses de evolución, con nivel sensitivo D10. Balance motor 5/5. Sin alteración esfinteriana.\nRM: lesión intramedular D8-D9 centrada, con captación homogénea y quistes polares.",
+      antecedentes_relevantes: "Parestesias en ambos miembros inferiores de 6 meses de evolución, con nivel sensitivo D10. Balance motor 5/5. Sin alteración esfinteriana.\nRM: lesión intramedular D8-D9 centrada, con captación homogénea y quistes polares.",
       diagnostico: "loe_med", anatomia_patologica: "Ependimoma intramedular D8-D9 (grado 2 de la OMS)",
       intervencion: "Laminotomía D8-D9, mielotomía media posterior y exéresis de lesión intramedular",
       posicion: "prono",
@@ -16919,7 +16946,7 @@
       recuperacion_senal: "Parcial: el tibial anterior reaparece a los 18 min con umbral 40 mA mayor; el abductor del hallux no se recupera al cierre. Onda D sin cambios.",
       resultado_esperable: "Paresia transitoria de MII izquierdo: la Onda D conservada hace esperable la recuperación.",
       incidencias_tecnicas: "Ninguna. Impedancias correctas durante toda la cirugía.",
-      deficit_postoperatorio: "Paresia de MII izquierdo 3/5 en el postoperatorio inmediato, 4+/5 a las 72 h y 5/5 al mes. Hipoestesia propioceptiva en MMII, esperable tras la mielotomía.",
+      deficit_postoperatorio: "Paresia de MII izquierdo 3/5 en el postoperatorio inmediato, 4+/5 a las 72 h y 5/5 al mes. Hipoestesia propioceptiva en miembros inferiores, esperable tras la mielotomía.",
       concordancia: "VP",
       rol: "residente", supervisor: "Adjunto responsable", dificultad_1a5: "4", caso_destacado: true, hacer_seguimiento: true,
       aprendizaje_clave: "Con la Onda D conservada, la pérdida del MEP muscular suele traducirse en un déficit motor transitorio. Si además cae la Onda D más de un 50 %, el riesgo de déficit permanente es alto.",
@@ -16936,7 +16963,7 @@
     cEpend.registro_intraop = {
       v: {
         quirofano: "Quirófano 3",
-        prequx_motor: "5/5 en los cuatro miembros", prequx_sensitivo: "Parestesias en MMII, nivel D10",
+        prequx_motor: "5/5 en los cuatro miembros", prequx_sensitivo: "Parestesias en miembros inferiores, nivel D10",
         prequx_ppcc: "Normales", prequx_esfinteres: "Continente",
         m_pess_mediano: true, m_pess_tibial: true, m_pem_mmss: true, m_pem_mmii: true, m_tof: true,
         mont_tes: "C3/C4 (C1/C2 de reserva)", mont_incidencias: "Ninguna",
@@ -16958,7 +16985,7 @@
         e_m_umbral_mep_basal: "120 mA", e_m_umbral_mep_post: "120 mA", e_m_umbral_mep_final: "160 mA",
         e_m_tof_basal: "4/4", e_m_tof_post: "4/4", e_m_tof_final: "4/4",
         cierre_resultado: "persistentes",
-        cierre_modalidades: "MEP MII izq. (AH ausente, TA con umbral +40 mA). SEP de MMII (mielotomía).",
+        cierre_modalidades: "MEP MII izq. (AH ausente, TA con umbral +40 mA). SEP de miembros inferiores (mielotomía).",
         cierre_com_cir: true, cierre_com_an: true, cierre_com_h: "14:15",
         cierre_deficit: "Posible paresia de MII izquierdo, previsiblemente transitoria (Onda D conservada).",
         cierre_incidencias: "Ninguna.", cierre_material: "Sin fallos. Reponer electrodo epidural.",
