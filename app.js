@@ -14329,6 +14329,8 @@
   // craneal del campo "par" del catálogo. Sin dato, no se pinta nada.
   function inervacionMaterial(item) {
     if (!item) return null;
+    // "inerv": texto propio cuando no basta con un par (geniohioideo: C1 vía XII)
+    if (item.inerv) return { texto: campo(item, "inerv"), tit: T("mat_par_tit") };
     if (item.par) return { texto: T("mat_par", { par: item.par }), tit: T("mat_par_tit") };
     var id = String(item.id || "").replace(/^r_/, "l_");
     for (var i = 0; i < MIOTOMAS.length; i++) {
@@ -16412,11 +16414,13 @@
   }
 
   // Dónde está montado el Raabe (y su referencia) en el montaje del caso, en
-  // texto: "Raabe (estímulo): TES MEP 12 catodal". Lee el montaje en crudo.
+  // texto: "S. de aspiración electrificada (Raabe): TES MEP 12 catodal". Lee el
+  // montaje en crudo. "raabe_estim" (Raabe (estímulo)) se retiró del catálogo
+  // el 27-09-2026: nadie lo usaba y era la misma sonda de aspiración.
   function hojaRaabeMontado(c) {
     if (!c) return "";
     var esc = montajeDesdeCaso(c);
-    var buscados = { raabe_estim: 1, ref_raabe: 1, cz_doble_prima: 1, sonda_aspiracion: 1, mapping: 1, ref_mapping_subcortical: 1, sonda_mono_esferica: 1, sonda_mono_recta: 1 };
+    var buscados = { ref_raabe: 1, cz_doble_prima: 1, sonda_aspiracion: 1, mapping: 1, ref_mapping_subcortical: 1, sonda_mono_esferica: 1, sonda_mono_recta: 1 };
     var partes = [];
     Object.keys(cajasDe(esc)).forEach(function (cajaKey) {
       var asign = (esc.asignaciones || {})[cajaKey] || {};

@@ -570,7 +570,6 @@ window.SURGERIES_DATA = {
 
     /* Reutilizable: se prepara, pero no se gasta y no suma al coste */
     { "id": "sonda_mapeo",          "nombre": "Sonda de mapeo cortical",   "borde": "grueso",      "color": "amarillo", "fondo": "amarillo",  "fungible": false },
-    { "id": "sonda_raabe",          "nombre": "Sonda Raabe",               "borde": "grueso",      "color": "negro",    "fondo": "ninguno",   "fungible": false },
     { "id": "sonda_mono_esferica",  "nombre": "Sonda monopolar esférica",  "borde": "grueso",      "color": "gris",     "fondo": "ninguno",   "fungible": false },
     { "id": "sonda_mono_recta",     "nombre": "Sonda monopolar recta",     "borde": "grueso",      "color": "gris",     "fondo": "ninguno",   "fungible": false },
     { "id": "sonda_bip_concentrica","nombre": "Sonda bipolar concéntrica", "borde": "grueso",      "color": "negro",    "fondo": "ninguno",   "fungible": false },
@@ -614,7 +613,6 @@ window.SURGERIES_DATA = {
         { "id": "c6", "nombre": "C6", "color": "amarillo", "etiqueta": "electrodo_sacacorchos", "nota": "Vías corticobulbares (pares craneales) — combinación principal junto a C5; admite otras con distintas referencias" },
         { "id": "mapping", "nombre": "Referencia Mapping cortical", "color": "negro", "etiqueta": "electrodo_sacacorchos", "nota": "Referencia del mapeo cortical — cátodo (entrada negra, catodal)" },
         { "id": "ref_mapping_subcortical", "nombre": "Referencia Mapping subcortical", "color": "rojo", "etiqueta": "electrodo_sacacorchos", "nota": "Referencia del mapeo subcortical — ánodo (entrada roja, anodal)" },
-        { "id": "raabe_estim", "nombre": "Raabe (estímulo)", "color": "negro", "etiqueta": "sonda_raabe", "nota": "Estimulador cortical tipo aspiración — cátodo, columna catodal (negra) de TES MEP, habitualmente el canal 12. Su ánodo de referencia es Ref.Raabe" },
         { "id": "ref_grid_estim", "nombre": "Ref.GRID", "color": "negro", "etiqueta": "electrodo_sacacorchos", "nota": "Referencia de la columna catodal (negra) para estimulación por GRID -distinta de \"Referencia GRID\" en GRID y D-Wave" },
         { "id": "cz_doble_prima", "nombre": "Cz''", "etiqueta": "electrodo_sacacorchos", "nota": "Alternativa a Ref.Raabe (ánodo de referencia)" },
         { "id": "ref_raabe", "nombre": "Ref.Raabe", "color": "rojo", "etiqueta": "electrodo_sacacorchos", "nota": "Referencia del estimulador Raabe — ánodo (entrada roja)" },
@@ -755,10 +753,10 @@ window.SURGERIES_DATA = {
         { "par": "VII", "id": "r_ment", "nombre": "R.Ment", "etiqueta": "hook_wire", "nota": "Mentoniano derecho — VII par craneal" },
         { "par": "VII", "id": "l_ment_ag", "nombre": "L.Ment", "etiqueta": "aguja_trenzada", "nota": "Mentoniano izquierdo — VII par craneal, con agujas pareadas en vez de hook wire" },
         { "par": "VII", "id": "r_ment_ag", "nombre": "R.Ment", "etiqueta": "aguja_trenzada", "nota": "Mentoniano derecho — VII par craneal, con agujas pareadas en vez de hook wire" },
-        { "id": "l_palad", "nombre": "L.Palad", "etiqueta": "hook_wire", "nota": "Velo del paladar izquierdo" },
-        { "id": "r_palad", "nombre": "R.Palad", "etiqueta": "hook_wire", "nota": "Velo del paladar derecho" },
-        { "id": "l_palad_ag", "nombre": "L.Palad", "etiqueta": "aguja_trenzada", "nota": "Velo del paladar izquierdo, con agujas pareadas en vez de hook wire" },
-        { "id": "r_palad_ag", "nombre": "R.Palad", "etiqueta": "aguja_trenzada", "nota": "Velo del paladar derecho, con agujas pareadas en vez de hook wire" },
+        { "par": "X", "id": "l_palad", "nombre": "L.Palad", "etiqueta": "hook_wire", "nota": "Velo del paladar izquierdo — X par (plexo faríngeo)" },
+        { "par": "X", "id": "r_palad", "nombre": "R.Palad", "etiqueta": "hook_wire", "nota": "Velo del paladar derecho — X par (plexo faríngeo)" },
+        { "par": "X", "id": "l_palad_ag", "nombre": "L.Palad", "etiqueta": "aguja_trenzada", "nota": "Velo del paladar izquierdo — X par (plexo faríngeo), con agujas pareadas en vez de hook wire" },
+        { "par": "X", "id": "r_palad_ag", "nombre": "R.Palad", "etiqueta": "aguja_trenzada", "nota": "Velo del paladar derecho — X par (plexo faríngeo), con agujas pareadas en vez de hook wire" },
         { "par": "X", "id": "l_crico", "nombre": "L.Crico", "etiqueta": "hook_wire", "nota": "Cricotiroideo izquierdo — X par; va junto a las cuerdas vocales en el mismo montaje; registro del reflejo trigémino-cervical. Sin confirmar: el crico evaluaría la parte motora y las cuerdas la sensitiva" },
         { "par": "X", "id": "r_crico", "nombre": "R.Crico", "etiqueta": "hook_wire", "nota": "Cricotiroideo derecho — X par; va junto a las cuerdas vocales en el mismo montaje; registro del reflejo trigémino-cervical. Sin confirmar: el crico evaluaría la parte motora y las cuerdas la sensitiva" },
         { "par": "X", "id": "l_crico_ag", "nombre": "L.Crico", "etiqueta": "aguja_trenzada", "nota": "Cricotiroideo izquierdo — X par, con agujas pareadas en vez de hook wire; registro del reflejo trigémino-cervical" },
@@ -805,8 +803,8 @@ window.SURGERIES_DATA = {
         {"ampliacion":true,"par":"VII","id":"r_platisma","nombre":"R.Platisma","etiqueta":"hook_wire","nota":"Platisma — VII par derecho"},
         {"ampliacion":true,"par":"IX","id":"l_estilofar","nombre":"L.Estilofar","etiqueta":"hook_wire","nota":"Estilofaríngeo — IX par izquierdo"},
         {"ampliacion":true,"par":"IX","id":"r_estilofar","nombre":"R.Estilofar","etiqueta":"hook_wire","nota":"Estilofaríngeo — IX par derecho"},
-        {"ampliacion":true,"id":"l_gen","nombre":"L.GEN","etiqueta":"hook_wire","nota":"Geniohioideo izquierdo"},
-        {"ampliacion":true,"id":"r_gen","nombre":"R.GEN","etiqueta":"hook_wire","nota":"Geniohioideo derecho"}
+        {"ampliacion":true,"inerv":"C1 vía XII","inerv_en":"C1 via CN XII","id":"l_gen","nombre":"L.GEN","etiqueta":"hook_wire","nota":"Geniohioideo izquierdo — fibras de C1 que viajan con el XII par"},
+        {"ampliacion":true,"inerv":"C1 vía XII","inerv_en":"C1 via CN XII","id":"r_gen","nombre":"R.GEN","etiqueta":"hook_wire","nota":"Geniohioideo derecho — fibras de C1 que viajan con el XII par"}
       ]
     },
     {
