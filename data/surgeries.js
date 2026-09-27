@@ -1308,7 +1308,7 @@ window.SURGERIES_DATA = {
    *
    * Qué músculo depende de qué raíces. La mayoría de las entradas siguen la
    * tabla consolidada que dio el usuario (18-08-2026), a partir de:
-   *   - Toleikis/Deletis, 2nd ed., cap. 13 — y Leppänen 2005/2006 (ASNM):
+   *   - Toleikis/Deletis, 2nd ed., cap. 13 — y Leppänen 2005 (ASNM):
    *     músculos y niveles de partida, marcados como "[TD/L]" en la nota.
    *   - Schirmer 2011 y London 2022 (J Neurosurg Spine): frecuencia de
    *     solapamiento entre niveles, marcados como "[Sch]" / "[Lon]".

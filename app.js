@@ -825,7 +825,7 @@
     tile_simulador_sub:   { es: "Pantalla de monitorización para practicar alarmas", en: "Monitoring screen to practise alarms" },
     tile_apuntes_sub:     { es: "Tus notas y fotos, en todos tus dispositivos", en: "Your notes and photos, on all your devices" },
     tile_bibliografia_sub: { es: "Libros, guías y artículos en los que se basa", en: "Books, guidelines and papers it is based on" },
-    biblio_intro:        { es: "Las fuentes usadas para construir MIO-Check, tal como se citan dentro de la herramienta.", en: "The sources used to build MIO-Check, as they are cited within the tool." },
+    biblio_intro:        { es: "Las fuentes usadas para construir MIO-Check, en estilo Vancouver. Los DOI llevan al artículo.", en: "The sources used to build MIO-Check, in Vancouver style. DOIs link to the article." },
     biblio_libros:       { es: "Libros", en: "Books" },
     biblio_guias:        { es: "Guías y recomendaciones de sociedades", en: "Society guidelines and recommendations" },
     biblio_articulos:    { es: "Artículos", en: "Papers" },
@@ -1683,52 +1683,65 @@
   });
   document.getElementById("tile-organizador").addEventListener("click", function () { irAPantalla("organizador"); });
   document.getElementById("tile-simulador").addEventListener("click", function () { abrirSimulador(); });
-  /* Bibliografía recomendada (27-09-2026, pedido del usuario): solo los
-     nombres de las fuentes usadas para construir la herramienta, tal como se
-     citan dentro de ella (Técnicas IONM, Checklist, Simulador, Registro...).
-     Sin títulos completos inventados: donde la herramienta solo dice "Autor
-     año", aquí también. Nada de contenido de las obras. */
+  /* Bibliografía recomendada (27-09-2026, pedido del usuario): las fuentes
+     usadas para construir la herramienta, en estilo Vancouver y numeradas de
+     seguido. Referencias preparadas por el usuario; los DOI se comprobaron en
+     PubMed (volumen, número y páginas; el año es el de la versión impresa),
+     salvo Álvarez 2023, cuya revista no está indexada. Solo la cita: nada de
+     contenido de las obras. Lima Medeiros 2024 = de Melo DLM en PubMed. */
   var BIBLIOGRAFIA = [
-    { g: "libros", t: "Møller AR. Intraoperative Neurophysiological Monitoring." },
-    { g: "libros", t: "Deletis V, Shils JL, Sala F, Seidel K (eds.). Neurophysiology in Neurosurgery: A Modern Approach. 2.ª ed.",
-      t_en: "Deletis V, Shils JL, Sala F, Seidel K (eds.). Neurophysiology in Neurosurgery: A Modern Approach. 2nd ed." },
-    { g: "guias", t: "MacDonald et al. 2013 (ASNM) — potenciales evocados motores", t_en: "MacDonald et al. 2013 (ASNM) — motor evoked potentials" },
-    { g: "guias", t: "MacDonald et al. 2019 (ISION) — potenciales evocados somatosensoriales", t_en: "MacDonald et al. 2019 (ISION) — somatosensory evoked potentials" },
-    { g: "guias", t: "Leppänen 2005/2006 (ASNM) — EMG de raíces y nervios", t_en: "Leppänen 2005/2006 (ASNM) — root and nerve EMG" },
-    { g: "guias", t: "Legatt et al. 2016 (ACNS) — MEP por estimulación transcraneal", t_en: "Legatt et al. 2016 (ACNS) — transcranial electrical MEP" },
-    { g: "guias", t: "Toleikis 2024 (ASNM)" },
-    { g: "articulos", t: "Acharya 2017" },
-    { g: "articulos", t: "Álvarez 2023" },
-    { g: "articulos", t: "Boaro 2026" },
-    { g: "articulos", t: "Costa 2015" },
-    { g: "articulos", t: "Deletis y Fernández-Conejero (J Clin Neurol)", t_en: "Deletis and Fernández-Conejero (J Clin Neurol)" },
-    { g: "articulos", t: "Lima Medeiros 2024" },
-    { g: "articulos", t: "London 2022 (J Neurosurg Spine)" },
-    { g: "articulos", t: "Mirallave Pescador 2022" },
-    { g: "articulos", t: "Romstock 2000" },
-    { g: "articulos", t: "Schirmer 2011" },
-    { g: "articulos", t: "Sloan 2012" },
-    { g: "articulos", t: "Szelényi 2022" },
-    { g: "articulos", t: "Ulkatan 2017" },
-    { g: "articulos", t: "Urriza et al. 2025" }
+    { g: "libros", t: "Møller AR. Intraoperative Neurophysiological Monitoring. 3.ª ed. New York: Springer; 2011.", t_en: "Møller AR. Intraoperative Neurophysiological Monitoring. 3rd ed. New York: Springer; 2011." },
+    { g: "libros", t: "Deletis V, Shils JL, Sala F, Seidel K, editores. Neurophysiology in Neurosurgery: A Modern Approach. 2.ª ed. London: Academic Press (Elsevier); 2020.", t_en: "Deletis V, Shils JL, Sala F, Seidel K, editors. Neurophysiology in Neurosurgery: A Modern Approach. 2nd ed. London: Academic Press (Elsevier); 2020." },
+    { g: "guias", t: "Macdonald DB, Skinner S, Shils J, Yingling C; American Society of Neurophysiological Monitoring. Intraoperative motor evoked potential monitoring – a position statement by the American Society of Neurophysiological Monitoring. Clin Neurophysiol. 2013;124(12):2291-316.", doi: "10.1016/j.clinph.2013.07.025" },
+    { g: "guias", t: "MacDonald DB, Dong C, Quatrale R, Sala F, Skinner S, Soto F, et al. Recommendations of the International Society of Intraoperative Neurophysiology for intraoperative somatosensory evoked potentials. Clin Neurophysiol. 2019;130(1):161-79.", doi: "10.1016/j.clinph.2018.10.008" },
+    { g: "guias", t: "Leppanen RE. Intraoperative monitoring of segmental spinal nerve root function with free-run and electrically-triggered electromyography and spinal cord function with reflexes and F-responses. A position statement by the American Society of Neurophysiological Monitoring. J Clin Monit Comput. 2005;19(6):437-61.", doi: "10.1007/s10877-005-0086-2" },
+    { g: "guias", t: "Legatt AD, Emerson RG, Epstein CM, MacDonald DB, Deletis V, Bravo RJ, et al. ACNS Guideline: Transcranial electrical stimulation motor evoked potential monitoring. J Clin Neurophysiol. 2016;33(1):42-50.", doi: "10.1097/WNP.0000000000000253" },
+    { g: "guias", t: "Toleikis JR, Pace C, Jahangiri FR, Hemmer LB, Toleikis SC. Intraoperative somatosensory evoked potential (SEP) monitoring: an updated position statement by the American Society of Neurophysiological Monitoring. J Clin Monit Comput. 2024;38(5):1003-42.", doi: "10.1007/s10877-024-01201-x" },
+    { g: "articulos", t: "Acharya S, Palukuri N, Gupta P, Kohli M. Transcranial motor evoked potentials during spinal deformity corrections – safety, efficacy, limitations, and the role of a checklist. Front Surg. 2017;4:8.", doi: "10.3389/fsurg.2017.00008" },
+    { g: "articulos", t: "Alvarez CM, Farhan R, Jahangiri FR. Benefits of intraoperative neurophysiological monitoring (IONM) for the localization, mapping, and resection of tumors in the fourth ventricle: a literature review. J Neurophysiol Monit. 2023;1(2):22-36.", doi: "10.5281/zenodo.10207910" },
+    { g: "articulos", t: "Boaro A, Basaldella F, Sala F. Intraoperative neurophysiological monitoring during spinal cord tumor surgery. Neurosurg Clin N Am. 2026;37(3):305-16.", doi: "10.1016/j.nec.2026.03.007" },
+    { g: "articulos", t: "Costa P, Deletis V. Cortical activity after stimulation of the corticospinal tract in the spinal cord. Clin Neurophysiol. 2016;127(2):1726-33.", doi: "10.1016/j.clinph.2015.11.004" },
+    { g: "articulos", t: "Deletis V, Fernández-Conejero I. Intraoperative monitoring and mapping of the functional integrity of the brainstem. J Clin Neurol. 2016;12(3):262-73.", doi: "10.3988/jcn.2016.12.3.262" },
+    { g: "articulos", t: "de Melo DLM, Comerlato EA, Pinheiro DS, Manzano GM. The feasibility and technical aspects of trigemino-cervical reflex elicitation in humans under general anesthesia. Clin Neurophysiol. 2024;161:173-9.", doi: "10.1016/j.clinph.2024.02.031" },
+    { g: "articulos", t: "London D, Birkenfeld B, Thomas J, Avshalumov M, Mogilner AY, Falowski S, et al. A broad and variable lumbosacral myotome map uncovered by foraminal nerve root stimulation. J Neurosurg Spine. 2022;37(5):680-6.", doi: "10.3171/2022.3.SPINE2212" },
+    { g: "articulos", t: "Mirallave Pescador A, Téllez MJ, Sánchez Roldán MÁ, Samusyte G, Lawson EC, Coelho P, et al. Methodology for eliciting the brainstem trigeminal-hypoglossal reflex in humans under general anesthesia. Clin Neurophysiol. 2022;137:1-10.", doi: "10.1016/j.clinph.2022.02.004" },
+    { g: "articulos", t: "Romstöck J, Strauss C, Fahlbusch R. Continuous electromyography monitoring of motor cranial nerves during cerebellopontine angle surgery. J Neurosurg. 2000;93(4):586-93.", doi: "10.3171/jns.2000.93.4.0586" },
+    { g: "articulos", t: "Schirmer CM, Shils JL, Arle JE, Cosgrove GR, Dempsey PK, Tarlov E, et al. Heuristic map of myotomal innervation in humans using direct intraoperative nerve root stimulation. J Neurosurg Spine. 2011;15(1):64-70.", doi: "10.3171/2011.2.SPINE1068" },
+    { g: "articulos", t: "Sloan TB. Muscle relaxant use during intraoperative neurophysiologic monitoring. J Clin Monit Comput. 2013;27(1):35-46.", doi: "10.1007/s10877-012-9399-0" },
+    { g: "articulos", t: "Szelényi A, Fava E. Long latency responses in tongue muscle elicited by various stimulation sites in anesthetized humans – new insights into tongue-related brainstem reflexes. Brain Stimul. 2022;15(3):566-75.", doi: "10.1016/j.brs.2022.03.003" },
+    { g: "articulos", t: "Ulkatan S, Jaramillo AM, Téllez MJ, Goodman RR, Deletis V. Feasibility of eliciting the H reflex in the masseter muscle in patients under general anesthesia. Clin Neurophysiol. 2017;128(1):123-7.", doi: "10.1016/j.clinph.2016.10.092" },
+    { g: "articulos", t: "Urriza J, Fernández-Conejero I, Seidel K, Ulkatan S. Introducing the Trigemino-Vocal Reflex: new insights to assess brainstem connectivity under general anesthesia. Clin Neurophysiol. 2025;175:2110739.", doi: "10.1016/j.clinph.2025.2110739" }
   ];
 
   function renderBibliografia() {
     var cont = document.getElementById("bibliografia-lista");
     cont.textContent = "";
+    var numero = 1;
     ["libros", "guias", "articulos"].forEach(function (g) {
       var h = document.createElement("h3");
       h.className = "biblio-grupo";
       h.textContent = T("biblio_" + g);
       cont.appendChild(h);
-      var ul = document.createElement("ul");
-      ul.className = "biblio-lista";
+      // Numeración de seguido entre los tres grupos, como en Vancouver
+      var ol = document.createElement("ol");
+      ol.className = "biblio-lista";
+      ol.start = numero;
       BIBLIOGRAFIA.filter(function (b) { return b.g === g; }).forEach(function (b) {
         var li = document.createElement("li");
-        li.textContent = campo(b, "t");
-        ul.appendChild(li);
+        li.appendChild(document.createTextNode(campo(b, "t")));
+        if (b.doi) {
+          li.appendChild(document.createTextNode(" doi: "));
+          var a = document.createElement("a");
+          a.href = "https://doi.org/" + b.doi;
+          a.target = "_blank";
+          a.rel = "noopener";
+          a.textContent = b.doi;
+          li.appendChild(a);
+        }
+        ol.appendChild(li);
+        numero++;
       });
-      cont.appendChild(ul);
+      cont.appendChild(ol);
     });
   }
 
@@ -11289,7 +11302,7 @@
     // Claves con el nombre de una fuente: rótulo con el formato de cita
     // unificado (demo-congreso B3.F3) en vez del nombre de la clave tal cual.
     alvarez_2023: "Álvarez 2023", alvarez_2023_clinico: "Álvarez 2023, clínico",
-    clinico_alvarez_2023: "Clínico (Álvarez 2023)", costa_2015: "Costa 2015",
+    clinico_alvarez_2023: "Clínico (Álvarez 2023)", costa_2015: "Costa 2016",
     analogico_moller: "Analógico (Møller)", ejemplo_laboratorio_moller: "Ejemplo de laboratorio (Møller)",
     moller_cap5_ejemplo: "Ejemplo (Møller, cap. 5)", macdonald_2019_ision: "MacDonald 2019 (ISION)",
     ision_scalp: "ISION, scalp",
@@ -11583,7 +11596,7 @@
   // única larguísima.
   //
   // Las fuentes ("fuente": [...] en cada sección) ya no se pintan en la
-  // celda -"Fuente: Costa 2015, MacDonald 2019..." ocupaba más que el dato
+  // celda -"Fuente: Costa 2016, MacDonald 2019..." ocupaba más que el dato
   // en sí-: se sustituyen por superíndices numerados, enlazados a una
   // lista de fuentes única al final de toda la vista Tabla (no una por
   // familia: el mismo texto citado por varias técnicas comparte número).

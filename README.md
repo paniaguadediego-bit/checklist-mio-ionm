@@ -901,9 +901,10 @@ de la monitorización en sí—.
 ## Simulador y Bibliografía
 
 Dos tarjetas de la pantalla de inicio (06-09-2026). **Bibliografía
-recomendada** (27-09-2026) nombra las fuentes usadas para construir la
-herramienta —libros, guías de sociedades y artículos— tal como se citan
-dentro de ella (muchas solo como «Autor año»); no reproduce contenido.
+recomendada** (27-09-2026) recoge las fuentes usadas para construir la
+herramienta —libros, guías de sociedades y artículos— en estilo Vancouver,
+numeradas de seguido y con el DOI enlazado (comprobados en PubMed, salvo
+Álvarez 2023, que no está indexado). Solo la cita, sin contenido de las obras.
 
 El **Simulador** (rehecho el 26-09-2026) imita de forma **esquemática** una
 pantalla de monitorización real, sin nombrar ninguna marca: barra lateral a
