@@ -621,28 +621,40 @@ main {
   color: var(--text);
 }
 
-.catalogo-grupo { margin-top: 0.5rem; }
+/* Cabeceras de categoría más fáciles de tocar (27-09-2026, pedido del
+   usuario): antes eran un rótulo de 0,64rem casi sin relleno. Ahora son una
+   fila con marco, letra mayor y 44 px en táctil; la abierta va en dorado. */
+.catalogo-grupo { margin-top: 0.35rem; }
 .grupo-titulo {
-  margin: 0 0 0.22rem;
-  font-size: 0.64rem;
+  margin: 0;
+  font-size: 0.74rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  color: var(--text);
   font-weight: 600;
   /* Es un <summary>: cabecera plegable, no solo un rótulo */
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.18rem 0;
+  gap: 0.5rem;
+  min-height: 2.3rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--campo-bg);
   list-style: none;
+  user-select: none;
+}
+.catalogo-grupo[open] > .grupo-titulo { color: var(--accent); border-color: var(--accent); margin-bottom: 0.4rem; }
+@media (pointer: coarse), (max-width: 900px) {
+  .grupo-titulo { min-height: 44px; font-size: 0.78rem; }
 }
 .grupo-titulo::-webkit-details-marker { display: none; }
 /* Flecha propia: el triángulo del navegador no hereda el color del tema */
 .grupo-titulo::before {
   content: "▸";
   color: var(--accent);
-  font-size: 0.85rem;
+  font-size: 1.05rem;
   font-weight: 600;
   line-height: 1;
   transition: transform 0.12s;
@@ -652,7 +664,7 @@ main {
 /* Cuántos ítems hay dentro, para no tener que abrir a ciegas */
 .grupo-cuenta {
   margin-left: auto;
-  font-size: 0.6rem;
+  font-size: 0.68rem;
   padding: 0.05rem 0.28rem;
   border-radius: 999px;
   background: var(--border);

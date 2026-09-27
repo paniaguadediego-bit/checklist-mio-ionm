@@ -597,6 +597,12 @@ window.SURGERIES_DATA = {
   /* ------------------------------------------------------------------ *
    * CATÁLOGO MAESTRO DE MATERIAL
    * Añade aquí músculos / estímulos nuevos para futuras cirugías.
+   * Orden de las categorías (27-09-2026, pedido del usuario; es el mismo en
+   * el Catálogo del Organizador y en Material): corticales, registro
+   * subcortical/periférico, músculos seguidos (superiores, inferiores, tronco
+   * y periné, craneales), reflejos de tronco (estímulo trigeminal y su
+   * registro), estimulación periférica y nervios, sensoriales (PEATC, VEP) y
+   * al final herramientas y comunes (sondas, tierras, puentes, material extra).
    * "etiqueta" es el tipo físico: lo que se cuenta en el resumen final.
    * ------------------------------------------------------------------ */
   "catalogo_material": [
@@ -635,6 +641,80 @@ window.SURGERIES_DATA = {
       ]
     },
     {
+      "categoria": "Otros electrodos corticales (scalp)",
+      "plegada_por_defecto": true,
+      "items": [
+        {"id":"sc_eeg_manta","nombre":"EEG Manta","etiqueta":"manta_4_8","nota":"Manta de electrodos para EEG continuo"},
+        {"id":"sc_fp1","nombre":"Fp1","etiqueta":"aguja_subdermica","nota":"Frontopolar izquierdo"},
+        {"id":"sc_fpz","nombre":"Fpz","etiqueta":"aguja_subdermica","nota":"Frontopolar medio"},
+        {"id":"sc_fp2","nombre":"Fp2","etiqueta":"aguja_subdermica","nota":"Frontopolar derecho"},
+        {"id":"sc_cz_6","nombre":"Cz-6","etiqueta":"aguja_subdermica","nota":"6 cm por detrás de Cz"},
+        {"id":"sc_f7","nombre":"F7","etiqueta":"aguja_subdermica","nota":"Frontal inferior izquierdo"},
+        {"id":"sc_f3","nombre":"F3","etiqueta":"aguja_subdermica","nota":"Frontal izquierdo"},
+        {"id":"sc_f4","nombre":"F4","etiqueta":"aguja_subdermica","nota":"Frontal derecho"},
+        {"id":"sc_f8","nombre":"F8","etiqueta":"aguja_subdermica","nota":"Frontal inferior derecho"},
+        {"id":"sc_c5","nombre":"C5'","etiqueta":"aguja_subdermica","nota":"Central izquierdo (C5 prima)"},
+        {"id":"sc_c6","nombre":"C6'","etiqueta":"aguja_subdermica","nota":"Central derecho (C6 prima)"},
+        {"id":"sc_t3","nombre":"T3","etiqueta":"aguja_subdermica","nota":"Temporal medio izquierdo"},
+        {"id":"sc_c3","nombre":"C3","etiqueta":"aguja_subdermica","nota":"Central izquierdo"},
+        {"id":"sc_cz","nombre":"Cz","etiqueta":"aguja_subdermica","nota":"Vértex"},
+        {"id":"sc_c4","nombre":"C4","etiqueta":"aguja_subdermica","nota":"Central derecho"},
+        {"id":"sc_t4","nombre":"T4","etiqueta":"aguja_subdermica","nota":"Temporal medio derecho"},
+        {"id":"sc_t5","nombre":"T5","etiqueta":"aguja_subdermica","nota":"Temporal posterior izquierdo"},
+        {"id":"sc_p3","nombre":"P3","etiqueta":"aguja_subdermica","nota":"Parietal izquierdo"},
+        {"id":"sc_pz","nombre":"Pz","etiqueta":"aguja_subdermica","nota":"Parietal medio"},
+        {"id":"sc_p4","nombre":"P4","etiqueta":"aguja_subdermica","nota":"Parietal derecho"},
+        {"id":"sc_t6","nombre":"T6","etiqueta":"aguja_subdermica","nota":"Temporal posterior derecho"},
+        {"id":"sc_m1","nombre":"M1","etiqueta":"aguja_subdermica","nota":"Mastoides izquierda"},
+        {"id":"sc_m2","nombre":"M2","etiqueta":"aguja_subdermica","nota":"Mastoides derecha"},
+        {"id":"sc_oz_mo","nombre":"Oz (MO)","etiqueta":"aguja_subdermica","nota":"Occipital medio"},
+        {"id":"sc_m3","nombre":"M3","etiqueta":"aguja_subdermica","nota":"Mastoides accesoria izquierda"},
+        {"id":"sc_m4","nombre":"M4","etiqueta":"aguja_subdermica","nota":"Mastoides accesoria derecha"}
+      ]
+    },
+    {
+      "categoria": "GRID y D-Wave",
+      "plegada_por_defecto": true,
+      "items": [
+        { "id": "grid1", "nombre": "GRID A.1", "etiqueta": "electrodo_grid_mantaA", "nota": "Contacto 1 de la manta GRID A: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
+        { "id": "grid2", "nombre": "GRID A.2", "etiqueta": "electrodo_grid_mantaA", "nota": "Contacto 2 de la manta GRID A: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
+        { "id": "grid3", "nombre": "GRID A.3", "etiqueta": "electrodo_grid_mantaA", "nota": "Contacto 3 de la manta GRID A: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
+        { "id": "grid4", "nombre": "GRID A.4", "etiqueta": "electrodo_grid_mantaA", "nota": "Contacto 4 de la manta GRID A: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
+        { "id": "grid5", "nombre": "GRID A.5", "etiqueta": "electrodo_grid_mantaA", "nota": "Contacto 5 de la manta GRID A: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
+        { "id": "grid6", "nombre": "GRID A.6", "etiqueta": "electrodo_grid_mantaA", "nota": "Contacto 6 de la manta GRID A: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
+        { "id": "grid7", "nombre": "GRID A.7", "etiqueta": "electrodo_grid_mantaA", "nota": "Contacto 7 de la manta GRID A: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
+        { "id": "grid8", "nombre": "GRID A.8", "etiqueta": "electrodo_grid_mantaA", "nota": "Contacto 8 de la manta GRID A: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
+        { "id": "grid2_1", "nombre": "GRID B.1", "etiqueta": "electrodo_grid_mantaB", "nota": "Contacto 1 de la manta GRID B: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
+        { "id": "grid2_2", "nombre": "GRID B.2", "etiqueta": "electrodo_grid_mantaB", "nota": "Contacto 2 de la manta GRID B: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
+        { "id": "grid2_3", "nombre": "GRID B.3", "etiqueta": "electrodo_grid_mantaB", "nota": "Contacto 3 de la manta GRID B: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
+        { "id": "grid2_4", "nombre": "GRID B.4", "etiqueta": "electrodo_grid_mantaB", "nota": "Contacto 4 de la manta GRID B: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
+        { "id": "grid2_5", "nombre": "GRID B.5", "etiqueta": "electrodo_grid_mantaB", "nota": "Contacto 5 de la manta GRID B: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
+        { "id": "grid2_6", "nombre": "GRID B.6", "etiqueta": "electrodo_grid_mantaB", "nota": "Contacto 6 de la manta GRID B: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
+        { "id": "grid2_7", "nombre": "GRID B.7", "etiqueta": "electrodo_grid_mantaB", "nota": "Contacto 7 de la manta GRID B: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
+        { "id": "grid2_8", "nombre": "GRID B.8", "etiqueta": "electrodo_grid_mantaB", "nota": "Contacto 8 de la manta GRID B: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
+        { "id": "epidural_dwave", "nombre": "Electrodo epidural (D-Wave)", "etiqueta": "electrodo_epidural_dwave", "nota": "Kit 3 Platinum Contacts" },
+        // Variantes del D-Wave, pedidas el 19-09-2026 -misma etiqueta que el
+        // ítem de arriba, que se deja tal cual porque ya está en casos y
+        // montajes reales-. Px.DW/Dst.DW son la entrada rápida: un solo chip
+        // que representa el kit entero (los 3 contactos vienen incluidos, se
+        // usa uno como activo y otro como referencia, sin detallar cuáles).
+        { "id": "px_dw", "nombre": "Px.DW", "etiqueta": "electrodo_epidural_dwave", "nota": "Epidural D-Wave proximal — kit completo (contactos 1/2/3 incluidos, uno activo y otro de referencia)" },
+        { "id": "dst_dw", "nombre": "Dst.DW", "etiqueta": "electrodo_epidural_dwave", "nota": "Epidural D-Wave distal — kit completo (contactos 1/2/3 incluidos, uno activo y otro de referencia)" },
+        // Px.1DW/2DW/3DW y Dst.1DW/2DW/3DW son la entrada detallada: cada
+        // contacto por separado para anotar cuál se usó de activo y cuál de
+        // referencia, pero los tres salen del mismo kit físico -"tercio_unidad"
+        // hace que colocar 1, 2 o 3 de ellos siga contando como 1 solo kit,
+        // igual que "media_unidad" con un par-.
+        { "id": "px_1dw", "nombre": "Px.1DW", "etiqueta": "electrodo_epidural_dwave", "tercio_unidad": true, "nota": "Epidural D-Wave proximal, contacto 1 de 3 (Px.1DW + Px.2DW + Px.3DW = 1 kit)" },
+        { "id": "px_2dw", "nombre": "Px.2DW", "etiqueta": "electrodo_epidural_dwave", "tercio_unidad": true, "nota": "Epidural D-Wave proximal, contacto 2 de 3 (Px.1DW + Px.2DW + Px.3DW = 1 kit)" },
+        { "id": "px_3dw", "nombre": "Px.3DW", "etiqueta": "electrodo_epidural_dwave", "tercio_unidad": true, "nota": "Epidural D-Wave proximal, contacto 3 de 3 (Px.1DW + Px.2DW + Px.3DW = 1 kit)" },
+        { "id": "dst_1dw", "nombre": "Dst.1DW", "etiqueta": "electrodo_epidural_dwave", "tercio_unidad": true, "nota": "Epidural D-Wave distal, contacto 1 de 3 (Dst.1DW + Dst.2DW + Dst.3DW = 1 kit)" },
+        { "id": "dst_2dw", "nombre": "Dst.2DW", "etiqueta": "electrodo_epidural_dwave", "tercio_unidad": true, "nota": "Epidural D-Wave distal, contacto 2 de 3 (Dst.1DW + Dst.2DW + Dst.3DW = 1 kit)" },
+        { "id": "dst_3dw", "nombre": "Dst.3DW", "etiqueta": "electrodo_epidural_dwave", "tercio_unidad": true, "nota": "Epidural D-Wave distal, contacto 3 de 3 (Dst.1DW + Dst.2DW + Dst.3DW = 1 kit)" },
+        { "id": "ref_grid", "nombre": "Referencia GRID", "etiqueta": "electrodo_sacacorchos", "nota": "Referencia de los registros del GRID (c-SEP, ECoG)" }
+      ]
+    },
+    {
       "categoria": "Registro cervical / periférico",
       "items": [
         { "id": "cv2", "nombre": "Cv2", "etiqueta": "electrodo_sacacorchos", "nota": "Registro cervical (apófisis espinosa de C2) de la respuesta subcortical de los PESS" },
@@ -646,6 +726,20 @@ window.SURGERIES_DATA = {
         { "id": "r_cubital_periferico", "nombre": "R.Cubital periférico", "etiqueta": "pegatinas", "nota": "Registro periférico sobre el nervio cubital: comprueba que el estímulo del PESS de cubital llega bien" },
         { "id": "l_hueco_popliteo", "nombre": "L.Hueco poplíteo", "etiqueta": "pegatinas", "nota": "Registro periférico en el hueco poplíteo (nervio tibial): comprueba que el estímulo del PESS de tibial posterior llega bien" },
         { "id": "r_hueco_popliteo", "nombre": "R.Hueco poplíteo", "etiqueta": "pegatinas", "nota": "Registro periférico en el hueco poplíteo (nervio tibial): comprueba que el estímulo del PESS de tibial posterior llega bien" }
+      ]
+    },
+    {
+      "categoria": "Otros puntos de registro",
+      "plegada_por_defecto": true,
+      "items": [
+        {"id":"l_p_cervical","nombre":"L.P.Cervical","etiqueta":"aguja_subdermica","nota":"Punto de registro cervical izquierdo"},
+        {"id":"r_p_cervical","nombre":"R.P.Cervical","etiqueta":"aguja_subdermica","nota":"Punto de registro cervical derecho"},
+        {"id":"l_p_popliteo","nombre":"L.P.Popliteo","etiqueta":"aguja_subdermica","nota":"Registro en hueco poplíteo izquierdo"},
+        {"id":"r_p_popliteo","nombre":"R.P.Popliteo","etiqueta":"aguja_subdermica","nota":"Registro en hueco poplíteo derecho"},
+        {"id":"l_p_lumbar","nombre":"L.P.Lumbar","etiqueta":"aguja_subdermica","nota":"Punto de registro lumbar izquierdo"},
+        {"id":"r_p_lumbar","nombre":"R.P.Lumbar","etiqueta":"aguja_subdermica","nota":"Punto de registro lumbar derecho"},
+        { "id": "l_eye", "nombre": "L.Eye", "etiqueta": "aguja_trenzada", "media_unidad": true, "nota": "Registro de ERG, ojo izquierdo — aguja del par trenzado (L.Eye + R.Eye = 1 paquete)" },
+        { "id": "r_eye", "nombre": "R.Eye", "etiqueta": "aguja_trenzada", "media_unidad": true, "nota": "Registro de ERG, ojo derecho — aguja del par trenzado (L.Eye + R.Eye = 1 paquete)" }
       ]
     },
     {
@@ -709,24 +803,39 @@ window.SURGERIES_DATA = {
       ]
     },
     {
-      "categoria": "Estimulación periférica",
+      "categoria": "Electrodos de tronco y periné",
+      "plegada_por_defecto": true,
       "items": [
-        { "id": "l_mediano", "nombre": "L.Mediano", "etiqueta": "pegatinas", "nota": "Estimulación del nervio mediano en la muñeca para los PESS de miembro superior" },
-        { "id": "r_mediano", "nombre": "R.Mediano", "etiqueta": "pegatinas", "nota": "Estimulación del nervio mediano en la muñeca para los PESS de miembro superior" },
-        { "id": "l_cubital", "nombre": "L.Cubital", "etiqueta": "pegatinas", "nota": "Estimulación del nervio cubital en la muñeca para los PESS de miembro superior (raíces C8-T1); útil también para vigilar el plexo braquial al posicionar" },
-        { "id": "r_cubital", "nombre": "R.Cubital", "etiqueta": "pegatinas", "nota": "Estimulación del nervio cubital en la muñeca para los PESS de miembro superior (raíces C8-T1); útil también para vigilar el plexo braquial al posicionar" },
-        { "id": "l_cubital_fosa", "nombre": "L.Cubital fosa", "etiqueta": "pegatinas", "nota": "Fosa cubital (codo), en vez de la muñeca" },
-        { "id": "r_cubital_fosa", "nombre": "R.Cubital fosa", "etiqueta": "pegatinas", "nota": "Fosa cubital (codo), en vez de la muñeca" },
-        { "id": "l_ptn", "nombre": "L.Tibial post.", "etiqueta": "pegatinas", "nota": "Estimulación del nervio tibial posterior en el tobillo (retromaleolar interno) para los PESS de miembro inferior" },
-        { "id": "r_ptn", "nombre": "R.Tibial post.", "etiqueta": "pegatinas", "nota": "Estimulación del nervio tibial posterior en el tobillo (retromaleolar interno) para los PESS de miembro inferior" },
-        { "id": "l_popliteo", "nombre": "L.Poplíteo (H)", "etiqueta": "pegatinas", "nota": "Hueco poplíteo — reflejo H" },
-        { "id": "r_popliteo", "nombre": "R.Poplíteo (H)", "etiqueta": "pegatinas", "nota": "Hueco poplíteo — reflejo H" }
-      ]
-    },
-    {
-      "categoria": "Tierras y referencias",
-      "items": [
-        { "id": "tierra", "nombre": "Tierra", "etiqueta": "aguja_subdermica", "nota": "Una por caja de registro" }
+        {"id":"l_diafragma","nombre":"L.Diafragma","etiqueta":"aguja_trenzada","nota":"Diafragma — nervio frénico izquierdo"},
+        {"id":"r_diafragma","nombre":"R.Diafragma","etiqueta":"aguja_trenzada","nota":"Diafragma — nervio frénico derecho"},
+        {"id":"l_ic","nombre":"L.IC","etiqueta":"aguja_trenzada","nota":"Intercostal izquierdo — registro muscular, T1-T4"},
+        {"id":"r_ic","nombre":"R.IC","etiqueta":"aguja_trenzada","nota":"Intercostal derecho — registro muscular, T1-T4"},
+        {"id":"l_ras","nombre":"L.RAS","etiqueta":"aguja_trenzada","nota":"Recto anterior superior izquierdo"},
+        {"id":"r_ras","nombre":"R.RAS","etiqueta":"aguja_trenzada","nota":"Recto anterior superior derecho"},
+        {"id":"l_ram","nombre":"L.RAM","etiqueta":"aguja_trenzada","nota":"Recto anterior medio izquierdo"},
+        {"id":"r_ram","nombre":"R.RAM","etiqueta":"aguja_trenzada","nota":"Recto anterior medio derecho"},
+        {"id":"l_rai","nombre":"L.RAI","etiqueta":"aguja_trenzada","nota":"Recto anterior inferior izquierdo"},
+        {"id":"r_rai","nombre":"R.RAI","etiqueta":"aguja_trenzada","nota":"Recto anterior inferior derecho"},
+        {"id":"l_oae","nombre":"L.OAE","etiqueta":"aguja_trenzada","nota":"Oblicuo abdominal externo izquierdo"},
+        {"id":"r_oae","nombre":"R.OAE","etiqueta":"aguja_trenzada","nota":"Oblicuo abdominal externo derecho"},
+        {"id":"l_cremaster","nombre":"L.Cremaster","etiqueta":"aguja_trenzada","nota":"Cremáster izquierdo"},
+        {"id":"r_cremaster","nombre":"R.Cremaster","etiqueta":"aguja_trenzada","nota":"Cremáster derecho"},
+        {"id":"l_cc","nombre":"L.CC","etiqueta":"aguja_trenzada","nota":"Esfínter anal / cavernoso-cavernoso izquierdo"},
+        {"id":"r_cc","nombre":"R.CC","etiqueta":"aguja_trenzada","nota":"Esfínter anal / cavernoso-cavernoso derecho"},
+        {"id":"l_abd","nombre":"L.Abd","etiqueta":"aguja_trenzada", "nota": "Músculos abdominales: registro de EMG y MEP de las raíces torácicas bajas (aprox. T7-T12)"},
+        {"id":"r_abd","nombre":"R.Abd","etiqueta":"aguja_trenzada", "nota": "Músculos abdominales: registro de EMG y MEP de las raíces torácicas bajas (aprox. T7-T12)"},
+        {"id":"l_bulbocavernoso","nombre":"L.Bulbocavernoso","etiqueta":"aguja_trenzada","nota":"Reflejo bulbocavernoso izquierdo"},
+        {"id":"r_bulbocavernoso","nombre":"R.Bulbocavernoso","etiqueta":"aguja_trenzada","nota":"Reflejo bulbocavernoso derecho"},
+        {"id":"n_dorsal_pene","nombre":"Nervio Dorsal del Pene","etiqueta":"pegatinas", "nota": "Estimulación del nervio dorsal del pene para el reflejo bulbocavernoso y los PESS de nervio pudendo"},
+        {"id":"clitoris","nombre":"Clítoris","etiqueta":"pegatinas", "nota": "Estimulación del nervio dorsal del clítoris para el reflejo bulbocavernoso y los PESS de nervio pudendo"},
+        {"id":"l_esfinter_anal_ext","nombre":"L.Esfínter Anal Externo","etiqueta":"hook_wire", "nota": "Registro del esfínter anal externo (raíces S2-S4): EMG, MEP y reflejo bulbocavernoso en cirugía de cono medular, cauda equina y médula anclada"},
+        {"id":"r_esfinter_anal_ext","nombre":"R.Esfínter Anal Externo","etiqueta":"hook_wire", "nota": "Registro del esfínter anal externo (raíces S2-S4): EMG, MEP y reflejo bulbocavernoso en cirugía de cono medular, cauda equina y médula anclada"},
+        {"id":"l_elevador_ano","nombre":"L.Elevador del ano","etiqueta":"aguja_trenzada", "nota": "Registro del elevador del ano (raíces sacras S3-S4) para EMG y MEP sacros"},
+        {"id":"r_elevador_ano","nombre":"R.Elevador del ano","etiqueta":"aguja_trenzada", "nota": "Registro del elevador del ano (raíces sacras S3-S4) para EMG y MEP sacros"},
+        {"id":"l_labio_mayor","nombre":"L.Labio mayor","etiqueta":"aguja_trenzada", "nota": "Registro del músculo bulboesponjoso en la mujer (a través del labio mayor) para el reflejo bulbocavernoso y los MEP sacros (S2-S4)"},
+        {"id":"r_labio_mayor","nombre":"R.Labio mayor","etiqueta":"aguja_trenzada", "nota": "Registro del músculo bulboesponjoso en la mujer (a través del labio mayor) para el reflejo bulbocavernoso y los MEP sacros (S2-S4)"},
+        {"id":"l_oblicuo_externo","nombre":"L.OblicuoExterno","etiqueta":"aguja_trenzada", "nota": "Registro del oblicuo externo del abdomen para EMG y MEP de las raíces torácicas bajas (aprox. T7-T12)"},
+        {"id":"r_oblicuo_externo","nombre":"R.OblicuoExterno","etiqueta":"aguja_trenzada", "nota": "Registro del oblicuo externo del abdomen para EMG y MEP de las raíces torácicas bajas (aprox. T7-T12)"}
       ]
     },
     {
@@ -808,65 +917,6 @@ window.SURGERIES_DATA = {
       ]
     },
     {
-      "categoria": "GRID y D-Wave",
-      "plegada_por_defecto": true,
-      "items": [
-        { "id": "grid1", "nombre": "GRID A.1", "etiqueta": "electrodo_grid_mantaA", "nota": "Contacto 1 de la manta GRID A: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
-        { "id": "grid2", "nombre": "GRID A.2", "etiqueta": "electrodo_grid_mantaA", "nota": "Contacto 2 de la manta GRID A: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
-        { "id": "grid3", "nombre": "GRID A.3", "etiqueta": "electrodo_grid_mantaA", "nota": "Contacto 3 de la manta GRID A: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
-        { "id": "grid4", "nombre": "GRID A.4", "etiqueta": "electrodo_grid_mantaA", "nota": "Contacto 4 de la manta GRID A: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
-        { "id": "grid5", "nombre": "GRID A.5", "etiqueta": "electrodo_grid_mantaA", "nota": "Contacto 5 de la manta GRID A: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
-        { "id": "grid6", "nombre": "GRID A.6", "etiqueta": "electrodo_grid_mantaA", "nota": "Contacto 6 de la manta GRID A: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
-        { "id": "grid7", "nombre": "GRID A.7", "etiqueta": "electrodo_grid_mantaA", "nota": "Contacto 7 de la manta GRID A: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
-        { "id": "grid8", "nombre": "GRID A.8", "etiqueta": "electrodo_grid_mantaA", "nota": "Contacto 8 de la manta GRID A: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
-        { "id": "grid2_1", "nombre": "GRID B.1", "etiqueta": "electrodo_grid_mantaB", "nota": "Contacto 1 de la manta GRID B: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
-        { "id": "grid2_2", "nombre": "GRID B.2", "etiqueta": "electrodo_grid_mantaB", "nota": "Contacto 2 de la manta GRID B: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
-        { "id": "grid2_3", "nombre": "GRID B.3", "etiqueta": "electrodo_grid_mantaB", "nota": "Contacto 3 de la manta GRID B: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
-        { "id": "grid2_4", "nombre": "GRID B.4", "etiqueta": "electrodo_grid_mantaB", "nota": "Contacto 4 de la manta GRID B: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
-        { "id": "grid2_5", "nombre": "GRID B.5", "etiqueta": "electrodo_grid_mantaB", "nota": "Contacto 5 de la manta GRID B: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
-        { "id": "grid2_6", "nombre": "GRID B.6", "etiqueta": "electrodo_grid_mantaB", "nota": "Contacto 6 de la manta GRID B: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
-        { "id": "grid2_7", "nombre": "GRID B.7", "etiqueta": "electrodo_grid_mantaB", "nota": "Contacto 7 de la manta GRID B: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
-        { "id": "grid2_8", "nombre": "GRID B.8", "etiqueta": "electrodo_grid_mantaB", "nota": "Contacto 8 de la manta GRID B: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
-        { "id": "epidural_dwave", "nombre": "Electrodo epidural (D-Wave)", "etiqueta": "electrodo_epidural_dwave", "nota": "Kit 3 Platinum Contacts" },
-        // Variantes del D-Wave, pedidas el 19-09-2026 -misma etiqueta que el
-        // ítem de arriba, que se deja tal cual porque ya está en casos y
-        // montajes reales-. Px.DW/Dst.DW son la entrada rápida: un solo chip
-        // que representa el kit entero (los 3 contactos vienen incluidos, se
-        // usa uno como activo y otro como referencia, sin detallar cuáles).
-        { "id": "px_dw", "nombre": "Px.DW", "etiqueta": "electrodo_epidural_dwave", "nota": "Epidural D-Wave proximal — kit completo (contactos 1/2/3 incluidos, uno activo y otro de referencia)" },
-        { "id": "dst_dw", "nombre": "Dst.DW", "etiqueta": "electrodo_epidural_dwave", "nota": "Epidural D-Wave distal — kit completo (contactos 1/2/3 incluidos, uno activo y otro de referencia)" },
-        // Px.1DW/2DW/3DW y Dst.1DW/2DW/3DW son la entrada detallada: cada
-        // contacto por separado para anotar cuál se usó de activo y cuál de
-        // referencia, pero los tres salen del mismo kit físico -"tercio_unidad"
-        // hace que colocar 1, 2 o 3 de ellos siga contando como 1 solo kit,
-        // igual que "media_unidad" con un par-.
-        { "id": "px_1dw", "nombre": "Px.1DW", "etiqueta": "electrodo_epidural_dwave", "tercio_unidad": true, "nota": "Epidural D-Wave proximal, contacto 1 de 3 (Px.1DW + Px.2DW + Px.3DW = 1 kit)" },
-        { "id": "px_2dw", "nombre": "Px.2DW", "etiqueta": "electrodo_epidural_dwave", "tercio_unidad": true, "nota": "Epidural D-Wave proximal, contacto 2 de 3 (Px.1DW + Px.2DW + Px.3DW = 1 kit)" },
-        { "id": "px_3dw", "nombre": "Px.3DW", "etiqueta": "electrodo_epidural_dwave", "tercio_unidad": true, "nota": "Epidural D-Wave proximal, contacto 3 de 3 (Px.1DW + Px.2DW + Px.3DW = 1 kit)" },
-        { "id": "dst_1dw", "nombre": "Dst.1DW", "etiqueta": "electrodo_epidural_dwave", "tercio_unidad": true, "nota": "Epidural D-Wave distal, contacto 1 de 3 (Dst.1DW + Dst.2DW + Dst.3DW = 1 kit)" },
-        { "id": "dst_2dw", "nombre": "Dst.2DW", "etiqueta": "electrodo_epidural_dwave", "tercio_unidad": true, "nota": "Epidural D-Wave distal, contacto 2 de 3 (Dst.1DW + Dst.2DW + Dst.3DW = 1 kit)" },
-        { "id": "dst_3dw", "nombre": "Dst.3DW", "etiqueta": "electrodo_epidural_dwave", "tercio_unidad": true, "nota": "Epidural D-Wave distal, contacto 3 de 3 (Dst.1DW + Dst.2DW + Dst.3DW = 1 kit)" },
-        { "id": "ref_grid", "nombre": "Referencia GRID", "etiqueta": "electrodo_sacacorchos", "nota": "Referencia de los registros del GRID (c-SEP, ECoG)" }
-      ]
-    },
-    {
-      "categoria": "Potenciales auditivos (PEATC)",
-      "plegada_por_defecto": true,
-      "items": [
-        { "id": "a1", "nombre": "A1", "etiqueta": "electrodo_sacacorchos", "nota": "Registro auditivo del lado izquierdo. Va en una de las entradas numeradas de REF-AEP" },
-        { "id": "a2", "nombre": "A2", "etiqueta": "electrodo_sacacorchos", "nota": "Registro auditivo del lado derecho. Va en una de las entradas numeradas de REF-AEP" }
-      ]
-    },
-    {
-      "categoria": "Potenciales visuales (VEP)",
-      "plegada_por_defecto": true,
-      "items": [
-        { "id": "o1", "nombre": "O1", "etiqueta": "electrodo_sacacorchos", "nota": "Registro visual occipital izquierdo. Va en una de las entradas numeradas de REF-AEP" },
-        { "id": "o2", "nombre": "O2", "etiqueta": "electrodo_sacacorchos", "nota": "Registro visual occipital derecho. Va en una de las entradas numeradas de REF-AEP" },
-        { "id": "discos_visuales", "nombre": "Discos visuales", "etiqueta": "discos_visuales", "nota": "Estimuladores luminosos (LED) en disco, sobre los párpados cerrados, para los PEV intraoperatorios" }
-      ]
-    },
-    {
       "categoria": "Estimulación trigeminal (reflejos)",
       "plegada_por_defecto": true,
       "items": [
@@ -879,71 +929,36 @@ window.SURGERIES_DATA = {
       ]
     },
     {
-      "categoria": "Otros electrodos corticales (scalp)",
+      "categoria": "Reflejos",
       "plegada_por_defecto": true,
       "items": [
-        {"id":"sc_eeg_manta","nombre":"EEG Manta","etiqueta":"manta_4_8","nota":"Manta de electrodos para EEG continuo"},
-        {"id":"sc_fp1","nombre":"Fp1","etiqueta":"aguja_subdermica","nota":"Frontopolar izquierdo"},
-        {"id":"sc_fpz","nombre":"Fpz","etiqueta":"aguja_subdermica","nota":"Frontopolar medio"},
-        {"id":"sc_fp2","nombre":"Fp2","etiqueta":"aguja_subdermica","nota":"Frontopolar derecho"},
-        {"id":"sc_cz_6","nombre":"Cz-6","etiqueta":"aguja_subdermica","nota":"6 cm por detrás de Cz"},
-        {"id":"sc_f7","nombre":"F7","etiqueta":"aguja_subdermica","nota":"Frontal inferior izquierdo"},
-        {"id":"sc_f3","nombre":"F3","etiqueta":"aguja_subdermica","nota":"Frontal izquierdo"},
-        {"id":"sc_f4","nombre":"F4","etiqueta":"aguja_subdermica","nota":"Frontal derecho"},
-        {"id":"sc_f8","nombre":"F8","etiqueta":"aguja_subdermica","nota":"Frontal inferior derecho"},
-        {"id":"sc_c5","nombre":"C5'","etiqueta":"aguja_subdermica","nota":"Central izquierdo (C5 prima)"},
-        {"id":"sc_c6","nombre":"C6'","etiqueta":"aguja_subdermica","nota":"Central derecho (C6 prima)"},
-        {"id":"sc_t3","nombre":"T3","etiqueta":"aguja_subdermica","nota":"Temporal medio izquierdo"},
-        {"id":"sc_c3","nombre":"C3","etiqueta":"aguja_subdermica","nota":"Central izquierdo"},
-        {"id":"sc_cz","nombre":"Cz","etiqueta":"aguja_subdermica","nota":"Vértex"},
-        {"id":"sc_c4","nombre":"C4","etiqueta":"aguja_subdermica","nota":"Central derecho"},
-        {"id":"sc_t4","nombre":"T4","etiqueta":"aguja_subdermica","nota":"Temporal medio derecho"},
-        {"id":"sc_t5","nombre":"T5","etiqueta":"aguja_subdermica","nota":"Temporal posterior izquierdo"},
-        {"id":"sc_p3","nombre":"P3","etiqueta":"aguja_subdermica","nota":"Parietal izquierdo"},
-        {"id":"sc_pz","nombre":"Pz","etiqueta":"aguja_subdermica","nota":"Parietal medio"},
-        {"id":"sc_p4","nombre":"P4","etiqueta":"aguja_subdermica","nota":"Parietal derecho"},
-        {"id":"sc_t6","nombre":"T6","etiqueta":"aguja_subdermica","nota":"Temporal posterior derecho"},
-        {"id":"sc_m1","nombre":"M1","etiqueta":"aguja_subdermica","nota":"Mastoides izquierda"},
-        {"id":"sc_m2","nombre":"M2","etiqueta":"aguja_subdermica","nota":"Mastoides derecha"},
-        {"id":"sc_oz_mo","nombre":"Oz (MO)","etiqueta":"aguja_subdermica","nota":"Occipital medio"},
-        {"id":"sc_m3","nombre":"M3","etiqueta":"aguja_subdermica","nota":"Mastoides accesoria izquierda"},
-        {"id":"sc_m4","nombre":"M4","etiqueta":"aguja_subdermica","nota":"Mastoides accesoria derecha"}
+        {"id":"l_blinkr","nombre":"L.BlinkR","etiqueta":"aguja_trenzada","nota":"Blink Reflex izquierdo"},
+        {"id":"r_blinkr","nombre":"R.BlinkR","etiqueta":"aguja_trenzada","nota":"Blink Reflex derecho"},
+        {"id":"l_rx_maset","nombre":"L.Rx.Maset","etiqueta":"aguja_trenzada","nota":"Reflejo maseterino izquierdo"},
+        {"id":"r_rx_maset","nombre":"R.Rx.Maset","etiqueta":"aguja_trenzada","nota":"Reflejo maseterino derecho"},
+        {"id":"l_rx_v_xii","nombre":"L.Rx.V-XII","etiqueta":"aguja_trenzada","nota":"Reflejo V-XII izquierdo"},
+        {"id":"r_rx_v_xii","nombre":"R.Rx.V-XII","etiqueta":"aguja_trenzada","nota":"Reflejo V-XII derecho"},
+        {"id":"l_lar","nombre":"L.LAR","etiqueta":"aguja_trenzada","nota":"Laryngeal Adductor Reflex izquierdo"},
+        {"id":"r_lar","nombre":"R.LAR","etiqueta":"aguja_trenzada","nota":"Laryngeal Adductor Reflex derecho"},
+        {"id":"l_rx_h","nombre":"L.Rx.H","etiqueta":"aguja_trenzada","nota":"Reflejo H izquierdo"},
+        {"id":"r_rx_h","nombre":"R.Rx.H","etiqueta":"aguja_trenzada","nota":"Reflejo H derecho"},
+        {"id":"l_rbc","nombre":"L.RBC","etiqueta":"aguja_trenzada","nota":"Reflejo bulbo-cavernoso izquierdo"},
+        {"id":"r_rbc","nombre":"R.RBC","etiqueta":"aguja_trenzada","nota":"Reflejo bulbo-cavernoso derecho"}
       ]
     },
     {
-      "categoria": "Electrodos de tronco y periné",
-      "plegada_por_defecto": true,
+      "categoria": "Estimulación periférica",
       "items": [
-        {"id":"l_diafragma","nombre":"L.Diafragma","etiqueta":"aguja_trenzada","nota":"Diafragma — nervio frénico izquierdo"},
-        {"id":"r_diafragma","nombre":"R.Diafragma","etiqueta":"aguja_trenzada","nota":"Diafragma — nervio frénico derecho"},
-        {"id":"l_ic","nombre":"L.IC","etiqueta":"aguja_trenzada","nota":"Intercostal izquierdo — registro muscular, T1-T4"},
-        {"id":"r_ic","nombre":"R.IC","etiqueta":"aguja_trenzada","nota":"Intercostal derecho — registro muscular, T1-T4"},
-        {"id":"l_ras","nombre":"L.RAS","etiqueta":"aguja_trenzada","nota":"Recto anterior superior izquierdo"},
-        {"id":"r_ras","nombre":"R.RAS","etiqueta":"aguja_trenzada","nota":"Recto anterior superior derecho"},
-        {"id":"l_ram","nombre":"L.RAM","etiqueta":"aguja_trenzada","nota":"Recto anterior medio izquierdo"},
-        {"id":"r_ram","nombre":"R.RAM","etiqueta":"aguja_trenzada","nota":"Recto anterior medio derecho"},
-        {"id":"l_rai","nombre":"L.RAI","etiqueta":"aguja_trenzada","nota":"Recto anterior inferior izquierdo"},
-        {"id":"r_rai","nombre":"R.RAI","etiqueta":"aguja_trenzada","nota":"Recto anterior inferior derecho"},
-        {"id":"l_oae","nombre":"L.OAE","etiqueta":"aguja_trenzada","nota":"Oblicuo abdominal externo izquierdo"},
-        {"id":"r_oae","nombre":"R.OAE","etiqueta":"aguja_trenzada","nota":"Oblicuo abdominal externo derecho"},
-        {"id":"l_cremaster","nombre":"L.Cremaster","etiqueta":"aguja_trenzada","nota":"Cremáster izquierdo"},
-        {"id":"r_cremaster","nombre":"R.Cremaster","etiqueta":"aguja_trenzada","nota":"Cremáster derecho"},
-        {"id":"l_cc","nombre":"L.CC","etiqueta":"aguja_trenzada","nota":"Esfínter anal / cavernoso-cavernoso izquierdo"},
-        {"id":"r_cc","nombre":"R.CC","etiqueta":"aguja_trenzada","nota":"Esfínter anal / cavernoso-cavernoso derecho"},
-        {"id":"l_abd","nombre":"L.Abd","etiqueta":"aguja_trenzada", "nota": "Músculos abdominales: registro de EMG y MEP de las raíces torácicas bajas (aprox. T7-T12)"},
-        {"id":"r_abd","nombre":"R.Abd","etiqueta":"aguja_trenzada", "nota": "Músculos abdominales: registro de EMG y MEP de las raíces torácicas bajas (aprox. T7-T12)"},
-        {"id":"l_bulbocavernoso","nombre":"L.Bulbocavernoso","etiqueta":"aguja_trenzada","nota":"Reflejo bulbocavernoso izquierdo"},
-        {"id":"r_bulbocavernoso","nombre":"R.Bulbocavernoso","etiqueta":"aguja_trenzada","nota":"Reflejo bulbocavernoso derecho"},
-        {"id":"n_dorsal_pene","nombre":"Nervio Dorsal del Pene","etiqueta":"pegatinas", "nota": "Estimulación del nervio dorsal del pene para el reflejo bulbocavernoso y los PESS de nervio pudendo"},
-        {"id":"clitoris","nombre":"Clítoris","etiqueta":"pegatinas", "nota": "Estimulación del nervio dorsal del clítoris para el reflejo bulbocavernoso y los PESS de nervio pudendo"},
-        {"id":"l_esfinter_anal_ext","nombre":"L.Esfínter Anal Externo","etiqueta":"hook_wire", "nota": "Registro del esfínter anal externo (raíces S2-S4): EMG, MEP y reflejo bulbocavernoso en cirugía de cono medular, cauda equina y médula anclada"},
-        {"id":"r_esfinter_anal_ext","nombre":"R.Esfínter Anal Externo","etiqueta":"hook_wire", "nota": "Registro del esfínter anal externo (raíces S2-S4): EMG, MEP y reflejo bulbocavernoso en cirugía de cono medular, cauda equina y médula anclada"},
-        {"id":"l_elevador_ano","nombre":"L.Elevador del ano","etiqueta":"aguja_trenzada", "nota": "Registro del elevador del ano (raíces sacras S3-S4) para EMG y MEP sacros"},
-        {"id":"r_elevador_ano","nombre":"R.Elevador del ano","etiqueta":"aguja_trenzada", "nota": "Registro del elevador del ano (raíces sacras S3-S4) para EMG y MEP sacros"},
-        {"id":"l_labio_mayor","nombre":"L.Labio mayor","etiqueta":"aguja_trenzada", "nota": "Registro del músculo bulboesponjoso en la mujer (a través del labio mayor) para el reflejo bulbocavernoso y los MEP sacros (S2-S4)"},
-        {"id":"r_labio_mayor","nombre":"R.Labio mayor","etiqueta":"aguja_trenzada", "nota": "Registro del músculo bulboesponjoso en la mujer (a través del labio mayor) para el reflejo bulbocavernoso y los MEP sacros (S2-S4)"},
-        {"id":"l_oblicuo_externo","nombre":"L.OblicuoExterno","etiqueta":"aguja_trenzada", "nota": "Registro del oblicuo externo del abdomen para EMG y MEP de las raíces torácicas bajas (aprox. T7-T12)"},
-        {"id":"r_oblicuo_externo","nombre":"R.OblicuoExterno","etiqueta":"aguja_trenzada", "nota": "Registro del oblicuo externo del abdomen para EMG y MEP de las raíces torácicas bajas (aprox. T7-T12)"}
+        { "id": "l_mediano", "nombre": "L.Mediano", "etiqueta": "pegatinas", "nota": "Estimulación del nervio mediano en la muñeca para los PESS de miembro superior" },
+        { "id": "r_mediano", "nombre": "R.Mediano", "etiqueta": "pegatinas", "nota": "Estimulación del nervio mediano en la muñeca para los PESS de miembro superior" },
+        { "id": "l_cubital", "nombre": "L.Cubital", "etiqueta": "pegatinas", "nota": "Estimulación del nervio cubital en la muñeca para los PESS de miembro superior (raíces C8-T1); útil también para vigilar el plexo braquial al posicionar" },
+        { "id": "r_cubital", "nombre": "R.Cubital", "etiqueta": "pegatinas", "nota": "Estimulación del nervio cubital en la muñeca para los PESS de miembro superior (raíces C8-T1); útil también para vigilar el plexo braquial al posicionar" },
+        { "id": "l_cubital_fosa", "nombre": "L.Cubital fosa", "etiqueta": "pegatinas", "nota": "Fosa cubital (codo), en vez de la muñeca" },
+        { "id": "r_cubital_fosa", "nombre": "R.Cubital fosa", "etiqueta": "pegatinas", "nota": "Fosa cubital (codo), en vez de la muñeca" },
+        { "id": "l_ptn", "nombre": "L.Tibial post.", "etiqueta": "pegatinas", "nota": "Estimulación del nervio tibial posterior en el tobillo (retromaleolar interno) para los PESS de miembro inferior" },
+        { "id": "r_ptn", "nombre": "R.Tibial post.", "etiqueta": "pegatinas", "nota": "Estimulación del nervio tibial posterior en el tobillo (retromaleolar interno) para los PESS de miembro inferior" },
+        { "id": "l_popliteo", "nombre": "L.Poplíteo (H)", "etiqueta": "pegatinas", "nota": "Hueco poplíteo — reflejo H" },
+        { "id": "r_popliteo", "nombre": "R.Poplíteo (H)", "etiqueta": "pegatinas", "nota": "Hueco poplíteo — reflejo H" }
       ]
     },
     {
@@ -1019,35 +1034,20 @@ window.SURGERIES_DATA = {
       ]
     },
     {
-      "categoria": "Reflejos",
+      "categoria": "Potenciales auditivos (PEATC)",
       "plegada_por_defecto": true,
       "items": [
-        {"id":"l_blinkr","nombre":"L.BlinkR","etiqueta":"aguja_trenzada","nota":"Blink Reflex izquierdo"},
-        {"id":"r_blinkr","nombre":"R.BlinkR","etiqueta":"aguja_trenzada","nota":"Blink Reflex derecho"},
-        {"id":"l_rx_maset","nombre":"L.Rx.Maset","etiqueta":"aguja_trenzada","nota":"Reflejo maseterino izquierdo"},
-        {"id":"r_rx_maset","nombre":"R.Rx.Maset","etiqueta":"aguja_trenzada","nota":"Reflejo maseterino derecho"},
-        {"id":"l_rx_v_xii","nombre":"L.Rx.V-XII","etiqueta":"aguja_trenzada","nota":"Reflejo V-XII izquierdo"},
-        {"id":"r_rx_v_xii","nombre":"R.Rx.V-XII","etiqueta":"aguja_trenzada","nota":"Reflejo V-XII derecho"},
-        {"id":"l_lar","nombre":"L.LAR","etiqueta":"aguja_trenzada","nota":"Laryngeal Adductor Reflex izquierdo"},
-        {"id":"r_lar","nombre":"R.LAR","etiqueta":"aguja_trenzada","nota":"Laryngeal Adductor Reflex derecho"},
-        {"id":"l_rx_h","nombre":"L.Rx.H","etiqueta":"aguja_trenzada","nota":"Reflejo H izquierdo"},
-        {"id":"r_rx_h","nombre":"R.Rx.H","etiqueta":"aguja_trenzada","nota":"Reflejo H derecho"},
-        {"id":"l_rbc","nombre":"L.RBC","etiqueta":"aguja_trenzada","nota":"Reflejo bulbo-cavernoso izquierdo"},
-        {"id":"r_rbc","nombre":"R.RBC","etiqueta":"aguja_trenzada","nota":"Reflejo bulbo-cavernoso derecho"}
+        { "id": "a1", "nombre": "A1", "etiqueta": "electrodo_sacacorchos", "nota": "Registro auditivo del lado izquierdo. Va en una de las entradas numeradas de REF-AEP" },
+        { "id": "a2", "nombre": "A2", "etiqueta": "electrodo_sacacorchos", "nota": "Registro auditivo del lado derecho. Va en una de las entradas numeradas de REF-AEP" }
       ]
     },
     {
-      "categoria": "Otros puntos de registro",
+      "categoria": "Potenciales visuales (VEP)",
       "plegada_por_defecto": true,
       "items": [
-        {"id":"l_p_cervical","nombre":"L.P.Cervical","etiqueta":"aguja_subdermica","nota":"Punto de registro cervical izquierdo"},
-        {"id":"r_p_cervical","nombre":"R.P.Cervical","etiqueta":"aguja_subdermica","nota":"Punto de registro cervical derecho"},
-        {"id":"l_p_popliteo","nombre":"L.P.Popliteo","etiqueta":"aguja_subdermica","nota":"Registro en hueco poplíteo izquierdo"},
-        {"id":"r_p_popliteo","nombre":"R.P.Popliteo","etiqueta":"aguja_subdermica","nota":"Registro en hueco poplíteo derecho"},
-        {"id":"l_p_lumbar","nombre":"L.P.Lumbar","etiqueta":"aguja_subdermica","nota":"Punto de registro lumbar izquierdo"},
-        {"id":"r_p_lumbar","nombre":"R.P.Lumbar","etiqueta":"aguja_subdermica","nota":"Punto de registro lumbar derecho"},
-        { "id": "l_eye", "nombre": "L.Eye", "etiqueta": "aguja_trenzada", "media_unidad": true, "nota": "Registro de ERG, ojo izquierdo — aguja del par trenzado (L.Eye + R.Eye = 1 paquete)" },
-        { "id": "r_eye", "nombre": "R.Eye", "etiqueta": "aguja_trenzada", "media_unidad": true, "nota": "Registro de ERG, ojo derecho — aguja del par trenzado (L.Eye + R.Eye = 1 paquete)" }
+        { "id": "o1", "nombre": "O1", "etiqueta": "electrodo_sacacorchos", "nota": "Registro visual occipital izquierdo. Va en una de las entradas numeradas de REF-AEP" },
+        { "id": "o2", "nombre": "O2", "etiqueta": "electrodo_sacacorchos", "nota": "Registro visual occipital derecho. Va en una de las entradas numeradas de REF-AEP" },
+        { "id": "discos_visuales", "nombre": "Discos visuales", "etiqueta": "discos_visuales", "nota": "Estimuladores luminosos (LED) en disco, sobre los párpados cerrados, para los PEV intraoperatorios" }
       ]
     },
     {
@@ -1069,12 +1069,9 @@ window.SURGERIES_DATA = {
       ]
     },
     {
-      "categoria": "Material extra (no ocupa entrada)",
-      "sin_entrada": true,
-      "plegada_por_defecto": true,
+      "categoria": "Tierras y referencias",
       "items": [
-        { "id": "auriculares_peatc", "nombre": "Auriculares PEATC", "etiqueta": "auriculares", "foto": "img/material/auriculares_er3c.jpg", "nota": "Auriculares de inserción ER-3C (Etymotic): rojo = oído derecho, azul = oído izquierdo. Estimulación auditiva para los PEATC (registro en A1/A2). Se conectan al puerto auditivo del equipo (lo indica la descripción de cada caja). No ocupan entrada" },
-        { "id": "gafas_vep", "nombre": "Gafas VEP", "etiqueta": "gafas", "nota": "Estimulación visual para los potenciales visuales (O1/O2). No ocupan entrada" }
+        { "id": "tierra", "nombre": "Tierra", "etiqueta": "aguja_subdermica", "nota": "Una por caja de registro" }
       ]
     },
     {
@@ -1082,6 +1079,15 @@ window.SURGERIES_DATA = {
       "plegada_por_defecto": true,
       "items": [
         { "id": "puente", "nombre": "Puente", "etiqueta": "puente", "nota": "Material reutilizable: sale en las cajas a preparar pero no cuenta en el coste" }
+      ]
+    },
+    {
+      "categoria": "Material extra (no ocupa entrada)",
+      "sin_entrada": true,
+      "plegada_por_defecto": true,
+      "items": [
+        { "id": "auriculares_peatc", "nombre": "Auriculares PEATC", "etiqueta": "auriculares", "foto": "img/material/auriculares_er3c.jpg", "nota": "Auriculares de inserción ER-3C (Etymotic): rojo = oído derecho, azul = oído izquierdo. Estimulación auditiva para los PEATC (registro en A1/A2). Se conectan al puerto auditivo del equipo (lo indica la descripción de cada caja). No ocupan entrada" },
+        { "id": "gafas_vep", "nombre": "Gafas VEP", "etiqueta": "gafas", "nota": "Estimulación visual para los potenciales visuales (O1/O2). No ocupan entrada" }
       ]
     }
   ],
