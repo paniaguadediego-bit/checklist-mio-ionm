@@ -2647,7 +2647,10 @@ dialog h3 {
 @media (max-width: 900px) {
   /* 80vh (antes 55vh): el recuadro para elegir material se quedaba pequeño
      en el móvil (pedido del usuario, 26-09-2026). */
-  .panel-catalogo { max-height: 80vh; }
+  /* Sin scroll propio en el móvil (27-09-2026): un deslizamiento largo se
+     paraba en seco al final del catálogo en vez de seguir con la página.
+     "Por donde ibas" lo mantiene plegarCatalogo() con el material elegido. */
+  .panel-catalogo { max-height: none; overflow-y: visible; }
   #dlg-montajes-lista, #plantilla-elegir-lista { grid-template-columns: 1fr; }
 }
 

@@ -2718,13 +2718,49 @@
      06-09-2026 (tarde) -mismo comportamiento que el resto de tarjetas al
      desplegarse en móvil-, así que ahora es .open lo que hay que tocar. */
   var scrollCatalogo = 0;
+  // Móvil (27-09-2026, pedido del usuario): el catálogo ya no tiene scroll
+  // propio ahí -un deslizamiento largo se paraba en seco al llegar al final
+  // de la lista, sin seguir con la página-, así que "por donde ibas" se
+  // guarda de otra forma: el material elegido es el ancla. Al plegar, la
+  // página sube a las cajas; al desplegar tras colocar, vuelve a ese
+  // material del catálogo.
+  var anclaCatalogo = null;
+
+  function catalogoConScrollPropio() {
+    return !window.matchMedia("(max-width: 900px)").matches;
+  }
+
+  // Lo que tapan arriba la cabecera y el rótulo fijos, para no dejar lo que
+  // se quiere enseñar debajo de ellos.
+  function altoBarrasFijas() {
+    var tapa = 0;
+    document.querySelectorAll(".barra-sup, #barra-caso").forEach(function (el) {
+      if (el.getClientRects().length) tapa = Math.max(tapa, el.getBoundingClientRect().bottom);
+    });
+    return tapa;
+  }
 
   function plegarCatalogo(plegar) {
     var panel = document.getElementById("panel-catalogo");
     if (plegar === !panel.open) return;
-    if (plegar) scrollCatalogo = panel.scrollTop;
-    panel.open = !plegar;
-    if (!plegar) panel.scrollTop = scrollCatalogo;
+    if (catalogoConScrollPropio()) {
+      if (plegar) scrollCatalogo = panel.scrollTop;
+      panel.open = !plegar;
+      if (!plegar) panel.scrollTop = scrollCatalogo;
+      return;
+    }
+    if (plegar) {
+      anclaCatalogo = seleccionado;
+      panel.open = false;
+      var cajas = document.getElementById("cajas");
+      // Si la tarjeta Cajas estaba plegada, no habría dónde colocarlo
+      if (cajas && !cajas.open) cajas.open = true;
+      if (cajas) window.scrollTo(0, cajas.getBoundingClientRect().top + window.pageYOffset - altoBarrasFijas() - 8);
+      return;
+    }
+    panel.open = true;
+    var chip = anclaCatalogo && document.querySelector('#catalogo-contenido .chip[data-item-id="' + anclaCatalogo + '"]');
+    if (chip && chip.getClientRects().length) chip.scrollIntoView({ block: "center" });
   }
 
   function seleccionar(itemId) {
