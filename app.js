@@ -922,17 +922,19 @@
     docente_tab_material:{ es: "Material", en: "Material" },
     docente_tab_teoria:  { es: "Teoría básica de IONM", en: "IONM basic theory" },
     en_construccion:     { es: "En construcción.", en: "Under construction." },
-    docente_material_intro: { es: "Todo el material del catálogo, agrupado por categoría, con una breve descripción de cada uno. La descripción es la nota del catálogo, seguida del tipo físico y de cómo cuenta para el material a preparar. El icono 📷 abre la foto cuando la hay.",
-                              en: "All the material in the catalogue, grouped by category, with a short description of each. The description is the catalogue note, followed by the physical type and how it counts towards the material to prepare. The 📷 icon opens the photo when there is one." },
+    docente_material_intro: { es: "Todo el material del catálogo, agrupado por categoría, con una breve descripción de cada uno. El color y el borde de cada ítem dicen su tipo físico (leyenda de abajo). El icono 📷 abre la foto cuando la hay.",
+                              en: "All the material in the catalogue, grouped by category, with a short description of each. Each item's colour and border show its physical type (legend below). The 📷 icon opens the photo when there is one." },
     docente_material_buscar_ph: { es: "Nombre, tipo o descripción…", en: "Name, type or description…" },
     docente_material_cuenta: { es: "{n} de {total} materiales", en: "{n} of {total} items" },
     docente_material_sin: { es: "Ningún material con ese filtro.", en: "No material matches that filter." },
-    mat_desc_tipo:       { es: "Tipo físico: {tipo}.", en: "Physical type: {tipo}." },
+    mat_leyenda:         { es: "Tipos físicos", en: "Physical types" },
+    mat_leyenda_doble:   { es: "×2", en: "×2" },
+    mat_leyenda_doble_tit: { es: "Cada colocación gasta 2 unidades (activo y referencia)", en: "Each placement uses 2 units (active and reference)" },
+    mat_leyenda_reutilizable: { es: "reutilizable", en: "reusable" },
     mat_desc_media:      { es: "Sale del mismo paquete que su pareja (Erb1 + Erb2 = 1 paquete).", en: "Comes from the same pack as its pair (Erb1 + Erb2 = 1 pack)." },
     mat_desc_tercio:     { es: "Los tres contactos salen del mismo kit: 1, 2 o 3 colocados cuentan como 1 kit.", en: "All three contacts come from the same kit: 1, 2 or 3 placed count as 1 kit." },
-    mat_desc_doble:      { es: "Cada colocación gasta 2 unidades (activo y referencia).", en: "Each placement uses 2 units (active and reference)." },
     mat_desc_sin_entrada: { es: "No ocupa entrada en la caja.", en: "Does not take a box input." },
-    mat_desc_reutilizable: { es: "Reutilizable: se prepara pero no se gasta.", en: "Reusable: prepared but not consumed." },
+    mat_leyenda_reutilizable_tit: { es: "Se prepara pero no se gasta", en: "Prepared but not consumed" },
     /* --- Simulador --- */
     // Menú "Ventanas" de la barra lateral: cada "+" crea la ventana con la
     // morfología y los parámetros recomendados ya puestos (SIM_PLANTILLAS).
@@ -14227,19 +14229,19 @@
    * comparte paquete...) -no se inventa ninguna descripción clínica-.
    * ---------------------------------------------------------------- */
   function descripcionMaterial(item) {
-    var etq = etiquetaDe(item, null);
+    // Lo que es del tipo físico -su nombre, si gasta 2 unidades, si es
+    // reutilizable- ya no se repite en cada fila (27-09-2026, pedido del
+    // usuario): va una sola vez en la leyenda de debajo del buscador, ver
+    // pintarLeyendaMaterial(). Aquí queda solo lo propio del ítem.
     var partes = [];
     var nota = campo(item, "nota");
     if (nota) partes.push(nota.replace(/\.?$/, "."));
-    if (etq) partes.push(T("mat_desc_tipo", { tipo: campo(etq, "nombre") }));
     if (item.media_unidad) partes.push(T("mat_desc_media"));
     if (item.tercio_unidad) partes.push(T("mat_desc_tercio"));
-    if (etq && etq.doble) partes.push(T("mat_desc_doble"));
     if (item.sin_entrada) partes.push(T("mat_desc_sin_entrada"));
     if (hayVariosEquipos() && item.equipos && item.equipos.length) {
       partes.push(T("mat_desc_equipos", { equipos: item.equipos.map(nombreEquipo).join(", ") }));
     }
-    if (etq && etq.fungible === false) partes.push(T("mat_desc_reutilizable"));
     return partes.join(" ");
   }
 
@@ -14253,7 +14255,41 @@
     return r.charAt(0).toUpperCase() + r.slice(1);
   }
 
+  // Leyenda de tipos físicos: un chip por tipo usado en el catálogo, con el
+  // mismo borde y color que llevan los ítems de ese tipo en la lista.
+  function pintarLeyendaMaterial() {
+    var cont = document.getElementById("docente-material-leyenda");
+    cont.textContent = "";
+    var vistos = {}, tipos = [];
+    CATALOGO.forEach(function (g) {
+      g.items.forEach(function (it) {
+        var etq = etiquetaDe(it, null);
+        if (etq && !vistos[etq.id]) { vistos[etq.id] = true; tipos.push(etq); }
+      });
+    });
+    var tit = document.createElement("span");
+    tit.className = "mat-leyenda-tit";
+    tit.textContent = T("mat_leyenda");
+    cont.appendChild(tit);
+    tipos.forEach(function (etq) {
+      var chip = document.createElement("span");
+      chip.className = "chip mat-leyenda-chip";
+      aplicarEstilo(chip, estiloDe({ etiqueta: etq.id }, null));
+      chip.appendChild(document.createTextNode(campo(etq, "nombre")));
+      [[etq.doble, "mat_leyenda_doble"], [etq.fungible === false, "mat_leyenda_reutilizable"]].forEach(function (m) {
+        if (!m[0]) return;
+        var marca = document.createElement("small");
+        marca.className = "mat-leyenda-marca";
+        marca.textContent = T(m[1]);
+        marca.title = T(m[1] + "_tit");
+        chip.appendChild(marca);
+      });
+      cont.appendChild(chip);
+    });
+  }
+
   function renderDocenteMaterial() {
+    pintarLeyendaMaterial();
     var cont = document.getElementById("docente-material-lista");
     cont.textContent = "";
     var busq = (document.getElementById("docente-material-buscar").value || "").toLowerCase();

@@ -1025,11 +1025,14 @@ pasos, técnicas, momentos críticos y criterios de alarma), aún sin construir.
   herramienta. Lo que se practica es que el cable llegue.
 - **Material** (24-09-2026, ahora pantalla propia de Inicio, no pestaña de Docencia) — todo el catálogo de material, el de fábrica más el
   tuyo, **en filas, una debajo de otra y agrupado por categoría**, con un
-  buscador y el icono 📷 para ver la foto cuando la hay. La descripción de cada
-  uno es la *nota* del catálogo, seguida del tipo físico y de lo que ya dice el
-  dato (reutilizable, comparte paquete, cuenta doble, no ocupa entrada); no se
-  inventa ninguna descripción clínica, así que si rellenas la nota de un ítem
-  en el catálogo mejora aquí sola.
+  buscador y el icono 📷 para ver la foto cuando la hay. Debajo del buscador,
+  una **leyenda de tipos físicos**: cada tipo con el color y el borde que llevan
+  sus ítems, más «×2» si cada colocación gasta dos unidades y «reutilizable»
+  si no se gasta (desde el 27-09-2026 eso ya no se repite en cada fila). La
+  descripción de cada ítem es su *nota* del catálogo y lo propio del ítem
+  (comparte paquete, no ocupa entrada, solo en un equipo); no se inventa
+  ninguna descripción clínica, así que si rellenas la nota de un ítem en el
+  catálogo mejora aquí sola.
 - **Teoría básica de IONM** — pestaña del 06-09-2026, de momento "en
   construcción": cubrirá conceptos como far-field/near-field, campo
   abierto/cerrado, reflejo H, onda F, potencial de acción... Sin fecha todavía.

@@ -3793,3 +3793,9 @@ button, input, select, textarea { font-family: inherit; }
   color: var(--text-muted);
 }
 .chip-separador::after, .mat-separador::after { content: ""; flex: 1; border-top: 1px solid var(--border); }
+
+/* Leyenda de tipos físicos de Material (27-09-2026, pintarLeyendaMaterial()) */
+.mat-leyenda { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem; margin: 0.2rem 0 0.6rem; }
+.mat-leyenda-tit { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); margin-right: 0.2rem; }
+.mat-leyenda-chip { font-size: 0.72rem; padding: 0.1rem 0.45rem; cursor: default; }
+.mat-leyenda-marca { margin-left: 0.3rem; font-size: 0.65rem; color: var(--text-muted); }
