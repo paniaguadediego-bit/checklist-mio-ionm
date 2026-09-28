@@ -73,7 +73,7 @@ propia en *Después / consulta*).
 **Novedades anteriores del 27-28/09/2026 (demo para el congreso):** recorrido guiado
 (hoy *Visita guiada*) y caso de ejemplo completo en `?demo`, **Revisión del montaje**
 en el Resumen, concordancia **PR**, equipo por defecto configurable
-(«Adaptarlo a otro servicio»), controles de 44 px en el móvil, letra **Inter**
+(«Adaptarlo a otro servicio»), controles de 44 px en el móvil (desde el 28-09-2026 las casillas son de ≈30 px y los botones siguen a 44), letra **Inter**
 y acciones de Plantillas de montaje agrupadas en **Más acciones**.
 
 **Novedades del 25-26/09/2026:** dos **equipos** (Inomed y Cadwell, cada uno con
@@ -151,7 +151,7 @@ conexión a internet (no hace ninguna petición de red).
 
 ## Idioma
 
-El botón **EN / ES** de la barra superior cambia entre castellano e inglés al
+El botón **EN / ES** del menú **⋮** de la barra superior cambia entre castellano e inglés al
 instante, sin recargar ni perder nada. Se recuerda en ese navegador, y en la
 primera visita se propone el del sistema.
 
@@ -497,8 +497,9 @@ que te interese para ver solo esos casos). Los mismos filtros deciden qué
 casos entran al exportar (ver *Informe de casos (PDF)* más abajo): filtra primero,
 luego exporta lo que se ve.
 
-**Al cerrar**, abre el caso desde la lista. La ficha son **8 apartados
-plegables, cronológicos, todos cerrados por defecto**: despliega el que te
+**Al cerrar**, abre el caso desde la lista. La ficha son **9 apartados
+plegables, cronológicos, todos cerrados por defecto** (Montaje / Material y
+Técnicas van separados desde el 28-09-2026): despliega el que te
 interese según el punto del caso en el que estés, no hay que rellenar de
 arriba abajo. Debajo del título ("Gestión de casos") sale el identificador
 del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
@@ -528,8 +529,9 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
 4. **Anestesia** — tipo (TIVA, R-TIVA, DXM, ALO, Gas), detalle, TOF
    monitorizado, incidencias anestésicas.
 5. **Montaje / Material** y **Técnicas** — desde el 28-09-2026 son dos
-   apartados al mismo nivel: *Montaje / Material* lleva los sub-apartados
-   Cajas y entradas y Material (más las imágenes del montaje), y *Técnicas*
+   apartados al mismo nivel: *Montaje / Material* lleva, todo seguido y sin
+   sub-desplegables, lo de Cajas y entradas y lo de Material (más las imágenes
+   del montaje), y *Técnicas*
    las técnicas realizadas, cómo se realizó cada una y sus notas. Antes era un
    solo apartado con tres sub-apartados:
 
@@ -584,9 +586,9 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
 6. **Desarrollo intraoperatorio** — resumen de la monitorización (de
    corrido qué salió al empezar, qué pasó por el medio y qué salió al
    cerrar); si se marcó la técnica "Mapeo de raíces y tornillos", un
-   selector de niveles C1–S2 (marca los que mapeaste y aparece una fila
-   "I [caja] — nivel — D [caja]" por cada uno, con el umbral izquierdo y
-   derecho en sus propios extremos) más una caja de notas libres de umbral
+   selector de niveles C1–S2 (marca los que mapeaste y aparecen en columna,
+   en orden anatómico, unidos por una línea -discontinua entre niveles no
+   contiguos- y con el umbral izquierdo y el derecho a cada lado) más una caja de notas libres de umbral
    EMG de tornillos pediculares para lo que
    no encaje en una raíz concreta; si hubo alerta y, si la hubo, las **alarmas** (las
    mismas fichas que G · Alarmas del Registro, en espejo: técnica, criterio,
@@ -597,7 +599,7 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
    Cierre del Registro); resultado esperable (lista: similar al previo, empeoramiento, mejoría o indeterminado; es el mismo dato que el Cierre del Registro);
    técnicas con alteración (un chip-fila con solo las técnicas ya marcadas
    como realizadas —se actualiza solo si las tocas en el punto 5—);
-   incidencias técnicas; equipo.
+   incidencias técnicas.
 7. **Resultado / Correlación clínica** — evolución postquirúrgica en lista
    (sin déficit nuevo, déficit nuevo transitorio, permanente o con evolución
    pendiente, no valorable) con su detalle en texto, y
@@ -610,7 +612,11 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
    seguimiento** (para acordarte de revisar la evolución del paciente),
    notas.
 
-Se rellena lo que haga falta y pulsa **Guardar**. Para cerrar el caso,
+La ficha **se guarda sola** (~1,5 s después de cada cambio, como el Registro;
+al salir guarda lo que quede); **Guardar** sigue ahí como confirmación visible.
+Solo deja de guardarse sola si falta la fecha o si el caso cambió en otro
+dispositivo mientras lo tenías abierto: entonces avisa y decide **Guardar**.
+Para cerrar el caso,
 pulsa **Cerrar caso** en la barra de abajo (guarda la ficha con el estado
 *Cerrado* y vuelve a la lista); en un caso cerrado el mismo botón es
 **Reabrir caso**. También se puede cambiar el campo **Estado** a mano. La barra
@@ -695,7 +701,7 @@ casos cancelados hay en total.
   registrado hoy no se confunde con uno de hoy.
 - Cualquier caso cerrado se sigue pudiendo abrir y corregir, sin límite de
   tiempo.
-- **Borrar caso**, abajo a la izquierda dentro de la ficha, quita un caso de
+- **Borrar caso**, en el menú **⋮** de la barra de la ficha, quita un caso de
   en medio para siempre — un caso de prueba, uno duplicado, uno que no
   debiste registrar. Pide confirmación porque no se puede deshacer desde la
   propia herramienta. (El repositorio de datos sí guarda historial de git,
@@ -726,6 +732,29 @@ guardan solo en ese navegador, no se sincronizan:
   marcan con `[TD/L]`, `[Sch]`, `[Lon]` en el propio tooltip) y en parte son
   cobertura de enseñanza habitual sin cita concreta detrás; la pantalla
   explica cuál es cuál.
+- **Cama de quirófano** — eliges la posición del paciente (supino, supino con
+  brazos extendidos, prono, sentado) y repartes las cajas por cabecera,
+  laterales y pies con el mismo gesto de pulsar y colocar del resto de la
+  herramienta. Lo que se practica es que el cable llegue.
+- **Teoría básica de IONM** — pestaña del 06-09-2026, de momento "en
+  construcción": cubrirá conceptos como far-field/near-field, campo
+  abierto/cerrado, reflejo H, onda F, potencial de acción... Sin fecha todavía.
+
+## Material
+
+Pantalla propia de Inicio (24-09-2026; antes era una pestaña de Docencia): todo el catálogo de material, el de fábrica más el
+  tuyo, **en filas, una debajo de otra y agrupado por categoría**, con un
+  buscador y el icono 📷 para ver la foto cuando la hay. Debajo del buscador,
+  una **leyenda de tipos físicos**: cada tipo con el color y el borde que llevan
+  sus ítems, más «×2» si cada colocación gasta dos unidades y «reutilizable»
+  si no se gasta (desde el 27-09-2026 eso ya no se repite en cada fila). Junto
+  al nombre de cada músculo, sus **raíces** («C5–C6», las mismas del miotoma de
+  Docencia) o su **par craneal** («VII par», campo `par` del catálogo), cuando
+  la herramienta tiene el dato; el buscador también las encuentra («C8»). La
+  descripción de cada ítem es su *nota* del catálogo y lo propio del ítem
+  (comparte paquete, no ocupa entrada, solo en un equipo); no se inventa
+  ninguna descripción clínica, así que si rellenas la nota de un ítem en el
+  catálogo mejora aquí sola.
 
 ## Técnicas IONM: chuleta de parámetros
 
@@ -817,9 +846,9 @@ directamente, y quitar una foto siempre pide confirmación.
 
 Pensado para el móvil, donde MIO-Check se usa instalado como app (sin barra
 de navegador): el botón/gesto **atrás** del teléfono, dentro de cualquiera
-de las 7 pantallas principales, te devuelve a Inicio —igual que pulsar el
+de las pantallas principales, te devuelve a Inicio —igual que pulsar el
 logo—, no te saca de la app. Solo si pulsas atrás estando ya en Inicio, o si
-pulsas el botón **Cerrar MIO-Check** (debajo de la tarjeta "Mis apuntes"),
+pulsas el botón **Cerrar MIO-Check** (al final de Inicio),
 se te pregunta si de verdad quieres salir —avisando si tienes cambios sin
 sincronizar todavía—. Así un gesto de atrás sin querer no te saca de la
 herramienta ni te hace perder lo que no se haya subido.
@@ -956,8 +985,8 @@ No lleva la "etiqueta del paciente" ni el "NHC" de la hoja en papel: regla
 
 ## Checklist pre-quirúrgico
 
-Tarjeta de la pantalla de inicio (19/20-09-2026), entre Gestión de Casos y
-Técnicas IONM. Repasa en **5 momentos** —planificación días antes, el día
+Tarjeta de la pantalla de inicio (19/20-09-2026), en el bloque **Quirófano**,
+antes del Registro intraoperatorio. Repasa en **5 momentos** —planificación días antes, el día
 antes de entrar en quirófano, tras la inducción, tras el posicionamiento, y
 comunicación de equipo con el campo ya abierto— para no olvidar nada antes
 de empezar a monitorizar. Contenido clínico dado por la usuaria; fuentes:
@@ -1107,26 +1136,7 @@ Docencia. No toca montajes, casos ni catálogos.
 
 Pendiente: un bloque nuevo **Cirugías con IONM** (qué hace cada cirugía, sus
 pasos, técnicas, momentos críticos y criterios de alarma), aún sin construir.
-- **Cama de quirófano** — eliges la posición del paciente (supino, supino con
-  brazos extendidos, prono, sentado) y repartes las cajas por cabecera,
-  laterales y pies con el mismo gesto de pulsar y colocar del resto de la
-  herramienta. Lo que se practica es que el cable llegue.
-- **Material** (24-09-2026, ahora pantalla propia de Inicio, no pestaña de Docencia) — todo el catálogo de material, el de fábrica más el
-  tuyo, **en filas, una debajo de otra y agrupado por categoría**, con un
-  buscador y el icono 📷 para ver la foto cuando la hay. Debajo del buscador,
-  una **leyenda de tipos físicos**: cada tipo con el color y el borde que llevan
-  sus ítems, más «×2» si cada colocación gasta dos unidades y «reutilizable»
-  si no se gasta (desde el 27-09-2026 eso ya no se repite en cada fila). Junto
-  al nombre de cada músculo, sus **raíces** («C5–C6», las mismas del miotoma de
-  Docencia) o su **par craneal** («VII par», campo `par` del catálogo), cuando
-  la herramienta tiene el dato; el buscador también las encuentra («C8»). La
-  descripción de cada ítem es su *nota* del catálogo y lo propio del ítem
-  (comparte paquete, no ocupa entrada, solo en un equipo); no se inventa
-  ninguna descripción clínica, así que si rellenas la nota de un ítem en el
-  catálogo mejora aquí sola.
-- **Teoría básica de IONM** — pestaña del 06-09-2026, de momento "en
-  construcción": cubrirá conceptos como far-field/near-field, campo
-  abierto/cerrado, reflejo H, onda F, potencial de acción... Sin fecha todavía.
+
 
 ## Uso desde el móvil
 
@@ -1564,15 +1574,15 @@ Los dos usan la fuente **`Casos`**.
 
 Fuente **`Casos`**. **Gráfico de columnas apiladas.** Dimensión: **Fecha**
 (granularidad Año y mes). Campo de desglose: **rol**. Métrica: **Recuento
-de registros**. Cada barra mensual se reparte entre *observo*,
-*supervisado* y *autonomo* según lo que marcaste en cada caso de ese mes —
-así se ve, mes a mes, cómo se va corriendo el peso hacia la autonomía.
+de registros**. Cada barra mensual se reparte entre *residente*,
+*adjunto2* y *adjunto1* (los valores de «Mi papel») según lo que marcaste en
+cada caso de ese mes.
 
 *(Opcional, solo si te importa que el orden dentro de cada barra sea
-siempre observo → supervisado → autónomo y no el alfabético que pone Looker
+siempre residente → adjunto2 → adjunto1 y no el alfabético que pone Looker
 por defecto: crea un **Campo calculado** en la fuente `Casos` llamado
 `Orden_rol` con la fórmula
-`CASE WHEN rol="observo" THEN 1 WHEN rol="supervisado" THEN 2 WHEN rol="autonomo" THEN 3 END`,
+`CASE WHEN rol="residente" THEN 1 WHEN rol="adjunto2" THEN 2 WHEN rol="adjunto1" THEN 3 END`,
 y ordena el desglose del gráfico por ese campo. No afecta a los datos, solo
 al orden visual.)*
 
@@ -1710,15 +1720,16 @@ Nada de esto toca los casos ya guardados: no hay migraciones.
 
 ## Basales (OPBSL, PostPos1, PostPos2 y CL-BSL)
 
-En la ficha del caso, **Desarrollo intraoperatorio → Basales**, encima del Resumen,
+En la ficha del caso, **Desarrollo intraoperatorio → Basales**, encima del Resumen de la monitorización,
 está la misma tabla que en el **Registro intraoperatorio**: lo que escribas en un
 sitio sale en el otro y en la hoja impresa. Columnas: **OPBSL** (apertura),
 **PostPos1** y **PostPos2** (hasta dos basales tras cambios de posición, antes
 de empezar o a mitad de cirugía) y **CL-BSL** (cierre). PostPos2 solo existe en
-las filas de t-SEP y t-MEP, y los c-MEP solo llevan OPBSL y CL-BSL. Filas de t-SEP y t-MEP de cada extremidad, TOF y, según las
+las filas de t-SEP y t-MEP, y los c-MEP solo llevan OPBSL y CL-BSL. Filas de t-SEP y t-MEP de cada extremidad y, según las
 técnicas del caso, c-SEP, c-MEP, GRID (con el electrodo de estímulo y el contacto
-de la inversión de fase), corticobulbares, Onda D proximal y distal, PEATC, H-R y
-umbral del MEP. Más filas libres para lo que haga falta.
+de la inversión de fase), corticobulbares, Onda D proximal y distal (Prox. y
+Dist. D-Wave), PEATC y H-R. Más filas libres para lo que haga falta. (Umbral MEP
+y TOF se quitaron el 28-09-2026; el TOF sigue como botón del modo rápido.)
 
 ## Modo demostración
 
@@ -1737,8 +1748,9 @@ real, se abre con `?demo` al final de la dirección:
   y vuelve a los datos de ejemplo.
 - No hay botón para salir del modo demo, a propósito: para volver a tus
   datos abre la dirección normal, sin `?demo`.
-- Los precios y el material propio **no** aparecen: están en tu repositorio
-  privado, no en el código público.
+- Tus precios y tu material propio **no** aparecen (están en tu repositorio
+  privado); para enseñar el coste de cada cirugía, la demo trae **precios
+  inventados** del mismo orden que los reales.
 - **Visita guiada (opcional)** (12 pasos; antes «Empieza aquí», que parecía
   obligatorio): se ofrece la primera vez («Ahora no» la cierra) y se relanza
   desde el botón secundario de Inicio, con una nota que dice que no hace falta
