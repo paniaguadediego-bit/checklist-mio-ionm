@@ -192,7 +192,6 @@
 
   var TEXTOS = {
     /* --- Barra superior y herramientas --- */
-    escenario_aria:      { es: "Escenario de cirugía", en: "Surgery scenario" },
     idioma_titulo:       { es: "Switch to English", en: "Cambiar a español" },
     sync_titulo:         { es: "Sincronizar con GitHub", en: "Sync with GitHub" },
     btn_exportar_casos:  { es: "Informe de casos (PDF)", en: "Cases report (PDF)" },
@@ -289,7 +288,6 @@
     btn_etiquetas:       { es: "Etiquetas", en: "Labels" },
     btn_etiquetas_tit:   { es: "Gestionar etiquetas (tipos físicos de material)", en: "Manage labels (physical material types)" },
     btn_nuevo_mat_tit:   { es: "Añadir material nuevo al catálogo", en: "Add new material to the catalogue" },
-    btn_plegar_tit:      { es: "Plegar / desplegar", en: "Collapse / expand" },
     chip_tipo:           { es: "Tipo: {tipo}", en: "Type: {tipo}" },
     chip_sin_etiqueta:   { es: "sin etiqueta", en: "no label" },
     chip_editar_tit:     { es: "Editar este material", en: "Edit this material" },
@@ -320,8 +318,6 @@
                            en: "Deactivated: no longer offered for new cases, but still selected here" },
     perfil_label:        { es: "Perfil", en: "Profile" },
     perfil_elegir:       { es: "— sin resaltar —", en: "— no highlight —" },
-    tec_recomendada:     { es: "Recomendada en “{perfil}”. Decides tú si se marca.",
-                           en: "Recommended in “{perfil}”. You decide whether to select it." },
 
     /* --- Cajas --- */
     cajas_titulo:        { es: "Cajas", en: "Boxes" },
@@ -483,9 +479,6 @@
     color_granate:       { es: "Granate", en: "Maroon" },
 
     /* --- Casos --- */
-    btn_casos:           { es: "Gestión de casos", en: "Case management" },
-    btn_casos_tit:       { es: "Registrar y consultar casos", en: "Record and review cases" },
-    dlg_casos_titulo:    { es: "Gestión de casos", en: "Case management" },
     casos_nuevo_cero:    { es: "Crear caso", en: "Create case" },
     casos_nuevo_cero_ay: { es: "Te lleva al Organizador de Montajes para construir el montaje de este caso -a mano, o a partir de una plantilla-. Rellenas el resto de la ficha cuando quieras.",
                            en: "Takes you to the Montage Organizer to build this case's montage -from scratch, or from a template-. Fill in the rest of the form whenever you like." },
@@ -674,9 +667,6 @@
     caso_notas_montaje_tecnicas: { es: "Notas de las Técnicas", en: "Techniques notes" },
     caso_notas_montaje: { es: "Notas del montaje", en: "Montage notes" },
     caso_notas_material: { es: "Notas del material", en: "Material notes" },
-    caso_sub_cajas:      { es: "Cajas y entradas", en: "Boxes and inputs" },
-    caso_sub_material:   { es: "Material", en: "Material" },
-    caso_sub_tecnicas:   { es: "Técnicas", en: "Techniques" },
     caso_tecnicas_parametros: { es: "Cómo se realizó cada técnica", en: "How each technique was performed" },
     caso_tecnicas_parametros_ay: { es: "Para cada técnica marcada como realizada arriba: sus propios parámetros reales usados en este caso concreto -cada técnica trae los suyos, no son los mismos para todas-. Queda plegado y vacío hasta que abras una técnica y escribas algo.",
                                     en: "For each technique ticked as performed above: its own actual parameters used in this specific case -each technique has its own set, not the same for all-. Stays collapsed and empty until you open a technique and write something." },
@@ -724,8 +714,6 @@
     umbral_raices_cab_izq:   { es: "Izquierda (mA)", en: "Left (mA)" },
     umbral_raices_cab_der:   { es: "Derecha (mA)", en: "Right (mA)" },
     umbral_raices_cab_nivel: { es: "Nivel", en: "Level" },
-    umbral_raices_izq_corto: { es: "I", en: "L" },
-    umbral_raices_der_corto: { es: "D", en: "R" },
     caso_umbral_tornillos_pediculares: { es: "Notas de umbral EMG de tornillos pediculares", en: "Notes on pedicle screw EMG threshold" },
     caso_umbral_tornillos_pediculares_ay: { es: "Cualquier cosa que no encaje en los niveles de arriba: umbrales no testados por raíz, matices, comparaciones entre tornillos, etc.",
                            en: "Anything that doesn't fit the levels above: thresholds not tested by root, nuances, comparisons between screws, etc." },
@@ -849,7 +837,7 @@
     montaje_sin_autor:   { es: "de fábrica", en: "factory" },
     montaje_autor_ido:   { es: "otro usuario", en: "another user" },
     montaje_no_es_tuyo:  { es: "Esta plantilla es de {autor}, así que no puedes cambiarla.\n\nUsa «Duplicar» para hacerte una copia tuya y trabajar sobre ella.",
-                           en: "This montage belongs to {autor}, so you cannot change it.\n\nUse “Duplicate” to make your own copy and work on that." },
+                           en: "This template belongs to {autor}, so you cannot change it.\n\nUse “Duplicate” to make your own copy and work on that." },
     montaje_de:          { es: "{nombre} · {autor}", en: "{nombre} · {autor}" },
     caso_sin_id:         { es: "Caso sin número", en: "Case with no number" },
     btn_menu_tit:        { es: "Idioma y guía de uso", en: "Language and user guide" },
@@ -955,7 +943,6 @@
     equipo_elegir_intro: { es: "Las cajas de conexión dependen del equipo; el material es el mismo.", en: "The connection boxes depend on the equipment; the material is the same." },
     equipo_opcion:       { es: "{corto} · {nombre}", en: "{corto} · {nombre}" },
     equipo_corto:        { es: "Equipo {corto}", en: "Equipment {corto}" },
-    equipo_rotulo:       { es: "Equipo {equipo}", en: "Equipment {equipo}" },
     caso_equipo_id:      { es: "Equipo", en: "Equipment" },
     caso_equipo_id_ay:      { es: "Se elige al crear el caso y decide qué cajas se usan. Solo se puede cambiar mientras el montaje esté vacío.", en: "Chosen when the case is created; it decides which boxes are used. It can only be changed while the setup is empty." },
     casos_filtro_equipo: { es: "Equipo", en: "Equipment" },
@@ -976,7 +963,6 @@
     demo_centro:         { es: "Hospital de demostración", en: "Demo hospital" },
     tile_simulador:      { es: "Simulador", en: "Simulator" },
     tile_bibliografia:   { es: "Bibliografía recomendada", en: "Recommended reading" },
-    docente_tab_material:{ es: "Material", en: "Material" },
     docente_tab_teoria:  { es: "Teoría básica de IONM", en: "IONM basic theory" },
     en_construccion:     { es: "En construcción.", en: "Under construction." },
     docente_material_intro: { es: "Todo el material del catálogo, agrupado por categoría, con una breve descripción de cada uno. El color y el borde de cada ítem dicen su tipo físico (leyenda de abajo). El icono 📷 abre la foto cuando la hay.",
@@ -1111,10 +1097,6 @@
     sim_grupo_estimulo:  { es: "Parámetros de estimulación", en: "Stimulation parameters" },
     sim_grupo_filtros:   { es: "Filtros, barrido y sensibilidad", en: "Filters, sweep and sensitivity" },
     sim_v_borrar:        { es: "Quitar ventana", en: "Remove window" },
-    btn_tecnicas_mio:    { es: "Técnicas MIO", en: "MIO Techniques" },
-    btn_tecnicas_mio_tit: { es: "Sitios de estimulación/registro, filtros y barridos de cada técnica, para consulta durante el caso",
-                           en: "Stimulation/recording sites, filters and sweep times for each technique, for reference during a case" },
-    dlg_tecnicas_mio_titulo: { es: "Técnicas MIO", en: "MIO Techniques" },
     tecnicas_mio_intro:  { es: "Cada parámetro cuantitativo indica su fuente. Cuando dos fuentes dan valores distintos, se muestran ambos por separado: nunca se promedian ni se combinan.",
                            en: "Each quantitative parameter names its source. When two sources give different values, both are shown separately — never averaged or merged." },
     tecnicas_mio_aviso_en: { es: "This section is only written in Spanish for now.", en: "This section is only written in Spanish for now." },
@@ -1127,7 +1109,6 @@
     tecmio_col_registro: { es: "Registro", en: "Recording" },
     tecmio_col_filtros_barrido: { es: "Filtros y barrido", en: "Filters and sweep" },
     tecmio_fuentes_titulo: { es: "Fuentes", en: "Sources" },
-    btn_docente:         { es: "Docente", en: "Teaching" },
     docente_titulo:      { es: "Miotomas: qué músculos monitorizar", en: "Myotomes: which muscles to monitor" },
     docente_intro:       { es: "Pulsa en la columna los <b>niveles</b> que abarca la cirugía. A la izquierda aparecen los músculos que dependen de esas raíces; pulsa uno para llevarlo a los <b>monitorizados</b> de la derecha, y pulsa allí para quitarlo. Los rangos son los que se enseñan habitualmente: la inervación se solapa y no todas las escuelas dan los mismos límites, así que están para discutirlos.",
                            en: "Click the <b>levels</b> the surgery covers on the spine. The muscles depending on those roots appear on the left; click one to move it to <b>monitored</b> on the right, and click there to remove it. The ranges are the ones usually taught: innervation overlaps and not every school gives the same limits, so they are there to be discussed." },
@@ -1182,7 +1163,6 @@
                            en: "Saved automatically, into the case. The original montage is untouched." },
     barra_caso_volver:   { es: "Volver al caso", en: "Back to the case" },
     barra_plantilla_texto: { es: "Plantilla", en: "Template" },
-    barra_plantilla_ninguna: { es: "— sin plantilla activa —", en: "— no active template —" },
     caso_reconstruccion_parcial: { es: "De este caso solo se han podido recolocar {recuperadas} de {esperadas} entradas.\n\nEs un caso antiguo, de antes de que se guardara el montaje completo, y alguna de sus entradas ya no existe en las cajas de ahora.\n\nSi sigues y cambias algo, el caso se quedará con las {recuperadas} que se ven. ¿Continuar?",
                            en: "Only {recuperadas} of {esperadas} inputs could be restored for this case.\n\nIt is an old case, from before the full montage was stored, and some of its inputs no longer exist in the current boxes.\n\nIf you continue and change anything, the case will keep only the {recuperadas} shown. Continue?" },
     montajes_cuenta:     { es: "{n} de {total}", en: "{n} of {total}" },
@@ -1223,19 +1203,16 @@
     reg_p_tecnicas_ayuda: { es: "Salen de la ficha del caso (Técnicas realizadas) y se cambian allí.", en: "They come from the case form (Techniques performed) and are changed there." },
     reg_p_sin_tecnicas:  { es: "El caso no tiene técnicas marcadas.", en: "The case has no techniques ticked." },
     reg_p_anest_ayuda:   { es: "Es el mismo dato que el apartado Anestesia de la ficha del caso: se escribe aquí o allí y se ve en los dos. Lo que cambie durante la cirugía (bolos, relajante, TAM…) va en los eventos de anestesia, con su hora.", en: "It is the same data as the Anaesthesia section of the case form: write it here or there and it shows in both. Whatever changes during surgery (boluses, relaxant, MAP…) goes in the anaesthesia events, with its time." },
-    reg_p_sin_anest:     { es: "El caso no tiene datos de anestesia.", en: "The case has no anaesthesia data." },
     reg_p_motor:         { es: "Electrodo motor", en: "Motor electrode" },
     reg_p_musculos:      { es: "Músculos registrados", en: "Muscles recorded" },
     reg_p_hora:          { es: "Hora", en: "Time" },
     reg_p_tipo:          { es: "Tipo", en: "Type" },
     reg_p_que:           { es: "Qué ha pasado", en: "What happened" },
     reg_p_evento_nuevo:  { es: "+ Evento (hora actual)", en: "+ Event (current time)" },
-    reg_p_sin_eventos:   { es: "Todavía no hay eventos.", en: "No events yet." },
     reg_p_alarma_nueva:  { es: "+ Alarma (hora actual)", en: "+ Alarm (current time)" },
     reg_p_sin_alarmas:   { es: "Sin alarmas.", en: "No alarms." },
     reg_p_modalidad:     { es: "Técnica · lado", en: "Technique · side" },
     reg_p_criterio:      { es: "Criterio", en: "Criterion" },
-    reg_p_causa:         { es: "Maniobra / causa probable", en: "Manoeuvre / probable cause" },
     reg_p_medidas:       { es: "Medidas adoptadas", en: "Measures taken" },
     reg_p_recup:         { es: "Recuperación", en: "Recovery" },
     reg_p_h_recup:       { es: "Hora de recuperación", en: "Recovery time" },
@@ -1261,10 +1238,6 @@
     reg_p_intensidad:    { es: "Intensidad (mA)", en: "Intensity (mA)" },
     reg_p_musculo:       { es: "Músculo (respuesta)", en: "Muscle (response)" },
     reg_p_fila_nueva:    { es: "+ Fila", en: "+ Row" },
-    reg_p_nivel:         { es: "Nivel", en: "Level" },
-    reg_p_izq_ma:        { es: "Izq. (mA)", en: "Left (mA)" },
-    reg_p_der_ma:        { es: "Der. (mA)", en: "Right (mA)" },
-    reg_p_nivel_repetido: { es: "Ese nivel ya está en la tabla.", en: "That level is already in the table." },
     reg_p_compartido:    { es: "⇄ = el mismo dato que en la ficha del caso: lo que escribas aquí aparece allí, y al revés.", en: "⇄ = the same data as in the case form: what you type here appears there, and vice versa." },
     reg_p_solo_caso:     { es: "Sale de la ficha del caso; se cambia allí.", en: "Comes from the case form; change it there." },
     registro_fila_quitar_conf: { es: "¿Quitar esta fila? Tiene datos escritos.", en: "Remove this row? It has data." },
@@ -2490,8 +2463,6 @@
   var montajeCaso = null;
   var casoEditandoUid = null;
 
-  function editandoMontajeDeCaso() { return !!montajeCaso; }
-
   function escenarioActual() {
     if (montajeCaso) return montajeCaso;
     return montajes[activo] || null;
@@ -3228,12 +3199,19 @@
     return fotosDBPromesa;
   }
 
+  // Qué fotos ya están en IndexedDB en esta sesión, con la longitud de su
+  // dataUrl como firma (auditoría 28-09-2026, T2): cada guardado de un caso
+  // volvía a escribir TODAS sus fotos, y el Registro guarda cada ~1,2 s
+  // durante la cirugía. Una foto con el mismo id no cambia de contenido
+  // (se reemplaza con otro id), así que basta con no repetirla.
+  var fotosYaEnIDB = {};
   function guardarFotoIDB(clave, dataUrl) {
+    if (fotosYaEnIDB[clave] === String(dataUrl).length) return Promise.resolve();
     return abrirFotosDB().then(function (db) {
       return new Promise(function (resolve, reject) {
         var tx = db.transaction(FOTOS_DB_ALMACEN, "readwrite");
         tx.objectStore(FOTOS_DB_ALMACEN).put(dataUrl, clave);
-        tx.oncomplete = function () { resolve(); };
+        tx.oncomplete = function () { fotosYaEnIDB[clave] = String(dataUrl).length; resolve(); };
         tx.onerror = function () { reject(tx.error); };
       });
     });
@@ -3251,6 +3229,7 @@
   }
 
   function borrarFotoIDB(clave) {
+    delete fotosYaEnIDB[clave];
     return abrirFotosDB().then(function (db) {
       return new Promise(function (resolve, reject) {
         var tx = db.transaction(FOTOS_DB_ALMACEN, "readwrite");
@@ -3293,7 +3272,10 @@
     return Promise.all((listaImgs || []).map(function (im) {
       if (!im || !im.id || im[campoUrl]) return Promise.resolve();
       return leerFotoIDB(prefijo + ":" + im.id).then(function (dataUrl) {
-        if (dataUrl) im[campoUrl] = dataUrl;
+        if (dataUrl) {
+          im[campoUrl] = dataUrl;
+          fotosYaEnIDB[prefijo + ":" + im.id] = String(dataUrl).length;
+        }
       }).catch(function () { /* no se pudo leer, la miniatura sale vacía */ });
     }));
   }
@@ -7764,7 +7746,7 @@
       });
       control.value = equipoDe(casoAbierto);
       control.addEventListener("change", function () { pintarEquipoSubtitulo(control.value); });
-      var conMontaje = casoAbierto && calcularResumen(montajeDesdeCaso(casoAbierto)).entradas > 0;
+      var conMontaje = !!(resumenFicha && resumenFicha.entradas > 0);
       control.disabled = !!conMontaje;
       div.appendChild(control);
       if (def.ay) div.appendChild(ayudaCampo(def.ay));
@@ -7927,7 +7909,12 @@
     return s;
   }
 
+  // Resumen del montaje del caso abierto, calculado una sola vez por pintado
+  // de la ficha (auditoría 28-09-2026, T7): lo usan el campo Equipo y
+  // «Montaje / Material».
+  var resumenFicha = null;
   function renderFichaCaso() {
+    resumenFicha = casoAbierto ? calcularResumen(montajeDesdeCaso(casoAbierto)) : null;
     camposCaso = {};
     oyentesTecnicasRealizadas = [];
     condicionalesPendientes = [];
@@ -7990,7 +7977,7 @@
         if (c.n_cajas) {
           var tituloDetalle = document.createElement("h4");
           tituloDetalle.className = "caso-cajas-detalle-titulo";
-          var resDetalle = calcularResumen(montajeDesdeCaso(c));
+          var resDetalle = resumenFicha;
           tituloDetalle.textContent = T("resumen_cajas", { n: resDetalle.cajas.length });
           contCajas.appendChild(tituloDetalle);
 
@@ -11644,18 +11631,6 @@
   // durante el renderizado en curso: lo consultan pintarTextoConResaltado()
   // y tecnicaCoincideTecMio() sin necesidad de pasarlo por cada función.
   var tecMioFiltro = "";
-
-  // Ya no se usa para agrupar la pantalla (ver TECMIO_FAMILIAS, reorganización
-  // del 05-09-2026), pero se deja: "region" sigue viniendo en cada técnica de
-  // referencia/tecnicas-mio.json y puede hacer falta para otra vista el día de mañana.
-  var TECMIO_REGIONES = {
-    columna_medula: "Columna / médula espinal",
-    fosa_posterior_tronco: "Fosa posterior / tronco",
-    cirugia_cerebral: "Cirugía cerebral",
-    craneotomia_despierta: "Craneotomía despierta",
-    plexo_periferico: "Plexo braquial / nervio periférico",
-    general: "General / multipropósito"
-  };
 
   // Agrupación de la pantalla "Técnicas IONM" por tipo de técnica (pedido por
   // el usuario, 05-09-2026), no por zona quirúrgica -ver el comentario largo al
@@ -15553,19 +15528,6 @@
     { v: "indeterminado", l: "Indeterminado", l_en: "Undetermined" }
   ];
 
-  // Técnicas del caso (ids de data/surgeries.js) que equivalen 1:1 a una
-  // casilla de "Modalidades": solo se marcan solas cuando la equivalencia es
-  // exacta. El detalle que la técnica no dice (qué nervio, qué lado) se
-  // marca a mano.
-  function regTec(ids) {
-    var f = function (c) {
-      var hechas = c.tecnicas_realizadas || [];
-      return ids.some(function (id) { return hechas.indexOf(id) !== -1; });
-    };
-    f.ids = ids;   // para saber qué técnicas del catálogo ya tienen casilla propia
-    return f;
-  }
-
   // ¿El montaje del caso lleva una sonda monopolar (las de la categoría
   // "Sondas": sonda_mono_esferica, sonda_mono_recta)? Coloca la casilla
   // "Monopolar" del mapeo sola.
@@ -15581,95 +15543,6 @@
     (esc.extras || []).forEach(function (id) { if (String(id).indexOf("sonda_mono_") === 0) hay = true; });
     return hay;
   }
-
-  // Técnicas del catálogo que NINGUNA casilla de "Modalidades" cubre 1:1
-  // (t-SEP, t-MEP, PEATC, ERG, PAN, Onda F facial, LSR, PRM/ARM, ENG
-  // continua, EOG, columnas dorsales, nervio periférico...), como fila
-  // extra al final: así salen TODAS las técnicas indexadas. Solo las activas,
-  // más las desactivadas que el caso ya tenga marcadas.
-  function regOtrasTecnicas(c) {
-    var cubiertas = {};
-    REG_MODALIDADES.forEach(function (fila) {
-      fila.grupos.forEach(function (g) {
-        g.items.forEach(function (it) {
-          if (it.der && it.der.ids) it.der.ids.forEach(function (id) { cubiertas[id] = true; });
-        });
-      });
-    });
-    var hechas = c ? (c.tecnicas_realizadas || []) : [];
-    return TECNICAS.filter(function (t) {
-      return !cubiertas[t.id] && (t.activa !== false || hechas.indexOf(t.id) !== -1);
-    }).map(function (t) {
-      return { id: "m_tec_" + t.id, l: campo(t, "etiqueta"), der: regTec([t.id]) };
-    });
-  }
-
-  function regFilasModalidades(c) {
-    var otras = regOtrasTecnicas(c);
-    return REG_MODALIDADES.concat(otras.length
-      ? [{ l: T("registro_otras_tecnicas"), grupos: [{ l: "", items: otras }] }] : []);
-  }
-
-  var REG_MODALIDADES = [
-    { l: "Sensitivas", l_en: "Sensory", grupos: [
-      { l: "SEP", items: [
-        { id: "m_pess_mediano", l: "Mediano", l_en: "Median" },
-        { id: "m_pess_cubital", l: "Cubital", l_en: "Ulnar" },
-        { id: "m_pess_tibial", l: "Tibial", l_en: "Tibial" },
-        { id: "m_pess_pudendo", l: "Pudendo", l_en: "Pudendal" }] },
-      { l: "PEAT", items: [
-        { id: "m_peat_d", l: "D", l_en: "R" },
-        { id: "m_peat_i", l: "I", l_en: "L" },
-        { id: "m_peat_pac", l: "PAC / ECochG" },
-        { id: "m_pev_flash", l: "PEV flash", der: regTec(["pev", "c_pev"]) }] }
-    ] },
-    { l: "Motoras", l_en: "Motor", grupos: [
-      { l: "MEP", items: [
-        { id: "m_pem_mmss", l: "Miembros superiores", l_en: "Upper limbs" },
-        { id: "m_pem_mmii", l: "Miembros inferiores", l_en: "Lower limbs" },
-        { id: "m_pem_esf", l: "Esfínter anal", l_en: "Anal sphincter" }] },
-      { l: "Corticobulbares", l_en: "Corticobulbar", items: [
-        { id: "m_cb_vii", l: "VII" },
-        { id: "m_cb_ixx", l: "IX-X" },
-        { id: "m_cb_xii", l: "XII" },
-        { id: "m_onda_d", l: "Onda D", l_en: "D wave", der: regTec(["onda_d"]) },
-        { id: "m_refl_h", l: "Reflejo H", l_en: "H reflex", der: regTec(["hr_popliteo", "hr_masetero", "hr_cuadriceps", "reflejo_h"]) }] }
-    ] },
-    { l: "EMG y reflejos", l_en: "EMG and reflexes", grupos: [
-      { l: "EMG", items: [
-        { id: "m_emg_libre", l: "Libre", l_en: "Free-run", der: regTec(["emg"]) },
-        { id: "m_emg_tornillos", l: "Estimulado: Tornillos", l_en: "Triggered: Screws", der: regTec(["mapeo_raices_tornillos"]) },
-        { id: "m_emg_raices", l: "Raíces", l_en: "Roots", der: regTec(["mapeo_raices_tornillos"]) },
-        { id: "m_emg_ppcc", l: "PPCC", l_en: "CN" }] },
-      { l: "Reflejos", l_en: "Reflexes", items: [
-        { id: "m_bcr", l: "BCR", der: regTec(["rbc"]) },
-        { id: "m_lar", l: "LAR", der: regTec(["rx_lar"]) },
-        { id: "m_blink", l: "Blink", der: regTec(["br"]) },
-        { id: "m_tcr", l: "TCR", der: regTec(["rx_tcr"]) },
-        { id: "m_tvcr", l: "Trigémino-vocal", l_en: "Trigemino-vocal", der: regTec(["rx_tvcr"]) }] }
-    ] },
-    { l: "Mapeo", l_en: "Mapping", grupos: [
-      { l: "", items: [
-        { id: "m_map_fase", l: "Inversión de fase", l_en: "Phase reversal", der: regTec(["phase_reversal"]) },
-        { id: "m_map_cortical", l: "Cortical motor", l_en: "Cortical motor", der: regTec(["mapeo_cortical"]) },
-        { id: "m_map_subcortical", l: "Subcortical", l_en: "Subcortical", der: regTec(["mapeo_subcortical"]) },
-        { id: "m_map_monopolar", l: "Monopolar", l_en: "Monopolar", der: regTieneSondaMonopolar },
-        { id: "m_map_raabe", l: "Raabe", l_en: "Raabe" },
-        { id: "m_map_otra_sonda", l: "Otra sonda", l_en: "Other probe" },
-        { id: "m_map_iv", l: "Suelo IV v.", l_en: "4th ventricle floor", der: regTec(["mapeo_iv_ventriculo"]) },
-        { id: "m_map_raices", l: "Raíces / cono", l_en: "Roots / conus" },
-        { id: "m_map_lenguaje", l: "Lenguaje / despierto", l_en: "Language / awake", der: regTec(["mapeo_lenguaje"]) }] }
-    ] },
-    { l: "Actividad / otros", l_en: "Activity / other", grupos: [
-      { l: "", items: [
-        { id: "m_eeg", l: "EEG", der: regTec(["eeg"]) },
-        { id: "m_ecog", l: "ECoG", der: regTec(["ecog"]) },
-        { id: "m_grid", l: "Grid" },
-        { id: "m_strip", l: "Strip" },
-        { id: "m_bis", l: "BIS / DSA" },
-        { id: "m_tof", l: "TOF" }] }
-    ], texto: { id: "m_otro", l: "Otro", l_en: "Other" } }
-  ];
 
   var REG_MONTAJE = [
     { id: "mont_tes", l: "TES", t: "text" },
@@ -16134,73 +16007,6 @@
     cont.appendChild(grid);
   }
 
-  function pintarSeccionModalidades(sec, cont) {
-    var d = registroDatos();
-    var c = registroCaso();
-    var ids = c ? (c.tecnicas_realizadas || []) : [];
-    if (c) {
-      var linea = document.createElement("p");
-      linea.className = "reg-tecnicas-caso";
-      var etiquetas = TECNICAS.filter(function (t) { return ids.indexOf(t.id) !== -1; })
-        .map(function (t) { return campo(t, "etiqueta"); });
-      var b = document.createElement("b");
-      b.textContent = T("registro_tecnicas_caso") + " ";
-      linea.appendChild(b);
-      linea.appendChild(document.createTextNode(etiquetas.length ? etiquetas.join(", ") : T("registro_sin_tecnicas")));
-      cont.appendChild(linea);
-      var nota = document.createElement("p");
-      nota.className = "reg-ayuda";
-      nota.textContent = T("registro_mod_ayuda");
-      cont.appendChild(nota);
-    }
-    regFilasModalidades(c).forEach(function (fila) {
-      var f = document.createElement("div");
-      f.className = "reg-mod-fila";
-      var rot = document.createElement("div");
-      rot.className = "reg-mod-rotulo";
-      rot.textContent = regL(fila);
-      f.appendChild(rot);
-      var cuerpo = document.createElement("div");
-      cuerpo.className = "reg-mod-cuerpo";
-      fila.grupos.forEach(function (g) {
-        var grp = document.createElement("div");
-        grp.className = "reg-mod-grupo";
-        if (g.l) {
-          var gl = document.createElement("span");
-          gl.className = "reg-mod-grupo-l";
-          gl.textContent = regL(g);
-          grp.appendChild(gl);
-        }
-        g.items.forEach(function (it) {
-          var def = { id: it.id, l: it.l, l_en: it.l_en, t: "check", der: it.der };
-          var lab = document.createElement("label");
-          lab.className = "check reg-mod-item";
-          var cb = document.createElement("input");
-          cb.type = "checkbox";
-          cb.checked = !!regGet(d.v, def);
-          cb.addEventListener("change", function () { d.v[it.id] = cb.checked; registroGuardarYa(); });
-          var sp = document.createElement("span");
-          sp.textContent = regL(it);
-          lab.appendChild(cb);
-          lab.appendChild(sp);
-          grp.appendChild(lab);
-        });
-        cuerpo.appendChild(grp);
-      });
-      if (fila.texto) cuerpo.appendChild(regControl({ id: fila.texto.id, l: fila.texto.l, l_en: fila.texto.l_en, t: "text" }, d.v));
-      f.appendChild(cuerpo);
-      cont.appendChild(f);
-    });
-    var montaje = document.createElement("div");
-    montaje.className = "reg-grid";
-    REG_MONTAJE.forEach(function (def) { montaje.appendChild(regControl(def, d.v)); });
-    var rotM = document.createElement("div");
-    rotM.className = "reg-mod-rotulo reg-mod-rotulo-suelto";
-    rotM.textContent = T("registro_montaje");
-    cont.appendChild(rotM);
-    cont.appendChild(montaje);
-  }
-
   // "guardar" = { cambiar, salir }: por defecto el guardado del Registro. La
   // ficha del caso pasa los suyos (allí se guarda con "Guardar").
   function pintarBloqueBasales(titulo, filas, prefijo, libres, cont, d, guardar) {
@@ -16277,179 +16083,6 @@
     return cols.some(function (col) { return col.t === "check" ? !!fila[col.id] : !!fila[col.id]; });
   }
 
-  function pintarSeccionLista(sec, cont, alCambiar) {
-    var d = registroDatos();
-    var lista = d[sec.lista];
-    while (sec.min && lista.length < sec.min) lista.push({ id: uuid() });
-
-    if (sec.antes) {
-      var previos = document.createElement("div");
-      previos.className = "reg-grid reg-grid-previos";
-      sec.antes.forEach(function (def) { previos.appendChild(regControl(def, d.v)); });
-      cont.appendChild(previos);
-    }
-
-    var acciones = document.createElement("div");
-    acciones.className = "reg-lista-acciones";
-    var btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "primario";
-    btn.textContent = campo(sec, "boton");
-    acciones.appendChild(btn);
-    cont.appendChild(acciones);
-
-    var filas = document.createElement("div");
-    filas.className = "reg-filas";
-    cont.appendChild(filas);
-
-    function pintarFilas(enfocarUltima) {
-      filas.textContent = "";
-      lista.forEach(function (fila, i) {
-        var card = document.createElement("div");
-        card.className = "reg-fila";
-        var cab = document.createElement("div");
-        cab.className = "reg-fila-cab";
-        var num = document.createElement("b");
-        num.textContent = sec.prefijo ? sec.prefijo + (i + 1) : "#" + (i + 1);
-        cab.appendChild(num);
-        var quitar = document.createElement("button");
-        quitar.type = "button";
-        quitar.className = "reg-fila-quitar";
-        quitar.textContent = "✕";
-        quitar.title = T("registro_fila_quitar");
-        quitar.addEventListener("click", function () {
-          if (regFilaConContenido(fila, sec.cols) && !confirm(T("registro_fila_quitar_conf"))) return;
-          lista.splice(i, 1);
-          registroGuardarYa();
-          pintarFilas(false);
-          alCambiar();
-        });
-        cab.appendChild(quitar);
-        card.appendChild(cab);
-        var grid = document.createElement("div");
-        grid.className = "reg-fila-grid";
-        sec.cols.forEach(function (col) { grid.appendChild(regControl(col, fila, alCambiar)); });
-        card.appendChild(grid);
-        filas.appendChild(card);
-      });
-      if (enfocarUltima && filas.lastChild) {
-        filas.lastChild.scrollIntoView({ block: "center", behavior: "smooth" });
-        var primero = filas.lastChild.querySelector("input[type=text], textarea");
-        if (primero) primero.focus({ preventScroll: true });
-      }
-    }
-    btn.addEventListener("click", function () {
-      var nueva = { id: uuid() };
-      if (sec.ahora) nueva.hora = horaAhora();
-      lista.push(nueva);
-      registroGuardarYa();
-      pintarFilas(true);
-      alCambiar();
-    });
-    pintarFilas(false);
-  }
-
-  function pintarSeccionModular(sec, cont) {
-    var d = registroDatos();
-    var FILAS = 6, COLS = 10;
-    while (d.modular.length < FILAS) d.modular.push([]);
-    var envoltura = document.createElement("div");
-    envoltura.className = "reg-modular-scroll";
-    var tabla = document.createElement("div");
-    tabla.className = "reg-modular";
-    function pintar() {
-      tabla.textContent = "";
-      d.modular.forEach(function (fila, r) {
-        var f = document.createElement("div");
-        f.className = "reg-modular-fila" + (r === 0 ? " reg-modular-cab" : "");
-        for (var c = 0; c < COLS; c++) {
-          (function (c) {
-            var inp = document.createElement("input");
-            inp.type = "text";
-            inp.value = fila[c] || "";
-            inp.setAttribute("aria-label", (r === 0 ? T("registro_mod_cab") : T("registro_mod_fila", { n: r })) + " · " + (c + 1));
-            inp.addEventListener("input", function () { fila[c] = inp.value; registroGuardar(); });
-            inp.addEventListener("change", registroGuardarYa);
-            f.appendChild(inp);
-          })(c);
-        }
-        tabla.appendChild(f);
-      });
-    }
-    pintar();
-    envoltura.appendChild(tabla);
-    cont.appendChild(envoltura);
-    var mas = document.createElement("button");
-    mas.type = "button";
-    mas.textContent = T("registro_mod_mas");
-    mas.addEventListener("click", function () { d.modular.push([]); registroGuardarYa(); pintar(); });
-    cont.appendChild(mas);
-  }
-
-  function pintarSeccionImagenes(sec, cont) {
-    var d = registroDatos();
-    var lista = d.imagenes;
-    var galeria = document.createElement("div");
-    galeria.className = "caso-imagenes-galeria";
-    function pintarGaleria() {
-      galeria.textContent = "";
-      lista.forEach(function (im) {
-        var marco = document.createElement("div");
-        marco.className = "caso-imagen-marco";
-        var mini = document.createElement("img");
-        mini.src = im.dataUrl;
-        mini.alt = im.nombre || "";
-        mini.className = "caso-imagen-mini";
-        mini.addEventListener("click", function () { abrirFotoSonda(im.dataUrl, im.nombre || ""); });
-        var quitar = document.createElement("button");
-        quitar.type = "button";
-        quitar.className = "caso-imagen-quitar";
-        quitar.textContent = "✕";
-        quitar.title = T("caso_imagen_quitar_tit");
-        quitar.addEventListener("click", function () {
-          if (!confirm(T("apunte_foto_borrar_conf"))) return;
-          var i = lista.indexOf(im);
-          if (i !== -1) lista.splice(i, 1);
-          registroGuardarYa();
-          pintarGaleria();
-        });
-        marco.appendChild(mini);
-        marco.appendChild(quitar);
-        galeria.appendChild(marco);
-      });
-    }
-    pintarGaleria();
-    var procesar = function (files) {
-      Array.prototype.slice.call(files).forEach(function (f) {
-        comprimirImagen(f, 1600, 0.85).then(function (dataUrl) {
-          lista.push({ id: uuid(), nombre: f.name, dataUrl: dataUrl, fecha: new Date().toISOString() });
-          registroGuardarYa();
-          pintarGaleria();
-        }).catch(function () { alert(T("caso_imagen_error")); });
-      });
-    };
-    var entrada = document.createElement("input");
-    entrada.type = "file";
-    entrada.accept = "image/*";
-    entrada.multiple = true;
-    entrada.hidden = true;
-    entrada.addEventListener("change", function () { procesar(entrada.files); entrada.value = ""; });
-    var btnAdd = document.createElement("button");
-    btnAdd.type = "button";
-    btnAdd.className = "caso-imagen-anadir";
-    btnAdd.textContent = T("caso_imagen_anadir");
-    btnAdd.addEventListener("click", function () { entrada.click(); });
-    var camara = crearBotonCamara(procesar);
-    var acciones = document.createElement("div");
-    acciones.className = "caso-imagen-acciones";
-    acciones.appendChild(btnAdd);
-    acciones.appendChild(camara.boton);
-    cont.appendChild(galeria);
-    cont.appendChild(acciones);
-    cont.appendChild(entrada);
-    cont.appendChild(camara.entrada);
-  }
-
   // Cuánto lleva escrito una sección, para el número del encabezado.
   function regCuenta(sec) {
     var d = registroDatos();
@@ -16521,13 +16154,13 @@
         var n = regCuenta(sec);
         cuenta.textContent = n ? String(n) : "";
       };
+      // Cada sección tiene su pintado propio en REG_PANTALLA (o no se enseña);
+      // A usa los campos genéricos y E, la tabla de basales. El pintado
+      // genérico de listas, zona modular, imágenes y modalidades se retiró
+      // el 29-09-2026: ya no se alcanzaba (auditoría, T1).
       if (enPantalla) enPantalla(sec, cuerpo, pintarCuenta);
       else if (sec.tipo === "campos") pintarSeccionCampos(sec, cuerpo);
-      else if (sec.tipo === "modalidades") pintarSeccionModalidades(sec, cuerpo);
       else if (sec.tipo === "basales") pintarSeccionBasales(sec, cuerpo);
-      else if (sec.tipo === "lista") pintarSeccionLista(sec, cuerpo, pintarCuenta);
-      else if (sec.tipo === "modular") pintarSeccionModular(sec, cuerpo);
-      else if (sec.tipo === "imagenes") pintarSeccionImagenes(sec, cuerpo);
       pintarCuenta();
       det.appendChild(cuerpo);
       cont.appendChild(det);
