@@ -35,6 +35,22 @@ con carpetas de colores, negrita/cursiva, fotos dentro de cada caja y
 de material en filas, con una breve descripción de uso de cada uno; tarjeta
 propia en *Después / consulta*).
 
+**Novedades del 28/09/2026 (noche): el Registro como volcador de datos.**
+- Lo que se recoge en quirófano se apunta en el **Registro intraoperatorio** y
+  la ficha de **Gestión de Casos** lo refleja **en espejo** (se puede escribir en
+  los dos lados): anestesia y sus eventos, basales, mapeo, alarmas, técnicas con
+  alteración, resultado de la señal, resultado esperable, incidencias y perla.
+- **Menos texto libre**: alarmas con listas (modalidad, criterio, causa y
+  medidas en casillas), resultado de la señal, resultado esperable y evolución
+  postquirúrgica en listas, y una **propuesta de concordancia** que se aplica
+  con un botón. Los textos que ya tenías se conservan al final del Resumen de la
+  monitorización.
+- **Basales** con OPBSL · PostPos1 · PostPos2 · CL-BSL; **umbrales por raíz** en
+  columna vertebral; ficha con **Montaje / Material** y **Técnicas** separados;
+  casillas más compactas; botón **Ocultar ayudas** en el menú ⋮; la demo enseña
+  el **coste** de cada cirugía con precios inventados; **Quirófano** en Inicio
+  con el Checklist y el Registro.
+
 **Novedades del 27-28/09/2026 (tras el congreso):**
 - **Registro intraoperatorio**: la **Hoja completa** sale por defecto y va
   simplificada en pantalla (la impresa no cambia): modalidades y anestesia de

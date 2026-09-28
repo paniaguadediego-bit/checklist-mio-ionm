@@ -218,6 +218,11 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Equipos (Inomed/Cadwell): cajas por equipo, elección, filtros, rótulos | `equipoDe()`, `cajasDe()`, `CAJAS_TODAS`, `equiposConCajas()`, `elegirEquipo()`, `nodoMarcaEquipo()`, `itemEnEquipo()` | ver `grep` |
 | Cajas con grupos, rejilla, puertos con luz y polos − / + (Cadwell) | `entradasDe()` (`grupos`, `polos`), `renderCajaFisica()` (`rejilla`, `recuadro`), `puertosEncendidos()`, `pintarPuertos()` | ver `grep` |
 | Registro ↔ ficha en espejo (28-09-2026): alarmas con listas cerradas (`REG_CRITERIO_AL`, `REG_CAUSA_AL`, `REG_MEDIDAS_AL`; ids, lo antiguo como opción más), mapeo E2 y eventos «An» pintados también en la ficha sobre la copia de trabajo (`guardar` = `REG_SIN_GUARDAR`); «Tipo de alerta»/«Medida correctora» se derivan al guardar; resultado de la señal ⇄ `cierre_resultado`; evolución en lista + propuesta de concordancia | `pintarAlarmas()`, `alarmasEnCaso()` (en `guardarCaso()`), `textoAlarma()`, `regSelectLista()`, `regIdLista()`, `pintarEventosAn()`, `propuestaConcordancia()`, `t: "alarmas_reg"/"mapeo_reg"/"eventos_an"` en `campoCaso()` | ver `grep` |
+| Columna vertebral de umbrales por raíz (ficha y E2 del Registro; salto discontinuo) | `pintarColumnaRaices()`, `REG_NIVELES_RAICES` | ver `grep` |
+| Columnas de basales OPBSL/PostPos1/PostPos2/CL-BSL | `REG_BASALES_COLS`, `regColBasal()` | ver `grep` |
+| Registro C · Anestesia en espejo y eventos An | `pintarPantallaAnestesia()`, `pintarEventosAn()` | ver `grep` |
+| Menú ⋮ «Ocultar ayudas» | `AYUDAS_KEY`, `aplicarAyudas()`, `body.sin-ayudas` en style.css | ver `grep` |
+| Precios inventados de la demo | `PRECIOS_DEMO`, `preciosDemo()` | ver `grep` |
 | Basales compartidas ficha ↔ Registro | `REG_BASALES_SENS/MOT`, `regFilasBasales()`, `pintarBloqueBasales()`, `seccionBasalesInforme()`, `t: "basales_reg"` en `campoCaso()` | ver `grep` |
 | Modo demostración (?demo) | `MODO_DEMO`, `almacenDemo()`, `sembrarDemo()`, `restablecerDemo()`, `prepararDemo()`; bloqueo de `fetch` a otros orígenes al principio del archivo | ver `grep` |
 | Visita guiada opcional (antes "Empieza aquí"; solo ?demo) | `TOUR_PASOS`, `TOUR_GRUPO_CASO`, `tourIr()`, `tourPreparar()`, `tourPintarTextos()`, `tourReservarSitio()`, `tourTerminar()` | ver `grep` |
@@ -340,79 +345,94 @@ distinta a la anterior, no importa el formato exacto.
 
 ## Estado del proyecto
 
-> **Resumen a 28-09-2026, tarde (léelo primero; el diario cronológico está en
+> **Resumen a 28-09-2026, noche (léelo primero; el diario cronológico está en
 > el repositorio privado, ver al final de este archivo).**
 > - **Pantallas (Inicio en tres bloques, tarjetas centradas, una línea bajo cada
 >   nombre):** *Antes de quirófano*: Organizador de Montajes, Gestión de Casos.
 >   *Quirófano*: Checklist pre-quirúrgico, Registro intraoperatorio.
->   *Después / consulta*: Técnicas IONM (solo con token), Material, Docencia (Miotomas,
->   Cama, Teoría básica pendiente), Simulador, Mis apuntes, Bibliografía
->   recomendada.
-> - **Registro intraoperatorio** (lo más trabajado el 27/28-09): vista **Hoja
->   completa por defecto** (`regVista()`), **Modo rápido** a elegir. La hoja en
->   PANTALLA va simplificada con `REG_PANTALLA` (id de sección → pintado propio;
->   `null` = no se enseña: D hitos, esquema, H zona modular); la hoja IMPRESA
->   (`construirHojaRegistroInterna()`) no cambia y los datos ocultos siguen
->   guardados. B y C de lectura desde la ficha. **E2 · Mapeo** por técnicas del
->   caso (`REG_MAPEO_BLOQUES`: `c_pem` GRID, `mapeo_cortical`/`subcortical` filas
->   C/S, `mapeo_nervio_periferico` tipo N, `mapeo_raices_tornillos` sobre
->   `caso.umbral_raices_niveles`; la tabla de tornillos salió de Basales y la
->   impresa se rellena con `regFilasTornillos()`). **F · Registro de fases y
->   eventos** en filas (5 en blanco, tipos F/E/An/T, fase del modo rápido).
->   G en fichas compactas. Cierre corto. **Campos compartidos con la ficha**
->   (`caso:` en `REG_SECCIONES`, `regGet()`/`regControl()`, marca ⇄): fecha, horas,
->   nivel, procedimiento, técnicas alteradas, incidencias, aprendizaje/destacado.
->   Modo rápido: bloques *Fase* y *Evento o alarma*, un solo «c-MEP», TOF propio,
->   horas de lo apuntado editables. Basales sin Umbral MEP ni TOF; D-Wave bajo GRID.
-> - **Material y catálogo**: 20 categorías en orden lógico (mismo en Catálogo y
->   Material); músculos de «ampliación» dentro de su categoría con separador
->   (`"ampliacion": true`); MMSS/MMII escritos enteros en lo visible; en Material
->   filas agrupadas (L./R., `SERIES_MATERIAL`), leyenda de tipos físicos y raíces o
->   `par` craneal. «Raabe (estímulo)» retirado (nadie lo usaba). En el móvil el
->   catálogo del Organizador no tiene scroll propio (`plegarCatalogo()` con ancla).
-> - **Desplegables**: lista propia para todos (`abrirListaSelect()`, manejador en
->   `document`); «Vincular a un caso» con `mejorarSelectorCaso()`.
-> - **Dos equipos** (Inomed/Cadwell): `equipo_id` en plantillas y casos (sin el
->   campo = Inomed); **no confundir con `equipo`**, texto libre retirado.
-> - **Técnicas IONM, privada** (27-09-2026): el contenido vive en el repo privado
->   (`referencia/tecnicas-mio.json` + LEEME); `bajarTecnicasMio()` lo baja con el
->   token; sin token o en demo no hay tarjeta; «Desconectar» lo borra.
->   **No volver a meter ese contenido aquí.**
-> - **Modo demo** `?demo`: datos ficticios aislados, sin red; visita guiada
->   opcional de 12 pasos (`TOUR_PASOS`), Técnicas IONM oculta. `localStorage` a
->   secas en todo el código, nunca `window.localStorage`.
+>   *Después / consulta*: Técnicas IONM (solo con token), Material, Docencia
+>   (Miotomas, Cama, Teoría básica pendiente), Simulador, Mis apuntes,
+>   Bibliografía recomendada. Menú ⋮: Catálogos, EN, Guía y **Ocultar/Mostrar
+>   ayudas** (`body.sin-ayudas`, por dispositivo).
+> - **Idea rectora del usuario (28-09 noche):** lo que se recoge en quirófano se
+>   apunta en el **Registro** y la ficha de Gestión de Casos lo refleja **en
+>   espejo** (se escribe en cualquiera de los dos); **menos texto libre**, listas
+>   cerradas con ids para poder sacar datos. Al cerrar un texto libre a lista, lo
+>   escrito en los casos reales se migra en el repo privado y el texto original
+>   se añade al final del Resumen de la monitorización («… (texto original): …»).
+> - **Registro ↔ ficha (⇄)**: fecha, horas, nivel, procedimiento, **anestesia**
+>   (tipo, TOF, detalle, incidencias) y **eventos An**, **basales**, **mapeo E2**
+>   (GRID/cortical/subcortical/nervio en la ficha con `t: "mapeo_reg"`; raíces con
+>   `pintarColumnaRaices()` en los dos sitios), **alarmas** (`pintarAlarmas()`:
+>   modalidad, criterio, causa, medidas en chips, recup S/P/N; «Tipo de alerta» y
+>   «Medida correctora» se derivan al guardar con `alarmasEnCaso()`), **técnicas
+>   con alteración** (chips), **resultado de la señal** (= `cierre_resultado`),
+>   **resultado esperable** (lista), incidencias técnicas y perla. La ficha
+>   trabaja sobre la copia de trabajo (`guardar` = `REG_SIN_GUARDAR`) y guarda con
+>   «Guardar»; el Registro guarda solo (`REG_GUARDAR`). Sin caso (Modelo 0) no hay
+>   espejo.
+> - **Ficha del caso**: apartados Identificación, Paciente, Cirugía, Anestesia,
+>   **Montaje / Material** (sin sub-desplegables), **Técnicas** (apartado propio),
+>   Desarrollo, Resultado, Docencia. Resultado: **evolución** en lista
+>   (`evolucion_postop`) + detalle, y **propuesta de concordancia**
+>   (`propuestaConcordancia()`) con botón Aplicar. Fuera «¿Hubo cambios respecto
+>   al plan?». Caso destacado y Hacer seguimiento en la misma fila (`par`).
+> - **Basales**: columnas **OPBSL · PostPos1 · PostPos2 · CL-BSL** (ids `basal`,
+>   `post`, `post2`, `final`); PostPos2 solo t-SEP/t-MEP, c-MEP solo OPBSL y
+>   CL-BSL (`regColBasal()`). **Umbrales por raíz** en columna vertebral: niveles
+>   en orden anatómico unidos por una línea (discontinua si no son contiguos).
+> - **Hoja impresa**: B · Técnicas en tres filas (monitorización, reflejos,
+>   mapeo) con las del caso marcadas; alarmas y resultado esperable con rótulos.
+>   Tiene que caber en A4 (hoja 1 ≈1000-1045 px de ≈1077).
+> - **Tamaños**: casillas ≈30 px y 0,8rem en todo el Registro, la ficha y Mis
+>   apuntes (le ganan al `min-height: 44px` táctil); basales pequeñas; botones con
+>   tamaño táctil.
+> - **Material**: «Estimulación trigeminal» (V1-V3 + N.Maset, id `l_rx_maset`);
+>   fuera la categoría «Reflejos» (eran técnicas). Serrato anterior C5-C7 en
+>   miotomas. 20 categorías en orden lógico; `SERIES_MATERIAL` agrupa L./R.
+> - **Registro en pantalla**: Hoja completa por defecto (`REG_PANTALLA`), modo
+>   rápido a elegir (guarda ids de criterio y la fase en `al.fase`). La impresa no
+>   cambia con lo de pantalla.
+> - **Dos equipos** (Inomed/Cadwell): `equipo_id`; **no confundir con `equipo`**.
+> - **Técnicas IONM, privada**: contenido en el repo privado
+>   (`referencia/tecnicas-mio.json`), se baja con el token. **No volver a meterlo
+>   aquí.**
+> - **Modo demo** `?demo`: datos ficticios aislados; precios INVENTADOS
+>   (`PRECIOS_DEMO`, `preciosDemo()`) para enseñar el coste; visita guiada de 12
+>   pasos. `localStorage` a secas, nunca `window.localStorage`.
 > - **Dónde vive cada dato:** localStorage (texto) · IndexedDB (fotos) · repo
 >   privado `checklist-mio-datos` (`estado.json`, `casos/`, `montajes/`,
->   `apuntes/` + `apuntes/fotos/`, `simulador/`, `referencia/`). Precios y material
->   propio del usuario: `estado.json`.
-> - **Historial público reescrito** dos veces (28-09 y otra el 27-09 para sacar
->   Técnicas IONM): un solo commit. Copias del historial fuera de GitHub:
->   `../copia-historial-codigo-2026-09-28.bundle` y
->   `../copia-historial-codigo-2026-09-27.bundle`. No borrarlas.
-> - **Licencia**: todos los derechos reservados (`LICENSE`). Registro de la
->   Propiedad Intelectual aparcado (`../registro-propiedad-intelectual/`).
-> - **Pendiente del usuario:** recargar la app en todos los dispositivos (Técnicas
->   aparece tras sincronizar); probar en un móvil real el deslizamiento del
->   catálogo y la lista propia de los desplegables; A (identificación) del
->   Registro se deja como está "por ahora".
+>   `apuntes/` + `apuntes/fotos/`, `simulador/`, `referencia/`). Precios reales y
+>   material propio del usuario: `estado.json` (nunca en este repo).
+> - **Sheet**: `Codigo.gs` con la columna `evolucion_postop` (54 columnas base),
+>   repegado por el usuario el 28-09 noche. Los campos de lista llegan como id.
+> - **Historial público reescrito** dos veces (27 y 28-09): copias
+>   `../copia-historial-codigo-2026-09-27.bundle` y `-28.bundle`. No borrarlas.
+> - **Licencia**: todos los derechos reservados (`LICENSE`).
+> - **Pendiente del usuario:** recargar la app en todos los dispositivos; revisar
+>   en sus casos las evoluciones «déficit nuevo, evolución pendiente» y la ECL
+>   L3-S1 (resultado esperable «similar»); probar en quirófano el Registro en
+>   espejo. A (identificación) del Registro se deja como está "por ahora".
 > - **Ideas pendientes, no construidas:** que la demo enseñe más utilidades;
->   conversión de un montaje Inomed ↔ Cadwell; sección del Registro en el Sheet;
->   bloque "Cirugías con IONM"; Teoría básica.
+>   conversión Inomed ↔ Cadwell; sección del Registro en el Sheet (eventos y
+>   alarmas); bloque "Cirugías con IONM"; Teoría básica; convertir en listas más
+>   textos libres de la ficha si el usuario lo pide.
 > - **Convenciones que han fallado antes:** subir el `?v=` de `index.html` en cada
 >   cambio de `app.js`/`style.css`/`data/`; `git fetch`+`pull --ff-only` antes de
 >   tocar `checklist-mio-datos` (y otro `fetch` antes del push); con
 >   `core.autocrlf=true` la copia de trabajo suele ir en **CRLF** (en git, LF) y
->   `data/i18n-en.js` tiene saltos mixtos: al editar con Python, detectar el salto
->   de línea, normalizar, editar y restaurarlo (o editar en crudo); en cadenas
->   Python que llevan regex de JS usar raw strings (`\d`, `\.`); ES5 (`var`, sin
->   flechas); `[hidden]` sobre clases con `display` propio necesita su regla;
->   `#pantalla-registro button { min-height: 44px }` gana por el id (excepciones
->   con `#pantalla-registro .clase`); `.card:not([open])` pillaba a las cajas
->   (`<div>`): ahora `details.card:not([open]):not(.caja-card)`; la hoja impresa
->   del Registro tiene que caber en A4.
+>   `data/i18n-en.js` tiene saltos mixtos: detectar el salto, normalizar, editar y
+>   restaurarlo; los scripts de Python largos, en un archivo del scratchpad y no
+>   en un heredoc de bash (los `\n` y `\d` de las cadenas JS llegaban rotos);
+>   ES5 (`var`, sin flechas); `[hidden]` sobre clases con `display` propio
+>   necesita su regla; `#pantalla-registro button` y `#dlg-caso select
+>   { min-height: 44px }` ganan por el id (excepciones con el id delante); un
+>   `::after` del padre se pinta sobre los hijos (`z-index` en el hijo); la hoja
+>   impresa del Registro tiene que caber en A4.
 > - **Comprobación habitual:** `node --check app.js`, servidor `checklist` de
 >   `.claude/launch.json` (no `file://`), probar en el navegador con `?demo`
->   (a 375 px para el móvil), commit y push (permiso permanente).
+>   (a 375 px para el móvil), commit y push (permiso permanente). Para medir la
+>   hoja impresa: sustituir `window.open` por un `<iframe>` de 794 px de ancho.
 > - **"Actualiza todo"**: poner al día este resumen, el mapa del código,
 >   README.md, `data/guia.js` si cambió el flujo, AGENTS.md, el diario privado y
 >   la memoria de Claude, y subirlo todo.

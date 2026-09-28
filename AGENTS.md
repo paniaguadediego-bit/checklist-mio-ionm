@@ -24,3 +24,6 @@ Instrucciones para cualquier asistente de código que trabaje en este repositori
   nunca a este repositorio público.
 - Con `core.autocrlf=true`, la copia de trabajo suele ir en CRLF: respeta el
   salto de línea que tenga cada archivo al editarlo.
+- Los scripts de Python largos para editar archivos van en un archivo aparte
+  (no en un heredoc de bash): dentro del heredoc, los `\n` y `\d` de las
+  cadenas de JavaScript llegan rotos. Después, siempre `node --check`.
