@@ -3924,3 +3924,16 @@ button, input, select, textarea { font-family: inherit; }
 .rr-bloque-evento { border-left: 3px solid var(--accent); }
 .rr-bloque-tit { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.3rem; }
 .rr-bloque .rr-titulo:first-of-type { margin-top: 0.2rem; }
+
+/* Alarmas con listas cerradas y tablas espejo del Registro en la ficha
+   (28-09-2026): medidas en chips, eventos de anestesia hora · qué · ✕ y la
+   propuesta de concordancia bajo su desplegable. */
+.reg-p-al-medidas { align-items: center; }
+.reg-p-al-medidas-t { font-size: 0.72rem; color: var(--text-muted); margin-right: 0.2rem; }
+.reg-p-al-medidas .chip { font-size: 0.74rem; }
+.reg-basal.reg-p-an .reg-basal-fila { grid-template-columns: 6rem minmax(0, 1fr) 1.8rem; }
+.caso-espejo .reg-p-nuevo { margin-top: 0.3rem; }
+.caso-espejo .reg-p-map-tit:first-child { margin-top: 0.1rem; }
+.caso-propuesta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; margin-top: 0.3rem; font-size: 0.8rem; color: var(--accent); }
+.caso-propuesta[hidden] { display: none; }
+.caso-propuesta-aplicar { font: inherit; font-size: 0.78rem; padding: 0.15rem 0.6rem; border: 1px solid var(--accent); border-radius: 4px; background: transparent; color: var(--accent); cursor: pointer; }

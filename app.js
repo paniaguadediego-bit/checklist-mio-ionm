@@ -734,7 +734,31 @@
                            en: "In sequence: what came out at the start (OP BSL), what happened along the way, and what came out at closing (CL BSL). E.g.: “SEP and MEP normal at baseline (OP BSL) […] high-frequency discharges at 2:20pm, resolve on their own […] CL BSL: similar to opening”." },
     caso_tipo_alerta:    { es: "Tipo de alerta", en: "Type of alert" },
     caso_medida_correctora: { es: "Medida correctora", en: "Corrective action" },
-    caso_recuperacion_senal: { es: "Recuperación de la señal", en: "Signal recovery" },
+    caso_recuperacion_senal: { es: "Resultado de la señal", en: "Signal outcome" },
+    caso_recuperacion_senal_ay: { es: "Cómo terminó la monitorización. Es el mismo dato que el Resultado del Cierre del Registro intraoperatorio.",
+                           en: "How the monitoring ended. It is the same data as the Result in the Closure of the intraoperative record." },
+    opc_recuperacion_senal_sin_cambios:  { es: "Sin cambios", en: "No changes" },
+    opc_recuperacion_senal_transitorios: { es: "Cambios transitorios recuperados", en: "Transient changes, recovered" },
+    opc_recuperacion_senal_persistentes: { es: "Cambios persistentes", en: "Persistent changes" },
+    caso_alarmas_registro: { es: "Alarmas", en: "Alarms" },
+    caso_alarmas_registro_ay: { es: "Son las alarmas de G · Alarmas del Registro intraoperatorio: lo que escribas aquí sale allí y en la hoja impresa, y al revés. Con ellas se rellenan solos «Tipo de alerta» y «Medida correctora» para el CSV y el Sheet.",
+                           en: "These are the alarms in G · Alarms of the intraoperative record: what you enter here appears there and on the printed sheet, and vice versa. They fill in “Type of alert” and “Corrective action” for the CSV and the Sheet." },
+    caso_mapeo_registro: { es: "Mapeo", en: "Mapping" },
+    caso_mapeo_registro_ay: { es: "Es el E2 · Mapeo del Registro intraoperatorio (el mismo dato, en los dos sitios). Cada bloque aparece si su técnica está marcada.",
+                           en: "It is E2 · Mapping of the intraoperative record (the same data, in both places). Each block appears if its technique is ticked." },
+    caso_eventos_anestesia: { es: "Eventos de anestesia", en: "Anaesthesia events" },
+    caso_eventos_anestesia_ay: { es: "Los eventos «An» del Registro intraoperatorio (hora y qué pasó), en espejo: se apuntan allí o aquí y se ven en los dos sitios.",
+                           en: "The “An” events of the intraoperative record (time and what happened), mirrored: enter them there or here and they show in both places." },
+    caso_evolucion_postop: { es: "Evolución postquirúrgica", en: "Postoperative evolution" },
+    caso_evolucion_postop_ay: { es: "Elige la opción; el detalle (exploración, fechas, grados) va en el cuadro de debajo.",
+                           en: "Choose the option; details (examination, dates, grades) go in the box below." },
+    opc_evolucion_postop_sin_deficit:        { es: "Sin déficit nuevo", en: "No new deficit" },
+    opc_evolucion_postop_deficit_transitorio: { es: "Déficit nuevo transitorio", en: "New transient deficit" },
+    opc_evolucion_postop_deficit_permanente:  { es: "Déficit nuevo permanente", en: "New permanent deficit" },
+    opc_evolucion_postop_deficit_pendiente:   { es: "Déficit nuevo, evolución pendiente", en: "New deficit, evolution pending" },
+    opc_evolucion_postop_no_valorable:       { es: "No valorable", en: "Not assessable" },
+    caso_concordancia_propuesta: { es: "Propuesta según alarmas, resultado de la señal y evolución: {v}", en: "Suggested from alarms, signal outcome and evolution: {v}" },
+    caso_concordancia_aplicar: { es: "Aplicar", en: "Apply" },
     caso_resultado_esperable: { es: "Resultado esperable", en: "Expected outcome" },
     caso_resultado_esperable_ay: { es: "Lo que cabría esperar en el postoperatorio respecto al estado previo, dado lo registrado, para compararlo después con la evolución real. Es el mismo dato que el Cierre del Registro intraoperatorio.",
                            en: "What would be expected postoperatively compared with the previous state, given what was recorded, to compare later against the actual evolution. It is the same data as the Closure of the intraoperative record." },
@@ -742,7 +766,7 @@
     opc_resultado_esperable_empeoramiento: { es: "Empeoramiento", en: "Worsening" },
     opc_resultado_esperable_mejoria:       { es: "Mejoría", en: "Improvement" },
     opc_resultado_esperable_indeterminado: { es: "Indeterminado", en: "Undetermined" },
-    caso_deficit_postoperatorio: { es: "Evolución postquirúrgica", en: "Postoperative evolution" },
+    caso_deficit_postoperatorio: { es: "Detalle de la evolución", en: "Evolution details" },
     caso_concordancia:   { es: "Concordancia", en: "Concordance" },
     caso_incidencias_tecnicas: { es: "Incidencias técnicas", en: "Technical incidents" },
     caso_equipo:         { es: "Equipo", en: "Equipment" },
@@ -1196,6 +1220,12 @@
     reg_p_recup:         { es: "Recuperación", en: "Recovery" },
     reg_p_h_recup:       { es: "Hora de recuperación", en: "Recovery time" },
     reg_p_vaciar_alarma: { es: "¿Vaciar esta alarma?", en: "Clear this alarm?" },
+    reg_p_causa_l:       { es: "Causa probable", en: "Probable cause" },
+    reg_p_nota:          { es: "Nota breve", en: "Short note" },
+    reg_p_an_nuevo:      { es: "+ Evento de anestesia", en: "+ Anaesthesia event" },
+    reg_p_alarma_nueva_ficha: { es: "+ Alarma", en: "+ Alarm" },
+    reg_p_sin_an:        { es: "Sin eventos de anestesia.", en: "No anaesthesia events." },
+    reg_p_quitar_evento: { es: "¿Quitar este evento?", en: "Remove this event?" },
     reg_p_en:            { es: "en {fase}", en: "in {fase}" },
     reg_p_fase_otra:     { es: "Otra…", en: "Other…" },
     reg_p_mapeo_nota:    { es: "Cada bloque de mapeo aparece solo si su técnica está marcada en la ficha del caso: c-MEP por GRID, mapeo cortical, mapeo subcortical, mapeo de nervio periférico y estimulación de raíces y tornillos.", en: "Each mapping block only appears if its technique is ticked in the case form: c-MEP by GRID, cortical mapping, subcortical mapping, peripheral nerve mapping and root and screw stimulation." },
@@ -4246,6 +4276,7 @@
      red. Al salir del modo se manda. */
   function guardarCaso(caso, esNuevo) {
     if (!esNuevo) caso.editado_en = (caso.editado_en || []).concat(new Date().toISOString());
+    alarmasEnCaso(caso);
     casos[caso.caso_uid] = caso;
     if (!MODO_DEMO) casosSinSubir[caso.caso_uid] = true;   // en la demo no hay nada que subir
     guardarUnCasoLocal(caso.caso_uid);
@@ -4314,7 +4345,7 @@
       tof_monitorizado: "", incidencias_anestesicas: "",
       resumen_monitorizacion: "", alerta: false, tipo_alerta: "",
       medida_correctora: "", recuperacion_senal: "", resultado_esperable: "",
-      deficit_postoperatorio: "", concordancia: "",
+      deficit_postoperatorio: "", evolucion_postop: "", concordancia: "",
       incidencias_tecnicas: "", equipo: "",
       rol: "", supervisor: "", dificultad_1a5: "", aprendizaje_clave: "", caso_destacado: false,
       hacer_seguimiento: false,
@@ -4426,7 +4457,7 @@
   /* ---------------------------------------------------------------- *
    * Exportación manual de Casos a CSV. Pedida por el usuario para tener
    * los datos a mano sin depender del disparador diario de Apps Script:
-   * mismas 53 columnas base que construirFilasCasos_() genera en la hoja
+   * mismas 54 columnas base que construirFilasCasos_() genera en la hoja
    * "Casos" de Codigo.gs -sin las columnas TEC_<etiqueta> por técnica, que
    * se consultan mejor caso a caso en la ficha-, con los mismos campos
    * resueltos (intervencionDe, resumenMonitorizacionDe, tipoAlertaDe) que
@@ -4447,7 +4478,7 @@
     "tof_monitorizado", "incidencias_anestesicas",
     "resumen_monitorizacion", "alerta", "tipo_alerta",
     "medida_correctora", "recuperacion_senal", "resultado_esperable",
-    "deficit_postoperatorio", "concordancia",
+    "deficit_postoperatorio", "evolucion_postop", "concordancia",
     "incidencias_tecnicas", "equipo",
     "rol", "supervisor", "dificultad_1a5", "aprendizaje_clave", "caso_destacado", "hacer_seguimiento",
     "notas", "version_esquema", "n_ediciones", "ultima_edicion", "guardado_en"
@@ -4568,7 +4599,7 @@
         servicio: valorCsvDeCaso(c, "servicio"),
         diagnostico: c.diagnostico ? opcionTexto("diagnostico", c.diagnostico) : "",
         intervencion: intervencionDe(c),
-        resultado_mio: (r.v || {}).cierre_resultado || "",
+        resultado_mio: c.recuperacion_senal ? opcionTexto("recuperacion_senal", c.recuperacion_senal) : ((r.v || {}).cierre_resultado || ""),
         concordancia: c.concordancia || ""
       };
       function sacar(tipo, lista, prefijo, aFila) {
@@ -4588,9 +4619,12 @@
                  accion_medidas: f.accion };
       });
       sacar("alarma", r.alarmas, "A", function (f) {
-        return { hora: f.hora, modalidad_lado: f.modalidad, criterio: f.criterio,
-                 causa_probable: f.causa, nrf: !!f.nrf, an: !!f.an, cir: !!f.cir,
-                 accion_medidas: f.medidas, recuperacion: f.recup, hora_recuperacion: f.h_recup,
+        var med = (f.medidas_l || []).map(function (v) { return regTextoLista(REG_MEDIDAS_AL, v); });
+        if (f.medidas) med.push(f.medidas);
+        return { hora: f.hora, fase_maniobra: f.fase || "", modalidad_lado: f.modalidad,
+                 criterio: regTextoLista(REG_CRITERIO_AL, f.criterio),
+                 causa_probable: regTextoLista(REG_CAUSA_AL, f.causa), nrf: !!f.nrf, an: !!f.an, cir: !!f.cir,
+                 accion_medidas: med.join(", "), recuperacion: f.recup, hora_recuperacion: f.h_recup,
                  min_hasta_recuperacion: minutosEntre(f.hora, f.h_recup) };
       });
     });
@@ -4838,6 +4872,20 @@
     return sec;
   }
 
+  // Alarmas del Registro (espejo en la ficha, 28-09-2026): una línea por
+  // alarma, con sus medidas. Sin alarmas estructuradas, nada.
+  function seccionAlarmasInforme(doc, c) {
+    var d = c.registro_intraop;
+    var filas = [];
+    ((d && d.alarmas) || []).forEach(function (a, i) {
+      if (filaRegistroVacia(a)) return;
+      var m = textoMedidasAlarma(a, i);
+      filas.push(filaInforme(doc, "A" + (i + 1), textoAlarma(a, i).replace(/^A\d+: /, "") +
+        (m ? "\n" + T("reg_p_medidas") + ": " + m.replace(/^A\d+: /, "") : ""), true));
+    });
+    return filas.length ? seccionInforme(doc, T("caso_alarmas_registro"), filas) : null;
+  }
+
   function seccionUmbralRaicesInforme(doc, c) {
     var datos = c.umbral_raices_niveles;
     if (!datos || !datos.niveles || !datos.niveles.length) return null;
@@ -5012,7 +5060,7 @@
     var CAMPOS_APARTE = [
       "tecnicas_realizadas", "tecnicas_alteradas", "tecnicas_parametros",
       "umbral_raices_niveles", "material_previsto", "material_real", "imagenes_montaje",
-      "informes_imagenes", "basales_registro"
+      "informes_imagenes", "basales_registro", "alarmas_registro", "mapeo_registro", "eventos_anestesia"
     ];
     // Identificación en 2 columnas y Paciente en 3 (edad, sexo y servicio son
     // siempre descripciones cortas), con el nombre del caso y los textos
@@ -5035,6 +5083,8 @@
         if (sb) art.appendChild(sb);
         var sr = seccionUmbralRaicesInforme(doc, c);
         if (sr) art.appendChild(sr);
+        var sa = seccionAlarmasInforme(doc, c);
+        if (sa) art.appendChild(sa);
       }
       if (g === "montaje") {
         // Mismo orden que CAMPOS_CASO/la ficha en pantalla (06-09-2026):
@@ -6623,6 +6673,11 @@
     // Registro (REG_RES_ESPERABLE, mismos ids). Lo escrito antes a mano se
     // conserva: ver resultadoEsperableId().
     resultado_esperable: ["similar", "empeoramiento", "mejoria", "indeterminado"],
+    // Antes texto libre "Recuperación de la señal"; desde el 28-09-2026 es el
+    // mismo dato que el Resultado del Cierre del Registro (REG_RESULTADO).
+    recuperacion_senal: ["sin_cambios", "transitorios", "persistentes"],
+    // Nuevo el 28-09-2026: la evolución en lista, el texto queda de detalle.
+    evolucion_postop: ["sin_deficit", "deficit_transitorio", "deficit_permanente", "deficit_pendiente", "no_valorable"],
     dificultad: ["1", "2", "3", "4", "5"],
     // Lista cerrada y corta a propósito, como los tipos de cirugía: sirve
     // para agrupar y contar. La anatomía patológica real o el nivel exacto
@@ -6680,6 +6735,8 @@
     { g: "anestesia", c: "tipo_anestesia", t: "sel", o: "anestesia" },
     { g: "anestesia", c: "tipo_anestesia_detalle", t: "text", ay: "caso_tipo_anestesia_detalle_ay" },
     { g: "anestesia", c: "tof_monitorizado", t: "sel", o: "sino" },
+    // Los eventos "An" del Registro (hora + qué), en espejo (28-09-2026).
+    { g: "anestesia", c: "eventos_anestesia", t: "eventos_an", ay: "caso_eventos_anestesia_ay" },
     { g: "anestesia", c: "incidencias_anestesicas", t: "area" },
 
     // 5. Montaje / Técnicas, reestructurado en 3 sub-apartados el
@@ -6746,6 +6803,9 @@
     // Basales (25-09-2026): la misma tabla que el Registro intraoperatorio,
     // guardada en caso.registro_intraop -ver campoCaso(), t "basales_reg"-.
     { g: "desarrollo", c: "basales_registro", t: "basales_reg", ay: "caso_basales_registro_ay" },
+    // E2 · Mapeo del Registro en espejo (GRID, cortical, subcortical, nervio
+    // periférico; las raíces ya tienen su campo propio más abajo).
+    { g: "desarrollo", c: "mapeo_registro", t: "mapeo_reg", ay: "caso_mapeo_registro_ay" },
     { g: "desarrollo", c: "resumen_monitorizacion", t: "area", rows: 12, ay: "caso_resumen_monitorizacion_ay" },
     // Pedido por Pani, 05-09-2026: ambas cajas solo aparecen si "Mapeo de
     // raíces y tornillos" está marcada en Técnicas realizadas -sin esa
@@ -6756,12 +6816,14 @@
     { g: "desarrollo", c: "hubo_cambios_plan", t: "check" },
     { g: "desarrollo", c: "cambios_respecto_al_plan", t: "area", dependeDe: "hubo_cambios_plan" },
     { g: "desarrollo", c: "alerta", t: "check" },
-    // Absorbe tambien el criterio de alarma: eran dos cajas para una misma
-    // idea -que salto y por que-, y tipo_alerta ya se escribia largo en la
-    // practica real, asi que pasa a area en vez de una linea.
-    { g: "desarrollo", c: "tipo_alerta", t: "area", dependeDe: "alerta" },
-    { g: "desarrollo", c: "medida_correctora", t: "area", dependeDe: "alerta" },
-    { g: "desarrollo", c: "recuperacion_senal", t: "area", dependeDe: "alerta" },
+    // Las alarmas son las de G · Alarmas del Registro, en espejo (28-09-2026,
+    // pedido del usuario: lo de quirófano se recoge en el Registro y se ve
+    // igual aquí). Sustituyen a "Tipo de alerta" y "Medida correctora" de
+    // texto libre: esos dos campos se siguen escribiendo, pero solos, a partir
+    // de las alarmas, al guardar el caso (ver alarmasEnCaso()), para el CSV y
+    // el Sheet. Los textos de antes se pasaron al Resumen de la monitorización.
+    { g: "desarrollo", c: "alarmas_registro", t: "alarmas_reg", dependeDe: "alerta", ay: "caso_alarmas_registro_ay" },
+    { g: "desarrollo", c: "recuperacion_senal", t: "sel", o: "recuperacion_senal", ay: "caso_recuperacion_senal_ay" },
     { g: "desarrollo", c: "resultado_esperable", t: "sel", o: "resultado_esperable", ay: "caso_resultado_esperable_ay" },
     // Depende en vivo de lo que esté marcado en "tecnicas_realizadas" -ver
     // oyentesTecnicasRealizadas-, así que tiene que ir después de esa
@@ -6774,7 +6836,10 @@
     // queda en el JSON, sin usarse.
 
     // 7. Resultado / Correlación clínica
+    { g: "resultado", c: "evolucion_postop", t: "sel", o: "evolucion_postop", ay: "caso_evolucion_postop_ay" },
     { g: "resultado", c: "deficit_postoperatorio", t: "area", rows: 4 },
+    // Debajo lleva una propuesta calculada con alarmas + resultado de la
+    // señal + evolución (propuestaConcordancia()), que se aplica con un botón.
     { g: "resultado", c: "concordancia", t: "sel", o: "concordancia", ay: "caso_concordancia_ay" },
 
     // 8. Docencia / Meta
@@ -6787,6 +6852,21 @@
     { g: "formacion", c: "notas", t: "area" }
   ];
   var GRUPOS_CASO = ["traza", "paciente", "cirugia", "anestesia", "montaje", "desarrollo", "resultado", "formacion"];
+
+  /* Concordancia propuesta: cambio en la monitorización (alerta o resultado
+     de la señal con cambios) frente a déficit nuevo (cualquiera de los tres
+     "déficit nuevo..."). Sin evolución o "no valorable", no propone nada.
+     Cambios recuperados sin déficit = PR (positivo reversible); alerta sin
+     resultado de la señal y sin déficit es ambiguo (FP o PR): nada. */
+  function propuestaConcordancia(p) {
+    if (!p.evol || p.evol === "no_valorable") return "";
+    var deficit = p.evol !== "sin_deficit";
+    var cambio = p.alerta || p.senal === "transitorios" || p.senal === "persistentes";
+    if (!cambio) return deficit ? "FN" : "VN";
+    if (p.senal === "persistentes") return deficit ? "VP" : "FP";
+    if (p.senal === "transitorios") return deficit ? "VP" : "PR";
+    return deficit ? "VP" : "";
+  }
 
   // Texto libre de antes -> id de la lista, solo cuando la equivalencia es
   // exacta ("Sin cambios.", "Similar al estado previo"...). Lo que lleva
@@ -7636,6 +7716,41 @@
       return div;
     }
 
+    // Espejo del Registro (28-09-2026): alarmas (G), mapeo (E2) y eventos de
+    // anestesia (An de F), sobre la copia de trabajo, como las basales. No
+    // entran en camposCaso: se guardan con el caso al pulsar "Guardar".
+    if (def.t === "alarmas_reg" || def.t === "mapeo_reg" || def.t === "eventos_an") {
+      if (!casoAbierto.registro_intraop) casoAbierto.registro_intraop = {};
+      var dR = registroAsegurar(casoAbierto.registro_intraop);
+      var contR = document.createElement("div");
+      contR.className = "caso-espejo";
+      var tecR = function () { return camposCaso.tecnicas_realizadas || casoAbierto.tecnicas_realizadas || []; };
+      var pintarR = function () {
+        contR.textContent = "";
+        if (def.t === "alarmas_reg") {
+          pintarAlarmas(contR, dR, { modalidades: regQueRapidos(dR, tecR()), guardar: REG_SIN_GUARDAR, conHora: false, alCambiar: function () {
+            if (camposCaso.alerta && alarmasConDatos(dR).length) camposCaso.alerta.checked = true;
+          } });
+        } else if (def.t === "mapeo_reg") {
+          var bloquesR = REG_MAPEO_BLOQUES.filter(function (b) {
+            return b.tec !== "mapeo_raices_tornillos" && tecR().indexOf(b.tec) !== -1;
+          });
+          if (!bloquesR.length) { contR.appendChild(regNodo("p", "caso-ro", T("reg_p_mapeo_ninguna"))); return; }
+          bloquesR.forEach(function (b) {
+            contR.appendChild(regNodo("div", "reg-basal-titulo reg-p-map-tit", T(b.t)));
+            b.pintar(contR, dR, REG_SIN_GUARDAR);
+          });
+        } else {
+          pintarEventosAn(contR, dR, REG_SIN_GUARDAR, false);
+        }
+      };
+      pintarR();
+      if (def.t !== "eventos_an") oyentesTecnicasRealizadas.push(pintarR);
+      div.appendChild(contR);
+      if (def.ay) div.appendChild(ayudaCampo(def.ay));
+      return div;
+    }
+
     if (def.t === "ro") {
       control = document.createElement("span");
       control.className = "caso-ro";
@@ -7953,6 +8068,38 @@
       actualizar();
       control.addEventListener("change", actualizar);
     });
+
+    // Propuesta de concordancia (28-09-2026): se calcula en vivo con "Hubo
+    // alerta"/alarmas, el resultado de la señal y la evolución; no se aplica
+    // sola, hay que pulsar "Aplicar".
+    var ctlConc = camposCaso.concordancia;
+    if (ctlConc) {
+      var propC = document.createElement("div");
+      propC.className = "caso-propuesta";
+      ctlConc.parentNode.appendChild(propC);
+      var actualizarPropC = function () {
+        var v = propuestaConcordancia({
+          alerta: !!(camposCaso.alerta && camposCaso.alerta.checked) || alarmasConDatos(casoAbierto.registro_intraop).length > 0,
+          senal: camposCaso.recuperacion_senal ? camposCaso.recuperacion_senal.value : "",
+          evol: camposCaso.evolucion_postop ? camposCaso.evolucion_postop.value : ""
+        });
+        propC.textContent = "";
+        propC.hidden = !v || v === ctlConc.value;
+        if (propC.hidden) return;
+        propC.appendChild(regNodo("span", null, T("caso_concordancia_propuesta", { v: opcionTexto("concordancia", v) })));
+        var ap = regNodo("button", "caso-propuesta-aplicar", T("caso_concordancia_aplicar"));
+        ap.type = "button";
+        ap.addEventListener("click", function () {
+          ctlConc.value = v;
+          ctlConc.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+        propC.appendChild(ap);
+      };
+      ["alerta", "recuperacion_senal", "evolucion_postop", "concordancia"].forEach(function (k) {
+        if (camposCaso[k]) camposCaso[k].addEventListener("change", actualizarPropC);
+      });
+      actualizarPropC();
+    }
 
     // Pie: cuándo se creó el archivo y cuántas veces se ha tocado después
     var pie = document.getElementById("caso-meta");
@@ -15095,11 +15242,60 @@
     { v: "P", l: "P · parcial", l_en: "P · partial" },
     { v: "N", l: "N · no", l_en: "N · no" }
   ];
+  // Mismos ids que OPCIONES.recuperacion_senal: es el mismo dato que
+  // «Resultado de la señal» de la ficha (compartido ⇄, 28-09-2026).
   var REG_RESULTADO = [
     { v: "sin_cambios", l: "Sin cambios", l_en: "No changes" },
     { v: "transitorios", l: "Cambios transitorios recuperados", l_en: "Transient changes, recovered" },
     { v: "persistentes", l: "Cambios persistentes", l_en: "Persistent changes" }
   ];
+
+  /* Alarmas con listas cerradas (28-09-2026, pedido del usuario: menos texto
+     libre para poder sacar datos). Se guardan ids; lo escrito antes a mano
+     (o el rótulo que guardaba el modo rápido, "↓ amplitud") se reconoce con
+     regIdLista() o se conserva como una opción más. Los ids de criterio son
+     los de REG_CAMBIOS_RAPIDOS. "medidas_l" es la lista de medidas; "medidas"
+     (texto) queda como nota breve. */
+  var REG_CRITERIO_AL = [
+    { v: "baja", l: "↓ amplitud", l_en: "↓ amplitude" },
+    { v: "perdida", l: "Pérdida", l_en: "Loss" },
+    { v: "latencia", l: "↑ latencia", l_en: "↑ latency" },
+    { v: "umbral", l: "↑ umbral", l_en: "↑ threshold" },
+    { v: "hfd", l: "HFD / descargas", l_en: "HFD / discharges" }
+  ];
+  var REG_CAUSA_AL = [
+    { v: "quirurgica", l: "Maniobra quirúrgica", l_en: "Surgical manoeuvre" },
+    { v: "anestesica", l: "Anestésica", l_en: "Anaesthetic" },
+    { v: "sistemica", l: "Sistémica (TAM, Tª, Hb)", l_en: "Systemic (MAP, temp., Hb)" },
+    { v: "posicional", l: "Posicional", l_en: "Positional" },
+    { v: "tecnica", l: "Técnica (electrodos, equipo)", l_en: "Technical (electrodes, device)" },
+    { v: "desconocida", l: "Desconocida", l_en: "Unknown" }
+  ];
+  var REG_MEDIDAS_AL = [
+    { v: "pausa", l: "Pausa / revertir maniobra", l_en: "Pause / reverse manoeuvre" },
+    { v: "retraccion", l: "Liberar retracción o tracción", l_en: "Release retraction or traction" },
+    { v: "suero", l: "Suero tibio", l_en: "Warm saline" },
+    { v: "papaverina", l: "Papaverina", l_en: "Papaverine" },
+    { v: "tam", l: "↑ TAM", l_en: "↑ MAP" },
+    { v: "anestesia", l: "Ajuste anestésico", l_en: "Anaesthetic adjustment" },
+    { v: "tecnica", l: "Revisar electrodos / ↑ intensidad", l_en: "Check electrodes / ↑ intensity" },
+    { v: "espera", l: "Esperar", l_en: "Wait" },
+    { v: "corticoides", l: "Corticoides", l_en: "Corticosteroids" },
+    { v: "wakeup", l: "Wake-up test", l_en: "Wake-up test" },
+    { v: "suspender", l: "Suspender la cirugía", l_en: "Abort surgery" }
+  ];
+  // Valor guardado -> id de la lista si coincide con el id o con un rótulo
+  // (en cualquier idioma); si no, el valor tal cual.
+  function regIdLista(lista, v) {
+    if (!v) return v;
+    var o = lista.filter(function (x) { return x.v === v || x.l === v || x.l_en === v; })[0];
+    return o ? o.v : v;
+  }
+  function regTextoLista(lista, v) {
+    var id = regIdLista(lista, v);
+    var o = lista.filter(function (x) { return x.v === id; })[0];
+    return o ? regOpcionLabel(o) : (v || "");
+  }
   // Los mismos ids que OPCIONES.resultado_esperable de la ficha: es el mismo
   // dato (compartido ⇄). Sustituye al texto libre "Déficit esperado / mensaje
   // transmitido" (28-09-2026, pedido del usuario).
@@ -15298,7 +15494,10 @@
     { id: "final", l: "CL-BSL", l_en: "CL-BSL" }
   ];
   // ¿Lleva la fila (id sin prefijo: "sep_msd", "libre1"...) esa columna?
+  // Los c-MEP no tienen post-posición: solo OPBSL y CL-BSL (pedido del
+  // usuario, 28-09-2026).
   function regColBasal(col, idFila) {
+    if (/^cmep_/.test(idFila)) return col.id === "basal" || col.id === "final";
     return !col.soloT || /^(sep|mep)_/.test(idFila);
   }
 
@@ -15429,7 +15628,7 @@
       ayuda_en: "Label the first row · screws (level | R | L) · roots · CN · awake tasks · other" },
     { hoja: 2, id: "i", tipo: "campos", l: "I · Cierre", l_en: "I · Closure",
       campos: [
-        { id: "cierre_resultado", l: "Resultado", l_en: "Result", t: "sel", o: REG_RESULTADO, ancho: true },
+        { id: "cierre_resultado", l: "Resultado de la señal", l_en: "Signal outcome", t: "sel", o: REG_RESULTADO, ancho: true, caso: "recuperacion_senal" },
         { id: "cierre_modalidades", l: "Técnicas con alteración", l_en: "Techniques with an alteration", t: "text", ancho: true,
           leerCaso: function (c) { return regNombresTecnicas(c.tecnicas_alteradas).join(", "); } },
         { id: "cierre_com_cir", l: "Comunicación final: Cirujano", l_en: "Final communication: Surgeon", t: "check" },
@@ -16162,9 +16361,11 @@
     { tec: ["eeg", "ecog"], l: "EEG / ECoG", l_en: "EEG / ECoG" }
   ];
 
-  function regQueRapidos(d) {
+  // "tecExplicitas": técnicas de otro sitio (la ficha, sin guardar); si no se
+  // pasa, las del caso vinculado al Registro (null = Modelo 0).
+  function regQueRapidos(d, tecExplicitas) {
     var c = registroCaso();
-    var tec = c ? (c.tecnicas_realizadas || []) : null;
+    var tec = tecExplicitas !== undefined ? tecExplicitas : (c ? (c.tecnicas_realizadas || []) : null);
     var extra = REG_QUE_EXTRA.filter(function (x) {
       if (x.siempre) return true;
       return tec ? x.tec.some(function (t) { return tec.indexOf(t) !== -1; }) : !!x.defecto;
@@ -16244,9 +16445,15 @@
       var n = "A" + (d.alarmas.indexOf(al) + 1);
       al.hora = hora;
       al.modalidad = modalidad || T(esAn ? "rr_que_anestesia" : "rr_que_tecnico");
-      al.criterio = textoCambio;
-      al.causa = fase;
+      // Ids de las listas cerradas (28-09-2026); la fase va aparte: ya no es
+      // la "causa", que ahora se elige de REG_CAUSA_AL.
+      al.criterio = cambio && !cambio.recup && cambio.id !== "sin_cambios" ? cambio.id : "";
+      al.fase = fase;
+      if (esAn) al.causa = "anestesica";
+      if (esT) al.causa = "tecnica";
       al.medidas = nota;
+      var cRap = registroCaso();
+      if (cRap) cRap.alerta = true;
       ev.accion = n + (nota ? " · " + nota : "");
       ev.alarma_id = al.id;
       mensaje = T("rr_alarma_apuntada", { n: n, hora: hora });
@@ -16469,14 +16676,53 @@
   }
 
   // Campo de texto de una fila: guarda en obj[clave] al escribir y al salir.
-  function regInput(obj, clave, tipo, placeholder, alCambiar) {
+  // "guardar" (opcional): { cambiar, salir }. Por defecto guarda el Registro;
+  // la ficha del caso pasa uno que no hace nada, porque allí se trabaja
+  // sobre la copia de trabajo y se guarda con "Guardar" (como las basales).
+  var REG_GUARDAR = { cambiar: function () { registroGuardar(); }, salir: function () { registroGuardarYa(); } };
+  var REG_SIN_GUARDAR = { cambiar: function () {}, salir: function () {} };
+
+  function regInput(obj, clave, tipo, placeholder, alCambiar, guardar) {
+    guardar = guardar || REG_GUARDAR;
     var inp = document.createElement("input");
     inp.type = tipo || "text";
     inp.value = obj[clave] || "";
     if (placeholder) { inp.placeholder = placeholder; inp.setAttribute("aria-label", placeholder); }
-    inp.addEventListener("input", function () { obj[clave] = inp.value; registroGuardar(); if (alCambiar) alCambiar(); });
-    inp.addEventListener("change", registroGuardarYa);
+    inp.addEventListener("input", function () { obj[clave] = inp.value; guardar.cambiar(); if (alCambiar) alCambiar(); });
+    inp.addEventListener("change", function () { guardar.salir(); });
     return inp;
+  }
+
+  // Desplegable sobre una lista {v, l}: un valor guardado que no está en la
+  // lista (texto libre de antes) se ofrece como una opción más.
+  function regSelectLista(obj, clave, lista, etiqueta, alCambiar, guardar) {
+    guardar = guardar || REG_GUARDAR;
+    var sel = document.createElement("select");
+    sel.setAttribute("aria-label", etiqueta);
+    var vacia = document.createElement("option");
+    vacia.value = "";
+    vacia.textContent = etiqueta + "…";
+    sel.appendChild(vacia);
+    lista.forEach(function (o) {
+      var op = document.createElement("option");
+      op.value = o.v;
+      op.textContent = regOpcionLabel(o);
+      sel.appendChild(op);
+    });
+    var val = regIdLista(lista, obj[clave]);
+    if (val && !lista.some(function (o) { return o.v === val; })) {
+      var propia = document.createElement("option");
+      propia.value = String(val);
+      propia.textContent = String(val);
+      sel.appendChild(propia);
+    }
+    sel.value = val || "";
+    sel.addEventListener("change", function () {
+      obj[clave] = sel.value;
+      guardar.salir();
+      if (alCambiar) alCambiar();
+    });
+    return sel;
   }
 
   function regSelect(obj, clave, opciones, etiqueta, alCambiar) {
@@ -16557,9 +16803,9 @@
          tabla suelta de la hoja (e_t_*). */
   var REG_MAPEO_BLOQUES = [
     { tec: "c_pem", t: "reg_p_map_grid", pintar: pintarMapeoGrid },
-    { tec: "mapeo_cortical", t: "reg_p_map_cortical", pintar: function (cont, d) { pintarMapeoFilas(cont, d, "C", true); } },
-    { tec: "mapeo_subcortical", t: "reg_p_map_subcortical", pintar: function (cont, d) { pintarMapeoFilas(cont, d, "S", true); } },
-    { tec: "mapeo_nervio_periferico", t: "reg_p_map_nervio", pintar: function (cont, d) { pintarMapeoFilas(cont, d, "N", false); } },
+    { tec: "mapeo_cortical", t: "reg_p_map_cortical", pintar: function (cont, d, g) { pintarMapeoFilas(cont, d, "C", true, g); } },
+    { tec: "mapeo_subcortical", t: "reg_p_map_subcortical", pintar: function (cont, d, g) { pintarMapeoFilas(cont, d, "S", true, g); } },
+    { tec: "mapeo_nervio_periferico", t: "reg_p_map_nervio", pintar: function (cont, d, g) { pintarMapeoFilas(cont, d, "N", false, g); } },
     { tec: "mapeo_raices_tornillos", t: "reg_p_map_raices", pintar: pintarMapeoRaices }
   ];
   var REG_NIVELES_RAICES = ["C1", "C2", "C3", "C4", "C5", "C6", "C7",
@@ -16581,7 +16827,7 @@
 
   // Electrodo motor y músculos registrados: los mismos gridN_motor /
   // gridN_musculos que imprime la hoja.
-  function pintarMapeoGrid(cont, d) {
+  function pintarMapeoGrid(cont, d, guardar) {
     var tabla = regNodo("div", "reg-basal reg-p-mapeo");
     var cab = regNodo("div", "reg-basal-fila reg-basal-cab");
     cab.appendChild(regNodo("span", null, ""));
@@ -16591,8 +16837,8 @@
     [1, 2].forEach(function (n) {
       var f = regNodo("div", "reg-basal-fila");
       f.appendChild(regNodo("span", "reg-basal-rotulo", String(n)));
-      f.appendChild(regInput(d.v, "grid" + n + "_motor", "text", T("reg_p_motor")));
-      f.appendChild(regInput(d.v, "grid" + n + "_musculos", "text", T("reg_p_musculos")));
+      f.appendChild(regInput(d.v, "grid" + n + "_motor", "text", T("reg_p_motor"), null, guardar));
+      f.appendChild(regInput(d.v, "grid" + n + "_musculos", "text", T("reg_p_musculos"), null, guardar));
       tabla.appendChild(f);
     });
     cont.appendChild(tabla);
@@ -16600,7 +16846,10 @@
 
   // Filas de d.mapeo de un tipo (C, S o N). Siempre 3 en blanco al final,
   // que entran en la lista al escribir en ellas, como los eventos.
-  function pintarMapeoFilas(cont, d, tipo, conHora) {
+  function pintarMapeoFilas(cont, d, tipo, conHora, guardar) {
+    guardar = guardar || REG_GUARDAR;
+    // En la ficha (se rellena después de la cirugía) la hora no se pone sola.
+    var horaSola = conHora && guardar !== REG_SIN_GUARDAR;
     var tabla = regNodo("div", "reg-basal reg-p-mapfilas" + (conHora ? " con-hora" : ""));
     cont.appendChild(tabla);
     var btn = regNodo("button", "reg-p-nuevo", T("reg_p_fila_nueva"));
@@ -16623,17 +16872,17 @@
         var inpHora = null;
         function tocar() {
           if (d.mapeo.indexOf(m) === -1) {
-            if (conHora && !m.hora) { m.hora = horaAhora(); if (inpHora) inpHora.value = m.hora; }
+            if (horaSola && !m.hora) { m.hora = horaAhora(); if (inpHora) inpHora.value = m.hora; }
             d.mapeo.push(m);
-            registroGuardar();
+            guardar.cambiar();
           }
         }
-        if (conHora) { inpHora = regInput(m, "hora", "time", T("reg_p_hora"), tocar); f.appendChild(inpHora); }
-        f.appendChild(regInput(m, "punto", "text", T(conHora ? "reg_p_punto" : "reg_p_nervio"), tocar));
-        var um = regInput(m, "umbral", "text", T(conHora ? "reg_p_umbral" : "reg_p_intensidad"), tocar);
+        if (conHora) { inpHora = regInput(m, "hora", "time", T("reg_p_hora"), tocar, guardar); f.appendChild(inpHora); }
+        f.appendChild(regInput(m, "punto", "text", T(conHora ? "reg_p_punto" : "reg_p_nervio"), tocar, guardar));
+        var um = regInput(m, "umbral", "text", T(conHora ? "reg_p_umbral" : "reg_p_intensidad"), tocar, guardar);
         um.inputMode = "decimal";
         f.appendChild(um);
-        f.appendChild(regInput(m, "respuesta", "text", T("reg_p_musculo"), tocar));
+        f.appendChild(regInput(m, "respuesta", "text", T("reg_p_musculo"), tocar, guardar));
         if (!blanca) {
           var q = regNodo("button", "reg-fila-quitar", "✕");
           q.type = "button";
@@ -16643,7 +16892,7 @@
             if (!confirm(T("registro_fila_quitar_conf"))) return;
             var i = d.mapeo.indexOf(m);
             if (i !== -1) d.mapeo.splice(i, 1);
-            registroGuardarYa();
+            guardar.salir();
             pintar();
           });
           f.appendChild(q);
@@ -16655,9 +16904,53 @@
     }
     btn.addEventListener("click", function () {
       var m = { id: uuid(), tipo: tipo };
-      if (conHora) m.hora = horaAhora();
+      if (horaSola) m.hora = horaAhora();
       d.mapeo.push(m);
-      registroGuardarYa();
+      guardar.salir();
+      pintar();
+    });
+    pintar();
+  }
+
+  /* Eventos de anestesia (cod "An" de F) en una tabla corta: hora · qué ·
+     ✕. La usa la ficha del caso, en espejo con el Registro (28-09-2026).
+     "conHora": los nuevos nacen con la hora actual (en quirófano sí; en la
+     ficha, que se rellena después, no). */
+  function pintarEventosAn(cont, d, guardar, conHora) {
+    guardar = guardar || REG_GUARDAR;
+    var tabla = regNodo("div", "reg-basal reg-p-ev reg-p-an");
+    cont.appendChild(tabla);
+    var btn = regNodo("button", "reg-p-nuevo", T("reg_p_an_nuevo"));
+    btn.type = "button";
+    cont.appendChild(btn);
+    function pintar() {
+      tabla.textContent = "";
+      var ans = d.eventos.filter(function (e) { return e.cod === "An"; });
+      if (!ans.length) { tabla.appendChild(regNodo("p", "caso-ro", T("reg_p_sin_an"))); return; }
+      ans.forEach(function (ev) {
+        var f = regNodo("div", "reg-basal-fila");
+        f.appendChild(regInput(ev, "hora", "time", T("reg_p_hora"), null, guardar));
+        var que = regInput(ev, "cambio", "text", T("reg_p_que"), null, guardar);
+        f.appendChild(que);
+        var q = regNodo("button", "reg-fila-quitar", "✕");
+        q.type = "button";
+        q.title = T("registro_fila_quitar");
+        q.setAttribute("aria-label", T("registro_fila_quitar"));
+        q.addEventListener("click", function () {
+          if (!confirm(T("reg_p_quitar_evento"))) return;
+          var i = d.eventos.indexOf(ev);
+          if (i !== -1) d.eventos.splice(i, 1);
+          guardar.salir();
+          pintar();
+        });
+        f.appendChild(q);
+        tabla.appendChild(f);
+        if (ev.accion) tabla.appendChild(regNodo("small", "reg-p-extra", ev.accion));
+      });
+    }
+    btn.addEventListener("click", function () {
+      d.eventos.push({ id: uuid(), cod: "An", hora: conHora ? horaAhora() : "", cambio: "" });
+      guardar.salir();
       pintar();
     });
     pintar();
@@ -16903,11 +17196,34 @@
   // impresa, así que al quitar una se vacía en vez de moverse las demás).
   function pintarPantallaAlarmas(sec, cont, alCambiar) {
     var d = registroDatos();
-    var btn = regNodo("button", "reg-p-nuevo", T("reg_p_alarma_nueva"));
+    pintarAlarmas(cont, d, { modalidades: regQueRapidos(d), alCambiar: function () {
+      // Hay alarma escrita -> "Hubo alerta" en el caso vinculado (espejo).
+      var c = registroCaso();
+      if (c && alarmasConDatos(d).length) c.alerta = true;
+      if (alCambiar) alCambiar();
+    } });
+  }
+
+  function alarmasConDatos(d) {
+    return ((d && d.alarmas) || []).filter(function (a) { return !filaRegistroVacia(a); });
+  }
+
+  /* Fichas de alarma (G) con listas cerradas. La usan el Registro y la ficha
+     del caso (en espejo, sobre la copia de trabajo). op: { modalidades
+     (rótulos), guardar ({cambiar, salir}; por defecto el del Registro),
+     alCambiar }. Una alarma vaciada se queda como { id } para no mover la
+     numeración A1, A2… de la hoja. */
+  function pintarAlarmas(cont, d, op) {
+    var guardar = op.guardar || REG_GUARDAR;
+    var alCambiar = op.alCambiar || function () {};
+    var listaMod = op.modalidades.concat([T("rr_que_anestesia"), T("rr_que_tecnico")])
+      .map(function (l) { return { v: l, l: l }; });
+    var conHora = op.conHora !== false;
+    var btn = regNodo("button", "reg-p-nuevo", T(conHora ? "reg_p_alarma_nueva" : "reg_p_alarma_nueva_ficha"));
     btn.type = "button";
-    cont.appendChild(btn);
     var lista = regNodo("div", "reg-p-alarmas");
     cont.appendChild(lista);
+    cont.appendChild(btn);
     function pintar(enfocar) {
       lista.textContent = "";
       var hay = false;
@@ -16917,8 +17233,8 @@
         var ficha = regNodo("div", "reg-p-alarma");
         var l1 = regNodo("div", "reg-p-al-l1");
         l1.appendChild(regNodo("b", "reg-p-al-n", "A" + (i + 1)));
-        l1.appendChild(regInput(al, "hora", "time", T("reg_p_hora"), alCambiar));
-        l1.appendChild(regInput(al, "modalidad", "text", T("reg_p_modalidad"), alCambiar));
+        l1.appendChild(regInput(al, "hora", "time", T("reg_p_hora"), alCambiar, guardar));
+        l1.appendChild(regSelectLista(al, "modalidad", listaMod, T("reg_p_modalidad"), alCambiar, guardar));
         var quitar = regNodo("button", "reg-fila-quitar", "✕");
         quitar.type = "button";
         quitar.title = T("registro_fila_quitar");
@@ -16926,39 +17242,82 @@
         quitar.addEventListener("click", function () {
           if (!confirm(T("reg_p_vaciar_alarma"))) return;
           d.alarmas[i] = { id: al.id };
-          registroGuardarYa();
+          guardar.salir();
           pintar(null);
           alCambiar();
         });
         l1.appendChild(quitar);
         ficha.appendChild(l1);
         var l2 = regNodo("div", "reg-p-al-l2");
-        l2.appendChild(regInput(al, "criterio", "text", T("reg_p_criterio"), alCambiar));
-        l2.appendChild(regInput(al, "causa", "text", T("reg_p_causa"), alCambiar));
+        l2.appendChild(regSelectLista(al, "criterio", REG_CRITERIO_AL, T("reg_p_criterio"), alCambiar, guardar));
+        l2.appendChild(regSelectLista(al, "causa", REG_CAUSA_AL, T("reg_p_causa_l"), alCambiar, guardar));
         ficha.appendChild(l2);
+        // Medidas: chips marcables, como las técnicas de la ficha.
+        var chips = regNodo("div", "chip-fila reg-p-al-medidas");
+        chips.appendChild(regNodo("span", "reg-p-al-medidas-t", T("reg_p_medidas") + ":"));
+        REG_MEDIDAS_AL.forEach(function (m) {
+          var marcada = (al.medidas_l || []).indexOf(m.v) !== -1;
+          var chip = regNodo("span", "chip chip-extra" + (marcada ? " activo" : ""), regOpcionLabel(m));
+          chip.addEventListener("click", function () {
+            if (!al.medidas_l) al.medidas_l = [];
+            var k = al.medidas_l.indexOf(m.v);
+            if (k === -1) al.medidas_l.push(m.v); else al.medidas_l.splice(k, 1);
+            chip.classList.toggle("activo", k === -1);
+            guardar.salir();
+            alCambiar();
+          });
+          chips.appendChild(chip);
+        });
+        ficha.appendChild(chips);
         var l3 = regNodo("div", "reg-p-al-l3");
-        l3.appendChild(regInput(al, "medidas", "text", T("reg_p_medidas"), alCambiar));
-        l3.appendChild(regSelect(al, "recup", REG_RECUP, T("reg_p_recup"), alCambiar));
-        l3.appendChild(regInput(al, "h_recup", "time", T("reg_p_h_recup"), alCambiar));
+        l3.appendChild(regInput(al, "medidas", "text", T("reg_p_nota"), alCambiar, guardar));
+        l3.appendChild(regSelectLista(al, "recup", REG_RECUP, T("reg_p_recup"), alCambiar, guardar));
+        l3.appendChild(regInput(al, "h_recup", "time", T("reg_p_h_recup"), alCambiar, guardar));
         ficha.appendChild(l3);
         lista.appendChild(ficha);
-        if (enfocar === al.id) {
-          var m = l1.querySelector('input[type="text"]');
-          ficha.scrollIntoView({ block: "center" });
-          if (m) m.focus({ preventScroll: true });
-        }
+        if (enfocar === al.id) ficha.scrollIntoView({ block: "center" });
       });
       if (!hay) lista.appendChild(regNodo("p", "reg-ayuda", T("reg_p_sin_alarmas")));
     }
     btn.addEventListener("click", function () {
       var al = d.alarmas.filter(filaRegistroVacia)[0];
       if (!al) { al = { id: uuid() }; d.alarmas.push(al); }
-      al.hora = horaAhora();
-      registroGuardarYa();
+      // En la ficha (después de la cirugía) sin hora: "manual" la marca como
+      // escrita para que no se tome por una fila vacía.
+      if (conHora) al.hora = horaAhora(); else al.manual = true;
+      guardar.salir();
       pintar(al.id);
       alCambiar();
     });
     pintar(null);
+  }
+
+  // Texto de una alarma para el caso (Tipo de alerta / CSV / Sheet / informe).
+  function textoAlarma(a, i) {
+    var partes = [a.hora, a.modalidad, regTextoLista(REG_CRITERIO_AL, a.criterio),
+      regTextoLista(REG_CAUSA_AL, a.causa)].filter(Boolean);
+    if (a.recup) partes.push(T("reg_p_recup") + " " + regTextoLista(REG_RECUP, a.recup) + (a.h_recup ? " (" + a.h_recup + ")" : ""));
+    return "A" + (i + 1) + ": " + partes.join(" · ");
+  }
+  function textoMedidasAlarma(a, i) {
+    var m = (a.medidas_l || []).map(function (v) { return regTextoLista(REG_MEDIDAS_AL, v); });
+    if (a.medidas) m.push(a.medidas);
+    return m.length ? "A" + (i + 1) + ": " + m.join(", ") : "";
+  }
+
+  /* Al guardar un caso: con alarmas en su Registro, "Hubo alerta", "Tipo de
+     alerta" y "Medida correctora" se escriben solos a partir de ellas (para
+     el CSV, el Sheet y lo que ya leía esos campos). Sin alarmas no se toca
+     nada: un caso antiguo conserva lo suyo. */
+  function alarmasEnCaso(c) {
+    var d = c.registro_intraop;
+    if (!d || !d.alarmas) return;
+    var lista = [];
+    d.alarmas.forEach(function (a, i) { if (!filaRegistroVacia(a)) lista.push({ a: a, i: i }); });
+    if (!lista.length) return;
+    c.alerta = true;
+    c.tipo_alerta = lista.map(function (x) { return textoAlarma(x.a, x.i); }).join("\n");
+    c.medida_correctora = lista.map(function (x) { return textoMedidasAlarma(x.a, x.i); }).filter(Boolean).join("\n");
   }
 
   // Cierre: modalidades afectadas elegidas entre las técnicas del caso, y se
@@ -17071,16 +17430,8 @@
     }
     proponer("hora_inicio", v.hora_inicio_mio);
     proponer("hora_fin", v.h_fin_mio);
-    var conAlarma = d.alarmas.filter(function (a) { return a.hora || a.modalidad || a.criterio || a.causa || a.medidas; });
-    if (conAlarma.length) {
-      proponer("alerta", true);
-      proponer("tipo_alerta", conAlarma.map(function (a, i) {
-        return [a.hora, a.modalidad, a.criterio].filter(Boolean).join(" · ") || ("A" + (i + 1));
-      }).join("\n"));
-      proponer("medida_correctora", conAlarma.map(function (a) { return a.medidas; }).filter(Boolean).join("\n"));
-    }
-    var res = REG_RESULTADO.filter(function (o) { return o.v === v.cierre_resultado; })[0];
-    if (res) proponer("recuperacion_senal", res.l);
+    // Alarmas y resultado de la señal ya no se proponen: van solos al caso
+    // (espejo, 28-09-2026; ver alarmasEnCaso() y cierre_resultado).
     proponer("incidencias_tecnicas", v.cierre_incidencias);
     if (v.cierre_perla_check) proponer("caso_destacado", true);
     proponer("aprendizaje_clave", v.cierre_perla);
@@ -17517,9 +17868,13 @@
       return { hora: f.hora || "", celdas: [f.hora, f.cod, f.fase, f.modalidad, f.cambio,
         hojaCasilla(!!f.av_cir), hojaCasilla(!!f.av_an), "", f.accion, ""] };
     });
-    var filasAl = d.alarmas.filter(function (f) { return regFilaConContenido(f, alDef); }).map(function (f) {
-      return { hora: f.hora || "", celdas: [f.hora, "A", f.causa, f.modalidad, f.criterio,
-        "", "", (f.nrf ? "N" : "") + (f.an ? " A" : "") + (f.cir ? " C" : ""), f.medidas, f.recup || ""], cls: "hj-alarma" };
+    // Listas cerradas (28-09-2026): se imprimen los rótulos, no los ids.
+    var filasAl = d.alarmas.filter(function (f) { return !filaRegistroVacia(f); }).map(function (f) {
+      var med = (f.medidas_l || []).map(function (v) { return regTextoLista(REG_MEDIDAS_AL, v); });
+      if (f.medidas) med.push(f.medidas);
+      return { hora: f.hora || "", celdas: [f.hora, "A", [f.fase, regTextoLista(REG_CAUSA_AL, f.causa)].filter(Boolean).join(" · "),
+        f.modalidad, regTextoLista(REG_CRITERIO_AL, f.criterio),
+        "", "", (f.nrf ? "N" : "") + (f.an ? " A" : "") + (f.cir ? " C" : ""), med.join(", "), f.recup || ""], cls: "hj-alarma" };
     });
     var todas = filasEv.concat(filasAl);
     todas.sort(function (a, b) { return a.hora && b.hora ? a.hora.localeCompare(b.hora) : 0; });
@@ -17542,7 +17897,7 @@
     res.appendChild(nodoInforme(doc, "small", null, T("hoja_resultado")));
     var resV = nodoInforme(doc, "div", "hj-v hj-lin");
     REG_RESULTADO.forEach(function (o) {
-      resV.appendChild(nodoInforme(doc, "span", "hj-it", hojaCasilla(d.v.cierre_resultado === o.v) + " " + regOpcionLabel(o)));
+      resV.appendChild(nodoInforme(doc, "span", "hj-it", hojaCasilla(regGet(d.v, hojaDef("cierre_resultado"), c) === o.v) + " " + regOpcionLabel(o)));
     });
     resV.appendChild(nodoInforme(doc, "span", "hj-it", regL(hojaDef("cierre_modalidades")) + ": " + (V("cierre_modalidades") || "____________")));
     res.appendChild(resV);
@@ -17818,6 +18173,7 @@
       resumen_monitorizacion: "Basales reproducibles en SEP de tibiales y medianos y en MEP de los cuatro miembros. Sin cambios significativos durante la instrumentación ni tras la reducción. Free-EMG sin descargas mantenidas.",
       umbral_raices_niveles: { niveles: ["L4", "L5", "S1"], valores: {
         L4: { izq: "24", der: "22" }, L5: { izq: "19", der: "26" }, S1: { izq: "28", der: "25" } } },
+      recuperacion_senal: "sin_cambios", evolucion_postop: "sin_deficit",
       deficit_postoperatorio: "Sin déficit nuevo.", concordancia: "VN",
       rol: "residente", dificultad_1a5: "2",
       aprendizaje_clave: "Estimular cada tornillo tras colocarlo, antes de pasar al siguiente nivel."
@@ -17844,9 +18200,7 @@
       resumen_monitorizacion: "Basales reproducibles tras la posición, sin cambios respecto al supino.\nTras la mielotomía media posterior se pierden los SEP de tibiales de forma bilateral: esperable por la mielotomía, se informa y no se toma como criterio de alarma.\nDurante la resección del polo inferior, pérdida del MEP muscular en tibial anterior y abductor del hallux izquierdos con Onda D estable (caída < 20 %). Alarma A1: pausa, irrigación con suero templado y TAM > 90 mmHg. El tibial anterior reaparece a los 18 min con umbral 40 mA mayor; el abductor del hallux no se recupera al cierre.\nOnda D sin cambios hasta el final. Free-EMG sin trenes mantenidos.",
       hubo_cambios_plan: false,
       alerta: true, tecnicas_alteradas: ["t_pem"],
-      tipo_alerta: "Pérdida del MEP muscular en tibial anterior y abductor del hallux izquierdos durante la resección del polo inferior (criterio todo o nada), con Onda D estable (caída < 20 %).",
-      medida_correctora: "Aviso al cirujano y a anestesia: pausa de la resección, irrigación con suero templado y TAM > 90 mmHg.",
-      recuperacion_senal: "Parcial: el tibial anterior reaparece a los 18 min con umbral 40 mA mayor; el abductor del hallux no se recupera al cierre. Onda D sin cambios.",
+      recuperacion_senal: "persistentes", evolucion_postop: "deficit_transitorio",
       resultado_esperable: "empeoramiento",
       incidencias_tecnicas: "Ninguna. Impedancias correctas durante toda la cirugía.",
       deficit_postoperatorio: "Paresia de MII izquierdo 3/5 en el postoperatorio inmediato, 4+/5 a las 72 h y 5/5 al mes. Hipoestesia propioceptiva en miembros inferiores, esperable tras la mielotomía.",
@@ -17904,9 +18258,9 @@
       ],
       mapeo: [],
       alarmas: [
-        { id: uuid(), hora: "11:40", modalidad: "MEP MII izq. (TA, AH)", criterio: "Pérdida (todo o nada)",
-          causa: "Tracción en el polo inferior del tumor", nrf: true, an: true, cir: true,
-          medidas: "Pausa, suero templado, TAM > 90 mmHg", recup: "P", h_recup: "11:58" }
+        { id: uuid(), hora: "11:40", modalidad: "t-MEP MII", criterio: "perdida", fase: "Resección",
+          causa: "quirurgica", nrf: true, an: true, cir: true, medidas_l: ["pausa", "suero", "tam"],
+          medidas: "TA vuelve con umbral +40 mA; AH no", recup: "P", h_recup: "11:58" }
       ],
       modular: [], imagenes: []
     };
@@ -17921,6 +18275,7 @@
       intervencion: "Craneotomía retrosigmoidea derecha", posicion: "park_bench", navegacion: "si",
       tipo_anestesia: "tiva", tof_monitorizado: "si",
       resumen_monitorizacion: "MEP corticobulbar del orbicular de los labios estable. Descargas neurotónicas breves en el EMG facial durante la disección, sin trenes mantenidos. PEATC con pérdida de la onda V al final de la resección.",
+      recuperacion_senal: "persistentes", evolucion_postop: "deficit_pendiente",
       deficit_postoperatorio: "Paresia facial leve (House-Brackmann II). Cofosis derecha.", concordancia: "VP",
       rol: "residente", dificultad_1a5: "5", hacer_seguimiento: true,
       aprendizaje_clave: "La relación final/basal del MEP corticobulbar orienta el pronóstico facial."

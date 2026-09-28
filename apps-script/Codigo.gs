@@ -295,7 +295,7 @@ function construirFilasCasos_(casos, cat, columnasTec) {
     "tof_monitorizado", "incidencias_anestesicas",
     "resumen_monitorizacion", "alerta", "tipo_alerta",
     "medida_correctora", "recuperacion_senal", "resultado_esperable",
-    "deficit_postoperatorio", "concordancia",
+    "deficit_postoperatorio", "evolucion_postop", "concordancia",
     "incidencias_tecnicas", "equipo",
     "rol", "supervisor", "dificultad_1a5", "aprendizaje_clave", "caso_destacado", "hacer_seguimiento",
     "notas", "version_esquema", "n_ediciones", "ultima_edicion", "guardado_en"
@@ -347,7 +347,7 @@ function construirFilasCasos_(casos, cat, columnasTec) {
       c.tof_monitorizado, c.incidencias_anestesicas,
       resumenMonitorizacion, comoNumero01_(c.alerta), tipoAlerta,
       c.medida_correctora, c.recuperacion_senal, c.resultado_esperable,
-      c.deficit_postoperatorio, c.concordancia,
+      c.deficit_postoperatorio, c.evolucion_postop, c.concordancia,
       c.incidencias_tecnicas, nombreEquipo_(c.equipo_id),
       c.rol, c.supervisor, c.dificultad_1a5, c.aprendizaje_clave, comoNumero01_(c.caso_destacado),
       comoNumero01_(c.hacer_seguimiento),

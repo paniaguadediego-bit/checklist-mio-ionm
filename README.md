@@ -571,13 +571,21 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
    derecho en sus propios extremos) más una caja de notas libres de umbral
    EMG de tornillos pediculares para lo que
    no encaje en una raíz concreta; si hubo cambios respecto al plan y, si
-   los hubo, su detalle; si hubo alerta y, si la hubo, tipo de alerta,
-   medida correctora y recuperación de la señal; resultado esperable (lista: similar al previo, empeoramiento, mejoría o indeterminado; es el mismo dato que el Cierre del Registro);
+   los hubo, su detalle; si hubo alerta y, si la hubo, las **alarmas** (las
+   mismas fichas que G · Alarmas del Registro, en espejo: modalidad, criterio,
+   causa probable, medidas en casillas, nota breve y recuperación S/P/N; con
+   ellas se escriben solos «Tipo de alerta» y «Medida correctora» para el CSV y
+   el Sheet); **resultado de la señal** (sin cambios / cambios transitorios
+   recuperados / cambios persistentes, el mismo dato que el Resultado del
+   Cierre del Registro); resultado esperable (lista: similar al previo, empeoramiento, mejoría o indeterminado; es el mismo dato que el Cierre del Registro);
    técnicas con alteración (un chip-fila con solo las técnicas ya marcadas
    como realizadas —se actualiza solo si las tocas en el punto 5—);
    incidencias técnicas; equipo.
-7. **Resultado / Correlación clínica** — evolución postquirúrgica,
-   concordancia (VP, FP, VN, FN o **PR — positivo reversible**: hubo un
+7. **Resultado / Correlación clínica** — evolución postquirúrgica en lista
+   (sin déficit nuevo, déficit nuevo transitorio, permanente o con evolución
+   pendiente, no valorable) con su detalle en texto, y
+   concordancia, con una **propuesta** calculada con las alarmas, el resultado
+   de la señal y la evolución que se aplica con un botón (VP, FP, VN, FN o **PR — positivo reversible**: hubo un
    cambio significativo que se recuperó tras actuar y no quedó déficit nuevo).
    La lista de casos se puede filtrar por concordancia.
 8. **Docencia / Meta** — mi papel (Adjunto 1 / Adjunto 2 / Residente),
@@ -1681,12 +1689,14 @@ este orden:
 
 Nada de esto toca los casos ya guardados: no hay migraciones.
 
-## Basales (apertura, post-posición y cierre)
+## Basales (OPBSL, PostPos1, PostPos2 y CL-BSL)
 
 En la ficha del caso, **Desarrollo intraoperatorio → Basales**, encima del Resumen,
 está la misma tabla que en el **Registro intraoperatorio**: lo que escribas en un
-sitio sale en el otro y en la hoja impresa. Tres momentos: apertura, tras
-posicionar y cierre. Filas de t-SEP y t-MEP de cada extremidad, TOF y, según las
+sitio sale en el otro y en la hoja impresa. Columnas: **OPBSL** (apertura),
+**PostPos1** y **PostPos2** (hasta dos basales tras cambios de posición, antes
+de empezar o a mitad de cirugía) y **CL-BSL** (cierre). PostPos2 solo existe en
+las filas de t-SEP y t-MEP, y los c-MEP solo llevan OPBSL y CL-BSL. Filas de t-SEP y t-MEP de cada extremidad, TOF y, según las
 técnicas del caso, c-SEP, c-MEP, GRID (con el electrodo de estímulo y el contacto
 de la inversión de fase), corticobulbares, Onda D proximal y distal, PEATC, H-R y
 umbral del MEP. Más filas libres para lo que haga falta.
