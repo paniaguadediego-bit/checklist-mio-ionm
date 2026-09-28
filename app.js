@@ -837,6 +837,8 @@
     caso_sin_id:         { es: "Caso sin número", en: "Case with no number" },
     btn_menu_tit:        { es: "Idioma y guía de uso", en: "Language and user guide" },
     btn_guia:            { es: "Guía de uso", en: "User guide" },
+    btn_ayudas_ocultar:  { es: "Ocultar ayudas", en: "Hide help texts" },
+    btn_ayudas_mostrar:  { es: "Mostrar ayudas", en: "Show help texts" },
     btn_guia_tit:        { es: "Cómo se usa MIO-Check, de un vistazo", en: "How to use MIO-Check, at a glance" },
     dlg_guia_titulo:     { es: "Guía de uso", en: "User guide" },
     guia_aviso_en:       { es: "This guide is only written in Spanish for now.", en: "This guide is only written in Spanish for now." },
@@ -14120,6 +14122,28 @@
     menuLista.hidden = true;
   });
 
+  /* "Ocultar ayudas" (28-09-2026, pedido del usuario): las leyendas de ayuda
+     ocupan mucho sitio y quien ya sabe usar la herramienta no las lee. Pone
+     la clase "sin-ayudas" en <body> y style.css esconde los textos de ayuda
+     (no los avisos de estado ni los datos). Se recuerda en este dispositivo:
+     es una preferencia de pantalla, no un dato que sincronizar. */
+  var AYUDAS_KEY = "mio_ionm_sin_ayudas_v1";
+  var btnAyudas = document.getElementById("btn-ayudas");
+  function aplicarAyudas(sin) {
+    document.body.classList.toggle("sin-ayudas", sin);
+    var clave = sin ? "btn_ayudas_mostrar" : "btn_ayudas_ocultar";
+    btnAyudas.setAttribute("data-i18n", clave);
+    btnAyudas.textContent = T(clave);
+  }
+  var sinAyudasIni = false;
+  try { sinAyudasIni = localStorage.getItem(AYUDAS_KEY) === "1"; } catch (e) { /* sin persistencia */ }
+  aplicarAyudas(sinAyudasIni);
+  btnAyudas.addEventListener("click", function () {
+    var sin = !document.body.classList.contains("sin-ayudas");
+    aplicarAyudas(sin);
+    try { localStorage.setItem(AYUDAS_KEY, sin ? "1" : "0"); } catch (e) { /* sin persistencia */ }
+  });
+
   /* ---------------------------------------------------------------- *
    * Ventana docente: miotomas
    *
@@ -16741,9 +16765,9 @@
 
   function pintarPantallaModalidades(sec, cont) {
     var c = registroCaso();
-    if (!c) { cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_sin_caso"))); return; }
+    if (!c) { cont.appendChild(regNodo("p", "reg-ayuda reg-estado", T("reg_p_sin_caso"))); return; }
     var nombres = regTecnicasCaso(c);
-    if (!nombres.length) { cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_sin_tecnicas"))); return; }
+    if (!nombres.length) { cont.appendChild(regNodo("p", "reg-ayuda reg-estado", T("reg_p_sin_tecnicas"))); return; }
     // Agrupadas como en Gestión de Casos: monitorización, reflejos, mapeo.
     var fila = regNodo("div", "chip-fila");
     var hechas = c.tecnicas_realizadas || [];
@@ -16756,7 +16780,7 @@
 
   function pintarPantallaAnestesia(sec, cont) {
     var c = registroCaso();
-    if (!c) { cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_sin_caso"))); return; }
+    if (!c) { cont.appendChild(regNodo("p", "reg-ayuda reg-estado", T("reg_p_sin_caso"))); return; }
     var datos = [
       ["caso_tipo_anestesia", c.tipo_anestesia ? opcionTexto("anestesia", c.tipo_anestesia) : ""],
       ["caso_tipo_anestesia_detalle", c.tipo_anestesia_detalle],
@@ -16799,7 +16823,7 @@
     var tec = c ? (c.tecnicas_realizadas || []) : null;
     cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_mapeo_nota")));
     var bloques = REG_MAPEO_BLOQUES.filter(function (b) { return !tec || tec.indexOf(b.tec) !== -1; });
-    if (!bloques.length) { cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_mapeo_ninguna"))); return; }
+    if (!bloques.length) { cont.appendChild(regNodo("p", "reg-ayuda reg-estado", T("reg_p_mapeo_ninguna"))); return; }
     bloques.forEach(function (b) {
       cont.appendChild(regNodo("div", "reg-basal-titulo reg-p-map-tit", T(b.t)));
       b.pintar(cont, d);
@@ -17258,7 +17282,7 @@
         lista.appendChild(ficha);
         if (enfocar === al.id) ficha.scrollIntoView({ block: "center" });
       });
-      if (!hay) lista.appendChild(regNodo("p", "reg-ayuda", T("reg_p_sin_alarmas")));
+      if (!hay) lista.appendChild(regNodo("p", "reg-ayuda reg-estado", T("reg_p_sin_alarmas")));
     }
     btn.addEventListener("click", function () {
       var al = d.alarmas.filter(filaRegistroVacia)[0];

@@ -3937,3 +3937,17 @@ button, input, select, textarea { font-family: inherit; }
 .caso-propuesta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; margin-top: 0.3rem; font-size: 0.8rem; color: var(--accent); }
 .caso-propuesta[hidden] { display: none; }
 .caso-propuesta-aplicar { font: inherit; font-size: 0.78rem; padding: 0.15rem 0.6rem; border: 1px solid var(--accent); border-radius: 4px; background: transparent; color: var(--accent); cursor: pointer; }
+
+/* "Ocultar ayudas" del menú ⋮ (28-09-2026): fuera las leyendas de ayuda
+   -bajo los campos de la ficha, introducciones de diálogos y pantallas, notas
+   del Registro, líneas bajo las tarjetas de Inicio-. Los avisos de estado
+   (".reg-estado", ".empty-hint") y los datos se quedan. */
+body.sin-ayudas .campo > small:not([class]),
+body.sin-ayudas .dlg-intro,
+body.sin-ayudas .dlg-ayuda,
+body.sin-ayudas .campo-ayuda,
+body.sin-ayudas .panel-ayuda,
+body.sin-ayudas .reg-ayuda:not(.reg-estado),
+body.sin-ayudas .tile-sub,
+body.sin-ayudas .tour-lanzar-nota,
+body.sin-ayudas .coste-nota { display: none !important; }
