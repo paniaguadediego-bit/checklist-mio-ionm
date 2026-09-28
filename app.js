@@ -736,8 +736,12 @@
     caso_medida_correctora: { es: "Medida correctora", en: "Corrective action" },
     caso_recuperacion_senal: { es: "Recuperación de la señal", en: "Signal recovery" },
     caso_resultado_esperable: { es: "Resultado esperable", en: "Expected outcome" },
-    caso_resultado_esperable_ay: { es: "Lo que cabría esperar en el postoperatorio dado lo registrado, para compararlo después con el déficit real.",
-                           en: "What would be expected postoperatively given what was recorded, to compare later against the actual deficit." },
+    caso_resultado_esperable_ay: { es: "Lo que cabría esperar en el postoperatorio respecto al estado previo, dado lo registrado, para compararlo después con la evolución real. Es el mismo dato que el Cierre del Registro intraoperatorio.",
+                           en: "What would be expected postoperatively compared with the previous state, given what was recorded, to compare later against the actual evolution. It is the same data as the Closure of the intraoperative record." },
+    opc_resultado_esperable_similar:       { es: "Similar al previo", en: "Similar to previous" },
+    opc_resultado_esperable_empeoramiento: { es: "Empeoramiento", en: "Worsening" },
+    opc_resultado_esperable_mejoria:       { es: "Mejoría", en: "Improvement" },
+    opc_resultado_esperable_indeterminado: { es: "Indeterminado", en: "Undetermined" },
     caso_deficit_postoperatorio: { es: "Evolución postquirúrgica", en: "Postoperative evolution" },
     caso_concordancia:   { es: "Concordancia", en: "Concordance" },
     caso_incidencias_tecnicas: { es: "Incidencias técnicas", en: "Technical incidents" },
@@ -6615,6 +6619,11 @@
     // "PR" (demo-congreso B3.F2): positivo reversible. Solo un valor más de la
     // lista; los casos ya guardados no cambian.
     concordancia: ["VP", "FP", "VN", "FN", "PR"],
+    // Nació como texto libre y se cerró a lista el 28-09-2026 (pedido del
+    // usuario) para poder contarlo; es el mismo dato que el Cierre del
+    // Registro (REG_RES_ESPERABLE, mismos ids). Lo escrito antes a mano se
+    // conserva: ver resultadoEsperableId().
+    resultado_esperable: ["similar", "empeoramiento", "mejoria", "indeterminado"],
     dificultad: ["1", "2", "3", "4", "5"],
     // Lista cerrada y corta a propósito, como los tipos de cirugía: sirve
     // para agrupar y contar. La anatomía patológica real o el nivel exacto
@@ -6754,7 +6763,7 @@
     { g: "desarrollo", c: "tipo_alerta", t: "area", dependeDe: "alerta" },
     { g: "desarrollo", c: "medida_correctora", t: "area", dependeDe: "alerta" },
     { g: "desarrollo", c: "recuperacion_senal", t: "area", dependeDe: "alerta" },
-    { g: "desarrollo", c: "resultado_esperable", t: "area", ay: "caso_resultado_esperable_ay" },
+    { g: "desarrollo", c: "resultado_esperable", t: "sel", o: "resultado_esperable", ay: "caso_resultado_esperable_ay" },
     // Depende en vivo de lo que esté marcado en "tecnicas_realizadas" -ver
     // oyentesTecnicasRealizadas-, así que tiene que ir después de esa
     // lista, nunca antes.
@@ -6779,6 +6788,19 @@
     { g: "formacion", c: "notas", t: "area" }
   ];
   var GRUPOS_CASO = ["traza", "paciente", "cirugia", "anestesia", "montaje", "desarrollo", "resultado", "formacion"];
+
+  // Texto libre de antes -> id de la lista, solo cuando la equivalencia es
+  // exacta ("Sin cambios.", "Similar al estado previo"...). Lo que lleva
+  // detalle (qué déficit, qué lado) se deja tal cual para no perderlo: el
+  // desplegable lo ofrece como una opción más hasta que se cambie a mano.
+  function resultadoEsperableId(v) {
+    if (!v || OPCIONES.resultado_esperable.indexOf(v) !== -1) return v;
+    var s = String(v).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "")
+      .replace(/[.\s]+$/, "").trim();
+    if (/^(sin cambios|similar al (estado )?previo|similar a previsto: similar al estado previo)$/.test(s)) return "similar";
+    if (/^(empeoramiento|mejoria|indeterminado)$/.test(s)) return s;
+    return v;
+  }
 
   function opcionTexto(grupo, valor) {
     var clave = "opc_" + grupo + "_" + valor;
@@ -7882,6 +7904,7 @@
           : def.c === "resumen_monitorizacion" ? resumenMonitorizacionDe(c)
           : def.c === "tipo_alerta" ? tipoAlertaDe(c)
           : def.c === "navegacion" ? navegacionDe(c)
+          : def.c === "resultado_esperable" ? resultadoEsperableId(c[def.c])
           : c[def.c];
         var elCampo = campoCaso(def, valor);
         // "montaje" reparte sus campos entre los 3 sub-apartados de arriba
@@ -15078,6 +15101,15 @@
     { v: "transitorios", l: "Cambios transitorios recuperados", l_en: "Transient changes, recovered" },
     { v: "persistentes", l: "Cambios persistentes", l_en: "Persistent changes" }
   ];
+  // Los mismos ids que OPCIONES.resultado_esperable de la ficha: es el mismo
+  // dato (compartido ⇄). Sustituye al texto libre "Déficit esperado / mensaje
+  // transmitido" (28-09-2026, pedido del usuario).
+  var REG_RES_ESPERABLE = [
+    { v: "similar", l: "Similar al previo", l_en: "Similar to previous" },
+    { v: "empeoramiento", l: "Empeoramiento", l_en: "Worsening" },
+    { v: "mejoria", l: "Mejoría", l_en: "Improvement" },
+    { v: "indeterminado", l: "Indeterminado", l_en: "Undetermined" }
+  ];
 
   // Técnicas del caso (ids de data/surgeries.js) que equivalen 1:1 a una
   // casilla de "Modalidades": solo se marcan solas cuando la equivalencia es
@@ -15394,7 +15426,7 @@
         { id: "cierre_com_cir", l: "Comunicación final: Cirujano", l_en: "Final communication: Surgeon", t: "check" },
         { id: "cierre_com_an", l: "Comunicación final: Anestesia", l_en: "Final communication: Anaesthesia", t: "check" },
         { id: "cierre_com_h", l: "Hora comunicación", l_en: "Communication time", t: "time" },
-        { id: "cierre_deficit", l: "Déficit esperado / mensaje transmitido", l_en: "Expected deficit / message conveyed", t: "text", ancho: true },
+        { id: "cierre_esperable", l: "Resultado esperable", l_en: "Expected outcome", t: "sel", o: REG_RES_ESPERABLE, ancho: true, caso: "resultado_esperable" },
         { id: "cierre_incidencias", l: "Incidencias técnicas", l_en: "Technical incidents", t: "area", ancho: true, caso: "incidencias_tecnicas" },
         { id: "cierre_material", l: "Material: consumo · fallos · reposición", l_en: "Material: use · failures · replacement", t: "text", ancho: true },
         { id: "cierre_perla_check", l: "Perla docente: caso para sesión", l_en: "Teaching pearl: case for session", t: "check", caso: "caso_destacado" },
@@ -15587,6 +15619,16 @@
         op.textContent = regOpcionLabel(o);
         ctl.appendChild(op);
       });
+      // Compartido con un campo de la ficha que antes era texto libre: lo
+      // escrito a mano se ofrece como una opción más, en vez de dejar el
+      // desplegable en blanco (igual que en campoCaso()).
+      if (def.caso === "resultado_esperable") val = resultadoEsperableId(val);
+      if (val && !def.o.some(function (o) { return o.v === val; })) {
+        var propia = document.createElement("option");
+        propia.value = String(val);
+        propia.textContent = String(val);
+        ctl.appendChild(propia);
+      }
       ctl.value = val || "";
       ctl.addEventListener("change", function () { fijar(ctl.value); registroGuardarYa(); });
     } else if (def.t === "area") {
@@ -16962,7 +17004,7 @@
     cont.appendChild(bloque);
 
     var grid2 = regNodo("div", "reg-grid");
-    ["cierre_deficit", "cierre_incidencias", "cierre_perla_check", "cierre_perla"].forEach(function (id) {
+    ["cierre_esperable", "cierre_incidencias", "cierre_perla_check", "cierre_perla"].forEach(function (id) {
       if (def[id]) grid2.appendChild(regControl(def[id], d.v));
     });
     cont.appendChild(grid2);
@@ -17490,7 +17532,18 @@
     var comV = nodoInforme(doc, "div", "hj-v hj-lin");
     comV.appendChild(nodoInforme(doc, "span", "hj-it", hojaCasilla(!!d.v.cierre_com_cir) + " " + T("hoja_cirujano")));
     comV.appendChild(nodoInforme(doc, "span", "hj-it", hojaCasilla(!!d.v.cierre_com_an) + " " + T("hoja_anestesia") + "  h: " + (d.v.cierre_com_h || "_____")));
-    comV.appendChild(nodoInforme(doc, "span", "hj-it", regL(hojaDef("cierre_deficit")) + ": " + (d.v.cierre_deficit || "____________________")));
+    // Resultado esperable (⇄ ficha): casillas como el Resultado; si el caso
+    // trae el texto libre de antes, se imprime ese texto.
+    var esp = resultadoEsperableId(regGet(d.v, hojaDef("cierre_esperable"), c));
+    var espTxt = regL(hojaDef("cierre_esperable")) + ":";
+    if (esp && !REG_RES_ESPERABLE.some(function (o) { return o.v === esp; })) {
+      comV.appendChild(nodoInforme(doc, "span", "hj-it", espTxt + " " + esp));
+    } else {
+      comV.appendChild(nodoInforme(doc, "span", "hj-it", espTxt));
+      REG_RES_ESPERABLE.forEach(function (o) {
+        comV.appendChild(nodoInforme(doc, "span", "hj-it", hojaCasilla(esp === o.v) + " " + regOpcionLabel(o)));
+      });
+    }
     com.appendChild(comV);
     gI.appendChild(com);
     gI.appendChild(hojaCelda(doc, regL(hojaDef("cierre_incidencias")), V("cierre_incidencias"), 2));
@@ -17774,7 +17827,7 @@
       tipo_alerta: "Pérdida del MEP muscular en tibial anterior y abductor del hallux izquierdos durante la resección del polo inferior (criterio todo o nada), con Onda D estable (caída < 20 %).",
       medida_correctora: "Aviso al cirujano y a anestesia: pausa de la resección, irrigación con suero templado y TAM > 90 mmHg.",
       recuperacion_senal: "Parcial: el tibial anterior reaparece a los 18 min con umbral 40 mA mayor; el abductor del hallux no se recupera al cierre. Onda D sin cambios.",
-      resultado_esperable: "Paresia transitoria de MII izquierdo: la Onda D conservada hace esperable la recuperación.",
+      resultado_esperable: "empeoramiento",
       incidencias_tecnicas: "Ninguna. Impedancias correctas durante toda la cirugía.",
       deficit_postoperatorio: "Paresia de MII izquierdo 3/5 en el postoperatorio inmediato, 4+/5 a las 72 h y 5/5 al mes. Hipoestesia propioceptiva en miembros inferiores, esperable tras la mielotomía.",
       concordancia: "VP",
@@ -17815,7 +17868,6 @@
         cierre_resultado: "persistentes",
         cierre_modalidades: "MEP MII izq. (AH ausente, TA con umbral +40 mA). SEP de miembros inferiores (mielotomía).",
         cierre_com_cir: true, cierre_com_an: true, cierre_com_h: "14:15",
-        cierre_deficit: "Posible paresia de MII izquierdo, previsiblemente transitoria (Onda D conservada).",
         cierre_incidencias: "Ninguna.", cierre_material: "Sin fallos. Reponer electrodo epidural.",
         cierre_perla_check: true,
         cierre_perla: "Onda D conservada + pérdida del MEP muscular: déficit habitualmente transitorio.",

@@ -572,7 +572,7 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
    EMG de tornillos pediculares para lo que
    no encaje en una raíz concreta; si hubo cambios respecto al plan y, si
    los hubo, su detalle; si hubo alerta y, si la hubo, tipo de alerta,
-   medida correctora y recuperación de la señal; resultado esperable;
+   medida correctora y recuperación de la señal; resultado esperable (lista: similar al previo, empeoramiento, mejoría o indeterminado; es el mismo dato que el Cierre del Registro);
    técnicas con alteración (un chip-fila con solo las técnicas ya marcadas
    como realizadas —se actualiza solo si las tocas en el punto 5—);
    incidencias técnicas; equipo.
