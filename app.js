@@ -568,7 +568,8 @@
     caso_g_paciente:     { es: "Paciente", en: "Patient" },
     caso_g_cirugia:      { es: "Cirugía", en: "Surgery" },
     caso_g_anestesia:    { es: "Anestesia", en: "Anaesthesia" },
-    caso_g_montaje:      { es: "Montaje / Técnicas", en: "Montage / Techniques" },
+    caso_g_montaje:      { es: "Montaje / Material", en: "Montage / Material" },
+    caso_g_tecnicas:     { es: "Técnicas", en: "Techniques" },
     caso_g_desarrollo:   { es: "Desarrollo intraoperatorio", en: "Intraoperative course" },
     caso_g_resultado:    { es: "Resultado / Correlación clínica", en: "Outcome / Clinical correlation" },
     caso_g_formacion:    { es: "Docencia / Meta", en: "Teaching / Meta" },
@@ -896,9 +897,9 @@
     tour_t_caso:         { es: "Caso", en: "Case" },
     tour_x_caso:         { es: "Cada cirugía real es un caso, sin ningún dato identificativo del paciente. Se crea desde una plantilla y la ficha sigue la cirugía en 8 apartados, de la planificación al resultado. Este caso de ejemplo lo tiene todo relleno.",
                            en: "Each real surgery is a case, with no patient-identifying data. It is created from a template and the form follows the surgery in 8 sections, from planning to outcome. This example case has everything filled in." },
-    tour_t_caso_montaje: { es: "Montaje y técnicas del caso", en: "Case montage and techniques" },
-    tour_x_caso_montaje: { es: "El montaje real del caso (se corrige en el Organizador), el material y las técnicas realizadas con sus parámetros: intensidad, duración, músculos… Admite fotos de la pantalla del equipo para consultarlas en un caso parecido.",
-                           en: "The case's actual montage (corrected in the Organiser), the material and the techniques performed with their parameters: intensity, duration, muscles… You can add photos of the machine's screen to look up in a similar case." },
+    tour_t_caso_montaje: { es: "Montaje y material del caso", en: "Case montage and material" },
+    tour_x_caso_montaje: { es: "El montaje real del caso (se corrige en el Organizador) y el material. Las técnicas realizadas, con sus parámetros (intensidad, duración, músculos…), van en su propio apartado, «Técnicas», justo debajo. Admite fotos de la pantalla del equipo para consultarlas en un caso parecido.",
+                           en: "The case's actual montage (corrected in the Organiser) and the material. The techniques performed, with their parameters (intensity, duration, muscles…), have their own section, “Techniques”, just below. You can add photos of the machine's screen to look up in a similar case." },
     tour_t_caso_desarrollo: { es: "Desarrollo intraoperatorio", en: "Intraoperative course" },
     tour_x_caso_desarrollo: { es: "Basales de apertura, post-posición y cierre; lo que pasó durante la cirugía; la alerta con su criterio, la medida correctora y si se recuperó la señal; las técnicas que se alteraron y los cambios respecto al plan.",
                            en: "Opening, post-positioning and closing baselines; what happened during surgery; the alert with its criterion, the corrective measure and whether the signal recovered; the techniques that changed and any change from the plan." },
@@ -918,7 +919,7 @@
     tour_x_exportar:     { es: "Con los filtros de arriba eliges casos y los exportas: informe en PDF de varios casos, un CSV con una fila por caso u otro CSV con los eventos y alarmas del registro. Fuera de la demo todo se sincroniza con un repositorio privado. Puedes repetir esta visita desde Inicio.",
                            en: "Use the filters above to choose cases and export them: a PDF report of several cases, a CSV with one row per case, or another CSV with the log's events and alarms. Outside the demo everything syncs to a private repository. You can repeat this tour from Home." },
     casos_quitar_fecha:  { es: "Quitar la fecha", en: "Clear the date" },
-    caso_basales_registro: { es: "Basales (apertura, post-posición y cierre)", en: "Baselines (opening, post-positioning and closing)" },
+    caso_basales_registro: { es: "Basales (OPBSL, PostPos y CL-BSL)", en: "Baselines (OPBSL, PostPos and CL-BSL)" },
     caso_basales_registro_ay: { es: "Es la misma tabla que la del Registro intraoperatorio: lo que escribas aquí sale allí y en la hoja impresa, y al revés. Las filas de c-SEP, c-MEP, GRID, corticobulbares, Onda D, PEATC y H-R aparecen según las técnicas marcadas.",
                               en: "It is the same table as in the Intraoperative record: whatever you write here appears there and on the printed sheet, and vice versa. The c-SEP, c-MEP, GRID, corticobulbar, D wave, BAEP and H-R rows appear depending on the techniques ticked." },
     caso_basales_grid_estimulo: { es: "GRID: electrodo de estímulo", en: "GRID: stimulating electrode" },
@@ -5103,13 +5104,16 @@
         // entera, sin más llamadas tras este cambio. "Coste del material"
         // se sigue viendo, igual que siempre, dentro de la propia ficha.
         [
-          seccionTecnicasInforme(doc, c),
-          seccionParametrosInforme(doc, c),
           seccionCajasInforme(doc, c),
           seccionMaterialInforme(doc, T("caso_material_previsto"), c.material_previsto),
           sec,
           seccionImagenesInforme(doc, T("caso_imagenes_montaje"), c.imagenes_montaje)
         ].filter(Boolean).forEach(function (s) { art.appendChild(s); });
+      } else if (g === "tecnicas") {
+        // Apartado propio desde el 28-09-2026: técnicas realizadas, cómo se
+        // hizo cada una y sus notas ("sec").
+        [seccionTecnicasInforme(doc, c), seccionParametrosInforme(doc, c), sec]
+          .filter(Boolean).forEach(function (s) { art.appendChild(s); });
       } else if (g === "paciente") {
         // Mismo criterio que "montaje": "sec" trae los campos simples del
         // grupo (edad, sexo, servicio, resumen de historia clínica), los
@@ -6747,7 +6751,9 @@
     // "Técnicas", ver el HTML a mano de cada uno en renderFichaCaso()-.
     // "sub" dice a cuál de los tres pertenece cada campo; el orden dentro
     // de cada sub-apartado es el orden de este array.
-    { g: "montaje", sub: "tecnicas", c: "tecnicas_realizadas", t: "tecnicas" },
+    // "Técnicas" es su propio apartado desde el 28-09-2026 (pedido del
+    // usuario); antes era el tercer sub-apartado de "Montaje / Técnicas".
+    { g: "tecnicas", c: "tecnicas_realizadas", t: "tecnicas" },
     // Pedido por Pani, 05-09-2026: para cada técnica ya marcada como
     // realizada, poder anotar cómo se hizo de verdad en este caso concreto
     // -campos propios por técnica desde el 10-09-2026, ver
@@ -6755,11 +6761,11 @@
     // lista de campos por el mismo motivo que tecnicas_alteradas: depende
     // de esa lista via oyentesTecnicasRealizadas, así que tiene que
     // construirse después.
-    { g: "montaje", sub: "tecnicas", c: "tecnicas_parametros", t: "tecnicas_parametros" },
+    { g: "tecnicas", c: "tecnicas_parametros", t: "tecnicas_parametros" },
     // Antes "Notas de Montaje/Técnicas" -absorbía lo que era "Pares
     // craneales monitorizados"-, renombrada "Notas de las Técnicas" el
     // 10-09-2026 al mudarse dentro del sub-apartado "Técnicas".
-    { g: "montaje", sub: "tecnicas", c: "notas_montaje_tecnicas", t: "area" },
+    { g: "tecnicas", c: "notas_montaje_tecnicas", t: "area" },
     // Nueva el 10-09-2026, pedida junto con el resto de la reestructuración:
     // por si hay algo que decir del montaje en sí -no de una técnica
     // concreta ni del material-, sin tener que forzarlo dentro de
@@ -6854,7 +6860,7 @@
     { g: "formacion", c: "hacer_seguimiento", t: "check" },
     { g: "formacion", c: "notas", t: "area" }
   ];
-  var GRUPOS_CASO = ["traza", "paciente", "cirugia", "anestesia", "montaje", "desarrollo", "resultado", "formacion"];
+  var GRUPOS_CASO = ["traza", "paciente", "cirugia", "anestesia", "montaje", "tecnicas", "desarrollo", "resultado", "formacion"];
 
   /* Concordancia propuesta: cambio en la monitorización (alerta o resultado
      de la señal con cambios) frente a déficit nuevo (cualquiera de los tres
@@ -7880,19 +7886,9 @@
         contMaterial.className = "caso-grupo-campos";
         detMaterial.appendChild(contMaterial);
 
-        var detTecnicas = document.createElement("details");
-        detTecnicas.className = "caso-grupo";
-        detTecnicas.open = true;
-        var sumTecnicas = document.createElement("summary");
-        sumTecnicas.textContent = T("caso_sub_tecnicas");
-        detTecnicas.appendChild(sumTecnicas);
-        var contTecnicas = document.createElement("div");
-        contTecnicas.className = "caso-grupo-campos";
-        detTecnicas.appendChild(contTecnicas);
-
+        // "Técnicas" salió de aquí el 28-09-2026: es su propio apartado.
         cont.appendChild(detCajas);
         cont.appendChild(detMaterial);
-        cont.appendChild(detTecnicas);
 
         var res = document.createElement("p");
         res.className = "caso-resumen-linea";
@@ -8029,7 +8025,6 @@
         // sin "sub" (imágenes), van directos a `cont` como siempre.
         var destino = def.sub === "cajas" ? contCajas
           : def.sub === "material" ? contMaterial
-          : def.sub === "tecnicas" ? contTecnicas
           : cont;
         destino.appendChild(elCampo);
         // Coste del material (pedido por Pani, 06-09-2026; metido dentro

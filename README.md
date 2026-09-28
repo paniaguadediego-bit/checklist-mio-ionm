@@ -458,7 +458,7 @@ herramienta—.
 
 **Al preparar**, pulsa **Crear caso** (06-09-2026, antes "Caso nuevo desde
 cero"). El caso se guarda al instante, vacío, y se abre su **ficha**. Para
-construir su montaje, ve al apartado *Montaje/Técnicas* y pulsa **Editar
+construir su montaje, ve al apartado *Montaje / Material* y pulsa **Editar
 material y montaje**: eso te lleva al **Organizador de Montajes** con las
 cajas de ese caso, donde lo montas a mano —marcando técnicas y colocando
 material como siempre— o cargas una plantilla encima con **Cargar montaje…**
@@ -511,9 +511,11 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
    quirúrgicos.
 4. **Anestesia** — tipo (TIVA, R-TIVA, DXM, ALO, Gas), detalle, TOF
    monitorizado, incidencias anestésicas.
-5. **Montaje / Técnicas** — repartido en tres sub-apartados desde el
-   10-09-2026 (pedido del usuario; antes era todo un único bloque), cada uno
-   su propio `<details>` abierto por defecto dentro del apartado:
+5. **Montaje / Material** y **Técnicas** — desde el 28-09-2026 son dos
+   apartados al mismo nivel: *Montaje / Material* lleva los sub-apartados
+   Cajas y entradas y Material (más las imágenes del montaje), y *Técnicas*
+   las técnicas realizadas, cómo se realizó cada una y sus notas. Antes era un
+   solo apartado con tres sub-apartados:
 
    - **Cajas y entradas**: el resumen de cajas/entradas ocupadas, la
      plantilla de origen (si el caso salió de una, resuelta en vivo — si la
@@ -603,7 +605,7 @@ a la izquierda (abre un PDF imprimible de ese caso, ver más abajo), y
 navega, nunca guarda ni cambia el estado.
 
 **Editar montaje de un caso ya guardado**: el botón vive en el sub-apartado
-"Cajas y entradas", dentro del apartado 5 (Montaje/Técnicas) — abre las
+"Cajas y entradas", dentro del apartado 5 (Montaje / Material) — abre las
 cajas de ese caso concreto
 para cambiar dónde va cada cosa, un cambio de última hora o un error al
 preparar. Se guarda en el caso, no toca el montaje del que salió. Mientras
