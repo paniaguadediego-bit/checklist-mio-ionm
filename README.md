@@ -572,8 +572,7 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
    "I [caja] — nivel — D [caja]" por cada uno, con el umbral izquierdo y
    derecho en sus propios extremos) más una caja de notas libres de umbral
    EMG de tornillos pediculares para lo que
-   no encaje en una raíz concreta; si hubo cambios respecto al plan y, si
-   los hubo, su detalle; si hubo alerta y, si la hubo, las **alarmas** (las
+   no encaje en una raíz concreta; si hubo alerta y, si la hubo, las **alarmas** (las
    mismas fichas que G · Alarmas del Registro, en espejo: modalidad, criterio,
    causa probable, medidas en casillas, nota breve y recuperación S/P/N; con
    ellas se escriben solos «Tipo de alerta» y «Medida correctora» para el CSV y

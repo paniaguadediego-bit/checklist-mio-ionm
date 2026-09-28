@@ -6827,8 +6827,10 @@
     // nada que hacer aquí- (ver ocultarSegunTecnica en campoCaso).
     { g: "desarrollo", c: "umbral_raices_niveles", t: "umbral_raices", ay: "caso_umbral_raices_niveles_ay" },
     { g: "desarrollo", c: "umbral_tornillos_pediculares", t: "area", ay: "caso_umbral_tornillos_pediculares_ay" },
-    { g: "desarrollo", c: "hubo_cambios_plan", t: "check" },
-    { g: "desarrollo", c: "cambios_respecto_al_plan", t: "area", dependeDe: "hubo_cambios_plan" },
+    // "¿Hubo cambios respecto al plan?" y su detalle, fuera de la ficha el
+    // 28-09-2026 (pedido del usuario: no los usa). Los datos antiguos se
+    // quedan en el JSON (y en el CSV/Sheet); el único texto real se pasó al
+    // Resumen de la monitorización.
     { g: "desarrollo", c: "alerta", t: "check" },
     // Las alarmas son las de G · Alarmas del Registro, en espejo (28-09-2026,
     // pedido del usuario: lo de quirófano se recoge en el Registro y se ve
