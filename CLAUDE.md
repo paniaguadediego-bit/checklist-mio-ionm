@@ -194,9 +194,12 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Registro intraoperatorio: pantalla digital | `REG_SECCIONES`, `regControl()`, `regGet()`, `pintarSeccion*()`, `registroPasarAlCaso()` | ver `grep` |
 | Lista propia de TODOS los desplegables (el `<select>` cerrado no cambia; un manejador en `document` en captura; `data-nativo` para excluir uno) | `selEsPropio()`, `abrirListaSelect()`, `colocarListaSelect()`, `cerrarListaSelect()` | ver `grep` |
 | Técnicas IONM desde el repo privado | `bajarTecnicasMio()`, `hayTecnicasMio()`, `pintarTileTecnicasMio()`, `olvidarTecnicasMio()`, `TECMIO_KEY` | ver `grep` |
+| Catálogo del Organizador en el móvil (sin scroll propio; al elegir sube a las cajas y al colocar vuelve al material) | `plegarCatalogo()`, `anclaCatalogo`, `catalogoConScrollPropio()`, `altoBarrasFijas()` | ver `grep` |
+| Foco sin teclado en táctil (Etiquetas, Material nuevo) | `enfocarSinTeclado()` | ver `grep` |
+| Bibliografía recomendada (Vancouver con DOI) | `BIBLIOGRAFIA`, `renderBibliografia()` | ver `grep` |
 | Selector «Vincular a un caso» propio (Checklist y Registro; el `<select>` sigue oculto como fuente de verdad) | `mejorarSelectorCaso()`, `refrescarSelectorCaso()`, `pintarOpcionCaso()` | ver `grep` |
 | Registro ↔ ficha: campos compartidos (`caso: "campo"` en la definición; `soloCaso`; `leerCaso`) — `regGet()` los lee del caso y `regControl()` los escribe en el caso | `regGet()`, `regControl()`, `regNombresTecnicas()` | ver `grep` |
-| Registro: hoja completa simplificada en pantalla (la impresa no cambia) | `REG_PANTALLA` (id de sección → pintado propio; `null` = no se enseña), `pintarPantallaModalidades/Anestesia/Mapeo/Eventos/Alarmas/Cierre()`, `regInput()`, `regSelect()` | ver `grep` |
+| Registro: hoja completa simplificada en pantalla (la impresa no cambia) | `REG_PANTALLA` (id de sección → pintado propio; `null` = no se enseña), `pintarPantallaIdentificacion/Modalidades/Anestesia/Mapeo/Eventos/Alarmas/Cierre()`, `REG_MAPEO_BLOQUES`, `pintarMapeoGrid/Filas/Raices()`, `regFilasTornillos()`, `REG_COD_PANTALLA`, `REG_FILAS_EVENTO_VACIAS`, `regInput()`, `regSelect()` | ver `grep` |
 | Registro: modo rápido (vista por defecto; escribe en `eventos`/`alarmas`, sin datos propios) | `pintarModoRapido()`, `regApuntar()`, `regMarcarFase()`, `regQuitarRapido()`, `REG_FASES_RAPIDAS`, `REG_CAMBIOS_RAPIDOS`, `REG_QUE_EXTRA`, `regVista()` | ver `grep` |
 | Registro intraoperatorio: hoja imprimible A4 | `construirHojaRegistro()`, `abrirHojaRegistro()`, `ESTILO_HOJA_REGISTRO` | ver `grep` |
 | Material, pantalla propia (todo el catálogo en filas) | `renderDocenteMaterial()`, `descripcionMaterial()` | ver `grep` |
@@ -336,94 +339,82 @@ distinta a la anterior, no importa el formato exacto.
 
 ## Estado del proyecto
 
-> **Resumen a 28-09-2026 (léelo primero; el diario cronológico está en el
-> repositorio privado, ver al final de este archivo).**
-> - **Pantallas (10 tarjetas de Inicio en tres bloques -Antes de quirófano, En
->   quirófano, Después / consulta-, cada una con una línea bajo el nombre):**
->   Antes: Organizador de Montajes, Gestión de Casos, Checklist pre-quirúrgico.
->   En quirófano: Registro intraoperatorio, Técnicas IONM (solo con token).
->   Después: Material (catálogo con descripción; pares L./R. y mantas GRID en una
->   fila, `descripcionSinLado()`, `SERIES_MATERIAL` (GRID y contactos Px/Dst de onda D); leyenda de tipos físicos, `pintarLeyendaMaterial()`; raíces de `MIOTOMAS` o `par` craneal, `inervacionMaterial()`), Docencia (Miotomas, Cama, Teoría básica
->   pendiente), Simulador, Mis apuntes y Bibliografía recomendada (`BIBLIOGRAFIA`,
->   `renderBibliografia()`: solo nombres de fuentes, tal como se citan).
-> - **Dos equipos** (25-09-2026): `equipo_id` "inomed" | "cadwell" en plantillas y
->   casos (sin el campo = Inomed). Cajas por equipo (`cajas_material` = Inomed,
->   `cajas_cadwell`), `cajasDe()`/`CAJAS_TODAS`; se elige al crear caso o montaje en
->   blanco. Cadwell: módulo cortical (TCS H1-H9 + registro E1-E13, 1A/1R-3A/3R,
->   GND, salidas 1-5 con luz verde según lo enchufado), LCSwap (rejilla 4×3, P1-P3
->   con − y + separados), 4 módulos de extremidad y amplificador de 32 canales
->   (plegado, salida 5). **`equipo_id` no es `equipo`**: ese era un texto libre del
->   caso, retirado de la ficha; la columna `equipo` del CSV/Sheet sale ahora de
->   `equipo_id`.
-> - **Basales compartidas** (25-09-2026): la tabla "Basales y comparativa" del
->   Registro se edita también desde la ficha (Desarrollo intraoperatorio). Mismos
->   datos en `caso.registro_intraop.v`. Filas según técnicas (`regFilasBasales()`).
-> - **Técnicas IONM, privada** (27-09-2026): el contenido ya no está en este
->   repositorio (era `data/tecnicas-mio.js`); vive en el privado,
->   `referencia/tecnicas-mio.json` + `LEEME-tecnicas-mio.md`. `bajarTecnicasMio()`
->   (en `bajarAuto()` y al volver la conexión) lo baja con el token y lo guarda en
->   `localStorage["mio_ionm_tecnicas_mio_v1"]`; `pintarTileTecnicasMio()` enseña la
->   tarjeta solo si hay datos y no es demo; «Desconectar» lo borra
->   (`olvidarTecnicasMio()`). No se sube nunca: se edita el JSON en el repo privado.
+> **Resumen a 28-09-2026, tarde (léelo primero; el diario cronológico está en
+> el repositorio privado, ver al final de este archivo).**
+> - **Pantallas (Inicio en tres bloques, tarjetas centradas, una línea bajo cada
+>   nombre):** *Antes de quirófano*: Organizador de Montajes, Gestión de Casos,
+>   Checklist pre-quirúrgico. *En quirófano*: Registro intraoperatorio, Técnicas
+>   IONM (solo con token). *Después / consulta*: Material, Docencia (Miotomas,
+>   Cama, Teoría básica pendiente), Simulador, Mis apuntes, Bibliografía
+>   recomendada.
+> - **Registro intraoperatorio** (lo más trabajado el 27/28-09): vista **Hoja
+>   completa por defecto** (`regVista()`), **Modo rápido** a elegir. La hoja en
+>   PANTALLA va simplificada con `REG_PANTALLA` (id de sección → pintado propio;
+>   `null` = no se enseña: D hitos, esquema, H zona modular); la hoja IMPRESA
+>   (`construirHojaRegistroInterna()`) no cambia y los datos ocultos siguen
+>   guardados. B y C de lectura desde la ficha. **E2 · Mapeo** por técnicas del
+>   caso (`REG_MAPEO_BLOQUES`: `c_pem` GRID, `mapeo_cortical`/`subcortical` filas
+>   C/S, `mapeo_nervio_periferico` tipo N, `mapeo_raices_tornillos` sobre
+>   `caso.umbral_raices_niveles`; la tabla de tornillos salió de Basales y la
+>   impresa se rellena con `regFilasTornillos()`). **F · Registro de fases y
+>   eventos** en filas (5 en blanco, tipos F/E/An/T, fase del modo rápido).
+>   G en fichas compactas. Cierre corto. **Campos compartidos con la ficha**
+>   (`caso:` en `REG_SECCIONES`, `regGet()`/`regControl()`, marca ⇄): fecha, horas,
+>   nivel, procedimiento, técnicas alteradas, incidencias, aprendizaje/destacado.
+>   Modo rápido: bloques *Fase* y *Evento o alarma*, un solo «c-MEP», TOF propio,
+>   horas de lo apuntado editables. Basales sin Umbral MEP ni TOF; D-Wave bajo GRID.
+> - **Material y catálogo**: 20 categorías en orden lógico (mismo en Catálogo y
+>   Material); músculos de «ampliación» dentro de su categoría con separador
+>   (`"ampliacion": true`); MMSS/MMII escritos enteros en lo visible; en Material
+>   filas agrupadas (L./R., `SERIES_MATERIAL`), leyenda de tipos físicos y raíces o
+>   `par` craneal. «Raabe (estímulo)» retirado (nadie lo usaba). En el móvil el
+>   catálogo del Organizador no tiene scroll propio (`plegarCatalogo()` con ancla).
+> - **Desplegables**: lista propia para todos (`abrirListaSelect()`, manejador en
+>   `document`); «Vincular a un caso» con `mejorarSelectorCaso()`.
+> - **Dos equipos** (Inomed/Cadwell): `equipo_id` en plantillas y casos (sin el
+>   campo = Inomed); **no confundir con `equipo`**, texto libre retirado.
+> - **Técnicas IONM, privada** (27-09-2026): el contenido vive en el repo privado
+>   (`referencia/tecnicas-mio.json` + LEEME); `bajarTecnicasMio()` lo baja con el
+>   token; sin token o en demo no hay tarjeta; «Desconectar» lo borra.
 >   **No volver a meter ese contenido aquí.**
-> - **Modo demo** `?demo`: datos ficticios aislados (prefijo de localStorage,
->   IndexedDB aparte), sin sincronizar. `localStorage` a secas en todo el código,
->   nunca `window.localStorage`.
-> - **Licencia**: todos los derechos reservados (`LICENSE`), titular Pablo Paniagua
->   de Diego. Registro de la Propiedad Intelectual aparcado hasta que la app esté
->   más desarrollada (paquete preparado en `../registro-propiedad-intelectual/`).
-> - **Dónde vive cada dato:** localStorage (texto, ligero) · **IndexedDB** (todas
->   las fotos: casos, checklist, registro, apuntes) · repo privado
->   `checklist-mio-datos` (`estado.json`, `casos/`, `montajes/`, `apuntes/` y
->   `apuntes/fotos/<id>.jpg`, una foto por archivo; y `simulador/<id>.json`, un preset del Simulador por archivo, desde el 26-09-2026). Las fotos de CASOS siguen
->   incrustadas en el JSON del caso; solo las de Apuntes son archivos aparte.
->   Material propio del usuario (femorales, bulbocavernoso monopolar...) y precios
->   reales: `estado.json` (`catalogo_usuario`, `etiquetas_usuario`).
-> - **Historial público reescrito** (28-09-2026): el repositorio del código tiene
->   un solo commit; el historial anterior (con la etiqueta `rpi-2026-09-25` del
->   Registro de la Propiedad Intelectual) está solo en
->   `../copia-historial-codigo-2026-09-28.bundle`, fuera de GitHub. No borrarlo.
-> - **Pendiente del usuario:** abrir la app nueva en TODOS los dispositivos (una copia con caché vieja
->   puede subir el documento de Apuntes sin sus fotos); abrir un .docx exportado en
->   Word real; revisar las descripciones de material redactadas el 26-09-2026.
-> - **Ideas pendientes, no construidas:** que la demo enseñe más utilidades
->   (el usuario lo pidió "más adelante"; p. ej. un caso de repaso del Simulador en
->   el recorrido); conversión de un montaje de Inomed a
->   Cadwell (y al revés); fusionar eventos y alarmas en la pantalla del Registro
->   (solo la hoja impresa los fusiona); rellenar la tabla de tornillos de la hoja
->   desde `umbral_raices_niveles`; sección del Registro en el Sheet; bloque
->   "Cirugías con IONM"; Teoría básica.
-> - **Convenciones que han fallado antes:** subir el `?v=` de `index.html` en
->   cada cambio de `app.js`/`style.css`/`data/`; `git fetch`+`pull --ff-only` antes
->   de tocar `checklist-mio-datos` (y otro `fetch` antes del push: la app escribe
->   ahí sola); al editar con Python, construir el contenido entero en memoria y
->   escribirlo al final, **respetando el salto de línea que ya tenga el archivo**
->   (hoy `app.js` va en LF; cuidado con `\r` en rutas dentro de strings de Python);
->   `estado.json` y los casos se reescriben con `json.dumps(indent=2,
->   ensure_ascii=False)` y el mismo salto de línea (comprobar el round-trip antes);
->   medir `--header-h`/`--barra-caso-h` a mano si se toca la cabecera o el rótulo;
->   ES5 (`var`, sin flechas ni `let`); cualquier `[hidden]` sobre una clase con
->   `display` propio necesita su regla explícita; la hoja impresa del Registro
->   tiene que caber en A4 (medir la página 1 con casos de varias técnicas).
-> - **Comprobación habitual:** `node --check app.js`, servidor estático local
->   (`.claude/launch.json`, configuración `checklist`, no `file://`), probar en el
->   navegador (el modo `?demo` trae casos y plantillas de ejemplo para probar sin
->   tocar nada real), commit y push (permiso permanente para este repo).
-> - **"Actualiza todo"** (orden del usuario, 26-09-2026): poner al día este
->   resumen, el mapa del código, README.md, `data/guia.js` si cambió el flujo,
->   AGENTS.md y la memoria de Claude, y subirlo todo a GitHub.
-> - **Demo y congreso** (27/28-09-2026, rama `demo-congreso`, ya en `main`): Inicio
->   en tres bloques con una línea por tarjeta; recorrido «Empieza aquí» solo en
->   `?demo` (`TOUR_PASOS`, `tourIr()`; con la ficha abierta la tarjeta va DENTRO de
->   `#dlg-caso`); caso estrella (ependimoma D8-D9) en `sembrarDemo()`; «Revisión del
->   montaje» en el Resumen (`revisarMontaje()`, reglas en `material_tecnicas` de
->   `data/surgeries.js`; lista propia, NO entra en `res.avisos` ni en el Sheet);
->   concordancia `PR`; equipo de lo nuevo por `"por_defecto"` (`equipoNuevo()`,
->   lo antiguo sin `equipo_id` sigue siendo Inomed); equipo de ejemplo `generico`
->   (solo demo); 44 px en ficha y Registro en táctil/estrecho; en `?demo`,
->   `window.fetch` rechaza otros orígenes. Sin campos nuevos en el modelo del caso.
-> - **Letra Inter** servida desde `fonts/` (OFL), negritas a 600. Rótulo de la
->   plantilla cargada sobrio (`.barra-caso-equipo`, sin logotipo de marca).
+> - **Modo demo** `?demo`: datos ficticios aislados, sin red; visita guiada
+>   opcional de 12 pasos (`TOUR_PASOS`), Técnicas IONM oculta. `localStorage` a
+>   secas en todo el código, nunca `window.localStorage`.
+> - **Dónde vive cada dato:** localStorage (texto) · IndexedDB (fotos) · repo
+>   privado `checklist-mio-datos` (`estado.json`, `casos/`, `montajes/`,
+>   `apuntes/` + `apuntes/fotos/`, `simulador/`, `referencia/`). Precios y material
+>   propio del usuario: `estado.json`.
+> - **Historial público reescrito** dos veces (28-09 y otra el 27-09 para sacar
+>   Técnicas IONM): un solo commit. Copias del historial fuera de GitHub:
+>   `../copia-historial-codigo-2026-09-28.bundle` y
+>   `../copia-historial-codigo-2026-09-27.bundle`. No borrarlas.
+> - **Licencia**: todos los derechos reservados (`LICENSE`). Registro de la
+>   Propiedad Intelectual aparcado (`../registro-propiedad-intelectual/`).
+> - **Pendiente del usuario:** recargar la app en todos los dispositivos (Técnicas
+>   aparece tras sincronizar); probar en un móvil real el deslizamiento del
+>   catálogo y la lista propia de los desplegables; A (identificación) del
+>   Registro se deja como está "por ahora".
+> - **Ideas pendientes, no construidas:** que la demo enseñe más utilidades;
+>   conversión de un montaje Inomed ↔ Cadwell; sección del Registro en el Sheet;
+>   bloque "Cirugías con IONM"; Teoría básica.
+> - **Convenciones que han fallado antes:** subir el `?v=` de `index.html` en cada
+>   cambio de `app.js`/`style.css`/`data/`; `git fetch`+`pull --ff-only` antes de
+>   tocar `checklist-mio-datos` (y otro `fetch` antes del push); con
+>   `core.autocrlf=true` la copia de trabajo suele ir en **CRLF** (en git, LF) y
+>   `data/i18n-en.js` tiene saltos mixtos: al editar con Python, detectar el salto
+>   de línea, normalizar, editar y restaurarlo (o editar en crudo); en cadenas
+>   Python que llevan regex de JS usar raw strings (`\d`, `\.`); ES5 (`var`, sin
+>   flechas); `[hidden]` sobre clases con `display` propio necesita su regla;
+>   `#pantalla-registro button { min-height: 44px }` gana por el id (excepciones
+>   con `#pantalla-registro .clase`); `.card:not([open])` pillaba a las cajas
+>   (`<div>`): ahora `details.card:not([open]):not(.caja-card)`; la hoja impresa
+>   del Registro tiene que caber en A4.
+> - **Comprobación habitual:** `node --check app.js`, servidor `checklist` de
+>   `.claude/launch.json` (no `file://`), probar en el navegador con `?demo`
+>   (a 375 px para el móvil), commit y push (permiso permanente).
+> - **"Actualiza todo"**: poner al día este resumen, el mapa del código,
+>   README.md, `data/guia.js` si cambió el flujo, AGENTS.md, el diario privado y
+>   la memoria de Claude, y subirlo todo.
 
 ## Diario del proyecto (privado)
 

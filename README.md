@@ -32,11 +32,30 @@ flechas, Intro y Escape.
 todo **imprimible**, prerrellenada desde el caso), **Mis apuntes** (documento
 con carpetas de colores, negrita/cursiva, fotos dentro de cada caja y
 **Exportar como Word**) y la pantalla **Material** (todo el catálogo
-de material en filas, con una breve descripción de uso de cada uno; desde el
-24-09-2026 tiene tarjeta propia bajo el Registro intraoperatorio).
+de material en filas, con una breve descripción de uso de cada uno; tarjeta
+propia en *Después / consulta*).
 
-**Novedades del 27-28/09/2026 (demo para el congreso):** recorrido guiado
-«Empieza aquí» y caso de ejemplo completo en `?demo`, **Revisión del montaje**
+**Novedades del 27-28/09/2026 (tras el congreso):**
+- **Registro intraoperatorio**: la **Hoja completa** sale por defecto y va
+  simplificada en pantalla (la impresa no cambia): modalidades y anestesia de
+  lectura desde la ficha, sin hitos, esquema ni zona modular, **E2 · Mapeo** con
+  un bloque por técnica de mapeo del caso (GRID, cortical, subcortical, nervio
+  periférico, raíces y tornillos), **Registro de fases y eventos** en filas con 5
+  en blanco, alarmas en fichas compactas y un cierre más corto. Los campos que
+  existen también en la ficha del caso son el mismo dato (⇄). El **Modo
+  rápido** separa *Fase* de *Evento o alarma* (qué + qué pasa) y deja corregir la
+  hora de lo apuntado. Nuevo **CSV de eventos y alarmas** en Gestión de Casos.
+- **Material**: pares L./R., mantas GRID y contactos de onda D en una fila;
+  leyenda de tipos físicos bajo el buscador; raíces (miotoma) o par craneal de
+  cada músculo; categorías del catálogo en orden lógico y los músculos de
+  «ampliación» dentro de su categoría (MMSS/MMII escritos enteros).
+- **Técnicas IONM** es privada: solo se ve con la sincronización configurada.
+- **Bibliografía recomendada** en estilo Vancouver con DOI; **Checklist** con
+  menos texto y sin *Planificación del caso*; **desplegables** con lista propia;
+  **visita guiada** opcional de 12 pasos en la demo.
+
+**Novedades anteriores del 27-28/09/2026 (demo para el congreso):** recorrido guiado
+(hoy *Visita guiada*) y caso de ejemplo completo en `?demo`, **Revisión del montaje**
 en el Resumen, concordancia **PR**, equipo por defecto configurable
 («Adaptarlo a otro servicio»), controles de 44 px en el móvil, letra **Inter**
 y acciones de Plantillas de montajes agrupadas en **Más acciones**.

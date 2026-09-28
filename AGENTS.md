@@ -19,3 +19,8 @@ Instrucciones para cualquier asistente de código que trabaje en este repositori
   caso reales, nombres de personas o del centro.
 - La consola del usuario es PowerShell 5.1: en los comandos que se le den, nada
   de `&&`; mejor `git -C "ruta" ...`, una orden por bloque.
+- El contenido de **Técnicas IONM** (apuntes del autor sacados de libros y
+  artículos) vive SOLO en el repositorio privado (`referencia/`): no lo copies
+  nunca a este repositorio público.
+- Con `core.autocrlf=true`, la copia de trabajo suele ir en CRLF: respeta el
+  salto de línea que tenga cada archivo al editarlo.
