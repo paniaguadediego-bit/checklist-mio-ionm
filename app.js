@@ -6861,8 +6861,9 @@
     { g: "formacion", c: "supervisor", t: "text" },
     { g: "formacion", c: "dificultad_1a5", t: "sel", o: "dificultad" },
     { g: "formacion", c: "aprendizaje_clave", t: "area", rows: 8 },
-    { g: "formacion", c: "caso_destacado", t: "check" },
-    { g: "formacion", c: "hacer_seguimiento", t: "check" },
+    // "par": las dos casillas en la misma fila (28-09-2026, pedido del usuario).
+    { g: "formacion", c: "caso_destacado", t: "check", par: true },
+    { g: "formacion", c: "hacer_seguimiento", t: "check", par: true },
     { g: "formacion", c: "notas", t: "area" }
   ];
   var GRUPOS_CASO = ["traza", "paciente", "cirugia", "anestesia", "montaje", "tecnicas", "desarrollo", "resultado", "formacion"];
@@ -7235,6 +7236,7 @@
     }
 
     if (def.t === "check") {
+      if (def.par) div.classList.add("campo-par");
       var lab = document.createElement("label");
       lab.className = "check";
       control = document.createElement("input");
@@ -15734,6 +15736,7 @@
     if (compartido) div.classList.add("reg-compartido");
 
     if (def.t === "check") {
+      if (def.par) div.classList.add("campo-par");
       var lab = document.createElement("label");
       lab.className = "check";
       var cb = document.createElement("input");

@@ -4009,3 +4009,7 @@ body.sin-ayudas .coste-nota { display: none !important; }
 #pantalla-apuntes .apunte-seccion-carpeta { height: 1.9rem; font-size: 0.8rem; padding: 0.25rem 0.35rem; }
 #pantalla-apuntes .apunte-seccion-titulo { height: 1.9rem; font-size: 0.9rem; padding: 0.2rem 0.2rem; }
 #pantalla-apuntes .apunte-editor { font-size: 0.85rem; line-height: 1.5; min-height: 10rem; }
+
+/* Dos casillas en la misma fila de la ficha ("par" en CAMPOS_CASO): Caso
+   destacado y Hacer seguimiento (28-09-2026, pedido del usuario). */
+.campo.campo-par { display: inline-flex; width: calc(50% - 0.3rem); vertical-align: top; margin-right: 0.3rem; }
