@@ -3965,3 +3965,21 @@ body.sin-ayudas .reg-ayuda:not(.reg-estado),
 body.sin-ayudas .tile-sub,
 body.sin-ayudas .tour-lanzar-nota,
 body.sin-ayudas .coste-nota { display: none !important; }
+
+/* Hoja 2 del Registro (F, G, I) con casillas del tamaño de las del E2 ·
+   Mapeo (28-09-2026, pedido del usuario): unos 30 px de alto y letra 0,8rem,
+   también en táctil (le gana a "#pantalla-registro select { min-height:
+   44px }" por especificidad). Los botones conservan su tamaño táctil. */
+#pantalla-registro .reg-hoja-2 select,
+#pantalla-registro .reg-hoja-2 input:not([type="checkbox"]),
+#pantalla-registro .reg-hoja-2 textarea {
+  min-height: 0;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.35rem;
+  line-height: 1.3;
+}
+#pantalla-registro .reg-hoja-2 select,
+#pantalla-registro .reg-hoja-2 input:not([type="checkbox"]) { height: 1.9rem; }
+#pantalla-registro .reg-hoja-2 .reg-p-al-l1,
+#pantalla-registro .reg-hoja-2 .reg-p-al-l2,
+#pantalla-registro .reg-hoja-2 .reg-p-al-l3 { align-items: center; }

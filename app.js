@@ -16186,7 +16186,9 @@
         cont.appendChild(h);
       }
       var det = document.createElement("details");
-      det.className = "caso-grupo reg-seccion";
+      // Clase por hoja: la hoja 2 lleva casillas del tamaño de las del E2
+      // (28-09-2026, pedido del usuario; ver .reg-hoja-2 en style.css).
+      det.className = "caso-grupo reg-seccion reg-hoja-" + (sec.hoja || 1);
       det.open = regAbierta(sec.id);
       det.addEventListener("toggle", function () { regRecordarAbierta(sec.id, det.open); });
       var sum = document.createElement("summary");
