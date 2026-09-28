@@ -772,6 +772,9 @@
     caso_conc_alerta:     { es: "Hubo alerta", en: "Alert" },
     caso_conc_sin_alerta: { es: "Sin alerta", en: "No alert" },
     caso_salir_guardar:   { es: "Hay cambios sin guardar en la ficha.\n\n¿Guardarlos antes de salir?", en: "There are unsaved changes in the case form.\n\nSave them before leaving?" },
+    modelo0_tit:          { es: "Modelo 0 — sin caso: hoja suelta en este dispositivo, sin sincronizar. Elige un caso para que se guarde dentro de él.", en: "Model 0 — no case: a loose sheet on this device, not synced. Choose a case to save it inside that case." },
+    caso_autoguardado:    { es: "Guardado.", en: "Saved." },
+    caso_cambiado_fuera_auto: { es: "Este caso ha cambiado en otro dispositivo: el guardado automático se ha parado. Pulsa Guardar para decidir.", en: "This case changed on another device: autosave has stopped. Press Save to decide." },
     caso_salir_descartar: { es: "¿Salir sin guardar? Se perderán los cambios.", en: "Leave without saving? The changes will be lost." },
     caso_cambiado_fuera:  { es: "Este caso ha cambiado en otro dispositivo mientras tenías la ficha abierta.\n\nSi guardas, sustituirás esos cambios. ¿Guardar igualmente?", en: "This case changed on another device while you had the form open.\n\nSaving will replace those changes. Save anyway?" },
     caso_resultado_esperable: { es: "Resultado esperable", en: "Expected outcome" },
@@ -8231,6 +8234,7 @@
   }
 
   function guardarFicha(cerrar) {
+    if (fichaAutoTimer) { clearTimeout(fichaAutoTimer); fichaAutoTimer = null; }
     var c = leerFichaCaso();
     if (!c.fecha) {
       var err = document.getElementById("caso-error");
@@ -8268,14 +8272,60 @@
   function firmaFicha() {
     try { return JSON.stringify(leerFichaCaso()); } catch (e) { return ""; }
   }
+  /* Autoguardado de la ficha (auditoría 28-09-2026, F1): igual que el
+     Registro, la ficha se guarda sola ~1,5 s después de cada cambio. Se
+     guarda una COPIA de la copia de trabajo: los controles (y las tablas
+     espejo) siguen enlazados a casoAbierto y no se pueden sustituir a mitad
+     de edición. «Guardar» sigue ahí como confirmación visible. No guarda
+     solo si falta la fecha o si el caso cambió en otro dispositivo mientras
+     tanto (C10): entonces avisa y deja la decisión a «Guardar». */
+  var fichaAutoTimer = null;
+  function casoCambiadoFuera() {
+    var uid = casoAbierto && casoAbierto.caso_uid;
+    return !!(!casoEsNuevo && fichaOrigen && uid && casos[uid] && casos[uid] !== fichaOrigen);
+  }
+  function autoguardarFicha() {
+    if (fichaAutoTimer) { clearTimeout(fichaAutoTimer); fichaAutoTimer = null; }
+    if (!casoAbierto || !dlgCaso.open) return false;
+    var firma = firmaFicha();
+    if (firma === fichaFirma) return true;
+    var c = casoAbierto;
+    if (!c.fecha) return false;
+    if (casoCambiadoFuera()) { avisoGuardado(T("caso_cambiado_fuera_auto"), true); return false; }
+    guardarCaso(clonar(c), casoEsNuevo, true);
+    casoEsNuevo = false;
+    fichaOrigen = casos[c.caso_uid];
+    fichaFirma = firma;
+    document.getElementById("caso-borrar").hidden = false;
+    document.getElementById("caso-mas").hidden = false;
+    avisoGuardado(T("caso_autoguardado"));
+    return true;
+  }
+  function programarAutoguardadoFicha() {
+    if (fichaAutoTimer) clearTimeout(fichaAutoTimer);
+    fichaAutoTimer = setTimeout(autoguardarFicha, 1500);
+  }
+  ["input", "change", "click"].forEach(function (ev) {
+    dlgCaso.addEventListener(ev, function (e) {
+      // Los botones de la barra no son cambios de la ficha.
+      if (e.target && e.target.closest && e.target.closest(".caso-acciones")) return;
+      programarAutoguardadoFicha();
+    });
+  });
+  document.addEventListener("visibilitychange", function () { if (document.hidden) autoguardarFicha(); });
+  window.addEventListener("pagehide", function () { autoguardarFicha(); });
+
   function salirDeFicha() {
-    if (casoAbierto && firmaFicha() !== fichaFirma) {
+    // Con el autoguardado, salir guarda lo pendiente sin preguntar. Solo si no
+    // se puede (sin fecha, o el caso cambió fuera) se pregunta como antes.
+    if (casoAbierto && firmaFicha() !== fichaFirma && !autoguardarFicha()) {
       if (confirm(T("caso_salir_guardar"))) {
         if (!guardarFicha(false)) return;
       } else if (!confirm(T("caso_salir_descartar"))) {
         return;
       }
     }
+    if (fichaAutoTimer) { clearTimeout(fichaAutoTimer); fichaAutoTimer = null; }
     dlgCaso.close();
     abrirListaCasos();
   }
@@ -15306,6 +15356,9 @@
   }
 
   function renderChecklistContenido() {
+    // «Vaciar» solo en Modelo 0, como en el Registro (auditoría 28-09-2026,
+    // F7): con un caso vinculado, las marcas son parte del caso.
+    document.getElementById("checklist-vaciar").hidden = !!(checklistCasoUid && casos[checklistCasoUid]);
     var cont = document.getElementById("checklist-contenido");
     cont.innerHTML = "";
     var valores = checklistValores();
@@ -15362,6 +15415,7 @@
     avisoGuardado(T("checklist_guardado"));
   });
   document.getElementById("checklist-vaciar").addEventListener("click", function () {
+    if (checklistCasoUid && casos[checklistCasoUid]) return;   // solo Modelo 0 (auditoría, F7)
     if (!confirm(T("checklist_vaciar_conf"))) return;
     if (checklistCasoUid && casos[checklistCasoUid]) {
       casos[checklistCasoUid].checklist_prequirurgico = {};
@@ -15681,10 +15735,10 @@
   // filas t-SEP y t-MEP (regColBasal()). Los ids no cambian: lo escrito en
   // Apertura/Post-posición/Cierre sigue en OPBSL/PostPos1/CL-BSL.
   var REG_BASALES_COLS = [
-    { id: "basal", l: "OPBSL", l_en: "OPBSL" },
-    { id: "post", l: "PostPos1", l_en: "PostPos1" },
-    { id: "post2", l: "PostPos2", l_en: "PostPos2", soloT: true },
-    { id: "final", l: "CL-BSL", l_en: "CL-BSL" }
+    { id: "basal", l: "OPBSL", l_en: "OPBSL", tit: "Basales de apertura, antes de empezar", tit_en: "Opening baselines, before starting" },
+    { id: "post", l: "PostPos1", l_en: "PostPos1", tit: "Basales tras el primer cambio de posición", tit_en: "Baselines after the first position change" },
+    { id: "post2", l: "PostPos2", l_en: "PostPos2", soloT: true, tit: "Basales tras el segundo cambio de posición (solo t-SEP y t-MEP)", tit_en: "Baselines after the second position change (t-SEP and t-MEP only)" },
+    { id: "final", l: "CL-BSL", l_en: "CL-BSL", tit: "Basales de cierre", tit_en: "Closing baselines" }
   ];
   // ¿Lleva la fila (id sin prefijo: "sep_msd", "libre1"...) esa columna?
   // Los c-MEP no tienen post-posición: solo OPBSL y CL-BSL (pedido del
@@ -16161,6 +16215,7 @@
     REG_BASALES_COLS.forEach(function (col) {
       var s = document.createElement("span");
       s.textContent = regL(col);
+      s.title = campo(col, "tit");   // la jerga, explicada al pasar o mantener (F9)
       cab.appendChild(s);
     });
     bloque.appendChild(cab);
