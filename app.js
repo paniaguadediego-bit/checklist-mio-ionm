@@ -1195,6 +1195,23 @@
     reg_p_mod_afectadas: { es: "Modalidades afectadas", en: "Affected modalities" },
     reg_p_en:            { es: "en {fase}", en: "in {fase}" },
     reg_p_fase_otra:     { es: "Otra…", en: "Other…" },
+    reg_p_mapeo_nota:    { es: "Cada bloque de mapeo aparece solo si su técnica está marcada en la ficha del caso: c-MEP por GRID, mapeo cortical, mapeo subcortical, mapeo de nervio periférico y estimulación de raíces y tornillos.", en: "Each mapping block only appears if its technique is ticked in the case form: c-MEP by GRID, cortical mapping, subcortical mapping, peripheral nerve mapping and root and screw stimulation." },
+    reg_p_mapeo_ninguna: { es: "El caso no tiene ninguna técnica de mapeo marcada.", en: "The case has no mapping technique ticked." },
+    reg_p_map_grid:      { es: "c-MEP por GRID", en: "c-MEP by GRID" },
+    reg_p_map_cortical:  { es: "Mapeo cortical", en: "Cortical mapping" },
+    reg_p_map_subcortical: { es: "Mapeo subcortical", en: "Subcortical mapping" },
+    reg_p_map_nervio:    { es: "Mapeo de nervio periférico", en: "Peripheral nerve mapping" },
+    reg_p_map_raices:    { es: "Estimulación de raíces y tornillos", en: "Root and screw stimulation" },
+    reg_p_punto:         { es: "Punto", en: "Point" },
+    reg_p_nervio:        { es: "Nervio / punto", en: "Nerve / point" },
+    reg_p_umbral:        { es: "Umbral (mA)", en: "Threshold (mA)" },
+    reg_p_intensidad:    { es: "Intensidad (mA)", en: "Intensity (mA)" },
+    reg_p_musculo:       { es: "Músculo (respuesta)", en: "Muscle (response)" },
+    reg_p_fila_nueva:    { es: "+ Fila", en: "+ Row" },
+    reg_p_nivel:         { es: "Nivel", en: "Level" },
+    reg_p_izq_ma:        { es: "Izq. (mA)", en: "Left (mA)" },
+    reg_p_der_ma:        { es: "Der. (mA)", en: "Right (mA)" },
+    reg_p_nivel_repetido: { es: "Ese nivel ya está en la tabla.", en: "That level is already in the table." },
     reg_p_compartido:    { es: "⇄ = el mismo dato que en la ficha del caso: lo que escribas aquí aparece allí, y al revés.", en: "⇄ = the same data as in the case form: what you type here appears there, and vice versa." },
     reg_p_solo_caso:     { es: "Sale de la ficha del caso; se cambia allí.", en: "Comes from the case form; change it there." },
     registro_fila_quitar_conf: { es: "¿Quitar esta fila? Tiene datos escritos.", en: "Remove this row? It has data." },
@@ -1214,6 +1231,7 @@
     rr_intro:            { es: "Para quirófano: marca la fase una vez y lo que apuntes después la hereda. Un cambio de señal es qué + qué pasa + Apuntar. Todo va a los mismos eventos y alarmas de la hoja completa, donde se puede corregir o completar después.",
                            en: "For the OR: mark the phase once and whatever you log afterwards inherits it. A signal change is what + what happens + Log. Everything goes to the same events and alarms as the full sheet, where it can be corrected or completed later." },
     rr_fase:             { es: "Fase", en: "Phase" },
+    rr_evento_alarma:    { es: "Evento o alarma", en: "Event or alarm" },
     rr_fase_actual:      { es: "Fase actual: {fase}", en: "Current phase: {fase}" },
     rr_sin_fase:         { es: "Sin fase marcada", en: "No phase marked" },
     rr_fase_otra:        { es: "+ Otra", en: "+ Other" },
@@ -15046,7 +15064,8 @@
     { v: "S", l: "S · subcortical (Raabe)", l_en: "S · subcortical (Raabe)" },
     { v: "IV", l: "IV · suelo IV v.", l_en: "IV · 4th ventricle floor" },
     { v: "PC", l: "PC · par craneal", l_en: "PC · cranial nerve" },
-    { v: "R", l: "R · raíz", l_en: "R · root" }
+    { v: "R", l: "R · raíz", l_en: "R · root" },
+    { v: "N", l: "N · nervio periférico", l_en: "N · peripheral nerve" }
   ];
   var REG_RECUP = [
     { v: "S", l: "S · sí", l_en: "S · yes" },
@@ -15743,37 +15762,8 @@
     par.className = "reg-basales";
     pintarBloqueBasales(T("registro_sens_otros"), regFilasBasales(REG_BASALES_SENS, "s_", d, tecRB), "s_", REG_BASALES_LIBRES.sens, par, d);
     pintarBloqueBasales(T("registro_motores"), regFilasBasales(REG_BASALES_MOT, "m_", d, tecRB), "m_", REG_BASALES_LIBRES.mot, par, d);
-    // Estimulación de tornillos: IZQ | NIVEL | DER
-    var bloque = document.createElement("div");
-    bloque.className = "reg-basal reg-basal-tornillos";
-    var cab = document.createElement("div");
-    cab.className = "reg-basal-titulo";
-    cab.textContent = T("registro_tornillos");
-    bloque.appendChild(cab);
-    var cab2 = document.createElement("div");
-    cab2.className = "reg-basal-fila reg-basal-cab";
-    REG_TORNILLOS.cols.forEach(function (col) {
-      var sp = document.createElement("span");
-      sp.textContent = regL(col);
-      cab2.appendChild(sp);
-    });
-    bloque.appendChild(cab2);
-    for (var i = 1; i <= REG_TORNILLOS.filas; i++) {
-      var f = document.createElement("div");
-      f.className = "reg-basal-fila";
-      REG_TORNILLOS.cols.forEach(function (col) {
-        var clave = "e_t_" + i + "_" + col.id;
-        var inp = document.createElement("input");
-        inp.type = "text";
-        inp.value = d.v[clave] || "";
-        inp.setAttribute("aria-label", T("registro_tornillos") + " " + i + " — " + regL(col));
-        inp.addEventListener("input", function () { d.v[clave] = inp.value; registroGuardar(); });
-        inp.addEventListener("change", registroGuardarYa);
-        f.appendChild(inp);
-      });
-      bloque.appendChild(f);
-    }
-    par.appendChild(bloque);
+    // La estimulación de tornillos pasó a E2 · Mapeo (28-09-2026), donde
+    // solo sale si el caso tiene marcada esa técnica.
     cont.appendChild(par);
   }
 
@@ -16075,14 +16065,16 @@
   // Lo elegido y aún sin apuntar. No se guarda: se pierde al cambiar de caso.
   var regRapido = { que: "", cambio: "", nota: "" };
 
+  // Hoja completa por defecto (28-09-2026, pedido del usuario); el modo
+  // rápido es la alternativa que se elige.
   function regVista() {
-    try { return localStorage.getItem(REG_VISTA_KEY) === "hoja" ? "hoja" : "rapida"; } catch (e) { return "rapida"; }
+    try { return localStorage.getItem(REG_VISTA_KEY) === "rapida" ? "rapida" : "hoja"; } catch (e) { return "hoja"; }
   }
 
   function pintarSelectorVistaRegistro(cont) {
     var barra = document.createElement("div");
     barra.className = "rr-vistas";
-    [["rapida", "rr_vista_rapida"], ["hoja", "rr_vista_hoja"]].forEach(function (p) {
+    [["hoja", "rr_vista_hoja"], ["rapida", "rr_vista_rapida"]].forEach(function (p) {
       var b = document.createElement("button");
       b.type = "button";
       b.textContent = T(p[1]);
@@ -16121,8 +16113,16 @@
       if (x.siempre) return true;
       return tec ? x.tec.some(function (t) { return tec.indexOf(t) !== -1; }) : !!x.defecto;
     });
+    // c-MEP como una sola entrada, detrás de t-MEP MII (28-09-2026, pedido
+    // del usuario), en vez de las cuatro filas por miembro de las basales.
+    var motores = [];
+    regFilasBasales(REG_BASALES_MOT, "m_", d, tec).forEach(function (r) {
+      if (/^cmep_/.test(r.id)) return;
+      motores.push(r);
+      if (r.id === "mep_mii" && (!tec || tec.indexOf("c_pem") !== -1)) motores.push({ l: "c-MEP" });
+    });
     return regFilasBasales(REG_BASALES_SENS, "s_", d, tec)
-      .concat(regFilasBasales(REG_BASALES_MOT, "m_", d, tec))
+      .concat(motores)
       .concat(extra)
       .map(function (r) { return campo(r, "l"); });
   }
@@ -16242,11 +16242,18 @@
 
     // Fase: las de fábrica más las propias ya usadas en este registro
     var faseAct = regFaseActual(d);
+    // Dos bloques separados (28-09-2026, pedido del usuario): la FASE se
+    // marca sola, cuando toque; "qué" + "qué pasa" van juntos y son los que
+    // definen cada evento o alarma.
+    var bFase = regNodo("div", "rr-bloque");
+    bFase.appendChild(regNodo("div", "rr-bloque-tit", T("rr_fase")));
+    panel.appendChild(bFase);
     var estado = document.createElement("div");
     estado.className = "rr-fase-actual";
     estado.textContent = faseAct ? T("rr_fase_actual", { fase: faseAct }) : T("rr_sin_fase");
-    panel.appendChild(estado);
-    var filaFases = regGrupoRapido(panel, T("rr_fase"));
+    bFase.appendChild(estado);
+    var filaFases = regNodo("div", "rr-chips");
+    bFase.appendChild(filaFases);
     var nombres = REG_FASES_RAPIDAS.map(function (f) { return campo(f, "l"); });
     d.eventos.forEach(function (e) {
       if (e.cod === "F" && e.fase && nombres.indexOf(e.fase) === -1) nombres.push(e.fase);
@@ -16259,7 +16266,10 @@
       if (nombre) regMarcarFase(nombre.trim());
     }, "rr-chip-otra"));
 
-    var filaQue = regGrupoRapido(panel, T("rr_que"));
+    var bEvento = regNodo("div", "rr-bloque rr-bloque-evento");
+    bEvento.appendChild(regNodo("div", "rr-bloque-tit", T("rr_evento_alarma")));
+    panel.appendChild(bEvento);
+    var filaQue = regGrupoRapido(bEvento, T("rr_que"));
     regQueRapidos(d).map(function (l) { return [l, l]; })
       .concat([[REG_QUE_ANESTESIA, T("rr_que_anestesia")], [REG_QUE_TECNICO, T("rr_que_tecnico")]])
       .forEach(function (p) {
@@ -16267,7 +16277,7 @@
         filaQue.appendChild(b);
       });
 
-    var filaCambio = regGrupoRapido(panel, T("rr_que_pasa"));
+    var filaCambio = regGrupoRapido(bEvento, T("rr_que_pasa"));
     REG_CAMBIOS_RAPIDOS.forEach(function (c) {
       var b = regChip(campo(c, "l"), regRapido.cambio === c.id, function () { regElegirEn(filaCambio, b, "cambio", c.id); });
       filaCambio.appendChild(b);
@@ -16279,7 +16289,7 @@
     nota.placeholder = T("rr_nota");
     nota.value = regRapido.nota;
     nota.addEventListener("input", function () { regRapido.nota = nota.value; });
-    panel.appendChild(nota);
+    bEvento.appendChild(nota);
 
     var botones = document.createElement("div");
     botones.className = "rr-botones";
@@ -16295,7 +16305,7 @@
     bAl.addEventListener("click", function () { regApuntar(true); });
     botones.appendChild(bEv);
     botones.appendChild(bAl);
-    panel.appendChild(botones);
+    bEvento.appendChild(botones);
 
     // Lo apuntado, lo último arriba
     var tit = document.createElement("div");
@@ -16465,10 +16475,42 @@
     cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_anest_ayuda")));
   }
 
-  // Electrodo motor y músculos registrados: los mismos gridN_motor /
-  // gridN_musculos que imprime la hoja.
+  /* E2 · Mapeo en pantalla (28-09-2026, pedido del usuario): un bloque por
+     técnica de mapeo marcada en el caso; sin caso (Modelo 0), todos.
+       c-MEP por GRID: electrodo motor · músculos registrados (gridN_*).
+       Cortical / subcortical: hora · punto · umbral · músculo (filas de
+         d.mapeo con tipo C / S, las mismas que imprime la hoja).
+       Nervio periférico: nervio/punto · intensidad · músculo (tipo N).
+       Raíces y tornillos: nivel · izq. · der. = los "Umbrales EMG por raíz"
+         de la ficha (umbral_raices_niveles), el mismo dato; sin caso, la
+         tabla suelta de la hoja (e_t_*). */
+  var REG_MAPEO_BLOQUES = [
+    { tec: "c_pem", t: "reg_p_map_grid", pintar: pintarMapeoGrid },
+    { tec: "mapeo_cortical", t: "reg_p_map_cortical", pintar: function (cont, d) { pintarMapeoFilas(cont, d, "C", true); } },
+    { tec: "mapeo_subcortical", t: "reg_p_map_subcortical", pintar: function (cont, d) { pintarMapeoFilas(cont, d, "S", true); } },
+    { tec: "mapeo_nervio_periferico", t: "reg_p_map_nervio", pintar: function (cont, d) { pintarMapeoFilas(cont, d, "N", false); } },
+    { tec: "mapeo_raices_tornillos", t: "reg_p_map_raices", pintar: pintarMapeoRaices }
+  ];
+  var REG_NIVELES_RAICES = ["C1", "C2", "C3", "C4", "C5", "C6", "C7",
+    "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12",
+    "L1", "L2", "L3", "L4", "L5", "S1", "S2"];
+
   function pintarPantallaMapeo(sec, cont) {
     var d = registroDatos();
+    var c = registroCaso();
+    var tec = c ? (c.tecnicas_realizadas || []) : null;
+    cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_mapeo_nota")));
+    var bloques = REG_MAPEO_BLOQUES.filter(function (b) { return !tec || tec.indexOf(b.tec) !== -1; });
+    if (!bloques.length) { cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_mapeo_ninguna"))); return; }
+    bloques.forEach(function (b) {
+      cont.appendChild(regNodo("div", "reg-basal-titulo reg-p-map-tit", T(b.t)));
+      b.pintar(cont, d);
+    });
+  }
+
+  // Electrodo motor y músculos registrados: los mismos gridN_motor /
+  // gridN_musculos que imprime la hoja.
+  function pintarMapeoGrid(cont, d) {
     var tabla = regNodo("div", "reg-basal reg-p-mapeo");
     var cab = regNodo("div", "reg-basal-fila reg-basal-cab");
     cab.appendChild(regNodo("span", null, ""));
@@ -16483,6 +16525,181 @@
       tabla.appendChild(f);
     });
     cont.appendChild(tabla);
+  }
+
+  // Filas de d.mapeo de un tipo (C, S o N). Siempre 3 en blanco al final,
+  // que entran en la lista al escribir en ellas, como los eventos.
+  function pintarMapeoFilas(cont, d, tipo, conHora) {
+    var tabla = regNodo("div", "reg-basal reg-p-mapfilas" + (conHora ? " con-hora" : ""));
+    cont.appendChild(tabla);
+    var btn = regNodo("button", "reg-p-nuevo", T("reg_p_fila_nueva"));
+    btn.type = "button";
+    cont.appendChild(btn);
+    var enBlanco = [];
+    function pintar() {
+      tabla.textContent = "";
+      var cab = regNodo("div", "reg-basal-fila reg-basal-cab");
+      (conHora ? [T("reg_p_hora"), T("reg_p_punto"), T("reg_p_umbral"), T("reg_p_musculo"), ""]
+               : [T("reg_p_nervio"), T("reg_p_intensidad"), T("reg_p_musculo"), ""])
+        .forEach(function (t) { cab.appendChild(regNodo("span", null, t)); });
+      tabla.appendChild(cab);
+      var propias = d.mapeo.filter(function (f) { return f.tipo === tipo; });
+      enBlanco = enBlanco.filter(function (f) { return d.mapeo.indexOf(f) === -1; });
+      while (enBlanco.length < 3) enBlanco.push({ id: uuid(), tipo: tipo });
+      propias.concat(enBlanco).forEach(function (m) {
+        var blanca = d.mapeo.indexOf(m) === -1;
+        var f = regNodo("div", "reg-basal-fila");
+        var inpHora = null;
+        function tocar() {
+          if (d.mapeo.indexOf(m) === -1) {
+            if (conHora && !m.hora) { m.hora = horaAhora(); if (inpHora) inpHora.value = m.hora; }
+            d.mapeo.push(m);
+            registroGuardar();
+          }
+        }
+        if (conHora) { inpHora = regInput(m, "hora", "time", T("reg_p_hora"), tocar); f.appendChild(inpHora); }
+        f.appendChild(regInput(m, "punto", "text", T(conHora ? "reg_p_punto" : "reg_p_nervio"), tocar));
+        var um = regInput(m, "umbral", "text", T(conHora ? "reg_p_umbral" : "reg_p_intensidad"), tocar);
+        um.inputMode = "decimal";
+        f.appendChild(um);
+        f.appendChild(regInput(m, "respuesta", "text", T("reg_p_musculo"), tocar));
+        if (!blanca) {
+          var q = regNodo("button", "reg-fila-quitar", "✕");
+          q.type = "button";
+          q.title = T("registro_fila_quitar");
+          q.setAttribute("aria-label", T("registro_fila_quitar"));
+          q.addEventListener("click", function () {
+            if (!confirm(T("registro_fila_quitar_conf"))) return;
+            var i = d.mapeo.indexOf(m);
+            if (i !== -1) d.mapeo.splice(i, 1);
+            registroGuardarYa();
+            pintar();
+          });
+          f.appendChild(q);
+        } else {
+          f.appendChild(regNodo("span"));
+        }
+        tabla.appendChild(f);
+      });
+    }
+    btn.addEventListener("click", function () {
+      var m = { id: uuid(), tipo: tipo };
+      if (conHora) m.hora = horaAhora();
+      d.mapeo.push(m);
+      registroGuardarYa();
+      pintar();
+    });
+    pintar();
+  }
+
+  // Raíces y tornillos: nivel · izq. · der. Con caso, son los "Umbrales EMG
+  // por raíz" de la ficha (el mismo dato, ⇄); sin caso, la tabla suelta.
+  function pintarMapeoRaices(cont, d) {
+    var c = registroCaso();
+    if (!c) { pintarTornillosSueltos(cont, d); return; }
+    if (!c.umbral_raices_niveles) c.umbral_raices_niveles = { niveles: [], valores: {} };
+    var datos = c.umbral_raices_niveles;
+    if (!datos.niveles) datos.niveles = [];
+    if (!datos.valores) datos.valores = {};
+    var tabla = regNodo("div", "reg-basal reg-p-raices");
+    cont.appendChild(tabla);
+    function pintar() {
+      tabla.textContent = "";
+      var cab = regNodo("div", "reg-basal-fila reg-basal-cab");
+      [T("reg_p_izq_ma"), T("reg_p_nivel") + " ⇄", T("reg_p_der_ma"), ""].forEach(function (t) { cab.appendChild(regNodo("span", null, t)); });
+      tabla.appendChild(cab);
+      var filas = datos.niveles.slice();
+      var blancas = Math.max(8 - filas.length, 1);
+      for (var k = 0; k < blancas; k++) filas.push("");
+      filas.forEach(function (nivel) {
+        var f = regNodo("div", "reg-basal-fila");
+        var vals = nivel ? (datos.valores[nivel] = datos.valores[nivel] || {}) : null;
+        function lado(clave, etq) {
+          var inp = document.createElement("input");
+          inp.type = "text";
+          inp.inputMode = "decimal";
+          inp.placeholder = etq;
+          inp.setAttribute("aria-label", (nivel || "") + " " + etq);
+          inp.disabled = !nivel;
+          inp.value = vals ? (vals[clave] || "") : "";
+          inp.addEventListener("input", function () { vals[clave] = inp.value; registroGuardar(); });
+          inp.addEventListener("change", registroGuardarYa);
+          return inp;
+        }
+        f.appendChild(lado("izq", T("reg_p_izq_ma")));
+        var sel = document.createElement("select");
+        sel.setAttribute("aria-label", T("reg_p_nivel"));
+        [""].concat(REG_NIVELES_RAICES).forEach(function (n) {
+          var op = document.createElement("option");
+          op.value = n;
+          op.textContent = n || "—";
+          sel.appendChild(op);
+        });
+        sel.value = nivel;
+        sel.addEventListener("change", function () {
+          var nuevo = sel.value;
+          if (nuevo && datos.niveles.indexOf(nuevo) !== -1 && nuevo !== nivel) {
+            alert(T("reg_p_nivel_repetido"));
+            sel.value = nivel;
+            return;
+          }
+          var i = datos.niveles.indexOf(nivel);
+          if (nivel && i !== -1) {
+            if (nuevo) {
+              datos.niveles[i] = nuevo;
+              datos.valores[nuevo] = datos.valores[nivel] || {};
+              delete datos.valores[nivel];
+            } else {
+              datos.niveles.splice(i, 1);
+            }
+          } else if (nuevo) {
+            datos.niveles.push(nuevo);
+          }
+          registroGuardarYa();
+          pintar();
+        });
+        f.appendChild(sel);
+        f.appendChild(lado("der", T("reg_p_der_ma")));
+        f.appendChild(regNodo("span"));
+        tabla.appendChild(f);
+      });
+    }
+    pintar();
+  }
+
+  // Sin caso vinculado: la tabla de tornillos de siempre (e_t_*)
+  function pintarTornillosSueltos(cont, d) {
+    var bloque = regNodo("div", "reg-basal reg-basal-tornillos");
+    var cab2 = regNodo("div", "reg-basal-fila reg-basal-cab");
+    REG_TORNILLOS.cols.forEach(function (col) { cab2.appendChild(regNodo("span", null, regL(col))); });
+    bloque.appendChild(cab2);
+    for (var i = 1; i <= REG_TORNILLOS.filas; i++) {
+      var f = regNodo("div", "reg-basal-fila");
+      REG_TORNILLOS.cols.forEach(function (col) {
+        f.appendChild(regInput(d.v, "e_t_" + i + "_" + col.id, "text", T("registro_tornillos") + " " + i + " — " + regL(col)));
+      });
+      bloque.appendChild(f);
+    }
+    cont.appendChild(bloque);
+  }
+
+  // Filas de la tabla de tornillos de la hoja impresa: con caso y niveles
+  // marcados, los "Umbrales EMG por raíz"; si no, la tabla suelta (e_t_*).
+  function regFilasTornillos(d, c) {
+    var datos = c && c.umbral_raices_niveles;
+    if (datos && (datos.niveles || []).length) {
+      var filas = datos.niveles.map(function (n) {
+        var v = (datos.valores || {})[n] || {};
+        return [v.izq || "", n, v.der || ""];
+      });
+      while (filas.length < REG_TORNILLOS.filas) filas.push(["", "", ""]);
+      return filas;
+    }
+    var out = [];
+    for (var ti = 1; ti <= REG_TORNILLOS.filas; ti++) {
+      out.push(REG_TORNILLOS.cols.map(function (col) { return d.v["e_t_" + ti + "_" + col.id] || ""; }));
+    }
+    return out;
   }
 
   // Fases y eventos: hora · tipo · qué ha pasado, con la letra de las
@@ -17128,10 +17345,7 @@
       par.classList.add("hj-par4");
       par.appendChild(tablaBasales(T("registro_corticales"), cortVis, "", 0, ""));
     }
-    var filasTor = [];
-    for (var ti = 1; ti <= REG_TORNILLOS.filas; ti++) {
-      filasTor.push({ celdas: REG_TORNILLOS.cols.map(function (col) { return d.v["e_t_" + ti + "_" + col.id] || ""; }) });
-    }
+    var filasTor = regFilasTornillos(d, c).map(function (celdas) { return { celdas: celdas }; });
     par.appendChild(hojaTabla(doc, REG_TORNILLOS.cols.map(function (col) { return { l: regL(col), cls: "hj-c" }; }),
       filasTor, { cls: "hj-basales hj-tornillos", titulo: T("registro_tornillos") }));
     p1.appendChild(par);

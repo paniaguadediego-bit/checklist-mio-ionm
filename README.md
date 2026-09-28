@@ -794,8 +794,8 @@ que esta es una primera versión pensada para irla ajustando.
 Mismo patrón que el Checklist: el desplegable de arriba elige **Modelo 0 —
 sin caso** (hoja suelta en este navegador, sin sincronizar) o un **caso**
 (la hoja vive dentro del caso, `registro_intraop`, y se sincroniza con él).
-Arriba hay dos vistas, **Modo rápido** (la que sale por defecto) y **Hoja
-completa**; el navegador recuerda la última que usaste.
+Arriba hay dos vistas, **Hoja completa** (la que sale por defecto desde el
+28-09-2026) y **Modo rápido**; el navegador recuerda la última que usaste.
 
 ### Modo rápido (para quirófano)
 
@@ -835,7 +835,13 @@ que siempre, con todos sus apartados, y no se borra ningún dato:
   cirugía se apunta como evento de tipo *Anestesia*.
 - **D · Hitos** y el **esquema** no se enseñan en pantalla.
 - **E · Basales y comparativa**, como siempre.
-- **E2 · Mapeo**: solo *electrodo motor* y *músculos registrados* (dos filas).
+- **E2 · Mapeo**: un bloque por cada técnica de mapeo marcada en la ficha
+  (sin caso vinculado, todos): *c-MEP por GRID* (electrodo motor · músculos
+  registrados), *mapeo cortical* y *subcortical* (hora · punto · umbral ·
+  músculo), *nervio periférico* (nervio/punto · intensidad · músculo) y
+  *estimulación de raíces y tornillos* (izq. · nivel · der., el mismo dato que
+  «Umbrales EMG por raíz» de la ficha; la tabla de tornillos ya no está en
+  Basales). Si el caso no tiene ninguna, lo dice.
 - **F · Registro de fases y eventos**: filas compactas *hora · tipo · qué ha
   pasado*, con la misma letra que las basales, y siempre al menos 5 filas en
   blanco (se guardan al escribir en ellas y, si no tenían hora, cogen la de
