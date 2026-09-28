@@ -344,8 +344,8 @@ distinta a la anterior, no importa el formato exacto.
 > el repositorio privado, ver al final de este archivo).**
 > - **Pantallas (Inicio en tres bloques, tarjetas centradas, una línea bajo cada
 >   nombre):** *Antes de quirófano*: Organizador de Montajes, Gestión de Casos.
->   *Quirófano*: Checklist pre-quirúrgico, Registro intraoperatorio, Técnicas
->   IONM (solo con token). *Después / consulta*: Material, Docencia (Miotomas,
+>   *Quirófano*: Checklist pre-quirúrgico, Registro intraoperatorio.
+>   *Después / consulta*: Técnicas IONM (solo con token), Material, Docencia (Miotomas,
 >   Cama, Teoría básica pendiente), Simulador, Mis apuntes, Bibliografía
 >   recomendada.
 > - **Registro intraoperatorio** (lo más trabajado el 27/28-09): vista **Hoja

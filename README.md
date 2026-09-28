@@ -6,9 +6,9 @@ cada cirugía monitorizada y saber exactamente qué hace falta.
 **Pantalla de inicio (06-09-2026; desde el 28-09-2026, 10 tarjetas en tres bloques):** el logo
 de la cabecera lleva siempre a una pantalla con tarjetas agrupadas por el
 momento de la cirugía — *Antes de quirófano*: **Organizador de Montajes** y
-**Gestión de Casos**; *Quirófano*: **Checklist pre-quirúrgico**,
-**Registro intraoperatorio** y **Técnicas IONM** (esta solo con la
-sincronización configurada); *Después / consulta*: **Material**,
+**Gestión de Casos**; *Quirófano*: **Checklist pre-quirúrgico** y
+**Registro intraoperatorio**; *Después / consulta*: **Técnicas IONM** (solo
+con la sincronización configurada), **Material**,
 **Docencia**, **Simulador**, **Mis apuntes** y **Bibliografía
 recomendada**—,
 cada una con una línea que dice para qué sirve y su propio espacio de trabajo. Se
