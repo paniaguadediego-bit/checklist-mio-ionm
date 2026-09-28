@@ -439,6 +439,15 @@ distinta a la anterior, no importa el formato exacto.
 >   README.md, `data/guia.js` si cambió el flujo, AGENTS.md, el diario privado y
 >   la memoria de Claude, y subirlo todo.
 
+## Auditoría periódica (privada)
+
+La herramienta se reaudita cada poco tiempo (clínico → funcional → técnico →
+estético). El informe vivo, con su tabla de seguimiento de cada hallazgo, está en
+el repositorio privado: `../checklist-mio-datos/docs/AUDITORIA.md`, y el encargo
+para repetirla en `../checklist-mio-datos/docs/PROMPT-AUDITORIA.md`. Antes de un
+bloque de mejoras, mira qué está pendiente allí; al arreglar un hallazgo, marca su
+fila como hecha.
+
 ## Diario del proyecto (privado)
 
 El diario cronológico de cada cambio -qué se hizo, cuándo y por qué, con los

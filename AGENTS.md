@@ -19,6 +19,10 @@ Instrucciones para cualquier asistente de código que trabaje en este repositori
   caso reales, nombres de personas o del centro.
 - La consola del usuario es PowerShell 5.1: en los comandos que se le den, nada
   de `&&`; mejor `git -C "ruta" ...`, una orden por bloque.
+- La **auditoría periódica** (informe vivo con seguimiento, y el encargo para
+  repetirla) vive en el repositorio privado: `../checklist-mio-datos/docs/`
+  (`AUDITORIA.md` y `PROMPT-AUDITORIA.md`). Al arreglar un hallazgo, marca su
+  fila como hecha.
 - El contenido de **Técnicas IONM** (apuntes del autor sacados de libros y
   artículos) vive SOLO en el repositorio privado (`referencia/`): no lo copies
   nunca a este repositorio público.
