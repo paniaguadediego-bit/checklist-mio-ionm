@@ -3373,8 +3373,24 @@ dialog h3 {
 .rr-botones .primario { background: var(--accent); border: 1px solid var(--accent); color: var(--accent-texto); border-radius: 6px; cursor: pointer; }
 .rr-alarma { background: transparent; border: 2px solid var(--peligro); color: var(--peligro); border-radius: 6px; cursor: pointer; }
 .rr-lista { display: flex; flex-direction: column; }
-.rr-linea { display: flex; align-items: baseline; gap: 0.5rem; padding: 0.35rem 0; border-top: 1px solid var(--border-soft); font-size: 0.85rem; }
+.rr-linea { display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0; border-top: 1px solid var(--border-soft); font-size: 0.85rem; }
 .rr-linea > b { flex: 0 0 auto; font-variant-numeric: tabular-nums; }
+/* Hora de lo apuntado: parece texto, pero se toca y se corrige */
+.rr-hora {
+  flex: 0 0 auto;
+  width: 5.4rem;
+  font: inherit;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: inherit;
+  background: transparent;
+  border: 1px solid transparent;
+  border-bottom: 1px dashed var(--border);
+  border-radius: 4px;
+  padding: 0.05rem 0.2rem;
+  cursor: pointer;
+}
+.rr-hora:hover, .rr-hora:focus { border-color: var(--border); background: var(--campo-bg); }
 .rr-cod { flex: 0 0 1.8rem; font-size: 0.7rem; font-weight: 600; color: var(--text-muted); }
 .rr-texto { flex: 1 1 auto; min-width: 0; }
 .rr-texto small { color: var(--text-muted); }

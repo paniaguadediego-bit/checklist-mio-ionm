@@ -1232,6 +1232,7 @@
                            en: "For the OR: mark the phase once and whatever you log afterwards inherits it. A signal change is what + what happens + Log. Everything goes to the same events and alarms as the full sheet, where it can be corrected or completed later." },
     rr_fase:             { es: "Fase", en: "Phase" },
     rr_evento_alarma:    { es: "Evento o alarma", en: "Event or alarm" },
+    rr_hora_editar:      { es: "Cambiar la hora", en: "Change the time" },
     rr_fase_actual:      { es: "Fase actual: {fase}", en: "Current phase: {fase}" },
     rr_sin_fase:         { es: "Sin fase marcada", en: "No phase marked" },
     rr_fase_otra:        { es: "+ Otra", en: "+ Other" },
@@ -16323,8 +16324,23 @@
     d.eventos.slice().reverse().forEach(function (ev) {
       var fila = document.createElement("div");
       fila.className = "rr-linea" + (ev.cod === "A" ? " rr-linea-alarma" : "") + (ev.cod === "F" ? " rr-linea-fase" : "");
-      var h = document.createElement("b");
-      h.textContent = ev.hora || "--:--";
+      // La hora se puede corregir aquí mismo (28-09-2026, pedido del
+      // usuario: por si no se apuntó en el momento). Si la línea es una
+      // alarma o una recuperación, cambia también la hora en su fila de G.
+      var h = document.createElement("input");
+      h.type = "time";
+      h.className = "rr-hora";
+      h.value = ev.hora || "";
+      h.title = T("rr_hora_editar");
+      h.setAttribute("aria-label", T("rr_hora_editar"));
+      h.addEventListener("change", function () {
+        ev.hora = h.value;
+        registroDatos().alarmas.forEach(function (a) {
+          if (ev.alarma_id && a.id === ev.alarma_id) a.hora = h.value;
+          if (ev.recupera_de && a.id === ev.recupera_de.id) a.h_recup = h.value;
+        });
+        registroGuardarYa();
+      });
       fila.appendChild(h);
       var cod = document.createElement("span");
       cod.className = "rr-cod";
