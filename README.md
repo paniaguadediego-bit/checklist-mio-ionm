@@ -857,7 +857,7 @@ allí, sale en la hoja impresa y en **Exportar eventos y alarmas (CSV)**.
 **En pantalla va simplificada** (28-09-2026); la hoja **impresa** sale igual
 que siempre, con todos sus apartados, y no se borra ningún dato:
 
-- **B · Modalidades** y **C · Anestesia**: solo lo que ya dice la ficha del
+- **B · Técnicas** (agrupadas como en Gestión de Casos) y **C · Anestesia**: solo lo que ya dice la ficha del
   caso, de lectura (se cambia allí). Lo que cambie de la anestesia durante la
   cirugía se apunta como evento de tipo *Anestesia*.
 - **D · Hitos** y el **esquema** no se enseñan en pantalla.
@@ -917,9 +917,10 @@ tuyo.
 **Imprimir hoja** (y **Hoja de registro** en la ficha de un caso) es el uso
 principal: genera **2 páginas A4** para llevar en papel a quirófano,
 prerrellenadas con lo que ya está en Gestión de Casos y con filas en blanco
-para escribir a mano. Hoja 1: identificación, técnicas/modalidades (casillas
-ya marcadas), anestesia, hitos, **basales y comparativa** (basal /
-post-posición / final), **mapeo** con la línea de la **sonda Raabe** (y dónde
+para escribir a mano. Hoja 1: identificación, **técnicas** del catálogo en
+tres filas -monitorización, reflejos y mapeo, como en Gestión de Casos- con las
+del caso ya marcadas, anestesia, hitos, **basales y comparativa** (OPBSL /
+PostPos1 / PostPos2 / CL-BSL), **mapeo** con la línea de la **sonda Raabe** (y dónde
 está montada en el caso) y un **esquema** pequeño. Hoja 2: **eventos y
 alarmas en una sola tabla** -con la leyenda de respuesta NRF / Anest. / Cir.
 y los códigos F/E/A/M/An/T de la hoja original-, cierre, y los parámetros de

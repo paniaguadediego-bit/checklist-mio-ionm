@@ -1304,6 +1304,9 @@
     hoja_musculos:       { es: "Músculos registrados", en: "Muscles recorded" },
     hoja_sensitivos:     { es: "Electrodo/s sensitivo/s", en: "Sensory electrode(s)" },
     registro_otras_tecnicas: { es: "Otras técnicas", en: "Other techniques" },
+    registro_tec_monitor:  { es: "Monitorización", en: "Monitoring" },
+    registro_tec_reflejos: { es: "Reflejos", en: "Reflexes" },
+    registro_tec_mapeo:    { es: "Mapeo", en: "Mapping" },
     hoja_otra_sonda:     { es: "Otra sonda", en: "Other probe" },
     hoja_intensidad:     { es: "Intensidad", en: "Intensity" },
     hoja_montado:        { es: "Montado en el caso", en: "Set up in the case" },
@@ -15551,7 +15554,7 @@
         { id: "prequx_ppcc", l: "Pre-qx: PPCC", l_en: "Pre-op: CN", t: "text" },
         { id: "prequx_esfinteres", l: "Pre-qx: Esfínteres", l_en: "Pre-op: Sphincters", t: "text" }
       ] },
-    { hoja: 1, id: "b", tipo: "modalidades", l: "B · Modalidades de monitorización y mapeo", l_en: "B · Monitoring and mapping modalities" },
+    { hoja: 1, id: "b", tipo: "modalidades", l: "B · Técnicas", l_en: "B · Techniques" },
     { hoja: 1, id: "c", tipo: "campos", l: "C · Anestesia", l_en: "C · Anaesthesia",
       campos: [
         { id: "an_hipnotico", l: "Inducción: hipnótico / opioide", l_en: "Induction: hypnotic / opioid", t: "text" },
@@ -16767,8 +16770,12 @@
     if (!c) { cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_sin_caso"))); return; }
     var nombres = regTecnicasCaso(c);
     if (!nombres.length) { cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_sin_tecnicas"))); return; }
-    var fila = regNodo("div", "reg-p-chips");
-    nombres.forEach(function (n) { fila.appendChild(regNodo("span", "reg-p-chip", n)); });
+    // Agrupadas como en Gestión de Casos: monitorización, reflejos, mapeo.
+    var fila = regNodo("div", "chip-fila");
+    var hechas = c.tecnicas_realizadas || [];
+    anadirChipsAgrupados(fila, TECNICAS.filter(function (t) { return hechas.indexOf(t.id) !== -1; }), function (t) {
+      return regNodo("span", "reg-p-chip", campo(t, "etiqueta"));
+    });
     cont.appendChild(fila);
     cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_tecnicas_ayuda")));
   }
@@ -17666,32 +17673,27 @@
     // B · Modalidades
     p1.appendChild(hojaSeccion(doc, regL(REG_SECCIONES[1])));
     var bB = nodoInforme(doc, "div", "hj-mods");
-    if (c) {
-      var hechas = c.tecnicas_realizadas || [];
-      var nombres = TECNICAS.filter(function (t) { return hechas.indexOf(t.id) !== -1; })
-        .map(function (t) { return campo(t, "etiqueta"); });
-      var lt = nodoInforme(doc, "div", "hj-mod hj-tec");
-      lt.appendChild(nodoInforme(doc, "b", null, T("registro_tecnicas_caso") + " "));
-      lt.appendChild(doc.createTextNode(nombres.length ? nombres.join(", ") : "—"));
-      bB.appendChild(lt);
-    }
-    regFilasModalidades(c).forEach(function (fila) {
-      var f = nodoInforme(doc, "div", "hj-mod");
-      f.appendChild(nodoInforme(doc, "b", "hj-mod-rot", regL(fila)));
-      fila.grupos.forEach(function (g) {
+    // Técnicas del catálogo, como en Gestión de Casos (28-09-2026, pedido del
+    // usuario): tres filas -monitorización, reflejos, mapeo- en el orden del
+    // catálogo, con las del caso ya marcadas y el resto para marcar a mano.
+    // Sustituye a la rejilla propia de "Modalidades" (REG_MODALIDADES), que
+    // repetía lo mismo con otros nombres.
+    var hechasB = c ? (c.tecnicas_realizadas || []) : [];
+    var tecsB = TECNICAS.filter(function (t) { return t.activa !== false || hechasB.indexOf(t.id) !== -1; });
+    var bloquesB = bloquesTecnicas(tecsB);
+    [["registro_tec_monitor", bloquesB.monitor], ["registro_tec_reflejos", bloquesB.reflejos], ["registro_tec_mapeo", bloquesB.mapeo]]
+      .forEach(function (par) {
+        if (!par[1].length) return;
+        var f = nodoInforme(doc, "div", "hj-mod");
+        f.appendChild(nodoInforme(doc, "b", "hj-mod-rot", T(par[0])));
         var grp = nodoInforme(doc, "span", "hj-mod-grupo");
-        if (g.l) grp.appendChild(nodoInforme(doc, "i", null, regL(g) + " "));
-        g.items.forEach(function (it) {
-          var marcada = !!regGet(d.v, { id: it.id, t: "check", der: it.der }, c);
-          grp.appendChild(nodoInforme(doc, "span", "hj-it", hojaCasilla(marcada) + " " + regL(it)));
+        par[1].forEach(function (t) {
+          grp.appendChild(nodoInforme(doc, "span", "hj-it", hojaCasilla(hechasB.indexOf(t.id) !== -1) + " " + campo(t, "etiqueta")));
         });
+        grp.appendChild(nodoInforme(doc, "span", "hj-it", T("registro_otro") + ": ________"));
         f.appendChild(grp);
+        bB.appendChild(f);
       });
-      if (fila.texto) {
-        f.appendChild(nodoInforme(doc, "span", "hj-it", regL(fila.texto) + ": " + (d.v[fila.texto.id] || "________")));
-      }
-      bB.appendChild(f);
-    });
     var mont = nodoInforme(doc, "div", "hj-mod");
     mont.appendChild(nodoInforme(doc, "b", "hj-mod-rot", T("registro_montaje")));
     REG_MONTAJE.forEach(function (m) {
