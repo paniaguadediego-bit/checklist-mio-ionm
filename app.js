@@ -217,13 +217,13 @@
     btn_renombrar:       { es: "Renombrar", en: "Rename" },
     btn_vaciar:          { es: "Vaciar", en: "Empty" },
     btn_borrar:          { es: "Borrar", en: "Delete" },
-    btn_guardar_montaje: { es: "Guardar montaje", en: "Save montage" },
+    btn_guardar_montaje: { es: "Guardar plantilla", en: "Save template" },
     montajes_mas:        { es: "Más acciones", en: "More actions" },
-    dlg_guardar_montaje_titulo: { es: "Guardar montaje", en: "Save montage" },
+    dlg_guardar_montaje_titulo: { es: "Guardar plantilla", en: "Save template" },
     guardar_montaje_intro: { es: "¿Qué quieres hacer con «{nombre}»?", en: "What do you want to do with “{nombre}”?" },
     guardar_montaje_nuevo: { es: "Guardar como nuevo", en: "Save as new" },
     guardar_montaje_sobrescribir: { es: "Sobrescribir este", en: "Overwrite this one" },
-    montaje_guardado:    { es: "Montaje guardado.", en: "Montage saved." },
+    montaje_guardado:    { es: "Plantilla guardada.", en: "Template saved." },
     btn_exportar:        { es: "Exportar copia", en: "Export backup" },
     btn_importar:        { es: "Importar copia", en: "Import backup" },
     btn_imprimir:        { es: "Imprimir", en: "Print" },
@@ -577,6 +577,8 @@
     caso_borrar:         { es: "Borrar caso", en: "Delete case" },
     caso_mas_tit:        { es: "Más acciones", en: "More actions" },
     caso_crear_informe:  { es: "Informe (PDF)", en: "Report (PDF)" },
+    caso_cerrar:         { es: "Cerrar caso", en: "Close case" },
+    caso_reabrir:        { es: "Reabrir caso", en: "Reopen case" },
     caso_informe_proximamente: { es: "Crear informe: todavía no hace nada, en camino.", en: "Create report: not wired up yet, coming soon." },
     caso_borrar_conf:    { es: "¿Borrar el caso “{caso}”?\nSe borra también del repositorio en cuanto haya conexión. No se puede deshacer desde la app, aunque queda recuperable en el historial de git.",
                            en: "Delete the case “{caso}”?\nAlso deleted from the repository as soon as there is a connection. This cannot be undone from the app, though it stays recoverable in the git history." },
@@ -830,16 +832,16 @@
     tab_servicios:       { es: "Servicios", en: "Specialties" },
     tab_perfiles:        { es: "Perfiles", en: "Profiles" },
     tab_usuarios:        { es: "Usuarios", en: "Users" },
-    cat_intro_usuarios:  { es: "Quién usa la herramienta. Sirve para <b>firmar los montajes</b>: cada uno lleva el nombre de quien lo creó, y solo su autor puede editarlo o borrarlo. No es una contraseña ni protege nada — cualquiera puede cambiar de perfil desde la barra de arriba. Estos nombres viven en tu repositorio de datos privado, nunca en el del código.",
+    cat_intro_usuarios:  { es: "Quién usa la herramienta. Sirve para <b>firmar las plantillas</b>: cada una lleva el nombre de quien la creó, y solo su autor puede editarla o borrarla. No es una contraseña ni protege nada — cualquiera puede cambiar de perfil desde la barra de arriba. Estos nombres viven en tu repositorio de datos privado, nunca en el del código.",
                            en: "Who uses the tool. It is used to <b>sign montages</b>: each one carries the name of whoever created it, and only its author can edit or delete it. It is not a password and protects nothing — anyone can switch profile from the top bar. These names live in your private data repository, never in the code one." },
     perfil_usuario_aria: { es: "Quién eres", en: "Who you are" },
     perfil_usuario_sin:  { es: "— quién eres —", en: "— who are you —" },
     perfil_usuario_nuevo: { es: "+ Añadir usuario…", en: "+ Add user…" },
-    perfil_usuario_pide:  { es: "¿Cómo te llamas? Aparecerá como autor de los montajes que crees.",
+    perfil_usuario_pide:  { es: "¿Cómo te llamas? Aparecerá como autor de las plantillas que crees.",
                            en: "What is your name? It will appear as the author of the montages you create." },
     montaje_sin_autor:   { es: "de fábrica", en: "factory" },
     montaje_autor_ido:   { es: "otro usuario", en: "another user" },
-    montaje_no_es_tuyo:  { es: "Este montaje es de {autor}, así que no puedes cambiarlo.\n\nUsa «Duplicar» para hacerte una copia tuya y trabajar sobre ella.",
+    montaje_no_es_tuyo:  { es: "Esta plantilla es de {autor}, así que no puedes cambiarla.\n\nUsa «Duplicar» para hacerte una copia tuya y trabajar sobre ella.",
                            en: "This montage belongs to {autor}, so you cannot change it.\n\nUse “Duplicate” to make your own copy and work on that." },
     montaje_de:          { es: "{nombre} · {autor}", en: "{nombre} · {autor}" },
     caso_sin_id:         { es: "Caso sin número", en: "Case with no number" },
@@ -899,7 +901,7 @@
     tour_x_plantilla:    { es: "En el Organizador de Montajes, una plantilla es el montaje tipo de una cirugía: qué electrodo va en cada entrada de cada caja del equipo. Se prepara una vez y se reutiliza en cada caso.",
                            en: "In the Montage Organiser, a template is the standard montage for a surgery: which electrode goes into each input of each box. You prepare it once and reuse it for every case." },
     tour_t_tecnicas:     { es: "Técnicas", en: "Techniques" },
-    tour_x_tecnicas:     { es: "Marca qué se va a monitorizar: SEP, MEP, Onda D, EMG, reflejos, mapeo… Las técnicas deciden qué basales pide el caso, qué modalidades salen en la hoja de registro y qué comprueba el Resumen.",
+    tour_x_tecnicas:     { es: "Marca qué se va a monitorizar: SEP, MEP, Onda D, EMG, reflejos, mapeo… Las técnicas deciden qué basales pide el caso, qué técnicas salen en la hoja de registro y qué comprueba el Resumen.",
                            en: "Tick what will be monitored: SEP, MEP, D wave, EMG, reflexes, mapping… The techniques decide which baselines the case asks for, which modalities appear on the recording sheet and what the Summary checks." },
     tour_t_resumen:      { es: "Resumen", en: "Summary" },
     tour_x_resumen:      { es: "El Resumen calcula lo que hay que llevar: material por tipo, cajas y canales ocupados, y los avisos. La Revisión del montaje avisa si una técnica no tiene su material o si sobra material de otra.",
@@ -923,7 +925,7 @@
     tour_x_registro:     { es: "En quirófano, el modo rápido apunta con dos toques: la fase una vez, y cada cambio como qué + qué pasa. La hora se pone sola y un «Recupera» cierra la alarma. La Hoja completa guarda el resto (anestesia, hitos, mapeo, cierre).",
                            en: "In the OR, quick mode logs with two taps: the phase once, and each change as what + what happens. The time is set automatically and a “Recovers” closes the alarm. The Full sheet holds the rest (anaesthesia, milestones, mapping, closure)." },
     tour_t_salidas:      { es: "Hoja de registro e informe", en: "Record sheet and report" },
-    tour_x_salidas:      { es: "Desde la ficha, Hoja de registro imprime las dos páginas A4 para quirófano, ya rellenas con lo que sabe el caso, y Crear informe hace el informe del caso en PDF. El Checklist pre-quirúrgico también se vincula al caso.",
+    tour_x_salidas:      { es: "Desde la ficha, Hoja de registro imprime las dos páginas A4 para quirófano, ya rellenas con lo que sabe el caso, e Informe (PDF) hace el informe del caso. El Checklist pre-quirúrgico también se vincula al caso.",
                            en: "From the case form, Record sheet prints the two A4 pages for the OR, already filled in with what the case knows, and Create report makes the case report as a PDF. The pre-surgical Checklist can also be linked to the case." },
     tour_t_exportar:     { es: "Exportar y analizar", en: "Export and analyse" },
     tour_x_exportar:     { es: "Con los filtros de arriba eliges casos y los exportas: informe en PDF de varios casos, un CSV con una fila por caso u otro CSV con los eventos y alarmas del registro. Fuera de la demo todo se sincroniza con un repositorio privado. Puedes repetir esta visita desde Inicio.",
@@ -1157,9 +1159,9 @@
     pos_prono:           { es: "Prono", en: "Prone" },
     pos_sentado:         { es: "Sentado", en: "Sitting" },
     caso_editar_montaje: { es: "Editar montaje", en: "Edit montage" },
-    caso_editar_montaje_ay: { es: "Abre las cajas de este caso para cambiar dónde va cada cosa. Lo que cambies se guarda en el caso, no en el montaje del que salió.",
+    caso_editar_montaje_ay: { es: "Abre las cajas de este caso para cambiar dónde va cada cosa. Lo que cambies se guarda en el caso, no en la plantilla de la que salió.",
                            en: "Opens this case’s boxes to change where each item goes. What you change is saved in the case, not in the montage it came from." },
-    caso_cargar_plantilla: { es: "Cargar montaje…", en: "Load montage…" },
+    caso_cargar_plantilla: { es: "Cargar plantilla…", en: "Load template…" },
     caso_montaje_origen: { es: "Plantilla de origen: {nombre}", en: "Source template: {nombre}" },
     caso_montaje_origen_no_disponible: { es: "plantilla no disponible", en: "template not available" },
     caso_guardar_plantilla: { es: "Guardar este montaje como plantilla…", en: "Save this montage as a template…" },
@@ -1169,7 +1171,7 @@
                            en: "Name of the new template:\n\nSo you can recognise it later in the list — never patient data." },
     plantilla_guardada: { es: "Plantilla «{nombre}» guardada.", en: "Template “{nombre}” saved." },
     barra_caso_texto:    { es: "Corrigiendo el material del caso", en: "Correcting the material of case" },
-    barra_caso_ay:       { es: "Se guarda solo, en el caso. El montaje original no se toca.",
+    barra_caso_ay:       { es: "Se guarda solo, en el caso. La plantilla original no se toca.",
                            en: "Saved automatically, into the case. The original montage is untouched." },
     barra_caso_volver:   { es: "Volver al caso", en: "Back to the case" },
     barra_plantilla_texto: { es: "Plantilla", en: "Template" },
@@ -1224,7 +1226,7 @@
     reg_p_sin_eventos:   { es: "Todavía no hay eventos.", en: "No events yet." },
     reg_p_alarma_nueva:  { es: "+ Alarma (hora actual)", en: "+ Alarm (current time)" },
     reg_p_sin_alarmas:   { es: "Sin alarmas.", en: "No alarms." },
-    reg_p_modalidad:     { es: "Modalidad · lado", en: "Modality · side" },
+    reg_p_modalidad:     { es: "Técnica · lado", en: "Technique · side" },
     reg_p_criterio:      { es: "Criterio", en: "Criterion" },
     reg_p_causa:         { es: "Maniobra / causa probable", en: "Manoeuvre / probable cause" },
     reg_p_medidas:       { es: "Medidas adoptadas", en: "Measures taken" },
@@ -1363,7 +1365,7 @@
                            en: "Relative TES contraindications (epilepsy, skull defect, intracranial electrodes, clips, pacemaker, DBS, cochlear implant)" },
     checklist_consentimiento: { es: "Consentimiento de la IONM firmado",
                            en: "IONM consent signed" },
-    checklist_definir_modalidades: { es: "Modalidades según estructuras en riesgo; maniobras de riesgo acordadas con el cirujano",
+    checklist_definir_modalidades: { es: "Técnicas según estructuras en riesgo; maniobras de riesgo acordadas con el cirujano",
                            en: "Modalities for the structures at risk; high-risk manoeuvres agreed with the surgeon" },
     checklist_plan_anestesico: { es: "Plan anestésico acordado: TIVA, relajante según técnicas, sin N₂O",
                            en: "Anaesthetic plan agreed: TIVA, relaxant according to techniques, no N₂O" },
@@ -1397,15 +1399,15 @@
                            en: "Surgeon warns before high-risk manoeuvres" },
 
     /* --- Fase 4.1: biblioteca de montajes --- */
-    dlg_montajes_titulo: { es: "Plantillas de montajes", en: "Montage templates" },
-    montaje_en_blanco:   { es: "+ Montaje en blanco", en: "+ Blank montage" },
+    dlg_montajes_titulo: { es: "Plantillas de montaje", en: "Montage templates" },
+    montaje_en_blanco:   { es: "+ Plantilla en blanco", en: "+ Blank template" },
 
     /* --- Fase 1: cargar una plantilla sobre un caso --- */
     dlg_elegir_plantilla_titulo: { es: "Elegir plantilla", en: "Choose template" },
     plantilla_filtro_buscar: { es: "Buscar", en: "Search" },
     plantilla_buscar_ph: { es: "Nombre o autor…", en: "Name or author…" },
     plantilla_entradas: { es: "{n} entradas", en: "{n} inputs" },
-    plantilla_vacio:    { es: "Ningún montaje con esos filtros.", en: "No montage matches those filters." },
+    plantilla_vacio:    { es: "Ninguna plantilla con esos filtros.", en: "No template matches those filters." },
     dlg_aplicar_plantilla_titulo: { es: "Cargar plantilla en el caso", en: "Load template into the case" },
     plantilla_confirmar_estado: { es: "Este caso está en estado «{estado}». ¿Seguro que quieres cargar una plantilla sobre él?",
                            en: "This case is in “{estado}” status. Are you sure you want to load a template onto it?" },
@@ -6905,6 +6907,13 @@
     if (p.senal === "transitorios") return deficit ? "VP" : "PR";
     return deficit ? "VP" : "";
   }
+  // Propuestas discutibles (validado con el usuario, 29-09-2026): hubo cambio
+  // y hay déficit, pero los cambios se recuperaron o no consta el resultado
+  // de la señal. Se proponen igual (VP), entre interrogantes.
+  function concordanciaDudosa(p) {
+    var cambio = p.alerta || p.senal === "transitorios" || p.senal === "persistentes";
+    return !!(p.evol && p.evol !== "no_valorable" && p.evol !== "sin_deficit" && cambio && p.senal !== "persistentes");
+  }
   // Qué datos llevaron a la propuesta, para que se vea la regla aplicada
   // (auditoría 28-09-2026, C7): «Cambios persistentes + Déficit nuevo…».
   function motivoConcordancia(p) {
@@ -8036,7 +8045,9 @@
         propC.textContent = "";
         propC.hidden = !v || v === ctlConc.value;
         if (propC.hidden) return;
-        propC.appendChild(regNodo("span", null, T("caso_concordancia_propuesta", { v: opcionTexto("concordancia", v) }) +
+        var textoV = opcionTexto("concordancia", v);
+        if (concordanciaDudosa(datosC)) textoV = "¿" + textoV + "?";
+        propC.appendChild(regNodo("span", null, T("caso_concordancia_propuesta", { v: textoV }) +
           " (" + motivoConcordancia(datosC) + ")"));
         var ap = regNodo("button", "caso-propuesta-aplicar", T("caso_concordancia_aplicar"));
         ap.type = "button";
@@ -8072,6 +8083,8 @@
     document.getElementById("caso-mas").hidden = casoEsNuevo;
     cerrarMenuCaso();
     document.getElementById("caso-error").hidden = true;
+    pintarBotonCerrarCaso();
+    if (camposCaso.estado) camposCaso.estado.addEventListener("change", pintarBotonCerrarCaso);
     fichaOrigen = casos[c.caso_uid] || null;
     fichaFirma = firmaFicha();
   }
@@ -8130,7 +8143,11 @@
     casoEsNuevo = false;
     casoAbierto = clonar(casos[c.caso_uid]);
     fichaOrigen = casos[c.caso_uid];
-    fichaFirma = firmaFicha();
+    // La firma NO se calcula aquí: leerFichaCaso() copiaría el formulario
+    // (aún con los valores de antes de guardar, p. ej. el estado antes de
+    // «Cerrar/Reabrir caso») sobre la copia recién guardada. La pone
+    // renderFichaCaso() al repintar; si no se repinta, la ficha se cierra.
+    fichaFirma = "";
     avisoGuardado(T("caso_guardado"));
     return true;
   }
@@ -8471,10 +8488,27 @@
   });
   document.getElementById("caso-volver").addEventListener("click", function () {
     // No guarda por su cuenta: si hay cambios sin guardar, pregunta antes
-    // (ver salirDeFicha()). Cerrar el caso es cambiar el campo Estado en
-    // Identificación/Trazabilidad, como cualquier otro campo -pedido del
-    // usuario, ya no hay un botón aparte que lo haga por su cuenta-.
+    // (ver salirDeFicha()).
     salirDeFicha();
+  });
+  /* «Cerrar caso» (vuelve el 29-09-2026, pedido del usuario tras la
+     auditoría: cerrar un caso obligaba a abrir Identificación, cambiar
+     Estado y Guardar). Guarda la ficha con el estado cambiado -la lógica de
+     guardarFicha(true)- y vuelve a la lista. Sobre un caso cerrado es
+     «Reabrir caso»: lo pasa a Preparado y se queda en la ficha. */
+  function pintarBotonCerrarCaso() {
+    var b = document.getElementById("caso-cerrar");
+    var ctl = camposCaso.estado;
+    var estado = ctl ? ctl.value : (casoAbierto && casoAbierto.estado);
+    b.hidden = estado === "cancelado";
+    b.textContent = T(estado === "cerrado" ? "caso_reabrir" : "caso_cerrar");
+  }
+  document.getElementById("caso-cerrar").addEventListener("click", function () {
+    var estabaCerrado = camposCaso.estado && camposCaso.estado.value === "cerrado";
+    if (!guardarFicha(true)) return;
+    if (estabaCerrado) { renderFichaCaso(); return; }
+    dlgCaso.close();
+    abrirListaCasos();
   });
   // Esc, o el gesto de atrás en los navegadores que lo convierten en
   // "cancel" del <dialog>: mismo camino que «Volver a la lista».
@@ -15610,7 +15644,7 @@
         { id: "hora", l: "Hora", l_en: "Time", t: "time" },
         { id: "cod", l: "Cód.", l_en: "Code", t: "sel", o: REG_COD_EVENTO },
         { id: "fase", l: "Fase / maniobra quirúrgica", l_en: "Surgical phase / manoeuvre", t: "text", ancho: true },
-        { id: "modalidad", l: "Modalidad · lado", l_en: "Modality · side", t: "text" },
+        { id: "modalidad", l: "Técnica · lado", l_en: "Technique · side", t: "text" },
         { id: "cambio", l: "Cambio (% amp, lat)", l_en: "Change (% amp, lat)", t: "text" },
         { id: "av_cir", l: "Aviso: Cir", l_en: "Alert: Surg", t: "check" },
         { id: "av_an", l: "Aviso: An", l_en: "Alert: An", t: "check" },
@@ -15622,7 +15656,7 @@
       boton: "+ Alarma", boton_en: "+ Alarm", ahora: false,
       cols: [
         { id: "hora", l: "Hora", l_en: "Time", t: "time" },
-        { id: "modalidad", l: "Modalidad · lado", l_en: "Modality · side", t: "text" },
+        { id: "modalidad", l: "Técnica · lado", l_en: "Technique · side", t: "text" },
         { id: "criterio", l: "Criterio", l_en: "Criterion", t: "text" },
         { id: "causa", l: "Maniobra / causa probable", l_en: "Manoeuvre / probable cause", t: "text", ancho: true },
         { id: "nrf", l: "NRF", t: "check" },
