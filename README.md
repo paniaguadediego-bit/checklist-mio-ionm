@@ -871,13 +871,14 @@ que siempre, con todos sus apartados, y no se borra ningún dato:
 - **G · Alarmas**: una ficha compacta por alarma (A1, A2…): hora y modalidad;
   criterio y causa; medidas, recuperación y hora de recuperación.
 - **H · Zona modular**: no se enseña en pantalla (sigue en la impresa).
-- **I · Cierre**: resultado, modalidades afectadas (casillas con las técnicas
-  del caso), déficit esperado, incidencias técnicas y perla docente. Sin
+- **I · Cierre**: resultado, técnicas con alteración (los mismos chips
+  marcables que en la ficha, con las técnicas del caso), resultado esperable
+  (lista), incidencias técnicas y perla docente. Sin
   comunicación final, material ni pendientes (siguen en la hoja impresa).
 
 **Datos compartidos con la ficha del caso** (⇄, 28-09-2026): fecha, hora de
 inicio y de fin, nivel/localización (Anatomía patológica de la ficha),
-procedimiento, modalidades afectadas (= *Técnicas alteradas*), incidencias
+procedimiento, técnicas con alteración, resultado esperable, incidencias
 técnicas y perla docente (= *Aprendizaje clave* y *Caso destacado*) son el
 mismo dato en los dos sitios, como las basales: se escriban donde se
 escriban, se ven en el otro y en la hoja impresa. El diagnóstico se enseña de

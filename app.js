@@ -1196,7 +1196,6 @@
     reg_p_recup:         { es: "Recuperación", en: "Recovery" },
     reg_p_h_recup:       { es: "Hora de recuperación", en: "Recovery time" },
     reg_p_vaciar_alarma: { es: "¿Vaciar esta alarma?", en: "Clear this alarm?" },
-    reg_p_mod_afectadas: { es: "Modalidades afectadas", en: "Affected modalities" },
     reg_p_en:            { es: "en {fase}", en: "in {fase}" },
     reg_p_fase_otra:     { es: "Otra…", en: "Other…" },
     reg_p_mapeo_nota:    { es: "Cada bloque de mapeo aparece solo si su técnica está marcada en la ficha del caso: c-MEP por GRID, mapeo cortical, mapeo subcortical, mapeo de nervio periférico y estimulación de raíces y tornillos.", en: "Each mapping block only appears if its technique is ticked in the case form: c-MEP by GRID, cortical mapping, subcortical mapping, peripheral nerve mapping and root and screw stimulation." },
@@ -15421,7 +15420,7 @@
     { hoja: 2, id: "i", tipo: "campos", l: "I · Cierre", l_en: "I · Closure",
       campos: [
         { id: "cierre_resultado", l: "Resultado", l_en: "Result", t: "sel", o: REG_RESULTADO, ancho: true },
-        { id: "cierre_modalidades", l: "Modalidades afectadas", l_en: "Affected modalities", t: "text", ancho: true,
+        { id: "cierre_modalidades", l: "Técnicas con alteración", l_en: "Techniques with an alteration", t: "text", ancho: true,
           leerCaso: function (c) { return regNombresTecnicas(c.tecnicas_alteradas).join(", "); } },
         { id: "cierre_com_cir", l: "Comunicación final: Cirujano", l_en: "Final communication: Surgeon", t: "check" },
         { id: "cierre_com_an", l: "Comunicación final: Anestesia", l_en: "Final communication: Anaesthesia", t: "check" },
@@ -16961,7 +16960,7 @@
     var c = registroCaso();
     var tecs = c ? TECNICAS.filter(function (t) { return (c.tecnicas_realizadas || []).indexOf(t.id) !== -1; }) : [];
     var bloque = regNodo("div", "campo reg-campo reg-ancho");
-    bloque.appendChild(regNodo("label", null, T("reg_p_mod_afectadas") + (tecs.length ? " ⇄" : "")));
+    bloque.appendChild(regNodo("label", null, T("caso_tecnicas_alteradas") + (tecs.length ? " ⇄" : "")));
     if (tecs.length) {
       // Son las "Técnicas alteradas" de la ficha (ids). Lo escrito antes a
       // mano en la hoja: los nombres que son técnicas del caso pasan a
@@ -16980,26 +16979,24 @@
         if (sueltas.length) d.v.cierre_modalidades = sueltas.join(", "); else delete d.v.cierre_modalidades;
         registroGuardarYa();
       }
-      var chips = regNodo("div", "reg-p-chips");
-      tecs.forEach(function (t) {
-        var lab = regNodo("label", "check reg-p-check");
-        var cb = document.createElement("input");
-        cb.type = "checkbox";
-        cb.checked = c.tecnicas_alteradas.indexOf(t.id) !== -1;
-        cb.addEventListener("change", function () {
+      // Los mismos chips marcables (y agrupados igual) que "Técnicas con
+      // alteración" en la ficha: es el mismo dato, se ve igual en los dos
+      // sitios (pedido del usuario, 28-09-2026).
+      var chips = regNodo("div", "chip-fila");
+      anadirChipsAgrupados(chips, tecs, function (t) {
+        var chip = regNodo("span", "chip chip-extra" + (c.tecnicas_alteradas.indexOf(t.id) !== -1 ? " activo" : ""), campo(t, "etiqueta"));
+        chip.addEventListener("click", function () {
           var i = c.tecnicas_alteradas.indexOf(t.id);
-          if (cb.checked && i === -1) c.tecnicas_alteradas.push(t.id);
-          if (!cb.checked && i !== -1) c.tecnicas_alteradas.splice(i, 1);
+          if (i === -1) c.tecnicas_alteradas.push(t.id); else c.tecnicas_alteradas.splice(i, 1);
+          chip.classList.toggle("activo", i === -1);
           registroGuardarYa();
         });
-        lab.appendChild(cb);
-        lab.appendChild(regNodo("span", null, campo(t, "etiqueta")));
-        chips.appendChild(lab);
+        return chip;
       });
       bloque.appendChild(chips);
       if (sueltas.length) bloque.appendChild(regNodo("small", "reg-p-extra", sueltas.join(", ")));
     } else {
-      bloque.appendChild(regInput(d.v, "cierre_modalidades", "text", T("reg_p_mod_afectadas")));
+      bloque.appendChild(regInput(d.v, "cierre_modalidades", "text", T("caso_tecnicas_alteradas")));
     }
     cont.appendChild(bloque);
 
