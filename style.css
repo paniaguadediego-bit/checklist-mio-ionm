@@ -561,7 +561,10 @@ main {
   transition: transform 0.12s;
 }
 .card[open] > summary.card-cab::before { transform: rotate(90deg); }
-.card:not([open]) { padding: 0; }
+/* Solo las tarjetas plegables (<details>) y no las cajas del montaje: estas
+   son <div> -nunca tienen "open"- o se pliegan con su propia cabecera, y con
+   esta regla perdían el relleno y el título tocaba el borde (28-09-2026). */
+details.card:not([open]):not(.caja-card) { padding: 0; }
 .card:not([open]) > summary.card-cab { margin: 0; border-bottom: none; border-radius: var(--r); }
 
 /* El catálogo es la cuarta ventana en el orden del HTML, pero en pantalla
