@@ -546,7 +546,7 @@ window.SURGERIES_DATA = {
     // "doble": true porque cada canal hook-wire necesita un par -activo y
     // referencia-, no un electrodo suelto: sin este flag el material a
     // preparar salía a la mitad de lo que hace falta pedir de verdad
-    // (confirmado por Pani, 04-09-2026). Ver "doble" en calcularResumen().
+    // (confirmado por el usuario, 04-09-2026). Ver "doble" en calcularResumen().
     { "id": "hook_wire",            "nombre": "Electrodo Hook Wire",       "borde": "doble",       "color": "naranja",  "fondo": "naranja",   "fungible": true, "doble": true },
     { "id": "pegatinas",            "nombre": "Pegatinas (par)",           "borde": "solido",      "color": "verde",    "fondo": "verde",     "fungible": true },
     { "id": "adhesivo_eng",         "nombre": "Electrodo adhesivo de ENG", "borde": "solido",      "color": "turquesa", "fondo": "verde",     "fungible": true },

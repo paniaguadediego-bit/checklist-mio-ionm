@@ -578,6 +578,10 @@
     caso_mas_tit:        { es: "Más acciones", en: "More actions" },
     caso_crear_informe:  { es: "Informe (PDF)", en: "Report (PDF)" },
     caso_cerrar:         { es: "Cerrar caso", en: "Close case" },
+    caso_fusionado:      { es: "El caso {id} había cambiado en otro dispositivo: se han juntado los dos sin perder nada.", en: "Case {id} had changed on another device: both versions were merged without losing anything." },
+    import_completa_hecho: { es: "Copia completa: se han recuperado {casos} casos y {montajes} plantillas que no estaban en este dispositivo. Los que ya estaban no se han tocado.", en: "Full backup: {casos} cases and {montajes} templates that were not on this device have been restored. Existing ones were left untouched." },
+    import_conf_completa: { es: "Es una copia completa: trae {casos} casos y {montajes} plantillas. De esos, solo se añaden los que no estén en este dispositivo.", en: "It is a full backup: it has {casos} cases and {montajes} templates. Only those not already on this device are added." },
+    import_completa_apuntes: { es: "También se han recuperado los apuntes (aquí no había ninguno).", en: "Notes were restored too (there were none here)." },
     caso_reabrir:        { es: "Reabrir caso", en: "Reopen case" },
     caso_informe_proximamente: { es: "Crear informe: todavía no hace nada, en camino.", en: "Create report: not wired up yet, coming soon." },
     caso_borrar_conf:    { es: "¿Borrar el caso “{caso}”?\nSe borra también del repositorio en cuanto haya conexión. No se puede deshacer desde la app, aunque queda recuperable en el historial de git.",
@@ -4672,7 +4676,7 @@
   });
 
   /* ------------------------------------------------------------------ *
-   * Informe en PDF (pedido por Pani, 05-09-2026: "en camino desde que se
+   * Informe en PDF (pedido por el usuario, 05-09-2026: "en camino desde que se
    * dejó a medias 'Crear informe'"). Sin librerías -regla 4 de CLAUDE.md-:
    * se abre una pestaña con su propio documento, montado con
    * createElement/textContent igual que el resto de la app -nunca
@@ -4680,7 +4684,7 @@
    * propio diálogo de impresión del navegador ya ofrece "Guardar como
    * PDF" de fábrica, así que no hace falta generar el PDF a mano.
    *
-   * Primera versión para que Pani la pruebe y la vaya afinando: recorre
+   * Primera versión para que el usuario la pruebe y la vaya afinando: recorre
    * CAMPOS_CASO/GRUPOS_CASO -la misma lista que pinta la ficha en
    * pantalla-, así que un campo nuevo en la ficha aparece aquí solo, sin
    * tocar esta función.
@@ -4821,11 +4825,30 @@
     return salida;
   }
 
-  function tecParValorLegible(v) {
-    if (Array.isArray(v)) return v.length ? v.join(", ") : "";
+  /* Opciones con id (auditoría 28-09-2026, C8; regla 3 de CLAUDE.md): cada
+     lista de data/parametros-tecnicas.js lleva "ids" fijos junto a
+     "opciones". Se guarda el id y se enseña el texto; así renombrar una
+     opción no parte los datos. Lo guardado antes como texto se reconoce y
+     pasa a id la próxima vez que se abre la ficha. Lo que no es ninguna
+     opción (texto propio con "permite_otro") se guarda tal cual. */
+  function tecParIdDe(cdef, v) {
+    if (typeof v !== "string" || !v || !cdef || !cdef.opciones) return v;
+    var ids = cdef.ids || [];
+    if (ids.indexOf(v) !== -1) return v;
+    var i = cdef.opciones.indexOf(v);
+    return i !== -1 && ids[i] ? ids[i] : v;
+  }
+  function tecParTextoDe(cdef, v) {
+    if (typeof v !== "string" || !v || !cdef || !cdef.opciones || !cdef.ids) return v;
+    var i = cdef.ids.indexOf(v);
+    return i !== -1 ? cdef.opciones[i] : v;
+  }
+
+  function tecParValorLegible(v, cdef) {
+    if (Array.isArray(v)) return v.length ? v.map(function (x) { return tecParTextoDe(cdef, x); }).join(", ") : "";
     if (v === true) return T("tecpar_si");
     if (v === false || v == null) return "";
-    return String(v);
+    return String(tecParTextoDe(cdef, v));
   }
 
   // Una línea "Etiqueta: valor · Etiqueta: valor..." con todo lo que tenga
@@ -4836,7 +4859,7 @@
     ["general", "estimulacion", "registro"].forEach(function (sec) {
       (tecDef ? tecDef.secciones[sec] || [] : []).forEach(function (cdef) {
         if (sec === "general" && cdef.id === "incidencias") return;
-        var v = tecParValorLegible((datos[sec] || {})[cdef.id]);
+        var v = tecParValorLegible((datos[sec] || {})[cdef.id], cdef);
         if (v) partes.push(cdef.etiqueta + ": " + v);
       });
     });
@@ -5522,6 +5545,60 @@
     return "https://api.github.com/repos/" + sync.repo + "/contents/" + rutaCaso(uid);
   }
 
+  /* Fusión de dos versiones del mismo caso (auditoría 28-09-2026, C3).
+     Sin versión común de referencia no se puede saber quién cambió qué, así
+     que el criterio es no perder nada:
+       - un campo vacío en un lado se toma del otro;
+       - si los dos lo tienen, gana el dispositivo que sube ("local");
+       - las listas de elementos con "id" (eventos, alarmas, mapeo, fotos…)
+         se juntan: cada elemento, entero, del lado local si lo tiene; los
+         que solo tiene el remoto se añaden;
+       - los objetos (registro_intraop, su "v", parámetros…) se fusionan
+         campo a campo con estas mismas reglas;
+       - "editado_en" es la unión de las dos historias.
+     Lo que un lado borró y el otro aún tiene puede volver: es el precio de
+     no perder datos, y es mucho menos grave que lo contrario. */
+  function fusionarCaso(local, remoto) {
+    function vacio(v) {
+      return v === undefined || v === null || v === "" ||
+        (Array.isArray(v) && !v.length) ||
+        (v && typeof v === "object" && !Array.isArray(v) && !Object.keys(v).length);
+    }
+    function esObjeto(v) { return v && typeof v === "object" && !Array.isArray(v); }
+    function conId(lista) { return lista.every(function (x) { return esObjeto(x) && x.id; }); }
+    function fusionar(l, r) {
+      if (vacio(l)) return vacio(r) ? l : r;
+      if (vacio(r)) return l;
+      if (Array.isArray(l) && Array.isArray(r)) {
+        if (!conId(l) || !conId(r)) return l;
+        // Un elemento local sin nada escrito (p. ej. una de las alarmas en
+        // blanco que la hoja crea de antemano, con el mismo id en los dos
+        // dispositivos) cede ante el remoto si ese sí tiene datos.
+        var ids = {}, porId = {};
+        r.forEach(function (y) { porId[y.id] = y; });
+        var out = l.map(function (x) {
+          ids[x.id] = true;
+          var enBlanco = Object.keys(x).every(function (k) { return k === "id" || vacio(x[k]); });
+          return (enBlanco && porId[x.id]) ? porId[x.id] : x;
+        });
+        r.forEach(function (y) { if (!ids[y.id]) out.push(y); });
+        return out;
+      }
+      if (esObjeto(l) && esObjeto(r)) {
+        var o = {};
+        Object.keys(r).forEach(function (k) { o[k] = r[k]; });
+        Object.keys(l).forEach(function (k) { o[k] = (k in r) ? fusionar(l[k], r[k]) : l[k]; });
+        return o;
+      }
+      return l;
+    }
+    var res = fusionar(local, remoto);
+    var marcas = {};
+    (local.editado_en || []).concat(remoto.editado_en || []).forEach(function (m) { marcas[m] = true; });
+    res.editado_en = Object.keys(marcas).sort();
+    return res;
+  }
+
   function subirCaso(uid, reintento) {
     var caso = casos[uid];
     if (!caso) { delete casosSinSubir[uid]; return Promise.resolve(); }
@@ -5547,13 +5624,23 @@
       headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()),
       body: JSON.stringify(cuerpo)
     }).then(function (resp) {
-      // 409/422: el archivo cambió desde otro dispositivo. Se relee el sha y
-      // se reintenta una vez: lo que acabas de escribir aquí es lo más nuevo.
+      // 409/422: el archivo cambió desde otro dispositivo (p. ej. el Registro
+      // en el móvil y la ficha en el ordenador, el mismo día). Antes se subía
+      // lo local tal cual y se perdía lo del otro dispositivo; desde el
+      // 29-09-2026 (auditoría, C3) se baja el remoto, se fusionan los dos con
+      // fusionarCaso() y se sube el resultado.
       if ((resp.status === 409 || resp.status === 422) && !reintento) {
         return fetch(urlCaso(uid), { headers: cabeceras(), cache: "no-store" })
           .then(function (r) { return r.ok ? r.json() : null; })
           .then(function (json) {
             casosSha[uid] = json ? json.sha : null;
+            var remoto = null;
+            try { remoto = json && json.content ? JSON.parse(deBase64(json.content)) : null; } catch (e) { remoto = null; }
+            if (remoto && remoto.caso_uid === uid && casos[uid]) {
+              casos[uid] = fusionarCaso(casos[uid], remoto);
+              guardarUnCasoLocal(uid);
+              avisoGuardado(T("caso_fusionado", { id: casos[uid].ID_Caso || uid }));
+            }
             return subirCasoYaHidratado(uid, true);
           });
       }
@@ -6664,7 +6751,7 @@
   // (que depende de una casilla o un desplegable de la propia ficha), esto
   // depende de otro campo de tipo "tecnicas". Usado por "Umbral EMG de
   // tornillos pediculares" y sus niveles/lados: sin mapeo_raices_tornillos
-  // marcado, ninguno de los dos tiene sentido (pedido por Pani, 05-09-2026).
+  // marcado, ninguno de los dos tiene sentido (pedido por el usuario, 05-09-2026).
   function ocultarSegunTecnica(div, tecnicaId) {
     var actualizar = function () {
       var realizadas = camposCaso.tecnicas_realizadas || [];
@@ -6782,7 +6869,7 @@
     // "Técnicas" es su propio apartado desde el 28-09-2026 (pedido del
     // usuario); antes era el tercer sub-apartado de "Montaje / Técnicas".
     { g: "tecnicas", c: "tecnicas_realizadas", t: "tecnicas" },
-    // Pedido por Pani, 05-09-2026: para cada técnica ya marcada como
+    // Pedido por el usuario, 05-09-2026: para cada técnica ya marcada como
     // realizada, poder anotar cómo se hizo de verdad en este caso concreto
     // -campos propios por técnica desde el 10-09-2026, ver
     // PARAMETROS_TECNICAS-. Va después de "tecnicas_realizadas" en la
@@ -6819,7 +6906,7 @@
     // casos reales antiguos que ya lo tenían relleno -no se borra nada,
     // solo se deja de mostrar aquí-.
     // { g: "montaje", sub: "material", c: "material_real", t: "material", ay: "caso_material_real_ay" },
-    // Pedido por Pani, 05-09-2026: fotos de cómo quedó el montaje en el
+    // Pedido por el usuario, 05-09-2026: fotos de cómo quedó el montaje en el
     // software del equipo (p. ej. la pantalla del Inomed), para poder
     // consultarlas en un caso futuro parecido. Van dentro del propio caso
     // -no en archivo aparte-, igual que material_previsto/asignaciones: un
@@ -6844,7 +6931,7 @@
     // periférico; las raíces ya tienen su campo propio más abajo).
     { g: "desarrollo", c: "mapeo_registro", t: "mapeo_reg", ay: "caso_mapeo_registro_ay" },
     { g: "desarrollo", c: "resumen_monitorizacion", t: "area", rows: 12, ay: "caso_resumen_monitorizacion_ay" },
-    // Pedido por Pani, 05-09-2026: ambas cajas solo aparecen si "Mapeo de
+    // Pedido por el usuario, 05-09-2026: ambas cajas solo aparecen si "Mapeo de
     // raíces y tornillos" está marcada en Técnicas realizadas -sin esa
     // técnica, ni el desplegable de niveles ni la nota de umbral tienen
     // nada que hacer aquí- (ver ocultarSegunTecnica en campoCaso).
@@ -7065,8 +7152,10 @@
         o.value = op;
         dl.appendChild(o);
       });
-      control.value = almacen[cdef.id] || "";
-      control.addEventListener("input", function () { almacen[cdef.id] = control.value; });
+      // Se escribe el texto; se guarda el id si coincide con una opción.
+      if (almacen[cdef.id]) almacen[cdef.id] = tecParIdDe(cdef, almacen[cdef.id]);
+      control.value = tecParTextoDe(cdef, almacen[cdef.id]) || "";
+      control.addEventListener("input", function () { almacen[cdef.id] = tecParIdDe(cdef, control.value); });
       wrap.appendChild(control);
       wrap.appendChild(dl);
       evento = "input";
@@ -7076,12 +7165,20 @@
       blank.value = "";
       blank.textContent = "—";
       control.appendChild(blank);
-      (cdef.opciones || []).forEach(function (op) {
+      (cdef.opciones || []).forEach(function (op, i) {
         var o = document.createElement("option");
-        o.value = op; o.textContent = op;
+        o.value = (cdef.ids || [])[i] || op; o.textContent = op;
         control.appendChild(o);
       });
-      control.value = almacen[cdef.id] || "";
+      if (almacen[cdef.id]) almacen[cdef.id] = tecParIdDe(cdef, almacen[cdef.id]);
+      var guardadoSel = almacen[cdef.id] || "";
+      if (guardadoSel && !(cdef.ids || []).some(function (id) { return id === guardadoSel; })) {
+        // Un valor que ya no está en la lista se ofrece igual, no se pierde.
+        var oLeg = document.createElement("option");
+        oLeg.value = guardadoSel; oLeg.textContent = guardadoSel;
+        control.appendChild(oLeg);
+      }
+      control.value = guardadoSel;
       control.addEventListener("change", function () { almacen[cdef.id] = control.value; });
       wrap.appendChild(control);
       evento = "change";
@@ -7112,6 +7209,9 @@
   // (mismo patrón de quitar con × que el resto de la app).
   function tecParCampoMultiseleccion(almacen, cdef) {
     var valorArr = Array.isArray(almacen[cdef.id]) ? almacen[cdef.id] : (almacen[cdef.id] = []);
+    // Textos de antes -> ids (en el sitio: es el mismo array guardado).
+    for (var iv = 0; iv < valorArr.length; iv++) valorArr[iv] = tecParIdDe(cdef, valorArr[iv]);
+    var idsOp = (cdef.opciones || []).map(function (op, i) { return (cdef.ids || [])[i] || op; });
     var wrap = document.createElement("div");
     wrap.className = "tecpar-campo tecpar-campo-ancho";
     var tit = tecParTitulo(cdef);
@@ -7123,18 +7223,19 @@
     fila.className = "chip-fila tecpar-chips";
     var pintar = function () {
       fila.textContent = "";
-      (cdef.opciones || []).forEach(function (op) {
+      (cdef.opciones || []).forEach(function (op, io) {
+        var idOp = idsOp[io];
         var chip = document.createElement("span");
-        chip.className = "chip chip-extra" + (valorArr.indexOf(op) !== -1 ? " activo" : "");
+        chip.className = "chip chip-extra" + (valorArr.indexOf(idOp) !== -1 ? " activo" : "");
         chip.textContent = op;
         chip.addEventListener("click", function () {
-          var i = valorArr.indexOf(op);
-          if (i === -1) valorArr.push(op); else valorArr.splice(i, 1);
+          var i = valorArr.indexOf(idOp);
+          if (i === -1) valorArr.push(idOp); else valorArr.splice(i, 1);
           pintar();
         });
         fila.appendChild(chip);
       });
-      valorArr.filter(function (v) { return (cdef.opciones || []).indexOf(v) === -1; }).forEach(function (extra) {
+      valorArr.filter(function (v) { return idsOp.indexOf(v) === -1; }).forEach(function (extra) {
         var chip = document.createElement("span");
         chip.className = "chip chip-extra activo";
         chip.textContent = extra;
@@ -7165,7 +7266,7 @@
       btnOtro.type = "button";
       btnOtro.textContent = T("tecpar_otro_anadir");
       var anadir = function () {
-        var v = inpOtro.value.trim();
+        var v = tecParIdDe(cdef, inpOtro.value.trim());
         if (v && valorArr.indexOf(v) === -1) { valorArr.push(v); inpOtro.value = ""; pintar(); }
       };
       btnOtro.addEventListener("click", anadir);
@@ -7189,7 +7290,7 @@
   // (general/estimulación/registro -sin encabezado para "general", es la
   // que menos campos trae-). "visible_si" se resuelve en vivo: cuando el
   // campo del que depende cambia, se reevalúa si el dependiente se
-  // muestra u oculta -"igual_a" compara texto tal cual, "mayor_que"
+  // muestra u oculta -"igual_a" compara el id de la opción, "mayor_que"
   // compara como número; un valor no numérico da "false", nunca rompe-.
   function pintarCamposTecnicaReal(tecId, datos) {
     var tecDef = definicionTecPar(tecId);
@@ -7246,10 +7347,15 @@
       cont.appendChild(secDiv);
     });
 
+    var defPorId = {};
+    ["general", "estimulacion", "registro"].forEach(function (secId) {
+      (tecDef.secciones[secId] || []).forEach(function (cd) { defPorId[cd.id] = cd; });
+    });
     condicionales.forEach(function (item) {
       var ctrl = mapaControles[item.condicion.campo];
       var evaluar = function () {
-        var v = valorTecActual(item.condicion.campo);
+        // "igual_a" es un id de opción (desde el 29-09-2026, C8).
+        var v = tecParIdDe(defPorId[item.condicion.campo], valorTecActual(item.condicion.campo));
         var mostrar = "igual_a" in item.condicion ? v === item.condicion.igual_a
           : "mayor_que" in item.condicion ? Number(v) > item.condicion.mayor_que
           : true;
@@ -7292,7 +7398,7 @@
     }
 
     // Técnicas realizadas y las dos tablas de material van dentro de un
-    // <details> plegado por defecto (pedido por Pani, 05-09-2026): son las
+    // <details> plegado por defecto (pedido por el usuario, 05-09-2026): son las
     // tres listas más largas de la ficha y no hace falta verlas siempre
     // abiertas. Por eso no llevan la etiqueta <label> normal -su summary la
     // sustituye-.
@@ -7807,7 +7913,7 @@
     // Solo tiene sentido anotar el umbral de tornillos si de verdad se hizo
     // mapeo de raíces y tornillos en este caso: sin la técnica marcada, ni
     // esta caja de notas ni la de niveles/umbrales de más abajo aparecen
-    // (pedido por Pani, 05-09-2026). Ver también el tipo "umbral_raices".
+    // (pedido por el usuario, 05-09-2026). Ver también el tipo "umbral_raices".
     if (def.c === "umbral_tornillos_pediculares") ocultarSegunTecnica(div, "mapeo_raices_tornillos");
     return div;
   }
@@ -7987,7 +8093,7 @@
           : def.sub === "material" ? contMaterial
           : cont;
         destino.appendChild(elCampo);
-        // Coste del material (pedido por Pani, 06-09-2026; metido dentro
+        // Coste del material (pedido por el usuario, 06-09-2026; metido dentro
         // del propio pliegue de "Material (montaje base)" el 07-09-2026,
         // para que abrir/cerrar uno abra/cierre el otro, y desde el
         // 10-09-2026 sin pliegue propio: comparte el de "Material" entero-):
@@ -9816,7 +9922,7 @@
   });
 
   // El desplegable "Perfil" (resaltado de técnicas recomendadas según el
-  // tipo de cirugía) se retiró el 05-09-2026 a petición de Pani: ya conoce
+  // tipo de cirugía) se retiró el 05-09-2026 a petición del usuario: ya conoce
   // de memoria qué técnicas implica cada cirugía y no le aporta nada. Se
   // quita el <select> del HTML y todo lo que lo pintaba/escuchaba; el dato
   // "nota_perfil_id" que pudiera haber quedado en un montaje antiguo no se
@@ -11224,6 +11330,11 @@
   // la copia perdería datos en silencio.
   document.getElementById("btn-exportar").addEventListener("click", function () {
     var copia = estadoActual();
+    // Copia completa (auditoría 28-09-2026, C6): además de lo de siempre
+    // (catálogos, etiquetas, material), los casos, las plantillas y los
+    // apuntes, que viven en archivos aparte y antes no salían. Así, sin
+    // token o con GitHub caído, hay una copia local de todo.
+    copia.completa = { casos: casos, montajes: montajes, apuntes: apunteDoc };
     var blob = new Blob([JSON.stringify(copia, null, 2)], { type: "application/json" });
     var url = URL.createObjectURL(blob);
     var a = document.createElement("a");
@@ -11259,16 +11370,55 @@
       if (!confirm(T("import_conf", {
         escenarios: Object.keys(copia.escenarios || {}).length,
         materiales: (copia.catalogo_usuario || []).length
-      }))) return;
+      }) + (copia.completa ? "\n\n" + T("import_conf_completa", {
+        casos: Object.keys(copia.completa.casos || {}).length,
+        montajes: Object.keys(copia.completa.montajes || {}).length
+      }) : ""))) return;
 
       // Mismo camino que la bajada de GitHub: así las etiquetas propias y
       // las copias antiguas sin etiquetas se tratan igual en los dos sitios.
       aplicarEstado(copia);
       avisoGuardado(T("importado"));
+      if (copia.completa) importarCopiaCompleta(copia.completa);
     };
     lector.readAsText(fichero);
     e.target.value = "";
   });
+
+  // Casos y plantillas de una copia completa: solo se añaden los que NO
+  // están en este dispositivo -nunca se pisa uno que ya exista-. Los apuntes,
+  // solo si aquí no hay ninguno. Lo recuperado se sube con la sincronización
+  // como cualquier cambio (y si en GitHub ya existía, se fusiona, ver
+  // fusionarCaso()).
+  function importarCopiaCompleta(completa) {
+    var nCasos = 0, nMontajes = 0, conApuntes = false;
+    Object.keys(completa.casos || {}).forEach(function (uid) {
+      var c = completa.casos[uid];
+      if (!c || !c.caso_uid || casos[uid]) return;
+      casos[uid] = c;
+      if (!MODO_DEMO) casosSinSubir[uid] = true;
+      guardarUnCasoLocal(uid);
+      nCasos++;
+    });
+    Object.keys(completa.montajes || {}).forEach(function (uid) {
+      var m = completa.montajes[uid];
+      if (!m || !m.montaje_uid || montajes[uid]) return;
+      guardarMontaje(m, true);
+      nMontajes++;
+    });
+    var ap = completa.apuntes;
+    if (ap && (ap.secciones || []).length && !(apunteDoc.secciones || []).length) {
+      apunteDoc = ap;
+      guardarApunteDoc();
+      conApuntes = true;
+    }
+    guardarCasos();
+    programarEnvio();
+    pintarEstadoSync();
+    if (pantallaActiva("casos")) renderListaCasos();
+    alert(T("import_completa_hecho", { casos: nCasos, montajes: nMontajes }) +
+      (conApuntes ? "\n" + T("import_completa_apuntes") : ""));
+  }
 
   document.getElementById("btn-imprimir").addEventListener("click", function () {
     window.print();
@@ -11458,7 +11608,7 @@
   };
 
   // Agrupación de la pantalla "Técnicas IONM" por tipo de técnica (pedido por
-  // Pani, 05-09-2026), no por zona quirúrgica -ver el comentario largo al
+  // el usuario, 05-09-2026), no por zona quirúrgica -ver el comentario largo al
   // principio del LEEME de referencia/ (repo privado) con el porqué y qué técnica cae en cada
   // familia-. Cada técnica trae su "familia" ya fijada a mano en ese archivo;
   // aquí solo se traduce a texto legible y se fija el orden de los grupos.
@@ -11732,7 +11882,7 @@
     // Clase por sección (tecmio-titulo-estimulacion, -filtros, -barrido...):
     // permite destacar en CSS justo lo que se consulta a media cirugía
     // -estimulación, filtros, barrido- por encima de registro/notas, sin
-    // tocar este archivo si el color cambia (pedido por Pani, 04-09-2026).
+    // tocar este archivo si el color cambia (pedido por el usuario, 04-09-2026).
     titulo.className = "tecmio-titulo-seccion tecmio-titulo-" + clave;
     pintarTextoConResaltado(titulo, TECMIO_SECCIONES[clave] || etiquetaTecMio(clave, TECMIO_SECCIONES));
     contenedor.appendChild(titulo);
@@ -11767,7 +11917,7 @@
     var summary = document.createElement("summary");
     if (tecnica.categoria) {
       var badge = document.createElement("span");
-      // Color por familia de técnica (pedido por Pani, 05-09-2026): un
+      // Color por familia de técnica (pedido por el usuario, 05-09-2026): un
       // colorcito propio por etiqueta -morado en SEP, rojo/granate en MEP,
       // un rojo distinto en Onda D, verde en EMG, azul en EEG/ECoG, naranja
       // en Reflejos...-. Las clases .tecmio-badge-<familia> están en

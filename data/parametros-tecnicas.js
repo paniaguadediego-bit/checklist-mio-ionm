@@ -10,7 +10,8 @@
  *
  * IDENTIFICADORES: esta tabla usa sus propios ids (t_sep, c_mep...), que NO
  * siempre coinciden con el id de la técnica en data/surgeries.js (t_pess,
- * c_pem...) -ver TECPAR_ID_MAP en app.js, que traduce de uno a otro-. Dos
+ * c_pem...) -ver TECPAR_ID_MAP al final de este mismo archivo, que traduce
+ * de uno a otro-. Dos
  * fusiones a propósito: "erg_retinograma" cubre tanto ERG como Retino, y
  * "prm_arm" cubre tanto PRM como ARM -mismos parámetros técnicos en la
  * práctica-, pero el catálogo de técnicas de surgeries.js NO se tocó: siguen
@@ -28,6 +29,12 @@
  *                  realizadas"); si permite_otro=true, se pueden añadir chips
  *                  propios sueltos.
  *   si_no          Casilla simple.
+ *
+ * IDS DE OPCIÓN (29-09-2026, auditoría C8): cada lista "opciones" lleva al
+ * lado "ids", en el mismo orden. Se guarda el id y se enseña el texto, así
+ * que el texto de una opción se puede corregir sin tocar su id (NUNCA cambiar
+ * un id ya usado: dejaría huérfanos los casos guardados). Una opción nueva va
+ * al final de las dos listas, con un id nuevo. "igual_a" de visible_si es un id.
  *
  * visible_si: el campo solo se pinta si el campo citado ("campo", el id de
  * OTRO campo de la misma técnica) cumple "igual_a" o "mayor_que" -se
@@ -56,6 +63,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -66,6 +74,7 @@ window.PARAMETROS_TECNICAS = {
               "Caída de amplitud 50% o aumento de latencia 10%",
               "Criterio adaptativo"
             ],
+            "ids": ["caida_de_amplitud_50pct_o_aumento_de_latencia_10","criterio_adaptativo"],
             "permite_otro": true,
             "fuente": "Boaro 2026 (clásico); criterio adaptativo propuesto por MacDonald y cols."
           },
@@ -88,6 +97,7 @@ window.PARAMETROS_TECNICAS = {
               "Pudendo",
               "Trigémino"
             ],
+            "ids": ["mediano","cubital","tibial_posterior","peroneo","pudendo","trigemino"],
             "permite_otro": true
           },
           {
@@ -98,6 +108,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Aguja subdérmica"
             ],
+            "ids": ["superficie_adhesivo","aguja_subdermica"],
             "permite_otro": true
           },
           {
@@ -108,6 +119,7 @@ window.PARAMETROS_TECNICAS = {
               "Monofásico",
               "Bifásico"
             ],
+            "ids": ["monofasico","bifasico"],
             "permite_otro": false
           },
           {
@@ -137,6 +149,7 @@ window.PARAMETROS_TECNICAS = {
               "Intercalado/alternante",
               "Simultáneo bilateral"
             ],
+            "ids": ["secuencial_por_nervio","intercalado_alternante","simultaneo_bilateral"],
             "permite_otro": true
           }
         ],
@@ -150,6 +163,7 @@ window.PARAMETROS_TECNICAS = {
               "Aguja subdérmica",
               "Superficie adhesivo"
             ],
+            "ids": ["sacacorchos","aguja_subdermica","superficie_adhesivo"],
             "permite_otro": true
           },
           {
@@ -160,6 +174,7 @@ window.PARAMETROS_TECNICAS = {
               "Clásico",
               "Optimizado ISION"
             ],
+            "ids": ["clasico","optimizado_ision"],
             "permite_otro": true,
             "fuente": "MacDonald 2019 (ISION)"
           },
@@ -172,6 +187,7 @@ window.PARAMETROS_TECNICAS = {
               "C4'–Fz",
               "Cz'–Fz"
             ],
+            "ids": ["c3_fz","c4_fz","cz_fz"],
             "permite_otro": true,
             "fuente": "Derivaciones clásicas: Boaro 2026"
           },
@@ -188,6 +204,7 @@ window.PARAMETROS_TECNICAS = {
               "Erb",
               "Fosa poplítea"
             ],
+            "ids": ["erb","fosa_poplitea"],
             "permite_otro": true
           },
           {
@@ -246,6 +263,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -256,6 +274,7 @@ window.PARAMETROS_TECNICAS = {
               "Caída de amplitud 50% o aumento de latencia 10%",
               "Criterio adaptativo"
             ],
+            "ids": ["caida_de_amplitud_50pct_o_aumento_de_latencia_10","criterio_adaptativo"],
             "permite_otro": true,
             "fuente": "Boaro 2026 (clásico); criterio adaptativo propuesto por MacDonald y cols."
           },
@@ -278,6 +297,7 @@ window.PARAMETROS_TECNICAS = {
               "Pudendo",
               "Trigémino"
             ],
+            "ids": ["mediano","cubital","tibial_posterior","peroneo","pudendo","trigemino"],
             "permite_otro": true
           },
           {
@@ -288,6 +308,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Aguja subdérmica"
             ],
+            "ids": ["superficie_adhesivo","aguja_subdermica"],
             "permite_otro": true
           },
           {
@@ -298,6 +319,7 @@ window.PARAMETROS_TECNICAS = {
               "Monofásico",
               "Bifásico"
             ],
+            "ids": ["monofasico","bifasico"],
             "permite_otro": false
           },
           {
@@ -327,6 +349,7 @@ window.PARAMETROS_TECNICAS = {
               "Intercalado/alternante",
               "Simultáneo bilateral"
             ],
+            "ids": ["secuencial_por_nervio","intercalado_alternante","simultaneo_bilateral"],
             "permite_otro": true
           }
         ],
@@ -349,6 +372,7 @@ window.PARAMETROS_TECNICAS = {
               "Referencial",
               "Bipolar"
             ],
+            "ids": ["referencial","bipolar"],
             "permite_otro": false
           },
           {
@@ -412,6 +436,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -424,6 +449,7 @@ window.PARAMETROS_TECNICAS = {
               "Aumento de umbral",
               "Simplificación de morfología"
             ],
+            "ids": ["todo_o_nada_desaparicion","caida_de_amplitud","aumento_de_umbral","simplificacion_de_morfologia"],
             "permite_otro": true,
             "fuente": "MacDonald 2013 (ASNM)"
           },
@@ -442,6 +468,7 @@ window.PARAMETROS_TECNICAS = {
               "Corriente constante (mA)",
               "Voltaje constante (V)"
             ],
+            "ids": ["corriente_constante_ma","voltaje_constante_v"],
             "permite_otro": false
           },
           {
@@ -454,6 +481,7 @@ window.PARAMETROS_TECNICAS = {
               "C3–C4",
               "C4–C3"
             ],
+            "ids": ["c1_c2","c2_c1","c3_c4","c4_c3"],
             "permite_otro": true,
             "fuente": "Deletis cap. 31 (C1–C2/C2–C1, C3–C4/C4–C3)",
             "nota": "Opciones orientativas y editables"
@@ -466,6 +494,7 @@ window.PARAMETROS_TECNICAS = {
               "Sacacorchos",
               "Aguja subdérmica"
             ],
+            "ids": ["sacacorchos","aguja_subdermica"],
             "permite_otro": true
           },
           {
@@ -515,6 +544,7 @@ window.PARAMETROS_TECNICAS = {
               "Ninguna",
               "Doble tren"
             ],
+            "ids": ["ninguna","doble_tren"],
             "permite_otro": true
           },
           {
@@ -524,7 +554,7 @@ window.PARAMETROS_TECNICAS = {
             "unidad": "ms",
             "visible_si": {
               "campo": "facilitacion",
-              "igual_a": "Doble tren"
+              "igual_a": "doble_tren"
             }
           },
           {
@@ -533,7 +563,7 @@ window.PARAMETROS_TECNICAS = {
             "tipo": "numero",
             "visible_si": {
               "campo": "facilitacion",
-              "igual_a": "Doble tren"
+              "igual_a": "doble_tren"
             }
           },
           {
@@ -568,6 +598,7 @@ window.PARAMETROS_TECNICAS = {
               "Recto abdominal",
               "Esfínter anal externo"
             ],
+            "ids": ["deltoides","biceps","triceps","extensores_del_carpo","flexores_del_carpo","abductor_corto_del_pulgar_apb","abductor_del_menique_adm","primer_interoseo_dorsal","aductores","cuadriceps_vasto_recto_femoral","isquiotibiales","tibial_anterior","gastrocnemio","soleo","extensor_corto_de_los_dedos_edb","abductor_del_primer_dedo_ah","intercostales","recto_abdominal","esfinter_anal_externo"],
             "permite_otro": true
           },
           {
@@ -582,6 +613,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -595,6 +627,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -638,6 +671,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -650,6 +684,7 @@ window.PARAMETROS_TECNICAS = {
               "Aumento de umbral",
               "Simplificación de morfología"
             ],
+            "ids": ["todo_o_nada_desaparicion","caida_de_amplitud","aumento_de_umbral","simplificacion_de_morfologia"],
             "permite_otro": true,
             "fuente": "MacDonald 2013 (ASNM)"
           },
@@ -668,6 +703,7 @@ window.PARAMETROS_TECNICAS = {
               "Corriente constante (mA)",
               "Voltaje constante (V)"
             ],
+            "ids": ["corriente_constante_ma","voltaje_constante_v"],
             "permite_otro": false
           },
           {
@@ -765,6 +801,7 @@ window.PARAMETROS_TECNICAS = {
               "Trapecio",
               "Lengua"
             ],
+            "ids": ["deltoides","biceps","triceps","extensores_del_carpo","flexores_del_carpo","abductor_corto_del_pulgar_apb","abductor_del_menique_adm","primer_interoseo_dorsal","aductores","cuadriceps_vasto_recto_femoral","isquiotibiales","tibial_anterior","gastrocnemio","soleo","extensor_corto_de_los_dedos_edb","abductor_del_primer_dedo_ah","frontal","orbicular_del_ojo","orbicular_de_la_boca","mentoniano","masetero","temporal","velo_del_paladar_faringe","cuerdas_vocales_electrodo_de_tubo","cricotiroideo","esternocleidomastoideo","trapecio","lengua"],
             "permite_otro": true
           },
           {
@@ -779,6 +816,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -792,6 +830,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -838,6 +877,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -850,6 +890,7 @@ window.PARAMETROS_TECNICAS = {
               "Aumento de umbral",
               "Simplificación de morfología"
             ],
+            "ids": ["todo_o_nada_desaparicion","caida_de_amplitud","aumento_de_umbral","simplificacion_de_morfologia"],
             "permite_otro": true,
             "fuente": "MacDonald 2013 (ASNM)"
           },
@@ -868,6 +909,7 @@ window.PARAMETROS_TECNICAS = {
               "Corriente constante (mA)",
               "Voltaje constante (V)"
             ],
+            "ids": ["corriente_constante_ma","voltaje_constante_v"],
             "permite_otro": false
           },
           {
@@ -880,6 +922,7 @@ window.PARAMETROS_TECNICAS = {
               "C5–Cz",
               "C6–Cz"
             ],
+            "ids": ["c3_cz","c4_cz","c5_cz","c6_cz"],
             "permite_otro": true,
             "nota": "Opciones orientativas y editables"
           },
@@ -891,6 +934,7 @@ window.PARAMETROS_TECNICAS = {
               "Sacacorchos",
               "Aguja subdérmica"
             ],
+            "ids": ["sacacorchos","aguja_subdermica"],
             "permite_otro": true
           },
           {
@@ -940,6 +984,7 @@ window.PARAMETROS_TECNICAS = {
               "Ninguna",
               "Doble tren"
             ],
+            "ids": ["ninguna","doble_tren"],
             "permite_otro": true
           },
           {
@@ -949,7 +994,7 @@ window.PARAMETROS_TECNICAS = {
             "unidad": "ms",
             "visible_si": {
               "campo": "facilitacion",
-              "igual_a": "Doble tren"
+              "igual_a": "doble_tren"
             }
           },
           {
@@ -958,7 +1003,7 @@ window.PARAMETROS_TECNICAS = {
             "tipo": "numero",
             "visible_si": {
               "campo": "facilitacion",
-              "igual_a": "Doble tren"
+              "igual_a": "doble_tren"
             }
           },
           {
@@ -991,6 +1036,7 @@ window.PARAMETROS_TECNICAS = {
               "Trapecio",
               "Lengua"
             ],
+            "ids": ["frontal","orbicular_del_ojo","orbicular_de_la_boca","mentoniano","masetero","temporal","velo_del_paladar_faringe","cuerdas_vocales_electrodo_de_tubo","cricotiroideo","esternocleidomastoideo","trapecio","lengua"],
             "permite_otro": true
           },
           {
@@ -1005,6 +1051,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -1018,6 +1065,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -1061,6 +1109,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -1070,6 +1119,7 @@ window.PARAMETROS_TECNICAS = {
             "opciones": [
               "Caída de amplitud"
             ],
+            "ids": ["caida_de_amplitud"],
             "permite_otro": true
           },
           {
@@ -1087,6 +1137,7 @@ window.PARAMETROS_TECNICAS = {
               "Corriente constante (mA)",
               "Voltaje constante (V)"
             ],
+            "ids": ["corriente_constante_ma","voltaje_constante_v"],
             "permite_otro": false
           },
           {
@@ -1099,6 +1150,7 @@ window.PARAMETROS_TECNICAS = {
               "C3–C4",
               "C4–C3"
             ],
+            "ids": ["c1_c2","c2_c1","c3_c4","c4_c3"],
             "permite_otro": true,
             "nota": "Opciones orientativas y editables"
           },
@@ -1110,6 +1162,7 @@ window.PARAMETROS_TECNICAS = {
               "Sacacorchos",
               "Aguja subdérmica"
             ],
+            "ids": ["sacacorchos","aguja_subdermica"],
             "permite_otro": true
           },
           {
@@ -1149,6 +1202,7 @@ window.PARAMETROS_TECNICAS = {
               "Epidural (catéter)",
               "Subdural"
             ],
+            "ids": ["epidural_cateter","subdural"],
             "permite_otro": true
           },
           {
@@ -1170,6 +1224,7 @@ window.PARAMETROS_TECNICAS = {
               "Rostral (control)",
               "Rostral + caudal"
             ],
+            "ids": ["caudal","rostral_control","rostral_caudal"],
             "permite_otro": false
           },
           {
@@ -1226,6 +1281,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -1247,6 +1303,7 @@ window.PARAMETROS_TECNICAS = {
             "opciones": [
               "Supraorbitario"
             ],
+            "ids": ["supraorbitario"],
             "permite_otro": true
           },
           {
@@ -1257,6 +1314,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Aguja subdérmica"
             ],
+            "ids": ["superficie_adhesivo","aguja_subdermica"],
             "permite_otro": true
           },
           {
@@ -1272,6 +1330,7 @@ window.PARAMETROS_TECNICAS = {
               "Monofásico",
               "Bifásico"
             ],
+            "ids": ["monofasico","bifasico"],
             "permite_otro": false
           },
           {
@@ -1316,6 +1375,7 @@ window.PARAMETROS_TECNICAS = {
             "opciones": [
               "Orbicular del ojo"
             ],
+            "ids": ["orbicular_del_ojo"],
             "permite_otro": true
           },
           {
@@ -1327,6 +1387,7 @@ window.PARAMETROS_TECNICAS = {
               "Contralateral",
               "Bilateral"
             ],
+            "ids": ["ipsilateral","contralateral","bilateral"],
             "permite_otro": false
           },
           {
@@ -1341,6 +1402,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -1351,6 +1413,7 @@ window.PARAMETROS_TECNICAS = {
               "R1",
               "R2"
             ],
+            "ids": ["r1","r2"],
             "permite_otro": false
           },
           {
@@ -1361,6 +1424,7 @@ window.PARAMETROS_TECNICAS = {
               "Primer pulso del tren",
               "Último pulso del tren"
             ],
+            "ids": ["primer_pulso_del_tren","ultimo_pulso_del_tren"],
             "permite_otro": false,
             "fuente": "Lima Medeiros 2024 mide desde el inicio del último pulso del tren"
           },
@@ -1375,6 +1439,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -1421,6 +1486,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -1443,6 +1509,7 @@ window.PARAMETROS_TECNICAS = {
               "Nervio dorsal del pene",
               "Nervio dorsal del clítoris"
             ],
+            "ids": ["nervio_dorsal_del_pene","nervio_dorsal_del_clitoris"],
             "permite_otro": true
           },
           {
@@ -1454,6 +1521,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Aguja subdérmica"
             ],
+            "ids": ["anillo","superficie_adhesivo","aguja_subdermica"],
             "permite_otro": true
           },
           {
@@ -1469,6 +1537,7 @@ window.PARAMETROS_TECNICAS = {
               "Monofásico",
               "Bifásico"
             ],
+            "ids": ["monofasico","bifasico"],
             "permite_otro": false
           },
           {
@@ -1513,6 +1582,7 @@ window.PARAMETROS_TECNICAS = {
             "opciones": [
               "Esfínter anal externo"
             ],
+            "ids": ["esfinter_anal_externo"],
             "permite_otro": true
           },
           {
@@ -1524,6 +1594,7 @@ window.PARAMETROS_TECNICAS = {
               "Contralateral",
               "Bilateral"
             ],
+            "ids": ["ipsilateral","contralateral","bilateral"],
             "permite_otro": false
           },
           {
@@ -1538,6 +1609,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -1547,6 +1619,7 @@ window.PARAMETROS_TECNICAS = {
             "opciones": [
               "Respuesta refleja"
             ],
+            "ids": ["respuesta_refleja"],
             "permite_otro": false
           },
           {
@@ -1557,6 +1630,7 @@ window.PARAMETROS_TECNICAS = {
               "Primer pulso del tren",
               "Último pulso del tren"
             ],
+            "ids": ["primer_pulso_del_tren","ultimo_pulso_del_tren"],
             "permite_otro": false,
             "fuente": "Lima Medeiros 2024 mide desde el inicio del último pulso del tren"
           },
@@ -1571,6 +1645,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -1617,6 +1692,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -1639,6 +1715,7 @@ window.PARAMETROS_TECNICAS = {
               "Inserto",
               "Auricular"
             ],
+            "ids": ["inserto","auricular"],
             "permite_otro": true
           },
           {
@@ -1649,6 +1726,7 @@ window.PARAMETROS_TECNICAS = {
               "Clic",
               "Tone burst"
             ],
+            "ids": ["clic","tone_burst"],
             "permite_otro": true
           },
           {
@@ -1660,6 +1738,7 @@ window.PARAMETROS_TECNICAS = {
               "Condensación",
               "Alternante"
             ],
+            "ids": ["rarefaccion","condensacion","alternante"],
             "permite_otro": false
           },
           {
@@ -1695,6 +1774,7 @@ window.PARAMETROS_TECNICAS = {
               "Sacacorchos",
               "Superficie adhesivo"
             ],
+            "ids": ["aguja_subdermica","sacacorchos","superficie_adhesivo"],
             "permite_otro": true
           },
           {
@@ -1705,6 +1785,7 @@ window.PARAMETROS_TECNICAS = {
               "Cz–Ai (ipsilateral)",
               "Cz–Ac (contralateral)"
             ],
+            "ids": ["cz_ai_ipsilateral","cz_ac_contralateral"],
             "permite_otro": true
           },
           {
@@ -1717,6 +1798,7 @@ window.PARAMETROS_TECNICAS = {
               "CNAP nervio VIII",
               "Núcleo coclear"
             ],
+            "ids": ["no","ecochg","cnap_nervio_viii","nucleo_coclear"],
             "permite_otro": true
           },
           {
@@ -1776,6 +1858,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -1828,6 +1911,7 @@ window.PARAMETROS_TECNICAS = {
               "Recto abdominal",
               "Esfínter anal externo"
             ],
+            "ids": ["frontal","orbicular_del_ojo","orbicular_de_la_boca","mentoniano","masetero","temporal","velo_del_paladar_faringe","cuerdas_vocales_electrodo_de_tubo","cricotiroideo","esternocleidomastoideo","trapecio","lengua","deltoides","biceps","triceps","extensores_del_carpo","flexores_del_carpo","abductor_corto_del_pulgar_apb","abductor_del_menique_adm","primer_interoseo_dorsal","aductores","cuadriceps_vasto_recto_femoral","isquiotibiales","tibial_anterior","gastrocnemio","soleo","extensor_corto_de_los_dedos_edb","abductor_del_primer_dedo_ah","intercostales","recto_abdominal","esfinter_anal_externo"],
             "permite_otro": true
           },
           {
@@ -1842,6 +1926,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -1886,6 +1971,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -1923,6 +2009,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -1957,6 +2044,7 @@ window.PARAMETROS_TECNICAS = {
               "Sacacorchos",
               "Superficie adhesivo"
             ],
+            "ids": ["aguja_subdermica","sacacorchos","superficie_adhesivo"],
             "permite_otro": true
           },
           {
@@ -1982,6 +2070,7 @@ window.PARAMETROS_TECNICAS = {
               "Índice comercial de profundidad",
               "Ninguno"
             ],
+            "ids": ["dsa_espectrograma","sef","indice_de_supresion_bsr","indice_comercial_de_profundidad","ninguno"],
             "permite_otro": true
           },
           {
@@ -1994,6 +2083,7 @@ window.PARAMETROS_TECNICAS = {
               "Crisis",
               "Supresión farmacológica"
             ],
+            "ids": ["profundidad_anestesica","isquemia","crisis","supresion_farmacologica"],
             "permite_otro": true
           },
           {
@@ -2031,6 +2121,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -2055,6 +2146,7 @@ window.PARAMETROS_TECNICAS = {
               "Grid",
               "Profundidad"
             ],
+            "ids": ["strip","grid","profundidad"],
             "permite_otro": true
           },
           {
@@ -2075,6 +2167,7 @@ window.PARAMETROS_TECNICAS = {
               "Referencial",
               "Bipolar"
             ],
+            "ids": ["referencial","bipolar"],
             "permite_otro": false
           },
           {
@@ -2107,6 +2200,7 @@ window.PARAMETROS_TECNICAS = {
               "Actividad epileptiforme",
               "Postdescargas durante mapeo"
             ],
+            "ids": ["actividad_epileptiforme","postdescargas_durante_mapeo"],
             "permite_otro": true
           },
           {
@@ -2148,6 +2242,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -2171,6 +2266,7 @@ window.PARAMETROS_TECNICAS = {
               "Pad LED de silicona",
               "Pad LED esterilizable"
             ],
+            "ids": ["gafas_led","pad_led_de_silicona","pad_led_esterilizable"],
             "permite_otro": true,
             "fuente": "Deletis cap. 4"
           },
@@ -2183,6 +2279,7 @@ window.PARAMETROS_TECNICAS = {
               "Izquierdo",
               "Ambos por separado"
             ],
+            "ids": ["derecho","izquierdo","ambos_por_separado"],
             "permite_otro": false
           },
           {
@@ -2221,6 +2318,7 @@ window.PARAMETROS_TECNICAS = {
               "Aguja subdérmica",
               "Sacacorchos"
             ],
+            "ids": ["grapa_staple","aguja_subdermica","sacacorchos"],
             "permite_otro": true,
             "fuente": "Deletis cap. 4 (grapa)"
           },
@@ -2237,6 +2335,7 @@ window.PARAMETROS_TECNICAS = {
               "O1",
               "O2"
             ],
+            "ids": ["lt","lo","oz","ro","rt","o1","o2"],
             "permite_otro": true,
             "fuente": "Deletis cap. 4: LT, LO, Oz, RO, RT"
           },
@@ -2307,6 +2406,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -2330,6 +2430,7 @@ window.PARAMETROS_TECNICAS = {
               "Pad LED de silicona",
               "Pad LED esterilizable"
             ],
+            "ids": ["gafas_led","pad_led_de_silicona","pad_led_esterilizable"],
             "permite_otro": true,
             "fuente": "Deletis cap. 4"
           },
@@ -2342,6 +2443,7 @@ window.PARAMETROS_TECNICAS = {
               "Izquierdo",
               "Ambos por separado"
             ],
+            "ids": ["derecho","izquierdo","ambos_por_separado"],
             "permite_otro": false
           },
           {
@@ -2389,6 +2491,7 @@ window.PARAMETROS_TECNICAS = {
               "Referencial",
               "Bipolar"
             ],
+            "ids": ["referencial","bipolar"],
             "permite_otro": false
           },
           {
@@ -2463,6 +2566,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -2491,6 +2595,7 @@ window.PARAMETROS_TECNICAS = {
               "Pad LED de silicona",
               "Pad LED esterilizable"
             ],
+            "ids": ["gafas_led","pad_led_de_silicona","pad_led_esterilizable"],
             "permite_otro": true,
             "fuente": "Deletis cap. 4",
             "visible_si": {
@@ -2507,6 +2612,7 @@ window.PARAMETROS_TECNICAS = {
               "Izquierdo",
               "Ambos por separado"
             ],
+            "ids": ["derecho","izquierdo","ambos_por_separado"],
             "permite_otro": false,
             "visible_si": {
               "campo": "estimulo_compartido_pev",
@@ -2563,6 +2669,7 @@ window.PARAMETROS_TECNICAS = {
             "opciones": [
               "Aguja subdérmica"
             ],
+            "ids": ["aguja_subdermica"],
             "permite_otro": true
           },
           {
@@ -2632,6 +2739,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -2653,6 +2761,7 @@ window.PARAMETROS_TECNICAS = {
             "opciones": [
               "Nervio tibial (hueco poplíteo)"
             ],
+            "ids": ["nervio_tibial_hueco_popliteo"],
             "permite_otro": true
           },
           {
@@ -2663,6 +2772,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Aguja subdérmica"
             ],
+            "ids": ["superficie_adhesivo","aguja_subdermica"],
             "permite_otro": true
           },
           {
@@ -2678,6 +2788,7 @@ window.PARAMETROS_TECNICAS = {
               "Monofásico",
               "Bifásico"
             ],
+            "ids": ["monofasico","bifasico"],
             "permite_otro": false
           },
           {
@@ -2706,6 +2817,7 @@ window.PARAMETROS_TECNICAS = {
               "H máxima",
               "Submáxima fija"
             ],
+            "ids": ["h_maxima","submaxima_fija"],
             "permite_otro": true
           }
         ],
@@ -2718,6 +2830,7 @@ window.PARAMETROS_TECNICAS = {
               "Sóleo",
               "Gastrocnemio"
             ],
+            "ids": ["soleo","gastrocnemio"],
             "permite_otro": true
           },
           {
@@ -2732,6 +2845,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -2742,6 +2856,7 @@ window.PARAMETROS_TECNICAS = {
               "H",
               "M"
             ],
+            "ids": ["h","m"],
             "permite_otro": false
           },
           {
@@ -2758,6 +2873,7 @@ window.PARAMETROS_TECNICAS = {
               "Cociente H/M",
               "Latencia H"
             ],
+            "ids": ["amplitud_h","cociente_h_m","latencia_h"],
             "permite_otro": true
           },
           {
@@ -2771,6 +2887,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -2818,6 +2935,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -2840,6 +2958,7 @@ window.PARAMETROS_TECNICAS = {
               "Eléctrico (nervio maseterino)",
               "Mecánico (martillo con trigger)"
             ],
+            "ids": ["electrico_nervio_maseterino","mecanico_martillo_con_trigger"],
             "permite_otro": false,
             "fuente": "Urriza 2025 cita el H maseterino (Ulkatan 2017) y el jaw jerk como reflejos distintos"
           },
@@ -2851,10 +2970,11 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Aguja subdérmica"
             ],
+            "ids": ["superficie_adhesivo","aguja_subdermica"],
             "permite_otro": true,
             "visible_si": {
               "campo": "modo_estimulo",
-              "igual_a": "Eléctrico (nervio maseterino)"
+              "igual_a": "electrico_nervio_maseterino"
             }
           },
           {
@@ -2863,7 +2983,7 @@ window.PARAMETROS_TECNICAS = {
             "tipo": "texto",
             "visible_si": {
               "campo": "modo_estimulo",
-              "igual_a": "Eléctrico (nervio maseterino)"
+              "igual_a": "electrico_nervio_maseterino"
             }
           },
           {
@@ -2874,10 +2994,11 @@ window.PARAMETROS_TECNICAS = {
               "Monofásico",
               "Bifásico"
             ],
+            "ids": ["monofasico","bifasico"],
             "permite_otro": false,
             "visible_si": {
               "campo": "modo_estimulo",
-              "igual_a": "Eléctrico (nervio maseterino)"
+              "igual_a": "electrico_nervio_maseterino"
             }
           },
           {
@@ -2887,7 +3008,7 @@ window.PARAMETROS_TECNICAS = {
             "unidad": "mA",
             "visible_si": {
               "campo": "modo_estimulo",
-              "igual_a": "Eléctrico (nervio maseterino)"
+              "igual_a": "electrico_nervio_maseterino"
             }
           },
           {
@@ -2897,7 +3018,7 @@ window.PARAMETROS_TECNICAS = {
             "unidad": "ms",
             "visible_si": {
               "campo": "modo_estimulo",
-              "igual_a": "Eléctrico (nervio maseterino)"
+              "igual_a": "electrico_nervio_maseterino"
             }
           },
           {
@@ -2908,10 +3029,11 @@ window.PARAMETROS_TECNICAS = {
               "H máxima",
               "Submáxima fija"
             ],
+            "ids": ["h_maxima","submaxima_fija"],
             "permite_otro": true,
             "visible_si": {
               "campo": "modo_estimulo",
-              "igual_a": "Eléctrico (nervio maseterino)"
+              "igual_a": "electrico_nervio_maseterino"
             }
           },
           {
@@ -2929,6 +3051,7 @@ window.PARAMETROS_TECNICAS = {
             "opciones": [
               "Masetero"
             ],
+            "ids": ["masetero"],
             "permite_otro": true
           },
           {
@@ -2943,6 +3066,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -2953,6 +3077,7 @@ window.PARAMETROS_TECNICAS = {
               "H",
               "M"
             ],
+            "ids": ["h","m"],
             "permite_otro": false
           },
           {
@@ -2969,6 +3094,7 @@ window.PARAMETROS_TECNICAS = {
               "Cociente H/M",
               "Latencia H"
             ],
+            "ids": ["amplitud_h","cociente_h_m","latencia_h"],
             "permite_otro": true
           },
           {
@@ -2982,6 +3108,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -3025,6 +3152,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -3046,6 +3174,7 @@ window.PARAMETROS_TECNICAS = {
             "opciones": [
               "Nervio femoral (región inguinal)"
             ],
+            "ids": ["nervio_femoral_region_inguinal"],
             "permite_otro": true
           },
           {
@@ -3056,6 +3185,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Aguja subdérmica"
             ],
+            "ids": ["superficie_adhesivo","aguja_subdermica"],
             "permite_otro": true
           },
           {
@@ -3071,6 +3201,7 @@ window.PARAMETROS_TECNICAS = {
               "Monofásico",
               "Bifásico"
             ],
+            "ids": ["monofasico","bifasico"],
             "permite_otro": false
           },
           {
@@ -3099,6 +3230,7 @@ window.PARAMETROS_TECNICAS = {
               "H máxima",
               "Submáxima fija"
             ],
+            "ids": ["h_maxima","submaxima_fija"],
             "permite_otro": true
           }
         ],
@@ -3112,6 +3244,7 @@ window.PARAMETROS_TECNICAS = {
               "Recto femoral",
               "Vasto lateral"
             ],
+            "ids": ["vasto_medial","recto_femoral","vasto_lateral"],
             "permite_otro": true
           },
           {
@@ -3126,6 +3259,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -3136,6 +3270,7 @@ window.PARAMETROS_TECNICAS = {
               "H",
               "M"
             ],
+            "ids": ["h","m"],
             "permite_otro": false
           },
           {
@@ -3152,6 +3287,7 @@ window.PARAMETROS_TECNICAS = {
               "Cociente H/M",
               "Latencia H"
             ],
+            "ids": ["amplitud_h","cociente_h_m","latencia_h"],
             "permite_otro": true
           },
           {
@@ -3165,6 +3301,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -3208,6 +3345,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -3235,6 +3373,7 @@ window.PARAMETROS_TECNICAS = {
               "Peroneo",
               "Tibial"
             ],
+            "ids": ["vago","laringeo_recurrente","facial","ciatico","femoral","peroneo","tibial"],
             "permite_otro": true
           },
           {
@@ -3246,6 +3385,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Manguito (APS)"
             ],
+            "ids": ["aguja","superficie_adhesivo","manguito_aps"],
             "permite_otro": true
           },
           {
@@ -3281,6 +3421,7 @@ window.PARAMETROS_TECNICAS = {
               "CMAP (músculo)",
               "SNAP/NAP (nervio)"
             ],
+            "ids": ["cmap_musculo","snap_nap_nervio"],
             "permite_otro": false
           },
           {
@@ -3300,6 +3441,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -3310,6 +3452,7 @@ window.PARAMETROS_TECNICAS = {
               "Amplitud",
               "Latencia"
             ],
+            "ids": ["amplitud","latencia"],
             "permite_otro": false
           },
           {
@@ -3318,7 +3461,7 @@ window.PARAMETROS_TECNICAS = {
             "tipo": "numero",
             "visible_si": {
               "campo": "tipo_registro",
-              "igual_a": "SNAP/NAP (nervio)"
+              "igual_a": "snap_nap_nervio"
             }
           },
           {
@@ -3332,6 +3475,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -3379,6 +3523,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -3406,6 +3551,7 @@ window.PARAMETROS_TECNICAS = {
               "Gancho bipolar",
               "Gancho tripolar"
             ],
+            "ids": ["gancho_bipolar","gancho_tripolar"],
             "permite_otro": true
           },
           {
@@ -3436,6 +3582,7 @@ window.PARAMETROS_TECNICAS = {
               "Gancho bipolar",
               "Gancho tripolar"
             ],
+            "ids": ["gancho_bipolar","gancho_tripolar"],
             "permite_otro": true
           },
           {
@@ -3453,6 +3600,7 @@ window.PARAMETROS_TECNICAS = {
               "Proximal a la lesión",
               "Distal a la lesión"
             ],
+            "ids": ["a_traves_de_la_lesion","proximal_a_la_lesion","distal_a_la_lesion"],
             "permite_otro": true
           },
           {
@@ -3516,6 +3664,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -3541,6 +3690,7 @@ window.PARAMETROS_TECNICAS = {
               "Rama bucal",
               "Rama marginal mandibular"
             ],
+            "ids": ["tronco_facial_agujero_estilomastoideo","rama_temporal","rama_zigomatica","rama_bucal","rama_marginal_mandibular"],
             "permite_otro": true
           },
           {
@@ -3551,6 +3701,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Aguja subdérmica"
             ],
+            "ids": ["superficie_adhesivo","aguja_subdermica"],
             "permite_otro": true
           },
           {
@@ -3566,6 +3717,7 @@ window.PARAMETROS_TECNICAS = {
               "Monofásico",
               "Bifásico"
             ],
+            "ids": ["monofasico","bifasico"],
             "permite_otro": false
           },
           {
@@ -3609,6 +3761,7 @@ window.PARAMETROS_TECNICAS = {
               "Orbicular de la boca",
               "Mentoniano"
             ],
+            "ids": ["frontal","orbicular_del_ojo","nasal","orbicular_de_la_boca","mentoniano"],
             "permite_otro": true
           },
           {
@@ -3623,6 +3776,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -3633,6 +3787,7 @@ window.PARAMETROS_TECNICAS = {
               "M",
               "F"
             ],
+            "ids": ["m","f"],
             "permite_otro": false
           },
           {
@@ -3644,6 +3799,7 @@ window.PARAMETROS_TECNICAS = {
               "Cociente F/M",
               "Latencia mínima F"
             ],
+            "ids": ["persistencia","cociente_f_m","latencia_minima_f"],
             "permite_otro": true
           },
           {
@@ -3657,6 +3813,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -3704,6 +3861,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -3728,6 +3886,7 @@ window.PARAMETROS_TECNICAS = {
               "Bucal",
               "Marginal mandibular"
             ],
+            "ids": ["temporal","zigomatica","bucal","marginal_mandibular"],
             "permite_otro": true
           },
           {
@@ -3738,6 +3897,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Aguja subdérmica"
             ],
+            "ids": ["superficie_adhesivo","aguja_subdermica"],
             "permite_otro": true
           },
           {
@@ -3753,6 +3913,7 @@ window.PARAMETROS_TECNICAS = {
               "Monofásico",
               "Bifásico"
             ],
+            "ids": ["monofasico","bifasico"],
             "permite_otro": false
           },
           {
@@ -3786,6 +3947,7 @@ window.PARAMETROS_TECNICAS = {
               "Orbicular de la boca",
               "Mentoniano"
             ],
+            "ids": ["frontal","orbicular_del_ojo","nasal","orbicular_de_la_boca","mentoniano"],
             "permite_otro": true
           },
           {
@@ -3799,6 +3961,7 @@ window.PARAMETROS_TECNICAS = {
               "Orbicular de la boca",
               "Mentoniano"
             ],
+            "ids": ["frontal","orbicular_del_ojo","nasal","orbicular_de_la_boca","mentoniano"],
             "permite_otro": true
           },
           {
@@ -3813,6 +3976,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -3823,6 +3987,7 @@ window.PARAMETROS_TECNICAS = {
               "Respuesta directa",
               "LSR"
             ],
+            "ids": ["respuesta_directa","lsr"],
             "permite_otro": false
           },
           {
@@ -3836,6 +4001,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -3886,6 +4052,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -3909,6 +4076,7 @@ window.PARAMETROS_TECNICAS = {
               "Par de discos adhesivos puenteados",
               "Epidural"
             ],
+            "ids": ["superficie_adhesivo_rectangular","par_de_discos_adhesivos_puenteados","epidural"],
             "permite_otro": true,
             "fuente": "Deletis cap. 31"
           },
@@ -3921,6 +4089,7 @@ window.PARAMETROS_TECNICAS = {
               "L1–L3",
               "L4–L5"
             ],
+            "ids": ["t11_t12","l1_l3","l4_l5"],
             "permite_otro": true,
             "fuente": "Deletis cap. 18 y 31"
           },
@@ -3932,6 +4101,7 @@ window.PARAMETROS_TECNICAS = {
               "Abdomen supraumbilical",
               "Paraumbilical bilateral"
             ],
+            "ids": ["abdomen_supraumbilical","paraumbilical_bilateral"],
             "permite_otro": true,
             "fuente": "Deletis cap. 31"
           },
@@ -3943,6 +4113,7 @@ window.PARAMETROS_TECNICAS = {
               "Monofásico",
               "Bifásico"
             ],
+            "ids": ["monofasico","bifasico"],
             "permite_otro": false
           },
           {
@@ -3990,6 +4161,7 @@ window.PARAMETROS_TECNICAS = {
               "Supino",
               "Lateral"
             ],
+            "ids": ["prono","supino","lateral"],
             "permite_otro": false,
             "fuente": "Deletis cap. 18: prono o supino cambia el reclutamiento de raíces posteriores y anteriores"
           },
@@ -4007,6 +4179,7 @@ window.PARAMETROS_TECNICAS = {
               "Extensor corto de los dedos (EDB)",
               "Abductor del primer dedo (AH)"
             ],
+            "ids": ["isquiotibiales","recto_femoral","vasto_medial","tibial_anterior","gastrocnemio","soleo","extensor_corto_de_los_dedos_edb","abductor_del_primer_dedo_ah"],
             "permite_otro": true
           },
           {
@@ -4021,6 +4194,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -4031,6 +4205,7 @@ window.PARAMETROS_TECNICAS = {
               "PRM",
               "ARM"
             ],
+            "ids": ["prm","arm"],
             "permite_otro": false
           },
           {
@@ -4044,6 +4219,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -4090,6 +4266,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -4111,6 +4288,7 @@ window.PARAMETROS_TECNICAS = {
             "opciones": [
               "Nervio mentoniano (foramen)"
             ],
+            "ids": ["nervio_mentoniano_foramen"],
             "permite_otro": true,
             "fuente": "Urriza 2025"
           },
@@ -4122,6 +4300,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Aguja subdérmica"
             ],
+            "ids": ["superficie_adhesivo","aguja_subdermica"],
             "permite_otro": true
           },
           {
@@ -4137,6 +4316,7 @@ window.PARAMETROS_TECNICAS = {
               "Monofásico",
               "Bifásico"
             ],
+            "ids": ["monofasico","bifasico"],
             "permite_otro": false
           },
           {
@@ -4180,6 +4360,7 @@ window.PARAMETROS_TECNICAS = {
               "Pulso simple",
               "Tren escalado según profundidad anestésica"
             ],
+            "ids": ["pulso_simple","tren_escalado_segun_profundidad_anestesica"],
             "permite_otro": false,
             "fuente": "Urriza 2025: pulso simple; si no hay respuesta, tren creciente hasta 4 pulsos"
           }
@@ -4192,6 +4373,7 @@ window.PARAMETROS_TECNICAS = {
             "opciones": [
               "Cuerdas vocales (electrodo de tubo)"
             ],
+            "ids": ["cuerdas_vocales_electrodo_de_tubo"],
             "permite_otro": true
           },
           {
@@ -4203,6 +4385,7 @@ window.PARAMETROS_TECNICAS = {
               "Contralateral",
               "Bilateral"
             ],
+            "ids": ["ipsilateral","contralateral","bilateral"],
             "permite_otro": false
           },
           {
@@ -4212,6 +4395,7 @@ window.PARAMETROS_TECNICAS = {
             "opciones": [
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -4222,6 +4406,7 @@ window.PARAMETROS_TECNICAS = {
               "R1",
               "R2"
             ],
+            "ids": ["r1","r2"],
             "permite_otro": false
           },
           {
@@ -4232,6 +4417,7 @@ window.PARAMETROS_TECNICAS = {
               "Primer pulso del tren",
               "Último pulso del tren"
             ],
+            "ids": ["primer_pulso_del_tren","ultimo_pulso_del_tren"],
             "permite_otro": false,
             "fuente": "Lima Medeiros 2024 mide desde el inicio del último pulso del tren"
           },
@@ -4243,6 +4429,7 @@ window.PARAMETROS_TECNICAS = {
               "Bipolar (contactos adyacentes)",
               "Referencial (vs aguja externa)"
             ],
+            "ids": ["bipolar_contactos_adyacentes","referencial_vs_aguja_externa"],
             "permite_otro": false,
             "fuente": "Urriza 2025"
           },
@@ -4252,7 +4439,7 @@ window.PARAMETROS_TECNICAS = {
             "tipo": "texto",
             "visible_si": {
               "campo": "montaje_tubo",
-              "igual_a": "Referencial (vs aguja externa)"
+              "igual_a": "referencial_vs_aguja_externa"
             },
             "nota": "Urriza 2025: manubrio esternal"
           },
@@ -4273,6 +4460,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -4320,6 +4508,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -4339,6 +4528,7 @@ window.PARAMETROS_TECNICAS = {
             "etiqueta": "Sitio de estímulo",
             "tipo": "seleccion",
             "opciones": [],
+            "ids": [],
             "permite_otro": true
           },
           {
@@ -4349,6 +4539,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Aguja subdérmica"
             ],
+            "ids": ["superficie_adhesivo","aguja_subdermica"],
             "permite_otro": true
           },
           {
@@ -4364,6 +4555,7 @@ window.PARAMETROS_TECNICAS = {
               "Monofásico",
               "Bifásico"
             ],
+            "ids": ["monofasico","bifasico"],
             "permite_otro": false
           },
           {
@@ -4408,6 +4600,7 @@ window.PARAMETROS_TECNICAS = {
             "opciones": [
               "Lengua"
             ],
+            "ids": ["lengua"],
             "permite_otro": true
           },
           {
@@ -4419,6 +4612,7 @@ window.PARAMETROS_TECNICAS = {
               "Contralateral",
               "Bilateral"
             ],
+            "ids": ["ipsilateral","contralateral","bilateral"],
             "permite_otro": false
           },
           {
@@ -4433,6 +4627,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -4443,6 +4638,7 @@ window.PARAMETROS_TECNICAS = {
               "R1",
               "R2"
             ],
+            "ids": ["r1","r2"],
             "permite_otro": false
           },
           {
@@ -4453,6 +4649,7 @@ window.PARAMETROS_TECNICAS = {
               "Primer pulso del tren",
               "Último pulso del tren"
             ],
+            "ids": ["primer_pulso_del_tren","ultimo_pulso_del_tren"],
             "permite_otro": false,
             "fuente": "Lima Medeiros 2024 mide desde el inicio del último pulso del tren"
           },
@@ -4467,6 +4664,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -4513,6 +4711,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -4535,6 +4734,7 @@ window.PARAMETROS_TECNICAS = {
               "Supraorbitario",
               "Infraorbitario"
             ],
+            "ids": ["supraorbitario","infraorbitario"],
             "permite_otro": true,
             "fuente": "Lima Medeiros 2024"
           },
@@ -4546,6 +4746,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Aguja subdérmica"
             ],
+            "ids": ["superficie_adhesivo","aguja_subdermica"],
             "permite_otro": true
           },
           {
@@ -4561,6 +4762,7 @@ window.PARAMETROS_TECNICAS = {
               "Monofásico",
               "Bifásico"
             ],
+            "ids": ["monofasico","bifasico"],
             "permite_otro": false
           },
           {
@@ -4606,6 +4808,7 @@ window.PARAMETROS_TECNICAS = {
               "Esternocleidomastoideo",
               "Trapecio"
             ],
+            "ids": ["esternocleidomastoideo","trapecio"],
             "permite_otro": true,
             "fuente": "Lima Medeiros 2024"
           },
@@ -4618,6 +4821,7 @@ window.PARAMETROS_TECNICAS = {
               "Contralateral",
               "Bilateral"
             ],
+            "ids": ["ipsilateral","contralateral","bilateral"],
             "permite_otro": false
           },
           {
@@ -4632,6 +4836,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -4642,6 +4847,7 @@ window.PARAMETROS_TECNICAS = {
               "Latencia corta",
               "Latencia larga"
             ],
+            "ids": ["latencia_corta","latencia_larga"],
             "permite_otro": false
           },
           {
@@ -4652,6 +4858,7 @@ window.PARAMETROS_TECNICAS = {
               "Primer pulso del tren",
               "Último pulso del tren"
             ],
+            "ids": ["primer_pulso_del_tren","ultimo_pulso_del_tren"],
             "permite_otro": false,
             "fuente": "Lima Medeiros 2024 mide desde el inicio del último pulso del tren"
           },
@@ -4666,6 +4873,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -4712,6 +4920,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -4733,6 +4942,7 @@ window.PARAMETROS_TECNICAS = {
             "opciones": [
               "Mucosa laríngea (electrodo de tubo)"
             ],
+            "ids": ["mucosa_laringea_electrodo_de_tubo"],
             "permite_otro": true
           },
           {
@@ -4742,6 +4952,7 @@ window.PARAMETROS_TECNICAS = {
             "opciones": [
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -4757,6 +4968,7 @@ window.PARAMETROS_TECNICAS = {
               "Monofásico",
               "Bifásico"
             ],
+            "ids": ["monofasico","bifasico"],
             "permite_otro": false
           },
           {
@@ -4786,6 +4998,7 @@ window.PARAMETROS_TECNICAS = {
             "opciones": [
               "Cuerdas vocales (electrodo de tubo)"
             ],
+            "ids": ["cuerdas_vocales_electrodo_de_tubo"],
             "permite_otro": true
           },
           {
@@ -4797,6 +5010,7 @@ window.PARAMETROS_TECNICAS = {
               "Contralateral",
               "Bilateral"
             ],
+            "ids": ["ipsilateral","contralateral","bilateral"],
             "permite_otro": false
           },
           {
@@ -4806,6 +5020,7 @@ window.PARAMETROS_TECNICAS = {
             "opciones": [
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -4816,6 +5031,7 @@ window.PARAMETROS_TECNICAS = {
               "R1",
               "R2"
             ],
+            "ids": ["r1","r2"],
             "permite_otro": false
           },
           {
@@ -4834,6 +5050,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -4878,6 +5095,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -4897,6 +5115,7 @@ window.PARAMETROS_TECNICAS = {
             "etiqueta": "Sitio de estímulo",
             "tipo": "seleccion",
             "opciones": [],
+            "ids": [],
             "permite_otro": true
           },
           {
@@ -4907,6 +5126,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Aguja subdérmica"
             ],
+            "ids": ["superficie_adhesivo","aguja_subdermica"],
             "permite_otro": true
           },
           {
@@ -4922,6 +5142,7 @@ window.PARAMETROS_TECNICAS = {
               "Monofásico",
               "Bifásico"
             ],
+            "ids": ["monofasico","bifasico"],
             "permite_otro": false
           },
           {
@@ -4964,6 +5185,7 @@ window.PARAMETROS_TECNICAS = {
             "etiqueta": "Músculos registrados",
             "tipo": "multiseleccion",
             "opciones": [],
+            "ids": [],
             "permite_otro": true
           },
           {
@@ -4975,6 +5197,7 @@ window.PARAMETROS_TECNICAS = {
               "Contralateral",
               "Bilateral"
             ],
+            "ids": ["ipsilateral","contralateral","bilateral"],
             "permite_otro": false
           },
           {
@@ -4989,6 +5212,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -4999,6 +5223,7 @@ window.PARAMETROS_TECNICAS = {
               "R1",
               "R2"
             ],
+            "ids": ["r1","r2"],
             "permite_otro": false
           },
           {
@@ -5009,6 +5234,7 @@ window.PARAMETROS_TECNICAS = {
               "Primer pulso del tren",
               "Último pulso del tren"
             ],
+            "ids": ["primer_pulso_del_tren","ultimo_pulso_del_tren"],
             "permite_otro": false,
             "fuente": "Lima Medeiros 2024 mide desde el inicio del último pulso del tren"
           },
@@ -5023,6 +5249,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -5066,6 +5293,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -5089,6 +5317,7 @@ window.PARAMETROS_TECNICAS = {
               "Bipolar",
               "Concéntrica"
             ],
+            "ids": ["monopolar","bipolar","concentrica"],
             "permite_otro": true
           },
           {
@@ -5105,6 +5334,7 @@ window.PARAMETROS_TECNICAS = {
               "Penfield 50–60 Hz",
               "Pulso único"
             ],
+            "ids": ["tren_corto_hf","penfield_50_60_hz","pulso_unico"],
             "permite_otro": true
           },
           {
@@ -5115,6 +5345,7 @@ window.PARAMETROS_TECNICAS = {
               "Corriente constante (mA)",
               "Voltaje constante (V)"
             ],
+            "ids": ["corriente_constante_ma","voltaje_constante_v"],
             "permite_otro": false
           },
           {
@@ -5138,7 +5369,7 @@ window.PARAMETROS_TECNICAS = {
             "tipo": "numero",
             "visible_si": {
               "campo": "paradigma",
-              "igual_a": "Tren corto HF"
+              "igual_a": "tren_corto_hf"
             }
           },
           {
@@ -5148,7 +5379,7 @@ window.PARAMETROS_TECNICAS = {
             "unidad": "ms",
             "visible_si": {
               "campo": "paradigma",
-              "igual_a": "Tren corto HF"
+              "igual_a": "tren_corto_hf"
             }
           },
           {
@@ -5193,6 +5424,7 @@ window.PARAMETROS_TECNICAS = {
               "Extensor corto de los dedos (EDB)",
               "Abductor del primer dedo (AH)"
             ],
+            "ids": ["frontal","orbicular_del_ojo","orbicular_de_la_boca","mentoniano","masetero","temporal","velo_del_paladar_faringe","cuerdas_vocales_electrodo_de_tubo","cricotiroideo","esternocleidomastoideo","trapecio","lengua","deltoides","biceps","triceps","extensores_del_carpo","flexores_del_carpo","abductor_corto_del_pulgar_apb","abductor_del_menique_adm","primer_interoseo_dorsal","aductores","cuadriceps_vasto_recto_femoral","isquiotibiales","tibial_anterior","gastrocnemio","soleo","extensor_corto_de_los_dedos_edb","abductor_del_primer_dedo_ah"],
             "permite_otro": true
           },
           {
@@ -5207,6 +5439,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -5240,6 +5473,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -5283,6 +5517,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -5306,6 +5541,7 @@ window.PARAMETROS_TECNICAS = {
               "Aspirador estimulante",
               "Bipolar"
             ],
+            "ids": ["monopolar","aspirador_estimulante","bipolar"],
             "permite_otro": true
           },
           {
@@ -5322,6 +5558,7 @@ window.PARAMETROS_TECNICAS = {
               "Penfield 50–60 Hz",
               "Pulso único"
             ],
+            "ids": ["tren_corto_hf","penfield_50_60_hz","pulso_unico"],
             "permite_otro": true
           },
           {
@@ -5332,6 +5569,7 @@ window.PARAMETROS_TECNICAS = {
               "Corriente constante (mA)",
               "Voltaje constante (V)"
             ],
+            "ids": ["corriente_constante_ma","voltaje_constante_v"],
             "permite_otro": false
           },
           {
@@ -5355,7 +5593,7 @@ window.PARAMETROS_TECNICAS = {
             "tipo": "numero",
             "visible_si": {
               "campo": "paradigma",
-              "igual_a": "Tren corto HF"
+              "igual_a": "tren_corto_hf"
             }
           },
           {
@@ -5365,7 +5603,7 @@ window.PARAMETROS_TECNICAS = {
             "unidad": "ms",
             "visible_si": {
               "campo": "paradigma",
-              "igual_a": "Tren corto HF"
+              "igual_a": "tren_corto_hf"
             }
           },
           {
@@ -5415,6 +5653,7 @@ window.PARAMETROS_TECNICAS = {
               "Extensor corto de los dedos (EDB)",
               "Abductor del primer dedo (AH)"
             ],
+            "ids": ["frontal","orbicular_del_ojo","orbicular_de_la_boca","mentoniano","masetero","temporal","velo_del_paladar_faringe","cuerdas_vocales_electrodo_de_tubo","cricotiroideo","esternocleidomastoideo","trapecio","lengua","deltoides","biceps","triceps","extensores_del_carpo","flexores_del_carpo","abductor_corto_del_pulgar_apb","abductor_del_menique_adm","primer_interoseo_dorsal","aductores","cuadriceps_vasto_recto_femoral","isquiotibiales","tibial_anterior","gastrocnemio","soleo","extensor_corto_de_los_dedos_edb","abductor_del_primer_dedo_ah"],
             "permite_otro": true
           },
           {
@@ -5429,6 +5668,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -5462,6 +5702,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -5505,6 +5746,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -5527,6 +5769,7 @@ window.PARAMETROS_TECNICAS = {
               "Mediano",
               "Tibial posterior"
             ],
+            "ids": ["mediano","tibial_posterior"],
             "permite_otro": true
           },
           {
@@ -5537,6 +5780,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Aguja subdérmica"
             ],
+            "ids": ["superficie_adhesivo","aguja_subdermica"],
             "permite_otro": true
           },
           {
@@ -5547,6 +5791,7 @@ window.PARAMETROS_TECNICAS = {
               "Monofásico",
               "Bifásico"
             ],
+            "ids": ["monofasico","bifasico"],
             "permite_otro": false
           },
           {
@@ -5587,6 +5832,7 @@ window.PARAMETROS_TECNICAS = {
               "Referencial",
               "Bipolar"
             ],
+            "ids": ["referencial","bipolar"],
             "permite_otro": false
           },
           {
@@ -5601,6 +5847,7 @@ window.PARAMETROS_TECNICAS = {
             "opciones": [
               "Perpendicular al surco central"
             ],
+            "ids": ["perpendicular_al_surco_central"],
             "permite_otro": true
           },
           {
@@ -5664,6 +5911,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -5686,6 +5934,7 @@ window.PARAMETROS_TECNICAS = {
               "Bipolar",
               "Monopolar"
             ],
+            "ids": ["bipolar","monopolar"],
             "permite_otro": true
           },
           {
@@ -5701,6 +5950,7 @@ window.PARAMETROS_TECNICAS = {
               "Penfield 50–60 Hz",
               "Tren corto HF"
             ],
+            "ids": ["penfield_50_60_hz","tren_corto_hf"],
             "permite_otro": true
           },
           {
@@ -5711,6 +5961,7 @@ window.PARAMETROS_TECNICAS = {
               "Corriente constante (mA)",
               "Voltaje constante (V)"
             ],
+            "ids": ["corriente_constante_ma","voltaje_constante_v"],
             "permite_otro": false
           },
           {
@@ -5734,7 +5985,7 @@ window.PARAMETROS_TECNICAS = {
             "tipo": "numero",
             "visible_si": {
               "campo": "paradigma",
-              "igual_a": "Tren corto HF"
+              "igual_a": "tren_corto_hf"
             }
           },
           {
@@ -5744,7 +5995,7 @@ window.PARAMETROS_TECNICAS = {
             "unidad": "ms",
             "visible_si": {
               "campo": "paradigma",
-              "igual_a": "Tren corto HF"
+              "igual_a": "tren_corto_hf"
             }
           },
           {
@@ -5776,6 +6027,7 @@ window.PARAMETROS_TECNICAS = {
               "Repetición",
               "Comprensión"
             ],
+            "ids": ["conteo","denominacion","lectura","repeticion","comprension"],
             "permite_otro": true
           },
           {
@@ -5792,6 +6044,7 @@ window.PARAMETROS_TECNICAS = {
               "Subcortical",
               "Ambos"
             ],
+            "ids": ["cortical","subcortical","ambos"],
             "permite_otro": false
           },
           {
@@ -5802,6 +6055,7 @@ window.PARAMETROS_TECNICAS = {
               "Dormido-despierto-dormido",
               "Despierto con sedación consciente"
             ],
+            "ids": ["dormido_despierto_dormido","despierto_con_sedacion_consciente"],
             "permite_otro": true
           }
         ],
@@ -5837,6 +6091,7 @@ window.PARAMETROS_TECNICAS = {
               "Abductor del meñique (ADM)",
               "Primer interóseo dorsal"
             ],
+            "ids": ["frontal","orbicular_del_ojo","orbicular_de_la_boca","mentoniano","masetero","temporal","velo_del_paladar_faringe","cuerdas_vocales_electrodo_de_tubo","cricotiroideo","esternocleidomastoideo","trapecio","lengua","deltoides","biceps","triceps","extensores_del_carpo","flexores_del_carpo","abductor_corto_del_pulgar_apb","abductor_del_menique_adm","primer_interoseo_dorsal"],
             "permite_otro": true
           },
           {
@@ -5851,6 +6106,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -5884,6 +6140,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -5927,6 +6184,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -5950,6 +6208,7 @@ window.PARAMETROS_TECNICAS = {
               "Bipolar",
               "Concéntrica"
             ],
+            "ids": ["monopolar","bipolar","concentrica"],
             "permite_otro": true
           },
           {
@@ -5965,6 +6224,7 @@ window.PARAMETROS_TECNICAS = {
               "Pulso único",
               "Tren corto HF"
             ],
+            "ids": ["pulso_unico","tren_corto_hf"],
             "permite_otro": true
           },
           {
@@ -5975,6 +6235,7 @@ window.PARAMETROS_TECNICAS = {
               "Corriente constante (mA)",
               "Voltaje constante (V)"
             ],
+            "ids": ["corriente_constante_ma","voltaje_constante_v"],
             "permite_otro": false
           },
           {
@@ -5998,7 +6259,7 @@ window.PARAMETROS_TECNICAS = {
             "tipo": "numero",
             "visible_si": {
               "campo": "paradigma",
-              "igual_a": "Tren corto HF"
+              "igual_a": "tren_corto_hf"
             }
           },
           {
@@ -6008,7 +6269,7 @@ window.PARAMETROS_TECNICAS = {
             "unidad": "ms",
             "visible_si": {
               "campo": "paradigma",
-              "igual_a": "Tren corto HF"
+              "igual_a": "tren_corto_hf"
             }
           },
           {
@@ -6030,6 +6291,7 @@ window.PARAMETROS_TECNICAS = {
               "Cuerdas vocales (electrodo de tubo)",
               "Lengua"
             ],
+            "ids": ["orbicular_del_ojo","orbicular_de_la_boca","velo_del_paladar_faringe","cuerdas_vocales_electrodo_de_tubo","lengua"],
             "permite_otro": true
           },
           {
@@ -6044,6 +6306,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -6072,6 +6335,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -6118,6 +6382,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -6141,6 +6406,7 @@ window.PARAMETROS_TECNICAS = {
               "Registro con microelectrodo multiarray sobre médula tras estímulo tibial (Yanni)",
               "Registro antidrómico en nervio tibial tras estímulo de columnas dorsales (Quiñones-Hinojosa)"
             ],
+            "ids": ["inversion_de_fase_del_sep_en_cp3_cp4_con_estimul","registro_con_microelectrodo_multiarray_sobre_med","registro_antidromico_en_nervio_tibial_tras_estim"],
             "permite_otro": true,
             "fuente": "Boaro 2026"
           },
@@ -6162,6 +6428,7 @@ window.PARAMETROS_TECNICAS = {
               "Monofásico",
               "Bifásico"
             ],
+            "ids": ["monofasico","bifasico"],
             "permite_otro": false
           },
           {
@@ -6259,6 +6526,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -6282,6 +6550,7 @@ window.PARAMETROS_TECNICAS = {
               "Orificio de tornillo",
               "Raíz directa"
             ],
+            "ids": ["tornillo_cabeza","orificio_de_tornillo","raiz_directa"],
             "permite_otro": true
           },
           {
@@ -6292,6 +6561,7 @@ window.PARAMETROS_TECNICAS = {
               "Bola",
               "Punta"
             ],
+            "ids": ["bola","punta"],
             "permite_otro": true
           },
           {
@@ -6307,6 +6577,7 @@ window.PARAMETROS_TECNICAS = {
               "Corriente constante (mA)",
               "Voltaje constante (V)"
             ],
+            "ids": ["corriente_constante_ma","voltaje_constante_v"],
             "permite_otro": false
           },
           {
@@ -6338,6 +6609,7 @@ window.PARAMETROS_TECNICAS = {
               "Manual",
               "Automático"
             ],
+            "ids": ["manual","automatico"],
             "permite_otro": false
           },
           {
@@ -6372,6 +6644,7 @@ window.PARAMETROS_TECNICAS = {
               "Recto abdominal",
               "Esfínter anal externo"
             ],
+            "ids": ["deltoides","biceps","triceps","extensores_del_carpo","flexores_del_carpo","abductor_corto_del_pulgar_apb","abductor_del_menique_adm","primer_interoseo_dorsal","aductores","cuadriceps_vasto_recto_femoral","isquiotibiales","tibial_anterior","gastrocnemio","soleo","extensor_corto_de_los_dedos_edb","abductor_del_primer_dedo_ah","intercostales","recto_abdominal","esfinter_anal_externo"],
             "permite_otro": true
           },
           {
@@ -6386,6 +6659,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -6410,6 +6684,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -6453,6 +6728,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -6476,6 +6752,7 @@ window.PARAMETROS_TECNICAS = {
               "Bipolar",
               "Gancho"
             ],
+            "ids": ["monopolar","bipolar","gancho"],
             "permite_otro": true
           },
           {
@@ -6491,6 +6768,7 @@ window.PARAMETROS_TECNICAS = {
               "Pulso único",
               "Tren corto HF"
             ],
+            "ids": ["pulso_unico","tren_corto_hf"],
             "permite_otro": true
           },
           {
@@ -6501,6 +6779,7 @@ window.PARAMETROS_TECNICAS = {
               "Corriente constante (mA)",
               "Voltaje constante (V)"
             ],
+            "ids": ["corriente_constante_ma","voltaje_constante_v"],
             "permite_otro": false
           },
           {
@@ -6524,7 +6803,7 @@ window.PARAMETROS_TECNICAS = {
             "tipo": "numero",
             "visible_si": {
               "campo": "paradigma",
-              "igual_a": "Tren corto HF"
+              "igual_a": "tren_corto_hf"
             }
           },
           {
@@ -6534,7 +6813,7 @@ window.PARAMETROS_TECNICAS = {
             "unidad": "ms",
             "visible_si": {
               "campo": "paradigma",
-              "igual_a": "Tren corto HF"
+              "igual_a": "tren_corto_hf"
             }
           },
           {
@@ -6556,6 +6835,7 @@ window.PARAMETROS_TECNICAS = {
               "Motor (EMG)",
               "Sensitivo (registro de PAN)"
             ],
+            "ids": ["motor_emg","sensitivo_registro_de_pan"],
             "permite_otro": false
           }
         ],
@@ -6594,6 +6874,7 @@ window.PARAMETROS_TECNICAS = {
               "Trapecio",
               "Lengua"
             ],
+            "ids": ["deltoides","biceps","triceps","extensores_del_carpo","flexores_del_carpo","abductor_corto_del_pulgar_apb","abductor_del_menique_adm","primer_interoseo_dorsal","aductores","cuadriceps_vasto_recto_femoral","isquiotibiales","tibial_anterior","gastrocnemio","soleo","extensor_corto_de_los_dedos_edb","abductor_del_primer_dedo_ah","frontal","orbicular_del_ojo","orbicular_de_la_boca","mentoniano","masetero","temporal","velo_del_paladar_faringe","cuerdas_vocales_electrodo_de_tubo","cricotiroideo","esternocleidomastoideo","trapecio","lengua"],
             "permite_otro": true
           },
           {
@@ -6608,6 +6889,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -6636,6 +6918,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -6679,6 +6962,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -6701,6 +6985,7 @@ window.PARAMETROS_TECNICAS = {
               "Monopolar",
               "Bipolar"
             ],
+            "ids": ["monopolar","bipolar"],
             "permite_otro": true
           },
           {
@@ -6716,6 +7001,7 @@ window.PARAMETROS_TECNICAS = {
               "Tren corto HF",
               "Pulso único"
             ],
+            "ids": ["tren_corto_hf","pulso_unico"],
             "permite_otro": true
           },
           {
@@ -6726,6 +7012,7 @@ window.PARAMETROS_TECNICAS = {
               "Corriente constante (mA)",
               "Voltaje constante (V)"
             ],
+            "ids": ["corriente_constante_ma","voltaje_constante_v"],
             "permite_otro": false
           },
           {
@@ -6749,7 +7036,7 @@ window.PARAMETROS_TECNICAS = {
             "tipo": "numero",
             "visible_si": {
               "campo": "paradigma",
-              "igual_a": "Tren corto HF"
+              "igual_a": "tren_corto_hf"
             }
           },
           {
@@ -6759,7 +7046,7 @@ window.PARAMETROS_TECNICAS = {
             "unidad": "ms",
             "visible_si": {
               "campo": "paradigma",
-              "igual_a": "Tren corto HF"
+              "igual_a": "tren_corto_hf"
             }
           },
           {
@@ -6792,6 +7079,7 @@ window.PARAMETROS_TECNICAS = {
               "Extensor corto de los dedos (EDB)",
               "Abductor del primer dedo (AH)"
             ],
+            "ids": ["deltoides","biceps","triceps","extensores_del_carpo","flexores_del_carpo","abductor_corto_del_pulgar_apb","abductor_del_menique_adm","primer_interoseo_dorsal","aductores","cuadriceps_vasto_recto_femoral","isquiotibiales","tibial_anterior","gastrocnemio","soleo","extensor_corto_de_los_dedos_edb","abductor_del_primer_dedo_ah"],
             "permite_otro": true
           },
           {
@@ -6806,6 +7094,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie adhesivo",
               "Electrodo de tubo endotraqueal"
             ],
+            "ids": ["aguja_subdermica","aguja_intramuscular","hook_wire","sacacorchos","superficie_adhesivo","electrodo_de_tubo_endotraqueal"],
             "permite_otro": true
           },
           {
@@ -6832,6 +7121,7 @@ window.PARAMETROS_TECNICAS = {
               "Onda D",
               "Ambos"
             ],
+            "ids": ["musculos","onda_d","ambos"],
             "permite_otro": false
           },
           {
@@ -6845,6 +7135,7 @@ window.PARAMETROS_TECNICAS = {
               "1/4",
               "0/4"
             ],
+            "ids": ["4_4","3_4","2_4","1_4","0_4"],
             "permite_otro": false
           },
           {
@@ -6889,6 +7180,7 @@ window.PARAMETROS_TECNICAS = {
               "Bilateral",
               "No aplica"
             ],
+            "ids": ["derecho","izquierdo","bilateral","no_aplica"],
             "permite_otro": false
           },
           {
@@ -6911,6 +7203,7 @@ window.PARAMETROS_TECNICAS = {
               "Monopolar",
               "Bipolar"
             ],
+            "ids": ["monopolar","bipolar"],
             "permite_otro": true
           },
           {
@@ -6926,6 +7219,7 @@ window.PARAMETROS_TECNICAS = {
               "Pulso único",
               "Tren corto HF"
             ],
+            "ids": ["pulso_unico","tren_corto_hf"],
             "permite_otro": true
           },
           {
@@ -6936,6 +7230,7 @@ window.PARAMETROS_TECNICAS = {
               "Corriente constante (mA)",
               "Voltaje constante (V)"
             ],
+            "ids": ["corriente_constante_ma","voltaje_constante_v"],
             "permite_otro": false
           },
           {
@@ -6959,7 +7254,7 @@ window.PARAMETROS_TECNICAS = {
             "tipo": "numero",
             "visible_si": {
               "campo": "paradigma",
-              "igual_a": "Tren corto HF"
+              "igual_a": "tren_corto_hf"
             }
           },
           {
@@ -6969,7 +7264,7 @@ window.PARAMETROS_TECNICAS = {
             "unidad": "ms",
             "visible_si": {
               "campo": "paradigma",
-              "igual_a": "Tren corto HF"
+              "igual_a": "tren_corto_hf"
             }
           },
           {
@@ -6988,6 +7283,7 @@ window.PARAMETROS_TECNICAS = {
               "Superficie periorbitario",
               "Aguja en musculatura extraocular"
             ],
+            "ids": ["superficie_periorbitario","aguja_en_musculatura_extraocular"],
             "permite_otro": true
           },
           {
@@ -6999,6 +7295,7 @@ window.PARAMETROS_TECNICAS = {
               "IV",
               "VI"
             ],
+            "ids": ["iii","iv","vi"],
             "permite_otro": true
           },
           {
