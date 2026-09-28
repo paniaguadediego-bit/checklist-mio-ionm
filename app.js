@@ -4812,7 +4812,7 @@
       var defs = t[1].map(function (r) { return { id: r.id, rotulo: campo(r, "l") }; });
       for (var i = 1; i <= t[2]; i++) defs.push({ id: "libre" + i, rotulo: d.v["e_" + t[0] + "libre" + i + "_l"] || T("registro_otro") });
       defs.forEach(function (r) {
-        var vals = REG_BASALES_COLS.map(function (col) { return d.v["e_" + t[0] + r.id + "_" + col.id] || ""; });
+        var vals = REG_BASALES_COLS.map(function (col) { return regColBasal(col, r.id) ? d.v["e_" + t[0] + r.id + "_" + col.id] || "" : ""; });
         if (vals.some(Boolean)) filas.push([r.rotulo].concat(vals));
       });
     });
@@ -15286,11 +15286,21 @@
     { id: "nivel", l: "NIVEL", l_en: "LEVEL" },
     { id: "der", l: "DER", l_en: "RIGHT" }
   ] };
+  // Rótulos cortos y una segunda post-posición (28-09-2026, pedido del
+  // usuario): a veces hay que repetir basales por cambios de posición antes
+  // de empezar o a mitad de cirugía. PostPos2 ("soloT") solo existe en las
+  // filas t-SEP y t-MEP (regColBasal()). Los ids no cambian: lo escrito en
+  // Apertura/Post-posición/Cierre sigue en OPBSL/PostPos1/CL-BSL.
   var REG_BASALES_COLS = [
-    { id: "basal", l: "Apertura", l_en: "Opening" },
-    { id: "post", l: "Post-posición", l_en: "Post-positioning" },
-    { id: "final", l: "Cierre", l_en: "Closing" }
+    { id: "basal", l: "OPBSL", l_en: "OPBSL" },
+    { id: "post", l: "PostPos1", l_en: "PostPos1" },
+    { id: "post2", l: "PostPos2", l_en: "PostPos2", soloT: true },
+    { id: "final", l: "CL-BSL", l_en: "CL-BSL" }
   ];
+  // ¿Lleva la fila (id sin prefijo: "sep_msd", "libre1"...) esa columna?
+  function regColBasal(col, idFila) {
+    return !col.soloT || /^(sep|mep)_/.test(idFila);
+  }
 
   // Filas visibles de una tabla de basales (ver el comentario de
   // REG_BASALES_SENS). "tecnicas" es la lista del caso, o null en Modelo 0.
@@ -15761,7 +15771,7 @@
       cab.appendChild(s);
     });
     bloque.appendChild(cab);
-    function fila(rotulo, idFila, editable) {
+    function fila(rotulo, idFila, editable, idSinPrefijo) {
       var f = document.createElement("div");
       f.className = "reg-basal-fila";
       if (editable) {
@@ -15780,6 +15790,10 @@
         f.appendChild(s);
       }
       REG_BASALES_COLS.forEach(function (col) {
+        if (!regColBasal(col, idSinPrefijo)) {
+          f.appendChild(document.createElement("span"));   // hueco en la rejilla
+          return;
+        }
         var clave = "e_" + idFila + "_" + col.id;
         var inp = document.createElement("input");
         inp.type = "text";
@@ -15791,8 +15805,8 @@
       });
       return f;
     }
-    filas.forEach(function (r) { bloque.appendChild(fila(regL(r), prefijo + r.id, false)); });
-    for (var i = 1; i <= libres; i++) bloque.appendChild(fila("", prefijo + "libre" + i, true));
+    filas.forEach(function (r) { bloque.appendChild(fila(regL(r), prefijo + r.id, false, r.id)); });
+    for (var i = 1; i <= libres; i++) bloque.appendChild(fila("", prefijo + "libre" + i, true, "libre" + i));
     cont.appendChild(bloque);
   }
 
@@ -17382,13 +17396,22 @@
     motVis = motVis.filter(function (x) { return !ES_CORTICAL.test(x.r.id); });
     var maxFilasBasales = 0;
     function tablaBasales(tituloTabla, visibles, prefijoLibres, libres, rotuloLibre) {
-      var cols = [{ l: tituloTabla, w: "36%", cls: "hj-rot" }].concat(REG_BASALES_COLS.map(function (col) { return { l: regL(col) }; }));
+      // PostPos2 solo si la tabla tiene alguna fila t-SEP/t-MEP (la de
+      // corticales no la lleva); en las demás filas, la celda sale tachada.
+      var colsT = REG_BASALES_COLS.filter(function (col) {
+        return !col.soloT || visibles.some(function (x) { return regColBasal(col, x.r.id); });
+      });
+      var cols = [{ l: tituloTabla, w: "30%", cls: "hj-rot" }].concat(colsT.map(function (col) { return { l: regL(col) }; }));
       var filas = visibles.map(function (x) {
-        return { celdas: [regL(x.r)].concat(REG_BASALES_COLS.map(function (col) { return d.v["e_" + x.prefijo + x.r.id + "_" + col.id] || ""; })) };
+        return { celdas: [regL(x.r)].concat(colsT.map(function (col) {
+          return regColBasal(col, x.r.id) ? d.v["e_" + x.prefijo + x.r.id + "_" + col.id] || "" : "—";
+        })) };
       });
       for (var i = 1; i <= libres; i++) {
         var k = "libre" + i;
-        filas.push({ celdas: [d.v["e_" + prefijoLibres + k + "_l"] || (i <= 2 ? rotuloLibre : "")].concat(REG_BASALES_COLS.map(function (col) { return d.v["e_" + prefijoLibres + k + "_" + col.id] || ""; })) });
+        filas.push({ celdas: [d.v["e_" + prefijoLibres + k + "_l"] || (i <= 2 ? rotuloLibre : "")].concat(colsT.map(function (col) {
+          return regColBasal(col, k) ? d.v["e_" + prefijoLibres + k + "_" + col.id] || "" : "—";
+        })) });
       }
       maxFilasBasales = Math.max(maxFilasBasales, filas.length);
       // Tabla larga: filas algo más bajas para que la hoja 1 quepa en un A4.

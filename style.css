@@ -3286,7 +3286,7 @@ dialog h3 {
 .reg-basal-tornillos .reg-basal-fila { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .reg-basal-fila {
   display: grid;
-  grid-template-columns: 5.2rem repeat(3, minmax(0, 1fr));
+  grid-template-columns: 5.2rem repeat(4, minmax(0, 1fr));
   gap: 0.25rem;
   margin-bottom: 0.25rem;
   align-items: center;
@@ -3538,7 +3538,7 @@ body.modo-demo #btn-sync { border-color: var(--aviso-border); color: var(--aviso
 
 /* Basales: solo se escriben números, así que letra y casillas más pequeñas
    (pedido del usuario, 25-09-2026), en la ficha y en el Registro. */
-.reg-basal-fila { grid-template-columns: 6.4rem repeat(3, minmax(0, 1fr)); gap: 0.2rem; margin-bottom: 0.15rem; }
+.reg-basal-fila { grid-template-columns: 6.4rem repeat(4, minmax(0, 1fr)); gap: 0.2rem; margin-bottom: 0.15rem; }
 .reg-basal-rotulo { font-size: 0.7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .reg-basal-cab { font-size: 0.62rem; }
 .reg-basales .reg-basal-fila input[type="text"] { font-size: 0.72rem; line-height: 1.2; padding: 0.12rem 0.3rem; min-width: 0; }
