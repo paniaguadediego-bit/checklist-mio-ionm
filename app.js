@@ -1208,7 +1208,7 @@
     reg_p_sin_caso:      { es: "Vincula un caso arriba para ver aquí lo que ya tiene.", en: "Link a case above to see what it already has here." },
     reg_p_tecnicas_ayuda: { es: "Salen de la ficha del caso (Técnicas realizadas) y se cambian allí.", en: "They come from the case form (Techniques performed) and are changed there." },
     reg_p_sin_tecnicas:  { es: "El caso no tiene técnicas marcadas.", en: "The case has no techniques ticked." },
-    reg_p_anest_ayuda:   { es: "Sale de la ficha del caso. Lo que cambie durante la cirugía (bolos, relajante, TAM…) se apunta como evento de tipo Anestesia.", en: "It comes from the case form. Whatever changes during surgery (boluses, relaxant, MAP…) is logged as an Anaesthesia event." },
+    reg_p_anest_ayuda:   { es: "Es el mismo dato que el apartado Anestesia de la ficha del caso: se escribe aquí o allí y se ve en los dos. Lo que cambie durante la cirugía (bolos, relajante, TAM…) va en los eventos de anestesia, con su hora.", en: "It is the same data as the Anaesthesia section of the case form: write it here or there and it shows in both. Whatever changes during surgery (boluses, relaxant, MAP…) goes in the anaesthesia events, with its time." },
     reg_p_sin_anest:     { es: "El caso no tiene datos de anestesia.", en: "The case has no anaesthesia data." },
     reg_p_motor:         { es: "Electrodo motor", en: "Motor electrode" },
     reg_p_musculos:      { es: "Músculos registrados", en: "Muscles recorded" },
@@ -16716,22 +16716,30 @@
     cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_tecnicas_ayuda")));
   }
 
+  /* C · Anestesia en espejo con la ficha (28-09-2026, pedido del usuario:
+     escribir en los dos lados). Los cuatro campos del apartado Anestesia de
+     la ficha, compartidos (⇄, "caso:" como el resto: regGet() los lee del
+     caso y regControl() los escribe en él), y debajo los eventos de
+     anestesia (cod "An" de F), la misma tabla que la ficha. La hoja impresa
+     no cambia. Sin caso vinculado no hay ficha que reflejar. */
   function pintarPantallaAnestesia(sec, cont) {
     var c = registroCaso();
     if (!c) { cont.appendChild(regNodo("p", "reg-ayuda reg-estado", T("reg_p_sin_caso"))); return; }
-    var datos = [
-      ["caso_tipo_anestesia", c.tipo_anestesia ? opcionTexto("anestesia", c.tipo_anestesia) : ""],
-      ["caso_tipo_anestesia_detalle", c.tipo_anestesia_detalle],
-      ["caso_tof_monitorizado", c.tof_monitorizado ? opcionTexto("sino", c.tof_monitorizado) : ""],
-      ["caso_incidencias_anestesicas", c.incidencias_anestesicas]
-    ].filter(function (x) { return x[1]; });
-    if (!datos.length) cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_sin_anest")));
-    datos.forEach(function (x) {
-      var p = regNodo("p", "reg-p-dato");
-      p.appendChild(regNodo("b", null, T(x[0]) + ": "));
-      p.appendChild(document.createTextNode(x[1]));
-      cont.appendChild(p);
-    });
+    var d = registroDatos();
+    function lista(grupo) {
+      return OPCIONES[grupo].map(function (v) { return { v: v, l: opcionTexto(grupo, v) }; });
+    }
+    var defs = [
+      { id: "an_tipo", l: T("caso_tipo_anestesia"), t: "sel", o: lista("anestesia"), caso: "tipo_anestesia" },
+      { id: "an_tof", l: T("caso_tof_monitorizado"), t: "sel", o: lista("sino"), caso: "tof_monitorizado" },
+      { id: "an_detalle", l: T("caso_tipo_anestesia_detalle"), t: "text", ancho: true, caso: "tipo_anestesia_detalle" },
+      { id: "an_incidencias", l: T("caso_incidencias_anestesicas"), t: "area", ancho: true, caso: "incidencias_anestesicas" }
+    ];
+    var grid = regNodo("div", "reg-grid");
+    defs.forEach(function (def) { grid.appendChild(regControl(def, d.v)); });
+    cont.appendChild(grid);
+    cont.appendChild(regNodo("div", "reg-basal-titulo reg-p-map-tit", T("caso_eventos_anestesia") + " ⇄"));
+    pintarEventosAn(cont, d, REG_GUARDAR, true);
     cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_anest_ayuda")));
   }
 
