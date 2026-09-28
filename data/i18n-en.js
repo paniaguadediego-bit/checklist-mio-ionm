@@ -90,7 +90,7 @@ window.SURGERIES_I18N.en = {
     "Músculos craneales (pares craneales)": "Cranial muscles (cranial nerves)",
     "Músculos de miembros inferiores": "Lower limb muscles",
     "Estimulación periférica": "Peripheral stimulation",
-    "Estimulación trigeminal (reflejos)": "Trigeminal stimulation (reflexes)",
+    "Estimulación trigeminal": "Trigeminal stimulation",
     "GRID / MANTA": "GRID / mat",
     "Potenciales auditivos (PEATC)": "Auditory potentials (BAEP)",
     "Potenciales visuales (VEP)": "Visual potentials (VEP)",

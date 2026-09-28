@@ -917,7 +917,14 @@ window.SURGERIES_DATA = {
       ]
     },
     {
-      "categoria": "Estimulación trigeminal (reflejos)",
+      /* Reorganizada el 28-09-2026 (pedido del usuario): aquí solo el
+         material de estímulo del trigémino. La antigua categoría "Reflejos"
+         repetía técnicas, no material (BlinkR, Rx.V-XII, LAR, Rx.H, RBC: su
+         material ya está en sus categorías y la técnica en el catálogo de
+         técnicas) y se quitó. Rx.Maset sí era material -el estímulo del
+         nervio maseterino, usado en casos y plantillas reales-: se queda aquí
+         con su mismo id. */
+      "categoria": "Estimulación trigeminal",
       "plegada_por_defecto": true,
       "items": [
         { "id": "l_v1", "nombre": "L.V1", "etiqueta": "aguja_trenzada", "nota": "Rama oftálmica izquierda del V par — Blink Reflex (registro en orbiculares oculi)" },
@@ -925,25 +932,9 @@ window.SURGERIES_DATA = {
         { "id": "l_v2", "nombre": "L.V2", "etiqueta": "pegatinas", "nota": "Rama maxilar izquierda del V par — reflejo trigémino-cervical (registro en STCM y cricotiroideo)" },
         { "id": "r_v2", "nombre": "R.V2", "etiqueta": "pegatinas", "nota": "Rama maxilar derecha del V par — reflejo trigémino-cervical (registro en STCM y cricotiroideo)" },
         { "id": "l_v3", "nombre": "L.V3", "etiqueta": "aguja_trenzada", "nota": "Rama mandibular izquierda del V par — reflejo trigémino-vocal (registro en cuerdas vocales)" },
-        { "id": "r_v3", "nombre": "R.V3", "etiqueta": "aguja_trenzada", "nota": "Rama mandibular derecha del V par — reflejo trigémino-vocal (registro en cuerdas vocales)" }
-      ]
-    },
-    {
-      "categoria": "Reflejos",
-      "plegada_por_defecto": true,
-      "items": [
-        {"id":"l_blinkr","nombre":"L.BlinkR","etiqueta":"aguja_trenzada","nota":"Blink Reflex izquierdo"},
-        {"id":"r_blinkr","nombre":"R.BlinkR","etiqueta":"aguja_trenzada","nota":"Blink Reflex derecho"},
-        {"id":"l_rx_maset","nombre":"L.Rx.Maset","etiqueta":"aguja_trenzada","nota":"Reflejo maseterino izquierdo"},
-        {"id":"r_rx_maset","nombre":"R.Rx.Maset","etiqueta":"aguja_trenzada","nota":"Reflejo maseterino derecho"},
-        {"id":"l_rx_v_xii","nombre":"L.Rx.V-XII","etiqueta":"aguja_trenzada","nota":"Reflejo V-XII izquierdo"},
-        {"id":"r_rx_v_xii","nombre":"R.Rx.V-XII","etiqueta":"aguja_trenzada","nota":"Reflejo V-XII derecho"},
-        {"id":"l_lar","nombre":"L.LAR","etiqueta":"aguja_trenzada","nota":"Laryngeal Adductor Reflex izquierdo"},
-        {"id":"r_lar","nombre":"R.LAR","etiqueta":"aguja_trenzada","nota":"Laryngeal Adductor Reflex derecho"},
-        {"id":"l_rx_h","nombre":"L.Rx.H","etiqueta":"aguja_trenzada","nota":"Reflejo H izquierdo"},
-        {"id":"r_rx_h","nombre":"R.Rx.H","etiqueta":"aguja_trenzada","nota":"Reflejo H derecho"},
-        {"id":"l_rbc","nombre":"L.RBC","etiqueta":"aguja_trenzada","nota":"Reflejo bulbo-cavernoso izquierdo"},
-        {"id":"r_rbc","nombre":"R.RBC","etiqueta":"aguja_trenzada","nota":"Reflejo bulbo-cavernoso derecho"}
+        { "id": "r_v3", "nombre": "R.V3", "etiqueta": "aguja_trenzada", "nota": "Rama mandibular derecha del V par — reflejo trigémino-vocal (registro en cuerdas vocales)" },
+        { "id": "l_rx_maset", "nombre": "L.N.Maset", "etiqueta": "aguja_trenzada", "nota": "Nervio maseterino izquierdo (rama motora del V3) — estímulo para el H-reflex del masetero / jaw jerk (registro en masetero)" },
+        { "id": "r_rx_maset", "nombre": "R.N.Maset", "etiqueta": "aguja_trenzada", "nota": "Nervio maseterino derecho (rama motora del V3) — estímulo para el H-reflex del masetero / jaw jerk (registro en masetero)" }
       ]
     },
     {
@@ -1229,11 +1220,11 @@ window.SURGERIES_DATA = {
       "estim_popliteo": { "nombre": "estímulo en el hueco poplíteo", "nombre_en": "popliteal fossa stimulation",
         "items": ["l_popliteo", "r_popliteo"] },
       "musc_soleo": { "nombre": "registro en gastrocnemio/sóleo", "nombre_en": "gastrocnemius/soleus recording",
-        "items": ["l_g", "r_g", "l_rx_h", "r_rx_h"] },
+        "items": ["l_g", "r_g"] },
       "estim_trig": { "nombre": "estímulo trigeminal (V1–V3)", "nombre_en": "trigeminal stimulation (V1–V3)",
-        "items": ["l_v1", "r_v1", "l_v2", "r_v2", "l_v3", "r_v3"] },
+        "items": ["l_v1", "r_v1", "l_v2", "r_v2", "l_v3", "r_v3", "l_rx_maset", "r_rx_maset"] },
       "ooc": { "nombre": "orbicular del ojo", "nombre_en": "orbicularis oculi",
-        "items": ["l_ooc", "r_ooc", "l_ooc_ag", "r_ooc_ag", "l_blinkr", "r_blinkr"] },
+        "items": ["l_ooc", "r_ooc", "l_ooc_ag", "r_ooc_ag"] },
       "sondas": { "nombre": "una sonda de estimulación", "nombre_en": "a stimulation probe", "categorias": ["Sondas"] },
       "grid": { "nombre": "un GRID o strip", "nombre_en": "a grid or strip",
         "items": ["grid1", "grid2", "grid3", "grid4", "grid5", "grid6", "grid7", "grid8",
