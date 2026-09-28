@@ -827,7 +827,26 @@ allí, sale en la hoja impresa y en **Exportar eventos y alarmas (CSV)**.
 
 ### Hoja completa
 
-Las secciones son desplegables (recuerdan cuáles dejaste abiertas):
+**En pantalla va simplificada** (28-09-2026); la hoja **impresa** sale igual
+que siempre, con todos sus apartados, y no se borra ningún dato:
+
+- **B · Modalidades** y **C · Anestesia**: solo lo que ya dice la ficha del
+  caso, de lectura (se cambia allí). Lo que cambie de la anestesia durante la
+  cirugía se apunta como evento de tipo *Anestesia*.
+- **D · Hitos** y el **esquema** no se enseñan en pantalla.
+- **E · Basales y comparativa**, como siempre.
+- **E2 · Mapeo**: solo *electrodo motor* y *músculos registrados* (dos filas).
+- **F · Eventos**: filas compactas *hora · tipo · qué ha pasado*, con la misma
+  letra que las basales; debajo, en pequeño, la modalidad (en dorado), la
+  fase y la acción cuando la fila viene del modo rápido.
+- **G · Alarmas**: una ficha compacta por alarma (A1, A2…): hora y modalidad;
+  criterio y causa; medidas, recuperación y hora de recuperación.
+- **I · Cierre**: resultado, modalidades afectadas (casillas con las técnicas
+  del caso), déficit esperado, incidencias técnicas y perla docente. Sin
+  comunicación final, material ni pendientes (siguen en la hoja impresa).
+
+Las secciones de la hoja impresa, completas (las que no se ven en pantalla
+se imprimen igual):
 
 - **Hoja 1**: A identificación y estado prequirúrgico · B modalidades y
   mapeo · C anestesia · D cronograma de hitos (con botón **Ahora**) · E

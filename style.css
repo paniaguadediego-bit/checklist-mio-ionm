@@ -3817,3 +3817,41 @@ button, input, select, textarea { font-family: inherit; }
 
 /* Raíces o par craneal de cada músculo en Material (27-09-2026) */
 .mat-inerv { font-size: 0.72rem; font-weight: 600; color: var(--accent); white-space: nowrap; }
+
+/* Hoja completa en pantalla, simplificada (28-09-2026): eventos, alarmas y
+   mapeo con la letra y las filas de "Basales y comparativa". */
+.reg-p-nuevo { margin: 0 0 0.5rem; }
+.reg-p-chips { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.1rem 0 0.3rem; }
+.reg-p-chip { font-size: 0.78rem; padding: 0.15rem 0.5rem; border: 1px solid var(--border); border-radius: 999px; background: var(--campo-bg); }
+.reg-p-check { font-size: 0.8rem; margin: 0; }
+.reg-p-dato { margin: 0.15rem 0; font-size: 0.85rem; }
+.reg-basal.reg-p-mapeo .reg-basal-fila { grid-template-columns: 1.4rem minmax(0, 1fr) minmax(0, 1.4fr); }
+.reg-basal.reg-p-ev .reg-basal-fila { grid-template-columns: 5.4rem 6.6rem minmax(0, 1fr) 1.8rem; align-items: center; }
+.reg-p-ev select, .reg-p-alarma select, .reg-p-ev input[type="time"], .reg-p-alarma input {
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.35rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--campo-bg);
+  color: var(--text);
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+.reg-p-que { display: flex; align-items: center; gap: 0.3rem; min-width: 0; }
+.reg-p-que input { flex: 1 1 auto; }
+.reg-p-mod { flex: 0 0 auto; font-size: 0.72rem; font-weight: 600; color: var(--accent); white-space: nowrap; }
+.reg-p-extra { grid-column: 1 / -1; font-size: 0.72rem; color: var(--text-muted); margin: -0.1rem 0 0.2rem; }
+.reg-p-alarmas { display: flex; flex-direction: column; gap: 0.5rem; }
+.reg-p-alarma { border: 1px solid var(--border-soft); border-left: 3px solid var(--peligro); border-radius: 6px; padding: 0.4rem 0.5rem; display: flex; flex-direction: column; gap: 0.3rem; }
+.reg-p-al-l1 { display: grid; grid-template-columns: 2rem 5.4rem minmax(0, 1fr) 1.8rem; gap: 0.3rem; align-items: center; }
+.reg-p-al-l2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 0.3rem; }
+.reg-p-al-l3 { display: grid; grid-template-columns: minmax(0, 1fr) 6.5rem 5.4rem; gap: 0.3rem; }
+.reg-p-al-n { color: var(--peligro); font-size: 0.85rem; }
+@media (max-width: 520px) {
+  .reg-basal.reg-p-ev .reg-basal-fila { grid-template-columns: 4.8rem 5.6rem minmax(0, 1fr) 1.8rem; }
+  .reg-p-al-l2 { grid-template-columns: minmax(0, 1fr); }
+  .reg-p-al-l3 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .reg-p-al-l3 > :first-child { grid-column: 1 / -1; }
+}

@@ -1171,6 +1171,29 @@
     registro_motores:    { es: "Motores", en: "Motor" },
     registro_corticales: { es: "Corticales / pares", en: "Cortical / cranial" },
     registro_fila_quitar: { es: "Quitar esta fila", en: "Remove this row" },
+    reg_p_sin_caso:      { es: "Vincula un caso arriba para ver aquí lo que ya tiene.", en: "Link a case above to see what it already has here." },
+    reg_p_tecnicas_ayuda: { es: "Salen de la ficha del caso (Técnicas realizadas) y se cambian allí.", en: "They come from the case form (Techniques performed) and are changed there." },
+    reg_p_sin_tecnicas:  { es: "El caso no tiene técnicas marcadas.", en: "The case has no techniques ticked." },
+    reg_p_anest_ayuda:   { es: "Sale de la ficha del caso. Lo que cambie durante la cirugía (bolos, relajante, TAM…) se apunta como evento de tipo Anestesia.", en: "It comes from the case form. Whatever changes during surgery (boluses, relaxant, MAP…) is logged as an Anaesthesia event." },
+    reg_p_sin_anest:     { es: "El caso no tiene datos de anestesia.", en: "The case has no anaesthesia data." },
+    reg_p_motor:         { es: "Electrodo motor", en: "Motor electrode" },
+    reg_p_musculos:      { es: "Músculos registrados", en: "Muscles recorded" },
+    reg_p_hora:          { es: "Hora", en: "Time" },
+    reg_p_tipo:          { es: "Tipo", en: "Type" },
+    reg_p_que:           { es: "Qué ha pasado", en: "What happened" },
+    reg_p_evento_nuevo:  { es: "+ Evento (hora actual)", en: "+ Event (current time)" },
+    reg_p_sin_eventos:   { es: "Todavía no hay eventos.", en: "No events yet." },
+    reg_p_alarma_nueva:  { es: "+ Alarma (hora actual)", en: "+ Alarm (current time)" },
+    reg_p_sin_alarmas:   { es: "Sin alarmas.", en: "No alarms." },
+    reg_p_modalidad:     { es: "Modalidad · lado", en: "Modality · side" },
+    reg_p_criterio:      { es: "Criterio", en: "Criterion" },
+    reg_p_causa:         { es: "Maniobra / causa probable", en: "Manoeuvre / probable cause" },
+    reg_p_medidas:       { es: "Medidas adoptadas", en: "Measures taken" },
+    reg_p_recup:         { es: "Recuperación", en: "Recovery" },
+    reg_p_h_recup:       { es: "Hora de recuperación", en: "Recovery time" },
+    reg_p_vaciar_alarma: { es: "¿Vaciar esta alarma?", en: "Clear this alarm?" },
+    reg_p_mod_afectadas: { es: "Modalidades afectadas", en: "Affected modalities" },
+    reg_p_en:            { es: "en {fase}", en: "in {fase}" },
     registro_fila_quitar_conf: { es: "¿Quitar esta fila? Tiene datos escritos.", en: "Remove this row? It has data." },
     registro_mod_cab:    { es: "Cabecera", en: "Header" },
     registro_mod_fila:   { es: "Fila {n}", en: "Row {n}" },
@@ -15932,6 +15955,10 @@
     }
     var hojaActual = 0;
     REG_SECCIONES.forEach(function (sec) {
+      // En pantalla, algunas secciones van simplificadas o no van (ver
+      // REG_PANTALLA); la hoja impresa sigue saliendo entera.
+      var enPantalla = Object.prototype.hasOwnProperty.call(REG_PANTALLA, sec.id) ? REG_PANTALLA[sec.id] : undefined;
+      if (enPantalla === null) return;
       if (sec.hoja !== hojaActual) {
         hojaActual = sec.hoja;
         var h = document.createElement("h3");
@@ -15953,7 +15980,7 @@
       det.appendChild(sum);
       var cuerpo = document.createElement("div");
       cuerpo.className = "caso-grupo-campos";
-      if (sec.ayuda) {
+      if (sec.ayuda && !enPantalla) {
         var ay = document.createElement("p");
         ay.className = "reg-ayuda";
         ay.textContent = campo(sec, "ayuda");
@@ -15963,7 +15990,8 @@
         var n = regCuenta(sec);
         cuenta.textContent = n ? String(n) : "";
       };
-      if (sec.tipo === "campos") pintarSeccionCampos(sec, cuerpo);
+      if (enPantalla) enPantalla(sec, cuerpo, pintarCuenta);
+      else if (sec.tipo === "campos") pintarSeccionCampos(sec, cuerpo);
       else if (sec.tipo === "modalidades") pintarSeccionModalidades(sec, cuerpo);
       else if (sec.tipo === "basales") pintarSeccionBasales(sec, cuerpo);
       else if (sec.tipo === "lista") pintarSeccionLista(sec, cuerpo, pintarCuenta);
@@ -16281,6 +16309,292 @@
     });
     panel.appendChild(lista);
     cont.appendChild(panel);
+  }
+
+  /* ---- Hoja completa en pantalla, simplificada (28-09-2026) -----------
+   * Pedido del usuario: en el móvil/tablet/ordenador la hoja completa tenía
+   * demasiada información. La hoja IMPRESA no cambia
+   * (construirHojaRegistroInterna() tiene su propio pintado) y los datos
+   * tampoco: lo que no se enseña aquí sigue guardado y sale impreso.
+   *   B y C: solo lo que ya dice la ficha del caso, de lectura.
+   *   D (hitos) y el esquema: no van en pantalla.
+   *   E2 mapeo: electrodo motor y músculos registrados (campos gridN_*).
+   *   F y G: filas compactas con la letra de "Basales y comparativa".
+   *   I cierre: resultado, modalidades afectadas (de las técnicas del caso),
+   *   déficit esperado, incidencias y perla docente.
+   * Lo que no está en REG_PANTALLA se pinta como siempre. */
+  var REG_PANTALLA = {
+    b: pintarPantallaModalidades,
+    c: pintarPantallaAnestesia,
+    d: null,
+    e2: pintarPantallaMapeo,
+    esquema: null,
+    f: pintarPantallaEventos,
+    g: pintarPantallaAlarmas,
+    i: pintarPantallaCierre
+  };
+
+  function regNodo(tag, clase, texto) {
+    var n = document.createElement(tag);
+    if (clase) n.className = clase;
+    if (texto !== undefined && texto !== null) n.textContent = texto;
+    return n;
+  }
+
+  // Campo de texto de una fila: guarda en obj[clave] al escribir y al salir.
+  function regInput(obj, clave, tipo, placeholder, alCambiar) {
+    var inp = document.createElement("input");
+    inp.type = tipo || "text";
+    inp.value = obj[clave] || "";
+    if (placeholder) { inp.placeholder = placeholder; inp.setAttribute("aria-label", placeholder); }
+    inp.addEventListener("input", function () { obj[clave] = inp.value; registroGuardar(); if (alCambiar) alCambiar(); });
+    inp.addEventListener("change", registroGuardarYa);
+    return inp;
+  }
+
+  function regSelect(obj, clave, opciones, etiqueta, alCambiar) {
+    var sel = document.createElement("select");
+    sel.setAttribute("aria-label", etiqueta);
+    var vacia = document.createElement("option");
+    vacia.value = "";
+    vacia.textContent = "—";
+    sel.appendChild(vacia);
+    opciones.forEach(function (o) {
+      var op = document.createElement("option");
+      op.value = o.v;
+      op.textContent = regOpcionLabel(o);
+      sel.appendChild(op);
+    });
+    sel.value = obj[clave] || "";
+    sel.addEventListener("change", function () {
+      obj[clave] = sel.value;
+      registroGuardarYa();
+      if (alCambiar) alCambiar();
+    });
+    return sel;
+  }
+
+  function regTecnicasCaso(c) {
+    var ids = c ? (c.tecnicas_realizadas || []) : [];
+    return TECNICAS.filter(function (t) { return ids.indexOf(t.id) !== -1; })
+      .map(function (t) { return campo(t, "etiqueta"); });
+  }
+
+  function pintarPantallaModalidades(sec, cont) {
+    var c = registroCaso();
+    if (!c) { cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_sin_caso"))); return; }
+    var nombres = regTecnicasCaso(c);
+    if (!nombres.length) { cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_sin_tecnicas"))); return; }
+    var fila = regNodo("div", "reg-p-chips");
+    nombres.forEach(function (n) { fila.appendChild(regNodo("span", "reg-p-chip", n)); });
+    cont.appendChild(fila);
+    cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_tecnicas_ayuda")));
+  }
+
+  function pintarPantallaAnestesia(sec, cont) {
+    var c = registroCaso();
+    if (!c) { cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_sin_caso"))); return; }
+    var datos = [
+      ["caso_tipo_anestesia", c.tipo_anestesia ? opcionTexto("anestesia", c.tipo_anestesia) : ""],
+      ["caso_tipo_anestesia_detalle", c.tipo_anestesia_detalle],
+      ["caso_tof_monitorizado", c.tof_monitorizado ? opcionTexto("sino", c.tof_monitorizado) : ""],
+      ["caso_incidencias_anestesicas", c.incidencias_anestesicas]
+    ].filter(function (x) { return x[1]; });
+    if (!datos.length) cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_sin_anest")));
+    datos.forEach(function (x) {
+      var p = regNodo("p", "reg-p-dato");
+      p.appendChild(regNodo("b", null, T(x[0]) + ": "));
+      p.appendChild(document.createTextNode(x[1]));
+      cont.appendChild(p);
+    });
+    cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_anest_ayuda")));
+  }
+
+  // Electrodo motor y músculos registrados: los mismos gridN_motor /
+  // gridN_musculos que imprime la hoja.
+  function pintarPantallaMapeo(sec, cont) {
+    var d = registroDatos();
+    var tabla = regNodo("div", "reg-basal reg-p-mapeo");
+    var cab = regNodo("div", "reg-basal-fila reg-basal-cab");
+    cab.appendChild(regNodo("span", null, ""));
+    cab.appendChild(regNodo("span", null, T("reg_p_motor")));
+    cab.appendChild(regNodo("span", null, T("reg_p_musculos")));
+    tabla.appendChild(cab);
+    [1, 2].forEach(function (n) {
+      var f = regNodo("div", "reg-basal-fila");
+      f.appendChild(regNodo("span", "reg-basal-rotulo", String(n)));
+      f.appendChild(regInput(d.v, "grid" + n + "_motor", "text", T("reg_p_motor")));
+      f.appendChild(regInput(d.v, "grid" + n + "_musculos", "text", T("reg_p_musculos")));
+      tabla.appendChild(f);
+    });
+    cont.appendChild(tabla);
+  }
+
+  // Eventos: hora · tipo · qué ha pasado. Una fila de fase (F) escribe en
+  // "fase"; el resto, en "cambio". Lo que ya traiga la fila del modo rápido
+  // -modalidad, fase, acción- se enseña al lado, sin perderse.
+  function pintarPantallaEventos(sec, cont, alCambiar) {
+    var d = registroDatos();
+    var btn = regNodo("button", "primario reg-p-nuevo", T("reg_p_evento_nuevo"));
+    btn.type = "button";
+    cont.appendChild(btn);
+    var tabla = regNodo("div", "reg-basal reg-p-ev");
+    cont.appendChild(tabla);
+    function pintar(enfocarUltima) {
+      tabla.textContent = "";
+      if (!d.eventos.length) { tabla.appendChild(regNodo("p", "reg-ayuda", T("reg_p_sin_eventos"))); return; }
+      var cab = regNodo("div", "reg-basal-fila reg-basal-cab");
+      [T("reg_p_hora"), T("reg_p_tipo"), T("reg_p_que"), ""].forEach(function (t) { cab.appendChild(regNodo("span", null, t)); });
+      tabla.appendChild(cab);
+      d.eventos.forEach(function (ev) {
+        var f = regNodo("div", "reg-basal-fila");
+        f.appendChild(regInput(ev, "hora", "time", T("reg_p_hora"), alCambiar));
+        f.appendChild(regSelect(ev, "cod", REG_COD_EVENTO, T("reg_p_tipo"), function () { pintar(false); alCambiar(); }));
+        var que = regNodo("div", "reg-p-que");
+        que.appendChild(regInput(ev, ev.cod === "F" ? "fase" : "cambio", "text", T("reg_p_que"), alCambiar));
+        f.appendChild(que);
+        var quitar = regNodo("button", "reg-fila-quitar", "✕");
+        quitar.type = "button";
+        quitar.title = T("registro_fila_quitar");
+        quitar.setAttribute("aria-label", T("registro_fila_quitar"));
+        quitar.addEventListener("click", function () { regQuitarRapido(ev); });
+        f.appendChild(quitar);
+        // Debajo, lo que trae la fila del modo rápido: la modalidad (en
+        // dorado, en su propia línea para no quitar sitio al texto), la fase y
+        // la acción.
+        var extra = [];
+        if (ev.cod !== "F" && ev.fase) extra.push(T("reg_p_en", { fase: ev.fase }));
+        if (ev.accion) extra.push(ev.accion);
+        var mod = ev.cod !== "F" ? ev.modalidad : "";
+        if (mod || extra.length) {
+          var linea = regNodo("small", "reg-p-extra");
+          if (mod) linea.appendChild(regNodo("span", "reg-p-mod", mod + (extra.length ? " · " : "")));
+          if (extra.length) linea.appendChild(document.createTextNode(extra.join(" · ")));
+          f.appendChild(linea);
+        }
+        tabla.appendChild(f);
+      });
+      if (enfocarUltima) {
+        var ultimo = tabla.lastChild && tabla.lastChild.querySelector(".reg-p-que input");
+        if (ultimo) { ultimo.scrollIntoView({ block: "center" }); ultimo.focus({ preventScroll: true }); }
+      }
+    }
+    btn.addEventListener("click", function () {
+      d.eventos.push({ id: uuid(), hora: horaAhora(), cod: "E" });
+      registroGuardarYa();
+      pintar(true);
+      alCambiar();
+    });
+    pintar(false);
+  }
+
+  // Alarmas: una ficha compacta por alarma (A1, A2... como en la hoja
+  // impresa, así que al quitar una se vacía en vez de moverse las demás).
+  function pintarPantallaAlarmas(sec, cont, alCambiar) {
+    var d = registroDatos();
+    var btn = regNodo("button", "primario reg-p-nuevo", T("reg_p_alarma_nueva"));
+    btn.type = "button";
+    cont.appendChild(btn);
+    var lista = regNodo("div", "reg-p-alarmas");
+    cont.appendChild(lista);
+    function pintar(enfocar) {
+      lista.textContent = "";
+      var hay = false;
+      d.alarmas.forEach(function (al, i) {
+        if (filaRegistroVacia(al)) return;
+        hay = true;
+        var ficha = regNodo("div", "reg-p-alarma");
+        var l1 = regNodo("div", "reg-p-al-l1");
+        l1.appendChild(regNodo("b", "reg-p-al-n", "A" + (i + 1)));
+        l1.appendChild(regInput(al, "hora", "time", T("reg_p_hora"), alCambiar));
+        l1.appendChild(regInput(al, "modalidad", "text", T("reg_p_modalidad"), alCambiar));
+        var quitar = regNodo("button", "reg-fila-quitar", "✕");
+        quitar.type = "button";
+        quitar.title = T("registro_fila_quitar");
+        quitar.setAttribute("aria-label", T("registro_fila_quitar"));
+        quitar.addEventListener("click", function () {
+          if (!confirm(T("reg_p_vaciar_alarma"))) return;
+          d.alarmas[i] = { id: al.id };
+          registroGuardarYa();
+          pintar(null);
+          alCambiar();
+        });
+        l1.appendChild(quitar);
+        ficha.appendChild(l1);
+        var l2 = regNodo("div", "reg-p-al-l2");
+        l2.appendChild(regInput(al, "criterio", "text", T("reg_p_criterio"), alCambiar));
+        l2.appendChild(regInput(al, "causa", "text", T("reg_p_causa"), alCambiar));
+        ficha.appendChild(l2);
+        var l3 = regNodo("div", "reg-p-al-l3");
+        l3.appendChild(regInput(al, "medidas", "text", T("reg_p_medidas"), alCambiar));
+        l3.appendChild(regSelect(al, "recup", REG_RECUP, T("reg_p_recup"), alCambiar));
+        l3.appendChild(regInput(al, "h_recup", "time", T("reg_p_h_recup"), alCambiar));
+        ficha.appendChild(l3);
+        lista.appendChild(ficha);
+        if (enfocar === al.id) {
+          var m = l1.querySelector('input[type="text"]');
+          ficha.scrollIntoView({ block: "center" });
+          if (m) m.focus({ preventScroll: true });
+        }
+      });
+      if (!hay) lista.appendChild(regNodo("p", "reg-ayuda", T("reg_p_sin_alarmas")));
+    }
+    btn.addEventListener("click", function () {
+      var al = d.alarmas.filter(filaRegistroVacia)[0];
+      if (!al) { al = { id: uuid() }; d.alarmas.push(al); }
+      al.hora = horaAhora();
+      registroGuardarYa();
+      pintar(al.id);
+      alCambiar();
+    });
+    pintar(null);
+  }
+
+  // Cierre: modalidades afectadas elegidas entre las técnicas del caso, y se
+  // guardan como texto ("MEP, SEP...") en el mismo campo que imprime la hoja.
+  function pintarPantallaCierre(sec, cont) {
+    var d = registroDatos();
+    var def = {};
+    sec.campos.forEach(function (x) { def[x.id] = x; });
+    var grid = regNodo("div", "reg-grid");
+    grid.appendChild(regControl(def.cierre_resultado, d.v));
+    cont.appendChild(grid);
+
+    var c = registroCaso();
+    var nombres = regTecnicasCaso(c);
+    var bloque = regNodo("div", "campo reg-campo reg-ancho");
+    bloque.appendChild(regNodo("label", null, T("reg_p_mod_afectadas")));
+    if (nombres.length) {
+      var elegidas = String(d.v.cierre_modalidades || "").split(/\s*,\s*/).filter(Boolean);
+      // Lo escrito antes a mano que no sea una técnica del caso se conserva
+      var sueltas = elegidas.filter(function (x) { return nombres.indexOf(x) === -1; });
+      var chips = regNodo("div", "reg-p-chips");
+      nombres.forEach(function (n) {
+        var lab = regNodo("label", "check reg-p-check");
+        var cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = elegidas.indexOf(n) !== -1;
+        cb.addEventListener("change", function () {
+          var marcadas = nombres.filter(function (m, k) { return chips.querySelectorAll("input")[k].checked; });
+          d.v.cierre_modalidades = marcadas.concat(sueltas).join(", ");
+          registroGuardarYa();
+        });
+        lab.appendChild(cb);
+        lab.appendChild(regNodo("span", null, n));
+        chips.appendChild(lab);
+      });
+      bloque.appendChild(chips);
+      if (sueltas.length) bloque.appendChild(regNodo("small", "reg-p-extra", sueltas.join(", ")));
+    } else {
+      bloque.appendChild(regInput(d.v, "cierre_modalidades", "text", T("reg_p_mod_afectadas")));
+    }
+    cont.appendChild(bloque);
+
+    var grid2 = regNodo("div", "reg-grid");
+    ["cierre_deficit", "cierre_incidencias", "cierre_perla_check", "cierre_perla"].forEach(function (id) {
+      if (def[id]) grid2.appendChild(regControl(def[id], d.v));
+    });
+    cont.appendChild(grid2);
   }
 
   function renderRegistroSelector() {
