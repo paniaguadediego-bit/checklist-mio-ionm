@@ -715,6 +715,9 @@
                            en: "Tick the levels tested during mapping and note the threshold on each side." },
     umbral_raices_izq:  { es: "Izquierdo {nivel}", en: "Left {nivel}" },
     umbral_raices_der:  { es: "{nivel} derecho", en: "{nivel} right" },
+    umbral_raices_cab_izq:   { es: "Izquierda (mA)", en: "Left (mA)" },
+    umbral_raices_cab_der:   { es: "Derecha (mA)", en: "Right (mA)" },
+    umbral_raices_cab_nivel: { es: "Nivel", en: "Level" },
     umbral_raices_izq_corto: { es: "I", en: "L" },
     umbral_raices_der_corto: { es: "D", en: "R" },
     caso_umbral_tornillos_pediculares: { es: "Notas de umbral EMG de tornillos pediculares", en: "Notes on pedicle screw EMG threshold" },
@@ -7510,41 +7513,60 @@
       var contValores = document.createElement("div");
       contValores.className = "umbral-raices-valores";
 
+      // Rediseño 28-09-2026 (pedido del usuario: "no da la sensación de que
+      // L4 está en el centro y a los lados cada salida de raíz"): una columna
+      // vertebral -los niveles apilados en orden anatómico, unidos por una
+      // línea vertical- y de cada nivel una rama a cada lado hasta la casilla
+      // de ese lado. Una sola cabecera Izquierda · Nivel · Derecha en vez de
+      // "I"/"D" en cada fila; el texto largo sigue como title/aria-label y es
+      // el que sale en el informe en PDF.
       var pintarValoresRaices = function () {
         contValores.textContent = "";
-        datosRaices.niveles.forEach(function (nivel) {
+        var ordenados = datosRaices.niveles.slice().sort(function (a, b) {
+          return NIVELES_RAICES.indexOf(a) - NIVELES_RAICES.indexOf(b);
+        });
+        if (!ordenados.length) return;
+        var cab = document.createElement("div");
+        cab.className = "umbral-raices-fila umbral-raices-cab";
+        [T("umbral_raices_cab_izq"), "", T("umbral_raices_cab_nivel"), "", T("umbral_raices_cab_der")].forEach(function (t) {
+          var sp = document.createElement("span");
+          sp.textContent = t;
+          cab.appendChild(sp);
+        });
+        contValores.appendChild(cab);
+        ordenados.forEach(function (nivel, k) {
           if (!datosRaices.valores[nivel]) datosRaices.valores[nivel] = {};
           var vals = datosRaices.valores[nivel];
-          // I (caja) - nivel - D (caja): izquierda y derecha en sus propios
-          // extremos, la raíz centrada -pedido del usuario el 05-09-2026,
-          // para leer de un vistazo qué lado es cada umbral sin tener que
-          // leer "Izquierdo"/"derecho" enteros cada vez. El texto largo
-          // (T("umbral_raices_izq"/"_der")) se conserva como title/aria-label
-          // y es el que sigue saliendo tal cual en el informe en PDF.
-          var campoLado = function (lado, etiquetaCorta, etiquetaLarga) {
-            var lab = document.createElement("label");
-            lab.className = "umbral-raices-campo " + lado;
-            lab.title = etiquetaLarga;
-            var etq = document.createElement("span");
-            etq.textContent = etiquetaCorta;
+          var campoLado = function (lado, etiquetaLarga) {
             var inp = document.createElement("input");
             inp.type = "text";
+            inp.inputMode = "decimal";
+            inp.className = "umbral-raices-mA " + lado;
+            inp.title = etiquetaLarga;
             inp.setAttribute("aria-label", etiquetaLarga);
             inp.value = vals[lado] || "";
             inp.addEventListener("input", function () { vals[lado] = inp.value; });
-            lab.appendChild(etq);
-            lab.appendChild(inp);
-            return lab;
+            return inp;
           };
-          var tituloNivel = document.createElement("span");
-          tituloNivel.className = "umbral-raices-nivel";
-          tituloNivel.textContent = nivel;
+          var rama = function (lado) {
+            var r = document.createElement("span");
+            r.className = "umbral-raices-rama " + lado;
+            return r;
+          };
+          var vert = document.createElement("span");
+          vert.className = "umbral-raices-vert" + (k === 0 ? " primera" : "") + (k === ordenados.length - 1 ? " ultima" : "");
+          var pill = document.createElement("span");
+          pill.className = "umbral-raices-nivel";
+          pill.textContent = nivel;
+          vert.appendChild(pill);
 
           var filaNivel = document.createElement("div");
           filaNivel.className = "umbral-raices-fila";
-          filaNivel.appendChild(campoLado("izq", T("umbral_raices_izq_corto"), T("umbral_raices_izq", { nivel: nivel })));
-          filaNivel.appendChild(tituloNivel);
-          filaNivel.appendChild(campoLado("der", T("umbral_raices_der_corto"), T("umbral_raices_der", { nivel: nivel })));
+          filaNivel.appendChild(campoLado("izq", T("umbral_raices_izq", { nivel: nivel })));
+          filaNivel.appendChild(rama("izq"));
+          filaNivel.appendChild(vert);
+          filaNivel.appendChild(rama("der"));
+          filaNivel.appendChild(campoLado("der", T("umbral_raices_der", { nivel: nivel })));
           contValores.appendChild(filaNivel);
         });
       };
