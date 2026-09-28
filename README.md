@@ -850,6 +850,15 @@ que siempre, con todos sus apartados, y no se borra ningún dato:
   del caso), déficit esperado, incidencias técnicas y perla docente. Sin
   comunicación final, material ni pendientes (siguen en la hoja impresa).
 
+**Datos compartidos con la ficha del caso** (⇄, 28-09-2026): fecha, hora de
+inicio y de fin, nivel/localización (Anatomía patológica de la ficha),
+procedimiento, modalidades afectadas (= *Técnicas alteradas*), incidencias
+técnicas y perla docente (= *Aprendizaje clave* y *Caso destacado*) son el
+mismo dato en los dos sitios, como las basales: se escriban donde se
+escriban, se ven en el otro y en la hoja impresa. El diagnóstico se enseña de
+lectura (lista cerrada de la ficha). Las alarmas y el resultado del cierre
+siguen pasando a la ficha con **Pasar al caso**, porque allí son texto libre.
+
 Las secciones de la hoja impresa, completas (las que no se ven en pantalla
 se imprimen igual):
 

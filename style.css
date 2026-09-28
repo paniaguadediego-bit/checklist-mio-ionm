@@ -3871,3 +3871,4 @@ button, input, select, textarea { font-family: inherit; }
   .reg-p-al-l3 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .reg-p-al-l3 > :first-child { grid-column: 1 / -1; }
 }
+.reg-solo-caso { margin: 0.1rem 0 0; color: var(--text-muted); }

@@ -1195,6 +1195,8 @@
     reg_p_mod_afectadas: { es: "Modalidades afectadas", en: "Affected modalities" },
     reg_p_en:            { es: "en {fase}", en: "in {fase}" },
     reg_p_fase_otra:     { es: "Otra…", en: "Other…" },
+    reg_p_compartido:    { es: "⇄ = el mismo dato que en la ficha del caso: lo que escribas aquí aparece allí, y al revés.", en: "⇄ = the same data as in the case form: what you type here appears there, and vice versa." },
+    reg_p_solo_caso:     { es: "Sale de la ficha del caso; se cambia allí.", en: "Comes from the case form; change it there." },
     registro_fila_quitar_conf: { es: "¿Quitar esta fila? Tiene datos escritos.", en: "Remove this row? It has data." },
     registro_mod_cab:    { es: "Cabecera", en: "Header" },
     registro_mod_fila:   { es: "Fila {n}", en: "Row {n}" },
@@ -15267,23 +15269,23 @@
     { id: "h_apertura_dural", l: "Apertura dural", l_en: "Dural opening" },
     { id: "h_fase_critica", l: "Fase crítica", l_en: "Critical phase" },
     { id: "h_cierre", l: "Cierre", l_en: "Closure" },
-    { id: "h_fin_mio", l: "Fin MIO", l_en: "IONM end" }
+    { id: "h_fin_mio", l: "Fin MIO", l_en: "IONM end", caso: "hora_fin" }
   ].map(function (h) { h.t = "time"; return h; });
 
   var REG_SECCIONES = [
     { hoja: 1, id: "a", tipo: "campos", l: "A · Identificación y estado prequirúrgico", l_en: "A · Identification and pre-op status",
       campos: [
-        { id: "fecha", l: "Fecha", l_en: "Date", t: "date", der: function (c) { return c.fecha; } },
+        { id: "fecha", l: "Fecha", l_en: "Date", t: "date", caso: "fecha", der: function (c) { return c.fecha; } },
         { id: "quirofano", l: "Quirófano", l_en: "Operating room", t: "text" },
-        { id: "hora_inicio_mio", l: "Hora inicio MIO ({equipo})", l_en: "IONM start time ({equipo})", t: "time", der: function (c) { return c.hora_inicio; } },
+        { id: "hora_inicio_mio", l: "Hora inicio MIO ({equipo})", l_en: "IONM start time ({equipo})", t: "time", caso: "hora_inicio", der: function (c) { return c.hora_inicio; } },
         { id: "cirujano", l: "Cirujano", l_en: "Surgeon", t: "text" },
         { id: "anestesista", l: "Anestesista", l_en: "Anaesthetist", t: "text" },
         { id: "neurofisiologo", l: "Neurofisiólogo / técnico", l_en: "Neurophysiologist / technician", t: "text" },
-        { id: "diagnostico", l: "Diagnóstico", l_en: "Diagnosis", t: "text", ancho: true,
+        { id: "diagnostico", l: "Diagnóstico", l_en: "Diagnosis", t: "text", ancho: true, soloCaso: true,
           der: function (c) { return c.diagnostico ? opcionTexto("diagnostico", c.diagnostico) : ""; } },
-        { id: "nivel_lado", l: "Nivel / localización · Lado", l_en: "Level / location · Side", t: "text", ancho: true,
+        { id: "nivel_lado", l: "Nivel / localización · Lado", l_en: "Level / location · Side", t: "text", ancho: true, caso: "anatomia_patologica",
           der: function (c) { return c.anatomia_patologica; } },
-        { id: "procedimiento", l: "Procedimiento", l_en: "Procedure", t: "text", ancho: true, der: function (c) { return intervencionDe(c); } },
+        { id: "procedimiento", l: "Procedimiento", l_en: "Procedure", t: "text", ancho: true, caso: "intervencion", der: function (c) { return intervencionDe(c); } },
         { id: "prequx_motor", l: "Pre-qx: Motor", l_en: "Pre-op: Motor", t: "text" },
         { id: "prequx_sensitivo", l: "Pre-qx: Sensitivo", l_en: "Pre-op: Sensory", t: "text" },
         { id: "prequx_ppcc", l: "Pre-qx: PPCC", l_en: "Pre-op: CN", t: "text" },
@@ -15367,15 +15369,16 @@
     { hoja: 2, id: "i", tipo: "campos", l: "I · Cierre", l_en: "I · Closure",
       campos: [
         { id: "cierre_resultado", l: "Resultado", l_en: "Result", t: "sel", o: REG_RESULTADO, ancho: true },
-        { id: "cierre_modalidades", l: "Modalidades afectadas", l_en: "Affected modalities", t: "text", ancho: true },
+        { id: "cierre_modalidades", l: "Modalidades afectadas", l_en: "Affected modalities", t: "text", ancho: true,
+          leerCaso: function (c) { return regNombresTecnicas(c.tecnicas_alteradas).join(", "); } },
         { id: "cierre_com_cir", l: "Comunicación final: Cirujano", l_en: "Final communication: Surgeon", t: "check" },
         { id: "cierre_com_an", l: "Comunicación final: Anestesia", l_en: "Final communication: Anaesthesia", t: "check" },
         { id: "cierre_com_h", l: "Hora comunicación", l_en: "Communication time", t: "time" },
         { id: "cierre_deficit", l: "Déficit esperado / mensaje transmitido", l_en: "Expected deficit / message conveyed", t: "text", ancho: true },
-        { id: "cierre_incidencias", l: "Incidencias técnicas", l_en: "Technical incidents", t: "area", ancho: true },
+        { id: "cierre_incidencias", l: "Incidencias técnicas", l_en: "Technical incidents", t: "area", ancho: true, caso: "incidencias_tecnicas" },
         { id: "cierre_material", l: "Material: consumo · fallos · reposición", l_en: "Material: use · failures · replacement", t: "text", ancho: true },
-        { id: "cierre_perla_check", l: "Perla docente: caso para sesión", l_en: "Teaching pearl: case for session", t: "check" },
-        { id: "cierre_perla", l: "Perla docente", l_en: "Teaching pearl", t: "area", ancho: true },
+        { id: "cierre_perla_check", l: "Perla docente: caso para sesión", l_en: "Teaching pearl: case for session", t: "check", caso: "caso_destacado" },
+        { id: "cierre_perla", l: "Perla docente", l_en: "Teaching pearl", t: "area", ancho: true, caso: "aprendizaje_clave" },
         { id: "pend_informe", l: "Pendiente: Informe", l_en: "Pending: Report", t: "check" },
         { id: "pend_explor", l: "Pendiente: Explor. postop", l_en: "Pending: Post-op exam", t: "check" },
         { id: "pend_bd", l: "Pendiente: Base de datos", l_en: "Pending: Database", t: "check" },
@@ -15468,8 +15471,25 @@
 
   // Valor efectivo de un campo: lo que el usuario tocó y, si no, el derivado
   // del caso vinculado (si el campo lo define y hay caso).
+  /* Campos compartidos con la ficha del caso (28-09-2026, pedido del
+     usuario: "que se sincronicen los datos que se puedan"). Un campo con
+     "caso" es el MISMO dato que ese campo de la ficha, como las basales: se
+     lee del caso y, al escribirlo aquí, se escribe en el caso (ver
+     regControl()). Lo que se hubiera tecleado antes en la hoja solo se usa si
+     el caso lo tiene vacío. "soloCaso": de lectura, se cambia en la ficha.
+     "leerCaso": valor calculado desde el caso (modalidades afectadas =
+     técnicas alteradas). Sin caso vinculado (Modelo 0), todo como antes. */
   function regGet(almacen, def, casoExplicito) {
     var v = almacen[def.id];
+    var cc = casoExplicito !== undefined ? casoExplicito : registroCaso();
+    if (cc && def.caso) {
+      var cv = cc[def.caso];
+      if (def.t === "check") return !!cv || v === true;
+      if (cv !== undefined && cv !== null && cv !== "") return cv;
+    }
+    if (cc && def.leerCaso) {
+      return [def.leerCaso(cc), v].filter(Boolean).join(", ");
+    }
     var sinTocar = def.t === "check" ? v === undefined : (v === undefined || v === "");
     if (sinTocar && def.der) {
       // "casoExplicito": al imprimir desde la ficha, el caso es la copia de
@@ -15494,11 +15514,25 @@
     var div = document.createElement("div");
     div.className = "campo reg-campo" + (def.ancho ? " reg-ancho" : "");
     var val = regGet(almacen, def);
+    var casoVinc = registroCaso();
+    var compartido = !!(def.caso && casoVinc && almacen === registroDatos().v);
     function fijar(v) {
-      almacen[def.id] = v;
+      if (compartido) {
+        casoVinc[def.caso] = v;
+        delete almacen[def.id];
+      } else {
+        almacen[def.id] = v;
+      }
       registroGuardar();
       if (alTocar) alTocar();
     }
+    if (def.soloCaso && casoVinc) {
+      div.appendChild(regNodo("label", null, regL(def)));
+      div.appendChild(regNodo("p", "reg-p-dato reg-solo-caso", val || "—"));
+      div.title = T("reg_p_solo_caso");
+      return div;
+    }
+    if (compartido) div.classList.add("reg-compartido");
 
     if (def.t === "check") {
       var lab = document.createElement("label");
@@ -15508,7 +15542,7 @@
       cb.checked = !!val;
       cb.addEventListener("change", function () { fijar(cb.checked); registroGuardarYa(); });
       var sp = document.createElement("span");
-      sp.textContent = regL(def);
+      sp.textContent = regL(def) + (compartido ? " ⇄" : "");
       lab.appendChild(cb);
       lab.appendChild(sp);
       div.appendChild(lab);
@@ -15517,7 +15551,7 @@
 
     var etq = document.createElement("label");
     etq.htmlFor = id;
-    etq.textContent = regL(def);
+    etq.textContent = regL(def) + (compartido ? " ⇄" : "");
     div.appendChild(etq);
 
     var ctl;
@@ -16326,6 +16360,7 @@
    *   déficit esperado, incidencias y perla docente.
    * Lo que no está en REG_PANTALLA se pinta como siempre. */
   var REG_PANTALLA = {
+    a: pintarPantallaIdentificacion,
     b: pintarPantallaModalidades,
     c: pintarPantallaAnestesia,
     d: null,
@@ -16385,10 +16420,19 @@
     return sel;
   }
 
-  function regTecnicasCaso(c) {
-    var ids = c ? (c.tecnicas_realizadas || []) : [];
+  function regNombresTecnicas(ids) {
+    ids = ids || [];
     return TECNICAS.filter(function (t) { return ids.indexOf(t.id) !== -1; })
       .map(function (t) { return campo(t, "etiqueta"); });
+  }
+  function regTecnicasCaso(c) {
+    return regNombresTecnicas(c ? c.tecnicas_realizadas : []);
+  }
+
+  // A, igual que siempre, más el aviso de los campos compartidos (⇄)
+  function pintarPantallaIdentificacion(sec, cont) {
+    pintarSeccionCampos(sec, cont);
+    if (registroCaso()) cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_compartido")));
   }
 
   function pintarPantallaModalidades(sec, cont) {
@@ -16640,26 +16684,41 @@
     cont.appendChild(grid);
 
     var c = registroCaso();
-    var nombres = regTecnicasCaso(c);
+    var tecs = c ? TECNICAS.filter(function (t) { return (c.tecnicas_realizadas || []).indexOf(t.id) !== -1; }) : [];
     var bloque = regNodo("div", "campo reg-campo reg-ancho");
-    bloque.appendChild(regNodo("label", null, T("reg_p_mod_afectadas")));
-    if (nombres.length) {
-      var elegidas = String(d.v.cierre_modalidades || "").split(/\s*,\s*/).filter(Boolean);
-      // Lo escrito antes a mano que no sea una técnica del caso se conserva
-      var sueltas = elegidas.filter(function (x) { return nombres.indexOf(x) === -1; });
+    bloque.appendChild(regNodo("label", null, T("reg_p_mod_afectadas") + (tecs.length ? " ⇄" : "")));
+    if (tecs.length) {
+      // Son las "Técnicas alteradas" de la ficha (ids). Lo escrito antes a
+      // mano en la hoja: los nombres que son técnicas del caso pasan a
+      // marcarse allí, una sola vez; el resto se conserva como texto.
+      if (!c.tecnicas_alteradas) c.tecnicas_alteradas = [];
+      var partes = String(d.v.cierre_modalidades || "").split(/\s*,\s*/).filter(Boolean);
+      var migradas = false;
+      var sueltas = partes.filter(function (p) {
+        var t = tecs.filter(function (x) { return campo(x, "etiqueta") === p; })[0];
+        if (!t) return true;
+        if (c.tecnicas_alteradas.indexOf(t.id) === -1) c.tecnicas_alteradas.push(t.id);
+        migradas = true;
+        return false;
+      });
+      if (migradas) {
+        if (sueltas.length) d.v.cierre_modalidades = sueltas.join(", "); else delete d.v.cierre_modalidades;
+        registroGuardarYa();
+      }
       var chips = regNodo("div", "reg-p-chips");
-      nombres.forEach(function (n) {
+      tecs.forEach(function (t) {
         var lab = regNodo("label", "check reg-p-check");
         var cb = document.createElement("input");
         cb.type = "checkbox";
-        cb.checked = elegidas.indexOf(n) !== -1;
+        cb.checked = c.tecnicas_alteradas.indexOf(t.id) !== -1;
         cb.addEventListener("change", function () {
-          var marcadas = nombres.filter(function (m, k) { return chips.querySelectorAll("input")[k].checked; });
-          d.v.cierre_modalidades = marcadas.concat(sueltas).join(", ");
+          var i = c.tecnicas_alteradas.indexOf(t.id);
+          if (cb.checked && i === -1) c.tecnicas_alteradas.push(t.id);
+          if (!cb.checked && i !== -1) c.tecnicas_alteradas.splice(i, 1);
           registroGuardarYa();
         });
         lab.appendChild(cb);
-        lab.appendChild(regNodo("span", null, n));
+        lab.appendChild(regNodo("span", null, campo(t, "etiqueta")));
         chips.appendChild(lab);
       });
       bloque.appendChild(chips);
@@ -17193,7 +17252,7 @@
     REG_RESULTADO.forEach(function (o) {
       resV.appendChild(nodoInforme(doc, "span", "hj-it", hojaCasilla(d.v.cierre_resultado === o.v) + " " + regOpcionLabel(o)));
     });
-    resV.appendChild(nodoInforme(doc, "span", "hj-it", regL(hojaDef("cierre_modalidades")) + ": " + (d.v.cierre_modalidades || "____________")));
+    resV.appendChild(nodoInforme(doc, "span", "hj-it", regL(hojaDef("cierre_modalidades")) + ": " + (V("cierre_modalidades") || "____________")));
     res.appendChild(resV);
     gI.appendChild(res);
     var com = nodoInforme(doc, "div", "hj-celda hj-s4");
@@ -17204,11 +17263,11 @@
     comV.appendChild(nodoInforme(doc, "span", "hj-it", regL(hojaDef("cierre_deficit")) + ": " + (d.v.cierre_deficit || "____________________")));
     com.appendChild(comV);
     gI.appendChild(com);
-    gI.appendChild(hojaCelda(doc, regL(hojaDef("cierre_incidencias")), d.v.cierre_incidencias, 2));
+    gI.appendChild(hojaCelda(doc, regL(hojaDef("cierre_incidencias")), V("cierre_incidencias"), 2));
     gI.appendChild(hojaCelda(doc, regL(hojaDef("cierre_material")), d.v.cierre_material, 2));
     var perla = nodoInforme(doc, "div", "hj-celda hj-s4");
     perla.appendChild(nodoInforme(doc, "small", null, regL(hojaDef("cierre_perla"))));
-    perla.appendChild(nodoInforme(doc, "div", "hj-v", hojaCasilla(!!d.v.cierre_perla_check) + " " + T("hoja_caso_sesion") + "  " + (d.v.cierre_perla || "")));
+    perla.appendChild(nodoInforme(doc, "div", "hj-v", hojaCasilla(!!V("cierre_perla_check")) + " " + T("hoja_caso_sesion") + "  " + (V("cierre_perla") || "")));
     gI.appendChild(perla);
     var pend = nodoInforme(doc, "div", "hj-celda hj-s4");
     pend.appendChild(nodoInforme(doc, "small", null, T("hoja_pendientes")));
