@@ -40,6 +40,15 @@
     };
   })();
 
+  // Pone el cursor en un campo solo si hay teclado físico: en táctil sacaría
+  // el teclado en pantalla nada más abrir (28-09-2026, Etiquetas y Material
+  // nuevo). En el móvil se toca el campo cuando se quiere escribir.
+  function enfocarSinTeclado(el) {
+    if (!el) return;
+    if (window.matchMedia && matchMedia("(pointer: coarse)").matches) return;
+    el.focus();
+  }
+
   var MODO_DEMO = /(^|[?&])demo(=|&|$)/.test(location.search);
   var DEMO_PREFIJO = "mio_ionm_demo__";
   var DEMO_SEMBRADO_KEY = "demo_sembrado";
@@ -6150,7 +6159,7 @@
     document.getElementById("mat-error").hidden = true;
     refrescarPreviaMaterial();
     dlg.showModal();
-    document.getElementById("mat-nombre").focus();
+    enfocarSinTeclado(document.getElementById("mat-nombre"));
   }
 
   function guardarMaterial() {
@@ -6343,7 +6352,7 @@
   function abrirGestorEtiquetas(id) {
     cargarEtiquetaEnFormulario(id);
     if (!dlgEt.open) dlgEt.showModal();
-    document.getElementById("et-nombre").focus();
+    enfocarSinTeclado(document.getElementById("et-nombre"));
   }
 
   function guardarEtiqueta() {
@@ -6468,7 +6477,7 @@
   document.getElementById("et-borrar").addEventListener("click", borrarEtiqueta);
   document.getElementById("et-nueva").addEventListener("click", function () {
     cargarEtiquetaEnFormulario(null);
-    document.getElementById("et-nombre").focus();
+    enfocarSinTeclado(document.getElementById("et-nombre"));
   });
   document.getElementById("et-cerrar").addEventListener("click", function () {
     dlgEt.close();

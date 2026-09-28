@@ -1751,7 +1751,11 @@ dialog h3 {
 }
 .campo textarea { resize: vertical; }
 
-.campo-fila { flex-direction: row; align-items: flex-end; gap: 0.9rem; }
+/* flex-wrap (28-09-2026): sin él, en el móvil las filas de campos de
+   Etiquetas y Material nuevo se salían por la derecha. */
+.campo-fila { flex-direction: row; flex-wrap: wrap; align-items: flex-end; gap: 0.6rem 0.9rem; }
+/* Un <fieldset> no encoge por debajo de su contenido salvo con esto */
+.campo-estilo { min-width: 0; }
 .campo-fila > span { display: flex; flex-direction: column; gap: 0.18rem; }
 .campo-fila select { width: auto; }
 .check {
