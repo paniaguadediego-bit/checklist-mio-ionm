@@ -856,7 +856,7 @@
     tile_material:       { es: "Material", en: "Material" },
     // Inicio en tres bloques, con una línea bajo cada tarjeta (demo-congreso B2.F1).
     inicio_grupo_antes:   { es: "Antes de quirófano", en: "Before surgery" },
-    inicio_grupo_en:      { es: "En quirófano", en: "In the OR" },
+    inicio_grupo_en:      { es: "Quirófano", en: "Operating room" },
     inicio_grupo_despues: { es: "Después / consulta", en: "After / reference" },
     tile_organizador_sub: { es: "Qué electrodo va en cada canal", en: "Which electrode goes in each channel" },
     tile_casos_sub:       { es: "Cada cirugía: planificación, basales, alertas y cierre", en: "Each surgery: planning, baselines, alerts and closure" },

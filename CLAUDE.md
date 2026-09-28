@@ -343,8 +343,8 @@ distinta a la anterior, no importa el formato exacto.
 > **Resumen a 28-09-2026, tarde (léelo primero; el diario cronológico está en
 > el repositorio privado, ver al final de este archivo).**
 > - **Pantallas (Inicio en tres bloques, tarjetas centradas, una línea bajo cada
->   nombre):** *Antes de quirófano*: Organizador de Montajes, Gestión de Casos,
->   Checklist pre-quirúrgico. *En quirófano*: Registro intraoperatorio, Técnicas
+>   nombre):** *Antes de quirófano*: Organizador de Montajes, Gestión de Casos.
+>   *Quirófano*: Checklist pre-quirúrgico, Registro intraoperatorio, Técnicas
 >   IONM (solo con token). *Después / consulta*: Material, Docencia (Miotomas,
 >   Cama, Teoría básica pendiente), Simulador, Mis apuntes, Bibliografía
 >   recomendada.
