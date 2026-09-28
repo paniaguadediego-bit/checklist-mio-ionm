@@ -15208,23 +15208,23 @@
     { id: "cmep_msd", l: "c-MEP MSD", tec: ["c_pem"] }, { id: "cmep_msi", l: "c-MEP MSI", tec: ["c_pem"] },
     { id: "cmep_mid", l: "c-MEP MID", tec: ["c_pem"] }, { id: "cmep_mii", l: "c-MEP MII", tec: ["c_pem"] },
     { id: "grid", l: "GRID", tec: REG_TEC_GRID },
+    // Onda D debajo de GRID (28-09-2026, pedido del usuario), con el nombre
+    // que usa en quirófano. Los ids no cambian: lo escrito se conserva. Es
+    // respuesta motora, por eso va en la columna de MEP (24-09-2026); la
+    // distal (control) se añadió el 25-09-2026.
+    { id: "onda_d", l: "Prox. D-Wave", l_en: "Prox. D-wave", tec: ["onda_d"], defecto: true },
+    { id: "onda_d_dist", l: "Dist. D-Wave", l_en: "Dist. D-wave", tec: ["onda_d"], defecto: true },
     { id: "cobu_vii_d", l: "CoBu VII D", tec: ["pem_corticobulbares"] }, { id: "cobu_vii_i", l: "CoBu VII I", tec: ["pem_corticobulbares"] },
     { id: "cobu_ixx_d", l: "CoBu IX-X D", tec: ["pem_corticobulbares"] }, { id: "cobu_ixx_i", l: "CoBu IX-X I", tec: ["pem_corticobulbares"] },
     { id: "cobu_xii_d", l: "CoBu XII D", tec: ["pem_corticobulbares"] }, { id: "cobu_xii_i", l: "CoBu XII I", tec: ["pem_corticobulbares"] },
-    // Onda D y H-R sóleo son respuestas motoras: van en la columna de MEP
-    // (pedido del usuario, 24-09-2026). "onda_d" es la proximal (antes solo
-    // "Onda D"); la distal (control) se añadió el 25-09-2026.
-    { id: "onda_d", l: "Onda D prox.", l_en: "D wave prox.", tec: ["onda_d"], defecto: true },
-    { id: "onda_d_dist", l: "Onda D distal", l_en: "D wave distal", tec: ["onda_d"], defecto: true },
+    // H-R sóleo también es respuesta motora: columna de MEP (24-09-2026).
     { id: "hr_soleo_d", l: "H-R Sóleo D", l_en: "H-R Soleus R", tec: ["hr_popliteo"], defecto: true },
-    { id: "hr_soleo_i", l: "H-R Sóleo I", l_en: "H-R Soleus L", tec: ["hr_popliteo"], defecto: true },
-    // Con qué intensidad salía el MEP y cómo estaba la relajación en cada
-    // momento: sin esto una caída posterior no se puede interpretar.
-    { id: "umbral_mep", l: "Umbral MEP", l_en: "MEP threshold", tec: ["t_pem", "c_pem"], defecto: true },
-    { id: "tof", l: "TOF" }
+    { id: "hr_soleo_i", l: "H-R Sóleo I", l_en: "H-R Soleus L", tec: ["hr_popliteo"], defecto: true }
+    // "Umbral MEP" y "TOF" se quitaron el 28-09-2026 (pedido del usuario).
+    // Ningún caso real los tenía escritos; TOF sigue en el modo rápido del
+    // Registro como botón propio (REG_QUE_EXTRA).
   ];
-  // SEP y MEP suman 8 filas cada una (pedido del usuario, 24-09-2026: el
-  // resto sobraba en blanco): SEP 6 fijas + 2 libres, MEP 7 fijas + 1 libre.
+  // Filas libres al final de cada tabla (pedido del usuario, 24-09-2026).
   var REG_BASALES_LIBRES = { sens: 2, mot: 1 };
   // Tercera tabla: estimulación de tornillos, IZQ | NIVEL | DER, 8 filas.
   // Claves e_t_<n>_izq / _nivel / _der.
@@ -16072,6 +16072,7 @@
   // Modalidades sin fila de basales que también cambian en quirófano. Salen
   // si el caso tiene la técnica; sin caso (Modelo 0), solo las "defecto".
   var REG_QUE_EXTRA = [
+    { siempre: true, l: "TOF", l_en: "TOF" },
     { tec: ["emg"], l: "EMG libre", l_en: "Free-run EMG", defecto: true },
     { tec: ["mapeo_raices_tornillos"], l: "Tornillos", l_en: "Screws" },
     { tec: ["rbc"], l: "RBC", l_en: "BCR" },
@@ -16083,11 +16084,11 @@
     var c = registroCaso();
     var tec = c ? (c.tecnicas_realizadas || []) : null;
     var extra = REG_QUE_EXTRA.filter(function (x) {
+      if (x.siempre) return true;
       return tec ? x.tec.some(function (t) { return tec.indexOf(t) !== -1; }) : !!x.defecto;
     });
     return regFilasBasales(REG_BASALES_SENS, "s_", d, tec)
       .concat(regFilasBasales(REG_BASALES_MOT, "m_", d, tec))
-      .filter(function (r) { return r.id !== "umbral_mep"; })
       .concat(extra)
       .map(function (r) { return campo(r, "l"); });
   }
@@ -16570,7 +16571,7 @@
   // impresa, así que al quitar una se vacía en vez de moverse las demás).
   function pintarPantallaAlarmas(sec, cont, alCambiar) {
     var d = registroDatos();
-    var btn = regNodo("button", "primario reg-p-nuevo", T("reg_p_alarma_nueva"));
+    var btn = regNodo("button", "reg-p-nuevo", T("reg_p_alarma_nueva"));
     btn.type = "button";
     cont.appendChild(btn);
     var lista = regNodo("div", "reg-p-alarmas");
@@ -17522,8 +17523,6 @@
         e_m_mep_mii_basal: "TA + AH", e_m_mep_mii_post: "TA + AH", e_m_mep_mii_final: "Solo TA",
         e_m_onda_d_basal: "22 µV", e_m_onda_d_post: "21 µV", e_m_onda_d_final: "20 µV",
         e_m_onda_d_dist_basal: "14 µV", e_m_onda_d_dist_post: "14 µV", e_m_onda_d_dist_final: "12,5 µV",
-        e_m_umbral_mep_basal: "120 mA", e_m_umbral_mep_post: "120 mA", e_m_umbral_mep_final: "160 mA",
-        e_m_tof_basal: "4/4", e_m_tof_post: "4/4", e_m_tof_final: "4/4",
         cierre_resultado: "persistentes",
         cierre_modalidades: "MEP MII izq. (AH ausente, TA con umbral +40 mA). SEP de miembros inferiores (mielotomía).",
         cierre_com_cir: true, cierre_com_an: true, cierre_com_h: "14:15",

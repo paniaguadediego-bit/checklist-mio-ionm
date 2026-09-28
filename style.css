@@ -3821,6 +3821,20 @@ button, input, select, textarea { font-family: inherit; }
 /* Hoja completa en pantalla, simplificada (28-09-2026): eventos, alarmas y
    mapeo con la letra y las filas de "Basales y comparativa". */
 .reg-p-nuevo { margin: 0 0 0.5rem; }
+/* "+ Evento" / "+ Alarma": el mismo botón secundario que el resto de la
+   herramienta (28-09-2026; antes salían con el gris del navegador). */
+.reg-p-nuevo {
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.reg-p-nuevo:hover { background: var(--accent-soft); }
+@media (pointer: coarse), (max-width: 900px) { .reg-p-nuevo { min-height: 44px; } }
 .reg-p-ev + .reg-p-nuevo { margin: 0.4rem 0 0; }
 .reg-p-blanco input, .reg-p-blanco select { opacity: 0.75; }
 .reg-p-chips { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.1rem 0 0.3rem; }
