@@ -7498,95 +7498,11 @@
       // {NIVEL: {izq, der}} }. Un nivel presente en "valores" no se borra al
       // desmarcar su chip -mismo criterio que tecnicas_parametros-: es texto
       // escrito a mano, se deja de mostrar pero no se pierde.
-      var NIVELES_RAICES = [
-        "C1", "C2", "C3", "C4", "C5", "C6", "C7",
-        "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12",
-        "L1", "L2", "L3", "L4", "L5", "S1", "S2"
-      ];
       var datosRaices = { niveles: ((valor && valor.niveles) || []).slice(), valores: Object.assign({}, valor && valor.valores) };
       camposCaso[def.c] = datosRaices;
-
       var contRaices = document.createElement("div");
       contRaices.className = "umbral-raices";
-      var filaNiveles = document.createElement("div");
-      filaNiveles.className = "chip-fila";
-      var contValores = document.createElement("div");
-      contValores.className = "umbral-raices-valores";
-
-      // Rediseño 28-09-2026 (pedido del usuario: "no da la sensación de que
-      // L4 está en el centro y a los lados cada salida de raíz"): una columna
-      // vertebral -los niveles apilados en orden anatómico, unidos por una
-      // línea vertical- y de cada nivel una rama a cada lado hasta la casilla
-      // de ese lado. Una sola cabecera Izquierda · Nivel · Derecha en vez de
-      // "I"/"D" en cada fila; el texto largo sigue como title/aria-label y es
-      // el que sale en el informe en PDF.
-      var pintarValoresRaices = function () {
-        contValores.textContent = "";
-        var ordenados = datosRaices.niveles.slice().sort(function (a, b) {
-          return NIVELES_RAICES.indexOf(a) - NIVELES_RAICES.indexOf(b);
-        });
-        if (!ordenados.length) return;
-        var cab = document.createElement("div");
-        cab.className = "umbral-raices-fila umbral-raices-cab";
-        [T("umbral_raices_cab_izq"), "", T("umbral_raices_cab_nivel"), "", T("umbral_raices_cab_der")].forEach(function (t) {
-          var sp = document.createElement("span");
-          sp.textContent = t;
-          cab.appendChild(sp);
-        });
-        contValores.appendChild(cab);
-        ordenados.forEach(function (nivel, k) {
-          if (!datosRaices.valores[nivel]) datosRaices.valores[nivel] = {};
-          var vals = datosRaices.valores[nivel];
-          var campoLado = function (lado, etiquetaLarga) {
-            var inp = document.createElement("input");
-            inp.type = "text";
-            inp.inputMode = "decimal";
-            inp.className = "umbral-raices-mA " + lado;
-            inp.title = etiquetaLarga;
-            inp.setAttribute("aria-label", etiquetaLarga);
-            inp.value = vals[lado] || "";
-            inp.addEventListener("input", function () { vals[lado] = inp.value; });
-            return inp;
-          };
-          var rama = function (lado) {
-            var r = document.createElement("span");
-            r.className = "umbral-raices-rama " + lado;
-            return r;
-          };
-          var vert = document.createElement("span");
-          vert.className = "umbral-raices-vert" + (k === 0 ? " primera" : "") + (k === ordenados.length - 1 ? " ultima" : "");
-          var pill = document.createElement("span");
-          pill.className = "umbral-raices-nivel";
-          pill.textContent = nivel;
-          vert.appendChild(pill);
-
-          var filaNivel = document.createElement("div");
-          filaNivel.className = "umbral-raices-fila";
-          filaNivel.appendChild(campoLado("izq", T("umbral_raices_izq", { nivel: nivel })));
-          filaNivel.appendChild(rama("izq"));
-          filaNivel.appendChild(vert);
-          filaNivel.appendChild(rama("der"));
-          filaNivel.appendChild(campoLado("der", T("umbral_raices_der", { nivel: nivel })));
-          contValores.appendChild(filaNivel);
-        });
-      };
-
-      NIVELES_RAICES.forEach(function (nivel) {
-        var chip = document.createElement("span");
-        chip.className = "chip chip-extra" + (datosRaices.niveles.indexOf(nivel) !== -1 ? " activo" : "");
-        chip.textContent = nivel;
-        chip.addEventListener("click", function () {
-          var i = datosRaices.niveles.indexOf(nivel);
-          if (i === -1) datosRaices.niveles.push(nivel); else datosRaices.niveles.splice(i, 1);
-          chip.classList.toggle("activo", i === -1);
-          pintarValoresRaices();
-        });
-        filaNiveles.appendChild(chip);
-      });
-
-      pintarValoresRaices();
-      contRaices.appendChild(filaNiveles);
-      contRaices.appendChild(contValores);
+      pintarColumnaRaices(contRaices, datosRaices, REG_SIN_GUARDAR, false);
       div.appendChild(contRaices);
       if (def.ay) div.appendChild(ayudaCampo(def.ay));
       ocultarSegunTecnica(div, "mapeo_raices_tornillos");
@@ -16983,6 +16899,94 @@
     pintar();
   }
 
+  /* Umbrales EMG por raíz, en columna vertebral: chips para elegir los
+     niveles y, debajo, los niveles en orden anatómico unidos por una línea
+     vertical, con una rama a cada lado hasta el umbral de ese lado. Entre
+     niveles no contiguos (L3 y L5, por ejemplo) la línea es discontinua. La
+     usan la ficha (sobre la copia de trabajo, guardar = REG_SIN_GUARDAR) y el
+     E2 del Registro (el mismo dato del caso). datos = { niveles, valores:
+     {NIVEL: {izq, der}} }. Un nivel desmarcado conserva sus valores: es
+     texto escrito a mano, se deja de mostrar pero no se pierde. */
+  function pintarColumnaRaices(cont, datos, guardar, compartido) {
+    guardar = guardar || REG_GUARDAR;
+    if (!datos.niveles) datos.niveles = [];
+    if (!datos.valores) datos.valores = {};
+    var filaNiveles = document.createElement("div");
+    filaNiveles.className = "chip-fila";
+    var contValores = document.createElement("div");
+    contValores.className = "umbral-raices-valores";
+    function pintarValores() {
+      contValores.textContent = "";
+      var ordenados = datos.niveles.slice().sort(function (a, b) {
+        return REG_NIVELES_RAICES.indexOf(a) - REG_NIVELES_RAICES.indexOf(b);
+      });
+      if (!ordenados.length) return;
+      var cab = document.createElement("div");
+      cab.className = "umbral-raices-fila umbral-raices-cab";
+      [T("umbral_raices_cab_izq"), "", T("umbral_raices_cab_nivel") + (compartido ? " ⇄" : ""), "", T("umbral_raices_cab_der")].forEach(function (t) {
+        var sp = document.createElement("span");
+        sp.textContent = t;
+        cab.appendChild(sp);
+      });
+      contValores.appendChild(cab);
+      ordenados.forEach(function (nivel, k) {
+        if (!datos.valores[nivel]) datos.valores[nivel] = {};
+        var vals = datos.valores[nivel];
+        var pos = REG_NIVELES_RAICES.indexOf(nivel);
+        var saltoArriba = k > 0 && pos - REG_NIVELES_RAICES.indexOf(ordenados[k - 1]) > 1;
+        var saltoAbajo = k < ordenados.length - 1 && REG_NIVELES_RAICES.indexOf(ordenados[k + 1]) - pos > 1;
+        function campoLado(lado, etiquetaLarga) {
+          var inp = document.createElement("input");
+          inp.type = "text";
+          inp.inputMode = "decimal";
+          inp.className = "umbral-raices-mA " + lado;
+          inp.title = etiquetaLarga;
+          inp.setAttribute("aria-label", etiquetaLarga);
+          inp.value = vals[lado] || "";
+          inp.addEventListener("input", function () { vals[lado] = inp.value; guardar.cambiar(); });
+          inp.addEventListener("change", function () { guardar.salir(); });
+          return inp;
+        }
+        function rama(lado) {
+          var r = document.createElement("span");
+          r.className = "umbral-raices-rama " + lado;
+          return r;
+        }
+        var vert = document.createElement("span");
+        vert.className = "umbral-raices-vert" + (k === 0 ? " primera" : "") + (k === ordenados.length - 1 ? " ultima" : "") +
+          (saltoArriba ? " salto-arriba" : "") + (saltoAbajo ? " salto-abajo" : "");
+        var pill = document.createElement("span");
+        pill.className = "umbral-raices-nivel";
+        pill.textContent = nivel;
+        vert.appendChild(pill);
+        var filaNivel = document.createElement("div");
+        filaNivel.className = "umbral-raices-fila" + (saltoArriba ? " con-salto" : "");
+        filaNivel.appendChild(campoLado("izq", T("umbral_raices_izq", { nivel: nivel })));
+        filaNivel.appendChild(rama("izq"));
+        filaNivel.appendChild(vert);
+        filaNivel.appendChild(rama("der"));
+        filaNivel.appendChild(campoLado("der", T("umbral_raices_der", { nivel: nivel })));
+        contValores.appendChild(filaNivel);
+      });
+    }
+    REG_NIVELES_RAICES.forEach(function (nivel) {
+      var chip = document.createElement("span");
+      chip.className = "chip chip-extra" + (datos.niveles.indexOf(nivel) !== -1 ? " activo" : "");
+      chip.textContent = nivel;
+      chip.addEventListener("click", function () {
+        var i = datos.niveles.indexOf(nivel);
+        if (i === -1) datos.niveles.push(nivel); else datos.niveles.splice(i, 1);
+        chip.classList.toggle("activo", i === -1);
+        guardar.salir();
+        pintarValores();
+      });
+      filaNiveles.appendChild(chip);
+    });
+    pintarValores();
+    cont.appendChild(filaNiveles);
+    cont.appendChild(contValores);
+  }
+
   // Raíces y tornillos: nivel · izq. · der. Con caso, son los "Umbrales EMG
   // por raíz" de la ficha (el mismo dato, ⇄); sin caso, la tabla suelta.
   function pintarMapeoRaices(cont, d) {
@@ -16992,70 +16996,11 @@
     var datos = c.umbral_raices_niveles;
     if (!datos.niveles) datos.niveles = [];
     if (!datos.valores) datos.valores = {};
-    var tabla = regNodo("div", "reg-basal reg-p-raices");
-    cont.appendChild(tabla);
-    function pintar() {
-      tabla.textContent = "";
-      var cab = regNodo("div", "reg-basal-fila reg-basal-cab");
-      [T("reg_p_izq_ma"), T("reg_p_nivel") + " ⇄", T("reg_p_der_ma"), ""].forEach(function (t) { cab.appendChild(regNodo("span", null, t)); });
-      tabla.appendChild(cab);
-      var filas = datos.niveles.slice();
-      var blancas = Math.max(8 - filas.length, 1);
-      for (var k = 0; k < blancas; k++) filas.push("");
-      filas.forEach(function (nivel) {
-        var f = regNodo("div", "reg-basal-fila");
-        var vals = nivel ? (datos.valores[nivel] = datos.valores[nivel] || {}) : null;
-        function lado(clave, etq) {
-          var inp = document.createElement("input");
-          inp.type = "text";
-          inp.inputMode = "decimal";
-          inp.placeholder = etq;
-          inp.setAttribute("aria-label", (nivel || "") + " " + etq);
-          inp.disabled = !nivel;
-          inp.value = vals ? (vals[clave] || "") : "";
-          inp.addEventListener("input", function () { vals[clave] = inp.value; registroGuardar(); });
-          inp.addEventListener("change", registroGuardarYa);
-          return inp;
-        }
-        f.appendChild(lado("izq", T("reg_p_izq_ma")));
-        var sel = document.createElement("select");
-        sel.setAttribute("aria-label", T("reg_p_nivel"));
-        [""].concat(REG_NIVELES_RAICES).forEach(function (n) {
-          var op = document.createElement("option");
-          op.value = n;
-          op.textContent = n || "—";
-          sel.appendChild(op);
-        });
-        sel.value = nivel;
-        sel.addEventListener("change", function () {
-          var nuevo = sel.value;
-          if (nuevo && datos.niveles.indexOf(nuevo) !== -1 && nuevo !== nivel) {
-            alert(T("reg_p_nivel_repetido"));
-            sel.value = nivel;
-            return;
-          }
-          var i = datos.niveles.indexOf(nivel);
-          if (nivel && i !== -1) {
-            if (nuevo) {
-              datos.niveles[i] = nuevo;
-              datos.valores[nuevo] = datos.valores[nivel] || {};
-              delete datos.valores[nivel];
-            } else {
-              datos.niveles.splice(i, 1);
-            }
-          } else if (nuevo) {
-            datos.niveles.push(nuevo);
-          }
-          registroGuardarYa();
-          pintar();
-        });
-        f.appendChild(sel);
-        f.appendChild(lado("der", T("reg_p_der_ma")));
-        f.appendChild(regNodo("span"));
-        tabla.appendChild(f);
-      });
-    }
-    pintar();
+    // La misma columna vertebral que la ficha (28-09-2026, pedido del
+    // usuario), sobre el mismo dato del caso.
+    var contR = regNodo("div", "umbral-raices");
+    cont.appendChild(contR);
+    pintarColumnaRaices(contR, datos, REG_GUARDAR, true);
   }
 
   // Sin caso vinculado: la tabla de tornillos de siempre (e_t_*)

@@ -2399,22 +2399,31 @@ dialog h3 {
 }
 .umbral-raices-cab { min-height: 0; margin-bottom: 0.2rem; font-size: 0.68rem; color: var(--text-muted); text-align: center; }
 .umbral-raices-vert { position: relative; align-self: stretch; display: flex; align-items: center; justify-content: center; }
-.umbral-raices-vert::before {
-  content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 3px; margin-left: -1.5px;
+/* Línea de la columna en dos mitades: ::before sube hacia el nivel de
+   arriba y ::after baja hacia el de abajo. Entre niveles no contiguos
+   (salto) la mitad correspondiente es discontinua. */
+.umbral-raices-vert::before, .umbral-raices-vert::after {
+  content: ""; position: absolute; left: 50%; width: 3px; margin-left: -1.5px;
   background: var(--border);
 }
-.umbral-raices-vert.primera::before { top: 50%; }
-.umbral-raices-vert.ultima::before { bottom: 50%; }
-.umbral-raices-vert.primera.ultima::before { display: none; }
+.umbral-raices-vert::before { top: 0; bottom: 50%; }
+.umbral-raices-vert::after { top: 50%; bottom: 0; }
+.umbral-raices-vert.primera::before, .umbral-raices-vert.ultima::after { display: none; }
+/* Hueco extra entre niveles no contiguos, cubierto por el tramo discontinuo. */
+.umbral-raices-fila.con-salto { margin-top: 1rem; }
+.umbral-raices-fila.con-salto .umbral-raices-vert.salto-arriba::before { top: -1rem; }
+.umbral-raices-vert.salto-arriba::before, .umbral-raices-vert.salto-abajo::after {
+  background: repeating-linear-gradient(to bottom, var(--text-muted) 0 4px, transparent 4px 8px);
+}
 .umbral-raices-nivel {
-  position: relative; min-width: 2.6rem; padding: 0.18rem 0.3rem; text-align: center;
+  position: relative; z-index: 1; min-width: 2.6rem; padding: 0.18rem 0.3rem; text-align: center;
   font-weight: 700; font-size: 0.8rem; color: var(--accent);
   background: var(--card-bg); border: 1.5px solid var(--accent); border-radius: 6px;
 }
 .umbral-raices-rama { height: 2px; background: var(--accent); opacity: 0.55; }
 .umbral-raices-rama.izq { margin-left: 0.15rem; }
 .umbral-raices-rama.der { margin-right: 0.15rem; }
-.campo .umbral-raices-fila input.umbral-raices-mA {
+.umbral-raices .umbral-raices-fila input.umbral-raices-mA {
   font: inherit; font-size: 0.85rem; width: 100%; box-sizing: border-box; text-align: center;
   padding: 0.25rem 0.3rem; border: 1px solid var(--border); border-radius: var(--r);
   background: var(--campo-bg); color: var(--text);
