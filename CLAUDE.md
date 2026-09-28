@@ -159,8 +159,10 @@ una copia local y compárala con la del repositorio.
 ### Antes de cualquier cambio grande en el código
 
 Exporta una copia desde la herramienta (**Exportar copia**) y guárdala fuera del
-proyecto. Desde el arreglo de agosto de 2026 esa exportación es **idéntica** a lo
-que se sube a GitHub, así que sirve de restauración completa.
+proyecto. **Ojo:** esa copia es `estadoActual()` -catálogos, etiquetas y material
+propio-, **no incluye casos, montajes ni apuntes** (van en archivos aparte desde
+que se separaron). Para esos, la copia de verdad es el repositorio de datos: clónalo
+(ver «Copia fría completa» más arriba) antes de un cambio grande.
 
 ---
 
@@ -191,7 +193,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Mis apuntes: carpetas con color, orden, editor con negrita/cursiva (24-09-2026) | `grupoCarpetaApunte()`, `crearSeccionApunte()`, `moverCarpetaApunte()`, `moverSeccionApunte()`, `apunteSanear()` | ver `grep` |
 | Mis apuntes: fotos como archivos aparte + sincronización | `subirApunteDocYaHidratado()`, `subirFotosApuntePendientes()`, `descargarFotosApunteFaltantes()`, `borrarFotosApunteRemotas()`, `apunteDocLigero()` | ver `grep` |
 | Mis apuntes: exportar a Word (.docx, sin librerías) | `exportarApuntesWord()`, `zipSinComprimir()`, `docxParrafosDeHtml()` | ver `grep` |
-| Registro intraoperatorio: pantalla digital | `REG_SECCIONES`, `regControl()`, `regGet()`, `pintarSeccion*()`, `registroPasarAlCaso()` | ver `grep` |
+| Registro intraoperatorio: pantalla digital | `REG_SECCIONES`, `regControl()`, `regGet()`, `pintarSeccion*()` | ver `grep` |
 | Lista propia de TODOS los desplegables (el `<select>` cerrado no cambia; un manejador en `document` en captura; `data-nativo` para excluir uno) | `selEsPropio()`, `abrirListaSelect()`, `colocarListaSelect()`, `cerrarListaSelect()` | ver `grep` |
 | Técnicas IONM desde el repo privado | `bajarTecnicasMio()`, `hayTecnicasMio()`, `pintarTileTecnicasMio()`, `olvidarTecnicasMio()`, `TECMIO_KEY` | ver `grep` |
 | Catálogo del Organizador en el móvil (sin scroll propio; al elegir sube a las cajas y al colocar vuelve al material) | `plegarCatalogo()`, `anclaCatalogo`, `catalogoConScrollPropio()`, `altoBarrasFijas()` | ver `grep` |

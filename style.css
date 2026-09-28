@@ -4013,3 +4013,14 @@ body.sin-ayudas .coste-nota { display: none !important; }
 /* Dos casillas en la misma fila de la ficha ("par" en CAMPOS_CASO): Caso
    destacado y Hacer seguimiento (28-09-2026, pedido del usuario). */
 .campo.campo-par { display: inline-flex; width: calc(50% - 0.3rem); vertical-align: top; margin-right: 0.3rem; }
+
+/* Áreas táctiles más grandes sin cambiar el aspecto (auditoría 28-09-2026,
+   F4): un pseudo-elemento transparente amplía la zona que se puede tocar.
+   La ✕ de quitar material (≈10×11 px) pasa a ≈22×21: las entradas de una
+   caja están a 21 px unas de otras, así que más alto invadiría la ✕ de la
+   fila vecina. En Mis apuntes solo se amplía en vertical: ▲ y ▼ (y las
+   acciones de carpeta) van pegados en horizontal. */
+.chip-quitar { position: relative; }
+.chip-quitar::after { content: ""; position: absolute; top: -5px; bottom: -5px; left: -4px; right: -8px; }
+.apunte-flecha, .apunte-carpeta-accion { position: relative; }
+.apunte-flecha::after, .apunte-carpeta-accion::after { content: ""; position: absolute; top: -8px; bottom: -8px; left: 0; right: 0; }

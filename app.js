@@ -195,7 +195,7 @@
     escenario_aria:      { es: "Escenario de cirugía", en: "Surgery scenario" },
     idioma_titulo:       { es: "Switch to English", en: "Cambiar a español" },
     sync_titulo:         { es: "Sincronizar con GitHub", en: "Sync with GitHub" },
-    btn_exportar_casos:  { es: "Exportar casos (PDF)", en: "Export cases (PDF)" },
+    btn_exportar_casos:  { es: "Informe de casos (PDF)", en: "Cases report (PDF)" },
     btn_exportar_casos_tit: { es: "Abre un informe imprimible de los casos que cumplen los filtros de arriba (Estado/Desde/Hasta/Destacados/Seguimiento) -usa \"Guardar como PDF\" en el diálogo de impresión del navegador. En pruebas: dilo si algo no sale bien.",
                            en: "Opens a printable report of the cases matching the filters above (Status/From/To/Notable/Follow-up) -use \"Save as PDF\" in the browser's print dialog. Still being tested: let me know if something looks off." },
     btn_exportar_casos_csv: { es: "Exportar CSV", en: "Export CSV" },
@@ -576,7 +576,7 @@
     caso_volver:         { es: "Volver a la lista", en: "Back to the list" },
     caso_borrar:         { es: "Borrar caso", en: "Delete case" },
     caso_mas_tit:        { es: "Más acciones", en: "More actions" },
-    caso_crear_informe:  { es: "Crear informe", en: "Create report" },
+    caso_crear_informe:  { es: "Informe (PDF)", en: "Report (PDF)" },
     caso_informe_proximamente: { es: "Crear informe: todavía no hace nada, en camino.", en: "Create report: not wired up yet, coming soon." },
     caso_borrar_conf:    { es: "¿Borrar el caso “{caso}”?\nSe borra también del repositorio en cuanto haya conexión. No se puede deshacer desde la app, aunque queda recuperable en el historial de git.",
                            en: "Delete the case “{caso}”?\nAlso deleted from the repository as soon as there is a connection. This cannot be undone from the app, though it stays recoverable in the git history." },
@@ -763,6 +763,11 @@
     opc_evolucion_postop_no_valorable:       { es: "No valorable", en: "Not assessable" },
     caso_concordancia_propuesta: { es: "Propuesta según alarmas, resultado de la señal y evolución: {v}", en: "Suggested from alarms, signal outcome and evolution: {v}" },
     caso_concordancia_aplicar: { es: "Aplicar", en: "Apply" },
+    caso_conc_alerta:     { es: "Hubo alerta", en: "Alert" },
+    caso_conc_sin_alerta: { es: "Sin alerta", en: "No alert" },
+    caso_salir_guardar:   { es: "Hay cambios sin guardar en la ficha.\n\n¿Guardarlos antes de salir?", en: "There are unsaved changes in the case form.\n\nSave them before leaving?" },
+    caso_salir_descartar: { es: "¿Salir sin guardar? Se perderán los cambios.", en: "Leave without saving? The changes will be lost." },
+    caso_cambiado_fuera:  { es: "Este caso ha cambiado en otro dispositivo mientras tenías la ficha abierta.\n\nSi guardas, sustituirás esos cambios. ¿Guardar igualmente?", en: "This case changed on another device while you had the form open.\n\nSaving will replace those changes. Save anyway?" },
     caso_resultado_esperable: { es: "Resultado esperable", en: "Expected outcome" },
     caso_resultado_esperable_ay: { es: "Lo que cabría esperar en el postoperatorio respecto al estado previo, dado lo registrado, para compararlo después con la evolución real. Es el mismo dato que el Cierre del Registro intraoperatorio.",
                            en: "What would be expected postoperatively compared with the previous state, given what was recorded, to compare later against the actual evolution. It is the same data as the Closure of the intraoperative record." },
@@ -1257,12 +1262,6 @@
     registro_mod_cab:    { es: "Cabecera", en: "Header" },
     registro_mod_fila:   { es: "Fila {n}", en: "Row {n}" },
     registro_mod_mas:    { es: "+ Fila", en: "+ Row" },
-    registro_pasar_caso: { es: "Pasar al caso", en: "Send to case" },
-    registro_pasar_nada: { es: "No hay nada que pasar: los campos del caso que corresponden ya están rellenos, o la hoja aún no tiene esos datos.",
-                           en: "Nothing to send: the matching case fields are already filled, or the sheet has no such data yet." },
-    registro_pasar_conf: { es: "Se rellenarán estos campos del caso (solo estaban vacíos, no se pisa nada):\n\n{lista}\n\n¿Continuar?",
-                           en: "These case fields will be filled (they were empty, nothing is overwritten):\n\n{lista}\n\nContinue?" },
-    registro_pasado:     { es: "Datos pasados al caso.", en: "Data sent to the case." },
     registro_guardar:    { es: "Guardar", en: "Save" },
     registro_guardado:   { es: "Registro guardado.", en: "Record saved." },
     rr_vista_rapida:     { es: "Modo rápido", en: "Quick mode" },
@@ -1333,7 +1332,7 @@
                            en: "↑ MAP · corticosteroids · wake-up test · consider aborting (adapted from Acharya 2017)" },
     hoja_recup_txt:      { es: "S sí · P parcial · N no", en: "S yes · P partial · N no" },
     hoja_resp:           { es: "Resp. NRF·An·Cir", en: "Resp. NRF·An·Surg" },
-    hoja_resultado:      { es: "Resultado", en: "Result" },
+    hoja_resultado:      { es: "Resultado de la señal", en: "Signal outcome" },
     hoja_comunicacion:   { es: "Comunicación final", en: "Final communication" },
     hoja_cirujano:       { es: "Cirujano", en: "Surgeon" },
     hoja_anestesia:      { es: "Anestesia", en: "Anaesthesia" },
@@ -4283,8 +4282,17 @@
   /* Guarda un caso en local y lo deja listo para subir. En quirófano se
      queda esperando, igual que el resto: durante la cirugía no se toca la
      red. Al salir del modo se manda. */
-  function guardarCaso(caso, esNuevo) {
-    if (!esNuevo) caso.editado_en = (caso.editado_en || []).concat(new Date().toISOString());
+  // "desdeRegistro" (auditoría 28-09-2026, C9): el Registro guarda en cada
+  // cambio; sellar "editado_en" cada vez dejaba cientos de marcas por
+  // cirugía. Desde el Registro se sella como mucho una vez cada 30 minutos.
+  function guardarCaso(caso, esNuevo, desdeRegistro) {
+    if (!esNuevo) {
+      var marcas = caso.editado_en || [];
+      var ultima = marcas.length ? Date.parse(marcas[marcas.length - 1]) : 0;
+      if (!desdeRegistro || !ultima || Date.now() - ultima > 30 * 60000) {
+        caso.editado_en = marcas.concat(new Date().toISOString());
+      }
+    }
     alarmasEnCaso(caso);
     casos[caso.caso_uid] = caso;
     if (!MODO_DEMO) casosSinSubir[caso.caso_uid] = true;   // en la demo no hay nada que subir
@@ -4586,6 +4594,19 @@
     return !Object.keys(f || {}).some(function (k) { return k !== "id" && f[k]; });
   }
 
+  // ¿Tiene la alarma algo escrito de verdad? (auditoría 28-09-2026, C5) Ni
+  // la marca "manual" del «+ Alarma» de la ficha ni una lista de medidas
+  // vacía (marcar y desmarcar un chip) cuentan: si no, una alarma en blanco
+  // ponía «Hubo alerta» y «A1: » en el CSV y el Sheet. filaRegistroVacia()
+  // sigue decidiendo qué filas se pintan (la alarma recién creada se ve).
+  function alarmaEscrita(a) {
+    return Object.keys(a || {}).some(function (k) {
+      if (k === "id" || k === "manual") return false;
+      var v = a[k];
+      return Array.isArray(v) ? v.length > 0 : !!v;
+    });
+  }
+
   // Minutos entre dos "HH:MM"; si la recuperación cae pasada la medianoche,
   // suma un día en vez de dar un número negativo.
   function minutosEntre(h1, h2) {
@@ -4613,7 +4634,7 @@
       };
       function sacar(tipo, lista, prefijo, aFila) {
         (lista || []).forEach(function (f, i) {
-          if (filaRegistroVacia(f)) return;
+          if (filaRegistroVacia(f) || (tipo === "alarma" && !alarmaEscrita(f))) return;
           var fila = Object.assign({ tipo_fila: tipo, n: prefijo + (i + 1) }, comunes, aFila(f));
           filas.push(COLUMNAS_CSV_EVENTOS.map(function (col) {
             var v = fila[col];
@@ -4887,7 +4908,7 @@
     var d = c.registro_intraop;
     var filas = [];
     ((d && d.alarmas) || []).forEach(function (a, i) {
-      if (filaRegistroVacia(a)) return;
+      if (!alarmaEscrita(a)) return;
       var m = textoMedidasAlarma(a, i);
       filas.push(filaInforme(doc, "A" + (i + 1), textoAlarma(a, i).replace(/^A\d+: /, "") +
         (m ? "\n" + T("reg_p_medidas") + ": " + m.replace(/^A\d+: /, "") : ""), true));
@@ -6884,6 +6905,13 @@
     if (p.senal === "transitorios") return deficit ? "VP" : "PR";
     return deficit ? "VP" : "";
   }
+  // Qué datos llevaron a la propuesta, para que se vea la regla aplicada
+  // (auditoría 28-09-2026, C7): «Cambios persistentes + Déficit nuevo…».
+  function motivoConcordancia(p) {
+    var senal = p.senal ? opcionTexto("recuperacion_senal", p.senal)
+      : T(p.alerta ? "caso_conc_alerta" : "caso_conc_sin_alerta");
+    return senal + " + " + opcionTexto("evolucion_postop", p.evol);
+  }
 
   // Texto libre de antes -> id de la lista, solo cuando la equivalencia es
   // exacta ("Sin cambios.", "Similar al estado previo"...). Lo que lleva
@@ -7999,15 +8027,17 @@
       propC.className = "caso-propuesta";
       ctlConc.parentNode.appendChild(propC);
       var actualizarPropC = function () {
-        var v = propuestaConcordancia({
+        var datosC = {
           alerta: !!(camposCaso.alerta && camposCaso.alerta.checked) || alarmasConDatos(casoAbierto.registro_intraop).length > 0,
           senal: camposCaso.recuperacion_senal ? camposCaso.recuperacion_senal.value : "",
           evol: camposCaso.evolucion_postop ? camposCaso.evolucion_postop.value : ""
-        });
+        };
+        var v = propuestaConcordancia(datosC);
         propC.textContent = "";
         propC.hidden = !v || v === ctlConc.value;
         if (propC.hidden) return;
-        propC.appendChild(regNodo("span", null, T("caso_concordancia_propuesta", { v: opcionTexto("concordancia", v) })));
+        propC.appendChild(regNodo("span", null, T("caso_concordancia_propuesta", { v: opcionTexto("concordancia", v) }) +
+          " (" + motivoConcordancia(datosC) + ")"));
         var ap = regNodo("button", "caso-propuesta-aplicar", T("caso_concordancia_aplicar"));
         ap.type = "button";
         ap.addEventListener("click", function () {
@@ -8042,6 +8072,8 @@
     document.getElementById("caso-mas").hidden = casoEsNuevo;
     cerrarMenuCaso();
     document.getElementById("caso-error").hidden = true;
+    fichaOrigen = casos[c.caso_uid] || null;
+    fichaFirma = firmaFicha();
   }
 
   function leerFichaCaso() {
@@ -8087,13 +8119,42 @@
       err.hidden = false;
       return false;
     }
+    // El caso cambió mientras la ficha estaba abierta (lo bajó la
+    // sincronización desde otro dispositivo): guardar la copia de trabajo lo
+    // pisaría entero. Se pregunta (auditoría 28-09-2026, C10).
+    if (!casoEsNuevo && fichaOrigen && casos[c.caso_uid] && casos[c.caso_uid] !== fichaOrigen &&
+        !confirm(T("caso_cambiado_fuera"))) return false;
     if (cerrar) c.estado = c.estado === "cerrado" ? "preparado" : "cerrado";
     recordarCentro(c.centro);
     guardarCaso(c, casoEsNuevo);
     casoEsNuevo = false;
     casoAbierto = clonar(casos[c.caso_uid]);
+    fichaOrigen = casos[c.caso_uid];
+    fichaFirma = firmaFicha();
     avisoGuardado(T("caso_guardado"));
     return true;
+  }
+
+  /* Cambios sin guardar en la ficha (auditoría 28-09-2026, C1): la ficha
+     trabaja sobre una copia y solo se guarda con «Guardar»; salir sin
+     guardar perdía lo escrito sin avisar. "fichaFirma" es la ficha tal como
+     quedó al pintarla o al guardarla; "fichaOrigen", el objeto de `casos`
+     del que se copió (si la sincronización lo sustituye, se nota, C10). */
+  var fichaFirma = "";
+  var fichaOrigen = null;
+  function firmaFicha() {
+    try { return JSON.stringify(leerFichaCaso()); } catch (e) { return ""; }
+  }
+  function salirDeFicha() {
+    if (casoAbierto && firmaFicha() !== fichaFirma) {
+      if (confirm(T("caso_salir_guardar"))) {
+        if (!guardarFicha(false)) return;
+      } else if (!confirm(T("caso_salir_descartar"))) {
+        return;
+      }
+    }
+    dlgCaso.close();
+    abrirListaCasos();
   }
 
   // Uids que cumplen los filtros activos de la pantalla (Estado/Desde/Hasta/
@@ -8409,12 +8470,17 @@
     cerrarMontajeDeCaso(true);
   });
   document.getElementById("caso-volver").addEventListener("click", function () {
-    // Solo navega, no guarda nada: para eso está "Guardar". Cerrar el caso
-    // es cambiar el campo Estado en Identificación/Trazabilidad, como
-    // cualquier otro campo -pedido del usuario, ya no hay un botón aparte
-    // que lo haga por su cuenta-.
-    dlgCaso.close();
-    abrirListaCasos();
+    // No guarda por su cuenta: si hay cambios sin guardar, pregunta antes
+    // (ver salirDeFicha()). Cerrar el caso es cambiar el campo Estado en
+    // Identificación/Trazabilidad, como cualquier otro campo -pedido del
+    // usuario, ya no hay un botón aparte que lo haga por su cuenta-.
+    salirDeFicha();
+  });
+  // Esc, o el gesto de atrás en los navegadores que lo convierten en
+  // "cancel" del <dialog>: mismo camino que «Volver a la lista».
+  dlgCaso.addEventListener("cancel", function (e) {
+    e.preventDefault();
+    salirDeFicha();
   });
 
   /* ---------------------------------------------------------------- *
@@ -15658,7 +15724,7 @@
   function registroGuardarYa() {
     if (registroTimer) { clearTimeout(registroTimer); registroTimer = null; }
     var c = registroCaso();
-    if (c) guardarCaso(c); else registroGuardarModeloCero();
+    if (c) guardarCaso(c, false, true); else registroGuardarModeloCero();
   }
   function registroGuardar() {
     if (registroTimer) clearTimeout(registroTimer);
@@ -16174,7 +16240,7 @@
     pintarSelectorVistaRegistro(cont);
     if (regVista() === "rapida") {
       pintarModoRapido(cont);
-      document.getElementById("registro-pasar-caso").hidden = !registroCaso();
+      document.getElementById("registro-vaciar").hidden = !!registroCaso();
       return;
     }
     var hojaActual = 0;
@@ -16227,7 +16293,11 @@
       det.appendChild(cuerpo);
       cont.appendChild(det);
     });
-    document.getElementById("registro-pasar-caso").hidden = !registroCaso();
+    // «Vaciar» solo en Modelo 0 (auditoría 28-09-2026, C2): con un caso
+    // vinculado, el Registro guarda basales, alarmas, mapeo y eventos de
+    // anestesia que también son datos de la ficha (espejo); vaciarlos de un
+    // toque desde la barra de quirófano era demasiado fácil.
+    document.getElementById("registro-vaciar").hidden = !!registroCaso();
   }
 
   /* ---- Modo rápido (27-09-2026) ---------------------------------------
@@ -17192,7 +17262,7 @@
   }
 
   function alarmasConDatos(d) {
-    return ((d && d.alarmas) || []).filter(function (a) { return !filaRegistroVacia(a); });
+    return ((d && d.alarmas) || []).filter(alarmaEscrita);
   }
 
   /* Fichas de alarma (G) con listas cerradas. La usan el Registro y la ficha
@@ -17298,10 +17368,21 @@
      nada: un caso antiguo conserva lo suyo. */
   function alarmasEnCaso(c) {
     var d = c.registro_intraop;
-    if (!d || !d.alarmas) return;
     var lista = [];
-    d.alarmas.forEach(function (a, i) { if (!filaRegistroVacia(a)) lista.push({ a: a, i: i }); });
-    if (!lista.length) return;
+    ((d && d.alarmas) || []).forEach(function (a, i) { if (alarmaEscrita(a)) lista.push({ a: a, i: i }); });
+    // Sin alarmas escritas: si lo que tiene el caso es lo que derivaron antes
+    // unas alarmas ya borradas («A1: …»), se deshace, en vez de dejar una
+    // alerta que ya no existe en el CSV y el Sheet (auditoría, C4). Un texto
+    // escrito a mano (casos antiguos) no empieza así y no se toca.
+    var DERIVADO = /^A\d+: /;
+    if (!lista.length) {
+      if (DERIVADO.test(c.tipo_alerta || "")) {
+        c.tipo_alerta = "";
+        c.alerta = false;
+        if (DERIVADO.test(c.medida_correctora || "")) c.medida_correctora = "";
+      }
+      return;
+    }
     c.alerta = true;
     c.tipo_alerta = lista.map(function (x) { return textoAlarma(x.a, x.i); }).join("\n");
     c.medida_correctora = lista.map(function (x) { return textoMedidasAlarma(x.a, x.i); }).filter(Boolean).join("\n");
@@ -17402,35 +17483,11 @@
     irAPantalla("registro");
   }
 
-  // "Pasar al caso": de la hoja hacia el caso vinculado. Solo rellena campos
-  // que el caso tiene VACÍOS -nunca pisa lo que ya estaba escrito-, y antes
-  // de tocar nada enseña exactamente cuáles.
-  function registroPasarAlCaso() {
-    var c = registroCaso();
-    if (!c) return;
-    var d = registroDatos();
-    var v = d.v;
-    var cambios = [];   // { campo, valor }
-    function vacio(x) { return x === undefined || x === null || x === "" || x === false; }
-    function proponer(campoCaso, valor) {
-      if (!vacio(valor) && vacio(c[campoCaso])) cambios.push({ campo: campoCaso, valor: valor });
-    }
-    proponer("hora_inicio", v.hora_inicio_mio);
-    proponer("hora_fin", v.h_fin_mio);
-    // Alarmas y resultado de la señal ya no se proponen: van solos al caso
-    // (espejo, 28-09-2026; ver alarmasEnCaso() y cierre_resultado).
-    proponer("incidencias_tecnicas", v.cierre_incidencias);
-    if (v.cierre_perla_check) proponer("caso_destacado", true);
-    proponer("aprendizaje_clave", v.cierre_perla);
-    if (!cambios.length) { alert(T("registro_pasar_nada")); return; }
-    var lista = cambios.map(function (x) { return "• " + T("caso_" + x.campo); }).join("\n");
-    if (!confirm(T("registro_pasar_conf", { lista: lista }))) return;
-    cambios.forEach(function (x) { c[x.campo] = x.valor; });
-    guardarCaso(c);
-    avisoGuardado(T("registro_pasado"));
-  }
+  // "Pasar al caso" se retiró el 28-09-2026 (auditoría, F3): con los campos
+  // compartidos (⇄) ya no quedaba nada que pasar a mano.
 
   function registroVaciar() {
+    if (registroCaso()) return;   // solo Modelo 0, ver renderRegistroContenido()
     if (!confirm(T("registro_vaciar_conf"))) return;
     if (registroTimer) { clearTimeout(registroTimer); registroTimer = null; }
     var d = registroDatos();
@@ -17457,7 +17514,6 @@
     avisoGuardado(T("registro_guardado"));
   });
   document.getElementById("registro-vaciar").addEventListener("click", registroVaciar);
-  document.getElementById("registro-pasar-caso").addEventListener("click", registroPasarAlCaso);
 
   /* ================================================================
    * Hoja imprimible del registro intraoperatorio (24-09-2026).
@@ -17851,7 +17907,7 @@
         hojaCasilla(!!f.av_cir), hojaCasilla(!!f.av_an), "", f.accion, ""] };
     });
     // Listas cerradas (28-09-2026): se imprimen los rótulos, no los ids.
-    var filasAl = d.alarmas.filter(function (f) { return !filaRegistroVacia(f); }).map(function (f) {
+    var filasAl = d.alarmas.filter(alarmaEscrita).map(function (f) {
       var med = (f.medidas_l || []).map(function (v) { return regTextoLista(REG_MEDIDAS_AL, v); });
       if (f.medidas) med.push(f.medidas);
       return { hora: f.hora || "", celdas: [f.hora, "A", [f.fase, regTextoLista(REG_CAUSA_AL, f.causa)].filter(Boolean).join(" · "),

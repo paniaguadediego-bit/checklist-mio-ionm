@@ -874,9 +874,11 @@ allí, sale en la hoja impresa y en **Exportar eventos y alarmas (CSV)**.
 **En pantalla va simplificada** (28-09-2026); la hoja **impresa** sale igual
 que siempre, con todos sus apartados, y no se borra ningún dato:
 
-- **B · Técnicas** (agrupadas como en Gestión de Casos) y **C · Anestesia**: solo lo que ya dice la ficha del
-  caso, de lectura (se cambia allí). Lo que cambie de la anestesia durante la
-  cirugía se apunta como evento de tipo *Anestesia*.
+- **B · Técnicas** (agrupadas como en Gestión de Casos): las del caso, de
+  lectura (se cambian en la ficha).
+- **C · Anestesia**: el mismo dato que el apartado Anestesia de la ficha (⇄):
+  tipo, TOF, detalle e incidencias, y debajo los **eventos de anestesia** (hora ·
+  qué pasó), que también se ven y se editan en la ficha.
 - **D · Hitos** y el **esquema** no se enseñan en pantalla.
 - **E · Basales y comparativa**, como siempre.
 - **E2 · Mapeo**: un bloque por cada técnica de mapeo marcada en la ficha
@@ -893,43 +895,43 @@ que siempre, con todos sus apartados, y no se borra ningún dato:
   y el mapeo en E2). Una fila de **fase** se elige entre las fases del modo
   rápido o «Otra…». Debajo, en pequeño, la modalidad (en dorado), la fase y la
   acción cuando la fila viene del modo rápido.
-- **G · Alarmas**: una ficha compacta por alarma (A1, A2…): hora y modalidad;
-  criterio y causa; medidas, recuperación y hora de recuperación.
+- **G · Alarmas**: una ficha compacta por alarma (A1, A2…) con listas cerradas:
+  hora y modalidad; criterio y causa probable; medidas en casillas; nota breve,
+  recuperación y hora de recuperación. Son las mismas alarmas de la ficha (⇄).
 - **H · Zona modular**: no se enseña en pantalla (sigue en la impresa).
-- **I · Cierre**: resultado, técnicas con alteración (los mismos chips
+- **I · Cierre**: resultado de la señal, técnicas con alteración (los mismos chips
   marcables que en la ficha, con las técnicas del caso), resultado esperable
   (lista), incidencias técnicas y perla docente. Sin
   comunicación final, material ni pendientes (siguen en la hoja impresa).
 
 **Datos compartidos con la ficha del caso** (⇄, 28-09-2026): fecha, hora de
 inicio y de fin, nivel/localización (Anatomía patológica de la ficha),
-procedimiento, técnicas con alteración, resultado esperable, incidencias
-técnicas y perla docente (= *Aprendizaje clave* y *Caso destacado*) son el
-mismo dato en los dos sitios, como las basales: se escriban donde se
+procedimiento, anestesia y eventos de anestesia, basales, mapeo, alarmas,
+técnicas con alteración, resultado de la señal, resultado esperable,
+incidencias técnicas y perla docente (= *Aprendizaje clave* y *Caso
+destacado*) son el mismo dato en los dos sitios: se escriban donde se
 escriban, se ven en el otro y en la hoja impresa. El diagnóstico se enseña de
-lectura (lista cerrada de la ficha). Las alarmas y el resultado del cierre
-siguen pasando a la ficha con **Pasar al caso**, porque allí son texto libre.
+lectura (lista cerrada de la ficha). Con un caso vinculado no hay botón
+**Vaciar** (solo en el Modelo 0), porque borraría también esos datos de la
+ficha.
 
 Las secciones de la hoja impresa, completas (las que no se ven en pantalla
 se imprimen igual):
 
-- **Hoja 1**: A identificación y estado prequirúrgico · B modalidades y
-  mapeo · C anestesia · D cronograma de hitos (con botón **Ahora**) · E
-  basales y comparativa (basal / post-posición / final) · E2 mapeo (filas
-  que se van añadiendo) · esquema (fotos del grid/craneotomía).
+- **Hoja 1**: A identificación y estado prequirúrgico · B técnicas
+  (monitorización, reflejos y mapeo) · C anestesia · D cronograma de hitos
+  (con botón **Ahora**) · E basales y comparativa (OPBSL / PostPos1 / PostPos2
+  / CL-BSL) · E2 mapeo (filas que se van añadiendo) · esquema (fotos del
+  grid/craneotomía).
 - **Hoja 2**: F registro de eventos (**+ Evento** añade una fila con la hora
   actual) · G alarmas (5 filas, con checklist de respuesta NRF/An/Cir) · H
   zona modular (rejilla libre 10 columnas) · I cierre.
 
 **Lo que pasa solo desde el caso** (si hay uno vinculado): fecha,
 diagnóstico, procedimiento, nivel/localización, hora de inicio, el tipo de
-anestesia (TIVA/halogenado/dexmedetomidina) y las casillas de B con
-equivalente exacto en las técnicas del caso (PEV, Onda D, EMG libre, Blink,
-BCR, LAR, TCR, trigémino-vocal, reflejo H, inversión de fase, mapeo
-cortical/subcortical, suelo IV v., lenguaje, EEG, ECoG, tornillos/raíces).
-El detalle que la técnica no dice (nervio, lado) se marca a mano. Mientras
-no toques un campo muestra el valor del caso; en cuanto lo tocas, manda el
-tuyo.
+anestesia y las técnicas del caso, que salen ya marcadas en B. Mientras no
+toques un campo propio de la hoja muestra el valor del caso; en cuanto lo
+tocas, manda el tuyo.
 
 **Imprimir hoja** (y **Hoja de registro** en la ficha de un caso) es el uso
 principal: genera **2 páginas A4** para llevar en papel a quirófano,
@@ -944,11 +946,8 @@ y los códigos F/E/A/M/An/T de la hoja original-, cierre, y los parámetros de
 cada técnica y las notas del caso. Lo que hayas tecleado en la pantalla del
 Registro sale impreso en su fila. Sin caso vinculado sale la hoja en blanco.
 
-**Pasar al caso** hace el camino contrario, solo con un caso vinculado:
-hora de inicio y fin, alerta/tipo/medidas (desde las alarmas),
-recuperación de la señal (desde el resultado del cierre), incidencias
-técnicas y perla docente. Solo rellena los campos que el caso tiene
-**vacíos** y antes enseña exactamente cuáles.
+**Pasar al caso** se retiró el 28-09-2026: con los campos compartidos (⇄)
+ya no quedaba nada que pasar a mano.
 
 No lleva la "etiqueta del paciente" ni el "NHC" de la hoja en papel: regla
 1, ningún dato identificativo. Sin columna en el Sheet ni en el CSV.
