@@ -3342,16 +3342,18 @@ dialog h3 {
 .rr-vistas button.activo { background: var(--accent); color: var(--accent-texto); border-color: var(--accent); font-weight: 600; }
 .rr-fase-actual { font-weight: 600; color: var(--accent); margin: 0.2rem 0 0.4rem; }
 .rr-titulo { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin: 0.7rem 0 0.3rem; }
-.rr-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.rr-chips { display: flex; flex-wrap: wrap; gap: 0.3rem; }
 .rr-chip {
   font: inherit;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   cursor: pointer;
   border: 1px solid var(--border);
   background: var(--card-bg);
   color: var(--text);
-  border-radius: 999px;
-  padding: 0.35rem 0.75rem;
+  /* Rectangulares y algo más pequeños (28-09-2026, pedido del usuario),
+     como el resto de botones de la herramienta. */
+  border-radius: 4px;
+  padding: 0.28rem 0.6rem;
 }
 .rr-chip.activo { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
 .rr-chip-otra { border-style: dashed; }
@@ -3379,7 +3381,9 @@ dialog h3 {
 .rr-linea-fase .rr-texto { font-weight: 600; color: var(--accent); }
 .rr-linea-alarma .rr-cod, .rr-linea-alarma .rr-texto { color: var(--peligro); font-weight: 600; }
 @media (pointer: coarse), (max-width: 900px) {
-  .rr-chip, .rr-vistas button, .rr-nota, .rr-botones button, .rr-linea .reg-fila-quitar { min-height: 44px; }
+  .rr-vistas button, .rr-nota, .rr-botones button, .rr-linea .reg-fila-quitar { min-height: 44px; }
+  /* Con el id para ganar a "#pantalla-registro button { min-height: 44px }" */
+  #pantalla-registro .rr-chip { min-height: 40px; }
   .rr-linea .reg-fila-quitar { min-width: 44px; }
 }
 .reg-fila .campo label { font-size: 0.68rem; }
