@@ -7856,39 +7856,18 @@
       var cont = document.getElementById("caso-c-" + g);
       cont.innerHTML = "";
       if (g === "montaje") {
-        // Reestructurado en 3 sub-apartados el 10-09-2026 (pedido del
-        // usuario): "Cajas y entradas" (resumen, detalle canal a canal,
-        // Editar montaje y sus notas), "Material" (material previsto,
-        // coste y sus notas) y "Técnicas" (técnicas realizadas, cómo se
-        // realizó cada una y sus notas). Los tres abiertos por defecto
-        // -organizan lo que ya se veía, no añaden nada que esconder-;
-        // "Imágenes del montaje, material y técnicas del caso" se queda
-        // fuera de los tres, al final, porque su nombre ya dice que cubre
-        // las tres cosas a la vez. Qué sub-apartado le toca a cada campo
-        // de CAMPOS_CASO lo dice "def.sub", ver el bucle de más abajo.
-        var detCajas = document.createElement("details");
-        detCajas.className = "caso-grupo";
-        detCajas.open = true;
-        var sumCajas = document.createElement("summary");
-        sumCajas.textContent = T("caso_sub_cajas");
-        detCajas.appendChild(sumCajas);
+        // Sin sub-apartados desde el 28-09-2026 (pedido del usuario): al
+        // abrir "Montaje / Material" sale todo seguido -cajas y entradas,
+        // material con su coste, notas e imágenes-. Antes eran <details>
+        // "Cajas y entradas", "Material" y "Técnicas" (esta última es ahora
+        // su propio apartado). contCajas/contMaterial siguen siendo dos
+        // contenedores para que "def.sub" ordene los campos igual que antes.
         var contCajas = document.createElement("div");
         contCajas.className = "caso-grupo-campos";
-        detCajas.appendChild(contCajas);
-
-        var detMaterial = document.createElement("details");
-        detMaterial.className = "caso-grupo";
-        detMaterial.open = true;
-        var sumMaterial = document.createElement("summary");
-        sumMaterial.textContent = T("caso_sub_material");
-        detMaterial.appendChild(sumMaterial);
         var contMaterial = document.createElement("div");
         contMaterial.className = "caso-grupo-campos";
-        detMaterial.appendChild(contMaterial);
-
-        // "Técnicas" salió de aquí el 28-09-2026: es su propio apartado.
-        cont.appendChild(detCajas);
-        cont.appendChild(detMaterial);
+        cont.appendChild(contCajas);
+        cont.appendChild(contMaterial);
 
         var res = document.createElement("p");
         res.className = "caso-resumen-linea";
@@ -18107,7 +18086,36 @@
     return c;
   }
 
+  /* Precios de la demo (28-09-2026, pedido del usuario: que se vea el coste
+     de cada cirugía). INVENTADOS, del mismo orden que los de un servicio
+     real pero no los reales (regla 2 de CLAUDE.md: nunca precios reales en
+     este repositorio). Van como etiquetas propias del almacén de la demo,
+     igual que las pondría un usuario desde el gestor de etiquetas; las sondas
+     monopolar y de aspiración, como fungibles (de un solo uso). Solo si la
+     demo todavía no tiene ninguna etiqueta con precio. */
+  var PRECIOS_DEMO = {
+    aguja_subdermica: 2.3, aguja_trenzada: 9.4, aguja_monopolar: 4.2, electrodo_sacacorchos: 4.9,
+    hook_wire: 8.75, pegatinas: 1.25, sensor_tubo: 10.5, electrodo_epidural: 340,
+    electrodo_epidural_dwave: 340, electrodo_grid_mantaA: 870, electrodo_grid_mantaB: 870,
+    sonda_mono_esferica: 79.9, sonda_aspiracion: 199
+  };
+  function preciosDemo() {
+    if (etiquetasUsuario.some(function (e) { return typeof e.precio === "number"; })) return false;
+    Object.keys(PRECIOS_DEMO).forEach(function (id) {
+      var base = ETIQUETAS_BASE.filter(function (e) { return e.id === id; })[0];
+      if (!base) return;
+      var propia = Object.assign({}, base, { precio: PRECIOS_DEMO[id], fungible: true });
+      var i = etiquetasUsuario.map(function (e) { return e.id; }).indexOf(id);
+      if (i === -1) etiquetasUsuario.push(propia); else etiquetasUsuario[i] = propia;
+    });
+    reconstruirEtiquetas();
+    guardarEstado();
+    return true;
+  }
+
   function sembrarDemo() {
+    // Antes de crear los casos: su coste se calcula al volcar el montaje.
+    preciosDemo();
     // Cajas que se repiten en varias plantillas
     var tesC3C4 = { "5:anodal": "c3", "5:catodal": "c4", "6:anodal": "c1", "6:catodal": "c2" };
     var corticalSEP = { "1": "cz_prima", "2": "c3_prima", "3": "c4_prima", "4": "fz", "5": "cv2", "gnd": "tierra" };
@@ -18345,6 +18353,19 @@
     try { sembrado = localStorage.getItem(DEMO_SEMBRADO_KEY); } catch (e) { /* sin persistencia */ }
     if (!sembrado) {
       try { sembrarDemo(); } catch (e) { console.error("Demo: no se pudieron sembrar los datos", e); }
+    }
+    // Demos sembradas antes de que hubiera precios: se ponen ahora y se
+    // recalcula el coste guardado de los casos con montaje.
+    if (preciosDemo()) {
+      Object.keys(casos).forEach(function (uid) {
+        var cD = casos[uid];
+        if (!cD.n_cajas) return;
+        var resD = calcularResumen(montajeDesdeCaso(cD));
+        var cosD = calcularCoste(resD);
+        cD.coste_material = Math.round(cosD.total * 100) / 100;
+        cD.coste_completo = !cosD.sinPrecio.length;
+        guardarCaso(cD, true);
+      });
     }
     // Un usuario de demostración ya elegido en "— quién eres —" (demo-congreso
     // B1.F3), para que quien pruebe la demo no tenga que crear uno. Se
