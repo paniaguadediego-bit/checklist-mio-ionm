@@ -1194,6 +1194,7 @@
     reg_p_vaciar_alarma: { es: "¿Vaciar esta alarma?", en: "Clear this alarm?" },
     reg_p_mod_afectadas: { es: "Modalidades afectadas", en: "Affected modalities" },
     reg_p_en:            { es: "en {fase}", en: "in {fase}" },
+    reg_p_fase_otra:     { es: "Otra…", en: "Other…" },
     registro_fila_quitar_conf: { es: "¿Quitar esta fila? Tiene datos escritos.", en: "Remove this row? It has data." },
     registro_mod_cab:    { es: "Cabecera", en: "Header" },
     registro_mod_fila:   { es: "Fila {n}", en: "Row {n}" },
@@ -15330,7 +15331,7 @@
         { id: "accion", l: "Acción · comentario", l_en: "Action · comment", t: "text", ancho: true }
       ] },
     { hoja: 1, id: "esquema", tipo: "imagenes", l: "Esquema (grid · craneotomía · puntos)", l_en: "Diagram (grid · craniotomy · points)" },
-    { hoja: 2, id: "f", tipo: "lista", lista: "eventos", l: "F · Registro de eventos", l_en: "F · Event log",
+    { hoja: 2, id: "f", tipo: "lista", lista: "eventos", l: "F · Registro de fases y eventos", l_en: "F · Phase and event log",
       ayuda: "Códigos: F fase · E evento · A alarma · M mapeo · An anestesia · T técnico",
       ayuda_en: "Codes: F phase · E event · A alarm · M mapping · An anaesthesia · T technical",
       boton: "+ Evento (hora actual)", boton_en: "+ Event (current time)", ahora: true,
@@ -16331,8 +16332,17 @@
     esquema: null,
     f: pintarPantallaEventos,
     g: pintarPantallaAlarmas,
+    // Zona modular: tampoco en pantalla (28-09-2026, el usuario no la ve útil
+    // en la herramienta); sigue en la hoja impresa.
+    h: null,
     i: pintarPantallaCierre
   };
+
+  // Tipos de la sección F en pantalla: fases y eventos (con anestesia y
+  // técnico). Las alarmas van en G y el mapeo en E2; una fila antigua o del
+  // modo rápido con otro código lo sigue enseñando.
+  var REG_COD_PANTALLA = ["F", "E", "An", "T"];
+  var REG_FILAS_EVENTO_VACIAS = 5;
 
   function regNodo(tag, clase, texto) {
     var n = document.createElement(tag);
@@ -16430,53 +16440,121 @@
     cont.appendChild(tabla);
   }
 
-  // Eventos: hora · tipo · qué ha pasado. Una fila de fase (F) escribe en
-  // "fase"; el resto, en "cambio". Lo que ya traiga la fila del modo rápido
-  // -modalidad, fase, acción- se enseña al lado, sin perderse.
+  // Fases y eventos: hora · tipo · qué ha pasado, con la letra de las
+  // basales. Siempre hay filas en blanco hasta completar
+  // REG_FILAS_EVENTO_VACIAS (28-09-2026, pedido del usuario): no se guardan
+  // hasta que se escribe algo en ellas, y entonces, si no tenían hora, cogen
+  // la de ese momento. Una fila de fase (F) elige entre las fases del modo
+  // rápido y escribe en "fase"; el resto escribe en "cambio". Lo que traiga
+  // la fila del modo rápido -modalidad, fase, acción- va debajo, en pequeño.
   function pintarPantallaEventos(sec, cont, alCambiar) {
     var d = registroDatos();
-    var btn = regNodo("button", "primario reg-p-nuevo", T("reg_p_evento_nuevo"));
-    btn.type = "button";
-    cont.appendChild(btn);
     var tabla = regNodo("div", "reg-basal reg-p-ev");
     cont.appendChild(tabla);
-    function pintar(enfocarUltima) {
-      tabla.textContent = "";
-      if (!d.eventos.length) { tabla.appendChild(regNodo("p", "reg-ayuda", T("reg_p_sin_eventos"))); return; }
-      var cab = regNodo("div", "reg-basal-fila reg-basal-cab");
-      [T("reg_p_hora"), T("reg_p_tipo"), T("reg_p_que"), ""].forEach(function (t) { cab.appendChild(regNodo("span", null, t)); });
-      tabla.appendChild(cab);
-      d.eventos.forEach(function (ev) {
-        var f = regNodo("div", "reg-basal-fila");
-        f.appendChild(regInput(ev, "hora", "time", T("reg_p_hora"), alCambiar));
-        f.appendChild(regSelect(ev, "cod", REG_COD_EVENTO, T("reg_p_tipo"), function () { pintar(false); alCambiar(); }));
-        var que = regNodo("div", "reg-p-que");
-        que.appendChild(regInput(ev, ev.cod === "F" ? "fase" : "cambio", "text", T("reg_p_que"), alCambiar));
-        f.appendChild(que);
+    var btn = regNodo("button", "reg-p-nuevo", T("reg_p_evento_nuevo"));
+    btn.type = "button";
+    cont.appendChild(btn);
+
+    function opcionesTipo(ev) {
+      return REG_COD_EVENTO.filter(function (o) {
+        return REG_COD_PANTALLA.indexOf(o.v) !== -1 || o.v === ev.cod;
+      });
+    }
+
+    function selectorFase(ev, alTocar) {
+      var sel = document.createElement("select");
+      sel.setAttribute("aria-label", T("rr_fase"));
+      var nombres = REG_FASES_RAPIDAS.map(function (f) { return campo(f, "l"); });
+      d.eventos.forEach(function (e) {
+        if (e.cod === "F" && e.fase && nombres.indexOf(e.fase) === -1) nombres.push(e.fase);
+      });
+      [""].concat(nombres).forEach(function (n) {
+        var op = document.createElement("option");
+        op.value = n;
+        op.textContent = n || "—";
+        sel.appendChild(op);
+      });
+      var otra = document.createElement("option");
+      otra.value = "__otra";
+      otra.textContent = T("reg_p_fase_otra");
+      sel.appendChild(otra);
+      sel.value = ev.fase || "";
+      sel.addEventListener("change", function () {
+        if (sel.value === "__otra") {
+          var nombre = (prompt(T("rr_fase_nueva")) || "").trim();
+          if (!nombre) { sel.value = ev.fase || ""; return; }
+          ev.fase = nombre;
+        } else {
+          ev.fase = sel.value;
+        }
+        alTocar();
+        registroGuardarYa();
+        pintar(false);
+      });
+      return sel;
+    }
+
+    function fila(ev, enBlanco) {
+      var f = regNodo("div", "reg-basal-fila" + (enBlanco ? " reg-p-blanco" : ""));
+      var inpHora;
+      // Una fila en blanco entra en la lista al escribir algo en ella
+      function tocar() {
+        if (d.eventos.indexOf(ev) === -1) {
+          if (!ev.hora) { ev.hora = horaAhora(); if (inpHora) inpHora.value = ev.hora; }
+          d.eventos.push(ev);
+          f.classList.remove("reg-p-blanco");
+          registroGuardar();
+        }
+        alCambiar();
+      }
+      inpHora = regInput(ev, "hora", "time", T("reg_p_hora"), tocar);
+      f.appendChild(inpHora);
+      f.appendChild(regSelect(ev, "cod", opcionesTipo(ev), T("reg_p_tipo"), function () { tocar(); pintar(false); }));
+      var que = regNodo("div", "reg-p-que");
+      que.appendChild(ev.cod === "F" ? selectorFase(ev, tocar) : regInput(ev, "cambio", "text", T("reg_p_que"), tocar));
+      f.appendChild(que);
+      if (!enBlanco) {
         var quitar = regNodo("button", "reg-fila-quitar", "✕");
         quitar.type = "button";
         quitar.title = T("registro_fila_quitar");
         quitar.setAttribute("aria-label", T("registro_fila_quitar"));
         quitar.addEventListener("click", function () { regQuitarRapido(ev); });
         f.appendChild(quitar);
-        // Debajo, lo que trae la fila del modo rápido: la modalidad (en
-        // dorado, en su propia línea para no quitar sitio al texto), la fase y
-        // la acción.
-        var extra = [];
-        if (ev.cod !== "F" && ev.fase) extra.push(T("reg_p_en", { fase: ev.fase }));
-        if (ev.accion) extra.push(ev.accion);
-        var mod = ev.cod !== "F" ? ev.modalidad : "";
-        if (mod || extra.length) {
-          var linea = regNodo("small", "reg-p-extra");
-          if (mod) linea.appendChild(regNodo("span", "reg-p-mod", mod + (extra.length ? " · " : "")));
-          if (extra.length) linea.appendChild(document.createTextNode(extra.join(" · ")));
-          f.appendChild(linea);
-        }
-        tabla.appendChild(f);
-      });
+      } else {
+        f.appendChild(regNodo("span"));
+      }
+      // Debajo, lo que trae la fila del modo rápido: la modalidad (en
+      // dorado, en su propia línea para no quitar sitio al texto), la fase y
+      // la acción.
+      var extra = [];
+      if (ev.cod !== "F" && ev.fase) extra.push(T("reg_p_en", { fase: ev.fase }));
+      if (ev.accion) extra.push(ev.accion);
+      var mod = ev.cod !== "F" ? ev.modalidad : "";
+      if (mod || extra.length) {
+        var linea = regNodo("small", "reg-p-extra");
+        if (mod) linea.appendChild(regNodo("span", "reg-p-mod", mod + (extra.length ? " · " : "")));
+        if (extra.length) linea.appendChild(document.createTextNode(extra.join(" · ")));
+        f.appendChild(linea);
+      }
+      return f;
+    }
+
+    // Filas en blanco que siguen sin escribirse entre repintados
+    var enBlanco = [];
+    function pintar(enfocarUltima) {
+      tabla.textContent = "";
+      var cab = regNodo("div", "reg-basal-fila reg-basal-cab");
+      [T("reg_p_hora"), T("reg_p_tipo"), T("reg_p_que"), ""].forEach(function (t) { cab.appendChild(regNodo("span", null, t)); });
+      tabla.appendChild(cab);
+      d.eventos.forEach(function (ev) { tabla.appendChild(fila(ev, false)); });
+      enBlanco = enBlanco.filter(function (ev) { return d.eventos.indexOf(ev) === -1; });
+      while (d.eventos.length + enBlanco.length < REG_FILAS_EVENTO_VACIAS) enBlanco.push({ id: uuid(), cod: "E" });
+      enBlanco.forEach(function (ev) { tabla.appendChild(fila(ev, true)); });
       if (enfocarUltima) {
-        var ultimo = tabla.lastChild && tabla.lastChild.querySelector(".reg-p-que input");
-        if (ultimo) { ultimo.scrollIntoView({ block: "center" }); ultimo.focus({ preventScroll: true }); }
+        var filas = tabla.querySelectorAll(".reg-basal-fila:not(.reg-basal-cab)");
+        var ultima = filas[d.eventos.length - 1];
+        var inp = ultima && ultima.querySelector(".reg-p-que input");
+        if (inp) { inp.scrollIntoView({ block: "center" }); inp.focus({ preventScroll: true }); }
       }
     }
     btn.addEventListener("click", function () {

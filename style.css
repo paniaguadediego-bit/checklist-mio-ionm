@@ -3821,6 +3821,8 @@ button, input, select, textarea { font-family: inherit; }
 /* Hoja completa en pantalla, simplificada (28-09-2026): eventos, alarmas y
    mapeo con la letra y las filas de "Basales y comparativa". */
 .reg-p-nuevo { margin: 0 0 0.5rem; }
+.reg-p-ev + .reg-p-nuevo { margin: 0.4rem 0 0; }
+.reg-p-blanco input, .reg-p-blanco select { opacity: 0.75; }
 .reg-p-chips { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.1rem 0 0.3rem; }
 .reg-p-chip { font-size: 0.78rem; padding: 0.15rem 0.5rem; border: 1px solid var(--border); border-radius: 999px; background: var(--campo-bg); }
 .reg-p-check { font-size: 0.8rem; margin: 0; }

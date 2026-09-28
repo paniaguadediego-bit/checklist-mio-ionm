@@ -836,11 +836,16 @@ que siempre, con todos sus apartados, y no se borra ningún dato:
 - **D · Hitos** y el **esquema** no se enseñan en pantalla.
 - **E · Basales y comparativa**, como siempre.
 - **E2 · Mapeo**: solo *electrodo motor* y *músculos registrados* (dos filas).
-- **F · Eventos**: filas compactas *hora · tipo · qué ha pasado*, con la misma
-  letra que las basales; debajo, en pequeño, la modalidad (en dorado), la
-  fase y la acción cuando la fila viene del modo rápido.
+- **F · Registro de fases y eventos**: filas compactas *hora · tipo · qué ha
+  pasado*, con la misma letra que las basales, y siempre al menos 5 filas en
+  blanco (se guardan al escribir en ellas y, si no tenían hora, cogen la de
+  ese momento). Tipos: fase, evento, anestesia y técnico (las alarmas van en G
+  y el mapeo en E2). Una fila de **fase** se elige entre las fases del modo
+  rápido o «Otra…». Debajo, en pequeño, la modalidad (en dorado), la fase y la
+  acción cuando la fila viene del modo rápido.
 - **G · Alarmas**: una ficha compacta por alarma (A1, A2…): hora y modalidad;
   criterio y causa; medidas, recuperación y hora de recuperación.
+- **H · Zona modular**: no se enseña en pantalla (sigue en la impresa).
 - **I · Cierre**: resultado, modalidades afectadas (casillas con las técnicas
   del caso), déficit esperado, incidencias técnicas y perla docente. Sin
   comunicación final, material ni pendientes (siguen en la hoja impresa).
