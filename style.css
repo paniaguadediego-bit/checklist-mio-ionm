@@ -43,7 +43,8 @@
      (06-09-2026, pantalla de inicio) y volvió a dos el 09-09-2026 (menú "⋮"
      arriba a la izquierda, sincronización en su propia fila debajo)
      -medido a mano en el navegador, no hay cálculo automático; hay que
-     remedirlo si cambia el contenido de la barra-. */
+     remedirlo si cambia el contenido de la barra-. Desde el 01-10-2026 lo mide app.js al cargar y al
+     cambiar; este valor queda solo como punto de partida. */
   --header-h: 72px;
   --r: 5px;
   /* Fondo de los campos rellenables. Es una variable y no un #fff suelto
@@ -4365,3 +4366,12 @@ textarea { resize: none; overflow-y: hidden; }
 .plantilla-tecs { display: flex; flex-wrap: wrap; gap: 0.2rem; margin-top: 0.15rem; }
 .plantilla-tec { font-size: 0.66rem; font-weight: 600; padding: 0.05rem 0.35rem; border-radius: 4px; background: var(--tag-bg); color: var(--text); border: 1px solid var(--border-soft); }
 .plantilla-tec-mas { color: var(--text-muted); }
+
+/* Rótulo «Plantilla» (fijo arriba al hacer scroll) algo distinto de las
+   tarjetas (01-10-2026, pedido del usuario: al bajar se confundía con
+   Catálogo, Cajas…). Solo un toque: fondo teñido del acento y sombra suave. */
+body:not(.editando-caso) .barra-caso {
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.28);
+}

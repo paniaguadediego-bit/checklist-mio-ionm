@@ -980,7 +980,6 @@
     mat_desc_equipos:    { es: "Solo en el equipo {equipos}.", en: "Only on {equipos} equipment." },
     demo_titulo:         { es: "demo", en: "demo" },
     demo_estado_sync:    { es: "Modo demo · sin nube", en: "Demo mode · no cloud" },
-    demo_aviso:          { es: "Modo demostración: datos ficticios, guardados solo en este navegador.", en: "Demo mode: fictitious data, stored only in this browser." },
     demo_sin_sync:       { es: "En el modo demostración no se sincroniza con GitHub: todo se queda en este navegador y no toca ningún dato real.", en: "Demo mode does not sync with GitHub: everything stays in this browser and no real data is touched." },
     demo_inicio_nota:    { es: "Modo demostración: casos, plantillas y apuntes son ficticios.", en: "Demo mode: cases, templates and notes are fictitious." },
     // Privacidad y autoría en la demo (demo-congreso B4.F2 y B4.F3). El
@@ -1943,7 +1942,9 @@
       if (pantallaActiva("registro")) renderRegistroContenido();
       if (tourPaso >= 0) tourPintarTextos();
       pintarEstadoSync();
-      avisoGuardado(T(MODO_DEMO ? "demo_aviso" : (syncActivo() ? "guardado_nube" : "guardado_local")));
+      // En la demo, sin texto (01-10-2026, pedido del usuario): la cabecera ya
+      // dice «Modo demo · sin nube» y el aviso la hacía más alta.
+      avisoGuardado(MODO_DEMO ? "" : T(syncActivo() ? "guardado_nube" : "guardado_local"));
     }
   }
 
@@ -14867,6 +14868,21 @@
     else if (localStorage.getItem(TEMA_KEY_VIEJA) === "1") temaIni = "claro";
   } catch (e) { /* sin persistencia */ }
   aplicarTema(temaIni);
+  /* Alto real de la barra superior en --header-h (01-10-2026): estaba fijo
+     a 72 px, medido a mano, pero la barra crece (aviso de la demo, texto de
+     sincronización en dos líneas) y lo que va fijo debajo -el rótulo de la
+     plantilla- quedaba tapado. Se mide al cargar y cada vez que cambia. */
+  (function () {
+    var barra = document.querySelector(".barra-sup");
+    if (!barra) return;
+    var medir = function () {
+      if (barra.offsetHeight) document.documentElement.style.setProperty("--header-h", barra.offsetHeight + "px");
+    };
+    medir();
+    window.addEventListener("resize", medir);
+    if (window.ResizeObserver) new ResizeObserver(medir).observe(barra);
+  })();
+
   btnColores.addEventListener("click", function () {
     var tema = TEMAS[(TEMAS.indexOf(temaActual) + 1) % TEMAS.length];
     aplicarTema(tema);
@@ -19747,7 +19763,7 @@
   // "Pantalla ancha" en style.css); plegarla también ahí obligaría a
   // desplegarla a mano antes de poder colocar nada.
   if (window.matchMedia("(max-width: 900px)").matches) plegarCatalogo(true);
-  avisoGuardado(T(MODO_DEMO ? "demo_aviso" : (syncActivo() ? "guardado_nube" : "guardado_local")));
+  avisoGuardado(MODO_DEMO ? "" : T(syncActivo() ? "guardado_nube" : "guardado_local"));
   // Traer lo último de GitHub al abrir, sin preguntar si no hay nada local
   // sin subir. Si lo hay, sube en vez de bajar.
   bajarAuto();
