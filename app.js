@@ -936,7 +936,7 @@
     tour_x_caso_docencia: { es: "Rol, supervisor, dificultad y aprendizaje clave de cada caso. Marca los destacados o los que quieres seguir, y encuéntralos después con los filtros: el registro de casos se convierte en un portafolio formativo.",
                            en: "Role, supervisor, difficulty and key learning point of each case. Flag notable cases or ones to follow up, and find them later with the filters: the case log becomes a training portfolio." },
     tour_t_registro:     { es: "Registro intraoperatorio", en: "Intraoperative log" },
-    tour_x_registro:     { es: "En quirófano, arriba de la hoja se apunta con dos toques: la fase una vez, y cada cambio como qué + qué pasa. La hora se pone sola y la alarma se cierra con su recuperación y «Ahora». Más abajo, el resto de la hoja (anestesia, basales, mapeo, cierre).",
+    tour_x_registro:     { es: "En quirófano, arriba de la hoja se apunta con dos toques: la fase una vez, y cada cambio como técnica + hallazgo. La hora se pone sola y la alarma se cierra con su recuperación y «Ahora». Más abajo, el resto de la hoja (anestesia, basales, mapeo, cierre).",
                            en: "In the OR, at the top of the sheet you log with two taps: the phase once, and each change as what + what happens. The time is set automatically and the alarm is closed with its recovery and “Now”. Further down, the rest of the sheet (anaesthesia, baselines, mapping, closure)." },
     tour_t_salidas:      { es: "Hoja de registro e informe", en: "Record sheet and report" },
     tour_x_salidas:      { es: "En el menú ⋮ de la ficha, Hoja de registro imprime las dos páginas A4 para quirófano, ya rellenas con lo que sabe el caso, e Informe (PDF) hace el informe del caso. El Checklist pre-quirúrgico también se vincula al caso.",
@@ -1261,7 +1261,7 @@
     registro_mod_mas:    { es: "+ Fila", en: "+ Row" },
     registro_guardar:    { es: "Guardar", en: "Save" },
     registro_guardado:   { es: "Registro guardado.", en: "Record saved." },
-    rr_intro:            { es: "Marca la fase una vez y lo que apuntes después la hereda. Un cambio de señal es qué + qué pasa + Apuntar. La hora de cada línea se corrige tocándola; debajo de cada alarma, las medidas adoptadas y la recuperación.",
+    rr_intro:            { es: "Marca la fase una vez y lo que apuntes después la hereda. Un cambio de señal es técnica + hallazgo + Apuntar. La hora de cada línea se corrige tocándola; debajo de cada alarma, las medidas adoptadas y la recuperación.",
                            en: "Mark the phase once and whatever you log afterwards inherits it. A signal change is what + what happens + Log. Tap a line's time to correct it; under each alarm, the measures taken and the recovery." },
     rr_fase:             { es: "Fase", en: "Phase" },
     rr_evento_alarma:    { es: "Evento o alarma", en: "Event or alarm" },
@@ -1286,14 +1286,14 @@
     rr_editar_hecho:     { es: "Hecho", en: "Done" },
     rr_detalle:          { es: "Detalle", en: "Detail" },
     rr_nota_l:           { es: "Nota", en: "Note" },
-    rr_que:              { es: "Qué", en: "What" },
-    rr_que_pasa:         { es: "Qué pasa", en: "What happens" },
+    rr_que:              { es: "Técnica", en: "Technique" },
+    rr_que_pasa:         { es: "Hallazgo", en: "Finding" },
     rr_que_anestesia:    { es: "Anestesia", en: "Anaesthesia" },
     rr_que_tecnico:      { es: "Técnico", en: "Technical" },
     rr_nota:             { es: "Otro o nota (opcional)", en: "Other or note (optional)" },
     rr_apuntar_evento:   { es: "Apuntar evento", en: "Log event" },
     rr_apuntar_alarma:   { es: "Apuntar alarma", en: "Log alarm" },
-    rr_falta_que:        { es: "Elige qué ha cambiado (un evento también puede ser solo un contexto o un TOF).", en: "Choose what changed (an event can also be just a context or a TOF)." },
+    rr_falta_que:        { es: "Elige la técnica (un evento también puede ser solo un contexto o un TOF).", en: "Choose the technique (an event can also be just a context or a TOF)." },
     rr_apuntado:         { es: "Apuntado a las {hora}.", en: "Logged at {hora}." },
     rr_alarma_apuntada:  { es: "Alarma {n} apuntada a las {hora}.", en: "Alarm {n} logged at {hora}." },
     rr_alarma_recuperada: { es: "{n} recuperada ({min} min).", en: "{n} recovered ({min} min)." },
@@ -16929,9 +16929,13 @@
     // QUÉ en filas por tipo (29-09-2026, pedido del usuario): técnicas,
     // factores técnicos, anestesia -con el TOF, que mide la relajación- y
     // Otro. Sigue siendo una sola elección entre todas las filas.
-    bEvento.appendChild(regNodo("div", "rr-titulo", T("rr_que")));
+    // «Técnica» y «Hallazgo» (antes «Qué» y «Qué pasa»; 29-09-2026, pedido del
+    // usuario), cada uno en su recuadro para que se vea la separación.
+    var subTecnica = regNodo("div", "rr-sub-bloque");
+    bEvento.appendChild(subTecnica);
+    subTecnica.appendChild(regNodo("div", "rr-sub-tit", T("rr_que")));
     var queGrupos = regNodo("div", "rr-que-grupos");
-    bEvento.appendChild(queGrupos);
+    subTecnica.appendChild(queGrupos);
     var tecnicasQue = regQueRapidos(d).filter(function (l) { return l !== "TOF"; });
     // Factores técnicos, Anestesia y Otro en una sola fila (29-09-2026,
     // pedido del usuario: caben), cada uno con su rótulo encima; Otro sin
@@ -17068,13 +17072,15 @@
     filaAnest.appendChild(subTof);
     queGrupos.appendChild(filaCorta);
     queGrupos.appendChild(filaAnest);
-    bEvento.appendChild(regCajaRapida("queNota", T("rr_que_detalle")));
+    subTecnica.appendChild(regCajaRapida("queNota", T("rr_que_detalle")));
 
     // «Qué pasa»: las generales, en su orden de siempre, y debajo las propias
     // de la técnica elegida en QUÉ (una sola elección entre las dos filas).
-    bEvento.appendChild(regNodo("div", "rr-titulo", T("rr_que_pasa")));
+    var subHallazgo = regNodo("div", "rr-sub-bloque");
+    bEvento.appendChild(subHallazgo);
+    subHallazgo.appendChild(regNodo("div", "rr-sub-tit", T("rr_que_pasa")));
     var cambioGrupos = regNodo("div", "rr-cambio-grupos");
-    bEvento.appendChild(cambioGrupos);
+    subHallazgo.appendChild(cambioGrupos);
     var filaCambio = regNodo("div", "rr-chips");
     cambioGrupos.appendChild(filaCambio);
     // Sin «Recupera parcial», «Recupera» ni «Sin cambios» (29-09-2026, pedido
@@ -17111,7 +17117,7 @@
       });
     };
     actualizarCambiosPropios();
-    bEvento.appendChild(regCajaRapida("nota", T("rr_nota")));
+    subHallazgo.appendChild(regCajaRapida("nota", T("rr_nota")));
 
     var filaCtx = regGrupoRapido(bEvento, T("rr_contexto"));
     REG_CONTEXTO.forEach(function (c) {

@@ -451,18 +451,18 @@ distinta a la anterior, no importa el formato exacto.
 >   Fases, eventos y alarmas se apuntan SOLO en el panel de arriba, «Apuntar
 >   fase, evento o alarma» (botón dorado relleno, `.reg-rapido`; antes «modo
 >   rápido», pestaña retirada el 29-09-2026); F y G no se pintan en pantalla.
->   Bloques: **Fase** (un toque; caja = detalle u «Otra»), **TOF** 0/4…4/4 (junto a Anestesia en QUÉ, contexto:
+>   Bloques: **Fase** (un toque; caja = detalle u «Otra»), **TOF** 0/4…4/4 (junto a Anestesia en Técnica, contexto:
 >   se elige y va en `ev.tof`/`al.tof` al apuntar; se desmarca como lo demás;
->   `data-clave="tof"` para que elegir un QUÉ no lo desmarque; un evento puede
+>   `data-clave="tof"` para que elegir una técnica no lo desmarque; un evento puede
 >   ser solo contexto y/o TOF; solo TOF → An «TOF 1/4»; pares craneales con
->   CoMEP en la tabla, `REG_PARES_COMEP`, cada par con botoncitos I/D → «CoMEP VII I»; «Qué pasa»
+>   CoMEP en la tabla, `REG_PARES_COMEP`, cada par con botoncitos I/D → «CoMEP VII I»; «Hallazgo»
 >   con alteraciones propias de la técnica elegida -`mod` en
 >   `REG_CAMBIOS_RAPIDOS`, mismos ids en `REG_CRITERIO_AL`, `regModalidadDeQue()`,
 >   `actualizarCambiosPropios()`, ayuda al mantener pulsado-; con GRID, solo sus
 >   eventos (`mod: "grid"`: colocación, phase reversal, desplazamiento, retirada)
 >   y sin la fila general; reflejos del caso con nombre corto), **Evento o alarma**
->   (QUÉ: t-SEP/t-MEP/c-SEP en tabla por miembro + factores técnicos, anestesia
->   y Otro en una fila; QUÉ PASA sin botones de recuperación -se marca en la
+>   («Técnica» -antes QUÉ- y «Hallazgo» -antes QUÉ PASA-, en recuadros propios; Técnica: t-SEP/t-MEP/c-SEP en tabla por miembro + factores técnicos, anestesia
+>   y Otro en una fila; Hallazgo sin botones de recuperación -se marca en la
 >   alarma-,
 >   **contexto quirúrgico** opcional en lista cerrada → `ev.contexto`, cajas de
 >   detalle u «Otro», Apuntar evento / alarma) y **Apuntado** (por hora, de lo más antiguo a lo más reciente; hora

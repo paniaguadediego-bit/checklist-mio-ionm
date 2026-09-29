@@ -932,7 +932,7 @@ hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
   4/4**. Es contexto: tocarlo no apunta nada; se guarda con el evento o la
   alarma que se apunte (se ve en su línea, «… · TOF 1/4», en el texto de la
   alarma y en la columna `tof` del CSV) y se desmarca al apuntar.
-- **Qué**, en filas por tipo: **Técnicas** (t-SEP, t-MEP y c-SEP en una tabla,
+- **Técnica** (antes «Qué»; recuadro propio), en filas por tipo: **Técnicas** (t-SEP, t-MEP y c-SEP en una tabla,
   una fila por técnica y una columna por miembro MSD · MSI · MID · MII; las del caso, de las mismas
   filas que las basales: t-SEP, t-MEP, c-MEP, PEAT, Onda D...; más EMG libre,
   tornillos, RBC, Blink o EEG/ECoG si el caso tiene esa técnica), **Factores
@@ -943,9 +943,9 @@ hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
   «CoMEP VII D…»); y los **reflejos** del caso con su
   nombre corto (BR, TVcR...). La caja de debajo añade un detalle
   a la técnica («t-MEP MSD · deltoides») o, con **Otro**, dice qué es.
-- **Qué pasa**: ↑ umbral, ↓ amplitud, ↑ latencia, pérdida, HFD / descargas
+- **Hallazgo** (antes «Qué pasa»; recuadro propio): ↑ umbral, ↓ amplitud, ↑ latencia, pérdida, HFD / descargas
   u **Otro** (sin botones de recuperación desde el 29-09-2026: la recuperación
-  se marca dentro de cada alarma). Debajo, al elegir una técnica en «Qué», sus
+  se marca dentro de cada alarma). Debajo, al elegir una técnica en «Técnica», sus
   **alteraciones propias** (la explicación sale con el ratón encima o
   manteniendo pulsado): t-MEP / c-MEP / CoMEP (cambio de morfología, sin
   facilitación, bloqueo neuromuscular), onda D (↓ > 30-50 %), t-SEP / c-SEP
@@ -965,7 +965,7 @@ hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
   con ✎ y sale en la hoja impresa (junto a la fase) y en el CSV de eventos.
 - **Apuntar evento** vale también solo con un contexto quirúrgico y/o un TOF
   («Disección · TOF 3/4», o solo «TOF 1/4», que queda como evento de
-  anestesia); una alarma necesita su «Qué».
+  anestesia); una alarma necesita su «Técnica».
 - Dos botones: **Apuntar evento** o **Apuntar
   alarma**. La alarma ocupa además la primera fila libre de alarmas (A1,
   A2...) con técnica, criterio y fase. Para cerrarla, en su detalle de
