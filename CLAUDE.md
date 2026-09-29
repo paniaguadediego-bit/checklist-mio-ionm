@@ -223,7 +223,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Columna vertebral de umbrales por raíz (ficha y E2 del Registro; salto discontinuo) | `pintarColumnaRaices()`, `REG_NIVELES_RAICES` | ver `grep` |
 | Columnas de basales OP BSL/PostPos1/PostPos2/CL BSL | `REG_BASALES_COLS`, `regColBasal()` | ver `grep` |
 | Registro C · Anestesia en espejo y eventos An | `pintarPantallaAnestesia()`, `pintarEventosAn()` | ver `grep` |
-| Correlación de cada alarma con la evolución (ficha, Resultado): grupos automáticos por técnica + criterio; `correlato_alarmas` = {clave de grupo: {evol, momento}} con ids (`OPCIONES.correlato_evol/_momento`); concordancia por grupo | `gruposAlarmas()`, `filaCorrelato()`, `concordanciaGrupo()`, `repintarCorrelato`, `t: "correlato_alarmas"` en `campoCaso()` | ver `grep` |
+| Correlación de cada alarma con la evolución (ficha, Resultado): grupos automáticos por técnica + criterio; `correlato_alarmas` = {clave de grupo: {evol, momento}} con ids (`OPCIONES.correlato_evol/_momento`); concordancia por grupo | `gruposAlarmas()`, `filaCorrelato()`, `concordanciaGrupo()`, `filasCorrelato()` (→ `correlato_filas`), `textoCorrelato()`, `concordanciaDeGrupos()`, `seccionCorrelatoInforme()`, `repintarCorrelato`, `repintarPropuestaCaso`, `t: "correlato_alarmas"` en `campoCaso()` | ver `grep` |
 | Menú ⋮ «Ocultar ayudas» | `AYUDAS_KEY`, `aplicarAyudas()`, `body.sin-ayudas` en style.css | ver `grep` |
 | Tema: oscuro siempre; «Modo claro» en el menú ⋮ (por dispositivo). Los colores oscuros van en `@media screen { :root:not(.tema-claro) … }`; al imprimir, siempre los claros | `TEMA_KEY`, `aplicarTema()`, `html.tema-claro` en style.css | ver `grep` |
 | Precios inventados de la demo | `PRECIOS_DEMO`, `preciosDemo()` | ver `grep` |
@@ -386,8 +386,13 @@ distinta a la anterior, no importa el formato exacto.
 >   de alarmas (misma técnica + mismo criterio = mismo sustrato; varias HFD de un
 >   músculo a distintas horas son una fila) con evolución y momento en listas
 >   cerradas y la concordancia del grupo (con su recuperación S/P/N). Guardado en
->   `correlato_alarmas` por clave de grupo. Aún NO va al CSV, al Sheet ni al
->   informe PDF.
+>   `correlato_alarmas` por clave de grupo. Al guardar, `alarmasEnCaso()` deja
+>   las filas ya resueltas en `correlato_filas` (ids), que es lo que lee el Sheet
+>   (pestaña **Correlacion_long**, `construirCorrelacionLong_()` en `Codigo.gs`:
+>   la lógica NO se repite allí). Sale también en el informe PDF
+>   (`seccionCorrelatoInforme()`), en el CSV de eventos y alarmas (4 columnas al
+>   final) y en la propuesta de concordancia del caso (`concordanciaDeGrupos()`:
+>   VP > ¿VP? > FP > PR > ¿PR?).
 > - **Ficha del caso**: apartados Identificación, Paciente, Cirugía, Anestesia,
 >   **Montaje / Material** (sin sub-desplegables), **Técnicas** (apartado propio),
 >   Desarrollo, Resultado, Docencia. Resultado: **evolución** en lista
@@ -447,7 +452,8 @@ distinta a la anterior, no importa el formato exacto.
 >   `apuntes/` + `apuntes/fotos/`, `simulador/`, `referencia/`). Precios reales y
 >   material propio del usuario: `estado.json` (nunca en este repo).
 > - **Sheet**: `Codigo.gs` con la columna `evolucion_postop` (54 columnas base),
->   repegado por el usuario el 28-09 noche. Los campos de lista llegan como id.
+>   repegado por el usuario el 28-09 noche. El 29-09 se añadió la pestaña
+>   **Correlacion_long** (una fila por grupo de alarmas): hay que repegarlo. Los campos de lista llegan como id.
 > - **Historial público reescrito** dos veces (27 y 28-09): copias
 >   `../copia-historial-codigo-2026-09-27.bundle` y `-28.bundle`. No borrarlas.
 > - **Licencia**: todos los derechos reservados (`LICENSE`).

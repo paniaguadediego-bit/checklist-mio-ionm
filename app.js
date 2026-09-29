@@ -4600,7 +4600,9 @@
     "tipo_fila", "n", "hora", "codigo", "fase_maniobra", "modalidad_lado", "cambio",
     "criterio", "causa_probable", "aviso_cirujano", "aviso_anestesia", "nrf", "an", "cir",
     "accion_medidas", "recuperacion", "hora_recuperacion", "min_hasta_recuperacion",
-    "resultado_mio", "concordancia"
+    "resultado_mio", "concordancia",
+    // Correlación de la alarma con la evolución, por grupo (29-09-2026)
+    "grupo_alarmas", "evolucion_alarma", "valorado", "concordancia_alarma"
   ];
 
   // Una fila del Registro sin nada escrito -las alarmas nacen con 5 filas
@@ -4663,14 +4665,28 @@
                  cambio: f.cambio, aviso_cirujano: !!f.av_cir, aviso_anestesia: !!f.av_an,
                  accion_medidas: f.accion };
       });
+      // Grupo de cada alarma (misma técnica y criterio) con su correlato
+      var grupoDe = {};
+      if (r.alarmas) gruposAlarmas(r).forEach(function (g) {
+        g.alarmas.forEach(function (x) { grupoDe[x.a.id || ("i" + x.n)] = g; });
+      });
       sacar("alarma", r.alarmas, "A", function (f) {
+        var g = grupoDe[f.id], eg = g ? correlatoDe(c, g) : {};
+        var corr = g ? {
+          grupo_alarmas: g.alarmas.map(function (x) { return "A" + x.n; }).join(", "),
+          evolucion_alarma: eg.evol ? opcionTexto("correlato_evol", eg.evol) : "",
+          valorado: eg.momento ? opcionTexto("correlato_momento", eg.momento) : "",
+          concordancia_alarma: concordanciaGrupo(g, eg.evol)
+        } : {};
         var med = (f.medidas_l || []).map(function (v) { return regTextoLista(REG_MEDIDAS_AL, v); });
         if (f.medidas) med.push(f.medidas);
         return { hora: f.hora, fase_maniobra: f.fase || "", modalidad_lado: f.modalidad,
                  criterio: regTextoLista(REG_CRITERIO_AL, f.criterio),
                  causa_probable: regTextoLista(REG_CAUSA_AL, f.causa), nrf: !!f.nrf, an: !!f.an, cir: !!f.cir,
                  accion_medidas: med.join(", "), recuperacion: f.recup, hora_recuperacion: f.h_recup,
-                 min_hasta_recuperacion: minutosEntre(f.hora, f.h_recup) };
+                 min_hasta_recuperacion: minutosEntre(f.hora, f.h_recup),
+                 grupo_alarmas: corr.grupo_alarmas, evolucion_alarma: corr.evolucion_alarma,
+                 valorado: corr.valorado, concordancia_alarma: corr.concordancia_alarma };
       });
     });
     // BOM, igual que casosACsv(), para que Excel abra bien los acentos.
@@ -4950,6 +4966,13 @@
     return filas.length ? seccionInforme(doc, T("caso_alarmas_registro"), filas) : null;
   }
 
+  // Correlación de cada alarma con la evolución (29-09-2026): una línea por
+  // grupo; sin alarmas, nada.
+  function seccionCorrelatoInforme(doc, c) {
+    var filas = filasCorrelato(c).map(function (f) { return filaInforme(doc, f.alarmas, textoCorrelato(f), true); });
+    return filas.length ? seccionInforme(doc, T("caso_correlato_alarmas"), filas) : null;
+  }
+
   function seccionUmbralRaicesInforme(doc, c) {
     var datos = c.umbral_raices_niveles;
     if (!datos || !datos.niveles || !datos.niveles.length) return null;
@@ -5124,7 +5147,8 @@
     var CAMPOS_APARTE = [
       "tecnicas_realizadas", "tecnicas_alteradas", "tecnicas_parametros",
       "umbral_raices_niveles", "material_previsto", "material_real", "imagenes_montaje",
-      "informes_imagenes", "basales_registro", "alarmas_registro", "mapeo_registro", "eventos_anestesia"
+      "informes_imagenes", "basales_registro", "alarmas_registro", "mapeo_registro", "eventos_anestesia",
+      "correlato_alarmas"
     ];
     // Identificación en 2 columnas y Paciente en 3 (edad, sexo y servicio son
     // siempre descripciones cortas), con el nombre del caso y los textos
@@ -5174,6 +5198,10 @@
         // hizo cada una y sus notas ("sec").
         [seccionTecnicasInforme(doc, c), seccionParametrosInforme(doc, c), sec]
           .filter(Boolean).forEach(function (s) { art.appendChild(s); });
+      } else if (g === "resultado") {
+        // La correlación de cada alarma, detrás de la evolución y la
+        // concordancia del caso (29-09-2026).
+        [sec, seccionCorrelatoInforme(doc, c)].filter(Boolean).forEach(function (s) { art.appendChild(s); });
       } else if (g === "paciente") {
         // Mismo criterio que "montaje": "sec" trae los campos simples del
         // grupo (edad, sexo, servicio, resumen de historia clínica), los
@@ -7059,6 +7087,50 @@
     return "";
   }
 
+  // Correlato elegido para un grupo, en un caso cualquiera (no solo el abierto).
+  function correlatoDe(c, g) { return (c.correlato_alarmas || {})[g.clave] || {}; }
+
+  // Una fila por grupo con todo ya resuelto: para el Sheet, el informe y el
+  // CSV. Listas en id (como el resto del Sheet); criterio en id si es de la
+  // lista y, si no, el texto.
+  function filasCorrelato(c) {
+    var d = c.registro_intraop;
+    if (!d || !d.alarmas) return [];
+    return gruposAlarmas(d).map(function (g) {
+      var e = correlatoDe(c, g);
+      var horas = g.alarmas.map(function (x) { return x.a.hora; }).filter(Boolean).sort();
+      var recs = [];
+      g.alarmas.forEach(function (x) { if (x.a.recup && recs.indexOf(x.a.recup) === -1) recs.push(x.a.recup); });
+      return {
+        alarmas: g.alarmas.map(function (x) { return "A" + x.n; }).join(", "),
+        n_alarmas: g.alarmas.length, tecnica: g.tec, criterio: g.crit,
+        hora_inicio: horas[0] || "", hora_fin: horas[horas.length - 1] || "",
+        recuperacion: recs.join("/"), evolucion: e.evol || "", valorado: e.momento || "",
+        concordancia: concordanciaGrupo(g, e.evol)
+      };
+    });
+  }
+
+  // «t-MEP MSD · deltoides · Pérdida · 08:59–09:35 → Sin déficit relacionado (72 h) · PR»
+  function textoCorrelato(f) {
+    var rango = f.hora_inicio + (f.hora_fin && f.hora_fin !== f.hora_inicio ? "–" + f.hora_fin : "");
+    var t = [f.tecnica, regTextoLista(REG_CRITERIO_AL, f.criterio), rango].filter(Boolean).join(" · ");
+    if (f.evolucion) t += " → " + opcionTexto("correlato_evol", f.evolucion) + (f.valorado ? " (" + opcionTexto("correlato_momento", f.valorado) + ")" : "");
+    if (f.concordancia) t += " · " + f.concordancia;
+    return t;
+  }
+
+  // Concordancia del caso a partir de sus grupos: la más informativa, en
+  // este orden (un VP en cualquier grupo hace VP el caso).
+  var ORDEN_CONC_GRUPOS = ["VP", "¿VP?", "FP", "PR", "¿PR?"];
+  function concordanciaDeGrupos(concs) {
+    for (var i = 0; i < ORDEN_CONC_GRUPOS.length; i++) {
+      if (concs.indexOf(ORDEN_CONC_GRUPOS[i]) !== -1) return ORDEN_CONC_GRUPOS[i];
+    }
+    return "";
+  }
+  var repintarPropuestaCaso = null;
+
   function filaCorrelato(g) {
     var fila = regNodo("div", "caso-correlato-fila");
     var horas = g.alarmas.map(function (x) { return x.a.hora; }).filter(Boolean).sort();
@@ -7095,6 +7167,7 @@
         e[k[0]] = sel.value;
         if (!e.evol && !e.momento) delete mapa[g.clave];
         pintarConc();
+        if (repintarPropuestaCaso) repintarPropuestaCaso();
       });
       ctr.appendChild(sel);
     });
@@ -7922,6 +7995,7 @@
           pintarAlarmas(contR, dR, { modalidades: regQueRapidos(dR, tecR()), guardar: REG_SIN_GUARDAR, conHora: false, alCambiar: function () {
             if (camposCaso.alerta && alarmasConDatos(dR).length) camposCaso.alerta.checked = true;
             if (repintarCorrelato) repintarCorrelato();
+            if (repintarPropuestaCaso) repintarPropuestaCaso();
           } });
         } else if (def.t === "mapeo_reg") {
           var bloquesR = REG_MAPEO_BLOQUES.filter(function (b) {
@@ -8271,13 +8345,24 @@
           evol: camposCaso.evolucion_postop ? camposCaso.evolucion_postop.value : ""
         };
         var v = propuestaConcordancia(datosC);
+        var dudosa = concordanciaDudosa(datosC);
+        var motivo = motivoConcordancia(datosC);
+        // Con la correlación de cada alarma rellena (29-09-2026), la propuesta
+        // sale de sus grupos, que es más fino que el resumen de todo el caso.
+        var filasG = filasCorrelato(casoAbierto).filter(function (f) { return f.concordancia; });
+        if (filasG.length) {
+          var vg = concordanciaDeGrupos(filasG.map(function (f) { return f.concordancia; }));
+          dudosa = vg.charAt(0) === "¿";
+          v = vg.replace(/[¿?]/g, "");
+          motivo = T("caso_correlato_alarmas") + ": " + filasG.map(function (f) { return f.alarmas + " " + f.concordancia; }).join(" · ");
+        }
         propC.textContent = "";
         propC.hidden = !v || v === ctlConc.value;
         if (propC.hidden) return;
         var textoV = opcionTexto("concordancia", v);
-        if (concordanciaDudosa(datosC)) textoV = "¿" + textoV + "?";
+        if (dudosa) textoV = "¿" + textoV + "?";
         propC.appendChild(regNodo("span", null, T("caso_concordancia_propuesta", { v: textoV }) +
-          " (" + motivoConcordancia(datosC) + ")"));
+          " (" + motivo + ")"));
         var ap = regNodo("button", "caso-propuesta-aplicar", T("caso_concordancia_aplicar"));
         ap.type = "button";
         ap.addEventListener("click", function () {
@@ -8289,6 +8374,7 @@
       ["alerta", "recuperacion_senal", "evolucion_postop", "concordancia"].forEach(function (k) {
         if (camposCaso[k]) camposCaso[k].addEventListener("change", actualizarPropC);
       });
+      repintarPropuestaCaso = actualizarPropC;
       actualizarPropC();
     }
 
@@ -17399,6 +17485,10 @@
      el CSV, el Sheet y lo que ya leía esos campos). Sin alarmas no se toca
      nada: un caso antiguo conserva lo suyo. */
   function alarmasEnCaso(c) {
+    // Correlación de cada alarma, ya calculada por grupo (29-09-2026): la lee
+    // el Sheet (Correlacion_long) tal cual, sin repetir la lógica en Codigo.gs.
+    var filasCorr = filasCorrelato(c);
+    if (filasCorr.length) c.correlato_filas = filasCorr; else delete c.correlato_filas;
     var d = c.registro_intraop;
     var lista = [];
     ((d && d.alarmas) || []).forEach(function (a, i) { if (alarmaEscrita(a)) lista.push({ a: a, i: i }); });

@@ -31,6 +31,7 @@ var HOJAS = {
   CASOS: "Casos",
   TECNICAS_LONG: "Tecnicas_long",
   MATERIAL_LONG: "Material_long",
+  CORRELACION_LONG: "Correlacion_long",
   LISTAS: "Listas",
   META: "Meta"
 };
@@ -401,6 +402,29 @@ function construirTecnicasLong_(casos, cat) {
   return { cabecera: cabecera, filas: filas, idsDesconocidos: idsDesconocidos };
 }
 
+// Correlación de cada alarma con la evolución postquirúrgica (29-09-2026):
+// una fila por grupo de alarmas (misma técnica y mismo criterio). La app deja
+// cada grupo ya calculado en c.correlato_filas al guardar el caso, así que
+// aquí solo se copia: la lógica (agrupar, concordancia) vive en un solo sitio.
+// Listas en id, como en Casos. Los casos cancelados no cuentan.
+function construirCorrelacionLong_(casos, cat) {
+  var cabecera = ["ID_Caso", "Fecha", "servicio", "Alarmas", "N_alarmas", "Tecnica", "Criterio",
+    "Hora_inicio", "Hora_fin", "Recuperacion", "Evolucion", "Valorado", "Concordancia_grupo", "Concordancia_caso"];
+  var iFecha = cabecera.indexOf("Fecha"), iIdCaso = cabecera.indexOf("ID_Caso"), iAl = cabecera.indexOf("Alarmas");
+  var filas = [];
+  casos.filter(function (c) { return c.estado !== "cancelado"; }).forEach(function (c) {
+    var serv = cat.SERV[c.servicio_id];
+    (c.correlato_filas || []).forEach(function (f) {
+      filas.push([c.ID_Caso, aFecha_(c.fecha), serv ? serv.nombre : "", f.alarmas, f.n_alarmas, f.tecnica, f.criterio,
+        f.hora_inicio, f.hora_fin, f.recuperacion, f.evolucion, f.valorado, f.concordancia, c.concordancia || ""]);
+    });
+  });
+  filas.sort(function (a, b) {
+    return compararColumna_(a[iFecha], b[iFecha]) || compararColumna_(a[iIdCaso], b[iIdCaso]) || compararColumna_(a[iAl], b[iAl]);
+  });
+  return { cabecera: cabecera, filas: filas };
+}
+
 // Hoja añadida sobre la especificación mínima: sin ella, "material consumido
 // acumulado" (fase 4) no tiene de dónde sacar un total por tipo, porque
 // material_previsto/material_real son mapas de clave variable y Looker no
@@ -612,6 +636,7 @@ function reconstruirTodo() {
   var hojaCasos = construirFilasCasos_(descarga.casos, cat, columnasTec);
   var hojaTecLong = construirTecnicasLong_(descarga.casos, cat);
   var hojaMatLong = construirMaterialLong_(descarga.casos);
+  var hojaCorrLong = construirCorrelacionLong_(descarga.casos, cat);
   var hojaListas = construirListas_(cat);
   var filasMeta = construirMeta_(descarga.casos, descarga.malformados, hojaTecLong.idsDesconocidos);
 
@@ -626,6 +651,9 @@ function reconstruirTodo() {
 
   var hMatLong = escribirHoja_(ss, HOJAS.MATERIAL_LONG, [hojaMatLong.cabecera].concat(hojaMatLong.filas));
   formatearTabla_(hMatLong, hojaMatLong.filas.length + 1, hojaMatLong.cabecera.length);
+
+  var hCorrLong = escribirHoja_(ss, HOJAS.CORRELACION_LONG, [hojaCorrLong.cabecera].concat(hojaCorrLong.filas));
+  formatearTabla_(hCorrLong, hojaCorrLong.filas.length + 1, hojaCorrLong.cabecera.length);
 
   var hListas = escribirHoja_(ss, HOJAS.LISTAS, hojaListas.filas);
   formatearListas_(hListas, hojaListas.bloques);

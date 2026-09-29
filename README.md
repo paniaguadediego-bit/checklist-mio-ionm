@@ -622,9 +622,11 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
    con su evolución (sin déficit relacionado, déficit que recupera, estable,
    empeoramiento, pendiente de valorar, no valorable), cuándo se valoró
    (inmediato, 72 h, alta, 1, 3 o 6 meses) y la concordancia de ese grupo,
-   calculada con su recuperación en quirófano; y
-   concordancia, con una **propuesta** calculada con las alarmas, el resultado
-   de la señal y la evolución que se aplica con un botón (VP, FP, VN, FN o **PR — positivo reversible**: hubo un
+   calculada con su recuperación en quirófano (sale también en el informe
+   PDF, en el CSV de eventos y alarmas y en la pestaña **Correlacion_long** del
+   Sheet); y concordancia, con una **propuesta** calculada con las alarmas, el resultado
+   de la señal y la evolución -o, si la correlación de cada alarma está
+   rellena, a partir de sus filas- que se aplica con un botón (VP, FP, VN, FN o **PR — positivo reversible**: hubo un
    cambio significativo que se recuperó tras actuar y no quedó déficit nuevo).
    La lista de casos se puede filtrar por concordancia.
 8. **Docencia / Meta** — mi papel (Adjunto 1 / Adjunto 2 / Residente),
@@ -1465,7 +1467,7 @@ una sola vez, en un Google Sheet tuyo:
 7. Elige ahora **`reconstruirTodo`** en el mismo desplegable y pulsa
    **▶ Ejecutar**, para la primera reconstrucción. Al terminar, vuelve a la
    pestaña del Sheet: deberían haber aparecido las hojas `Casos`,
-   `Tecnicas_long`, `Material_long`, `Listas` y `Meta`.
+   `Tecnicas_long`, `Material_long`, `Correlacion_long`, `Listas` y `Meta`.
 
 A partir de aquí funciona solo, una vez al día. Para forzarlo a mano sin
 entrar al editor: recarga el Sheet y usa el menú **MIO-Check → Reconstruir
@@ -1531,7 +1533,7 @@ cuando pulsas el botón de actualizar).
 
 ### 0. Conectar las tres hojas
 
-Cada tabla del Sheet (`Casos`, `Tecnicas_long`, `Material_long`) se conecta
+Cada tabla del Sheet (`Casos`, `Tecnicas_long`, `Material_long`, `Correlacion_long`) se conecta
 como una **fuente de datos separada**, aunque las tres vivan en el mismo
 documento — es así como funciona el conector de Hojas de cálculo de Looker
 Studio.
