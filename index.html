@@ -24,7 +24,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260930zt">
+<link rel="stylesheet" href="style.css?v=20260930zv">
 </head>
 <body>
 
@@ -123,6 +123,8 @@
     <button type="button" id="demo-restablecer" data-i18n="demo_restablecer"></button>
     <p class="demo-autoria" data-i18n="demo_autoria"></p>
   </div>
+  <!-- Logo en grande abajo del todo (30-09-2026, pedido del usuario). -->
+  <img class="inicio-logo" src="img/icon-512.png" alt="MIO-Check" width="160" height="160" loading="lazy">
 </div>
 
 <main class="pantalla" id="pantalla-organizador">
@@ -921,33 +923,41 @@
 
   <div class="pestanas" id="docente-pestanas">
     <button type="button" class="pestana activa" data-pane="miotomas" data-i18n="docente_tab_miotomas"></button>
-    <button type="button" class="pestana" data-pane="cama" data-i18n="docente_tab_cama"></button>
-    <button type="button" class="pestana" data-pane="teoria" data-i18n="docente_tab_teoria"></button>
+    <!-- Cama de quirófano y Teoría básica, ocultas por ahora (30-09-2026,
+         pedido del usuario): solo Miotomas. Quitar el hidden para volver. -->
+    <button type="button" class="pestana" data-pane="cama" data-i18n="docente_tab_cama" hidden></button>
+    <button type="button" class="pestana" data-pane="teoria" data-i18n="docente_tab_teoria" hidden></button>
   </div>
 
   <div id="pane-miotomas">
   <p class="dlg-intro" data-i18n-html="docente_intro"></p>
   <p class="docente-fuentes" data-i18n-html="docente_fuentes"></p>
 
-  <div class="docente-cols">
-    <div class="docente-col">
-      <h4 data-i18n="docente_posibles"></h4>
+  <!-- Mismo formato que la ficha de Gestión de Casos y el Registro
+       (30-09-2026, pedido del usuario): apartados plegables y los niveles en
+       chips, como «Umbrales por raíz». Antes, tres columnas con una pila de
+       vértebras en el centro. -->
+  <details class="caso-grupo docente-grupo" open>
+    <summary data-i18n="docente_columna"></summary>
+    <div class="caso-grupo-campos">
+      <div id="docente-vertebras" class="chip-fila"></div>
+      <button type="button" id="docente-limpiar-niveles" data-i18n="docente_limpiar"></button>
+    </div>
+  </details>
+  <details class="caso-grupo docente-grupo" open>
+    <summary data-i18n="docente_posibles"></summary>
+    <div class="caso-grupo-campos">
       <p class="docente-pista" id="docente-nivel-pista"></p>
       <div id="docente-posibles" class="docente-lista"></div>
     </div>
-
-    <div class="docente-columna-vert">
-      <h4 data-i18n="docente_columna"></h4>
-      <div id="docente-vertebras" class="vertebras"></div>
-      <button type="button" id="docente-limpiar-niveles" data-i18n="docente_limpiar"></button>
-    </div>
-
-    <div class="docente-col">
-      <h4 data-i18n="docente_elegidos"></h4>
+  </details>
+  <details class="caso-grupo docente-grupo" open>
+    <summary data-i18n="docente_elegidos"></summary>
+    <div class="caso-grupo-campos">
       <p class="docente-pista" id="docente-cobertura"></p>
       <div id="docente-elegidos" class="docente-lista"></div>
     </div>
-  </div>
+  </details>
 
   </div><!-- /pane-miotomas -->
 
@@ -1116,8 +1126,8 @@
 
 <script src="data/surgeries.js?v=20260930c"></script>
 <script src="data/i18n-en.js?v=20260930b"></script>
-<script src="data/guia.js?v=20260930zb"></script>
+<script src="data/guia.js?v=20260930zc"></script>
 <script src="data/parametros-tecnicas.js?v=20260930a"></script>
-<script src="app.js?v=20260930zzm"></script>
+<script src="app.js?v=20260930zzo"></script>
 </body>
 </html>

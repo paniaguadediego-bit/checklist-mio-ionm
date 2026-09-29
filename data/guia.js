@@ -60,7 +60,7 @@ window.GUIA = {
     ] },
     { grupo: "Después / consulta", tarjetas: [
       { titulo: "Material", texto: "Todo el catálogo, con buscador." },
-      { titulo: "Docencia", texto: "Miotomas y cama de quirófano para practicar." },
+      { titulo: "Docencia", texto: "Miotomas: qué músculos cubren los niveles de la cirugía." },
       { titulo: "Simulador", texto: "Una pantalla de monitorización para ensayar alarmas." },
       { titulo: "Mis apuntes", texto: "Tus notas y fotos en carpetas; se exportan a Word." }
     ] }

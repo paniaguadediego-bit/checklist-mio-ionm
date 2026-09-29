@@ -890,7 +890,7 @@
     tile_material_sub:    { es: "Cada electrodo y sonda, y para qué sirve", en: "Every electrode and probe, and what it is for" },
     tile_registro_sub:    { es: "Hoja de quirófano imprimible: hitos, eventos, alarmas", en: "Printable OR sheet: milestones, events, alarms" },
     tile_tecnicas_sub:    { es: "Parámetros de estímulo y registro, con su fuente", en: "Stimulation and recording parameters, with sources" },
-    tile_docencia_sub:    { es: "Miotomas y colocación de cajas en la mesa", en: "Myotomes and box placement on the table" },
+    tile_docencia_sub:    { es: "Miotomas: qué músculos cubren cada raíz", en: "Myotomes: which muscles cover each root" },
     tile_simulador_sub:   { es: "Pantalla de monitorización para practicar alarmas", en: "Monitoring screen to practise alarms" },
     tile_apuntes_sub:     { es: "Tus notas y fotos, en todos tus dispositivos", en: "Your notes and photos, on all your devices" },
     tile_bibliografia_sub: { es: "Libros, guías y artículos en los que se basa", en: "Books, guidelines and papers it is based on" },
@@ -1134,8 +1134,8 @@
     tecmio_col_filtros_barrido: { es: "Filtros y barrido", en: "Filters and sweep" },
     tecmio_fuentes_titulo: { es: "Fuentes", en: "Sources" },
     docente_titulo:      { es: "Miotomas: qué músculos monitorizar", en: "Myotomes: which muscles to monitor" },
-    docente_intro:       { es: "Pulsa en la columna los <b>niveles</b> que abarca la cirugía. A la izquierda aparecen los músculos que dependen de esas raíces; pulsa uno para llevarlo a los <b>monitorizados</b> de la derecha, y pulsa allí para quitarlo. Los rangos son los que se enseñan habitualmente: la inervación se solapa y no todas las escuelas dan los mismos límites, así que están para discutirlos.",
-                           en: "Click the <b>levels</b> the surgery covers on the spine. The muscles depending on those roots appear on the left; click one to move it to <b>monitored</b> on the right, and click there to remove it. The ranges are the ones usually taught: innervation overlaps and not every school gives the same limits, so they are there to be discussed." },
+    docente_intro:       { es: "Marca en <b>Columna</b> los niveles que abarca la cirugía. En <b>Músculos posibles</b> salen los que dependen de esas raíces: toca uno para pasarlo a <b>Monitorizados</b>, y tócalo allí para quitarlo. Los rangos son los que se enseñan habitualmente: la inervación se solapa y no todas las escuelas dan los mismos límites, así que están para discutirlos.",
+                           en: "Tick in <b>Spine</b> the levels the surgery covers. <b>Possible muscles</b> shows the ones depending on those roots: tap one to move it to <b>Monitored</b>, and tap it there to remove it. The ranges are the ones usually taught: innervation overlaps and not every school gives the same limits, so they are there to be discussed." },
     docente_fuentes:      { es: "El detalle al pasar el ratón por un músculo, cuando lo lleva, cita: <b>[TD/L]</b> Toleikis, en Deletis et al., Neurophysiology in Neurosurgery, 2.ª ed., cap. 13, y Leppänen (ASNM) para el músculo y el nivel · <b>[Sch]</b> Schirmer 2011 y <b>[Lon]</b> London 2022 (J Neurosurg Spine) para la frecuencia real de solapamiento entre niveles. Los músculos sin ninguna marca no vienen de esta tabla: son rangos habituales de enseñanza, sin cita concreta detrás.",
                            en: "The tooltip on a muscle, when it has one, cites: <b>[TD/L]</b> Toleikis, in Deletis et al., Neurophysiology in Neurosurgery, 2nd ed., ch. 13, and Leppänen (ASNM) for the muscle and level · <b>[Sch]</b> Schirmer 2011 and <b>[Lon]</b> London 2022 (J Neurosurg Spine) for how often levels actually overlap. Muscles with no mark are not from this table: they are the usual teaching ranges, with no specific citation behind them." },
     docente_posibles:    { es: "Músculos posibles", en: "Possible muscles" },
@@ -14770,13 +14770,13 @@
       if (m) (m.niveles || []).forEach(function (n) { cubiertos[n] = true; });
     });
 
+    // Chips como los niveles de «Umbrales por raíz» de la ficha (30-09-2026).
+    // Un nivel marcado que ya tiene músculo que lo cubre lleva ✓.
     vertebras().forEach(function (v) {
-      var b = document.createElement("button");
-      b.type = "button";
+      var b = document.createElement("span");
       var marcado = docenteNiveles.indexOf(v) !== -1;
-      b.className = "vertebra" + (marcado ? " marcada" : "") +
-        (marcado && cubiertos[v] ? " cubierta" : "");
-      b.textContent = v;
+      b.className = "chip chip-extra" + (marcado ? " activo" : "");
+      b.textContent = v + (marcado && cubiertos[v] ? " ✓" : "");
       b.addEventListener("click", function () {
         var i = docenteNiveles.indexOf(v);
         if (i === -1) docenteNiveles.push(v); else docenteNiveles.splice(i, 1);
