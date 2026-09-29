@@ -1208,7 +1208,7 @@
     barra_caso_ay:       { es: "Se guarda solo, en el caso. La plantilla original no se toca.",
                            en: "Saved automatically, into the case. The original montage is untouched." },
     barra_caso_volver:   { es: "Volver al caso", en: "Back to the case" },
-    barra_plantilla_texto: { es: "Plantilla", en: "Template" },
+    barra_plantilla_texto: { es: "Plantilla seleccionada", en: "Selected template" },
     caso_reconstruccion_parcial: { es: "De este caso solo se han podido recolocar {recuperadas} de {esperadas} entradas.\n\nEs un caso antiguo, de antes de que se guardara el montaje completo, y alguna de sus entradas ya no existe en las cajas de ahora.\n\nSi sigues y cambias algo, el caso se quedará con las {recuperadas} que se ven. ¿Continuar?",
                            en: "Only {recuperadas} of {esperadas} inputs could be restored for this case.\n\nIt is an old case, from before the full montage was stored, and some of its inputs no longer exist in the current boxes.\n\nIf you continue and change anything, the case will keep only the {recuperadas} shown. Continue?" },
     montajes_cuenta:     { es: "{n} de {total}", en: "{n} of {total}" },
