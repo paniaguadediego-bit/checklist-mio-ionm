@@ -11647,7 +11647,22 @@
       tecs.slice(0, PLANTILLA_MAX_TECS).forEach(function (t) {
         fTecs.appendChild(regNodo("span", "plantilla-tec", campo(t, "corta") || campo(t, "etiqueta")));
       });
-      if (tecs.length > PLANTILLA_MAX_TECS) fTecs.appendChild(regNodo("span", "plantilla-tec plantilla-tec-mas", "+" + (tecs.length - PLANTILLA_MAX_TECS)));
+      if (tecs.length > PLANTILLA_MAX_TECS) {
+        // «+n»: al tocarlo, un globo con las técnicas que no caben (01-10-2026,
+        // pedido del usuario), sin cargar la plantilla.
+        var mas = regNodo("span", "plantilla-tec plantilla-tec-mas", "+" + (tecs.length - PLANTILLA_MAX_TECS));
+        var resto = tecs.slice(PLANTILLA_MAX_TECS).map(function (t) { return campo(t, "corta") || campo(t, "etiqueta"); }).join(" · ");
+        mas.title = resto;
+        mas.setAttribute("data-ayuda", resto);
+        mas.addEventListener("click", function (e) {
+          e.stopPropagation();
+          e.preventDefault();
+          mostrarGloboAyuda(mas);
+          var g = ayudaGlobo;
+          setTimeout(function () { if (ayudaGlobo === g) quitarGloboAyuda(); }, 3500);
+        });
+        fTecs.appendChild(mas);
+      }
       fila.appendChild(fTecs);
     }
     return fila;

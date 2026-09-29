@@ -4390,3 +4390,4 @@ body:not(.editando-caso) .barra-caso {
 .plantilla-tecs { gap: 0.15rem; margin-top: 0.05rem; }
 .plantilla-tec { font-size: 0.6rem; padding: 0 0.3rem; }
 .plantilla-fila .marca-ficticio { font-size: 0.55rem; padding: 0 0.3rem; }
+.plantilla-tec-mas { cursor: pointer; color: var(--accent); border-color: var(--accent); }
