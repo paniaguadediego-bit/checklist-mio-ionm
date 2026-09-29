@@ -4328,3 +4328,14 @@ textarea { resize: none; overflow-y: hidden; }
 .marca-ficticio { display: inline-block; margin-left: 0.4rem; vertical-align: 0.12em; font-family: var(--mono); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.08rem 0.35rem; border-radius: 4px; color: var(--aviso-text); background: var(--aviso-bg); border: 1px solid var(--aviso-border); white-space: nowrap; }
 .aviso-ficticio { margin: 0.35rem 0 0; padding: 0.35rem 0.55rem; font-size: 0.75rem; line-height: 1.35; color: var(--aviso-text); background: var(--aviso-bg); border: 1px solid var(--aviso-border); border-radius: 4px; }
 .aviso-ficticio[hidden] { display: none; }
+
+/* Plantillas de montaje, distinta del resto de tarjetas del Organizador
+   (30-09-2026, pedido del usuario): es la puerta de entrada. Cabecera
+   centrada, teñida del acento y con su borde; título algo más grande. */
+#montajes { border-color: var(--accent); }
+#montajes > summary.card-cab {
+  justify-content: center;
+  background: var(--accent-soft);
+  border-bottom-color: var(--accent);
+}
+#montajes > summary.card-cab h2 { font-size: 0.92rem; letter-spacing: 0.02em; color: var(--accent); }
