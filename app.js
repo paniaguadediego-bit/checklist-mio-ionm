@@ -8745,12 +8745,13 @@
       det.textContent = c.nombre_caso || (intervencionDe(c) || c.escenario_nombre || T("caso_sin_intervencion"));
       fila.appendChild(det);
 
+      // Sin etiqueta de estado (29-09-2026, pedido del usuario): lo dice el
+      // color del recuadro (leyenda bajo los filtros); queda en el title y
+      // para el lector de pantalla.
+      fila.title = T("caso_estado_" + c.estado);
+      fila.setAttribute("aria-label", (c.ID_Caso || "") + " · " + fila.title);
       var pie = document.createElement("span");
       pie.className = "caso-fila-pie";
-      var et = document.createElement("span");
-      et.className = "caso-etiqueta estado-" + c.estado;
-      et.textContent = T("caso_estado_" + c.estado);
-      pie.appendChild(et);
       if (c.alerta) {
         var al = document.createElement("span");
         al.className = "caso-etiqueta alerta";
@@ -8763,7 +8764,7 @@
         sub.textContent = T("caso_pendiente_subir");
         pie.appendChild(sub);
       }
-      fila.appendChild(pie);
+      if (pie.children.length) fila.appendChild(pie);
 
       cont.appendChild(fila);
     });
@@ -16645,6 +16646,9 @@
     { id: "an_sube", mod: "anestesia", l: "↑ perfusión", l_en: "↑ infusion", ayuda: "Se aumenta la perfusión del fármaco.", ayuda_en: "Drug infusion increased." },
     { id: "an_baja", mod: "anestesia", l: "↓ perfusión", l_en: "↓ infusion", ayuda: "Se disminuye la perfusión del fármaco.", ayuda_en: "Drug infusion decreased." },
     { id: "an_bolo", mod: "anestesia", l: "Bolo", l_en: "Bolus", ayuda: "Bolo del fármaco.", ayuda_en: "Drug bolus." },
+    // «Inicio» (29-09-2026, pedido del usuario): un fármaco que se empieza a
+    // mitad de la cirugía, para saber cuándo.
+    { id: "an_inicio", mod: "anestesia", l: "Inicio", l_en: "Start", ayuda: "Se inicia el fármaco.", ayuda_en: "Drug started." },
     { id: "an_detencion", mod: "anestesia", l: "Detención", l_en: "Stopped", ayuda: "Se detiene el fármaco.", ayuda_en: "Drug stopped." }
   ];
   // Fármacos anestésicos más usados (29-09-2026, pedido del usuario): salen al

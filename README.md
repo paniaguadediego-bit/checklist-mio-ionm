@@ -76,6 +76,9 @@ manteniendo pulsado; la ficha del caso tiene la barra de abajo en una sola fila
 las medidas **Aviso al cirujano / anestesista** y **Reposicionar**, la
 recuperación como *recupera / en parte / no recupera*, rótulos en cada casilla,
 botón **Ahora** para la hora de recuperación y la duración de la alarma.
+En **Gestión de Casos**, cada caso va en un recuadro del color de su estado
+(borde izquierdo más ancho) y, sin etiqueta de estado, una leyenda de colores
+bajo Destacados / Seguimiento.
 Además: **TOF 0/4 a 4/4** de un toque; **contexto quirúrgico** en lista cerrada
 para cada evento; las alarmas de «Apuntado» van **plegadas** con un resumen; solo
 se corrige una línea con el **✎**; modo oscuro por defecto con **Modo claro** en
@@ -959,8 +962,8 @@ hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
   (pierde motor / sensitivo) y retirada, con su hora. Con **Anestesia** elegida
   sale la fila **Fármaco** (propofol, remifentanilo, fentanilo, ketamina,
   dexmedetomidina, midazolam, sevoflurano, desflurano, rocuronio, sugammadex,
-  lidocaína, noradrenalina) y en Hallazgo solo ↑ perfusión, ↓ perfusión, bolo
-  o detención; se apunta como evento de anestesia «Propofol · Bolo» (también
+  lidocaína, noradrenalina) y en Hallazgo solo ↑ perfusión, ↓ perfusión, bolo,
+  inicio o detención; se apunta como evento de anestesia «Propofol · Bolo» (también
   en la ficha) y el fármaco se guarda con su id. La caja de debajo es
   una nota (acción o medidas) o, con **Otro**, el cambio.
 - **Contexto quirúrgico** (opcional, lista cerrada): disección, retracción,

@@ -24,7 +24,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260930zm">
+<link rel="stylesheet" href="style.css?v=20260930zp">
 </head>
 <body>
 
@@ -634,6 +634,14 @@
         <label for="casos-seguimiento" data-i18n="casos_filtro_seguimiento"></label>
       </span>
     </div>
+    <!-- Leyenda del color de cada caso (29-09-2026): el estado ya no va en
+         una etiqueta, lo dice el color del recuadro. -->
+    <div class="casos-leyenda" aria-hidden="true">
+      <span class="casos-leyenda-it estado-pendiente_planificar" data-i18n="caso_estado_pendiente_planificar"></span>
+      <span class="casos-leyenda-it estado-preparado" data-i18n="caso_estado_preparado"></span>
+      <span class="casos-leyenda-it estado-cerrado" data-i18n="caso_estado_cerrado"></span>
+      <span class="casos-leyenda-it estado-cancelado" data-i18n="caso_estado_cancelado"></span>
+    </div>
   </div>
 
   <div id="casos-lista" class="casos-lista"></div>
@@ -1107,8 +1115,8 @@
 
 <script src="data/surgeries.js?v=20260930c"></script>
 <script src="data/i18n-en.js?v=20260930b"></script>
-<script src="data/guia.js?v=20260930z"></script>
+<script src="data/guia.js?v=20260930za"></script>
 <script src="data/parametros-tecnicas.js?v=20260930a"></script>
-<script src="app.js?v=20260930zzf"></script>
+<script src="app.js?v=20260930zzh"></script>
 </body>
 </html>

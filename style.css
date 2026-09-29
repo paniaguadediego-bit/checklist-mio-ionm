@@ -2010,10 +2010,20 @@ dialog h3 {
    con el acento dorado se confundían), y borde más grueso para que se vea.
    La etiqueta del pie lleva el mismo color de fondo. */
 .caso-fila[class*="estado-"] { border-left-width: 5px; }
-.caso-fila.estado-pendiente_planificar { border-left-color: var(--estado-pendiente); }
-.caso-fila.estado-preparado { border-left-color: var(--estado-preparado); }
-.caso-fila.estado-cerrado { border-left-color: var(--estado-cerrado); }
-.caso-fila.estado-cancelado { border-left-color: var(--estado-cancelado); }
+/* Todo el recuadro del color de su estado, con el borde izquierdo más ancho
+   (29-09-2026, pedido del usuario: fuera la etiqueta de estado). */
+.caso-fila.estado-pendiente_planificar { border-color: var(--estado-pendiente); }
+.caso-fila.estado-preparado { border-color: var(--estado-preparado); }
+.caso-fila.estado-cerrado { border-color: var(--estado-cerrado); }
+.caso-fila.estado-cancelado { border-color: var(--estado-cancelado); }
+/* Leyenda de colores bajo los filtros */
+.casos-leyenda { display: flex; flex-wrap: wrap; gap: 0.25rem 0.8rem; margin: 0.35rem 0 0.1rem; font-size: 0.72rem; color: var(--text-muted); }
+.casos-filtros .casos-leyenda-it { display: inline-flex; flex-direction: row; align-items: center; gap: 0.3rem; }
+.casos-leyenda-it::before { content: ""; width: 0.75rem; height: 0.75rem; border-radius: 2px; border: 2px solid var(--text-muted); }
+.casos-leyenda-it.estado-pendiente_planificar::before { border-color: var(--estado-pendiente); }
+.casos-leyenda-it.estado-preparado::before { border-color: var(--estado-preparado); }
+.casos-leyenda-it.estado-cerrado::before { border-color: var(--estado-cerrado); }
+.casos-leyenda-it.estado-cancelado::before { border-color: var(--estado-cancelado); }
 
 .caso-fila-cab { display: flex; justify-content: space-between; font-size: 0.82rem; }
 .caso-fila-id-grupo { display: flex; align-items: center; gap: 0.3rem; }
@@ -2039,12 +2049,6 @@ dialog h3 {
   color: var(--text-muted);
 }
 .caso-etiqueta.alerta { background: var(--quitar-bg); color: var(--peligro); font-weight: 600; }
-/* Etiqueta de estado con el color de su borde (ver .caso-fila.estado-*).
-   El negro lleva un filo claro para verse también en modo oscuro. */
-.caso-etiqueta.estado-pendiente_planificar { background: var(--estado-pendiente); color: #fff; font-weight: 600; box-shadow: 0 0 0 1px #8a8374; }
-.caso-etiqueta.estado-preparado { background: var(--estado-preparado); color: #1a1600; font-weight: 600; }
-.caso-etiqueta.estado-cerrado { background: var(--estado-cerrado); color: #fff; font-weight: 600; }
-.caso-etiqueta.estado-cancelado { background: var(--estado-cancelado); color: #fff; font-weight: 600; }
 .caso-etiqueta.sin-subir { background: var(--accent-soft); color: var(--accent); }
 
 /* --------------------- Apuntes: cajas de texto y fotos ------------------ */
@@ -4020,7 +4024,8 @@ body.sin-ayudas .coste-nota { display: none !important; }
 /* Tema oscuro: el borde negro de «Pendiente de planificar» no se veía sobre
    el fondo oscuro (contraste 1,08:1; auditoría, F8). */
 @media screen {
-  :root:not(.tema-claro) .caso-fila.estado-pendiente_planificar { border-left-color: #8a8374; }
+  :root:not(.tema-claro) .caso-fila.estado-pendiente_planificar { border-color: #8a8374; }
+  :root:not(.tema-claro) .casos-leyenda-it.estado-pendiente_planificar::before { border-color: #8a8374; }
 }
 
 /* «Ahora» junto a su casilla de hora: del mismo alto que ella (≈30 px) en
