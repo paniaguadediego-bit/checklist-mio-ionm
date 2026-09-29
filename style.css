@@ -4092,6 +4092,8 @@ body.sin-ayudas .coste-nota { display: none !important; }
   letter-spacing: 0.01em;
 }
 .caso-grupo.reg-rapido > summary:hover { filter: brightness(1.06); }
+/* Texto centrado en el botón (29-09-2026, pedido del usuario) */
+.caso-grupo.reg-rapido > summary { justify-content: center; }
 .caso-grupo.reg-rapido[open] > summary { border-bottom-color: var(--accent); }
 .caso-grupo.reg-rapido > summary { border-radius: calc(var(--r) - 2px); }
 .caso-grupo.reg-rapido[open] > summary { border-radius: calc(var(--r) - 2px) calc(var(--r) - 2px) 0 0; }
