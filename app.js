@@ -483,6 +483,12 @@
     casos_nuevo_cero_ay: { es: "Te lleva al Organizador de Montajes para construir el montaje de este caso -a mano, o a partir de una plantilla-. Rellenas el resto de la ficha cuando quieras.",
                            en: "Takes you to the Montage Organizer to build this case's montage -from scratch, or from a template-. Fill in the rest of the form whenever you like." },
     casos_filtro_estado: { es: "Estado", en: "Status" },
+    casos_filtro_servicio: { es: "Especialidad", en: "Specialty" },
+    casos_filtros_btn:   { es: "Filtros", en: "Filters" },
+    casos_filtros_quitar: { es: "Quitar filtros", en: "Clear filters" },
+    casos_filtro_quitar_uno: { es: "Quitar este filtro", en: "Remove this filter" },
+    casos_filtro_desde_chip: { es: "Desde {f}", en: "From {f}" },
+    casos_filtro_hasta_chip: { es: "Hasta {f}", en: "To {f}" },
     casos_filtro_todos:  { es: "Todos", en: "All" },
     casos_filtro_desde:  { es: "Desde", en: "From" },
     casos_filtro_hasta:  { es: "Hasta", en: "To" },
@@ -1306,7 +1312,7 @@
     rr_n_evento:         { es: "1 evento", en: "1 event" },
     rr_filtro_todos:     { es: "Todos", en: "All" },
     rr_filtro_criticos:  { es: "Críticos", en: "Critical" },
-    rr_filtro_avisos:    { es: "Advertencias", en: "Warnings" },
+    rr_filtro_avisos:    { es: "Cambios", en: "Changes" },
     rr_filtro_info:      { es: "Info/Normal", en: "Info/Normal" },
     rr_filtro_vacio:     { es: "Nada en este filtro.", en: "Nothing in this filter." },
     rr_et_fase:          { es: "FASE", en: "PHASE" },
@@ -8631,9 +8637,11 @@
     var soloDestacados = document.getElementById("casos-destacado").checked;
     var soloSeguimiento = document.getElementById("casos-seguimiento").checked;
     var fEquipo = hayVariosEquipos() ? document.getElementById("casos-equipo").value : "";
+    var fServicio = document.getElementById("casos-servicio").value;
     return Object.keys(casos).filter(function (uid) {
       var c = casos[uid];
       if (fEquipo && equipoDe(c) !== fEquipo) return false;
+      if (fServicio && c.servicio_id !== fServicio) return false;
       if (fEstado && c.estado !== fEstado) return false;
       if (fConcordancia && c.concordancia !== fConcordancia) return false;
       if (fDesde && (c.fecha || "") < fDesde) return false;
@@ -8658,9 +8666,85 @@
     return (ascendente ? da - db : db - da) || (b.fecha || "").localeCompare(a.fecha || "");
   }
 
+  // Especialidad: los servicios activos del catálogo, más el de algún caso
+  // que ya no esté activo (para poder seguir filtrándolo).
+  function pintarFiltroServicio() {
+    var sel = document.getElementById("casos-servicio");
+    var valor = sel.value;
+    sel.textContent = "";
+    var todos = document.createElement("option");
+    todos.value = "";
+    todos.textContent = T("casos_filtro_todos");
+    sel.appendChild(todos);
+    var usados = {};
+    Object.keys(casos).forEach(function (uid) { if (casos[uid].servicio_id) usados[casos[uid].servicio_id] = 1; });
+    SERVICIOS.filter(function (s) { return s.activa !== false || usados[s.id]; }).forEach(function (s) {
+      var o = document.createElement("option");
+      o.value = s.id;
+      o.textContent = campo(s, "nombre");
+      sel.appendChild(o);
+    });
+    sel.value = valor;
+    if (sel.value !== valor) sel.value = "";
+  }
+
+  // «Filtros (n)» y, debajo, un chip con ✕ por cada filtro puesto (30-09-2026).
+  var CASOS_FILTROS_SELECT = ["casos-estado", "casos-servicio", "casos-concordancia", "casos-equipo"];
+  function pintarFiltrosActivos() {
+    var cont = document.getElementById("casos-filtros-activos");
+    cont.textContent = "";
+    var activos = [];
+    CASOS_FILTROS_SELECT.forEach(function (id) {
+      var sel = document.getElementById(id);
+      if (id === "casos-equipo" && !hayVariosEquipos()) return;
+      if (sel.value) activos.push({ texto: sel.options[sel.selectedIndex].textContent, quitar: function () { sel.value = ""; } });
+    });
+    [["casos-desde", "casos_filtro_desde_chip"], ["casos-hasta", "casos_filtro_hasta_chip"]].forEach(function (x) {
+      var inp = document.getElementById(x[0]);
+      if (inp.value) activos.push({ texto: T(x[1], { f: fechaCorta(inp.value) }), quitar: function () { inp.value = ""; } });
+    });
+    [["casos-destacado", "casos_filtro_destacados"], ["casos-seguimiento", "casos_filtro_seguimiento"]].forEach(function (x) {
+      var chk = document.getElementById(x[0]);
+      if (chk.checked) activos.push({ texto: T(x[1]), quitar: function () { chk.checked = false; } });
+    });
+    activos.forEach(function (a) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "casos-filtro-chip";
+      b.textContent = a.texto + " ✕";
+      b.title = T("casos_filtro_quitar_uno");
+      b.addEventListener("click", function () { a.quitar(); renderListaCasos(); });
+      cont.appendChild(b);
+    });
+    cont.hidden = !activos.length;
+    var n = document.getElementById("casos-filtros-n");
+    n.textContent = activos.length ? String(activos.length) : "";
+    n.hidden = !activos.length;
+    document.getElementById("casos-filtros-quitar").hidden = !activos.length;
+  }
+  function fechaCorta(iso) {
+    var p = String(iso).split("-");
+    return p.length === 3 ? p[2] + "/" + p[1] + "/" + p[0].slice(2) : iso;
+  }
+
+  document.getElementById("casos-filtros-btn").addEventListener("click", function () {
+    var panel = document.getElementById("casos-filtros-panel");
+    panel.hidden = !panel.hidden;
+    this.setAttribute("aria-expanded", panel.hidden ? "false" : "true");
+    this.classList.toggle("abierto", !panel.hidden);
+  });
+  document.getElementById("casos-filtros-quitar").addEventListener("click", function () {
+    CASOS_FILTROS_SELECT.concat(["casos-desde", "casos-hasta"]).forEach(function (id) { document.getElementById(id).value = ""; });
+    document.getElementById("casos-destacado").checked = false;
+    document.getElementById("casos-seguimiento").checked = false;
+    renderListaCasos();
+  });
+
   function renderListaCasos() {
     pintarFiltroEquipo();
+    pintarFiltroServicio();
     pintarBotonesQuitarFecha();
+    pintarFiltrosActivos();
     var cont = document.getElementById("casos-lista");
     cont.innerHTML = "";
     var orden = document.getElementById("casos-orden").value;
@@ -8787,7 +8871,7 @@
   }
 
   document.getElementById("tile-casos").addEventListener("click", abrirListaCasos);
-  ["casos-estado", "casos-concordancia", "casos-equipo", "casos-desde", "casos-hasta", "casos-orden", "casos-destacado", "casos-seguimiento"].forEach(function (id) {
+  ["casos-estado", "casos-servicio", "casos-concordancia", "casos-equipo", "casos-desde", "casos-hasta", "casos-orden", "casos-destacado", "casos-seguimiento"].forEach(function (id) {
     document.getElementById(id).addEventListener("change", renderListaCasos);
   });
 

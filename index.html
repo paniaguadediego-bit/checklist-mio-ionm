@@ -24,7 +24,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260930zv">
+<link rel="stylesheet" href="style.css?v=20260930zw">
 </head>
 <body>
 
@@ -582,7 +582,25 @@
     <small data-i18n="casos_nuevo_cero_ay"></small>
   </div>
 
-  <div class="casos-filtros">
+  <!-- Filtros agrupados (30-09-2026, pedido del usuario: demasiado ruido).
+       A la vista solo «Filtros (n)» y «Ordenar por»; los filtros van en un
+       panel plegable y los que están puestos salen debajo como chips con ✕.
+       Los ids de los controles no cambian: casosFiltradosUids() los lee igual. -->
+  <div class="casos-filtros-barra">
+    <button type="button" id="casos-filtros-btn" class="casos-filtros-btn" aria-expanded="false" aria-controls="casos-filtros-panel">
+      <span data-i18n="casos_filtros_btn"></span> <span class="casos-filtros-n" id="casos-filtros-n" hidden></span>
+    </button>
+    <span class="barra-flex"></span>
+    <label for="casos-orden" class="casos-orden-rot" data-i18n="casos_filtro_orden"></label>
+    <select id="casos-orden">
+      <option value="fecha" data-i18n="casos_orden_fecha"></option>
+      <option value="fecha_asc" data-i18n="casos_orden_fecha_asc"></option>
+      <option value="dificultad" data-i18n="casos_orden_dificultad"></option>
+      <option value="dificultad_asc" data-i18n="casos_orden_dificultad_asc"></option>
+    </select>
+  </div>
+  <div class="casos-filtros-activos" id="casos-filtros-activos"></div>
+  <div class="casos-filtros casos-filtros-panel" id="casos-filtros-panel" hidden>
     <div class="casos-filtros-fila">
       <span>
         <label for="casos-estado" data-i18n="casos_filtro_estado"></label>
@@ -593,6 +611,11 @@
           <option value="cerrado" data-i18n="caso_estado_cerrado"></option>
           <option value="cancelado" data-i18n="caso_estado_cancelado"></option>
         </select>
+      </span>
+      <!-- Especialidad (30-09-2026): el servicio del caso (servicio_id). -->
+      <span>
+        <label for="casos-servicio" data-i18n="casos_filtro_servicio"></label>
+        <select id="casos-servicio"></select>
       </span>
       <!-- Filtro por concordancia (demo-congreso B3.F2), con PR incluido. -->
       <span>
@@ -618,15 +641,6 @@
         <label for="casos-hasta" data-i18n="casos_filtro_hasta"></label>
         <span class="fecha-filtro"><input type="date" id="casos-hasta"><button type="button" class="btn-quitar-fecha" data-para="casos-hasta" data-i18n-title="casos_quitar_fecha" hidden>✕</button></span>
       </span>
-      <span>
-        <label for="casos-orden" data-i18n="casos_filtro_orden"></label>
-        <select id="casos-orden">
-          <option value="fecha" data-i18n="casos_orden_fecha"></option>
-          <option value="fecha_asc" data-i18n="casos_orden_fecha_asc"></option>
-          <option value="dificultad" data-i18n="casos_orden_dificultad"></option>
-          <option value="dificultad_asc" data-i18n="casos_orden_dificultad_asc"></option>
-        </select>
-      </span>
     </div>
     <div class="casos-filtros-fila">
       <span class="casos-filtro-check">
@@ -637,7 +651,11 @@
         <input type="checkbox" id="casos-seguimiento">
         <label for="casos-seguimiento" data-i18n="casos_filtro_seguimiento"></label>
       </span>
+      <span class="barra-flex"></span>
+      <button type="button" id="casos-filtros-quitar" class="casos-filtros-quitar" data-i18n="casos_filtros_quitar"></button>
     </div>
+  </div>
+  <div class="casos-filtros casos-filtros-pie">
     <!-- Leyenda del color de cada caso (29-09-2026): el estado ya no va en
          una etiqueta, lo dice el color del recuadro. -->
     <div class="casos-leyenda" aria-hidden="true">
@@ -1128,6 +1146,6 @@
 <script src="data/i18n-en.js?v=20260930b"></script>
 <script src="data/guia.js?v=20260930zc"></script>
 <script src="data/parametros-tecnicas.js?v=20260930a"></script>
-<script src="app.js?v=20260930zzo"></script>
+<script src="app.js?v=20260930zzp"></script>
 </body>
 </html>
