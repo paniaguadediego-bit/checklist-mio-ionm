@@ -6,13 +6,18 @@
  * está bloqueado por CORS, así que el contenido va envuelto en una variable
  * global y se carga con una simple etiqueta <script>.
  *
- * Es la versión corta y orientada a la tarea, no la documentación de
- * referencia -esa sigue siendo README.md-. No se sincroniza, no se guarda
- * nada de aquí, y queda excluida de la impresión.
+ * Rehecha el 30-09-2026 (pedido del usuario: «la cantidad de texto es
+ * inmensa, nadie se va a leer eso nunca»). Ahora es visual y corta: el flujo
+ * de un día en cinco pasos, una tarjeta por pantalla con dos o tres puntos,
+ * lo que conviene saber y unas dudas rápidas de una o dos frases. La
+ * referencia larga sigue siendo README.md. Regla al tocarla: frases cortas,
+ * como mucho tres puntos por tarjeta; si algo necesita un párrafo, va al
+ * README, no aquí.
  *
- * Si cambia el flujo de trabajo, este archivo hay que revisarlo a la vez que
- * el README: es la segunda descripción del flujo que existe en el proyecto,
- * y puede quedarse obsoleta en silencio si solo se actualiza una de las dos.
+ * Todo es texto plano (se pinta con textContent). No se sincroniza, no se
+ * guarda nada de aquí, y queda excluida de la impresión.
+ *
+ * Si cambia el flujo de trabajo, revisar este archivo a la vez que el README.
  *
  * Solo en castellano por ahora (decisión del usuario, 31-08-2026): la app
  * muestra un aviso dentro de la propia guía cuando la interfaz está en
@@ -20,126 +25,71 @@
  */
 window.GUIA = {
 
-  tarjetas: [
-    {
-      titulo: "Qué es",
-      texto: "Prepara el material de una cirugía monitorizada (IONM) y te dice exactamente qué llevar, cuánto cuesta y en qué caja va cada cosa, canal a canal."
-    },
-    {
-      titulo: "El flujo de un día",
-      texto: "Plantilla → técnicas → material en las cajas → resumen → guardar como caso → cerrarlo después de la cirugía."
-    },
-    {
-      titulo: "Plantilla y caso no son lo mismo",
-      texto: "La plantilla es el molde: la reutilizas cuantas veces quieras. El caso es lo que pasó ese día concreto y no cambia aunque el molde cambie después — ni aunque lo edites, ni aunque lo borres."
-    },
-    {
-      titulo: "Catálogo y etiquetas",
-      texto: "El catálogo es todo el material que puedes colocar. La etiqueta es de qué tipo físico está hecho (aguja, sacacorchos, pegatina…); es lo que se cuenta en el resumen y de donde sale el precio."
-    },
-    {
-      titulo: "Cajas y resumen",
-      texto: "Cajas es dónde va cada cosa, canal a canal. El resumen es el objetivo de todo: material a preparar, coste, cajas necesarias y avisos."
-    },
-    {
-      titulo: "Y además",
-      texto: "Ventana Docente para practicar miotomas y colocación de cajas, castellano/inglés, funciona sin cobertura y se sincroniza sola entre el móvil y el ordenador."
-    },
-    {
-      titulo: "Pantalla de inicio",
-      texto: "El logo lleva siempre aquí: las tarjetas van agrupadas por el momento de la cirugía -Antes de quirófano (Organizador de Montajes, Gestión de Casos), Quirófano (Checklist pre-quirúrgico, Registro intraoperatorio) y Después / consulta (Técnicas IONM, Material, Docencia, Simulador, Mis apuntes, Bibliografía recomendada)-, cada una con una línea que dice para qué sirve. Se trabaja solo dentro de la que elijas; el logo, o el botón Inicio junto al título de cada pantalla, te devuelven aquí. El menú ⋮ de arriba tiene Catálogos, el idioma (EN/ES), Modo claro/oscuro (la herramienta va en oscuro salvo que elijas el claro), esta Guía y Ocultar/Mostrar ayudas; el modo y las ayudas se recuerdan en cada dispositivo."
-    }
+  // Un día con MIO-Check, de principio a fin
+  flujo: [
+    { titulo: "Prepara", texto: "Una plantilla en el Organizador: técnicas y material en cada caja." },
+    { titulo: "Crea el caso", texto: "Gestión de Casos → Crear caso, y carga la plantilla." },
+    { titulo: "Comprueba", texto: "Checklist pre-quirúrgico, vinculado al caso." },
+    { titulo: "Apunta", texto: "Registro: fases, eventos y alarmas con un toque." },
+    { titulo: "Cierra", texto: "Resultado, evolución y concordancia en la ficha." }
   ],
 
-  // Acordeón: todos cerrados por defecto. "html" admite <b>/<p>/<ul> como
-  // texto estático de desarrollador, igual que ya hacen las intros de
-  // Catálogos (cat_intro_*) -no es dato de usuario, no hace falta
-  // createElement/textContent para esto.
-  acordeon: [
-    {
-      titulo: "Plantilla y caso: cuándo usar cada una",
-      html: "<p>Usa una <b>plantilla</b> (un montaje de la biblioteca) mientras preparas o practicas: la editas, la duplicas, la reordenas sin ningún riesgo, porque no representa ninguna cirugía real todavía.</p><p>Crea un <b>caso</b> cuando la cirugía va a pasar o ya pasó de verdad, con <b>Crear caso</b> en Gestión de Casos. Se abre su <b>ficha</b>; para construir su montaje, en el apartado 5 (Montaje / Material), sub-apartado Cajas y entradas, pulsa <b>Editar montaje</b>, que te lleva al Organizador -a mano, o cargando una plantilla encima-. A partir de ahí es un registro clínico: cargar una plantilla sobre él siempre es una copia de su contenido, nunca un enlace — si luego cambias la plantilla, el caso ya guardado no se entera.</p>"
-    },
-    {
-      titulo: "Preparar un montaje desde cero",
-      html: "<p>Dentro de <b>Organizador de Montajes</b>, tarjeta <b>Plantillas de montaje</b> -abierta de fábrica, es la primera- → <b>+ Plantilla en blanco</b>. El banco de trabajo (Catálogo, Cajas, Técnicas, Resumen) queda cargado con él al momento.</p><p>Marca las técnicas que vas a hacer, y en Catálogo pulsa un ítem y luego la entrada de la caja donde va -también se puede arrastrar, aunque en pantallas táctiles pulsar y colocar funciona mejor-. Se guarda solo con cada cambio: no hay un botón «Guardar» que se pueda olvidar, aunque si prefieres una confirmación explícita, <b>Guardar plantilla</b> la ofrece (ver más abajo).</p>"
-    },
-    {
-      titulo: "Partir de la plantilla de un compañero (duplicar)",
-      html: "<p>Desde <b>Plantillas de montaje</b>, elige el montaje de otro autor y pulsa <b>Más acciones → Duplicar</b>. La copia nace a tu nombre y es tuya para editar; el original de tu compañero no se toca.</p>"
-    },
-    {
-      titulo: "La biblioteca de Plantillas de montaje: buscar, elegir, gestionar",
-      html: "<p>Tarjeta <b>Plantillas de montaje</b>, arriba del todo dentro de Organizador de Montajes -abierta de fábrica-. Buscador por nombre o autor, y cuántas entradas tiene ocupadas cada uno. La lista sale siempre en <b>orden alfabético</b>, sin importar de quién sea cada montaje.</p><p>Elegir un montaje <b>lo carga al momento y pliega la tarjeta sola, sin preguntar</b>: no hay ningún riesgo, cada montaje es su propio archivo y el anterior se queda guardado tal cual.</p><p><b>Duplicar, Renombrar, Vaciar y Borrar</b> están en el menú <b>Más acciones</b>, junto al botón <b>Guardar plantilla</b>, y actúan sobre el montaje que tengas cargado en ese momento. Solo puedes tocar los tuyos -salvo los de fábrica, sin autor, que puede editar cualquiera-. <b>Guardar plantilla</b> pregunta cada vez si quieres sobrescribir el activo o guardarlo como uno nuevo -una confirmación explícita, aparte del guardado automático de siempre-.</p>"
-    },
-    {
-      titulo: "Cargar un montaje sobre un caso ya creado",
-      html: "<p>Solo se puede hacer desde <b>Corrigiendo el material del caso</b> -el botón <b>Editar montaje</b> del apartado 5 te lleva ahí-, en la barra fija de arriba, botón <b>Cargar plantilla…</b>. No está en la ficha del caso, a propósito: desde ahí no se sabe si lo que se va a sustituir se puede editar de verdad.</p><p>Elige un montaje y <b>siempre</b> te pregunta antes de tocar nada -también con el caso vacío-, diciendo en números qué va a pasar: cuántas entradas se sobrescriben, o cuántas vacías se rellenan y cuántas se conservan. Puedes <b>Reemplazar todo</b> o <b>Añadir solo lo que falta</b> -esta segunda opción no toca ninguna entrada que ya tuviera material-.</p><p>Es una copia: cargar un montaje no crea ningún enlace con él. Si el caso está cerrado o cancelado, pide una confirmación aparte antes de seguir.</p>"
-    },
-    {
-      titulo: "Guardar el montaje de un caso como plantilla",
-      html: "<p>Desde <b>Corrigiendo el material del caso</b> (botón <b>Editar montaje</b> del apartado 5), en la barra fija de arriba, botón <b>Guardar este montaje como plantilla…</b> -ya no está en la ficha-. Crea siempre una plantilla <b>nueva</b> a partir de lo que hay ahora mismo en las cajas de ese caso -nunca sobrescribe una existente-.</p><p>Disponible en cualquier momento, tenga el caso el estado que tenga. El caso en sí no se modifica en absoluto.</p>"
-    },
-    {
-      titulo: "Registrar un caso y cerrarlo: los 9 apartados",
-      html: "<p>Desde <b>Gestión de casos</b>, la ficha se organiza en 9 apartados plegables, todos cerrados por defecto -se abre el que interese, no hace falta rellenar de arriba abajo-: Identificación/Trazabilidad, Paciente, Cirugía, Anestesia, Montaje/Material, Técnicas, Desarrollo intraoperatorio, Resultado/Correlación clínica, y Docencia/Meta.</p><p>La ficha <b>se guarda sola</b> al poco de cada cambio, igual que el Registro (<b>Guardar</b> queda como confirmación). <b>Cerrar caso</b>, en la barra de abajo, la guarda como Cerrado y vuelve a la lista; en un caso cerrado el mismo botón es <b>Reabrir caso</b>.</p><p>El <b>Estado</b> (apartado 1) puede ser Pendiente de planificar (negro), Preparado (amarillo), Cerrado (verde) o Cancelado (rojo); el color se ve en la lista de casos. Un caso cancelado pide un motivo, y en el Google Sheet solo cuenta para trazabilidad y paciente -no entra en las estadísticas de técnicas ni de material, porque no llegó a monitorizarse de verdad-.</p><p>El apartado 5 (Montaje/Material) se reparte en dos sub-apartados: <b>Cajas y entradas</b> -con el <b>detalle canal a canal</b>, qué hay puesto en cada entrada de cada caja con el mismo aspecto que la ventana Resumen, de solo lectura: para corregirlo hace falta el botón <b>Editar montaje</b>, que te lleva al Organizador de Montajes-, <b>Material</b> -el material real del caso, sin copia editable aparte: si añades algo que no estaba previsto, colócalo en su caja y anótalo en Notas del material; justo debajo sale también el <b>coste del material</b>, mismo desglose que en Resumen con los precios de hoy, tanto en pantalla como en el informe en PDF-. <b>Técnicas</b> es el apartado 6, aparte: técnicas realizadas y cómo se realizó cada una, con sus propios campos por técnica.</p>"
-    },
-    {
-      titulo: "Equipos",
-      html: "<p>Cada plantilla y cada caso son de un <b>equipo</b> (el aparato de monitorización), con su letra. El material, el catálogo y los precios son los mismos para todos; lo único que cambia son las <b>cajas</b> donde se coloca. Si el servicio solo tiene un equipo configurado, la app no pregunta ni lo rotula.</p><p>Al pulsar <b>Crear caso</b> o <b>Plantilla en blanco</b> se elige el equipo (propone el último que usaste). El rótulo del Organizador dice con qué equipo estás trabajando, y en Gestión de Casos cada caso lleva su letra y se puede filtrar por equipo.</p><p><b>Cargar plantilla…</b> solo ofrece plantillas del mismo equipo que el caso: las entradas de un equipo no existen en las cajas del otro. Por lo mismo, el equipo de un caso solo se puede cambiar mientras su montaje esté vacío.</p><p>Lo que es propio de cada equipo -dónde van las sondas, los auriculares o si hay conmutador- lo explica la descripción de cada caja, en la tarjeta <b>Cajas</b>. El material que solo existe en un equipo no aparece en el catálogo de los demás.</p>"
-    },
-    {
-      titulo: "Revisión del montaje (en el Resumen)",
-      html: "<p>Debajo del material, el Resumen avisa de lo que parece que falta o sobra: una <b>caja de registro con entradas ocupadas y el GND vacío</b>, una <b>técnica marcada sin su material</b> (p. ej. SEP de mediano sin registro en Erb ni cervical, MEP sin electrodos de TES, PEATC sin auriculares) y <b>material colocado que ninguna técnica marcada usa</b> (¿falta marcarla?).</p><p>Son avisos orientativos: no impiden nada y no se guardan en el caso ni van al Sheet.</p>"
-    },
-    {
-      titulo: "Material extra, sondas y conmutador",
-      html: "<p>El <b>material extra</b> es el que no ocupa entrada de ninguna caja -auriculares PEATC y gafas VEP, por ejemplo-: se añade aparte y entra igualmente en el resumen y en el coste.</p><p>Las <b>sondas</b> (categoría propia del catálogo, plegada de fábrica) sí ocupan entrada, como cualquier otro material. Algunas llevan un icono <b>📷</b> junto al nombre: lo abre en un visor dentro de la propia herramienta, para identificar la sonda física sin salir a buscarla en otro sitio.</p><p>El <b>conmutador</b> es un chip fijo de la caja de estimulación. En cuanto lo colocas, suma automáticamente <b>6 electrodos sacacorchos</b> al material a preparar, sin que ocupen entrada propia -reparten por dentro del switch hacia varios canales-.</p>"
-    },
-    {
-      titulo: "Coste del material: fungible, sin precio, cobro por manta",
-      html: "<p>El coste solo cuenta el material <b>fungible</b> -el que se gasta-. Lo reutilizable (sondas, gafas, auriculares…) se prepara pero no se gasta, y no entra en el total.</p><p>Un tipo de material sin precio puesto se lista aparte, en vez de contar como cero, para que el total no parezca completo sin serlo -los precios se ponen uno por uno desde el botón <b>Etiquetas</b>-.</p><p>Alguna etiqueta -la manta de electrodos GRID, por ejemplo- viene marcada <b>«Se cobra por manta»</b>: cuenta 1 unidad de coste sin importar cuántas de sus tiras coloques, porque el conjunto entero se abre igual se use una tira o las ocho.</p>"
-    },
-    {
-      titulo: "Perfil de usuario y autoría (y por qué no es seguridad)",
-      html: "<p>El selector <b>«quién eres»</b> de la barra superior firma como autor los montajes que crees. Solo el autor de un montaje puede editarlo, renombrarlo, vaciarlo o borrarlo -los de fábrica, sin autor, los puede tocar cualquiera-.</p><p><b>No es una medida de seguridad</b>: cambiar de perfil no pide contraseña ni nada parecido, cualquiera puede hacerlo desde la misma barra. Es solo para no pisarse el trabajo entre compañeros sin querer.</p>"
-    },
-    {
-      titulo: "Sincronización, trabajo sin conexión y qué hacer ante un conflicto",
-      html: "<p>Con el token conectado (botón <b>☁</b>), todo -montajes, casos, catálogos- se sube y se baja solo, unos segundos después de cada cambio.</p><p><b>Sin conexión sigue funcionando con normalidad</b> y reintenta en cuanto vuelve. Si has tocado algo en el móvil sin subirlo y abres el ordenador, no se pisa nada: sube lo tuyo en vez de bajar.</p><p>Si dos dispositivos han cambiado cosas distintas, avisa de <b>Conflicto</b> y decides tú, desde el propio diálogo, entre <b>Subir</b> (gana lo de este dispositivo) o <b>Bajar</b> (gana lo del repositorio). La app nunca decide sola cuál de las dos versiones se pierde.</p>"
-    },
-    {
-      titulo: "Concordancia: VP, FP, VN, FN y PR",
-      html: "<p>En <b>Resultado / Correlación clínica</b>, si hubo alarmas, <b>Correlación de cada alarma</b> pone una fila por grupo (misma técnica y mismo criterio van juntas): elige cómo evolucionó esa función y cuándo se valoró, y la fila calcula su concordancia con la recuperación en quirófano. La concordancia del caso compara los cambios de la monitorización con el resultado neurológico. Además de VP, FP, VN y FN está <b>PR — positivo reversible</b>: hubo un cambio significativo que se recuperó tras actuar (avisar, pausar, subir la TAM...) y no quedó déficit nuevo.</p><p>Gestión de Casos se puede filtrar por concordancia.</p>"
-    },
-    {
-      titulo: "Informe en PDF y exportar a CSV",
-      html: "<p>Dentro de <b>Gestión de casos</b>, botón <b>Informe de casos (PDF)</b>: abre un informe en PDF -imprimible desde el propio diálogo del navegador- con los casos que cumplan los filtros que tengas puestos arriba (Estado/Desde/Hasta/Destacados/Seguimiento); sin ningún filtro, salen todos. <b>Informe (PDF)</b>, en el menú ⋮ de la ficha de un caso, hace lo mismo pero solo para ese caso. Es una función en pruebas: si algo no sale como esperas, dilo para irla afinando.</p><p>El botón <b>Exportar CSV</b>, al lado, descarga un CSV con esos mismos casos filtrados, sin esperar a la sincronización automática con el Google Sheet -útil si quieres los datos ya mismo, o prefieres no depender de ella-.</p><p><b>Exportar eventos y alarmas (CSV)</b> descarga los eventos y las alarmas del Registro intraoperatorio de esos mismos casos, una fila por evento o alarma, con el ID del caso para cruzarlo con el otro CSV.</p>"
-    },
-    {
-      titulo: "Qué NO se guarda nunca",
-      html: "<p>Ningún dato que identifique al paciente: ni nombre, ni apellidos, ni número de historia clínica, ni fecha de nacimiento. Solo el identificador del caso, la edad, el sexo y el resumen de historia clínica.</p><p>Ojo especial con <b>Pruebas de imagen</b> (apartado 2, Paciente): al fotografiar o capturar un informe de RM/TC, encuadra solo la imagen o el hallazgo, nunca la cabecera del informe, que suele traer el nombre y el NHC del paciente.</p>"
-    },
-    {
-      titulo: "Docencia",
-      html: "<p>Tarjeta <b>Docencia</b> de la pantalla de inicio (antes botón <b>Docente</b> de la barra superior). Tres pestañas, sin relación con la preparación de material -no tocan ningún montaje ni caso, y Miotomas/Cama de quirófano se guardan solo en ese navegador, no se sincronizan-:</p><p><b>Miotomas</b>: marcas los niveles de columna que abarca la cirugía y aparecen los músculos que dependen de esas raíces; los llevas de un lado a otro pulsándolos. Es un ejercicio, no una calculadora -no elige por ti, solo avisa de qué niveles se quedan sin ningún músculo que los cubra-.</p><p><b>Cama de quirófano</b>: eliges la posición del paciente y repartes las cajas por cabecera, laterales y pies con el mismo gesto de pulsar y colocar del resto de la herramienta. Lo que se practica es que el cable llegue.</p><p><b>Teoría básica de IONM</b>: pestaña nueva, de momento en construcción. El <b>Material</b> tiene su propia tarjeta en la pantalla de inicio, bajo el Registro intraoperatorio: todo el catálogo en filas, agrupado por categoría y con buscador.</p>"
-    },
-    {
-      titulo: "Checklist pre-quirúrgico",
-      html: "<p>Tarjeta <b>Checklist pre-quirúrgico</b> de la pantalla de inicio: una lista de comprobación en 5 momentos, desde la planificación hasta el campo ya abierto, para no olvidar nada antes de empezar a monitorizar.</p><p>El desplegable de arriba elige dónde se guardan las marcas: <b>Modelo 0 — sin caso</b> es una checklist de trabajo suelta, sin sincronizar -como el Simulador-, para repasar sin más. Si eliges un caso de la lista, las marcas se guardan dentro de ese caso y viajan con él -se sincronizan, y dos cirugías que estés preparando a la vez no se mezclan-. <b>Vaciar</b> desmarca todo lo de la checklist que tengas abierta en ese momento.</p>"
-    },
-    {
-      titulo: "Registro intraoperatorio",
-      html: "<p>La <b>Hoja completa</b> en pantalla va simplificada (la hoja <b>impresa</b> sale completa, como siempre): las técnicas (agrupadas como en Gestión de Casos) salen de la ficha del caso, de lectura; la anestesia se escribe aquí o en la ficha, es el mismo dato; <b>E2 · Mapeo</b> enseña un bloque por cada técnica de mapeo marcada en el caso (GRID, cortical, subcortical, nervio periférico, raíces y tornillos); las fases, los eventos y las alarmas se apuntan en el panel de arriba (F y G no salen en pantalla); y el cierre, en pocos campos.</p><p>Los campos marcados con <b>⇄</b> son el mismo dato que en la ficha del caso (fecha, horas, nivel, procedimiento, alarmas, mapeo, eventos de anestesia, técnicas con alteración, resultado de la señal, resultado esperable, incidencias técnicas y perla docente = aprendizaje clave). Lo que se recoge en quirófano se apunta aquí y aparece solo en Gestión de Casos: se escriban donde se escriban, se ven en el otro sitio y en la hoja impresa.</p><p><b>Apuntar fase, evento o alarma</b> (para quirófano), arriba de la hoja: es el único sitio donde se apuntan. En el bloque <b>Fase</b> toca la fase en la que está la cirugía; lo que apuntes después la hereda. El <b>TOF</b> (0/4 a 4/4), junto a Anestesia, es contexto: se elige y se guarda con el evento o la alarma que apuntes (se desmarca al apuntar). Un evento puede ser solo un contexto quirúrgico y/o un TOF. Al elegir una técnica, Hallazgo enseña debajo sus alteraciones propias (MEP, onda D, SEP, EMG, EEG, PEATC); mantén pulsado un botón para leer qué significa. Con GRID elegido salen sus eventos: colocación, phase reversal, se mueve y retirada. Con Anestesia elegida, elige el fármaco y qué se hizo (↑ o ↓ perfusión, bolo, inicio, detención): queda «Propofol · Bolo». Si el caso tiene CoMEP salen los pares craneales, y sus reflejos con el nombre corto. En el bloque <b>Evento o alarma</b> elige la <b>técnica</b> (en filas: técnicas del caso, factores técnicos, anestesia u Otro), si quieres el <b>contexto quirúrgico</b>, y el <b>hallazgo</b> (↑ umbral, ↓ amplitud, pérdida...) y pulsa <b>Apuntar evento</b> o <b>Apuntar alarma</b>. Si no está en los botones, toca <b>Otra</b> u <b>Otro</b> y escríbelo en la caja de debajo; con un botón normal, esa caja es un detalle opcional. La alarma se cierra en su detalle, con la Recuperación y su hora (botón Ahora). En <b>Apuntado</b> (por orden de hora, lo último abajo), la hora de cada línea se toca y se corrige; con <b>✎</b> se corrige también lo demás de la línea; y debajo de cada alarma, plegados con un resumen que se despliega al tocarlo, están la <b>causa probable</b>, las <b>medidas adoptadas</b> y la <b>recuperación</b> (Sí, Parcial o No, con su hora).</p><p>Las <b>basales</b> (OP BSL, PostPos1, PostPos2 -solo t-SEP y t-MEP- y CL BSL) son la misma tabla que la del apartado Desarrollo intraoperatorio de la ficha del caso: lo que escribas en un sitio sale en el otro y en la hoja impresa. Sus filas dependen de las técnicas del caso.</p><p>Como el Checklist, el desplegable de arriba elige dónde se guarda: <b>Modelo 0 — sin caso</b> es una hoja suelta en este navegador; si eliges un caso, la hoja se guarda dentro del caso y viaja con él. El botón <b>Vaciar</b> solo aparece en el Modelo 0: con un caso vinculado, lo del Registro es también la ficha del caso.</p><p>Lo más útil es <b>Imprimir hoja</b> (también desde la ficha de un caso, menú <b>⋮ → Hoja de registro</b>): genera 2 páginas A4 prerrellenadas con lo que ya metiste en Gestión de Casos -identificación, técnicas (monitorización, reflejos y mapeo, con las del caso marcadas), anestesia, dónde está montado el Raabe, parámetros y notas- y con filas en blanco para escribir a mano en quirófano: basales y comparativa, mapeo con esquema pequeño y un único registro de eventos y alarmas con la leyenda de respuesta NRF / Anest. / Cir. Lo que hayas tecleado en la pantalla (eventos, alarmas, hitos…) sale ya impreso en su fila.</p><p>Los botones <b>Ahora</b> ponen la hora actual, y <b>+ Evento</b> añade una fila de registro ya con la hora. No lleva etiqueta ni nº de historia del paciente.</p>"
-    },
-    {
-      titulo: "Mis apuntes",
-      html: "<p>Tarjeta <b>Mis apuntes</b>: tu documento personal de parámetros, filtros y fotos, hecho de <b>cajas de texto con título</b> que se guardan solas (y el botón <b>Guardar</b>, siempre visible abajo, te confirma la hora y sube al momento).</p><p>Puedes agrupar las cajas en <b>carpetas</b>, cada una con su color (pulsa el cuadradito para cambiarlo) y ordenarlas con las flechas ▲▼. Cada caja tiene botones <b>B</b> (negrita) e <b>I</b> (cursiva) y sus propias <b>fotos</b> debajo: cada foto se guarda como archivo aparte, sin límite práctico.</p><p><b>Exportar como Word</b> descarga un .docx con todo (carpetas, cajas con su formato y fotos) para abrirlo y editarlo en Word.</p>"
-    },
-    {
-      titulo: "Uso desde el móvil",
-      html: "<p>La interfaz es táctil. Lo cómodo es <b>pulsar y colocar</b>: tocas el material, el catálogo se pliega solo para dejar ver las cajas, y tocas la entrada de destino. En cuanto lo colocas, se suelta la selección y el catálogo se despliega solo otra vez, listo para el siguiente ítem. Arrastrar no funciona bien en pantallas táctiles, así que ese es el flujo recomendado.</p><p>Las fotos (montaje, pruebas de imagen, planificación, apuntes) se pueden hacer con el botón <b>📷</b> junto a «Añadir imagen», y quitar una siempre pide confirmación. Se guardan aparte del resto de datos, así que ya no hay que preocuparse por el espacio del móvil.</p>"
-    }
+  // Una tarjeta por pantalla, en los mismos tres bloques que el Inicio
+  pantallas: [
+    { grupo: "Antes de quirófano", tarjetas: [
+      { titulo: "Organizador de Montajes", texto: "Qué electrodo va en cada canal.", puntos: [
+        "Toca un material y luego la entrada de la caja.",
+        "Se guarda solo con cada cambio.",
+        "El Resumen te da material, coste y avisos."
+      ] },
+      { titulo: "Gestión de Casos", texto: "Una ficha por cirugía.", puntos: [
+        "Crear caso: eliges el equipo (Inomed o Cadwell).",
+        "La ficha se guarda sola; «Cerrar caso» al terminar.",
+        "Informe en PDF y CSV de los casos filtrados."
+      ] }
+    ] },
+    { grupo: "Quirófano", tarjetas: [
+      { titulo: "Checklist pre-quirúrgico", texto: "Cuatro momentos, de la planificación al posicionamiento.", puntos: [
+        "Vincúlalo a un caso y las marcas viajan con él."
+      ] },
+      { titulo: "Registro intraoperatorio", texto: "Lo que pasa en quirófano, con la hora.", puntos: [
+        "Fase: un toque; lo siguiente la hereda.",
+        "Técnica + hallazgo → Apuntar evento o alarma.",
+        "En el cronograma, toca la hora o ✎ para corregir."
+      ] }
+    ] },
+    { grupo: "Después / consulta", tarjetas: [
+      { titulo: "Material", texto: "Todo el catálogo, con buscador." },
+      { titulo: "Docencia", texto: "Miotomas y cama de quirófano para practicar." },
+      { titulo: "Simulador", texto: "Una pantalla de monitorización para ensayar alarmas." },
+      { titulo: "Mis apuntes", texto: "Tus notas y fotos en carpetas; se exportan a Word." }
+    ] }
+  ],
+
+  // Lo que conviene saber: una línea cada cosa
+  claves: [
+    { icono: "🔒", texto: "Nunca datos del paciente: ni nombre, ni NHC, ni fecha de nacimiento. En las fotos, sin la cabecera del informe." },
+    { icono: "⇄", texto: "Mismo dato en dos sitios: lo que escribes en el Registro sale en la ficha del caso, y al revés." },
+    { icono: "☁", texto: "Funciona sin cobertura y se sincroniza sola. Si sale «Conflicto», decides tú: Subir o Bajar." },
+    { icono: "⧉", texto: "Plantilla ≠ caso: cargar una plantilla copia su contenido; cambiarla después no toca los casos." }
+  ],
+
+  // Dudas rápidas: una o dos frases
+  dudas: [
+    { pregunta: "¿Qué significan los colores del cronograma?",
+      respuesta: "Rojo, alarma. Naranja, un cambio sin alarma o un factor técnico. Verde, fase o recuperación. Azul, lo demás (anestesia, mapeo, contexto)." },
+    { pregunta: "¿Qué es PR en la concordancia?",
+      respuesta: "Positivo reversible: hubo un cambio significativo, se recuperó tras actuar y no quedó déficit nuevo." },
+    { pregunta: "¿Por qué hay material «sin precio»?",
+      respuesta: "Se lista aparte para que el total no parezca completo sin serlo. Los precios se ponen en Etiquetas; solo cuenta lo fungible." },
+    { pregunta: "¿Puedo usar la plantilla de un compañero?",
+      respuesta: "Sí: Más acciones → Duplicar. La copia es tuya y el original no se toca." },
+    { pregunta: "¿Inomed o Cadwell?",
+      respuesta: "Cada plantilla y cada caso son de un equipo; solo cambian las cajas. Solo se cargan plantillas del mismo equipo." },
+    { pregunta: "¿Cómo cambio los colores o quito las ayudas?",
+      respuesta: "El botón redondo junto al ⋮ pasa por azul, oscuro y claro. «Ocultar ayudas» está en el ⋮." },
+    { pregunta: "¿Algún truco para el móvil?",
+      respuesta: "Toca y coloca en vez de arrastrar. En el Registro, mantén pulsado un botón para ver qué significa." }
   ]
 
 };

@@ -544,7 +544,7 @@
     apuntes_word_sin_titulo: { es: "(sin título)", en: "(untitled)" },
     apuntes_word_error:  { es: "No se pudo crear el archivo de Word: {error}", en: "Could not create the Word file: {error}" },
 
-    caso_estado_pendiente_planificar: { es: "Pendiente de planificar", en: "Planning pending" },
+    caso_estado_pendiente_planificar: { es: "A planificar", en: "To plan" },
     caso_estado_preparado: { es: "Preparado", en: "Prepared" },
     caso_estado_cerrado: { es: "Cerrado", en: "Closed" },
     caso_estado_cancelado: { es: "Cancelado", en: "Cancelled" },
@@ -809,7 +809,7 @@
     opc_rol_adjunto1:    { es: "Adjunto 1", en: "Attending 1" },
     opc_rol_adjunto2:    { es: "Adjunto 2", en: "Attending 2" },
     opc_rol_residente:   { es: "Residente", en: "Resident" },
-    opc_estado_pendiente_planificar: { es: "Pendiente de planificar", en: "Planning pending" },
+    opc_estado_pendiente_planificar: { es: "A planificar", en: "To plan" },
     opc_estado_preparado:{ es: "Preparado", en: "Prepared" },
     opc_estado_cerrado:  { es: "Cerrado", en: "Closed" },
     opc_estado_cancelado:{ es: "Cancelado", en: "Cancelled" },
@@ -858,12 +858,16 @@
     montaje_de:          { es: "{nombre} · {autor}", en: "{nombre} · {autor}" },
     caso_sin_id:         { es: "Caso sin número", en: "Case with no number" },
     btn_menu_tit:        { es: "Idioma y guía de uso", en: "Language and user guide" },
-    btn_guia:            { es: "Guía de uso", en: "User guide" },
     btn_ayudas_ocultar:  { es: "Ocultar ayudas", en: "Hide help texts" },
     btn_ayudas_mostrar:  { es: "Mostrar ayudas", en: "Show help texts" },
-    btn_tema_claro:      { es: "Modo claro", en: "Light mode" },
-    btn_tema_oscuro:     { es: "Modo oscuro", en: "Dark mode" },
-    btn_tema_azul:       { es: "Modo azul", en: "Blue mode" },
+    btn_colores_tit:     { es: "Colores: {tema}. Toca para pasar a {sig}.", en: "Colours: {tema}. Tap to switch to {sig}." },
+    tema_azul:           { es: "azul", en: "blue" },
+    tema_oscuro:         { es: "oscuro", en: "dark" },
+    tema_claro:          { es: "claro", en: "light" },
+    btn_guia_corto:      { es: "Guía", en: "Guide" },
+    guia_flujo_tit:      { es: "Un día con MIO-Check", en: "A day with MIO-Check" },
+    guia_claves_tit:     { es: "Conviene saber", en: "Good to know" },
+    guia_dudas_tit:      { es: "Dudas rápidas", en: "Quick questions" },
     btn_guia_tit:        { es: "Cómo se usa MIO-Check, de un vistazo", en: "How to use MIO-Check, at a glance" },
     dlg_guia_titulo:     { es: "Guía de uso", en: "User guide" },
     guia_aviso_en:       { es: "This guide is only written in Spanish for now.", en: "This guide is only written in Spanish for now." },
@@ -1191,8 +1195,8 @@
     montaje_creado:      { es: "creado {fecha}", en: "created {fecha}" },
 
     /* --- Checklist pre-quirúrgico (19/20-09-2026) --- */
-    checklist_intro:     { es: "Repaso en 5 momentos antes de empezar. Fuentes: Møller, cap. 18; MacDonald 2013 (ASNM); Deletis et al., 2.ª ed., caps. 19 y 41.",
-                           en: "A check in 5 moments before starting. Sources: Møller, ch. 18; MacDonald 2013 (ASNM); Deletis et al., 2nd ed., chs. 19 and 41." },
+    checklist_intro:     { es: "Repaso en 4 momentos antes de empezar. Fuentes: Møller, cap. 18; MacDonald 2013 (ASNM); Deletis et al., 2.ª ed., caps. 19 y 41.",
+                           en: "A check in 4 moments before starting. Sources: Møller, ch. 18; MacDonald 2013 (ASNM); Deletis et al., 2nd ed., chs. 19 and 41." },
     checklist_vincular:  { es: "Vincular a un caso", en: "Link to a case" },
     checklist_modelo_cero: { es: "Modelo 0 — sin caso", en: "Model 0 — no case" },
     checklist_progreso:  { es: "{n} de {total} revisados", en: "{n} of {total} checked" },
@@ -1378,8 +1382,6 @@
                            en: "After induction" },
     checklist_g_posicionamiento: { es: "Tras el posicionamiento",
                            en: "After positioning" },
-    checklist_g_comunicacion: { es: "Con el campo abierto",
-                           en: "Once the field is open" },
     checklist_hist_clinica: { es: "Historia: diagnóstico, nivel y lado, cirugía previa, neuropatía previa",
                            en: "History: diagnosis, level and side, prior surgery, pre-existing neuropathy" },
     checklist_examen_neuro: { es: "Exploración neurológica preoperatoria documentada",
@@ -1416,10 +1418,6 @@
                            en: "Final baseline before incision" },
     checklist_confirmar_decusacion: { es: "Decusación confirmada si PESS/PEM lateralizados",
                            en: "Decussation confirmed if SEP/MEP are lateralised" },
-    checklist_aviso_bolo_anestesia: { es: "Anestesia avisa antes de bolos o cambios de profundidad",
-                           en: "Anaesthesia warns before boluses or depth changes" },
-    checklist_timing_maniobras_cirujano: { es: "Cirujano avisa antes de las maniobras de riesgo",
-                           en: "Surgeon warns before high-risk manoeuvres" },
 
     /* --- Fase 4.1: biblioteca de montajes --- */
     dlg_montajes_titulo: { es: "Plantillas de montaje", en: "Montage templates" },
@@ -11771,40 +11769,75 @@
   var guiaRenderizada = false;
 
   function renderGuia() {
-    var guia = window.GUIA || { tarjetas: [], acordeon: [] };
+    // Rehecha el 30-09-2026 (pedido del usuario: demasiado texto). Todo en
+    // textContent: el contenido de data/guia.js es texto plano.
+    var guia = window.GUIA || {};
+    var cont = document.getElementById("guia-cuerpo");
+    cont.textContent = "";
+    var nodo = function (tag, clase, texto) {
+      var n = document.createElement(tag);
+      if (clase) n.className = clase;
+      if (texto) n.textContent = texto;
+      return n;
+    };
 
-    var contTarjetas = document.getElementById("guia-tarjetas");
-    contTarjetas.innerHTML = "";
-    guia.tarjetas.forEach(function (t, i) {
-      var tarjeta = document.createElement("div");
-      // La tercera tarjeta ("Plantilla y caso no son lo mismo") es la más
-      // importante de las seis -pedido explícito al escribir el guion-.
-      tarjeta.className = "guia-tarjeta" + (i === 2 ? " guia-destacada" : "");
-      var h4 = document.createElement("h4");
-      h4.textContent = t.titulo;
-      var p = document.createElement("p");
-      p.textContent = t.texto;
-      tarjeta.appendChild(h4);
-      tarjeta.appendChild(p);
-      contTarjetas.appendChild(tarjeta);
+    // Un día con MIO-Check: cinco pasos numerados
+    if ((guia.flujo || []).length) {
+      cont.appendChild(nodo("div", "guia-seccion-tit", T("guia_flujo_tit")));
+      var ol = nodo("ol", "guia-flujo");
+      guia.flujo.forEach(function (p, k) {
+        var li = nodo("li");
+        li.appendChild(nodo("span", "guia-n", String(k + 1)));
+        var txt = nodo("span", "guia-flujo-txt");
+        txt.appendChild(nodo("b", null, p.titulo));
+        txt.appendChild(nodo("span", null, p.texto));
+        li.appendChild(txt);
+        ol.appendChild(li);
+      });
+      cont.appendChild(ol);
+    }
+
+    // Una tarjeta por pantalla, en los bloques del Inicio
+    (guia.pantallas || []).forEach(function (g) {
+      cont.appendChild(nodo("div", "guia-seccion-tit", g.grupo));
+      var rejilla = nodo("div", "guia-tarjetas");
+      g.tarjetas.forEach(function (t) {
+        var tarjeta = nodo("div", "guia-tarjeta");
+        tarjeta.appendChild(nodo("h4", null, t.titulo));
+        tarjeta.appendChild(nodo("p", null, t.texto));
+        if ((t.puntos || []).length) {
+          var ul = nodo("ul");
+          t.puntos.forEach(function (x) { ul.appendChild(nodo("li", null, x)); });
+          tarjeta.appendChild(ul);
+        }
+        rejilla.appendChild(tarjeta);
+      });
+      cont.appendChild(rejilla);
     });
 
-    var contAcordeon = document.getElementById("guia-acordeon");
-    contAcordeon.innerHTML = "";
-    guia.acordeon.forEach(function (sec) {
-      var det = document.createElement("details");
-      det.className = "caso-grupo";
-      var summary = document.createElement("summary");
-      summary.textContent = sec.titulo;
-      var campos = document.createElement("div");
-      campos.className = "caso-grupo-campos";
-      // Contenido estático de desarrollador (data/guia.js), no dato de
-      // usuario: mismo patrón que las intros de Catálogos (cat_intro_*).
-      campos.innerHTML = sec.html;
-      det.appendChild(summary);
-      det.appendChild(campos);
-      contAcordeon.appendChild(det);
-    });
+    // Conviene saber: icono + una línea
+    if ((guia.claves || []).length) {
+      cont.appendChild(nodo("div", "guia-seccion-tit", T("guia_claves_tit")));
+      var claves = nodo("div", "guia-claves");
+      guia.claves.forEach(function (c) {
+        var fila = nodo("div", "guia-clave");
+        fila.appendChild(nodo("span", "guia-clave-ico", c.icono));
+        fila.appendChild(nodo("span", null, c.texto));
+        claves.appendChild(fila);
+      });
+      cont.appendChild(claves);
+    }
+
+    // Dudas rápidas, plegadas
+    if ((guia.dudas || []).length) {
+      cont.appendChild(nodo("div", "guia-seccion-tit", T("guia_dudas_tit")));
+      guia.dudas.forEach(function (d) {
+        var det = nodo("details", "guia-duda");
+        det.appendChild(nodo("summary", null, d.pregunta));
+        det.appendChild(nodo("p", null, d.respuesta));
+        cont.appendChild(det);
+      });
+    }
 
     guiaRenderizada = true;
   }
@@ -11812,6 +11845,8 @@
   function abrirGuia() {
     if (!guiaRenderizada) renderGuia();
     dlgGuia.showModal();
+    // Empieza por arriba: el foco en «Cerrar» la abría ya desplazada al final
+    dlgGuia.scrollTop = 0;
   }
 
   document.getElementById("btn-guia").addEventListener("click", abrirGuia);
@@ -14626,30 +14661,28 @@
     try { localStorage.setItem(AYUDAS_KEY, sin ? "1" : "0"); } catch (e) { /* sin persistencia */ }
   });
 
-  /* Aspecto (menú ⋮). Tres modos desde el 30-09-2026, pedido del usuario:
-     «azul» (por defecto: paleta azul marino de quirófano), «claro» (clase
-     "tema-claro" en <html>) y «oscuro» (los colores de antes, negro y dorado:
-     clase "tema-oscuro"). Ver style.css. El menú ofrece los dos que no están
-     puestos. Se recuerda en este dispositivo, como «Ocultar ayudas»; la
-     clave vieja (solo claro sí/no) se sigue leyendo. */
+  /* Colores. Tres modos desde el 30-09-2026, pedido del usuario: «azul»
+     (por defecto: paleta azul marino de quirófano), «oscuro» (los colores de
+     antes, negro y dorado: clase "tema-oscuro" en <html>) y «claro» (clase
+     "tema-claro"). Ver style.css. Se cambian con el botón redondo junto al ⋮,
+     que pasa al siguiente y enseña el color del modo puesto. Se recuerda en
+     este dispositivo, como «Ocultar ayudas»; la clave vieja (solo claro
+     sí/no) se sigue leyendo. */
   var TEMA_KEY = "mio_ionm_tema_v2";
   var TEMA_KEY_VIEJA = "mio_ionm_tema_claro_v1";
-  var TEMAS = ["azul", "claro", "oscuro"];
-  var btnTema = document.getElementById("btn-tema");
-  var btnTema2 = document.getElementById("btn-tema-2");
+  var TEMAS = ["azul", "oscuro", "claro"];
+  var btnColores = document.getElementById("btn-colores");
+  var temaActual = "azul";
   function aplicarTema(tema) {
+    temaActual = tema;
     var html = document.documentElement;
     html.classList.toggle("tema-claro", tema === "claro");
     html.classList.toggle("tema-oscuro", tema === "oscuro");
-    var otros = TEMAS.filter(function (t) { return t !== tema; });
-    // Orden fijo en el menú: Modo claro, Modo oscuro, Modo azul
-    otros.sort(function (a, b) { return ["claro", "oscuro", "azul"].indexOf(a) - ["claro", "oscuro", "azul"].indexOf(b); });
-    [btnTema, btnTema2].forEach(function (b, k) {
-      var clave = "btn_tema_" + otros[k];
-      b.setAttribute("data-i18n", clave);
-      b.textContent = T(clave);
-      b.setAttribute("data-tema", otros[k]);
-    });
+    btnColores.setAttribute("data-tema", tema);
+    var sig = TEMAS[(TEMAS.indexOf(tema) + 1) % TEMAS.length];
+    var tit = T("btn_colores_tit", { tema: T("tema_" + tema), sig: T("tema_" + sig) });
+    btnColores.title = tit;
+    btnColores.setAttribute("aria-label", tit);
   }
   var temaIni = "azul";
   try {
@@ -14658,12 +14691,10 @@
     else if (localStorage.getItem(TEMA_KEY_VIEJA) === "1") temaIni = "claro";
   } catch (e) { /* sin persistencia */ }
   aplicarTema(temaIni);
-  [btnTema, btnTema2].forEach(function (b) {
-    b.addEventListener("click", function () {
-      var tema = b.getAttribute("data-tema");
-      aplicarTema(tema);
-      try { localStorage.setItem(TEMA_KEY, tema); } catch (e) { /* sin persistencia */ }
-    });
+  btnColores.addEventListener("click", function () {
+    var tema = TEMAS[(TEMAS.indexOf(temaActual) + 1) % TEMAS.length];
+    aplicarTema(tema);
+    try { localStorage.setItem(TEMA_KEY, tema); } catch (e) { /* sin persistencia */ }
   });
 
   /* ---------------------------------------------------------------- *
@@ -15269,8 +15300,9 @@
   /* ================================================================ *
    * Checklist pre-quirúrgico (19/20-09-2026, pedido por el usuario): lista
    * de comprobación para no olvidar nada antes de empezar la
-   * monitorización, en 5 momentos desde la planificación hasta el campo
-   * abierto. Contenido y agrupación dados por el usuario; los ítems
+   * monitorización, en 4 momentos desde la planificación hasta el
+   * posicionamiento (el 5.º, «Con el campo abierto», se quitó el 30-09-2026
+   * a petición del usuario; las marcas que tuvieran los casos se ignoran). Contenido y agrupación dados por el usuario; los ítems
    * marcados "(añadido)" abajo son sugerencias propias hechas al revisar el
    * listado, aceptadas tácitamente al seguir adelante con el diseño -si
    * alguno sobra, se quita con una línea-.
@@ -15292,7 +15324,7 @@
    * anestésica: Neurophysiology in Neurosurgery 2ed cap.19.
    * ================================================================ */
   var CHECKLIST_KEY = "mio_ionm_checklist_v1";
-  var CHECKLIST_GRUPOS = ["planificacion", "dia_antes", "induccion", "posicionamiento", "comunicacion"];
+  var CHECKLIST_GRUPOS = ["planificacion", "dia_antes", "induccion", "posicionamiento"];
   var CHECKLIST_ITEMS = [
     { id: "hist_clinica", g: "planificacion" },
     { id: "examen_neuro", g: "planificacion" },
@@ -15311,9 +15343,7 @@
     { id: "registro_tras_posicionamiento", g: "posicionamiento" },
     { id: "nervios_perifericos_riesgo", g: "posicionamiento" }, // (añadido)
     { id: "basal_definitiva", g: "posicionamiento" },
-    { id: "confirmar_decusacion", g: "posicionamiento" },
-    { id: "aviso_bolo_anestesia", g: "comunicacion" },
-    { id: "timing_maniobras_cirujano", g: "comunicacion" }
+    { id: "confirmar_decusacion", g: "posicionamiento" }
   ];
 
   var checklistModeloCero = { valores: {} };
@@ -19004,8 +19034,7 @@
       definir_modalidades: true, plan_anestesico: true, montar_equipo: true, preconfigurar_protocolo: true,
       material_disponible: true, electrodos_antes_drapeado: true, bloque_mordida: true, impedancias: true,
       estado_estable_anestesico: true, registro_basal_supino: true, registro_tras_posicionamiento: true,
-      nervios_perifericos_riesgo: true, basal_definitiva: true, confirmar_decusacion: true,
-      aviso_bolo_anestesia: true, timing_maniobras_cirujano: true
+      nervios_perifericos_riesgo: true, basal_definitiva: true, confirmar_decusacion: true
     };
     cEpend.registro_intraop = {
       v: {

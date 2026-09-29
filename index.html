@@ -24,7 +24,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260930zs">
+<link rel="stylesheet" href="style.css?v=20260930zt">
 </head>
 <body>
 
@@ -52,14 +52,15 @@
          el 09-09-2026 -pedido del usuario, sobraba en la barra fija-. Pasó
          un rato a la izquierda del todo ese mismo día y volvió a la
          derecha -pedido del usuario otra vez-. -->
+    <!-- Colores y Guía fuera del ⋮ (30-09-2026, pedido del usuario): a mano
+         junto al menú. El botón redondo pasa por los tres modos. -->
+    <button type="button" id="btn-colores" class="btn-modo btn-colores"><span class="btn-colores-muestra"></span></button>
+    <button type="button" id="btn-guia" class="btn-modo" data-i18n="btn_guia_corto" data-i18n-title="btn_guia_tit"></button>
     <div class="menu-desplegable">
       <button type="button" id="btn-menu" class="btn-modo" data-i18n-title="btn_menu_tit">⋮</button>
       <div class="menu-lista" id="menu-lista" hidden>
         <button type="button" id="btn-catalogos" data-i18n="btn_catalogos" data-i18n-title="btn_catalogos_tit"></button>
         <button type="button" id="btn-idioma" title="Switch to English">EN</button>
-        <button type="button" id="btn-tema" data-i18n="btn_tema_claro"></button>
-        <button type="button" id="btn-tema-2" data-i18n="btn_tema_oscuro"></button>
-        <button type="button" id="btn-guia" data-i18n-title="btn_guia_tit" data-i18n="btn_guia"></button>
         <button type="button" id="btn-ayudas" data-i18n="btn_ayudas_ocultar"></button>
       </div>
     </div>
@@ -815,8 +816,7 @@
 <dialog id="dlg-guia" class="no-print dlg-ancho">
   <h3 data-i18n="dlg_guia_titulo"></h3>
   <p class="dlg-intro" id="guia-aviso-en" hidden data-i18n="guia_aviso_en"></p>
-  <div id="guia-tarjetas" class="guia-tarjetas"></div>
-  <div id="guia-acordeon"></div>
+  <div id="guia-cuerpo"></div>
   <div class="dlg-botones">
     <span class="barra-flex"></span>
     <button type="button" id="guia-cerrar" data-i18n="cerrar"></button>
@@ -1116,8 +1116,8 @@
 
 <script src="data/surgeries.js?v=20260930c"></script>
 <script src="data/i18n-en.js?v=20260930b"></script>
-<script src="data/guia.js?v=20260930za"></script>
+<script src="data/guia.js?v=20260930zb"></script>
 <script src="data/parametros-tecnicas.js?v=20260930a"></script>
-<script src="app.js?v=20260930zzl"></script>
+<script src="app.js?v=20260930zzm"></script>
 </body>
 </html>

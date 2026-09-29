@@ -47,6 +47,9 @@
      porque en modo oscuro tiene que cambiar: un blanco fijo con la letra
      clara encima deja el campo ilegible. */
   --campo-bg: #ffffff;
+  /* Fondo de las cabeceras de tarjeta (Plantillas, Catálogo…) y de los
+     apartados de la ficha; en oscuro y azul se aclara aparte. */
+  --cab-bg: #e3e8ed;
   /* Colores fijos con nombre (auditoría 28-09-2026, E3). No cambian con el
      tema a propósito: la barra superior y sus controles son oscuros siempre,
      y el Simulador imita la pantalla oscura de un equipo de monitorización.
@@ -547,8 +550,10 @@ main {
   gap: 0.4rem;
   margin: calc(-1 * var(--card-py)) calc(-1 * var(--card-px)) 0.6rem;
   padding: 0.5rem 0.7rem;
-  background: var(--tag-bg);
-  border-bottom: 1px solid var(--border-soft);
+  /* Fondo propio de cabecera (30-09-2026, pedido del usuario: en azul se
+     fundía con el cuerpo). Ver --cab-bg. */
+  background: var(--cab-bg);
+  border-bottom: 1px solid var(--border);
   border-radius: var(--r) var(--r) 0 0;
 }
 .card > summary.card-cab::-webkit-details-marker { display: none; }
@@ -1097,35 +1102,48 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
 .dlg-ancho { max-width: 62rem; width: calc(100vw - 2rem); }
 
 /* --------------------------- Guía de uso (Fase 5) ------------------------ */
-.guia-tarjetas {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 0.5rem;
-  margin-bottom: 0.9rem;
+/* Guía rehecha el 30-09-2026: pasos numerados, tarjetas por pantalla,
+   «Conviene saber» con icono y dudas plegadas. Poco texto y mucho aire. */
+#guia-cuerpo { display: flex; flex-direction: column; gap: 0.5rem; }
+.guia-seccion-tit {
+  font-family: ui-monospace, "Cascadia Mono", Consolas, "Roboto Mono", monospace;
+  font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--accent); margin-top: 0.7rem;
 }
+.guia-seccion-tit:first-child { margin-top: 0; }
+.guia-flujo { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0; }
+.guia-flujo li { display: flex; gap: 0.65rem; align-items: flex-start; position: relative; padding-bottom: 0.6rem; }
+/* Línea que une los pasos */
+.guia-flujo li:not(:last-child)::before {
+  content: ""; position: absolute; left: 0.8rem; top: 1.7rem; bottom: 0.1rem; width: 2px; background: var(--border);
+}
+.guia-n {
+  flex: 0 0 auto; width: 1.6rem; height: 1.6rem; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent);
+  font-weight: 700; font-size: 0.8rem;
+}
+.guia-flujo-txt { display: flex; flex-direction: column; font-size: 0.85rem; line-height: 1.35; padding-top: 0.1rem; }
+.guia-flujo-txt span { color: var(--text-muted); font-size: 0.8rem; }
+.guia-tarjetas { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 0.5rem; }
 .guia-tarjeta {
-  border: 1px solid var(--border-soft);
-  border-radius: var(--r);
-  background: var(--card-bg);
-  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 6px;
+  background: var(--card-bg); padding: 0.55rem 0.7rem;
 }
-.guia-tarjeta h4 {
-  margin: 0 0 0.3rem;
-  font-size: 0.82rem;
-  color: var(--accent);
-  font-weight: 600;
+.guia-tarjeta h4 { margin: 0 0 0.15rem; font-size: 0.9rem; }
+.guia-tarjeta p { margin: 0; font-size: 0.8rem; color: var(--text-muted); line-height: 1.35; }
+.guia-tarjeta ul { margin: 0.4rem 0 0; padding-left: 1.1rem; font-size: 0.8rem; line-height: 1.4; }
+.guia-tarjeta li + li { margin-top: 0.15rem; }
+.guia-claves { display: flex; flex-direction: column; gap: 0.35rem; }
+.guia-clave { display: flex; gap: 0.6rem; align-items: flex-start; font-size: 0.82rem; line-height: 1.35; }
+.guia-clave-ico {
+  flex: 0 0 auto; width: 1.7rem; height: 1.7rem; border-radius: 6px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--tag-bg); font-size: 0.9rem;
 }
-.guia-tarjeta p {
-  margin: 0;
-  font-size: 0.78rem;
-  color: var(--text);
-  line-height: 1.35;
-}
-/* La tarjeta 3 ("Plantilla y caso no son lo mismo") es la más importante de
-   las seis -pedido explícito-: un marco de acento la distingue sin gritar. */
-.guia-tarjeta.guia-destacada { border-color: var(--accent); border-width: 2px; }
-#guia-acordeon p { font-size: 0.8rem; line-height: 1.45; margin: 0 0 0.5rem; }
-#guia-acordeon p:last-child { margin-bottom: 0; }
+.guia-duda { border: 1px solid var(--border-soft); border-radius: 6px; background: var(--card-bg); }
+.guia-duda > summary { cursor: pointer; padding: 0.45rem 0.65rem; font-size: 0.84rem; font-weight: 600; }
+.guia-duda > p { margin: 0; padding: 0 0.65rem 0.55rem; font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; }
 
 /* ------------------------- Técnicas MIO (Lote 1) ------------------------ */
 /* Familia de técnica (SEP, MEP, Reflejos... - ver TECMIO_FAMILIAS en app.js)
@@ -2284,7 +2302,7 @@ dialog h3 {
   border: 1px solid var(--border-soft);
   border-radius: var(--r);
   margin-bottom: 0.5rem;
-  background: var(--tag-bg);
+  background: var(--cab-bg);
 }
 .caso-grupo > summary {
   cursor: pointer;
@@ -2304,7 +2322,7 @@ dialog h3 {
   transition: transform 0.12s;
 }
 .caso-grupo[open] > summary::before { transform: rotate(90deg); }
-.caso-grupo[open] > summary { border-bottom: 1px solid var(--border-soft); }
+.caso-grupo[open] > summary { border-bottom: 1px solid var(--border); }
 .caso-grupo-campos { padding: 0.7rem 0.7rem 0.2rem; background: var(--card-bg); }
 
 .caso-ro { font-size: 0.82rem; color: var(--text-muted); padding: 0.2rem 0; }
@@ -2648,7 +2666,9 @@ dialog h3 {
 @media (max-width: 620px) {
   main { padding: 0.5rem 0.45rem 3rem; }
   .cajas-grid { grid-template-columns: 1fr; }
-  .barra-sup #perfil-usuario { min-width: 0; flex: 1; max-width: none; }
+  /* Ancho natural (30-09-2026): con Colores y Guía en la barra, repartir el
+     sitio con el hueco flexible cortaba el nombre del perfil. */
+  .barra-sup #perfil-usuario { min-width: 0; flex: 0 1 auto; max-width: none; }
   .barra-sup img.marca { height: 26px; width: 26px; }
   .btn-modo { font-size: 0.7rem; padding: 0.3rem 0.45rem; }
   /* Dos filas ya de por sí (09-09-2026); esto es solo red de seguridad si
@@ -2759,6 +2779,9 @@ dialog h3 {
     /* Los campos rellenables se oscurecen aquí, en un solo sitio. No hace
        falta repetir selectores por tipo: todos leen la misma variable. */
     --campo-bg: #121923;
+    /* Cabeceras de tarjetas y apartados: un azul más claro que la tarjeta,
+       para que no se fundan con el cuerpo. */
+    --cab-bg: #25344a;
 
     /* Mismos diez colores por familia de técnica, aclarados para leerse
        sobre fondo oscuro (mismo criterio que --accent más arriba). */
@@ -2804,6 +2827,7 @@ dialog h3 {
     --panel: #080808;
     --panel-borde: #2b2b2b;
     --campo-bg: #141414;
+    --cab-bg: #2a2a2a;
   }
 }
 
@@ -4267,3 +4291,10 @@ textarea { resize: none; overflow-y: hidden; }
 .rr-item .rr-linea-alarma .rr-texto { color: var(--text); }
 .rr-item .rr-linea-fase .rr-texto { color: var(--text); }
 .rr-item .rr-al-plegable, .rr-item .rr-editor { margin-left: 0; }
+
+/* Botón de colores junto al ⋮ (30-09-2026): una bolita con el color del
+   modo puesto; al tocarlo pasa al siguiente (azul → oscuro → claro). */
+.btn-colores { display: inline-flex; align-items: center; justify-content: center; padding-left: 0.4rem; padding-right: 0.4rem; }
+.btn-colores-muestra { width: 0.8rem; height: 0.8rem; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.55); background: #0a84ff; }
+.btn-colores[data-tema="oscuro"] .btn-colores-muestra { background: #d8b45c; }
+.btn-colores[data-tema="claro"] .btn-colores-muestra { background: #eef1f4; }

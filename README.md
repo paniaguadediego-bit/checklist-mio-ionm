@@ -27,7 +27,7 @@ móvil sale con otra letra). Se usan igual: tocar, elegir; con teclado,
 flechas, Intro y Escape.
 
 **Resumen de las pantallas añadidas después del flujo de abajo:**
-**Checklist pre-quirúrgico** (lista de 5 momentos, suelta o ligada a un caso),
+**Checklist pre-quirúrgico** (lista de 4 momentos, suelta o ligada a un caso),
 **Registro intraoperatorio** (la hoja de papel de quirófano, en pantalla y sobre
 todo **imprimible**, prerrellenada desde el caso), **Mis apuntes** (documento
 con carpetas de colores, negrita/cursiva, fotos dentro de cada caja y
@@ -1081,9 +1081,9 @@ No lleva la "etiqueta del paciente" ni el "NHC" de la hoja en papel: regla
 ## Checklist pre-quirúrgico
 
 Tarjeta de la pantalla de inicio (19/20-09-2026), en el bloque **Quirófano**,
-antes del Registro intraoperatorio. Repasa en **5 momentos** —planificación días antes, el día
-antes de entrar en quirófano, tras la inducción, tras el posicionamiento, y
-comunicación de equipo con el campo ya abierto— para no olvidar nada antes
+antes del Registro intraoperatorio. Repasa en **4 momentos** —planificación días antes, el día
+antes de entrar en quirófano, tras la inducción y tras el posicionamiento
+(«Con el campo abierto» se quitó el 30-09-2026)— para no olvidar nada antes
 de empezar a monitorizar. Contenido clínico dado por la usuaria; fuentes:
 Møller cap.18, MacDonald 2013 (ASNM), Neurophysiology in Neurosurgery 2ed
 cap.19/41.
