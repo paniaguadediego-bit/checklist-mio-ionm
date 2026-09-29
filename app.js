@@ -974,7 +974,6 @@
     equipo_elegir_titulo: { es: "¿Con qué equipo?", en: "Which equipment?" },
     equipo_elegir_intro: { es: "Las cajas de conexión dependen del equipo; el material es el mismo.", en: "The connection boxes depend on the equipment; the material is the same." },
     equipo_opcion:       { es: "{corto} · {nombre}", en: "{corto} · {nombre}" },
-    equipo_corto:        { es: "Equipo {corto}", en: "Equipment {corto}" },
     caso_equipo_id:      { es: "Equipo", en: "Equipment" },
     caso_equipo_id_ay:      { es: "Se elige al crear el caso y decide qué cajas se usan. Solo se puede cambiar mientras el montaje esté vacío.", en: "Chosen when the case is created; it decides which boxes are used. It can only be changed while the setup is empty." },
     casos_filtro_equipo: { es: "Equipo", en: "Equipment" },
@@ -5511,19 +5510,7 @@
 
     uids.forEach(function (uid) {
       var m = montajes[uid];
-      var fila = document.createElement("button");
-      fila.type = "button";
-      fila.className = "montaje-fila" + (puedoEditar(m) ? " mio" : "");
-      var nom = document.createElement("span");
-      nom.className = "montaje-nombre";
-      nom.textContent = campo(m, "nombre") || uid;
-      if (MODO_DEMO) nom.appendChild(nodoFicticio());
-      var sub = document.createElement("span");
-      sub.className = "montaje-autor";
-      sub.textContent = autorDe(m) + " · " + T("plantilla_entradas", { n: contarOcupadas(m) }) +
-        (fechaMontaje(m) ? " · " + fechaMontaje(m) : "");
-      fila.appendChild(nom);
-      fila.appendChild(sub);
+      var fila = nodoFilaPlantilla(m, uid, contarOcupadas(m), usuarioActual());
       fila.addEventListener("click", function () {
         dlgElegirPlantilla.close();
         abrirConfirmarPlantilla(m);
@@ -11597,25 +11584,11 @@
 
     uids.forEach(function (uid) {
       var m = montajes[uid];
-      var fila = document.createElement("button");
-      fila.type = "button";
-      fila.className = "montaje-fila" + (uid === activo ? " activo" : "") +
-        (puedoEditar(m) ? " mio" : "");
-      var nom = document.createElement("span");
-      nom.className = "montaje-nombre";
-      nom.textContent = campo(m, "nombre") || uid;
-      if (MODO_DEMO) nom.appendChild(nodoFicticio());
-      var sub = document.createElement("span");
-      sub.className = "montaje-autor";
       // El subtítulo es el autor y cuántas entradas tiene ocupadas: con
       // montajes compartidos hay que saber de quién es y cuánto trae antes
       // de abrirlo.
-      sub.textContent = (hayVariosEquipos() ? T("equipo_corto", { corto: cortoEquipo(equipoDe(m)) }) + " · " : "") +
-        autorDe(m) + (yo && m.autor_id === yo.id ? " · " + T("montaje_tuyo") : "") +
-        " · " + T("plantilla_entradas", { n: calcularResumen(m).entradas }) +
-        (fechaMontaje(m) ? " · " + fechaMontaje(m) : "");
-      fila.appendChild(nom);
-      fila.appendChild(sub);
+      var fila = nodoFilaPlantilla(m, uid, calcularResumen(m).entradas, yo);
+      if (uid === activo) fila.classList.add("activo");
       // Elegir un montaje no lleva confirmación: no destruye nada, cada
       // montaje es su propio archivo y el anterior queda guardado tal
       // cual. La confirmación de la Fase 1 es solo para aplicar contenido
@@ -11630,6 +11603,53 @@
       });
       cont.appendChild(fila);
     });
+  }
+
+  /* Fila de una plantilla con el aspecto de las de Gestión de Casos
+     (30-09-2026, pedido del usuario: las plantillas no resultaban nada
+     atractivas). Arriba el nombre y, a la derecha, la fecha y el equipo con
+     su marca; debajo, autor y entradas; y una línea de etiquetas con sus
+     técnicas. Borde izquierdo grueso: en el acento si es tuya. La usan la
+     lista de Plantillas de montajes y «Cargar plantilla…». */
+  var PLANTILLA_MAX_TECS = 6;
+  function nodoFilaPlantilla(m, uid, entradas, yo) {
+    var fila = document.createElement("button");
+    fila.type = "button";
+    fila.className = "montaje-fila plantilla-fila" + (puedoEditar(m) ? " mio" : "");
+    var cab = document.createElement("span");
+    cab.className = "plantilla-cab";
+    var nom = document.createElement("span");
+    nom.className = "montaje-nombre";
+    nom.textContent = campo(m, "nombre") || uid;
+    if (MODO_DEMO) nom.appendChild(nodoFicticio());
+    cab.appendChild(nom);
+    var der = document.createElement("span");
+    der.className = "plantilla-der";
+    if (fechaMontaje(m)) der.appendChild(regNodo("span", "plantilla-fecha", fechaMontaje(m)));
+    if (hayVariosEquipos()) {
+      var eq = document.createElement("span");
+      eq.className = "caso-fila-equipo";
+      eq.appendChild(nodoMarcaEquipo(equipoDe(m)));
+      der.appendChild(eq);
+    }
+    cab.appendChild(der);
+    fila.appendChild(cab);
+    var sub = document.createElement("span");
+    sub.className = "montaje-autor";
+    sub.textContent = autorDe(m) + (yo && m.autor_id === yo.id ? " · " + T("montaje_tuyo") : "") +
+      " · " + T("plantilla_entradas", { n: entradas });
+    fila.appendChild(sub);
+    var tecs = TECNICAS.filter(function (t) { return (m.tecnicas || []).indexOf(t.id) !== -1; });
+    if (tecs.length) {
+      var fTecs = document.createElement("span");
+      fTecs.className = "plantilla-tecs";
+      tecs.slice(0, PLANTILLA_MAX_TECS).forEach(function (t) {
+        fTecs.appendChild(regNodo("span", "plantilla-tec", campo(t, "corta") || campo(t, "etiqueta")));
+      });
+      if (tecs.length > PLANTILLA_MAX_TECS) fTecs.appendChild(regNodo("span", "plantilla-tec plantilla-tec-mas", "+" + (tecs.length - PLANTILLA_MAX_TECS)));
+      fila.appendChild(fTecs);
+    }
+    return fila;
   }
 
   document.getElementById("montajes-buscar").addEventListener("input", renderListaMontajesDialog);
