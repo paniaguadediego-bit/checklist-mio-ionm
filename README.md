@@ -81,7 +81,8 @@ para cada evento; las alarmas de «Apuntado» van **plegadas** con un resumen; s
 se corrige una línea con el **✎**; modo oscuro por defecto con **Modo claro** en
 el menú ⋮; y la **correlación de cada alarma** con la evolución postquirúrgica
 (ficha → Resultado), que llega al informe, al CSV y a la pestaña
-`Correlacion_long` del Sheet.
+`Correlacion_long` del Sheet. «Apuntado» va en orden cronológico (lo último
+abajo) y la pantalla del Registro ya no lleva los rótulos «Hoja 1 / Hoja 2».
 
 **Novedades del 27-28/09/2026 (tras el congreso):**
 - **Registro intraoperatorio**: la **Hoja completa** sale por defecto y va

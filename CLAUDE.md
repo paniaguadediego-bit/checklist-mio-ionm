@@ -202,7 +202,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Selector «Vincular a un caso» propio (Checklist y Registro; el `<select>` sigue oculto como fuente de verdad) | `mejorarSelectorCaso()`, `refrescarSelectorCaso()`, `pintarOpcionCaso()` | ver `grep` |
 | Registro ↔ ficha: campos compartidos (`caso: "campo"` en la definición; `soloCaso`; `leerCaso`) — `regGet()` los lee del caso y `regControl()` los escribe en el caso | `regGet()`, `regControl()`, `regNombresTecnicas()` | ver `grep` |
 | Registro: hoja completa simplificada en pantalla (la impresa no cambia) | `REG_PANTALLA` (id de sección → pintado propio; `null` = no se enseña), `pintarPantallaIdentificacion/Modalidades/Anestesia/Mapeo/Cierre()` (F y G a `null` desde el 29-09-2026), `REG_MAPEO_BLOQUES`, `pintarMapeoGrid/Filas/Raices()`, `regFilasTornillos()`, `regInput()`, `regSelectLista()` | ver `grep` |
-| Registro: panel «Apuntar fase, evento o alarma» (antes modo rápido; único sitio donde se apuntan, arriba de la Hoja completa; escribe en `eventos`/`alarmas`, sin datos propios; «Otro» + cajas; QUÉ en filas por tipo -técnicas, factores técnicos, anestesia, Otro-; TOF 0/4…4/4 de un toque en su bloque; contexto quirúrgico; lista «Apuntado» por hora con horas editables, ✎ para corregir cada línea y, bajo cada alarma, causa, medidas y recuperación) | `pintarPanelApuntar()`, `regItemsApuntados()`, `regLineaApuntada()`, `regEditorApuntado()` (`regEditando`, solo con ✎), alarma plegable con `resumenAlarma()` (`regAlarmasAbiertas`), `pintarMedidasRecup()` (también en la ficha), `regApuntar()`, `regMarcarFase()`, `regQuitarRapido()`, `regCajaRapida()`, `regApuntarTof()`, `regTofActual()`, `REG_TOF`, `REG_CONTEXTO` (ev.contexto, ids), `REG_FASES_RAPIDAS`, `REG_CAMBIOS_RAPIDOS`, `REG_QUE_EXTRA`, `REG_QUE_OTRO`/`REG_CAMBIO_OTRO` | ver `grep` |
+| Registro: panel «Apuntar fase, evento o alarma» (antes modo rápido; único sitio donde se apuntan, arriba de la Hoja completa; escribe en `eventos`/`alarmas`, sin datos propios; «Otro» + cajas; QUÉ en filas por tipo -técnicas, factores técnicos, anestesia, Otro-; TOF 0/4…4/4 de un toque en su bloque; contexto quirúrgico; lista «Apuntado» por hora ascendente con horas editables, ✎ para corregir cada línea y, bajo cada alarma, causa, medidas y recuperación) | `pintarPanelApuntar()`, `regItemsApuntados()`, `regLineaApuntada()`, `regEditorApuntado()` (`regEditando`, solo con ✎), alarma plegable con `resumenAlarma()` (`regAlarmasAbiertas`), `pintarMedidasRecup()` (también en la ficha), `regApuntar()`, `regMarcarFase()`, `regQuitarRapido()`, `regCajaRapida()`, `regApuntarTof()`, `regTofActual()`, `REG_TOF`, `REG_CONTEXTO` (ev.contexto, ids), `REG_FASES_RAPIDAS`, `REG_CAMBIOS_RAPIDOS`, `REG_QUE_EXTRA`, `REG_QUE_OTRO`/`REG_CAMBIO_OTRO` | ver `grep` |
 | Registro intraoperatorio: hoja imprimible A4 | `construirHojaRegistro()`, `abrirHojaRegistro()`, `ESTILO_HOJA_REGISTRO` | ver `grep` |
 | Material, pantalla propia (todo el catálogo en filas) | `renderDocenteMaterial()`, `descripcionMaterial()` | ver `grep` |
 | Fotos en IndexedDB (todas las fotos) | `guardarFotoIDB()`, `hidratarFotosIDB()`, `quitarDataUrls()` | ver `grep` |
@@ -447,7 +447,7 @@ distinta a la anterior, no importa el formato exacto.
 > - **Material**: «Estimulación trigeminal» (V1-V3 + N.Maset, id `l_rx_maset`);
 >   fuera la categoría «Reflejos» (eran técnicas). Serrato anterior C5-C7 en
 >   miotomas. 20 categorías en orden lógico; `SERIES_MATERIAL` agrupa L./R.
-> - **Registro en pantalla**: una sola vista, la Hoja completa (`REG_PANTALLA`).
+> - **Registro en pantalla**: una sola vista, la Hoja completa (`REG_PANTALLA`), sin los rótulos «Hoja 1 / Hoja 2» (el orden de la pantalla ya no es el del papel).
 >   Fases, eventos y alarmas se apuntan SOLO en el panel de arriba, «Apuntar
 >   fase, evento o alarma» (botón dorado relleno, `.reg-rapido`; antes «modo
 >   rápido», pestaña retirada el 29-09-2026); F y G no se pintan en pantalla.
@@ -455,7 +455,7 @@ distinta a la anterior, no importa el formato exacto.
 >   toque → evento `An`, modalidad «TOF», cambio «TOF 2/4»), **Evento o alarma**
 >   (QUÉ en filas técnicas / factores técnicos / anestesia / Otro, QUÉ PASA,
 >   **contexto quirúrgico** opcional en lista cerrada → `ev.contexto`, cajas de
->   detalle u «Otro», Apuntar evento / alarma) y **Apuntado** (por hora; hora
+>   detalle u «Otro», Apuntar evento / alarma) y **Apuntado** (por hora, de lo más antiguo a lo más reciente; hora
 >   editable; ✎ -solo el lápiz- corrige la línea y su alarma; cada alarma con su
 >   detalle **plegado** y un resumen: causa, medidas -avisos primero- y
 >   recuperación S/P/N con hora, «Ahora» y duración). La impresa no cambia con lo
