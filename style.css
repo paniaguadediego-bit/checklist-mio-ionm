@@ -4247,7 +4247,17 @@ textarea { resize: none; overflow-y: hidden; }
 :root { --g-critico: #c62828; --g-aviso: #b5590a; --g-ok: #178a32; --g-info: #1d63c9; --mono: ui-monospace, "Cascadia Mono", Consolas, "Roboto Mono", monospace; }
 @media screen { :root:not(.tema-claro) { --g-critico: #ff3b30; --g-aviso: #ff9f0a; --g-ok: #30d158; --g-info: #0a84ff; } }
 #pantalla-registro .rr-titulo, #pantalla-registro .rr-bloque-tit { font-family: var(--mono); font-weight: 500; letter-spacing: 0.08em; }
-.rr-crono-cab { display: flex; justify-content: space-between; gap: 0.5rem; }
+/* Cabecera plegable (30-09-2026, pedido del usuario): más aire arriba y
+   abajo, aspecto de título como los apartados (▸ que gira, acento, negrita)
+   y el total a la derecha. */
+.rr-crono { margin: 1.4rem 0 0.6rem; }
+.rr-crono-cab { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 0.45rem; padding: 0.55rem 0.1rem; margin-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+.rr-crono-cab::-webkit-details-marker { display: none; }
+.rr-crono-cab::before { content: "▸"; font-size: 0.9rem; color: var(--accent); transition: transform 0.12s; }
+.rr-crono[open] > .rr-crono-cab::before { transform: rotate(90deg); }
+.rr-crono:not([open]) > .rr-crono-cab { margin-bottom: 0; }
+.rr-crono-tit { flex: 1 1 auto; font-family: var(--mono); font-size: 0.95rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cab-texto, var(--accent)); }
+.rr-crono-n { font-family: var(--mono); font-size: 0.72rem; color: var(--text-muted); white-space: nowrap; }
 .rr-crono-filtros { margin-bottom: 0.45rem; }
 .rr-lista { gap: 0.4rem; }
 .rr-item { --g: var(--g-info); background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--g); border-radius: 6px; padding: 0.3rem 0.4rem 0.4rem 0.55rem; }

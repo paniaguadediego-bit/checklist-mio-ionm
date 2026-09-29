@@ -494,6 +494,9 @@ distinta a la anterior, no importa el formato exacto.
 >     ALARMA A1…), total a la derecha y filtros Todos / Críticos / Cambios /
 >     Info/Normal. Hora editable; ✎ (solo el lápiz) corrige la línea y su
 >     alarma; cada alarma con su detalle **plegado** y resumen.
+>     El cronograma entero es un `<details class="rr-crono">` plegable, con
+>     cabecera de título (▸, mayúsculas); su estado (`regCronoAbierto`) se
+>     conserva al volver a pintar.
 >   - La impresa no cambia con lo de pantalla (salvo la fase de F, que lleva
 >     « · contexto»).
 > - **Gestión de Casos**: borde izquierdo y bolita del color del estado («A

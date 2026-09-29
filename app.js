@@ -17533,11 +17533,17 @@
     // Lo apuntado, en orden de hora (lo último, abajo). «Cronograma de
     // eventos» (30-09-2026, pedido del usuario: nombre y aspecto de tarjetas
     // con franja de color), con el total a la derecha y filtros por gravedad.
+    // Plegable entero (30-09-2026, pedido del usuario): la cabecera es un
+    // título como los de los apartados de la ficha; lo abierto o cerrado se
+    // conserva al volver a pintar (al apuntar, al filtrar).
     var items = regItemsApuntados(d);
-    var cabL = regNodo("div", "rr-titulo rr-crono-cab");
-    cabL.appendChild(regNodo("span", null, T("rr_apuntado_lista")));
-    cabL.appendChild(regNodo("span", null, items.length === 1 ? T("rr_n_evento") : T("rr_n_eventos", { n: items.length })));
-    panel.appendChild(cabL);
+    var crono = regNodo("details", "rr-crono");
+    crono.open = regCronoAbierto;
+    crono.addEventListener("toggle", function () { regCronoAbierto = crono.open; });
+    var cabL = regNodo("summary", "rr-crono-cab");
+    cabL.appendChild(regNodo("span", "rr-crono-tit", T("rr_apuntado_lista")));
+    cabL.appendChild(regNodo("span", "rr-crono-n", items.length === 1 ? T("rr_n_evento") : T("rr_n_eventos", { n: items.length })));
+    crono.appendChild(cabL);
     if (items.length) {
       var filtros = regNodo("div", "rr-chips rr-crono-filtros");
       [["todos", "rr_filtro_todos"], ["critico", "rr_filtro_criticos"], ["aviso", "rr_filtro_avisos"], ["info", "rr_filtro_info"]].forEach(function (f) {
@@ -17546,7 +17552,7 @@
         b.addEventListener("click", function () { regFiltroCrono = f[0]; renderRegistroContenido(); });
         filtros.appendChild(b);
       });
-      panel.appendChild(filtros);
+      crono.appendChild(filtros);
     }
     var lista = regNodo("div", "rr-lista");
     if (!items.length) lista.appendChild(regNodo("p", "reg-ayuda", T("rr_vacio")));
@@ -17556,7 +17562,8 @@
     });
     if (items.length && !visibles.length) lista.appendChild(regNodo("p", "reg-ayuda", T("rr_filtro_vacio")));
     visibles.forEach(function (it) { lista.appendChild(regLineaApuntada(d, it)); });
-    panel.appendChild(lista);
+    crono.appendChild(lista);
+    panel.appendChild(crono);
     cont.appendChild(panel);
   }
 
@@ -17610,6 +17617,7 @@
   // factor técnico; ok (verde) = fase o recuperación; info (azul) = el resto
   // (anestesia, mapeo, contexto). La etiqueta dice qué es.
   var regFiltroCrono = "todos";
+  var regCronoAbierto = true;
   function regTipoApuntado(it) {
     var ev = it.ev, al = it.al;
     if (al) return { g: "critico", et: T("rr_et_alarma") + " A" + it.n };
