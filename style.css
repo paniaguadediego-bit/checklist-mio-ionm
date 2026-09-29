@@ -3356,7 +3356,6 @@ dialog h3 {
   padding: 0.28rem 0.6rem;
 }
 .rr-chip.activo { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
-.rr-chip-otra { border-style: dashed; }
 .rr-nota {
   font: inherit;
   width: 100%;
@@ -4055,7 +4054,12 @@ body.sin-ayudas .coste-nota { display: none !important; }
 /* QUÉ en filas por tipo y corrección de lo apuntado (29-09-2026). */
 .rr-subtit { font-size: 0.68rem; color: var(--text-muted); margin: 0.3rem 0 0.15rem; }
 /* Factores técnicos, Anestesia y Otro en una fila (29-09-2026) */
-.rr-que-fila { display: flex; flex-wrap: wrap; gap: 0 0.9rem; align-items: flex-end; }
+/* Tres columnas iguales (1fr en un contenedor max-content = tan anchas como
+   la mayor), para que Técnico, Anestesia y Otro queden a la misma distancia. */
+.rr-que-fila { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; width: max-content; max-width: 100%; gap: 0 1.4rem; align-items: end; }
+/* El rótulo no ensancha la columna (si no, «Factores técnicos» partía línea):
+   se sale por la derecha, que el hueco entre columnas ya le deja sitio. */
+.rr-que-sub .rr-subtit { width: 0; white-space: nowrap; overflow: visible; }
 /* t-SEP / t-MEP / c-SEP por miembro en cuadrícula de 4 columnas (29-09-2026) */
 .rr-que-cuadro { display: grid; grid-template-columns: auto repeat(4, minmax(0, 1fr)); gap: 0.3rem; margin-bottom: 0.3rem; align-items: center; }
 .rr-que-cuadro .rr-chip { white-space: nowrap; padding-left: 0.3rem; padding-right: 0.3rem; }
