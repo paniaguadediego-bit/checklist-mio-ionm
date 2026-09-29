@@ -79,13 +79,17 @@ botón **Ahora** para la hora de recuperación y la duración de la alarma.
 En **Gestión de Casos**, cada caso va en un recuadro del color de su estado
 (borde izquierdo más ancho) y, sin etiqueta de estado, una leyenda de colores
 bajo Destacados / Seguimiento.
-Además: **TOF 0/4 a 4/4** de un toque; **contexto quirúrgico** en lista cerrada
-para cada evento; las alarmas de «Apuntado» van **plegadas** con un resumen; solo
-se corrige una línea con el **✎**; modo oscuro por defecto con **Modo claro** en
-el menú ⋮; y la **correlación de cada alarma** con la evolución postquirúrgica
-(ficha → Resultado), que llega al informe, al CSV y a la pestaña
-`Correlacion_long` del Sheet. «Apuntado» va en orden cronológico (lo último
-abajo) y la pantalla del Registro ya no lleva los rótulos «Hoja 1 / Hoja 2».
+Además, en el Registro: «Evento o alarma» con dos recuadros, **Técnica** (t-SEP y
+t-MEP en tabla por miembro, pares craneales con CoMEP con lado I/D, reflejos del
+caso, factores técnicos, Anestesia con **TOF 0/4 a 4/4** como contexto y sus
+**fármacos**) y **Hallazgo** (generales y, debajo, las **propias de la técnica**
+elegida; eventos del **GRID**; ↑/↓ perfusión, bolo, inicio o detención del
+fármaco); **contexto quirúrgico** en lista cerrada; un evento puede ser solo
+contexto y/o TOF; «Apuntado» en orden cronológico, con las alarmas **plegadas**
+y el **✎** para corregir; sin rótulos «Hoja 1 / Hoja 2». Modo oscuro por defecto
+con **Modo claro** en el menú ⋮, y la **correlación de cada alarma** con la
+evolución postquirúrgica (ficha → Resultado), que llega al informe, al CSV y a
+la pestaña `Correlacion_long` del Sheet.
 
 **Novedades del 27-28/09/2026 (tras el congreso):**
 - **Registro intraoperatorio**: la **Hoja completa** sale por defecto y va

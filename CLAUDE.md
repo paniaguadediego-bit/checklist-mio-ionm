@@ -447,31 +447,40 @@ distinta a la anterior, no importa el formato exacto.
 > - **Material**: «Estimulación trigeminal» (V1-V3 + N.Maset, id `l_rx_maset`);
 >   fuera la categoría «Reflejos» (eran técnicas). Serrato anterior C5-C7 en
 >   miotomas. 20 categorías en orden lógico; `SERIES_MATERIAL` agrupa L./R.
-> - **Registro en pantalla**: una sola vista, la Hoja completa (`REG_PANTALLA`), sin los rótulos «Hoja 1 / Hoja 2» (el orden de la pantalla ya no es el del papel).
->   Fases, eventos y alarmas se apuntan SOLO en el panel de arriba, «Apuntar
->   fase, evento o alarma» (botón dorado relleno, `.reg-rapido`; antes «modo
->   rápido», pestaña retirada el 29-09-2026); F y G no se pintan en pantalla.
->   Bloques: **Fase** (un toque; caja = detalle u «Otra»), **TOF** 0/4…4/4 (junto a Anestesia en Técnica, contexto:
->   se elige y va en `ev.tof`/`al.tof` al apuntar; se desmarca como lo demás;
->   `data-clave="tof"` para que elegir una técnica no lo desmarque; un evento puede
->   ser solo contexto y/o TOF; solo TOF → An «TOF 1/4»; pares craneales con
->   CoMEP en la tabla, `REG_PARES_COMEP`, cada par con botoncitos I/D → «CoMEP VII I»; «Hallazgo»
->   con alteraciones propias de la técnica elegida -`mod` en
->   `REG_CAMBIOS_RAPIDOS`, mismos ids en `REG_CRITERIO_AL`, `regModalidadDeQue()`,
->   `actualizarCambiosPropios()`, ayuda al mantener pulsado-; con GRID, solo sus
->   eventos (`mod: "grid"`: colocación, phase reversal, desplazamiento, retirada)
->   y sin la fila general; con Anestesia, fila de fármacos (`REG_FARMACOS`, id en
->   `ev.farmaco`) y solo ↑/↓ perfusión, bolo, inicio, detención (`mod: "anestesia"`,
->   `REG_MODS_SIN_GENERAL`) → An «Propofol · Bolo»; reflejos del caso con nombre corto), **Evento o alarma**
->   («Técnica» -antes QUÉ- y «Hallazgo» -antes QUÉ PASA-, en recuadros propios; Técnica: t-SEP/t-MEP/c-SEP en tabla por miembro + factores técnicos, anestesia
->   y Otro en una fila; Hallazgo sin botones de recuperación -se marca en la
->   alarma-,
->   **contexto quirúrgico** opcional en lista cerrada → `ev.contexto`, cajas de
->   detalle u «Otro», Apuntar evento / alarma) y **Apuntado** (por hora, de lo más antiguo a lo más reciente; hora
->   editable; ✎ -solo el lápiz- corrige la línea y su alarma; cada alarma con su
->   detalle **plegado** y un resumen: causa, medidas -avisos primero- y
->   recuperación S/P/N con hora, «Ahora» y duración). La impresa no cambia con lo
->   de pantalla (salvo la fase de F, que lleva « · contexto»).
+> - **Registro en pantalla**: una sola vista, la Hoja completa (`REG_PANTALLA`),
+>   sin rótulos «Hoja 1 / Hoja 2»; F y G no se pintan en pantalla (sí en la hoja
+>   impresa). Fases, eventos y alarmas se apuntan SOLO en el panel de arriba,
+>   «Apuntar fase, evento o alarma» (botón dorado relleno y centrado, flecha a los
+>   dos lados, `.reg-rapido`; antes «modo rápido»). Dentro:
+>   - **Fase**: un toque; caja = detalle u «Otra».
+>   - **Evento o alarma** (recuadro resaltado en dorado apagado) con dos
+>     recuadros: **Técnica** (antes «Qué»): t-SEP / t-MEP / c-SEP en tabla por
+>     miembro (MSD · MSI · MID · MII) y, con CoMEP, los pares craneales en la
+>     misma tabla (`REG_PARES_COMEP`, botoncitos I/D → «CoMEP VII I»); el resto de
+>     técnicas; **Reflejos** del caso con nombre corto; Factores técnicos + Otro
+>     en una fila; **Anestesia + TOF 0/4…4/4** en otra (TOF = contexto:
+>     `ev.tof`/`al.tof`, `data-clave="tof"`, se desmarca al apuntar); con
+>     Anestesia, fila **Fármaco** (`REG_FARMACOS` → `ev.farmaco`). **Hallazgo**
+>     (antes «Qué pasa»): ↑ umbral, ↓ amplitud, ↑ latencia, pérdida, HFD, Otro (sin
+>     botones de recuperación: se marca en la alarma) y debajo las **propias de la
+>     técnica elegida** (`mod` en `REG_CAMBIOS_RAPIDOS`, mismos ids en
+>     `REG_CRITERIO_AL`, `regModalidadDeQue()`, `actualizarCambiosPropios()`,
+>     `miembro` sup/inf: N13/N20 o N22/P37; ayuda al mantener pulsado); con GRID
+>     solo sus eventos (colocación, phase reversal, se mueve, retirada) y con
+>     Anestesia solo ↑/↓ perfusión, bolo, inicio, detención
+>     (`REG_MODS_SIN_GENERAL`) → An «Propofol · Bolo». Luego **contexto
+>     quirúrgico** opcional (`ev.contexto`) y Apuntar evento / alarma. Un evento
+>     puede ser solo contexto y/o TOF (solo TOF → An «TOF 1/4»); la alarma
+>     necesita técnica.
+>   - **Apuntado**: por hora, de lo más antiguo a lo más reciente; hora editable;
+>     ✎ (solo el lápiz) corrige la línea y su alarma; cada alarma con su detalle
+>     **plegado** y resumen (causa, medidas -avisos primero-, recuperación S/P/N
+>     con hora, «Ahora» y duración).
+>   - La impresa no cambia con lo de pantalla (salvo la fase de F, que lleva
+>     « · contexto»).
+> - **Gestión de Casos**: cada caso en un recuadro del color de su estado (borde
+>   izquierdo 5 px), sin etiqueta de estado (queda en `title`); leyenda de
+>   colores (`.casos-leyenda`) bajo Destacados / Seguimiento.
 > - **Dos equipos** (Inomed/Cadwell): `equipo_id`; **no confundir con `equipo`**.
 > - **Técnicas IONM, privada**: contenido en el repo privado
 >   (`referencia/tecnicas-mio.json`), se baja con el token. **No volver a meterlo

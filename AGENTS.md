@@ -27,7 +27,7 @@ Instrucciones para cualquier asistente de código que trabaje en este repositori
   el caso guarda el id. Se puede corregir el texto de una opción, pero **nunca
   cambiar un id ya usado**; una opción nueva va al final de las dos listas.
 - Las listas cerradas del Registro y la ficha (`REG_MEDIDAS_AL`,
-  `REG_CONTEXTO`, `REG_CRITERIO_AL`, `REG_CAUSA_AL`, `OPCIONES.*`...) guardan
+  `REG_CONTEXTO`, `REG_CRITERIO_AL`, `REG_CAMBIOS_RAPIDOS`, `REG_FARMACOS`, `REG_CAUSA_AL`, `OPCIONES.*`...) guardan
   ids: se puede cambiar el rótulo, nunca un id ya usado.
 - Si cambia `apps-script/Codigo.gs`, el usuario tiene que volver a pegarlo en
   Apps Script: dale el archivo **entero** para copiar y pegar, no bloques
