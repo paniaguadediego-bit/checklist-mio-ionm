@@ -4375,3 +4375,18 @@ body:not(.editando-caso) .barra-caso {
   border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.28);
 }
+
+/* Plantillas de montajes más compacta (01-10-2026, pedido del usuario): la
+   lista se abre entera, sin scroll propio dentro del de la pantalla; botones
+   Guardar plantilla / Más acciones más pequeños; y cada plantilla ocupa
+   menos alto (título más pequeño, menos relleno, técnicas más pequeñas). */
+#dlg-montajes-lista { max-height: none; overflow: visible; gap: 0.3rem; }
+.montajes-acciones button { font-size: 0.78rem; min-height: 32px; padding: 0.2rem 0.7rem; }
+.plantilla-fila { padding: 0.32rem 0.55rem; gap: 0.1rem; }
+.plantilla-fila .montaje-nombre { font-size: 0.8rem; line-height: 1.25; }
+.plantilla-fila .montaje-autor { font-size: 0.68rem; }
+.plantilla-fecha { font-size: 0.66rem; }
+.plantilla-der .caso-fila-equipo { font-size: 0.64rem; }
+.plantilla-tecs { gap: 0.15rem; margin-top: 0.05rem; }
+.plantilla-tec { font-size: 0.6rem; padding: 0 0.3rem; }
+.plantilla-fila .marca-ficticio { font-size: 0.55rem; padding: 0 0.3rem; }
