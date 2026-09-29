@@ -16873,20 +16873,27 @@
     var queGrupos = regNodo("div", "rr-que-grupos");
     bEvento.appendChild(queGrupos);
     var tecnicasQue = regQueRapidos(d).filter(function (l) { return l !== "TOF"; });
-    [["rr_grupo_tecnicas", tecnicasQue.map(function (l) { return [l, l]; })],
-     ["rr_grupo_factores", [[REG_QUE_TECNICO, T("rr_que_tecnico")]]],
-     ["rr_grupo_anestesia", [[REG_QUE_ANESTESIA, T("rr_que_anestesia")]]],
-     [null, [[REG_QUE_OTRO, T("rr_otro"), "rr-chip-otra"]]]
+    // Factores técnicos, Anestesia y Otro en una sola fila (29-09-2026,
+    // pedido del usuario: caben), cada uno con su rótulo encima; Otro sin
+    // rótulo, alineado con los botones.
+    var filaCorta = regNodo("div", "rr-que-fila");
+    [["rr_grupo_tecnicas", tecnicasQue.map(function (l) { return [l, l]; }), queGrupos],
+     ["rr_grupo_factores", [[REG_QUE_TECNICO, T("rr_que_tecnico")]], filaCorta],
+     ["rr_grupo_anestesia", [[REG_QUE_ANESTESIA, T("rr_que_anestesia")]], filaCorta],
+     [null, [[REG_QUE_OTRO, T("rr_otro"), "rr-chip-otra"]], filaCorta]
     ].forEach(function (g) {
       if (!g[1].length) return;
-      if (g[0]) queGrupos.appendChild(regNodo("div", "rr-subtit", T(g[0])));
+      var dest = g[2] === queGrupos ? queGrupos : regNodo("div", "rr-que-sub");
+      dest.appendChild(regNodo("div", "rr-subtit", g[0] ? T(g[0]) : "\u00a0"));
       var filaG = regNodo("div", "rr-chips");
       g[1].forEach(function (p) {
         var b = regChip(p[1], regRapido.que === p[0], function () { regElegirEn(queGrupos, b, "que", p[0]); }, p[2]);
         filaG.appendChild(b);
       });
-      queGrupos.appendChild(filaG);
+      dest.appendChild(filaG);
+      if (dest !== queGrupos) filaCorta.appendChild(dest);
     });
+    queGrupos.appendChild(filaCorta);
     bEvento.appendChild(regCajaRapida("queNota", T("rr_que_detalle")));
 
     var filaCambio = regGrupoRapido(bEvento, T("rr_que_pasa"));
