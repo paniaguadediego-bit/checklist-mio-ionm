@@ -371,7 +371,7 @@ distinta a la anterior, no importa el formato exacto.
 >   token), Material (en construcción), **Miotomas** (antes «Docencia»; id
 >   `docente`; Cama y Teoría ocultas con `hidden`), Simulador (en construcción),
 >   Mis apuntes, Bibliografía recomendada. Al final del inicio, logo grande,
->   «Con agradecimiento al Dr. Javier Urriza Mena» y la autoría (siempre, no
+>   «Con la inestimable colaboración del Dr. Javier Urriza Mena» y la autoría (siempre, no
 >   solo en la demo; nombre en el repo público por decisión del autor). Barra
 >   superior: botón redondo de **colores** (oscuro → azul → claro) y **Guía**
 >   junto al ⋮; en el ⋮ quedan Catálogos, EN y Ocultar ayudas.
@@ -496,7 +496,7 @@ distinta a la anterior, no importa el formato exacto.
 >     alarma; cada alarma con su detalle **plegado** y resumen.
 >     El cronograma entero es un `<details class="rr-crono">` plegable, con
 >     cabecera de título (▸, mayúsculas); su estado (`regCronoAbierto`) se
->     conserva al volver a pintar.
+>     conserva al volver a pintar y entre sesiones (`mio_ionm_crono_plegado`).
 >   - La impresa no cambia con lo de pantalla (salvo la fase de F, que lleva
 >     « · contexto»).
 > - **Gestión de Casos**: borde izquierdo y bolita del color del estado («A

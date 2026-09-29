@@ -14,7 +14,7 @@ momento de la cirugía — *Antes de quirófano*: **Organizador de Montajes** y
 dice para qué sirve y su propio espacio de trabajo. Se pulsa una y se trabaja
 solo ahí; el logo, o el botón **Inicio** junto al título de cada pantalla, son
 el único camino de vuelta al inicio. Al final del inicio, el logo en grande,
-el agradecimiento al Dr. Javier Urriza Mena y la autoría. En **Material**, cada
+la colaboración del Dr. Javier Urriza Mena y la autoría. En **Material**, cada
 par izquierda/derecha sale en una sola fila («L./R.APB»), cada manta GRID en
 una («GRID A (1–8)») y los tres contactos de cada kit de onda D en una
 («Px.1–3DW», «Dst.1–3DW»). Las tarjetas de cada bloque van centradas.

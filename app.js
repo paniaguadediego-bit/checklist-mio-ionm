@@ -986,7 +986,7 @@
     // contacto es el que dio el autor para la demo (28-09-2026).
     demo_privacidad:     { es: "MIO-Check no guarda número de historia ni etiquetas del paciente. Esta demo, además, no envía nada a ningún servidor: lo que escribas se queda en este navegador y se borra con «Restablecer demo». No introduzcas datos reales de pacientes.",
                            en: "MIO-Check never stores medical record numbers or patient labels. This demo also sends nothing to any server: whatever you type stays in this browser and is erased with “Reset demo”. Do not enter real patient data." },
-    inicio_agradecimiento: { es: "Con agradecimiento al Dr. Javier Urriza Mena.", en: "With thanks to Dr. Javier Urriza Mena." },
+    inicio_agradecimiento: { es: "Con la inestimable colaboración del Dr. Javier Urriza Mena.", en: "With the invaluable collaboration of Dr. Javier Urriza Mena." },
     demo_autoria:        { es: "© 2026 P. Paniagua. Todos los derechos reservados. Uso solo con autorización. Contacto: paniagua.dediego@gmail.com",
                            en: "© 2026 P. Paniagua. All rights reserved. Use only with permission. Contact: paniagua.dediego@gmail.com" },
     demo_restablecer:    { es: "Restablecer demo", en: "Reset demo" },
@@ -17535,11 +17535,14 @@
     // con franja de color), con el total a la derecha y filtros por gravedad.
     // Plegable entero (30-09-2026, pedido del usuario): la cabecera es un
     // título como los de los apartados de la ficha; lo abierto o cerrado se
-    // conserva al volver a pintar (al apuntar, al filtrar).
+    // conserva al volver a pintar (al apuntar, al filtrar) y al cerrar la app.
     var items = regItemsApuntados(d);
     var crono = regNodo("details", "rr-crono");
     crono.open = regCronoAbierto;
-    crono.addEventListener("toggle", function () { regCronoAbierto = crono.open; });
+    crono.addEventListener("toggle", function () {
+      regCronoAbierto = crono.open;
+      try { localStorage.setItem(CRONO_KEY, crono.open ? "0" : "1"); } catch (e) { /* sin persistencia */ }
+    });
     var cabL = regNodo("summary", "rr-crono-cab");
     cabL.appendChild(regNodo("span", "rr-crono-tit", T("rr_apuntado_lista")));
     cabL.appendChild(regNodo("span", "rr-crono-n", items.length === 1 ? T("rr_n_evento") : T("rr_n_eventos", { n: items.length })));
@@ -17617,7 +17620,10 @@
   // factor técnico; ok (verde) = fase o recuperación; info (azul) = el resto
   // (anestesia, mapeo, contexto). La etiqueta dice qué es.
   var regFiltroCrono = "todos";
+  // Plegado o no, recordado entre sesiones (30-09-2026, pedido del usuario).
+  var CRONO_KEY = "mio_ionm_crono_plegado";
   var regCronoAbierto = true;
+  try { regCronoAbierto = localStorage.getItem(CRONO_KEY) !== "1"; } catch (e) { /* sin persistencia */ }
   function regTipoApuntado(it) {
     var ev = it.ev, al = it.al;
     if (al) return { g: "critico", et: T("rr_et_alarma") + " A" + it.n };
