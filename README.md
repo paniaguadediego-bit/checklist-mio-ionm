@@ -899,10 +899,10 @@ hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
   y todo lo que apuntes después la hereda hasta que marques otra. La caja de
   debajo es un detalle opcional de la fase (va en «Acción y resultado» de su
   fila de F) o, con **Otra**, el nombre de la fase.
-- **Qué**: las técnicas del caso, que salen de las mismas filas que las
-  basales (t-SEP, t-MEP, c-MEP, PEAT, Onda D, TOF...), más EMG libre,
-  tornillos, RBC, Blink o EEG/ECoG si el caso tiene esa técnica,
-  **Anestesia** / **Técnico** y **Otro**. La caja de debajo añade un detalle
+- **Qué**, en filas por tipo: **Técnicas** (las del caso, de las mismas
+  filas que las basales: t-SEP, t-MEP, c-MEP, PEAT, Onda D...; más EMG libre,
+  tornillos, RBC, Blink o EEG/ECoG si el caso tiene esa técnica), **Factores
+  técnicos** (Técnico), **Anestesia** (Anestesia y TOF) y **Otro**. La caja de debajo añade un detalle
   a la técnica («t-MEP MSD · deltoides») o, con **Otro**, dice qué es.
 - **Qué pasa**: ↓ amplitud, pérdida, ↑ latencia, ↑ umbral, HFD / descargas,
   recupera parcial, recupera, sin cambios u **Otro**. La caja de debajo es
@@ -915,7 +915,10 @@ hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
 - Debajo, **Apuntado**: todo lo apuntado, ordenado por hora (lo último
   arriba), también las alarmas escritas desde la ficha. La **hora** de cada
   línea se corrige tocándola (en una alarma o una recuperación cambia también
-  la de la alarma). Debajo de cada **alarma**, lo que antes se completaba en
+  la de la alarma). Con **✎**, o tocando el texto, se abren debajo las
+  casillas para **corregir la línea**: qué, qué pasa, nota y fase (en una fase,
+  su nombre y el detalle); en una alarma, lo corregido pasa también a su fila
+  de alarmas (técnica, fase y criterio). «Hecho» las cierra. Debajo de cada **alarma**, lo que antes se completaba en
   G: **causa probable**, **medidas adoptadas** (casillas + caja de texto) y
   **recuperación** Sí /
   Parcial / No con su hora (que mueve también la línea «Recupera»). La ✕
@@ -924,8 +927,7 @@ hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
 
 El panel **no guarda nada propio**: escribe en los mismos eventos (F) y
 alarmas (G) de siempre, así que lo apuntado sale en la hoja impresa, en la
-ficha del caso (⇄) y en **Exportar eventos y alarmas (CSV)**. El criterio de
-una alarma (lo que sale de «Qué pasa») se cambia en la ficha del caso.
+ficha del caso (⇄) y en **Exportar eventos y alarmas (CSV)**.
 
 ### Hoja completa
 

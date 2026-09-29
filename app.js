@@ -1255,6 +1255,13 @@
     rr_que_detalle:      { es: "Otro o detalle (opcional)", en: "Other or detail (optional)" },
     rr_falta_otro:       { es: "Con «Otro», escribe en la caja de debajo qué es.", en: "With “Other”, type what it is in the box below." },
     rr_en_hoja:          { es: "Apuntar fase, evento o alarma", en: "Log phase, event or alarm" },
+    rr_grupo_tecnicas:   { es: "Técnicas", en: "Techniques" },
+    rr_grupo_factores:   { es: "Factores técnicos", en: "Technical factors" },
+    rr_grupo_anestesia:  { es: "Anestesia", en: "Anaesthesia" },
+    rr_editar:           { es: "Corregir esta línea", en: "Edit this line" },
+    rr_editar_hecho:     { es: "Hecho", en: "Done" },
+    rr_detalle:          { es: "Detalle", en: "Detail" },
+    rr_nota_l:           { es: "Nota", en: "Note" },
     rr_que:              { es: "Qué", en: "What" },
     rr_que_pasa:         { es: "Qué pasa", en: "What happens" },
     rr_que_anestesia:    { es: "Anestesia", en: "Anaesthesia" },
@@ -16285,12 +16292,12 @@
     return fila;
   }
 
-  // Dentro de una fila de chips, solo uno activo a la vez; pulsar el activo
-  // lo desmarca.
+  // Dentro de un grupo de chips (una fila o varias), solo uno activo a la
+  // vez; pulsar el activo lo desmarca.
   function regElegirEn(fila, boton, clave, valor) {
     var ya = regRapido[clave] === valor;
     regRapido[clave] = ya ? "" : valor;
-    Array.prototype.forEach.call(fila.children, function (b) { b.classList.remove("activo"); });
+    Array.prototype.forEach.call(fila.querySelectorAll(".rr-chip"), function (b) { b.classList.remove("activo"); });
     if (!ya) boton.classList.add("activo");
   }
 
@@ -16448,14 +16455,27 @@
     var bEvento = regNodo("div", "rr-bloque rr-bloque-evento");
     bEvento.appendChild(regNodo("div", "rr-bloque-tit", T("rr_evento_alarma")));
     panel.appendChild(bEvento);
-    var filaQue = regGrupoRapido(bEvento, T("rr_que"));
-    regQueRapidos(d).map(function (l) { return [l, l]; })
-      .concat([[REG_QUE_ANESTESIA, T("rr_que_anestesia")], [REG_QUE_TECNICO, T("rr_que_tecnico")],
-               [REG_QUE_OTRO, T("rr_otro"), "rr-chip-otra"]])
-      .forEach(function (p) {
-        var b = regChip(p[1], regRapido.que === p[0], function () { regElegirEn(filaQue, b, "que", p[0]); }, p[2]);
-        filaQue.appendChild(b);
+    // QUÉ en filas por tipo (29-09-2026, pedido del usuario): técnicas,
+    // factores técnicos, anestesia -con el TOF, que mide la relajación- y
+    // Otro. Sigue siendo una sola elección entre todas las filas.
+    bEvento.appendChild(regNodo("div", "rr-titulo", T("rr_que")));
+    var queGrupos = regNodo("div", "rr-que-grupos");
+    bEvento.appendChild(queGrupos);
+    var tecnicasQue = regQueRapidos(d).filter(function (l) { return l !== "TOF"; });
+    [["rr_grupo_tecnicas", tecnicasQue.map(function (l) { return [l, l]; })],
+     ["rr_grupo_factores", [[REG_QUE_TECNICO, T("rr_que_tecnico")]]],
+     ["rr_grupo_anestesia", [[REG_QUE_ANESTESIA, T("rr_que_anestesia")], ["TOF", "TOF"]]],
+     [null, [[REG_QUE_OTRO, T("rr_otro"), "rr-chip-otra"]]]
+    ].forEach(function (g) {
+      if (!g[1].length) return;
+      if (g[0]) queGrupos.appendChild(regNodo("div", "rr-subtit", T(g[0])));
+      var filaG = regNodo("div", "rr-chips");
+      g[1].forEach(function (p) {
+        var b = regChip(p[1], regRapido.que === p[0], function () { regElegirEn(queGrupos, b, "que", p[0]); }, p[2]);
+        filaG.appendChild(b);
       });
+      queGrupos.appendChild(filaG);
+    });
     bEvento.appendChild(regCajaRapida("queNota", T("rr_que_detalle")));
 
     var filaCambio = regGrupoRapido(bEvento, T("rr_que_pasa"));
@@ -16573,6 +16593,21 @@
       if (fase) txt.appendChild(regNodo("small", null, " " + T("rr_en_fase", { fase: fase })));
     }
     fila.appendChild(txt);
+    // Corregir la línea (29-09-2026, pedido del usuario): ✎ o tocar el texto
+    // abre sus casillas debajo; otra vez, o «Hecho», las cierra.
+    var clave = ev ? ev.id : al.id;
+    var alternarEdicion = function () {
+      regEditando = regEditando === clave ? "" : clave;
+      renderRegistroContenido();
+    };
+    txt.classList.add("rr-texto-editable");
+    txt.addEventListener("click", alternarEdicion);
+    var ed = regNodo("button", "rr-editar-btn" + (regEditando === clave ? " activo" : ""), "✎");
+    ed.type = "button";
+    ed.title = T("rr_editar");
+    ed.setAttribute("aria-label", T("rr_editar"));
+    ed.addEventListener("click", alternarEdicion);
+    fila.appendChild(ed);
     var q = regNodo("button", "reg-fila-quitar", "✕");
     q.type = "button";
     q.title = T("rr_quitar");
@@ -16586,6 +16621,7 @@
     });
     fila.appendChild(q);
     caja.appendChild(fila);
+    if (regEditando === clave) caja.appendChild(regEditorApuntado(d, ev, al));
     if (al) {
       // Debajo de cada alarma, lo que antes se completaba en G: causa
       // probable (29-09-2026, pedido del usuario), medidas adoptadas y
@@ -16607,6 +16643,51 @@
       caja.appendChild(det);
     }
     return caja;
+  }
+
+  // Casillas para corregir una línea de «Apuntado». Una alarma con evento se
+  // corrige en el evento y se copia a su alarma: técnica, fase y criterio (el
+  // id si el cambio es uno de los botones; si no, el texto).
+  var regEditando = "";
+  function regEditorApuntado(d, ev, al) {
+    var box = regNodo("div", "rr-editor");
+    var copiarAAlarma = function () {
+      if (!ev || !al) return;
+      al.modalidad = ev.modalidad || "";
+      al.fase = ev.fase || "";
+      var c = REG_CAMBIOS_RAPIDOS.filter(function (x) {
+        return !x.recup && x.id !== "sin_cambios" && campo(x, "l") === ev.cambio;
+      })[0];
+      al.criterio = c ? c.id : (ev.cambio || "");
+    };
+    function casilla(obj, k, etiqueta) {
+      box.appendChild(regNodo("span", "rr-editor-et", etiqueta));
+      box.appendChild(regInput(obj, k, "text", etiqueta, copiarAAlarma));
+    }
+    if (ev && ev.cod === "F") {
+      casilla(ev, "fase", T("rr_fase"));
+      casilla(ev, "accion", T("rr_detalle"));
+    } else if (ev) {
+      casilla(ev, "modalidad", T("rr_que"));
+      casilla(ev, "cambio", T("rr_que_pasa"));
+      // En una alarma, la nota son sus medidas (debajo)
+      if (!al) casilla(ev, "accion", T("rr_nota_l"));
+      casilla(ev, "fase", T("rr_fase"));
+    } else {
+      casilla(al, "modalidad", T("rr_que"));
+      box.appendChild(regNodo("span", "rr-editor-et", T("reg_p_criterio")));
+      box.appendChild(regSelectLista(al, "criterio", REG_CRITERIO_AL, T("reg_p_criterio")));
+      casilla(al, "fase", T("rr_fase"));
+    }
+    var hecho = regNodo("button", "rr-editor-hecho", T("rr_editar_hecho"));
+    hecho.type = "button";
+    hecho.addEventListener("click", function () {
+      regEditando = "";
+      registroGuardarYa();
+      renderRegistroContenido();
+    });
+    box.appendChild(hecho);
+    return box;
   }
 
   /* ---- Hoja completa en pantalla, simplificada (28-09-2026) -----------
