@@ -945,7 +945,15 @@ hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
   a la técnica («t-MEP MSD · deltoides») o, con **Otro**, dice qué es.
 - **Qué pasa**: ↑ umbral, ↓ amplitud, ↑ latencia, pérdida, HFD / descargas
   u **Otro** (sin botones de recuperación desde el 29-09-2026: la recuperación
-  se marca dentro de cada alarma). La caja de debajo es
+  se marca dentro de cada alarma). Debajo, al elegir una técnica en «Qué», sus
+  **alteraciones propias** (la explicación sale con el ratón encima o
+  manteniendo pulsado): t-MEP / c-MEP / CoMEP (cambio de morfología, sin
+  facilitación, bloqueo neuromuscular), onda D (↓ > 30-50 %), t-SEP / c-SEP
+  (desorganización / ↑ duración, pérdida cortical con subcortical conservado,
+  cambio N13 / N20), EMG (trenes A, neurotónicos, salvas, sin respuesta
+  evocada), EEG / ECoG (enlentecimiento, atenuación / isoeléctrico,
+  brote-supresión, epileptiforme) y PEATC (↑ interpico, pérdida de onda V o I).
+  En una alarma quedan como criterio (lista cerrada con ids). La caja de debajo es
   una nota (acción o medidas) o, con **Otro**, el cambio.
 - **Contexto quirúrgico** (opcional, lista cerrada): disección, retracción,
   tracción / manipulación, coagulación, resección / aspiración, irrigación,

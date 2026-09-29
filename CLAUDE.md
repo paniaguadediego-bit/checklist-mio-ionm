@@ -455,7 +455,10 @@ distinta a la anterior, no importa el formato exacto.
 >   se elige y va en `ev.tof`/`al.tof` al apuntar; se desmarca como lo demás;
 >   `data-clave="tof"` para que elegir un QUÉ no lo desmarque; un evento puede
 >   ser solo contexto y/o TOF; solo TOF → An «TOF 1/4»; pares craneales con
->   CoMEP en la tabla, `REG_PARES_COMEP`, cada par con botoncitos I/D → «CoMEP VII I»; reflejos del caso con nombre corto), **Evento o alarma**
+>   CoMEP en la tabla, `REG_PARES_COMEP`, cada par con botoncitos I/D → «CoMEP VII I»; «Qué pasa»
+>   con alteraciones propias de la técnica elegida -`mod` en
+>   `REG_CAMBIOS_RAPIDOS`, mismos ids en `REG_CRITERIO_AL`, `regModalidadDeQue()`,
+>   `actualizarCambiosPropios()`, ayuda al mantener pulsado-; reflejos del caso con nombre corto), **Evento o alarma**
 >   (QUÉ: t-SEP/t-MEP/c-SEP en tabla por miembro + factores técnicos, anestesia
 >   y Otro en una fila; QUÉ PASA sin botones de recuperación -se marca en la
 >   alarma-,

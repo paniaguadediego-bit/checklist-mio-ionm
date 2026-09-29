@@ -1277,6 +1277,7 @@
     rr_al_detalle:       { es: "Causa, medidas y recuperación", en: "Cause, measures and recovery" },
     rr_contexto:         { es: "Contexto quirúrgico (opcional)", en: "Surgical context (optional)" },
     rr_grupo_reflejos:   { es: "Reflejos", en: "Reflexes" },
+    rr_cambios_propios:  { es: "Propias de {tec}", en: "Specific to {tec}" },
     rr_grupo_tecnicas:   { es: "Técnicas", en: "Techniques" },
     rr_grupo_factores:   { es: "Factores técnicos", en: "Technical factors" },
     rr_grupo_anestesia:  { es: "Anestesia", en: "Anaesthesia" },
@@ -15849,7 +15850,27 @@
     { v: "baja", l: "↓ amplitud", l_en: "↓ amplitude" },
     { v: "latencia", l: "↑ latencia", l_en: "↑ latency" },
     { v: "perdida", l: "Pérdida", l_en: "Loss" },
-    { v: "hfd", l: "HFD / descargas", l_en: "HFD / discharges" }
+    { v: "hfd", l: "HFD / descargas", l_en: "HFD / discharges" },
+    // Propias de cada técnica (29-09-2026), los mismos ids que en
+    // REG_CAMBIOS_RAPIDOS; nunca cambiar uno ya usado.
+    { v: "mep_morfologia", l: "Cambio de morfología", l_en: "Morphology change" },
+    { v: "mep_sin_facilitacion", l: "Sin facilitación", l_en: "No facilitation" },
+    { v: "mep_bloqueo_nm", l: "Bloqueo neuromuscular", l_en: "Neuromuscular block" },
+    { v: "onda_d_baja", l: "↓ onda D > 30-50 %", l_en: "↓ D wave > 30-50 %" },
+    { v: "sep_desorganizacion", l: "Desorganización / ↑ duración", l_en: "Disorganisation / ↑ duration" },
+    { v: "sep_cortical", l: "Pérdida cortical (subcortical conservado)", l_en: "Cortical loss (subcortical preserved)" },
+    { v: "sep_n13_n20", l: "Cambio N13 / N20", l_en: "N13 / N20 change" },
+    { v: "emg_trenes_a", l: "Trenes A", l_en: "A-trains" },
+    { v: "emg_neurotonicos", l: "Trenes neurotónicos", l_en: "Neurotonic trains" },
+    { v: "emg_salvas", l: "Salvas (burst)", l_en: "Bursts" },
+    { v: "emg_sin_respuesta", l: "Sin respuesta evocada", l_en: "No evoked response" },
+    { v: "eeg_enlentecimiento", l: "Enlentecimiento", l_en: "Slowing" },
+    { v: "eeg_atenuacion", l: "Atenuación / isoeléctrico", l_en: "Attenuation / isoelectric" },
+    { v: "eeg_brote_supresion", l: "Brote-supresión", l_en: "Burst suppression" },
+    { v: "eeg_epileptiforme", l: "Actividad epileptiforme", l_en: "Epileptiform activity" },
+    { v: "peat_interpico", l: "↑ interpico (I-III, III-V, I-V)", l_en: "↑ interpeak (I-III, III-V, I-V)" },
+    { v: "peat_onda_v", l: "Pérdida onda V", l_en: "Wave V loss" },
+    { v: "peat_onda_i", l: "Pérdida onda I", l_en: "Wave I loss" }
   ];
   var REG_CAUSA_AL = [
     { v: "quirurgica", l: "Maniobra quirúrgica", l_en: "Surgical manoeuvre" },
@@ -16584,8 +16605,40 @@
     { id: "hfd", l: "HFD / descargas", l_en: "HFD / discharges" },
     { id: "recupera_p", l: "Recupera parcial", l_en: "Partial recovery", recup: "P" },
     { id: "recupera", l: "Recupera", l_en: "Recovers", recup: "S" },
-    { id: "sin_cambios", l: "Sin cambios", l_en: "No change" }
+    { id: "sin_cambios", l: "Sin cambios", l_en: "No change" },
+    // Propias de cada técnica (29-09-2026, pedido del usuario): «mod» dice
+    // de cuál; salen en su fila de «Qué pasa» solo al elegir en QUÉ una
+    // técnica de esa modalidad. «ayuda» va en el title y al mantener pulsado.
+    { id: "mep_morfologia", mod: "mep", l: "Cambio de morfología", l_en: "Morphology change", ayuda: "Pérdida o cambio de la morfología del complejo: fases que desaparecen, polifasia exagerada o potencial desorganizado sin pérdida completa de amplitud.", ayuda_en: "Loss or change of the complex morphology: phases disappear, exaggerated polyphasia or a disorganised potential without complete amplitude loss." },
+    { id: "mep_sin_facilitacion", mod: "mep", l: "Sin facilitación", l_en: "No facilitation", ayuda: "Bloqueo de conducción con la estimulación cortical repetitiva: sin facilitación al aplicar trenes (se pierde la sumación temporal).", ayuda_en: "Conduction block with repetitive cortical stimulation: no facilitation with trains (temporal summation lost)." },
+    { id: "mep_bloqueo_nm", mod: "mep", l: "Bloqueo neuromuscular", l_en: "Neuromuscular block", ayuda: "Curarización: se pierde la respuesta muscular (CMAP) y se mantiene la onda D epidural.", ayuda_en: "Curarisation: the muscle response (CMAP) is lost while the epidural D wave is preserved." },
+    { id: "onda_d_baja", mod: "onda_d", l: "↓ onda D > 30-50 %", l_en: "↓ D wave > 30-50 %", ayuda: "Disminución de la amplitud de la onda D epidural > 30-50 %: indicador específico de lesión del tracto corticoespinal, independiente del bloqueo neuromuscular.", ayuda_en: "D-wave amplitude drop > 30-50 %: specific marker of corticospinal tract injury, independent of neuromuscular block." },
+    { id: "sep_desorganizacion", mod: "sep", l: "Desorganización / ↑ duración", l_en: "Disorganisation / ↑ duration", ayuda: "Complejo desorganizado o ensanchado (duración aumentada): desincronización de la conducción por los cordones posteriores.", ayuda_en: "Disorganised or widened complex (longer duration): desynchronised conduction along the dorsal columns." },
+    { id: "sep_cortical", mod: "sep", l: "Pérdida cortical (subcortical conservado)", l_en: "Cortical loss (subcortical preserved)", ayuda: "Abolición del componente cortical con respuestas subcorticales o periféricas conservadas: isquemia cortical, anestesia profunda (halogenados) o hipotensión grave.", ayuda_en: "Loss of the cortical component with subcortical or peripheral responses preserved: cortical ischaemia, deep anaesthesia (volatile agents) or severe hypotension." },
+    { id: "sep_n13_n20", mod: "sep", l: "Cambio N13 / N20", l_en: "N13 / N20 change", ayuda: "Cambios significativos en N13 / N20 (según extremidad): alteración localizada en la región cervical o el tronco del encéfalo.", ayuda_en: "Significant N13 / N20 changes (by limb): localised cervical or brainstem involvement." },
+    { id: "emg_trenes_a", mod: "emg", l: "Trenes A", l_en: "A-trains", ayuda: "Descargas sinusoidales de muy alta frecuencia (100-200 Hz), alta amplitud y duración fija: tracción o compresión mecánica aguda de la raíz o el nervio motor.", ayuda_en: "Sinusoidal very high frequency discharges (100-200 Hz), high amplitude, fixed duration: acute mechanical traction or compression of the root or motor nerve." },
+    { id: "emg_neurotonicos", mod: "emg", l: "Trenes neurotónicos", l_en: "Neurotonic trains", ayuda: "Actividad rítmica de frecuencia intermedia: irritación mecánica, térmica (cauterio, irrigación caliente) o isquémica.", ayuda_en: "Rhythmic intermediate frequency activity: mechanical, thermal (cautery, warm irrigation) or ischaemic irritation." },
+    { id: "emg_salvas", mod: "emg", l: "Salvas (burst)", l_en: "Bursts", ayuda: "Respuestas cortas por estimulación mecánica directa (contacto puntual con el instrumental).", ayuda_en: "Short responses from direct mechanical stimulation (brief contact with instruments)." },
+    { id: "emg_sin_respuesta", mod: "emg", l: "Sin respuesta evocada", l_en: "No evoked response", ayuda: "Depresión o silencio de la EMG evocada: sin respuesta al estimular directamente el nervio (pedículo, mapeo de pares craneales) por neurotmesis o axonotmesis.", ayuda_en: "Depressed or absent evoked EMG: no response to direct nerve stimulation (pedicle, cranial nerve mapping) due to neurotmesis or axonotmesis." },
+    { id: "eeg_enlentecimiento", mod: "eeg", l: "Enlentecimiento", l_en: "Slowing", ayuda: "Enlentecimiento de la actividad de fondo: delta/theta generalizada o focal (isquemia en endarterectomía carotídea o clipaje de aneurismas).", ayuda_en: "Background slowing: generalised or focal delta/theta (ischaemia in carotid endarterectomy or aneurysm clipping)." },
+    { id: "eeg_atenuacion", mod: "eeg", l: "Atenuación / isoeléctrico", l_en: "Attenuation / isoelectric", ayuda: "Atenuación o aplanamiento del trazado, isoeléctrico focal o global: hipoperfusión grave o hipotermia.", ayuda_en: "Attenuation or flattening, focal or global isoelectric activity: severe hypoperfusion or hypothermia." },
+    { id: "eeg_brote_supresion", mod: "eeg", l: "Brote-supresión", l_en: "Burst suppression", ayuda: "Patrón de brote-supresión: anestesia profunda (propofol, inhalatorios) o isquemia grave.", ayuda_en: "Burst suppression pattern: deep anaesthesia (propofol, volatile agents) or severe ischaemia." },
+    { id: "eeg_epileptiforme", mod: "eeg", l: "Actividad epileptiforme", l_en: "Epileptiform activity", ayuda: "Espigas, punta-onda o crisis electrográficas: estimulación cortical directa (mapeo motor) o reperfusión.", ayuda_en: "Spikes, spike-wave or electrographic seizures: direct cortical stimulation (motor mapping) or reperfusion." },
+    { id: "peat_interpico", mod: "peat", l: "↑ interpico (I-III, III-V, I-V)", l_en: "↑ interpeak (I-III, III-V, I-V)", ayuda: "Aumento de los intervalos interpico: estiramiento o compresión del VIII par o del tronco (frecuente en el neurinoma del acústico).", ayuda_en: "Longer interpeak intervals: stretch or compression of CN VIII or the brainstem (common in vestibular schwannoma)." },
+    { id: "peat_onda_v", mod: "peat", l: "Pérdida onda V", l_en: "Wave V loss", ayuda: "Pérdida aislada de la onda V: afectación mesencefálica / del lemnisco lateral.", ayuda_en: "Isolated wave V loss: midbrain / lateral lemniscus involvement." },
+    { id: "peat_onda_i", mod: "peat", l: "Pérdida onda I", l_en: "Wave I loss", ayuda: "Pérdida de la onda I: problema periférico (coclear, asa vascular).", ayuda_en: "Wave I loss: peripheral problem (cochlear, vascular loop)." }
   ];
+  // Modalidad de lo elegido en QUÉ, para las alteraciones propias
+  function regModalidadDeQue(q) {
+    q = String(q || "");
+    if (/D-Wave|Onda D/i.test(q)) return "onda_d";
+    if (/^(t-|c-)?MEP|^CoMEP/.test(q)) return "mep";
+    if (/^(t-|c-)?SEP/.test(q)) return "sep";
+    if (/^PEAT/.test(q)) return "peat";
+    if (/EMG|Tornillos/.test(q)) return "emg";
+    if (/EEG|ECoG/.test(q)) return "eeg";
+    return "";
+  }
   var REG_QUE_ANESTESIA = "__an", REG_QUE_TECNICO = "__t";
   // TOF (29-09-2026, pedido del usuario): las cinco respuestas posibles, ni
   // más ni menos, como eventos de anestesia de un toque (cod "An",
@@ -16877,6 +16930,7 @@
     // Anestesia y el TOF en otra fila (29-09-2026, pedido del usuario).
     var filaCorta = regNodo("div", "rr-que-fila");
     var filaAnest = regNodo("div", "rr-que-fila-an");
+    var actualizarCambiosPropios = function () {};
     var reflejosPendientes = null;
     [["rr_grupo_tecnicas", tecnicasQue.map(function (l) { return [l, l]; }), queGrupos],
      ["rr_grupo_factores", [[REG_QUE_TECNICO, T("rr_que_tecnico")]], filaCorta],
@@ -16887,7 +16941,10 @@
       var dest = g[2] === queGrupos ? queGrupos : regNodo("div", "rr-que-sub");
       dest.appendChild(regNodo("div", "rr-subtit", g[0] ? T(g[0]) : "\u00a0"));
       var chipQue = function (p) {
-        return regChip(p[1], regRapido.que === p[0], function (e) { regElegirEn(queGrupos, e.currentTarget, "que", p[0]); }, p[2]);
+        return regChip(p[1], regRapido.que === p[0], function (e) {
+          regElegirEn(queGrupos, e.currentTarget, "que", p[0]);
+          actualizarCambiosPropios();
+        }, p[2]);
       };
       // Técnicas de los cuatro miembros (t-SEP, t-MEP, c-SEP...) en cuadrícula
       // (29-09-2026, pedido del usuario): una fila por técnica y cada miembro
@@ -17004,17 +17061,44 @@
     queGrupos.appendChild(filaAnest);
     bEvento.appendChild(regCajaRapida("queNota", T("rr_que_detalle")));
 
-    var filaCambio = regGrupoRapido(bEvento, T("rr_que_pasa"));
+    // «Qué pasa»: las generales, en su orden de siempre, y debajo las propias
+    // de la técnica elegida en QUÉ (una sola elección entre las dos filas).
+    bEvento.appendChild(regNodo("div", "rr-titulo", T("rr_que_pasa")));
+    var cambioGrupos = regNodo("div", "rr-cambio-grupos");
+    bEvento.appendChild(cambioGrupos);
+    var filaCambio = regNodo("div", "rr-chips");
+    cambioGrupos.appendChild(filaCambio);
     // Sin «Recupera parcial», «Recupera» ni «Sin cambios» (29-09-2026, pedido
     // del usuario: la recuperación se marca en su sitio, dentro de cada
     // alarma, con «Ahora»). Siguen en la lista para leer lo ya apuntado.
-    REG_CAMBIOS_RAPIDOS.filter(function (c) { return !c.recup && c.id !== "sin_cambios"; })
+    REG_CAMBIOS_RAPIDOS.filter(function (c) { return !c.recup && c.id !== "sin_cambios" && !c.mod; })
       .map(function (c) { return [c.id, campo(c, "l")]; })
       .concat([[REG_CAMBIO_OTRO, T("rr_otro"), "rr-chip-otra"]])
       .forEach(function (p) {
-        var b = regChip(p[1], regRapido.cambio === p[0], function () { regElegirEn(filaCambio, b, "cambio", p[0]); }, p[2]);
+        var b = regChip(p[1], regRapido.cambio === p[0], function () { regElegirEn(cambioGrupos, b, "cambio", p[0]); }, p[2]);
         filaCambio.appendChild(b);
       });
+    var titEsp = regNodo("div", "rr-subtit");
+    var filaEsp = regNodo("div", "rr-chips rr-cambio-esp");
+    cambioGrupos.appendChild(titEsp);
+    cambioGrupos.appendChild(filaEsp);
+    actualizarCambiosPropios = function () {
+      var mod = regModalidadDeQue(regRapido.que);
+      var lista = REG_CAMBIOS_RAPIDOS.filter(function (c) { return c.mod && c.mod === mod; });
+      // Una propia de otra técnica que ya no se ve no se queda elegida
+      var elegida = REG_CAMBIOS_RAPIDOS.filter(function (c) { return c.id === regRapido.cambio; })[0];
+      if (elegida && elegida.mod && elegida.mod !== mod) regRapido.cambio = "";
+      filaEsp.textContent = "";
+      titEsp.textContent = lista.length ? T("rr_cambios_propios", { tec: regRapido.que }) : "";
+      titEsp.hidden = filaEsp.hidden = !lista.length;
+      lista.forEach(function (c) {
+        var b = regChip(campo(c, "l"), regRapido.cambio === c.id, function () { regElegirEn(cambioGrupos, b, "cambio", c.id); });
+        b.title = campo(c, "ayuda");
+        b.setAttribute("data-ayuda", b.title);
+        filaEsp.appendChild(b);
+      });
+    };
+    actualizarCambiosPropios();
     bEvento.appendChild(regCajaRapida("nota", T("rr_nota")));
 
     var filaCtx = regGrupoRapido(bEvento, T("rr_contexto"));
