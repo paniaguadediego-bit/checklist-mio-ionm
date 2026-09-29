@@ -15861,6 +15861,7 @@
     { v: "sep_desorganizacion", l: "Desorganización / ↑ duración", l_en: "Disorganisation / ↑ duration" },
     { v: "sep_cortical", l: "Pérdida cortical (subcortical conservado)", l_en: "Cortical loss (subcortical preserved)" },
     { v: "sep_n13_n20", l: "Cambio N13 / N20", l_en: "N13 / N20 change" },
+    { v: "sep_n22_p37", l: "Cambio N22 / P37", l_en: "N22 / P37 change" },
     { v: "emg_trenes_a", l: "Trenes A", l_en: "A-trains" },
     { v: "emg_neurotonicos", l: "Trenes neurotónicos", l_en: "Neurotonic trains" },
     { v: "emg_salvas", l: "Salvas (burst)", l_en: "Bursts" },
@@ -16617,7 +16618,10 @@
     { id: "onda_d_baja", mod: "onda_d", l: "↓ onda D > 30-50 %", l_en: "↓ D wave > 30-50 %", ayuda: "Disminución de la amplitud de la onda D epidural > 30-50 %: indicador específico de lesión del tracto corticoespinal, independiente del bloqueo neuromuscular.", ayuda_en: "D-wave amplitude drop > 30-50 %: specific marker of corticospinal tract injury, independent of neuromuscular block." },
     { id: "sep_desorganizacion", mod: "sep", l: "Desorganización / ↑ duración", l_en: "Disorganisation / ↑ duration", ayuda: "Complejo desorganizado o ensanchado (duración aumentada): desincronización de la conducción por los cordones posteriores.", ayuda_en: "Disorganised or widened complex (longer duration): desynchronised conduction along the dorsal columns." },
     { id: "sep_cortical", mod: "sep", l: "Pérdida cortical (subcortical conservado)", l_en: "Cortical loss (subcortical preserved)", ayuda: "Abolición del componente cortical con respuestas subcorticales o periféricas conservadas: isquemia cortical, anestesia profunda (halogenados) o hipotensión grave.", ayuda_en: "Loss of the cortical component with subcortical or peripheral responses preserved: cortical ischaemia, deep anaesthesia (volatile agents) or severe hypotension." },
-    { id: "sep_n13_n20", mod: "sep", l: "Cambio N13 / N20", l_en: "N13 / N20 change", ayuda: "Cambios significativos en N13 / N20 (según extremidad): alteración localizada en la región cervical o el tronco del encéfalo.", ayuda_en: "Significant N13 / N20 changes (by limb): localised cervical or brainstem involvement." },
+    { id: "sep_n13_n20", mod: "sep", miembro: "sup", l: "Cambio N13 / N20", l_en: "N13 / N20 change", ayuda: "Cambios significativos en N13 / N20 (según extremidad): alteración localizada en la región cervical o el tronco del encéfalo.", ayuda_en: "Significant N13 / N20 changes (by limb): localised cervical or brainstem involvement." },
+    // Miembros inferiores (29-09-2026, el usuario: no tienen N13 ni N20): N22
+    // lumbar y P37 cortical, los equivalentes del tibial.
+    { id: "sep_n22_p37", mod: "sep", miembro: "inf", l: "Cambio N22 / P37", l_en: "N22 / P37 change", ayuda: "Cambios significativos en N22 (lumbar) / P37 (cortical) del tibial: alteración localizada en la región lumbar, la médula o el tronco del encéfalo.", ayuda_en: "Significant tibial N22 (lumbar) / P37 (cortical) changes: localised lumbar, spinal cord or brainstem involvement." },
     { id: "emg_trenes_a", mod: "emg", l: "Trenes A", l_en: "A-trains", ayuda: "Descargas sinusoidales de muy alta frecuencia (100-200 Hz), alta amplitud y duración fija: tracción o compresión mecánica aguda de la raíz o el nervio motor.", ayuda_en: "Sinusoidal very high frequency discharges (100-200 Hz), high amplitude, fixed duration: acute mechanical traction or compression of the root or motor nerve." },
     { id: "emg_neurotonicos", mod: "emg", l: "Trenes neurotónicos", l_en: "Neurotonic trains", ayuda: "Actividad rítmica de frecuencia intermedia: irritación mecánica, térmica (cauterio, irrigación caliente) o isquémica.", ayuda_en: "Rhythmic intermediate frequency activity: mechanical, thermal (cautery, warm irrigation) or ischaemic irritation." },
     { id: "emg_salvas", mod: "emg", l: "Salvas (burst)", l_en: "Bursts", ayuda: "Respuestas cortas por estimulación mecánica directa (contacto puntual con el instrumental).", ayuda_en: "Short responses from direct mechanical stimulation (brief contact with instruments)." },
@@ -17099,7 +17103,12 @@
     cambioGrupos.appendChild(filaEsp);
     actualizarCambiosPropios = function () {
       var mod = regModalidadDeQue(regRapido.que);
-      var lista = REG_CAMBIOS_RAPIDOS.filter(function (c) { return c.mod && c.mod === mod; });
+      // Las que dependen del miembro (N13/N20 arriba, N22/P37 abajo), solo
+      // con el suyo; sin miembro en el nombre, las dos.
+      var miembro = /MS[DI]$/.test(regRapido.que || "") ? "sup" : (/MI[DI]$/.test(regRapido.que || "") ? "inf" : "");
+      var lista = REG_CAMBIOS_RAPIDOS.filter(function (c) {
+        return c.mod && c.mod === mod && (!c.miembro || !miembro || c.miembro === miembro);
+      });
       // Una propia de otra técnica que ya no se ve no se queda elegida
       var elegida = REG_CAMBIOS_RAPIDOS.filter(function (c) { return c.id === regRapido.cambio; })[0];
       if (elegida && elegida.mod && elegida.mod !== mod) regRapido.cambio = "";

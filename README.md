@@ -950,7 +950,7 @@ hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
   manteniendo pulsado): t-MEP / c-MEP / CoMEP (cambio de morfología, sin
   facilitación, bloqueo neuromuscular), onda D (↓ > 30-50 %), t-SEP / c-SEP
   (desorganización / ↑ duración, pérdida cortical con subcortical conservado,
-  cambio N13 / N20), EMG (trenes A, neurotónicos, salvas, sin respuesta
+  cambio N13 / N20 en miembros superiores o N22 / P37 en inferiores), EMG (trenes A, neurotónicos, salvas, sin respuesta
   evocada), EEG / ECoG (enlentecimiento, atenuación / isoeléctrico,
   brote-supresión, epileptiforme) y PEATC (↑ interpico, pérdida de onda V o I).
   En una alarma quedan como criterio (lista cerrada con ids). Con **GRID**
