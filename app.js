@@ -16943,10 +16943,12 @@
             // Cada par, con su número pequeño y dos botoncitos, I y D (29-09-2026,
             // pedido del usuario): izquierdo a la izquierda, como en la tabla
             // de raíces. Se apunta «CoMEP VII I», el nombre de las basales.
+            // Una fila más corta (III · IV) va centrada en las cuatro columnas
+            var desplaza = Math.floor((REG_MIEMBROS.length - pares.length) / 2);
             pares.forEach(function (par, col) {
               var celda = regNodo("div", "rr-par");
               celda.style.gridRow = String(fila);
-              celda.style.gridColumn = String(col + 2);
+              celda.style.gridColumn = String(col + 2 + desplaza);
               celda.appendChild(regNodo("span", "rr-par-n", par));
               var lados = regNodo("div", "rr-par-lados");
               ["I", "D"].forEach(function (lado) {
