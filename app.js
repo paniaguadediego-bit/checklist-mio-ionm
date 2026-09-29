@@ -19091,7 +19091,7 @@
     var corticalSEP = { "1": "cz_prima", "2": "c3_prima", "3": "c4_prima", "4": "fz", "5": "cv2", "gnd": "tierra" };
     var mmii = { "9": "l_q", "10": "r_q", "11": "l_ta", "12": "r_ta", "13": "l_ah", "14": "r_ah", "15": "l_g", "16": "r_g", "gnd": "tierra" };
 
-    var mLumbar = montajeDemo("Demo · Columna lumbar (SEP + MEP + EMG)",
+    var mLumbar = montajeDemo("Demo · Inomed · Columna lumbar (SEP + MEP + EMG)",
       ["t_pess", "t_pem", "emg", "mapeo_raices_tornillos"],
       {
         tes_mep: { "5:anodal": "c3", "5:catodal": "c4", "6:anodal": "c1", "6:catodal": "c2", "12:catodal": "sonda_mono_recta", "12:anodal": "ref_sonda" },
@@ -19102,7 +19102,7 @@
       }, [],
       "Plantilla de ejemplo. Mediano como control de SEP; APB como control de MEP. Sonda monopolar para estimular tornillos y raíces. La caja de miembros superiores va sin tierra a propósito, para ver el aviso de la Revisión del montaje en el Resumen.");
 
-    var mMedular = montajeDemo("Demo · Tumor medular (Onda D)",
+    var mMedular = montajeDemo("Demo · Inomed · Tumor medular (Onda D)",
       ["t_pess", "t_pem", "onda_d", "emg"],
       {
         tes_mep: tesC3C4,
@@ -19114,7 +19114,7 @@
       }, [],
       "Electrodo epidural proximal y distal a la lesión (lo coloca el cirujano).");
 
-    var mAPC = montajeDemo("Demo · Ángulo pontocerebeloso",
+    var mAPC = montajeDemo("Demo · Inomed · Ángulo pontocerebeloso",
       ["t_pess", "t_pem", "pem_corticobulbares", "peatc", "emg"],
       {
         tes_mep: { "5:anodal": "c3", "5:catodal": "c4", "6:anodal": "c5", "6:catodal": "c6" },
@@ -19126,7 +19126,7 @@
       }, ["auriculares_peatc"],
       "Lado derecho en el ejemplo. Auriculares de PEATC en el material extra.");
 
-    var mGRID = montajeDemo("Demo · Supratentorial con GRID",
+    var mGRID = montajeDemo("Demo · Inomed · Supratentorial con GRID",
       ["t_pem", "c_pem", "phase_reversal", "mapeo_cortical", "eeg"],
       {
         tes_mep: tesC3C4,
@@ -19138,7 +19138,7 @@
       "Hemisferio izquierdo en el ejemplo: registro motor en el lado derecho.");
 
     casoDemo(-38, {
-      nombre_caso: "Demo · Artrodesis lumbar L4-S1", estado: "cerrado",
+      nombre_caso: "Demo · Inomed · Artrodesis lumbar L4-S1", estado: "cerrado",
       hora_inicio: "08:30", hora_fin: "12:40",
       edad: "64", sexo: "hombre", servicio_id: "cot",
       antecedentes_relevantes: "Lumbociática bilateral de 2 años de evolución. Sin déficit motor previo.",
@@ -19159,7 +19159,7 @@
     // registro rellenos, para que la hoja impresa salga completa. Ficticio,
     // sin nombres. "Restablecer demo" lo vuelve a sembrar tal cual.
     var cEpend = casoDemo(-21, {
-      nombre_caso: "Demo · Ependimoma medular D8-D9", estado: "cerrado",
+      nombre_caso: "Demo · Inomed · Ependimoma medular D8-D9", estado: "cerrado",
       hora_inicio: "08:15", hora_fin: "14:30",
       edad: "47", sexo: "mujer", servicio_id: "neurocirugia",
       antecedentes_relevantes: "Parestesias en ambos miembros inferiores de 6 meses de evolución, con nivel sensitivo D10. Balance motor 5/5. Sin alteración esfinteriana.\nRM: lesión intramedular D8-D9 centrada, con captación homogénea y quistes polares.",
@@ -19241,7 +19241,7 @@
     guardarCaso(cEpend, true);
 
     casoDemo(-9, {
-      nombre_caso: "Demo · Neurinoma del acústico derecho", estado: "cerrado",
+      nombre_caso: "Demo · Inomed · Neurinoma del acústico derecho", estado: "cerrado",
       hora_inicio: "08:00", hora_fin: "15:10",
       edad: "52", sexo: "mujer", servicio_id: "neurocirugia",
       antecedentes_relevantes: "Hipoacusia derecha progresiva. Función facial normal (House-Brackmann I).",
@@ -19256,13 +19256,13 @@
     }, mAPC);
 
     casoDemo(-6, {
-      nombre_caso: "Demo · Escoliosis idiopática", estado: "cancelado",
+      nombre_caso: "Demo · Inomed · Escoliosis idiopática", estado: "cancelado",
       motivo_cancelacion: "Cuadro febril del paciente la víspera. Se reprograma.",
       edad: "15", sexo: "mujer", servicio_id: "cot", diagnostico: "escoliosis"
     }, null);
 
     var cGRID = casoDemo(1, {
-      nombre_caso: "Demo · Glioma frontal izquierdo", estado: "preparado",
+      nombre_caso: "Demo · Inomed · Glioma frontal izquierdo", estado: "preparado",
       edad: "58", sexo: "hombre", servicio_id: "neurocirugia",
       antecedentes_relevantes: "Crisis focales motoras de mano derecha. Balance motor 5/5.",
       diagnostico: "loe_st", anatomia_patologica: "Lesión frontal posterior izquierda, próxima al área motora",
@@ -19484,7 +19484,8 @@
   function tourMontajeDemo() {
     var uids = Object.keys(montajes);
     for (var i = 0; i < uids.length; i++) {
-      if (/^Demo · Columna lumbar/.test(montajes[uids[i]].nombre || "")) return uids[i];
+      // Con o sin «Inomed ·» (30-09-2026): así sirve también la demo ya sembrada
+      if (/^Demo · (Inomed · )?Columna lumbar/.test(montajes[uids[i]].nombre || "")) return uids[i];
     }
     return null;
   }
