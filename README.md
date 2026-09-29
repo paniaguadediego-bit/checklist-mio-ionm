@@ -882,16 +882,16 @@ que esta es una primera versión pensada para irla ajustando.
 Mismo patrón que el Checklist: el desplegable de arriba elige **Modelo 0 —
 sin caso** (hoja suelta en este navegador, sin sincronizar) o un **caso**
 (la hoja vive dentro del caso, `registro_intraop`, y se sincroniza con él).
-Arriba hay dos vistas, **Hoja completa** (la que sale por defecto desde el
-28-09-2026) y **Modo rápido**; el navegador recuerda la última que usaste.
-Desde el 29-09-2026 la **Hoja completa** lleva arriba el mismo panel del modo
-rápido («Apuntar fase, evento o alarma», plegable), con los tamaños compactos
-de la hoja, para apuntar sin cambiar de vista.
+Hay una sola vista, la **Hoja completa**. Desde el 29-09-2026 ya no existe la
+pestaña «Modo rápido»: su manera de apuntar es la **única** para fases, eventos
+y alarmas, en el panel de arriba de la hoja.
 
-### Modo rápido (para quirófano)
+### Apuntar fase, evento o alarma (para quirófano)
 
-Añadido el 27-09-2026 porque la hoja completa tiene demasiados campos y
-desplegables para usarla con prisa. Casi todo se hace con toques:
+Nació el 27-09-2026 como «modo rápido», porque la hoja completa tenía
+demasiados campos y desplegables para usarla con prisa. Desde el 29-09-2026 es
+un panel plegable arriba de la Hoja completa, con los tamaños compactos de la
+hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
 
 - **Fase**: tocas la fase en la que está la cirugía (Basal, Posición,
   Incisión, Exposición, Apertura dural, Descompresión, Resección,
@@ -912,13 +912,19 @@ desplegables para usarla con prisa. Casi todo se hace con toques:
   A2...) con técnica, criterio y fase. Un evento «Recupera» o «Recupera
   parcial» de la misma técnica cierra la última alarma abierta y rellena
   su hora de recuperación.
-- Debajo, lo apuntado (lo último arriba). La ✕ quita una línea; si era una
-  alarma, vacía su fila, y si era una recuperación, la alarma vuelve a
-  quedar abierta.
+- Debajo, **Apuntado**: todo lo apuntado, ordenado por hora (lo último
+  arriba), también las alarmas escritas desde la ficha. La **hora** de cada
+  línea se corrige tocándola (en una alarma o una recuperación cambia también
+  la de la alarma). Debajo de cada **alarma**, lo que antes se completaba en
+  G: **medidas adoptadas** (casillas + caja de texto) y **recuperación** Sí /
+  Parcial / No con su hora (que mueve también la línea «Recupera»). La ✕
+  quita una línea; si era una alarma, vacía su fila, y si era una
+  recuperación, la alarma vuelve a quedar abierta.
 
-El modo rápido **no guarda nada propio**: escribe en los mismos eventos (F) y
-alarmas (G) de la hoja completa, así que lo apuntado se ve y se corrige
-allí, sale en la hoja impresa y en **Exportar eventos y alarmas (CSV)**.
+El panel **no guarda nada propio**: escribe en los mismos eventos (F) y
+alarmas (G) de siempre, así que lo apuntado sale en la hoja impresa, en la
+ficha del caso (⇄) y en **Exportar eventos y alarmas (CSV)**. El criterio y la
+causa probable de una alarma se cambian en la ficha del caso.
 
 ### Hoja completa
 
@@ -939,16 +945,9 @@ que siempre, con todos sus apartados, y no se borra ningún dato:
   *estimulación de raíces y tornillos* (izq. · nivel · der., el mismo dato que
   «Umbrales EMG por raíz» de la ficha; la tabla de tornillos ya no está en
   Basales). Si el caso no tiene ninguna, lo dice.
-- **F · Registro de fases y eventos**: filas compactas *hora · tipo · qué ha
-  pasado*, con la misma letra que las basales, y siempre al menos 5 filas en
-  blanco (se guardan al escribir en ellas y, si no tenían hora, cogen la de
-  ese momento). Tipos: fase, evento, anestesia y técnico (las alarmas van en G
-  y el mapeo en E2). Una fila de **fase** se elige entre las fases del modo
-  rápido o «Otra…». Debajo, en pequeño, la técnica (en dorado), la fase y la
-  acción cuando la fila viene del modo rápido.
-- **G · Alarmas**: una ficha compacta por alarma (A1, A2…) con listas cerradas:
-  hora y técnica; criterio y causa probable; medidas en casillas; nota breve,
-  recuperación y hora de recuperación. Son las mismas alarmas de la ficha (⇄).
+- **F · Fases y eventos** y **G · Alarmas**: no se enseñan en pantalla desde
+  el 29-09-2026; se apuntan y se corrigen en el panel de arriba (ver el
+  apartado anterior). Siguen en la hoja impresa.
 - **H · Zona modular**: no se enseña en pantalla (sigue en la impresa).
 - **I · Cierre**: resultado de la señal, técnicas con alteración (los mismos chips
   marcables que en la ficha, con las técnicas del caso), resultado esperable
@@ -1749,7 +1748,7 @@ las filas de t-SEP y t-MEP, y los c-MEP solo llevan OPBSL y CL-BSL. Filas de t-S
 técnicas del caso, c-SEP, c-MEP, GRID (con el electrodo de estímulo y el contacto
 de la inversión de fase), corticobulbares, Onda D proximal y distal (Prox. y
 Dist. D-Wave), PEATC y H-R. Más filas libres para lo que haga falta. (Umbral MEP
-y TOF se quitaron el 28-09-2026; el TOF sigue como botón del modo rápido.)
+y TOF se quitaron el 28-09-2026; el TOF sigue como botón del panel de apuntar.)
 
 ## Modo demostración
 
@@ -1777,7 +1776,7 @@ real, se abre con `?demo` al final de la dirección:
   para usar la demo. Recorre la plantilla, las Técnicas y el Resumen del
   Organizador; el caso estrella (ependimoma D8-D9, con todo relleno) apartado
   por apartado -montaje y técnicas, desarrollo intraoperatorio, resultado y
-  concordancia, docencia-; el modo rápido del Registro; la hoja de registro y
+  concordancia, docencia-; el panel de apuntar del Registro; la hoja de registro y
   el informe; y la exportación desde Gestión de Casos. La tarjeta se puede
   **minimizar**, y mientras está abajo la página reserva su altura para que
   no tape el final.

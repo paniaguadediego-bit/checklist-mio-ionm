@@ -917,8 +917,8 @@
     tour_x_caso_docencia: { es: "Rol, supervisor, dificultad y aprendizaje clave de cada caso. Marca los destacados o los que quieres seguir, y encuéntralos después con los filtros: el registro de casos se convierte en un portafolio formativo.",
                            en: "Role, supervisor, difficulty and key learning point of each case. Flag notable cases or ones to follow up, and find them later with the filters: the case log becomes a training portfolio." },
     tour_t_registro:     { es: "Registro intraoperatorio", en: "Intraoperative log" },
-    tour_x_registro:     { es: "En quirófano, el modo rápido apunta con dos toques: la fase una vez, y cada cambio como qué + qué pasa. La hora se pone sola y un «Recupera» cierra la alarma. La Hoja completa guarda el resto (anestesia, hitos, mapeo, cierre).",
-                           en: "In the OR, quick mode logs with two taps: the phase once, and each change as what + what happens. The time is set automatically and a “Recovers” closes the alarm. The Full sheet holds the rest (anaesthesia, milestones, mapping, closure)." },
+    tour_x_registro:     { es: "En quirófano, arriba de la hoja se apunta con dos toques: la fase una vez, y cada cambio como qué + qué pasa. La hora se pone sola y un «Recupera» cierra la alarma. Más abajo, el resto de la hoja (anestesia, basales, mapeo, cierre).",
+                           en: "In the OR, at the top of the sheet you log with two taps: the phase once, and each change as what + what happens. The time is set automatically and a “Recovers” closes the alarm. Further down, the rest of the sheet (anaesthesia, baselines, mapping, closure)." },
     tour_t_salidas:      { es: "Hoja de registro e informe", en: "Record sheet and report" },
     tour_x_salidas:      { es: "Desde la ficha, Hoja de registro imprime las dos páginas A4 para quirófano, ya rellenas con lo que sabe el caso, e Informe (PDF) hace el informe del caso. El Checklist pre-quirúrgico también se vincula al caso.",
                            en: "From the case form, Record sheet prints the two A4 pages for the OR, already filled in with what the case knows, and Create report makes the case report as a PDF. The pre-surgical Checklist can also be linked to the case." },
@@ -1206,9 +1206,7 @@
     reg_p_motor:         { es: "Electrodo motor", en: "Motor electrode" },
     reg_p_musculos:      { es: "Músculos registrados", en: "Muscles recorded" },
     reg_p_hora:          { es: "Hora", en: "Time" },
-    reg_p_tipo:          { es: "Tipo", en: "Type" },
     reg_p_que:           { es: "Qué ha pasado", en: "What happened" },
-    reg_p_evento_nuevo:  { es: "+ Evento (hora actual)", en: "+ Event (current time)" },
     reg_p_alarma_nueva:  { es: "+ Alarma (hora actual)", en: "+ Alarm (current time)" },
     reg_p_sin_alarmas:   { es: "Sin alarmas.", en: "No alarms." },
     reg_p_modalidad:     { es: "Técnica · lado", en: "Technique · side" },
@@ -1223,8 +1221,6 @@
     reg_p_alarma_nueva_ficha: { es: "+ Alarma", en: "+ Alarm" },
     reg_p_sin_an:        { es: "Sin eventos de anestesia.", en: "No anaesthesia events." },
     reg_p_quitar_evento: { es: "¿Quitar este evento?", en: "Remove this event?" },
-    reg_p_en:            { es: "en {fase}", en: "in {fase}" },
-    reg_p_fase_otra:     { es: "Otra…", en: "Other…" },
     reg_p_mapeo_nota:    { es: "Cada bloque de mapeo aparece solo si su técnica está marcada en la ficha del caso: c-MEP por GRID, mapeo cortical, mapeo subcortical, mapeo de nervio periférico y estimulación de raíces y tornillos.", en: "Each mapping block only appears if its technique is ticked in the case form: c-MEP by GRID, cortical mapping, subcortical mapping, peripheral nerve mapping and root and screw stimulation." },
     reg_p_mapeo_ninguna: { es: "El caso no tiene ninguna técnica de mapeo marcada.", en: "The case has no mapping technique ticked." },
     reg_p_map_grid:      { es: "c-MEP por GRID", en: "c-MEP by GRID" },
@@ -1246,17 +1242,14 @@
     registro_mod_mas:    { es: "+ Fila", en: "+ Row" },
     registro_guardar:    { es: "Guardar", en: "Save" },
     registro_guardado:   { es: "Registro guardado.", en: "Record saved." },
-    rr_vista_rapida:     { es: "Modo rápido", en: "Quick mode" },
-    rr_vista_hoja:       { es: "Hoja completa", en: "Full sheet" },
-    rr_intro:            { es: "Para quirófano: marca la fase una vez y lo que apuntes después la hereda. Un cambio de señal es qué + qué pasa + Apuntar. Todo va a los mismos eventos y alarmas de la hoja completa, donde se puede corregir o completar después.",
-                           en: "For the OR: mark the phase once and whatever you log afterwards inherits it. A signal change is what + what happens + Log. Everything goes to the same events and alarms as the full sheet, where it can be corrected or completed later." },
+    rr_intro:            { es: "Marca la fase una vez y lo que apuntes después la hereda. Un cambio de señal es qué + qué pasa + Apuntar. La hora de cada línea se corrige tocándola; debajo de cada alarma, las medidas adoptadas y la recuperación.",
+                           en: "Mark the phase once and whatever you log afterwards inherits it. A signal change is what + what happens + Log. Tap a line's time to correct it; under each alarm, the measures taken and the recovery." },
     rr_fase:             { es: "Fase", en: "Phase" },
     rr_evento_alarma:    { es: "Evento o alarma", en: "Event or alarm" },
     rr_hora_editar:      { es: "Cambiar la hora", en: "Change the time" },
     rr_fase_actual:      { es: "Fase actual: {fase}", en: "Current phase: {fase}" },
     rr_sin_fase:         { es: "Sin fase marcada", en: "No phase marked" },
     rr_fase_otra:        { es: "Otra", en: "Other" },
-    rr_fase_nueva:       { es: "Nombre de la fase:", en: "Phase name:" },
     rr_fase_detalle:     { es: "Otra fase o detalle (opcional)", en: "Other phase or detail (optional)" },
     rr_otro:             { es: "Otro", en: "Other" },
     rr_que_detalle:      { es: "Otro o detalle (opcional)", en: "Other or detail (optional)" },
@@ -16114,15 +16107,10 @@
   function renderRegistroContenido() {
     var cont = document.getElementById("registro-contenido");
     cont.textContent = "";
-    pintarSelectorVistaRegistro(cont);
-    if (regVista() === "rapida") {
-      pintarModoRapido(cont);
-      document.getElementById("registro-vaciar").hidden = !!registroCaso();
-      return;
-    }
-    // El panel del modo rápido también arriba de la Hoja completa (29-09-2026,
-    // pedido del usuario), para apuntar fase, evento o alarma sin salir de
-    // ella. Abierto salvo que se pliegue (se recuerda al revés que el resto).
+    // Fases, eventos y alarmas se apuntan en un solo sitio, arriba de la hoja
+    // (29-09-2026, pedido del usuario): el panel del antiguo modo rápido, que
+    // sustituye en pantalla a F y G y deja de ser una vista aparte. Abierto
+    // salvo que se pliegue (se recuerda al revés que las demás secciones).
     var detR = document.createElement("details");
     detR.className = "caso-grupo reg-seccion reg-rapido";
     detR.open = !regAbierta("rapido_plegado");
@@ -16131,7 +16119,7 @@
     sumR.appendChild(regNodo("span", "", T("rr_en_hoja")));
     detR.appendChild(sumR);
     var cuerpoR = regNodo("div", "caso-grupo-campos");
-    pintarModoRapido(cuerpoR, true);
+    pintarPanelApuntar(cuerpoR);
     detR.appendChild(cuerpoR);
     cont.appendChild(detR);
     var hojaActual = 0;
@@ -16202,8 +16190,12 @@
    * caso" y el CSV de eventos lo ven sin más. La fase actual tampoco se
    * guarda aparte: es la del último evento F. Lo único extra son dos claves
    * en la fila del evento -alarma_id y recupera_de- para poder deshacer
-   * bien; la hoja y el CSV las ignoran porque solo leen sus columnas. */
-  var REG_VISTA_KEY = "mio_ionm_registro_vista_v1";
+   * bien; la hoja y el CSV las ignoran porque solo leen sus columnas.
+   * 29-09-2026 (pedido del usuario): deja de ser una vista aparte. Es el único
+   * sitio donde se apuntan fases, eventos y alarmas, arriba de la Hoja
+   * completa; F y G ya no se pintan en pantalla (siguen en la hoja impresa)
+   * y lo que se corregía allí -horas, medidas y recuperación de cada alarma-
+   * se corrige en la lista «Apuntado». */
   var REG_FASES_RAPIDAS = [
     { l: "Basal", l_en: "Baseline" }, { l: "Posición", l_en: "Positioning" },
     { l: "Incisión", l_en: "Incision" }, { l: "Exposición", l_en: "Exposure" },
@@ -16231,29 +16223,6 @@
   // queNota y faseNota son las cajas de Qué y de Fase; nota, la de Qué pasa.
   function regRapidoVacio() { return { que: "", cambio: "", nota: "", queNota: "", faseNota: "" }; }
   var regRapido = regRapidoVacio();
-
-  // Hoja completa por defecto (28-09-2026, pedido del usuario); el modo
-  // rápido es la alternativa que se elige.
-  function regVista() {
-    try { return localStorage.getItem(REG_VISTA_KEY) === "rapida" ? "rapida" : "hoja"; } catch (e) { return "hoja"; }
-  }
-
-  function pintarSelectorVistaRegistro(cont) {
-    var barra = document.createElement("div");
-    barra.className = "rr-vistas";
-    [["hoja", "rr_vista_hoja"], ["rapida", "rr_vista_rapida"]].forEach(function (p) {
-      var b = document.createElement("button");
-      b.type = "button";
-      b.textContent = T(p[1]);
-      if (regVista() === p[0]) b.className = "activo";
-      b.addEventListener("click", function () {
-        try { localStorage.setItem(REG_VISTA_KEY, p[0]); } catch (e) { /* solo esta sesión */ }
-        renderRegistroContenido();
-      });
-      barra.appendChild(b);
-    });
-    cont.appendChild(barra);
-  }
 
   function regFaseActual(d) {
     for (var i = d.eventos.length - 1; i >= 0; i--) {
@@ -16436,12 +16405,12 @@
     return caja;
   }
 
-  // "enHoja": el mismo panel dentro de la Hoja completa (29-09-2026, pedido
-  // del usuario), con los tamaños compactos de la hoja (.rr-en-hoja).
-  function pintarModoRapido(cont, enHoja) {
+  // Panel «Apuntar fase, evento o alarma», arriba de la Hoja completa, con
+  // los tamaños compactos de la hoja (.rr-en-hoja).
+  function pintarPanelApuntar(cont) {
     var d = registroDatos();
     var panel = document.createElement("div");
-    panel.className = "rr" + (enHoja ? " rr-en-hoja" : "");
+    panel.className = "rr rr-en-hoja";
     var intro = document.createElement("p");
     intro.className = "reg-ayuda";
     intro.textContent = T("rr_intro");
@@ -16515,68 +16484,126 @@
     bEvento.appendChild(botones);
 
     // Lo apuntado, lo último arriba
-    var tit = document.createElement("div");
-    tit.className = "rr-titulo";
-    tit.textContent = T("rr_apuntado_lista");
-    panel.appendChild(tit);
-    var lista = document.createElement("div");
-    lista.className = "rr-lista";
-    if (!d.eventos.length) {
-      var vacio = document.createElement("p");
-      vacio.className = "reg-ayuda";
-      vacio.textContent = T("rr_vacio");
-      lista.appendChild(vacio);
-    }
-    d.eventos.slice().reverse().forEach(function (ev) {
-      var fila = document.createElement("div");
-      fila.className = "rr-linea" + (ev.cod === "A" ? " rr-linea-alarma" : "") + (ev.cod === "F" ? " rr-linea-fase" : "");
-      // La hora se puede corregir aquí mismo (28-09-2026, pedido del
-      // usuario: por si no se apuntó en el momento). Si la línea es una
-      // alarma o una recuperación, cambia también la hora en su fila de G.
-      var h = document.createElement("input");
-      h.type = "time";
-      h.className = "rr-hora";
-      h.value = ev.hora || "";
-      h.title = T("rr_hora_editar");
-      h.setAttribute("aria-label", T("rr_hora_editar"));
-      h.addEventListener("change", function () {
+    panel.appendChild(regNodo("div", "rr-titulo", T("rr_apuntado_lista")));
+    var lista = regNodo("div", "rr-lista");
+    var items = regItemsApuntados(d);
+    if (!items.length) lista.appendChild(regNodo("p", "reg-ayuda", T("rr_vacio")));
+    items.forEach(function (it) { lista.appendChild(regLineaApuntada(d, it)); });
+    panel.appendChild(lista);
+    cont.appendChild(panel);
+  }
+
+  // Lo que sale en «Apuntado»: los eventos, cada uno con su alarma si la
+  // tiene, y las alarmas escritas sin evento (de antes, de la ficha o de la
+  // hoja): ya no hay sección G en pantalla donde verlas (29-09-2026). Por
+  // hora, lo último arriba; a igual hora, lo último apuntado.
+  function regItemsApuntados(d) {
+    var items = [], conEvento = {};
+    d.eventos.forEach(function (ev, k) {
+      var it = { ev: ev, orden: k };
+      if (ev.alarma_id) {
+        d.alarmas.forEach(function (a, i) {
+          if (a.id === ev.alarma_id && !filaRegistroVacia(a)) { it.al = a; it.n = i + 1; conEvento[a.id] = 1; }
+        });
+      }
+      items.push(it);
+    });
+    // Un evento A escrito a mano (sin alarma_id: la demo, la ficha) va con
+    // la alarma de su misma hora, en vez de salir dos veces; y se enlaza,
+    // para que corregir la hora o quitar la línea alcance también a la alarma.
+    items.forEach(function (it) {
+      if (it.al || it.ev.cod !== "A" || !it.ev.hora) return;
+      d.alarmas.forEach(function (a, i) {
+        if (!it.al && !conEvento[a.id] && !filaRegistroVacia(a) && a.hora === it.ev.hora) {
+          it.al = a; it.n = i + 1; conEvento[a.id] = 1;
+          it.ev.alarma_id = a.id;
+        }
+      });
+    });
+    d.alarmas.forEach(function (a, i) {
+      if (filaRegistroVacia(a) || conEvento[a.id]) return;
+      items.push({ al: a, n: i + 1, orden: d.eventos.length + i });
+    });
+    function hora(it) { return (it.ev ? it.ev.hora : it.al.hora) || ""; }
+    return items.sort(function (x, y) {
+      var hx = hora(x), hy = hora(y);
+      if (hx !== hy) return hx < hy ? 1 : -1;
+      return y.orden - x.orden;
+    });
+  }
+
+  function regLineaApuntada(d, it) {
+    var ev = it.ev, al = it.al;
+    var caja = regNodo("div", "rr-item");
+    var fila = regNodo("div", "rr-linea" + (al ? " rr-linea-alarma" : "") + (ev && ev.cod === "F" ? " rr-linea-fase" : ""));
+    // La hora se puede corregir aquí mismo (28-09-2026, pedido del
+    // usuario: por si no se apuntó en el momento). Si la línea es una
+    // alarma o una recuperación, cambia también la hora de la alarma.
+    var h = document.createElement("input");
+    h.type = "time";
+    h.className = "rr-hora";
+    h.value = (ev ? ev.hora : al.hora) || "";
+    h.title = T("rr_hora_editar");
+    h.setAttribute("aria-label", T("rr_hora_editar"));
+    h.addEventListener("change", function () {
+      if (ev) {
         ev.hora = h.value;
-        registroDatos().alarmas.forEach(function (a) {
+        d.alarmas.forEach(function (a) {
           if (ev.alarma_id && a.id === ev.alarma_id) a.hora = h.value;
           if (ev.recupera_de && a.id === ev.recupera_de.id) a.h_recup = h.value;
         });
-        registroGuardarYa();
-      });
-      fila.appendChild(h);
-      var cod = document.createElement("span");
-      cod.className = "rr-cod";
-      cod.textContent = ev.cod || "";
-      fila.appendChild(cod);
-      var txt = document.createElement("span");
-      txt.className = "rr-texto";
-      if (ev.cod === "F") {
-        txt.textContent = [ev.fase, ev.accion].filter(Boolean).join(" · ");
       } else {
-        txt.textContent = [ev.modalidad, ev.cambio, ev.accion].filter(Boolean).join(" · ");
-        if (ev.fase) {
-          var f = document.createElement("small");
-          f.textContent = " " + T("rr_en_fase", { fase: ev.fase });
-          txt.appendChild(f);
-        }
+        al.hora = h.value;
       }
-      fila.appendChild(txt);
-      var q = document.createElement("button");
-      q.type = "button";
-      q.className = "reg-fila-quitar";
-      q.textContent = "✕";
-      q.title = T("rr_quitar");
-      q.setAttribute("aria-label", T("rr_quitar"));
-      q.addEventListener("click", function () { regQuitarRapido(ev); });
-      fila.appendChild(q);
-      lista.appendChild(fila);
+      registroGuardarYa();
+      renderRegistroContenido();   // se reordena y se ve la hora nueva abajo
     });
-    panel.appendChild(lista);
-    cont.appendChild(panel);
+    fila.appendChild(h);
+    fila.appendChild(regNodo("span", "rr-cod", ev ? (ev.cod || "") : "A"));
+    var txt = regNodo("span", "rr-texto");
+    if (ev && ev.cod === "F") {
+      txt.textContent = [ev.fase, ev.accion].filter(Boolean).join(" · ");
+    } else {
+      // En una alarma, la nota ya no se enseña aquí: está en sus medidas.
+      var partes = al
+        ? [al.modalidad || (ev && ev.modalidad), ev ? ev.cambio : regTextoLista(REG_CRITERIO_AL, al.criterio), "A" + it.n]
+        : [ev.modalidad, ev.cambio, ev.accion];
+      txt.textContent = partes.filter(Boolean).join(" · ");
+      var fase = ev ? ev.fase : al.fase;
+      if (fase) txt.appendChild(regNodo("small", null, " " + T("rr_en_fase", { fase: fase })));
+    }
+    fila.appendChild(txt);
+    var q = regNodo("button", "reg-fila-quitar", "✕");
+    q.type = "button";
+    q.title = T("rr_quitar");
+    q.setAttribute("aria-label", T("rr_quitar"));
+    q.addEventListener("click", function () {
+      if (ev) { regQuitarRapido(ev); return; }
+      if (!confirm(T("reg_p_vaciar_alarma"))) return;
+      d.alarmas[it.n - 1] = { id: al.id };
+      registroGuardarYa();
+      renderRegistroContenido();
+    });
+    fila.appendChild(q);
+    caja.appendChild(fila);
+    if (al) {
+      // Debajo de cada alarma, lo que antes se completaba en G: medidas
+      // adoptadas y recuperación Sí / Parcial / No con su hora.
+      var det = regNodo("div", "reg-p-alarma rr-al-detalle");
+      pintarMedidasRecup(det, al, REG_GUARDAR, function () {
+        var c = registroCaso();
+        if (c && alarmasConDatos(d).length) c.alerta = true;
+      }, function () {
+        // La hora de recuperación mueve también la línea «Recupera» que la puso
+        for (var k = d.eventos.length - 1; k >= 0; k--) {
+          if (d.eventos[k].recupera_de && d.eventos[k].recupera_de.id === al.id) { d.eventos[k].hora = al.h_recup || ""; break; }
+        }
+        registroGuardarYa();
+        renderRegistroContenido();
+      });
+      caja.appendChild(det);
+    }
+    return caja;
   }
 
   /* ---- Hoja completa en pantalla, simplificada (28-09-2026) -----------
@@ -16598,19 +16625,14 @@
     d: null,
     e2: pintarPantallaMapeo,
     esquema: null,
-    f: pintarPantallaEventos,
-    g: pintarPantallaAlarmas,
+    // F y G: se apuntan y corrigen en el panel de arriba (29-09-2026).
+    f: null,
+    g: null,
     // Zona modular: tampoco en pantalla (28-09-2026, el usuario no la ve útil
     // en la herramienta); sigue en la hoja impresa.
     h: null,
     i: pintarPantallaCierre
   };
-
-  // Tipos de la sección F en pantalla: fases y eventos (con anestesia y
-  // técnico). Las alarmas van en G y el mapeo en E2; una fila antigua o del
-  // modo rápido con otro código lo sigue enseñando.
-  var REG_COD_PANTALLA = ["F", "E", "An", "T"];
-  var REG_FILAS_EVENTO_VACIAS = 5;
 
   function regNodo(tag, clase, texto) {
     var n = document.createElement(tag);
@@ -16664,28 +16686,6 @@
     sel.addEventListener("change", function () {
       obj[clave] = sel.value;
       guardar.salir();
-      if (alCambiar) alCambiar();
-    });
-    return sel;
-  }
-
-  function regSelect(obj, clave, opciones, etiqueta, alCambiar) {
-    var sel = document.createElement("select");
-    sel.setAttribute("aria-label", etiqueta);
-    var vacia = document.createElement("option");
-    vacia.value = "";
-    vacia.textContent = "—";
-    sel.appendChild(vacia);
-    opciones.forEach(function (o) {
-      var op = document.createElement("option");
-      op.value = o.v;
-      op.textContent = regOpcionLabel(o);
-      sel.appendChild(op);
-    });
-    sel.value = obj[clave] || "";
-    sel.addEventListener("change", function () {
-      obj[clave] = sel.value;
-      registroGuardarYa();
       if (alCambiar) alCambiar();
     });
     return sel;
@@ -17051,144 +17051,6 @@
     return out;
   }
 
-  // Fases y eventos: hora · tipo · qué ha pasado, con la letra de las
-  // basales. Siempre hay filas en blanco hasta completar
-  // REG_FILAS_EVENTO_VACIAS (28-09-2026, pedido del usuario): no se guardan
-  // hasta que se escribe algo en ellas, y entonces, si no tenían hora, cogen
-  // la de ese momento. Una fila de fase (F) elige entre las fases del modo
-  // rápido y escribe en "fase"; el resto escribe en "cambio". Lo que traiga
-  // la fila del modo rápido -modalidad, fase, acción- va debajo, en pequeño.
-  function pintarPantallaEventos(sec, cont, alCambiar) {
-    var d = registroDatos();
-    var tabla = regNodo("div", "reg-basal reg-p-ev");
-    cont.appendChild(tabla);
-    var btn = regNodo("button", "reg-p-nuevo", T("reg_p_evento_nuevo"));
-    btn.type = "button";
-    cont.appendChild(btn);
-
-    function opcionesTipo(ev) {
-      return REG_COD_EVENTO.filter(function (o) {
-        return REG_COD_PANTALLA.indexOf(o.v) !== -1 || o.v === ev.cod;
-      });
-    }
-
-    function selectorFase(ev, alTocar) {
-      var sel = document.createElement("select");
-      sel.setAttribute("aria-label", T("rr_fase"));
-      var nombres = REG_FASES_RAPIDAS.map(function (f) { return campo(f, "l"); });
-      d.eventos.forEach(function (e) {
-        if (e.cod === "F" && e.fase && nombres.indexOf(e.fase) === -1) nombres.push(e.fase);
-      });
-      [""].concat(nombres).forEach(function (n) {
-        var op = document.createElement("option");
-        op.value = n;
-        op.textContent = n || "—";
-        sel.appendChild(op);
-      });
-      var otra = document.createElement("option");
-      otra.value = "__otra";
-      otra.textContent = T("reg_p_fase_otra");
-      sel.appendChild(otra);
-      sel.value = ev.fase || "";
-      sel.addEventListener("change", function () {
-        if (sel.value === "__otra") {
-          var nombre = (prompt(T("rr_fase_nueva")) || "").trim();
-          if (!nombre) { sel.value = ev.fase || ""; return; }
-          ev.fase = nombre;
-        } else {
-          ev.fase = sel.value;
-        }
-        alTocar();
-        registroGuardarYa();
-        pintar(false);
-      });
-      return sel;
-    }
-
-    function fila(ev, enBlanco) {
-      var f = regNodo("div", "reg-basal-fila" + (enBlanco ? " reg-p-blanco" : ""));
-      var inpHora;
-      // Una fila en blanco entra en la lista al escribir algo en ella
-      function tocar() {
-        if (d.eventos.indexOf(ev) === -1) {
-          if (!ev.hora) { ev.hora = horaAhora(); if (inpHora) inpHora.value = ev.hora; }
-          d.eventos.push(ev);
-          f.classList.remove("reg-p-blanco");
-          registroGuardar();
-        }
-        alCambiar();
-      }
-      inpHora = regInput(ev, "hora", "time", T("reg_p_hora"), tocar);
-      f.appendChild(inpHora);
-      f.appendChild(regSelect(ev, "cod", opcionesTipo(ev), T("reg_p_tipo"), function () { tocar(); pintar(false); }));
-      var que = regNodo("div", "reg-p-que");
-      que.appendChild(ev.cod === "F" ? selectorFase(ev, tocar) : regInput(ev, "cambio", "text", T("reg_p_que"), tocar));
-      f.appendChild(que);
-      if (!enBlanco) {
-        var quitar = regNodo("button", "reg-fila-quitar", "✕");
-        quitar.type = "button";
-        quitar.title = T("registro_fila_quitar");
-        quitar.setAttribute("aria-label", T("registro_fila_quitar"));
-        quitar.addEventListener("click", function () { regQuitarRapido(ev); });
-        f.appendChild(quitar);
-      } else {
-        f.appendChild(regNodo("span"));
-      }
-      // Debajo, lo que trae la fila del modo rápido: la modalidad (en
-      // dorado, en su propia línea para no quitar sitio al texto), la fase y
-      // la acción.
-      var extra = [];
-      if (ev.cod !== "F" && ev.fase) extra.push(T("reg_p_en", { fase: ev.fase }));
-      if (ev.accion) extra.push(ev.accion);
-      var mod = ev.cod !== "F" ? ev.modalidad : "";
-      if (mod || extra.length) {
-        var linea = regNodo("small", "reg-p-extra");
-        if (mod) linea.appendChild(regNodo("span", "reg-p-mod", mod + (extra.length ? " · " : "")));
-        if (extra.length) linea.appendChild(document.createTextNode(extra.join(" · ")));
-        f.appendChild(linea);
-      }
-      return f;
-    }
-
-    // Filas en blanco que siguen sin escribirse entre repintados
-    var enBlanco = [];
-    function pintar(enfocarUltima) {
-      tabla.textContent = "";
-      var cab = regNodo("div", "reg-basal-fila reg-basal-cab");
-      [T("reg_p_hora"), T("reg_p_tipo"), T("reg_p_que"), ""].forEach(function (t) { cab.appendChild(regNodo("span", null, t)); });
-      tabla.appendChild(cab);
-      d.eventos.forEach(function (ev) { tabla.appendChild(fila(ev, false)); });
-      enBlanco = enBlanco.filter(function (ev) { return d.eventos.indexOf(ev) === -1; });
-      while (d.eventos.length + enBlanco.length < REG_FILAS_EVENTO_VACIAS) enBlanco.push({ id: uuid(), cod: "E" });
-      enBlanco.forEach(function (ev) { tabla.appendChild(fila(ev, true)); });
-      if (enfocarUltima) {
-        var filas = tabla.querySelectorAll(".reg-basal-fila:not(.reg-basal-cab)");
-        var ultima = filas[d.eventos.length - 1];
-        var inp = ultima && ultima.querySelector(".reg-p-que input");
-        if (inp) { inp.scrollIntoView({ block: "center" }); inp.focus({ preventScroll: true }); }
-      }
-    }
-    btn.addEventListener("click", function () {
-      d.eventos.push({ id: uuid(), hora: horaAhora(), cod: "E" });
-      registroGuardarYa();
-      pintar(true);
-      alCambiar();
-    });
-    pintar(false);
-  }
-
-  // Alarmas: una ficha compacta por alarma (A1, A2... como en la hoja
-  // impresa, así que al quitar una se vacía en vez de moverse las demás).
-  function pintarPantallaAlarmas(sec, cont, alCambiar) {
-    var d = registroDatos();
-    pintarAlarmas(cont, d, { modalidades: regQueRapidos(d), alCambiar: function () {
-      // Hay alarma escrita -> "Hubo alerta" en el caso vinculado (espejo).
-      var c = registroCaso();
-      if (c && alarmasConDatos(d).length) c.alerta = true;
-      if (alCambiar) alCambiar();
-    } });
-  }
-
   function alarmasConDatos(d) {
     return ((d && d.alarmas) || []).filter(alarmaEscrita);
   }
@@ -17237,28 +17099,7 @@
         l2.appendChild(regSelectLista(al, "criterio", REG_CRITERIO_AL, T("reg_p_criterio"), alCambiar, guardar));
         l2.appendChild(regSelectLista(al, "causa", REG_CAUSA_AL, T("reg_p_causa_l"), alCambiar, guardar));
         ficha.appendChild(l2);
-        // Medidas: chips marcables, como las técnicas de la ficha.
-        var chips = regNodo("div", "chip-fila reg-p-al-medidas");
-        chips.appendChild(regNodo("span", "reg-p-al-medidas-t", T("reg_p_medidas") + ":"));
-        REG_MEDIDAS_AL.forEach(function (m) {
-          var marcada = (al.medidas_l || []).indexOf(m.v) !== -1;
-          var chip = regNodo("span", "chip chip-extra" + (marcada ? " activo" : ""), regOpcionLabel(m));
-          chip.addEventListener("click", function () {
-            if (!al.medidas_l) al.medidas_l = [];
-            var k = al.medidas_l.indexOf(m.v);
-            if (k === -1) al.medidas_l.push(m.v); else al.medidas_l.splice(k, 1);
-            chip.classList.toggle("activo", k === -1);
-            guardar.salir();
-            alCambiar();
-          });
-          chips.appendChild(chip);
-        });
-        ficha.appendChild(chips);
-        var l3 = regNodo("div", "reg-p-al-l3");
-        l3.appendChild(regInput(al, "medidas", "text", T("reg_p_nota"), alCambiar, guardar));
-        l3.appendChild(regSelectLista(al, "recup", REG_RECUP, T("reg_p_recup"), alCambiar, guardar));
-        l3.appendChild(regInput(al, "h_recup", "time", T("reg_p_h_recup"), alCambiar, guardar));
-        ficha.appendChild(l3);
+        pintarMedidasRecup(ficha, al, guardar, alCambiar);
         lista.appendChild(ficha);
         if (enfocar === al.id) ficha.scrollIntoView({ block: "center" });
       });
@@ -17275,6 +17116,36 @@
       alCambiar();
     });
     pintar(null);
+  }
+
+  // Medidas adoptadas (chips marcables + caja) y recuperación S/P/N con su
+  // hora. La usan las fichas de alarma del caso y la lista «Apuntado» del
+  // Registro. "alHoraRecup" (opcional) se llama al cambiar la hora de
+  // recuperación, además de alCambiar.
+  function pintarMedidasRecup(cont, al, guardar, alCambiar, alHoraRecup) {
+    var chips = regNodo("div", "chip-fila reg-p-al-medidas");
+    chips.appendChild(regNodo("span", "reg-p-al-medidas-t", T("reg_p_medidas") + ":"));
+    REG_MEDIDAS_AL.forEach(function (m) {
+      var marcada = (al.medidas_l || []).indexOf(m.v) !== -1;
+      var chip = regNodo("span", "chip chip-extra" + (marcada ? " activo" : ""), regOpcionLabel(m));
+      chip.addEventListener("click", function () {
+        if (!al.medidas_l) al.medidas_l = [];
+        var k = al.medidas_l.indexOf(m.v);
+        if (k === -1) al.medidas_l.push(m.v); else al.medidas_l.splice(k, 1);
+        chip.classList.toggle("activo", k === -1);
+        guardar.salir();
+        alCambiar();
+      });
+      chips.appendChild(chip);
+    });
+    cont.appendChild(chips);
+    var l3 = regNodo("div", "reg-p-al-l3");
+    l3.appendChild(regInput(al, "medidas", "text", T("reg_p_nota"), alCambiar, guardar));
+    l3.appendChild(regSelectLista(al, "recup", REG_RECUP, T("reg_p_recup"), alCambiar, guardar));
+    var hRecup = regInput(al, "h_recup", "time", T("reg_p_h_recup"), alCambiar, guardar);
+    if (alHoraRecup) hRecup.addEventListener("change", alHoraRecup);
+    l3.appendChild(hRecup);
+    cont.appendChild(l3);
   }
 
   // Texto de una alarma para el caso (Tipo de alerta / CSV / Sheet / informe).
@@ -18465,15 +18336,17 @@
       det.open = true;
       listo(det);
     } else if (id === "registro") {
-      // El Registro del caso de ejemplo, en modo rápido, que es de lo que habla
+      // El Registro del caso de ejemplo, con el panel de apuntar a la vista,
+      // que es de lo que habla
       tourCerrarCaso();
       registroVaciarPendiente();
       registroCasoUid = tourCasoDemo();
       regRapido = regRapidoVacio();
-      try { localStorage.setItem(REG_VISTA_KEY, "rapida"); } catch (e) { /* solo esta vez */ }
       renderRegistro();
       irAPantalla("registro");
-      listo(document.querySelector("#registro-contenido .rr") || document.getElementById("registro-contenido"));
+      var panelReg = document.querySelector("#registro-contenido .reg-rapido");
+      if (panelReg) panelReg.open = true;
+      listo(panelReg || document.getElementById("registro-contenido"));
     } else if (id === "exportar") {
       tourCerrarCaso();
       abrirListaCasos();

@@ -201,8 +201,8 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Bibliografía recomendada (Vancouver con DOI) | `BIBLIOGRAFIA`, `renderBibliografia()` | ver `grep` |
 | Selector «Vincular a un caso» propio (Checklist y Registro; el `<select>` sigue oculto como fuente de verdad) | `mejorarSelectorCaso()`, `refrescarSelectorCaso()`, `pintarOpcionCaso()` | ver `grep` |
 | Registro ↔ ficha: campos compartidos (`caso: "campo"` en la definición; `soloCaso`; `leerCaso`) — `regGet()` los lee del caso y `regControl()` los escribe en el caso | `regGet()`, `regControl()`, `regNombresTecnicas()` | ver `grep` |
-| Registro: hoja completa simplificada en pantalla (la impresa no cambia) | `REG_PANTALLA` (id de sección → pintado propio; `null` = no se enseña), `pintarPantallaIdentificacion/Modalidades/Anestesia/Mapeo/Eventos/Alarmas/Cierre()`, `REG_MAPEO_BLOQUES`, `pintarMapeoGrid/Filas/Raices()`, `regFilasTornillos()`, `REG_COD_PANTALLA`, `REG_FILAS_EVENTO_VACIAS`, `regInput()`, `regSelect()` | ver `grep` |
-| Registro: modo rápido (vista por defecto; escribe en `eventos`/`alarmas`, sin datos propios) | `pintarModoRapido()`, `regApuntar()`, `regMarcarFase()`, `regQuitarRapido()`, `REG_FASES_RAPIDAS`, `REG_CAMBIOS_RAPIDOS`, `REG_QUE_EXTRA`, `regVista()` | ver `grep` |
+| Registro: hoja completa simplificada en pantalla (la impresa no cambia) | `REG_PANTALLA` (id de sección → pintado propio; `null` = no se enseña), `pintarPantallaIdentificacion/Modalidades/Anestesia/Mapeo/Cierre()` (F y G a `null` desde el 29-09-2026), `REG_MAPEO_BLOQUES`, `pintarMapeoGrid/Filas/Raices()`, `regFilasTornillos()`, `regInput()`, `regSelectLista()` | ver `grep` |
+| Registro: panel «Apuntar fase, evento o alarma» (antes modo rápido; único sitio donde se apuntan, arriba de la Hoja completa; escribe en `eventos`/`alarmas`, sin datos propios; «Otro» + cajas; lista «Apuntado» por hora con horas editables y, bajo cada alarma, medidas y recuperación) | `pintarPanelApuntar()`, `regItemsApuntados()`, `regLineaApuntada()`, `pintarMedidasRecup()` (también en la ficha), `regApuntar()`, `regMarcarFase()`, `regQuitarRapido()`, `regCajaRapida()`, `REG_FASES_RAPIDAS`, `REG_CAMBIOS_RAPIDOS`, `REG_QUE_EXTRA`, `REG_QUE_OTRO`/`REG_CAMBIO_OTRO` | ver `grep` |
 | Registro intraoperatorio: hoja imprimible A4 | `construirHojaRegistro()`, `abrirHojaRegistro()`, `ESTILO_HOJA_REGISTRO` | ver `grep` |
 | Material, pantalla propia (todo el catálogo en filas) | `renderDocenteMaterial()`, `descripcionMaterial()` | ver `grep` |
 | Fotos en IndexedDB (todas las fotos) | `guardarFotoIDB()`, `hidratarFotosIDB()`, `quitarDataUrls()` | ver `grep` |
@@ -419,9 +419,12 @@ distinta a la anterior, no importa el formato exacto.
 > - **Material**: «Estimulación trigeminal» (V1-V3 + N.Maset, id `l_rx_maset`);
 >   fuera la categoría «Reflejos» (eran técnicas). Serrato anterior C5-C7 en
 >   miotomas. 20 categorías en orden lógico; `SERIES_MATERIAL` agrupa L./R.
-> - **Registro en pantalla**: Hoja completa por defecto (`REG_PANTALLA`), modo
->   rápido a elegir (guarda ids de criterio y la fase en `al.fase`). La impresa no
->   cambia con lo de pantalla.
+> - **Registro en pantalla**: una sola vista, la Hoja completa (`REG_PANTALLA`).
+>   Fases, eventos y alarmas se apuntan SOLO en el panel de arriba (antes «modo
+>   rápido», pestaña retirada el 29-09-2026; guarda ids de criterio y la fase en
+>   `al.fase`); F y G no se pintan en pantalla. En «Apuntado», bajo cada alarma,
+>   medidas adoptadas y recuperación S/P/N con hora; criterio y causa, en la
+>   ficha. La impresa no cambia con lo de pantalla.
 > - **Dos equipos** (Inomed/Cadwell): `equipo_id`; **no confundir con `equipo`**.
 > - **Técnicas IONM, privada**: contenido en el repo privado
 >   (`referencia/tecnicas-mio.json`), se baja con el token. **No volver a meterlo
