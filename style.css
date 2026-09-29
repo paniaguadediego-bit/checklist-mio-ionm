@@ -4086,3 +4086,16 @@ body.sin-ayudas .coste-nota { display: none !important; }
 .caso-grupo.reg-rapido[open] > summary { border-bottom-color: var(--accent); }
 .caso-grupo.reg-rapido > summary { border-radius: calc(var(--r) - 2px); }
 .caso-grupo.reg-rapido[open] > summary { border-radius: calc(var(--r) - 2px) calc(var(--r) - 2px) 0 0; }
+/* Correlación de cada alarma con la evolución (ficha, Resultado; 29-09-2026):
+   una fila compacta por grupo -rótulo arriba; evolución, momento y
+   concordancia debajo-. */
+.caso-correlato { display: flex; flex-direction: column; gap: 0.35rem; }
+.caso-correlato-fila { border: 1px solid var(--border-soft); border-left: 3px solid var(--peligro); border-radius: 6px; padding: 0.3rem 0.45rem; }
+.caso-correlato-tit { font-size: 0.8rem; margin-bottom: 0.25rem; }
+.caso-correlato-tit b { color: var(--peligro); }
+.caso-correlato-ctr { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) 2.6rem; gap: 0.3rem; align-items: center; }
+.caso-correlato-conc { font-size: 0.8rem; font-weight: 700; color: var(--accent); text-align: center; }
+@media (max-width: 600px) {
+  .caso-correlato-ctr { grid-template-columns: minmax(0, 1fr) 2.6rem; }
+  .caso-correlato-ctr > select:first-child { grid-column: 1 / -1; }
+}

@@ -616,7 +616,13 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
    incidencias técnicas.
 7. **Resultado / Correlación clínica** — evolución postquirúrgica en lista
    (sin déficit nuevo, déficit nuevo transitorio, permanente o con evolución
-   pendiente, no valorable) con su detalle en texto, y
+   pendiente, no valorable) con su detalle en texto; **correlación de cada
+   alarma** (29-09-2026): una fila por grupo de alarmas -misma técnica y mismo
+   criterio, así varias HFD de un músculo a distintas horas son una sola fila-
+   con su evolución (sin déficit relacionado, déficit que recupera, estable,
+   empeoramiento, pendiente de valorar, no valorable), cuándo se valoró
+   (inmediato, 72 h, alta, 1, 3 o 6 meses) y la concordancia de ese grupo,
+   calculada con su recuperación en quirófano; y
    concordancia, con una **propuesta** calculada con las alarmas, el resultado
    de la señal y la evolución que se aplica con un botón (VP, FP, VN, FN o **PR — positivo reversible**: hubo un
    cambio significativo que se recuperó tras actuar y no quedó déficit nuevo).

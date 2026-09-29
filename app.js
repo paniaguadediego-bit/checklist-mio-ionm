@@ -773,6 +773,23 @@
     opc_resultado_esperable_mejoria:       { es: "Mejoría", en: "Improvement" },
     opc_resultado_esperable_indeterminado: { es: "Indeterminado", en: "Undetermined" },
     caso_deficit_postoperatorio: { es: "Detalle de la evolución", en: "Evolution details" },
+    caso_correlato_alarmas: { es: "Correlación de cada alarma", en: "Correlation of each alarm" },
+    caso_correlato_alarmas_ay: { es: "Una fila por técnica y criterio: las alarmas repetidas del mismo sustrato van juntas. Elige cómo evolucionó esa función y cuándo se valoró; la concordancia de la fila se calcula sola con su recuperación en quirófano.",
+                           en: "One row per technique and criterion: repeated alarms of the same substrate go together. Choose how that function evolved and when it was assessed; the row's concordance is calculated from its intraoperative recovery." },
+    caso_correlato_evol: { es: "Evolución", en: "Evolution" },
+    caso_correlato_momento: { es: "Valorado", en: "Assessed" },
+    opc_correlato_evol_sin_deficit: { es: "Sin déficit relacionado", en: "No related deficit" },
+    opc_correlato_evol_recupera:  { es: "Déficit que recupera", en: "Deficit that recovers" },
+    opc_correlato_evol_estable:   { es: "Déficit estable", en: "Stable deficit" },
+    opc_correlato_evol_empeora:   { es: "Empeoramiento", en: "Worsening" },
+    opc_correlato_evol_pendiente: { es: "Pendiente de valorar", en: "Pending assessment" },
+    opc_correlato_evol_no_valorable: { es: "No valorable", en: "Not assessable" },
+    opc_correlato_momento_inmediato: { es: "Inmediato", en: "Immediate" },
+    opc_correlato_momento_72h:    { es: "72 h", en: "72 h" },
+    opc_correlato_momento_alta:   { es: "Al alta", en: "At discharge" },
+    opc_correlato_momento_1m:     { es: "1 mes", en: "1 month" },
+    opc_correlato_momento_3m:     { es: "3 meses", en: "3 months" },
+    opc_correlato_momento_6m:     { es: "6 meses o más", en: "6 months or more" },
     caso_concordancia:   { es: "Concordancia", en: "Concordance" },
     caso_incidencias_tecnicas: { es: "Incidencias técnicas", en: "Technical incidents" },
     caso_equipo:         { es: "Equipo", en: "Equipment" },
@@ -6760,6 +6777,9 @@
 
   var OPCIONES = {
     sexo: ["mujer", "hombre", "otro"],
+    // Correlato postoperatorio de cada grupo de alarmas (29-09-2026).
+    correlato_evol: ["sin_deficit", "recupera", "estable", "empeora", "pendiente", "no_valorable"],
+    correlato_momento: ["inmediato", "72h", "alta", "1m", "3m", "6m"],
     // Quién rellena la ficha, no el nivel de supervisión clínica -eso ya no
     // se distingue en ningún campo-.
     rol: ["adjunto1", "adjunto2", "residente"],
@@ -6956,6 +6976,9 @@
     // 7. Resultado / Correlación clínica
     { g: "resultado", c: "evolucion_postop", t: "sel", o: "evolucion_postop", ay: "caso_evolucion_postop_ay" },
     { g: "resultado", c: "deficit_postoperatorio", t: "area", rows: 4 },
+    // Una fila por alarma o grupo de alarmas del mismo sustrato, con su
+    // correlato postoperatorio en listas cerradas (29-09-2026).
+    { g: "resultado", c: "correlato_alarmas", t: "correlato_alarmas", ay: "caso_correlato_alarmas_ay" },
     // Debajo lleva una propuesta calculada con alarmas + resultado de la
     // señal + evolución (propuestaConcordancia()), que se aplica con un botón.
     { g: "resultado", c: "concordancia", t: "sel", o: "concordancia", ay: "caso_concordancia_ay" },
@@ -6999,6 +7022,86 @@
     var senal = p.senal ? opcionTexto("recuperacion_senal", p.senal)
       : T(p.alerta ? "caso_conc_alerta" : "caso_conc_sin_alerta");
     return senal + " + " + opcionTexto("evolucion_postop", p.evol);
+  }
+
+  /* Grupos de alarmas para la correlación postoperatoria: misma técnica y
+     mismo criterio = mismo sustrato (varias HFD de un músculo a distintas
+     horas no se multiplican). La clave del grupo es la que guarda
+     correlato_alarmas: si se corrige la técnica o el criterio de una alarma,
+     cambia de grupo y su correlato se vuelve a elegir. */
+  var repintarCorrelato = null;
+  function gruposAlarmas(d) {
+    var grupos = [], porClave = {};
+    (d.alarmas || []).forEach(function (a, i) {
+      if (!alarmaEscrita(a)) return;
+      var tec = String(a.modalidad || "").trim(), crit = String(a.criterio || "").trim();
+      var clave = (tec + "|" + crit).toLowerCase();
+      var g = porClave[clave];
+      if (!g) { g = porClave[clave] = { clave: clave, tec: tec, crit: crit, alarmas: [] }; grupos.push(g); }
+      g.alarmas.push({ a: a, n: i + 1 });
+    });
+    return grupos;
+  }
+
+  // Concordancia de un grupo: su recuperación en quirófano (todas «Sí» =
+  // recuperada; alguna «No» = persistente) frente a su correlato. Las
+  // discutibles, entre interrogantes, como en la propuesta del caso.
+  function concordanciaGrupo(g, evol) {
+    if (!evol || evol === "no_valorable" || evol === "pendiente") return "";
+    var rec = g.alarmas.map(function (x) { return x.a.recup || ""; });
+    var persistente = rec.indexOf("N") !== -1;
+    var recuperada = !persistente && rec.every(function (r) { return r === "S"; });
+    var parcial = !persistente && !recuperada && rec.every(function (r) { return r === "S" || r === "P"; });
+    if (evol !== "sin_deficit") return recuperada || parcial ? "¿VP?" : "VP";
+    if (persistente) return "FP";
+    if (recuperada) return "PR";
+    if (parcial) return "¿PR?";
+    return "";
+  }
+
+  function filaCorrelato(g) {
+    var fila = regNodo("div", "caso-correlato-fila");
+    var horas = g.alarmas.map(function (x) { return x.a.hora; }).filter(Boolean).sort();
+    var rango = horas.length ? horas[0] + (horas[horas.length - 1] !== horas[0] ? "–" + horas[horas.length - 1] : "") : "";
+    var tit = regNodo("div", "caso-correlato-tit");
+    tit.appendChild(regNodo("b", null, g.alarmas.map(function (x) { return "A" + x.n; }).join(", ")));
+    tit.appendChild(document.createTextNode(" · " + [g.tec, regTextoLista(REG_CRITERIO_AL, g.crit), rango].filter(Boolean).join(" · ")));
+    fila.appendChild(tit);
+    var ctr = regNodo("div", "caso-correlato-ctr");
+    var actual = function () { return (casoAbierto.correlato_alarmas || {})[g.clave] || {}; };
+    var conc = regNodo("span", "caso-correlato-conc");
+    var pintarConc = function () {
+      var p = concordanciaGrupo(g, actual().evol);
+      conc.textContent = p;
+      conc.title = p ? opcionTexto("concordancia", p.replace(/[¿?]/g, "")) : "";
+    };
+    [["evol", "correlato_evol"], ["momento", "correlato_momento"]].forEach(function (k) {
+      var sel = document.createElement("select");
+      sel.setAttribute("aria-label", T("caso_correlato_" + k[0]));
+      var vacia = document.createElement("option");
+      vacia.value = "";
+      vacia.textContent = T("caso_correlato_" + k[0]) + "…";
+      sel.appendChild(vacia);
+      OPCIONES[k[1]].forEach(function (v) {
+        var o = document.createElement("option");
+        o.value = v;
+        o.textContent = opcionTexto(k[1], v);
+        sel.appendChild(o);
+      });
+      sel.value = actual()[k[0]] || "";
+      sel.addEventListener("change", function () {
+        var mapa = casoAbierto.correlato_alarmas || (casoAbierto.correlato_alarmas = {});
+        var e = mapa[g.clave] || (mapa[g.clave] = {});
+        e[k[0]] = sel.value;
+        if (!e.evol && !e.momento) delete mapa[g.clave];
+        pintarConc();
+      });
+      ctr.appendChild(sel);
+    });
+    pintarConc();
+    ctr.appendChild(conc);
+    fila.appendChild(ctr);
+    return fila;
   }
 
   // Texto libre de antes -> id de la lista, solo cuando la equivalencia es
@@ -7818,6 +7921,7 @@
         if (def.t === "alarmas_reg") {
           pintarAlarmas(contR, dR, { modalidades: regQueRapidos(dR, tecR()), guardar: REG_SIN_GUARDAR, conHora: false, alCambiar: function () {
             if (camposCaso.alerta && alarmasConDatos(dR).length) camposCaso.alerta.checked = true;
+            if (repintarCorrelato) repintarCorrelato();
           } });
         } else if (def.t === "mapeo_reg") {
           var bloquesR = REG_MAPEO_BLOQUES.filter(function (b) {
@@ -7835,6 +7939,28 @@
       pintarR();
       if (def.t !== "eventos_an") oyentesTecnicasRealizadas.push(pintarR);
       div.appendChild(contR);
+      if (def.ay) div.appendChild(ayudaCampo(def.ay));
+      return div;
+    }
+
+    // Correlación de cada alarma con la evolución (29-09-2026, pedido del
+    // usuario): una fila por grupo -misma técnica y mismo criterio, p. ej.
+    // varias HFD de un músculo a distintas horas, que son el mismo sustrato-
+    // con su evolución y cuándo se valoró, y la concordancia de ese grupo.
+    // Se guarda en casoAbierto.correlato_alarmas por clave de grupo; no entra
+    // en camposCaso. Sin alarmas, no se enseña.
+    if (def.t === "correlato_alarmas") {
+      var contC = regNodo("div", "caso-correlato");
+      var pintarC = function () {
+        contC.textContent = "";
+        var dC = casoAbierto.registro_intraop ? registroAsegurar(casoAbierto.registro_intraop) : null;
+        var grupos = dC ? gruposAlarmas(dC) : [];
+        div.hidden = !grupos.length;
+        grupos.forEach(function (g) { contC.appendChild(filaCorrelato(g)); });
+      };
+      pintarC();
+      repintarCorrelato = pintarC;
+      div.appendChild(contC);
       if (def.ay) div.appendChild(ayudaCampo(def.ay));
       return div;
     }

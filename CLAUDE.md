@@ -223,6 +223,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Columna vertebral de umbrales por raíz (ficha y E2 del Registro; salto discontinuo) | `pintarColumnaRaices()`, `REG_NIVELES_RAICES` | ver `grep` |
 | Columnas de basales OP BSL/PostPos1/PostPos2/CL BSL | `REG_BASALES_COLS`, `regColBasal()` | ver `grep` |
 | Registro C · Anestesia en espejo y eventos An | `pintarPantallaAnestesia()`, `pintarEventosAn()` | ver `grep` |
+| Correlación de cada alarma con la evolución (ficha, Resultado): grupos automáticos por técnica + criterio; `correlato_alarmas` = {clave de grupo: {evol, momento}} con ids (`OPCIONES.correlato_evol/_momento`); concordancia por grupo | `gruposAlarmas()`, `filaCorrelato()`, `concordanciaGrupo()`, `repintarCorrelato`, `t: "correlato_alarmas"` en `campoCaso()` | ver `grep` |
 | Menú ⋮ «Ocultar ayudas» | `AYUDAS_KEY`, `aplicarAyudas()`, `body.sin-ayudas` en style.css | ver `grep` |
 | Tema: oscuro siempre; «Modo claro» en el menú ⋮ (por dispositivo). Los colores oscuros van en `@media screen { :root:not(.tema-claro) … }`; al imprimir, siempre los claros | `TEMA_KEY`, `aplicarTema()`, `html.tema-claro` en style.css | ver `grep` |
 | Precios inventados de la demo | `PRECIOS_DEMO`, `preciosDemo()` | ver `grep` |
@@ -381,6 +382,12 @@ distinta a la anterior, no importa el formato exacto.
 >   trabaja sobre la copia de trabajo (`guardar` = `REG_SIN_GUARDAR`) y guarda con
 >   «Guardar»; el Registro guarda solo (`REG_GUARDAR`). Sin caso (Modelo 0) no hay
 >   espejo.
+> - **Correlación de cada alarma** (29-09-2026): en Resultado, una fila por grupo
+>   de alarmas (misma técnica + mismo criterio = mismo sustrato; varias HFD de un
+>   músculo a distintas horas son una fila) con evolución y momento en listas
+>   cerradas y la concordancia del grupo (con su recuperación S/P/N). Guardado en
+>   `correlato_alarmas` por clave de grupo. Aún NO va al CSV, al Sheet ni al
+>   informe PDF.
 > - **Ficha del caso**: apartados Identificación, Paciente, Cirugía, Anestesia,
 >   **Montaje / Material** (sin sub-desplegables), **Técnicas** (apartado propio),
 >   Desarrollo, Resultado, Docencia. Resultado: **evolución** en lista

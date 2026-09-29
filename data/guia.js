@@ -110,7 +110,7 @@ window.GUIA = {
     },
     {
       titulo: "Concordancia: VP, FP, VN, FN y PR",
-      html: "<p>En <b>Resultado / Correlación clínica</b>, la concordancia compara los cambios de la monitorización con el resultado neurológico. Además de VP, FP, VN y FN está <b>PR — positivo reversible</b>: hubo un cambio significativo que se recuperó tras actuar (avisar, pausar, subir la TAM...) y no quedó déficit nuevo.</p><p>Gestión de Casos se puede filtrar por concordancia.</p>"
+      html: "<p>En <b>Resultado / Correlación clínica</b>, si hubo alarmas, <b>Correlación de cada alarma</b> pone una fila por grupo (misma técnica y mismo criterio van juntas): elige cómo evolucionó esa función y cuándo se valoró, y la fila calcula su concordancia con la recuperación en quirófano. La concordancia del caso compara los cambios de la monitorización con el resultado neurológico. Además de VP, FP, VN y FN está <b>PR — positivo reversible</b>: hubo un cambio significativo que se recuperó tras actuar (avisar, pausar, subir la TAM...) y no quedó déficit nuevo.</p><p>Gestión de Casos se puede filtrar por concordancia.</p>"
     },
     {
       titulo: "Informe en PDF y exportar a CSV",
