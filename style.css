@@ -2732,9 +2732,12 @@ dialog h3 {
     --border-soft: #202a38;
     --text: #f1f5f9;
     --text-muted: #94a3b8;
-    --accent: #0a84ff;
-    --accent-soft: #10263f;
-    --accent-texto: #ffffff;
+    /* Acento en un azul más suave que el #0A84FF de la propuesta (30-09-2026,
+       pedido del usuario: los títulos azules eran demasiado intensos). Sobre
+       él, texto oscuro, como se hacía con el dorado. */
+    --accent: #7aa7da;
+    --accent-soft: #16263a;
+    --accent-texto: #0b1420;
     --barra-caso-bg: #0b4f96;
     --estado-pendiente: #000000;
     --estado-preparado: #ffe600;
@@ -2769,6 +2772,34 @@ dialog h3 {
   :root:not(.tema-claro) #catalogo-buscar,
   :root:not(.tema-claro) #perfil-select { background: #1b2226; color: var(--text); }
   :root:not(.tema-claro) .caja-plate { background: #c8d2d8; }
+  /* «Modo oscuro» del menú ⋮ (30-09-2026, pedido del usuario): los colores
+     de antes de la paleta azul, negro neutro con acento dorado a juego con
+     el logo. Clase "tema-oscuro" en <html>; gana al bloque de arriba por ir
+     después con la misma especificidad. */
+  :root.tema-oscuro {
+    --bg: #0f0f0f;
+    --card-bg: #1a1a1a;
+    --border: #333333;
+    --border-soft: #262626;
+    --text: #e8e8e8;
+    --text-muted: #a0a0a0;
+    --accent: #d8b45c;
+    --accent-soft: #2a2515;
+    --accent-texto: #1a1507;
+    --barra-caso-bg: #6f5a24;
+    --estado-preparado: #ffd60a;
+    --estado-cerrado: #34c759;
+    --estado-cancelado: #ff5147;
+    --aviso-bg: #2e2412;
+    --aviso-border: #a8792a;
+    --aviso-text: #dfb265;
+    --tag-bg: #242424;
+    --peligro: #d98276;
+    --quitar-bg: #33201d;
+    --panel: #080808;
+    --panel-borde: #2b2b2b;
+    --campo-bg: #141414;
+  }
 }
 
 /* ================================================================ *
@@ -4172,7 +4203,7 @@ textarea { resize: none; overflow-y: hidden; }
    completo en un dorado más apagado y fondo ligeramente teñido, para que se
    distinga bien de la lista «Apuntado» de debajo. */
 :root { --acento-apagado: #a88c4a; }
-@media screen { :root:not(.tema-claro) { --acento-apagado: #3d7fc4; } }
+@media screen { :root:not(.tema-claro) { --acento-apagado: #4d7bab; } :root.tema-oscuro { --acento-apagado: #8c7540; } }
 .rr-bloque.rr-bloque-evento {
   border: 1.5px solid var(--acento-apagado);
   background: var(--accent-soft);
@@ -4220,7 +4251,7 @@ textarea { resize: none; overflow-y: hidden; }
 .rr-en-hoja .rr-linea, .rr-linea { display: block; border-top: none; padding: 0; }
 .rr-linea-cab { display: flex; align-items: center; gap: 0.4rem; }
 .rr-cab-hueco { flex: 1 1 auto; }
-.rr-item .rr-hora { font-family: var(--mono); font-weight: 500; font-size: 0.8rem; color: var(--g-info); width: 5.2rem; border-bottom-color: transparent; padding-left: 0; }
+.rr-item .rr-hora { font-family: var(--mono); font-weight: 500; font-size: 0.8rem; color: var(--accent); width: 5.2rem; border-bottom-color: transparent; padding-left: 0; }
 .rr-etiqueta { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.05em; padding: 0.1rem 0.35rem; border-radius: 4px; color: var(--g); background: color-mix(in srgb, var(--g) 16%, transparent); white-space: nowrap; }
 .rr-item .rr-texto { display: block; font-size: 0.85rem; line-height: 1.35; padding: 0.1rem 0 0; }
 .rr-item .rr-texto small { display: block; font-family: var(--mono); font-size: 0.72rem; margin-top: 0.1rem; }
