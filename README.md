@@ -956,7 +956,12 @@ hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
   En una alarma quedan como criterio (lista cerrada con ids). Con **GRID**
   elegido (es el electrodo, no una técnica: sirve para c-MEP, s-MEP o ECoG) no
   salen alteraciones sino sus **eventos**: colocación, phase reversal, se mueve
-  (pierde motor / sensitivo) y retirada, con su hora. La caja de debajo es
+  (pierde motor / sensitivo) y retirada, con su hora. Con **Anestesia** elegida
+  sale la fila **Fármaco** (propofol, remifentanilo, fentanilo, ketamina,
+  dexmedetomidina, midazolam, sevoflurano, desflurano, rocuronio, sugammadex,
+  lidocaína, noradrenalina) y en Hallazgo solo ↑ perfusión, ↓ perfusión, bolo
+  o detención; se apunta como evento de anestesia «Propofol · Bolo» (también
+  en la ficha) y el fármaco se guarda con su id. La caja de debajo es
   una nota (acción o medidas) o, con **Otro**, el cambio.
 - **Contexto quirúrgico** (opcional, lista cerrada): disección, retracción,
   tracción / manipulación, coagulación, resección / aspiración, irrigación,

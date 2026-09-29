@@ -1279,6 +1279,8 @@
     rr_grupo_reflejos:   { es: "Reflejos", en: "Reflexes" },
     rr_cambios_propios:  { es: "Propias de {tec}", en: "Specific to {tec}" },
     rr_cambios_grid:     { es: "Eventos del GRID", en: "GRID events" },
+    rr_cambios_anestesia: { es: "Con el fármaco", en: "With the drug" },
+    rr_farmaco:          { es: "Fármaco", en: "Drug" },
     rr_grupo_tecnicas:   { es: "Técnicas", en: "Techniques" },
     rr_grupo_factores:   { es: "Factores técnicos", en: "Technical factors" },
     rr_grupo_anestesia:  { es: "Anestesia", en: "Anaesthesia" },
@@ -16638,11 +16640,37 @@
     { id: "grid_colocacion", mod: "grid", l: "Colocación", l_en: "Placement", ayuda: "Colocación del GRID sobre la corteza.", ayuda_en: "GRID placed on the cortex." },
     { id: "grid_phase_reversal", mod: "grid", l: "Phase reversal", l_en: "Phase reversal", ayuda: "Inversión de fase (localización del surco central).", ayuda_en: "Phase reversal (central sulcus localisation)." },
     { id: "grid_desplazamiento", mod: "grid", l: "Se mueve (pierde motor / sensitivo)", l_en: "Moves (motor / sensory lost)", ayuda: "El GRID cambia de posición y se pierden las respuestas motoras y/o sensitivas que se tenían; en la caja de detalle, cuáles.", ayuda_en: "The GRID shifts and the motor and/or sensory responses are lost; say which in the detail box." },
-    { id: "grid_retirada", mod: "grid", l: "Retirada", l_en: "Removal", ayuda: "Retirada del GRID.", ayuda_en: "GRID removed." }
+    { id: "grid_retirada", mod: "grid", l: "Retirada", l_en: "Removal", ayuda: "Retirada del GRID.", ayuda_en: "GRID removed." },
+    // Anestesia (29-09-2026, pedido del usuario): qué se hizo con el fármaco
+    { id: "an_sube", mod: "anestesia", l: "↑ perfusión", l_en: "↑ infusion", ayuda: "Se aumenta la perfusión del fármaco.", ayuda_en: "Drug infusion increased." },
+    { id: "an_baja", mod: "anestesia", l: "↓ perfusión", l_en: "↓ infusion", ayuda: "Se disminuye la perfusión del fármaco.", ayuda_en: "Drug infusion decreased." },
+    { id: "an_bolo", mod: "anestesia", l: "Bolo", l_en: "Bolus", ayuda: "Bolo del fármaco.", ayuda_en: "Drug bolus." },
+    { id: "an_detencion", mod: "anestesia", l: "Detención", l_en: "Stopped", ayuda: "Se detiene el fármaco.", ayuda_en: "Drug stopped." }
   ];
+  // Fármacos anestésicos más usados (29-09-2026, pedido del usuario): salen al
+  // elegir «Anestesia» en Técnica; se guarda el id en ev.farmaco (nunca
+  // cambiar uno ya usado; uno nuevo, al final).
+  var REG_FARMACOS = [
+    { v: "propofol", l: "Propofol", l_en: "Propofol" },
+    { v: "remifentanilo", l: "Remifentanilo", l_en: "Remifentanil" },
+    { v: "fentanilo", l: "Fentanilo", l_en: "Fentanyl" },
+    { v: "ketamina", l: "Ketamina", l_en: "Ketamine" },
+    { v: "dexmedetomidina", l: "Dexmedetomidina", l_en: "Dexmedetomidine" },
+    { v: "midazolam", l: "Midazolam", l_en: "Midazolam" },
+    { v: "sevoflurano", l: "Sevoflurano", l_en: "Sevoflurane" },
+    { v: "desflurano", l: "Desflurano", l_en: "Desflurane" },
+    { v: "rocuronio", l: "Rocuronio", l_en: "Rocuronium" },
+    { v: "sugammadex", l: "Sugammadex", l_en: "Sugammadex" },
+    { v: "lidocaina", l: "Lidocaína", l_en: "Lidocaine" },
+    { v: "noradrenalina", l: "Noradrenalina", l_en: "Noradrenaline" }
+  ];
+  // Hallazgos que no tienen sentido con esa «técnica»: solo sus propios
+  var REG_MODS_SIN_GENERAL = ["grid", "anestesia"];
+
   // Modalidad de lo elegido en QUÉ, para las alteraciones propias
   function regModalidadDeQue(q) {
     q = String(q || "");
+    if (q === REG_QUE_ANESTESIA) return "anestesia";
     if (/^GRID/.test(q)) return "grid";
     if (/D-Wave|Onda D/i.test(q)) return "onda_d";
     if (/^(t-|c-)?MEP|^CoMEP/.test(q)) return "mep";
@@ -16682,7 +16710,7 @@
   var REG_QUE_OTRO = "__otro", REG_CAMBIO_OTRO = "__otro";
   // Lo elegido y aún sin apuntar. No se guarda: se pierde al cambiar de caso.
   // queNota y faseNota son las cajas de Qué y de Fase; nota, la de Qué pasa.
-  function regRapidoVacio() { return { que: "", cambio: "", nota: "", queNota: "", faseNota: "", contexto: "", tof: "" }; }
+  function regRapidoVacio() { return { que: "", cambio: "", nota: "", queNota: "", faseNota: "", contexto: "", tof: "", farmaco: "" }; }
   var regRapido = regRapidoVacio();
 
   function regFaseActual(d) {
@@ -16798,8 +16826,16 @@
     // Con «Otro» en Qué pasa, la caja es el cambio; si no, es la nota.
     var textoCambio = otroCambio ? nota : (cambio ? campo(cambio, "l") : "");
     if (otroCambio) nota = "";
+    // Anestesia con fármaco: «Propofol · Bolo» también en el cambio, que es lo
+    // que enseña la tabla de eventos de anestesia de la ficha.
+    var farm = esAn && regRapido.farmaco ? REG_FARMACOS.filter(function (f) { return f.v === regRapido.farmaco; })[0] : null;
+    if (farm) {
+      modalidad = [campo(farm, "l"), queNota].filter(Boolean).join(" · ");
+      textoCambio = [campo(farm, "l"), textoCambio].filter(Boolean).join(" · ");
+    }
     var ev = { id: uuid(), hora: hora, cod: esAlarma ? "A" : (esAn ? "An" : (esT ? "T" : "E")),
                fase: fase, modalidad: modalidad, cambio: textoCambio, accion: nota };
+    if (farm) ev.farmaco = farm.v;
     // Solo un TOF: evento de anestesia «TOF 1/4», como los de antes (sale
     // también en los eventos de anestesia de la ficha).
     if (soloTof) { ev.cod = "An"; ev.modalidad = "TOF"; ev.cambio = "TOF " + regRapido.tof; }
@@ -17076,6 +17112,16 @@
     filaAnest.appendChild(subTof);
     queGrupos.appendChild(filaCorta);
     queGrupos.appendChild(filaAnest);
+    var cajaFarm = regNodo("div", "rr-farmacos");
+    cajaFarm.appendChild(regNodo("div", "rr-subtit", T("rr_farmaco")));
+    var filaFarm = regNodo("div", "rr-chips");
+    REG_FARMACOS.forEach(function (f) {
+      var bF = regChip(campo(f, "l"), regRapido.farmaco === f.v, function () { regElegirEn(filaFarm, bF, "farmaco", f.v); });
+      bF.setAttribute("data-clave", "farmaco");
+      filaFarm.appendChild(bF);
+    });
+    cajaFarm.appendChild(filaFarm);
+    queGrupos.appendChild(cajaFarm);
     subTecnica.appendChild(regCajaRapida("queNota", T("rr_que_detalle")));
 
     // «Qué pasa»: las generales, en su orden de siempre, y debajo las propias
@@ -17114,9 +17160,17 @@
       if (elegida && elegida.mod && elegida.mod !== mod) regRapido.cambio = "";
       filaEsp.textContent = "";
       // El GRID no tiene ↑ umbral, pérdida...: solo sus eventos
-      filaCambio.hidden = mod === "grid";
-      if (mod === "grid" && REG_CAMBIOS_RAPIDOS.filter(function (c) { return c.id === regRapido.cambio && !c.mod; }).length) regRapido.cambio = "";
-      titEsp.textContent = !lista.length ? "" : (mod === "grid" ? T("rr_cambios_grid") : T("rr_cambios_propios", { tec: regRapido.que }));
+      var sinGeneral = REG_MODS_SIN_GENERAL.indexOf(mod) !== -1;
+      filaCambio.hidden = sinGeneral;
+      if (sinGeneral && REG_CAMBIOS_RAPIDOS.filter(function (c) { return c.id === regRapido.cambio && !c.mod; }).length) regRapido.cambio = "";
+      // Fármacos, solo con Anestesia elegida
+      cajaFarm.hidden = mod !== "anestesia";
+      if (mod !== "anestesia" && regRapido.farmaco) {
+        regRapido.farmaco = "";
+        Array.prototype.forEach.call(filaFarm.children, function (b) { b.classList.remove("activo"); });
+      }
+      titEsp.textContent = !lista.length ? "" : (mod === "grid" ? T("rr_cambios_grid") :
+        (mod === "anestesia" ? T("rr_cambios_anestesia") : T("rr_cambios_propios", { tec: regRapido.que })));
       titEsp.hidden = filaEsp.hidden = !lista.length;
       lista.forEach(function (c) {
         var b = regChip(campo(c, "l"), regRapido.cambio === c.id, function () { regElegirEn(cambioGrupos, b, "cambio", c.id); });

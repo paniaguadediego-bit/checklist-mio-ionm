@@ -460,7 +460,9 @@ distinta a la anterior, no importa el formato exacto.
 >   `REG_CAMBIOS_RAPIDOS`, mismos ids en `REG_CRITERIO_AL`, `regModalidadDeQue()`,
 >   `actualizarCambiosPropios()`, ayuda al mantener pulsado-; con GRID, solo sus
 >   eventos (`mod: "grid"`: colocación, phase reversal, desplazamiento, retirada)
->   y sin la fila general; reflejos del caso con nombre corto), **Evento o alarma**
+>   y sin la fila general; con Anestesia, fila de fármacos (`REG_FARMACOS`, id en
+>   `ev.farmaco`) y solo ↑/↓ perfusión, bolo, detención (`mod: "anestesia"`,
+>   `REG_MODS_SIN_GENERAL`) → An «Propofol · Bolo»; reflejos del caso con nombre corto), **Evento o alarma**
 >   («Técnica» -antes QUÉ- y «Hallazgo» -antes QUÉ PASA-, en recuadros propios; Técnica: t-SEP/t-MEP/c-SEP en tabla por miembro + factores técnicos, anestesia
 >   y Otro en una fila; Hallazgo sin botones de recuperación -se marca en la
 >   alarma-,

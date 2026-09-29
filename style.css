@@ -4190,3 +4190,6 @@ textarea { resize: none; overflow-y: hidden; }
 .rr-sub-tit { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.25rem; }
 /* TOF algo más estrecho para caber junto a Anestesia dentro de su recuadro */
 #pantalla-registro .rr-que-fila-an .rr-chips .rr-chip { padding-left: 0.3rem; padding-right: 0.3rem; }
+/* [hidden] sobre clases con display propio necesita su regla (la fila general
+   de Hallazgo con GRID o Anestesia, la fila propia sin técnica...) */
+.rr-chips[hidden], .rr-subtit[hidden], .rr-farmacos[hidden] { display: none; }
