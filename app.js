@@ -16587,13 +16587,16 @@
     fila.appendChild(q);
     caja.appendChild(fila);
     if (al) {
-      // Debajo de cada alarma, lo que antes se completaba en G: medidas
-      // adoptadas y recuperación Sí / Parcial / No con su hora.
+      // Debajo de cada alarma, lo que antes se completaba en G: causa
+      // probable (29-09-2026, pedido del usuario), medidas adoptadas y
+      // recuperación Sí / Parcial / No con su hora.
       var det = regNodo("div", "reg-p-alarma rr-al-detalle");
-      pintarMedidasRecup(det, al, REG_GUARDAR, function () {
+      var alCambiarAl = function () {
         var c = registroCaso();
         if (c && alarmasConDatos(d).length) c.alerta = true;
-      }, function () {
+      };
+      det.appendChild(regSelectLista(al, "causa", REG_CAUSA_AL, T("reg_p_causa_l"), alCambiarAl));
+      pintarMedidasRecup(det, al, REG_GUARDAR, alCambiarAl, function () {
         // La hora de recuperación mueve también la línea «Recupera» que la puso
         for (var k = d.eventos.length - 1; k >= 0; k--) {
           if (d.eventos[k].recupera_de && d.eventos[k].recupera_de.id === al.id) { d.eventos[k].hora = al.h_recup || ""; break; }

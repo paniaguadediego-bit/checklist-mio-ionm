@@ -916,15 +916,16 @@ hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
   arriba), también las alarmas escritas desde la ficha. La **hora** de cada
   línea se corrige tocándola (en una alarma o una recuperación cambia también
   la de la alarma). Debajo de cada **alarma**, lo que antes se completaba en
-  G: **medidas adoptadas** (casillas + caja de texto) y **recuperación** Sí /
+  G: **causa probable**, **medidas adoptadas** (casillas + caja de texto) y
+  **recuperación** Sí /
   Parcial / No con su hora (que mueve también la línea «Recupera»). La ✕
   quita una línea; si era una alarma, vacía su fila, y si era una
   recuperación, la alarma vuelve a quedar abierta.
 
 El panel **no guarda nada propio**: escribe en los mismos eventos (F) y
 alarmas (G) de siempre, así que lo apuntado sale en la hoja impresa, en la
-ficha del caso (⇄) y en **Exportar eventos y alarmas (CSV)**. El criterio y la
-causa probable de una alarma se cambian en la ficha del caso.
+ficha del caso (⇄) y en **Exportar eventos y alarmas (CSV)**. El criterio de
+una alarma (lo que sale de «Qué pasa») se cambia en la ficha del caso.
 
 ### Hoja completa
 
