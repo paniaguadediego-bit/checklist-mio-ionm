@@ -4060,6 +4060,9 @@ body.sin-ayudas .coste-nota { display: none !important; }
 /* El rótulo no ensancha la columna (si no, «Factores técnicos» partía línea):
    se sale por la derecha, que el hueco entre columnas ya le deja sitio. */
 .rr-que-sub .rr-subtit { width: 0; white-space: nowrap; overflow: visible; }
+/* Anestesia + TOF en la misma fila (29-09-2026) */
+.rr-que-fila-an { display: flex; flex-wrap: wrap; gap: 0 0.8rem; align-items: flex-end; margin-top: 0.1rem; }
+.rr-que-fila-an .rr-chips { gap: 0.25rem; }
 /* t-SEP / t-MEP / c-SEP por miembro en cuadrícula de 4 columnas (29-09-2026) */
 .rr-que-cuadro { display: grid; grid-template-columns: auto repeat(4, minmax(0, 1fr)); gap: 0.3rem; margin-bottom: 0.3rem; align-items: center; }
 .rr-que-cuadro .rr-chip { white-space: nowrap; padding-left: 0.3rem; padding-right: 0.3rem; }

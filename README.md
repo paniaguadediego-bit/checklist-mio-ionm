@@ -928,17 +928,19 @@ hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
   y todo lo que apuntes después la hereda hasta que marques otra. La caja de
   debajo es un detalle opcional de la fase (va en «Acción y resultado» de su
   fila de F) o, con **Otra**, el nombre de la fase.
-- **TOF** (opcional, dentro de «Evento o alarma», tras el contexto
-  quirúrgico): **0/4 · 1/4 · 2/4 · 3/4 · 4/4**. Es contexto, como el quirúrgico:
-  tocarlo no apunta nada; se guarda con el evento o la alarma que se apunte
-  (se ve en su línea, «… · TOF 1/4», en el texto de la alarma y en la columna
-  `tof` del CSV). Se desmarca al apuntar, como lo demás: uno de antes no
-  sería el real.
+- **TOF** (opcional, en la fila de **Anestesia**): **0/4 · 1/4 · 2/4 · 3/4 ·
+  4/4**. Es contexto: tocarlo no apunta nada; se guarda con el evento o la
+  alarma que se apunte (se ve en su línea, «… · TOF 1/4», en el texto de la
+  alarma y en la columna `tof` del CSV) y se desmarca al apuntar.
 - **Qué**, en filas por tipo: **Técnicas** (t-SEP, t-MEP y c-SEP en una tabla,
   una fila por técnica y una columna por miembro MSD · MSI · MID · MII; las del caso, de las mismas
   filas que las basales: t-SEP, t-MEP, c-MEP, PEAT, Onda D...; más EMG libre,
   tornillos, RBC, Blink o EEG/ECoG si el caso tiene esa técnica), **Factores
-  técnicos** (Técnico), **Anestesia** y **Otro** (estos tres en una fila). La caja de debajo añade un detalle
+  técnicos** (Técnico) y **Otro** en una fila, **Anestesia** con el TOF en otra;
+  si el caso tiene **CoMEP**, los pares craneales en la misma tabla que t-SEP y
+  t-MEP (III · IV · VI / V · VII · VIII / IX · X · XI · XII, se apunta «CoMEP
+  VII») en lugar de las filas «CoMEP VII D…»; y los **reflejos** del caso con su
+  nombre corto (BR, TVcR...). La caja de debajo añade un detalle
   a la técnica («t-MEP MSD · deltoides») o, con **Otro**, dice qué es.
 - **Qué pasa**: ↑ umbral, ↓ amplitud, ↑ latencia, pérdida, HFD / descargas
   u **Otro** (sin botones de recuperación desde el 29-09-2026: la recuperación
@@ -949,6 +951,9 @@ hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
   clipaje / oclusión vascular, tornillo / implante, cambio de posición, cambio
   anestésico, TA / hemodinámica. Se ve en la línea de «Apuntado», se corrige
   con ✎ y sale en la hoja impresa (junto a la fase) y en el CSV de eventos.
+- **Apuntar evento** vale también solo con un contexto quirúrgico y/o un TOF
+  («Disección · TOF 3/4», o solo «TOF 1/4», que queda como evento de
+  anestesia); una alarma necesita su «Qué».
 - Dos botones: **Apuntar evento** o **Apuntar
   alarma**. La alarma ocupa además la primera fila libre de alarmas (A1,
   A2...) con técnica, criterio y fase. Para cerrarla, en su detalle de

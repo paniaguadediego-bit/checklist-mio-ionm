@@ -1276,7 +1276,7 @@
     rr_en_hoja:          { es: "Apuntar fase, evento o alarma", en: "Log phase, event or alarm" },
     rr_al_detalle:       { es: "Causa, medidas y recuperación", en: "Cause, measures and recovery" },
     rr_contexto:         { es: "Contexto quirúrgico (opcional)", en: "Surgical context (optional)" },
-    rr_tof_fila:         { es: "TOF (opcional)", en: "TOF (optional)" },
+    rr_grupo_reflejos:   { es: "Reflejos", en: "Reflexes" },
     rr_grupo_tecnicas:   { es: "Técnicas", en: "Techniques" },
     rr_grupo_factores:   { es: "Factores técnicos", en: "Technical factors" },
     rr_grupo_anestesia:  { es: "Anestesia", en: "Anaesthesia" },
@@ -1291,7 +1291,7 @@
     rr_nota:             { es: "Otro o nota (opcional)", en: "Other or note (optional)" },
     rr_apuntar_evento:   { es: "Apuntar evento", en: "Log event" },
     rr_apuntar_alarma:   { es: "Apuntar alarma", en: "Log alarm" },
-    rr_falta_que:        { es: "Elige primero qué ha cambiado.", en: "First choose what changed." },
+    rr_falta_que:        { es: "Elige qué ha cambiado (un evento también puede ser solo un contexto o un TOF).", en: "Choose what changed (an event can also be just a context or a TOF)." },
     rr_apuntado:         { es: "Apuntado a las {hora}.", en: "Logged at {hora}." },
     rr_alarma_apuntada:  { es: "Alarma {n} apuntada a las {hora}.", en: "Alarm {n} logged at {hora}." },
     rr_alarma_recuperada: { es: "{n} recuperada ({min} min).", en: "{n} recovered ({min} min)." },
@@ -16594,6 +16594,8 @@
   var REG_TOF = ["0/4", "1/4", "2/4", "3/4", "4/4"];
   // Columnas de la cuadrícula de QUÉ (t-SEP, t-MEP... por miembro)
   var REG_MIEMBROS = ["MSD", "MSI", "MID", "MII"];
+  // Pares craneales de QUÉ con CoMEP, en las filas que pidió el usuario
+  var REG_PARES_COMEP = [["III", "IV", "VI"], ["V", "VII", "VIII"], ["IX", "X", "XI", "XII"]];
   // Contexto quirúrgico del evento o la alarma (29-09-2026), lista cerrada.
   // Se guarda el id en ev.contexto; nunca cambiar un id ya usado.
   var REG_CONTEXTO = [
@@ -16683,7 +16685,11 @@
   function regElegirEn(fila, boton, clave, valor) {
     var ya = regRapido[clave] === valor;
     regRapido[clave] = ya ? "" : valor;
-    Array.prototype.forEach.call(fila.querySelectorAll(".rr-chip"), function (b) { b.classList.remove("activo"); });
+    // Un chip con data-clave distinta (el TOF, dentro de QUÉ) es de otra
+    // elección: no se toca.
+    Array.prototype.forEach.call(fila.querySelectorAll(".rr-chip"), function (b) {
+      if ((b.getAttribute("data-clave") || clave) === clave) b.classList.remove("activo");
+    });
     if (!ya) boton.classList.add("activo");
   }
 
@@ -16708,7 +16714,10 @@
     var q = regRapido.que;
     var queNota = regRapido.queNota.trim();
     var nota = regRapido.nota.trim();
-    if (!q) { avisoGuardado(T("rr_falta_que"), true); return; }
+    // Un evento puede ser solo contexto y/o TOF (29-09-2026, pedido del
+    // usuario: «en Disección», «TOF 1/4»...); una alarma necesita su QUÉ.
+    if (!q && (esAlarma || (!regRapido.contexto && !regRapido.tof))) { avisoGuardado(T("rr_falta_que"), true); return; }
+    var soloTof = !q && !regRapido.contexto;
     if (q === REG_QUE_OTRO && !queNota) { avisoGuardado(T("rr_falta_otro"), true); return; }
     var otroCambio = regRapido.cambio === REG_CAMBIO_OTRO;
     if (otroCambio && !nota) { avisoGuardado(T("rr_falta_otro"), true); return; }
@@ -16725,6 +16734,9 @@
     if (otroCambio) nota = "";
     var ev = { id: uuid(), hora: hora, cod: esAlarma ? "A" : (esAn ? "An" : (esT ? "T" : "E")),
                fase: fase, modalidad: modalidad, cambio: textoCambio, accion: nota };
+    // Solo un TOF: evento de anestesia «TOF 1/4», como los de antes (sale
+    // también en los eventos de anestesia de la ficha).
+    if (soloTof) { ev.cod = "An"; ev.modalidad = "TOF"; ev.cambio = "TOF " + regRapido.tof; }
     if (regRapido.contexto) ev.contexto = regRapido.contexto;
     // El TOF es contexto del evento o la alarma (29-09-2026, pedido del
     // usuario): el elegido en su fila va con lo que se apunta («¿estaba
@@ -16862,11 +16874,14 @@
     // Factores técnicos, Anestesia y Otro en una sola fila (29-09-2026,
     // pedido del usuario: caben), cada uno con su rótulo encima; Otro sin
     // rótulo, alineado con los botones.
+    // Anestesia y el TOF en otra fila (29-09-2026, pedido del usuario).
     var filaCorta = regNodo("div", "rr-que-fila");
+    var filaAnest = regNodo("div", "rr-que-fila-an");
+    var reflejosPendientes = null;
     [["rr_grupo_tecnicas", tecnicasQue.map(function (l) { return [l, l]; }), queGrupos],
      ["rr_grupo_factores", [[REG_QUE_TECNICO, T("rr_que_tecnico")]], filaCorta],
-     ["rr_grupo_anestesia", [[REG_QUE_ANESTESIA, T("rr_que_anestesia")]], filaCorta],
-     [null, [[REG_QUE_OTRO, T("rr_otro"), "rr-chip-otra"]], filaCorta]
+     [null, [[REG_QUE_OTRO, T("rr_otro"), "rr-chip-otra"]], filaCorta],
+     ["rr_grupo_anestesia", [[REG_QUE_ANESTESIA, T("rr_que_anestesia")]], filaAnest]
     ].forEach(function (g) {
       if (!g[1].length) return;
       var dest = g[2] === queGrupos ? queGrupos : regNodo("div", "rr-que-sub");
@@ -16887,7 +16902,17 @@
           filasMiembros[m[1]].push({ p: p, col: REG_MIEMBROS.indexOf(m[2]) + 1 });
           return false;
         });
-        if (ordenFilas.length) {
+        // Pares craneales si el caso tiene CoMEP (29-09-2026, pedido del
+        // usuario): en la misma tabla, «CoMEP» al principio de la primera de
+        // sus tres filas (III IV VI / V VII VIII / IX X XI XII); se apunta
+        // «CoMEP VII».
+        var casoQue = registroCaso();
+        var tecCaso = casoQue ? (casoQue.tecnicas_realizadas || []) : [];
+        var filasPares = tecCaso.indexOf("pem_corticobulbares") !== -1 ? REG_PARES_COMEP : [];
+        // Con la tabla de pares, fuera las filas de basales «CoMEP VII D»...
+        // que la repetían (el lado, si hace falta, en la caja de detalle).
+        if (filasPares.length) resto = resto.filter(function (p) { return !/^CoMEP /.test(p[1]); });
+        if (ordenFilas.length || filasPares.length) {
           var cuadro = regNodo("div", "rr-que-cuadro");
           // Rótulo de la técnica a la izquierda y, en cada botón, solo el
           // miembro: el nombre entero no cabía a 375 px. Se apunta igual el
@@ -16907,15 +16932,62 @@
               cuadro.appendChild(b);
             });
           });
+          filasPares.forEach(function (pares, k) {
+            var fila = ordenFilas.length + k + 1;
+            if (k === 0) {
+              var rotP = regNodo("span", "rr-que-cuadro-rot", "CoMEP");
+              rotP.style.gridRow = String(fila);
+              rotP.style.gridColumn = "1";
+              cuadro.appendChild(rotP);
+            }
+            pares.forEach(function (par, col) {
+              var nombre = "CoMEP " + par;
+              var b = chipQue([nombre, par]);
+              b.title = nombre;
+              b.setAttribute("aria-label", nombre);
+              b.style.gridRow = String(fila);
+              b.style.gridColumn = String(col + 2);
+              cuadro.appendChild(b);
+            });
+          });
           dest.appendChild(cuadro);
+        }
+        // Reflejos del caso (29-09-2026, pedido del usuario), con su nombre
+        // corto (BR, TVcR...), en su fila debajo de las demás técnicas.
+        var reflejosCaso = TECNICAS.filter(function (t) { return t.reflejo && tecCaso.indexOf(t.id) !== -1; })
+          .map(function (t) { var n = campo(t, "corta") || campo(t, "etiqueta"); return [n, n]; });
+        if (reflejosCaso.length) {
+          resto = resto.slice();
+          var filaR = regNodo("div", "rr-chips");
+          reflejosCaso.forEach(function (p) { filaR.appendChild(chipQue(p)); });
+          reflejosPendientes = function () {
+            dest.appendChild(regNodo("div", "rr-subtit", T("rr_grupo_reflejos")));
+            dest.appendChild(filaR);
+          };
         }
       }
       var filaG = regNodo("div", "rr-chips");
       resto.forEach(function (p) { filaG.appendChild(chipQue(p)); });
       if (resto.length) dest.appendChild(filaG);
-      if (dest !== queGrupos) filaCorta.appendChild(dest);
+      if (reflejosPendientes) { reflejosPendientes(); reflejosPendientes = null; }
+      if (dest !== queGrupos) g[2].appendChild(dest);
     });
+    // TOF junto a Anestesia: contexto del evento o la alarma, que se elige
+    // aparte de QUÉ (regRapido.tof) y va con lo que se apunte; el botón dice
+    // solo «2/4».
+    var subTof = regNodo("div", "rr-que-sub");
+    subTof.appendChild(regNodo("div", "rr-subtit", "TOF"));
+    var filaTof = regNodo("div", "rr-chips");
+    REG_TOF.forEach(function (v) {
+      var bTofV = regChip(v, regRapido.tof === v, function () { regElegirEn(filaTof, bTofV, "tof", v); });
+      bTofV.setAttribute("aria-label", "TOF " + v);
+      bTofV.setAttribute("data-clave", "tof");
+      filaTof.appendChild(bTofV);
+    });
+    subTof.appendChild(filaTof);
+    filaAnest.appendChild(subTof);
     queGrupos.appendChild(filaCorta);
+    queGrupos.appendChild(filaAnest);
     bEvento.appendChild(regCajaRapida("queNota", T("rr_que_detalle")));
 
     var filaCambio = regGrupoRapido(bEvento, T("rr_que_pasa"));
@@ -16931,25 +17003,11 @@
       });
     bEvento.appendChild(regCajaRapida("nota", T("rr_nota")));
 
-    // TOF, contexto del evento o la alarma (29-09-2026, pedido del usuario),
-    // detrás del contexto quirúrgico: se elige como él y va con lo que se
-    // apunte (ev.tof / al.tof, «2/4»). Ya no se apunta solo al tocarlo.
-    var filaTof;
-    var ponerTof = function () {
-      filaTof = regGrupoRapido(bEvento, T("rr_tof_fila"));
-      REG_TOF.forEach(function (v) {
-        var bTofV = regChip(v, regRapido.tof === v, function () { regElegirEn(filaTof, bTofV, "tof", v); });
-        bTofV.setAttribute("aria-label", "TOF " + v);
-        filaTof.appendChild(bTofV);
-      });
-    };
     var filaCtx = regGrupoRapido(bEvento, T("rr_contexto"));
     REG_CONTEXTO.forEach(function (c) {
       var b = regChip(campo(c, "l"), regRapido.contexto === c.v, function () { regElegirEn(filaCtx, b, "contexto", c.v); });
       filaCtx.appendChild(b);
     });
-
-    ponerTof();
 
     var botones = document.createElement("div");
     botones.className = "rr-botones";
@@ -17058,11 +17116,14 @@
       var partes = al
         ? [al.modalidad || (ev && ev.modalidad), ev ? ev.cambio : regTextoLista(REG_CRITERIO_AL, al.criterio), "A" + it.n]
         : [ev.cambio && ev.modalidad && String(ev.cambio).indexOf(ev.modalidad) === 0 ? "" : ev.modalidad, ev.cambio, ev.accion];
-      txt.textContent = partes.filter(Boolean).join(" · ");
       var fase = ev ? ev.fase : al.fase;
       var ctx = ev && ev.contexto ? regTextoLista(REG_CONTEXTO, ev.contexto) : "";
       var tofL = (ev && ev.tof) || (al && al.tof);
       tofL = tofL ? "TOF " + tofL : "";
+      if (tofL && ev && ev.cambio === tofL) tofL = "";
+      // Evento solo de contexto y/o TOF: eso es su texto principal
+      if (!partes.filter(Boolean).length) { partes = [ctx, tofL]; ctx = ""; tofL = ""; }
+      txt.textContent = partes.filter(Boolean).join(" · ");
       if (fase || ctx || tofL) txt.appendChild(regNodo("small", null, " " + [fase ? T("rr_en_fase", { fase: fase }) : "", ctx, tofL].filter(Boolean).join(" · ")));
     }
     fila.appendChild(txt);
