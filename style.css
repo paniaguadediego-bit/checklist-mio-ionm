@@ -2721,33 +2721,36 @@ dialog h3 {
    oscuro no se leería en papel blanco. */
 @media screen {
   :root:not(.tema-claro) {
-    /* Fondos en negro neutro, a juego con el logo (26-09-2026). */
-    --bg: #0f0f0f;
-    --card-bg: #1a1a1a;
-    --border: #333333;
-    --border-soft: #262626;
-    --text: #e8e8e8;
-    --text-muted: #a0a0a0;
-    --accent: #d8b45c;
-    --accent-soft: #2a2515;
-    /* Sobre el dorado claro del modo oscuro, texto oscuro: el blanco no se lee. */
-    --accent-texto: #1a1507;
-    --barra-caso-bg: #6f5a24;
+    /* Paleta azul marino de quirófano (30-09-2026, prueba del usuario con
+       los colores que le propuso otra IA; antes negro neutro con acento
+       dorado). Fondo #0F141C, tarjetas #18202C, bordes #283344, texto
+       #F1F5F9 / #94A3B8; rojo #FF3B30 crítico, naranja #FF9F0A aviso,
+       verde #30D158 normal, azul #0A84FF acción, amarillo #FFE600. */
+    --bg: #0f141c;
+    --card-bg: #18202c;
+    --border: #283344;
+    --border-soft: #202a38;
+    --text: #f1f5f9;
+    --text-muted: #94a3b8;
+    --accent: #0a84ff;
+    --accent-soft: #10263f;
+    --accent-texto: #ffffff;
+    --barra-caso-bg: #0b4f96;
     --estado-pendiente: #000000;
-    --estado-preparado: #ffd60a;
-    --estado-cerrado: #34c759;
-    --estado-cancelado: #ff5147;
-    --aviso-bg: #2e2412;
-    --aviso-border: #a8792a;
-    --aviso-text: #dfb265;
-    --tag-bg: #242424;
-    --peligro: #d98276;
-    --quitar-bg: #33201d;
-    --panel: #080808;
-    --panel-borde: #2b2b2b;
+    --estado-preparado: #ffe600;
+    --estado-cerrado: #30d158;
+    --estado-cancelado: #ff3b30;
+    --aviso-bg: #2e2210;
+    --aviso-border: #ff9f0a;
+    --aviso-text: #ffb340;
+    --tag-bg: #202a38;
+    --peligro: #ff5a50;
+    --quitar-bg: #3a1c1c;
+    --panel: #0b0f15;
+    --panel-borde: #283344;
     /* Los campos rellenables se oscurecen aquí, en un solo sitio. No hace
        falta repetir selectores por tipo: todos leen la misma variable. */
-    --campo-bg: #141414;
+    --campo-bg: #121923;
 
     /* Mismos diez colores por familia de técnica, aclarados para leerse
        sobre fondo oscuro (mismo criterio que --accent más arriba). */
@@ -3394,11 +3397,10 @@ dialog h3 {
   cursor: pointer;
 }
 .rr-hora:hover, .rr-hora:focus { border-color: var(--border); background: var(--campo-bg); }
-.rr-cod { flex: 0 0 1.8rem; font-size: 0.7rem; font-weight: 600; color: var(--text-muted); }
 .rr-texto { flex: 1 1 auto; min-width: 0; }
 .rr-texto small { color: var(--text-muted); }
 .rr-linea-fase .rr-texto { font-weight: 600; color: var(--accent); }
-.rr-linea-alarma .rr-cod, .rr-linea-alarma .rr-texto { color: var(--peligro); font-weight: 600; }
+.rr-linea-alarma .rr-texto { color: var(--peligro); font-weight: 600; }
 @media (pointer: coarse), (max-width: 900px) {
   .rr-nota, .rr-botones button, .rr-linea .reg-fila-quitar { min-height: 44px; }
   /* Con el id para ganar a "#pantalla-registro button { min-height: 44px }" */
@@ -4170,7 +4172,7 @@ textarea { resize: none; overflow-y: hidden; }
    completo en un dorado más apagado y fondo ligeramente teñido, para que se
    distinga bien de la lista «Apuntado» de debajo. */
 :root { --acento-apagado: #a88c4a; }
-@media screen { :root:not(.tema-claro) { --acento-apagado: #8c7540; } }
+@media screen { :root:not(.tema-claro) { --acento-apagado: #3d7fc4; } }
 .rr-bloque.rr-bloque-evento {
   border: 1.5px solid var(--acento-apagado);
   background: var(--accent-soft);
@@ -4198,3 +4200,30 @@ textarea { resize: none; overflow-y: hidden; }
 /* [hidden] sobre clases con display propio necesita su regla (la fila general
    de Hallazgo con GRID o Anestesia, la fila propia sin técnica...) */
 .rr-chips[hidden], .rr-subtit[hidden], .rr-farmacos[hidden] { display: none; }
+
+/* ---------------- Cronograma de eventos (30-09-2026) ----------------
+   Pedido del usuario a partir de una maqueta: cada línea es una tarjeta con
+   franja de color a la izquierda (rojo crítico, naranja aviso, verde normal,
+   azul información), hora en azul y monoespaciada, etiqueta de color y
+   filtros rectangulares encima. Rótulos de sección en monoespaciada. */
+:root { --g-critico: #c62828; --g-aviso: #b5590a; --g-ok: #178a32; --g-info: #1d63c9; --mono: ui-monospace, "Cascadia Mono", Consolas, "Roboto Mono", monospace; }
+@media screen { :root:not(.tema-claro) { --g-critico: #ff3b30; --g-aviso: #ff9f0a; --g-ok: #30d158; --g-info: #0a84ff; } }
+#pantalla-registro .rr-titulo, #pantalla-registro .rr-bloque-tit { font-family: var(--mono); font-weight: 500; letter-spacing: 0.08em; }
+.rr-crono-cab { display: flex; justify-content: space-between; gap: 0.5rem; }
+.rr-crono-filtros { margin-bottom: 0.45rem; }
+.rr-lista { gap: 0.4rem; }
+.rr-item { --g: var(--g-info); background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--g); border-radius: 6px; padding: 0.3rem 0.4rem 0.4rem 0.55rem; }
+.rr-g-critico { --g: var(--g-critico); background: color-mix(in srgb, var(--g-critico) 7%, var(--card-bg)); }
+.rr-g-aviso { --g: var(--g-aviso); }
+.rr-g-ok { --g: var(--g-ok); }
+.rr-g-info { --g: var(--g-info); }
+.rr-en-hoja .rr-linea, .rr-linea { display: block; border-top: none; padding: 0; }
+.rr-linea-cab { display: flex; align-items: center; gap: 0.4rem; }
+.rr-cab-hueco { flex: 1 1 auto; }
+.rr-item .rr-hora { font-family: var(--mono); font-weight: 500; font-size: 0.8rem; color: var(--g-info); width: 5.2rem; border-bottom-color: transparent; padding-left: 0; }
+.rr-etiqueta { font-family: var(--mono); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.05em; padding: 0.1rem 0.35rem; border-radius: 4px; color: var(--g); background: color-mix(in srgb, var(--g) 16%, transparent); white-space: nowrap; }
+.rr-item .rr-texto { display: block; font-size: 0.85rem; line-height: 1.35; padding: 0.1rem 0 0; }
+.rr-item .rr-texto small { display: block; font-family: var(--mono); font-size: 0.72rem; margin-top: 0.1rem; }
+.rr-item .rr-linea-alarma .rr-texto { color: var(--text); }
+.rr-item .rr-linea-fase .rr-texto { color: var(--text); }
+.rr-item .rr-al-plegable, .rr-item .rr-editor { margin-left: 0; }

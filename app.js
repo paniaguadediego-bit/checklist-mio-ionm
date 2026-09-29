@@ -1300,7 +1300,22 @@
     rr_alarma_apuntada:  { es: "Alarma {n} apuntada a las {hora}.", en: "Alarm {n} logged at {hora}." },
     rr_alarma_recuperada: { es: "{n} recuperada ({min} min).", en: "{n} recovered ({min} min)." },
     rr_fase_marcada:     { es: "Fase: {fase} ({hora}).", en: "Phase: {fase} ({hora})." },
-    rr_apuntado_lista:   { es: "Apuntado", en: "Logged" },
+    rr_apuntado_lista:   { es: "Cronograma de eventos", en: "Event timeline" },
+    rr_n_eventos:        { es: "{n} eventos", en: "{n} events" },
+    rr_n_evento:         { es: "1 evento", en: "1 event" },
+    rr_filtro_todos:     { es: "Todos", en: "All" },
+    rr_filtro_criticos:  { es: "Críticos", en: "Critical" },
+    rr_filtro_avisos:    { es: "Advertencias", en: "Warnings" },
+    rr_filtro_info:      { es: "Info/Normal", en: "Info/Normal" },
+    rr_filtro_vacio:     { es: "Nada en este filtro.", en: "Nothing in this filter." },
+    rr_et_fase:          { es: "FASE", en: "PHASE" },
+    rr_et_evento:        { es: "EVENTO", en: "EVENT" },
+    rr_et_cambio:        { es: "CAMBIO", en: "CHANGE" },
+    rr_et_alarma:        { es: "ALARMA", en: "ALARM" },
+    rr_et_recupera:      { es: "RECUPERA", en: "RECOVERY" },
+    rr_et_mapeo:         { es: "MAPEO", en: "MAPPING" },
+    rr_et_anest:         { es: "ANESTESIA", en: "ANAESTH." },
+    rr_et_tecnico:       { es: "TÉCNICO", en: "TECHNICAL" },
     rr_vacio:            { es: "Todavía no hay nada apuntado.", en: "Nothing logged yet." },
     rr_quitar:           { es: "Quitar esta línea", en: "Remove this line" },
     rr_quitar_conf:      { es: "¿Quitar esta línea? Si era una alarma, se vacía también su fila de alarmas.", en: "Remove this line? If it was an alarm, its alarm row is cleared too." },
@@ -17208,12 +17223,32 @@
     botones.appendChild(bAl);
     bEvento.appendChild(botones);
 
-    // Lo apuntado, en orden de hora (lo último, abajo)
-    panel.appendChild(regNodo("div", "rr-titulo", T("rr_apuntado_lista")));
-    var lista = regNodo("div", "rr-lista");
+    // Lo apuntado, en orden de hora (lo último, abajo). «Cronograma de
+    // eventos» (30-09-2026, pedido del usuario: nombre y aspecto de tarjetas
+    // con franja de color), con el total a la derecha y filtros por gravedad.
     var items = regItemsApuntados(d);
+    var cabL = regNodo("div", "rr-titulo rr-crono-cab");
+    cabL.appendChild(regNodo("span", null, T("rr_apuntado_lista")));
+    cabL.appendChild(regNodo("span", null, items.length === 1 ? T("rr_n_evento") : T("rr_n_eventos", { n: items.length })));
+    panel.appendChild(cabL);
+    if (items.length) {
+      var filtros = regNodo("div", "rr-chips rr-crono-filtros");
+      [["todos", "rr_filtro_todos"], ["critico", "rr_filtro_criticos"], ["aviso", "rr_filtro_avisos"], ["info", "rr_filtro_info"]].forEach(function (f) {
+        var b = regNodo("button", "rr-chip" + (regFiltroCrono === f[0] ? " activo" : ""), T(f[1]));
+        b.type = "button";
+        b.addEventListener("click", function () { regFiltroCrono = f[0]; renderRegistroContenido(); });
+        filtros.appendChild(b);
+      });
+      panel.appendChild(filtros);
+    }
+    var lista = regNodo("div", "rr-lista");
     if (!items.length) lista.appendChild(regNodo("p", "reg-ayuda", T("rr_vacio")));
-    items.forEach(function (it) { lista.appendChild(regLineaApuntada(d, it)); });
+    var visibles = items.filter(function (it) {
+      var g = regTipoApuntado(it).g;
+      return regFiltroCrono === "todos" || g === regFiltroCrono || (regFiltroCrono === "info" && g === "ok");
+    });
+    if (items.length && !visibles.length) lista.appendChild(regNodo("p", "reg-ayuda", T("rr_filtro_vacio")));
+    visibles.forEach(function (it) { lista.appendChild(regLineaApuntada(d, it)); });
     panel.appendChild(lista);
     cont.appendChild(panel);
   }
@@ -17263,10 +17298,30 @@
     });
   }
 
+  // Gravedad de una línea del cronograma, para su color y los filtros:
+  // crítico (rojo) = alarma; aviso (naranja) = un cambio sin alarma o un
+  // factor técnico; ok (verde) = fase o recuperación; info (azul) = el resto
+  // (anestesia, mapeo, contexto). La etiqueta dice qué es.
+  var regFiltroCrono = "todos";
+  function regTipoApuntado(it) {
+    var ev = it.ev, al = it.al;
+    if (al) return { g: "critico", et: T("rr_et_alarma") + " A" + it.n };
+    if (ev.recupera_de) return { g: "ok", et: T("rr_et_recupera") };
+    if (ev.cod === "F") return { g: "ok", et: T("rr_et_fase") };
+    if (ev.cod === "T") return { g: "aviso", et: T("rr_et_tecnico") };
+    if (ev.cod === "An") return { g: "info", et: T("rr_et_anest") };
+    if (ev.cod === "M") return { g: "info", et: T("rr_et_mapeo") };
+    if (ev.cambio && !/^TOF /.test(ev.cambio)) return { g: "aviso", et: T("rr_et_cambio") };
+    return { g: "info", et: T("rr_et_evento") };
+  }
+
   function regLineaApuntada(d, it) {
     var ev = it.ev, al = it.al;
-    var caja = regNodo("div", "rr-item");
+    var tipo = regTipoApuntado(it);
+    var caja = regNodo("div", "rr-item rr-g-" + tipo.g);
     var fila = regNodo("div", "rr-linea" + (al ? " rr-linea-alarma" : "") + (ev && ev.cod === "F" ? " rr-linea-fase" : ""));
+    // Cabecera de la tarjeta: hora, etiqueta de color, ✎ y ✕; debajo, el texto.
+    var cab = regNodo("div", "rr-linea-cab");
     // La hora se puede corregir aquí mismo (28-09-2026, pedido del
     // usuario: por si no se apuntó en el momento). Si la línea es una
     // alarma o una recuperación, cambia también la hora de la alarma.
@@ -17289,8 +17344,9 @@
       registroGuardarYa();
       renderRegistroContenido();   // se reordena y se ve la hora nueva abajo
     });
-    fila.appendChild(h);
-    fila.appendChild(regNodo("span", "rr-cod", ev ? (ev.cod || "") : "A"));
+    cab.appendChild(h);
+    cab.appendChild(regNodo("span", "rr-etiqueta", tipo.et));
+    cab.appendChild(regNodo("span", "rr-cab-hueco"));
     var txt = regNodo("span", "rr-texto");
     if (ev && ev.cod === "F") {
       txt.textContent = [ev.fase, ev.accion].filter(Boolean).join(" · ");
@@ -17309,7 +17365,6 @@
       txt.textContent = partes.filter(Boolean).join(" · ");
       if (fase || ctx || tofL) txt.appendChild(regNodo("small", null, " " + [fase ? T("rr_en_fase", { fase: fase }) : "", ctx, tofL].filter(Boolean).join(" · ")));
     }
-    fila.appendChild(txt);
     // Corregir la línea (29-09-2026, pedido del usuario): solo con ✎ (tocar
     // el texto ya no la abre), que tiene la zona táctil ampliada; otra vez, o
     // «Hecho», cierra las casillas.
@@ -17323,7 +17378,7 @@
     ed.title = T("rr_editar");
     ed.setAttribute("aria-label", T("rr_editar"));
     ed.addEventListener("click", alternarEdicion);
-    fila.appendChild(ed);
+    cab.appendChild(ed);
     var q = regNodo("button", "reg-fila-quitar", "✕");
     q.type = "button";
     q.title = T("rr_quitar");
@@ -17335,7 +17390,9 @@
       registroGuardarYa();
       renderRegistroContenido();
     });
-    fila.appendChild(q);
+    cab.appendChild(q);
+    fila.appendChild(cab);
+    fila.appendChild(txt);
     caja.appendChild(fila);
     if (regEditando === clave) caja.appendChild(regEditorApuntado(d, ev, al));
     if (al) {
