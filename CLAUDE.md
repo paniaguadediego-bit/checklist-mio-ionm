@@ -194,7 +194,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Mis apuntes: fotos como archivos aparte + sincronización | `subirApunteDocYaHidratado()`, `subirFotosApuntePendientes()`, `descargarFotosApunteFaltantes()`, `borrarFotosApunteRemotas()`, `apunteDocLigero()` | ver `grep` |
 | Mis apuntes: exportar a Word (.docx, sin librerías) | `exportarApuntesWord()`, `zipSinComprimir()`, `docxParrafosDeHtml()` | ver `grep` |
 | Registro intraoperatorio: pantalla digital | `REG_SECCIONES`, `regControl()`, `regGet()`, `REG_PANTALLA` (pintado propio por sección), `pintarSeccionCampos()` (A), `pintarSeccionBasales()` (E) | ver `grep` |
-| Lista propia de TODOS los desplegables (el `<select>` cerrado no cambia; un manejador en `document` en captura; `data-nativo` para excluir uno) | `selEsPropio()`, `abrirListaSelect()`, `colocarListaSelect()`, `cerrarListaSelect()` | ver `grep` |
+| Lista propia de TODOS los desplegables (el `<select>` cerrado no cambia; un manejador en `document` en captura; `data-nativo` para excluir uno). En táctil se abre al SOLTAR y solo si el dedo no se movió (si no, es scroll) | `selEsPropio()`, `abrirListaSelect()`, `colocarListaSelect()`, `cerrarListaSelect()`, `selMovido()` | ver `grep` |
 | Técnicas IONM desde el repo privado | `bajarTecnicasMio()`, `hayTecnicasMio()`, `pintarTileTecnicasMio()`, `olvidarTecnicasMio()`, `TECMIO_KEY` | ver `grep` |
 | Catálogo del Organizador en el móvil (sin scroll propio; al elegir sube a las cajas y al colocar vuelve al material) | `plegarCatalogo()`, `anclaCatalogo`, `catalogoConScrollPropio()`, `altoBarrasFijas()` | ver `grep` |
 | Foco sin teclado en táctil (Etiquetas, Material nuevo) | `enfocarSinTeclado()` | ver `grep` |
@@ -224,6 +224,9 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Columnas de basales OP BSL/PostPos1/PostPos2/CL BSL | `REG_BASALES_COLS`, `regColBasal()` | ver `grep` |
 | Registro C · Anestesia en espejo y eventos An | `pintarPantallaAnestesia()`, `pintarEventosAn()` | ver `grep` |
 | Correlación de cada alarma con la evolución (ficha, Resultado): grupos automáticos por técnica + criterio; `correlato_alarmas` = {clave de grupo: {evol, momento}} con ids (`OPCIONES.correlato_evol/_momento`); concordancia por grupo | `gruposAlarmas()`, `filaCorrelato()`, `concordanciaGrupo()`, `filasCorrelato()` (→ `correlato_filas`), `textoCorrelato()`, `concordanciaDeGrupos()`, `seccionCorrelatoInforme()`, `repintarCorrelato`, `repintarPropuestaCaso`, `t: "correlato_alarmas"` en `campoCaso()` | ver `grep` |
+| Recuadros de texto que crecen solos (sin tirador): input + MutationObserver (childList y open/class/hidden) | `ajustarAltoTexto()`, `ajustarTodosLosTextos()`; `textarea { resize: none }` | ver `grep` |
+| Nombre corto de técnica en los chips de pantalla (`"corta"` en `data/surgeries.js`: BR, TVcR, TCR, THR, LAR, H-R Masetero) + ayuda al mantener pulsado (`data-ayuda`) | `rotularChipTecnica()`, `ayudaTecnica()`, `mostrarGloboAyuda()`, `.globo-ayuda` | ver `grep` |
+| Casillas de tabla sin texto dentro (la cabecera ya lo dice) | `regInputSinTexto()` | ver `grep` |
 | Menú ⋮ «Ocultar ayudas» | `AYUDAS_KEY`, `aplicarAyudas()`, `body.sin-ayudas` en style.css | ver `grep` |
 | Tema: oscuro siempre; «Modo claro» en el menú ⋮ (por dispositivo). Los colores oscuros van en `@media screen { :root:not(.tema-claro) … }`; al imprimir, siempre los claros | `TEMA_KEY`, `aplicarTema()`, `html.tema-claro` en style.css | ver `grep` |
 | Precios inventados de la demo | `PRECIOS_DEMO`, `preciosDemo()` | ver `grep` |
@@ -382,6 +385,16 @@ distinta a la anterior, no importa el formato exacto.
 >   trabaja sobre la copia de trabajo (`guardar` = `REG_SIN_GUARDAR`) y guarda con
 >   «Guardar»; el Registro guarda solo (`REG_GUARDAR`). Sin caso (Modelo 0) no hay
 >   espejo.
+> - **Retoques del 29-09 (tarde)**: desplegables que ya no se abren al hacer
+>   scroll sobre ellos; recuadros de texto que crecen solos; sin texto dentro de
+>   las casillas del Mapeo; raíces y tornillos con la columna vertebral también
+>   en Modelo 0 (`d.raices`; la tabla `e_t_*` solo si ya tenía datos);
+>   **CoMEP** (antes «MEP córtico-bulbares»/«CoBu»; solo rótulos, ids iguales);
+>   reflejos con nombre corto y ayuda al mantener pulsado; ficha con la barra en
+>   una fila (Informe y Hoja de registro en el ⋮, «Volver») y fondo algo más
+>   claro con línea dorada; alarmas con medidas «Aviso al cirujano/anestesista»
+>   y «Reposicionar…», recuperación «recupera / en parte / no recupera»,
+>   rótulos, «Ahora» y duración (`pintarMedidasRecup()`).
 > - **Correlación de cada alarma** (29-09-2026): en Resultado, una fila por grupo
 >   de alarmas (misma técnica + mismo criterio = mismo sustrato; varias HFD de un
 >   músculo a distintas horas son una fila) con evolución y momento en listas

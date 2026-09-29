@@ -1094,9 +1094,9 @@ window.SURGERIES_DATA = {
     { "id": "t_pem", "etiqueta": "t-MEP", "grupo": "monitorizacion", "activa": true, "descripcion": "Potenciales evocados motores transcraneales" },
     { "id": "c_pem", "etiqueta": "c-MEP", "grupo": "monitorizacion", "activa": true, "descripcion": "PEM por estímulo directo cortical" },
     { "id": "c_pess", "etiqueta": "c-SEP", "grupo": "monitorizacion", "activa": true, "descripcion": "PESS corticales" },
-    { "id": "pem_corticobulbares", "etiqueta": "MEP córtico-bulbares", "grupo": "monitorizacion", "activa": true, "descripcion": "Vías corticobulbares (pares craneales)" },
+    { "id": "pem_corticobulbares", "etiqueta": "CoMEP", "grupo": "monitorizacion", "activa": true, "descripcion": "Vías corticobulbares (pares craneales)" },
     { "id": "onda_d", "etiqueta": "Onda D", "grupo": "monitorizacion", "activa": true, "descripcion": "Registro epidural de la onda D" },
-    { "id": "br", "etiqueta": "Blink Reflex (BR)", "grupo": "monitorizacion", "activa": true, "reflejo": true, "descripcion": "Reflejo del parpadeo" },
+    { "id": "br", "etiqueta": "Blink Reflex (BR)", "corta": "BR", "grupo": "monitorizacion", "activa": true, "reflejo": true, "descripcion": "Reflejo del parpadeo" },
     { "id": "rbc", "etiqueta": "RBC", "grupo": "monitorizacion", "activa": true, "reflejo": true, "descripcion": "Reflejo bulbo-cavernoso" },
     { "id": "peatc", "etiqueta": "PEATC", "grupo": "monitorizacion", "activa": true, "descripcion": "Potenciales evocados auditivos de tronco cerebral" },
     { "id": "emg", "etiqueta": "Free-EMG", "grupo": "monitorizacion", "activa": true, "descripcion": "Electromiografía" },
@@ -1111,7 +1111,7 @@ window.SURGERIES_DATA = {
     // sigue mostrando (tachado) en vez de perder la marca.
     { "id": "reflejo_h", "etiqueta": "Reflejo H", "grupo": "monitorizacion", "activa": false, "reflejo": true, "descripcion": "Dividido en H-R Gastrocnemio y H-R Masetero" },
     { "id": "hr_popliteo", "etiqueta": "H-R Sóleo", "grupo": "monitorizacion", "activa": true, "reflejo": true, "descripcion": "Reflejo H por estímulo en hueco poplíteo" },
-    { "id": "hr_masetero", "etiqueta": "H-R Masetero (Jaw Jerk)", "grupo": "monitorizacion", "activa": true, "reflejo": true, "descripcion": "Reflejo H por estímulo del nervio masetero — mismo circuito que el jaw jerk / reflejo maseterino clásico. No confundir con el reflejo inhibitorio del masetero (silent period), que es otro circuito y no se estudia en IONM." },
+    { "id": "hr_masetero", "etiqueta": "H-R Masetero (Jaw Jerk)", "corta": "H-R Masetero", "grupo": "monitorizacion", "activa": true, "reflejo": true, "descripcion": "Reflejo H por estímulo del nervio masetero — mismo circuito que el jaw jerk / reflejo maseterino clásico. No confundir con el reflejo inhibitorio del masetero (silent period), que es otro circuito y no se estudia en IONM." },
     { "id": "hr_cuadriceps", "etiqueta": "H-R Cuádriceps", "grupo": "monitorizacion", "activa": true, "reflejo": true },
 
     /* Añadidas de la lista del usuario. Van con su etiqueta exacta y SIN
@@ -1139,10 +1139,10 @@ window.SURGERIES_DATA = {
     // masetero (silent period) es un circuito distinto del H-reflex, no un
     // sinónimo. Se desactiva por la misma razón que rx_mandibular.
     { "id": "rx_inhib_maseterino", "etiqueta": "Reflejo inhibitorio del masetero", "grupo": "monitorizacion", "activa": false, "reflejo": true, "descripcion": "No se estudia en IONM: es el silent period maseterino, un circuito inhibitorio distinto del H-reflex del masetero." },
-    { "id": "rx_tvcr", "etiqueta": "Reflejo trigémino-vocal (TVcR)", "grupo": "monitorizacion", "activa": true, "reflejo": true },
-    { "id": "rx_thr", "etiqueta": "Reflejo trigémino-hipogloso (THR)", "grupo": "monitorizacion", "activa": true, "reflejo": true },
-    { "id": "rx_tcr", "etiqueta": "Reflejo trigémino-cervical (TCR)", "grupo": "monitorizacion", "activa": true, "reflejo": true },
-    { "id": "rx_lar", "etiqueta": "Reflejo laríngeo aductor (LAR)", "grupo": "monitorizacion", "activa": true, "reflejo": true },
+    { "id": "rx_tvcr", "etiqueta": "Reflejo trigémino-vocal (TVcR)", "corta": "TVcR", "grupo": "monitorizacion", "activa": true, "reflejo": true },
+    { "id": "rx_thr", "etiqueta": "Reflejo trigémino-hipogloso (THR)", "corta": "THR", "grupo": "monitorizacion", "activa": true, "reflejo": true },
+    { "id": "rx_tcr", "etiqueta": "Reflejo trigémino-cervical (TCR)", "corta": "TCR", "grupo": "monitorizacion", "activa": true, "reflejo": true },
+    { "id": "rx_lar", "etiqueta": "Reflejo laríngeo aductor (LAR)", "corta": "LAR", "grupo": "monitorizacion", "activa": true, "reflejo": true },
     { "id": "rx_glosofaringeo_trigeminal", "etiqueta": "Reflejo glosofaríngeo-trigeminal", "grupo": "monitorizacion", "activa": true, "reflejo": true },
 
     { "id": "mapeo_cortical", "etiqueta": "Mapeo cortical", "grupo": "mapeo", "activa": true, "descripcion": "Técnica de Penfield" },

@@ -1754,7 +1754,7 @@ dialog h3 {
   color: var(--text);
   width: 100%;
 }
-.campo textarea { resize: vertical; }
+.campo textarea { resize: none; }
 
 /* flex-wrap (28-09-2026): sin él, en el móvil las filas de campos de
    Etiquetas y Material nuevo se salían por la derecha. */
@@ -2092,7 +2092,7 @@ dialog h3 {
   background: var(--campo-bg);
   color: var(--text);
   overflow: auto;
-  resize: vertical;
+  resize: none;
   white-space: pre-wrap;
   word-break: break-word;
 }
@@ -2346,7 +2346,7 @@ dialog h3 {
   background: var(--campo-bg);
   color: var(--text);
 }
-.tecpar-campo textarea { resize: vertical; }
+.tecpar-campo textarea { resize: none; }
 /* Campos anchos (texto libre, multiselección, la nota de técnicas sin
    definición propia): ocupan toda la rejilla en vez de una celda estrecha
    como los campos cortos. */
@@ -3646,12 +3646,14 @@ dialog:focus { outline: none; }
 }
 .caso-mas-lista[hidden] { display: none; }
 .caso-mas-lista button { text-align: left; }
+/* Una sola fila también en el móvil (29-09-2026): botones más bajos y con
+   un borde que se vea sobre el fondo oscuro (antes, negro sobre negro). */
+.caso-acciones { gap: 0.4rem; background: var(--tag-bg); border-top: 1px solid var(--border); }
+.caso-acciones > button, .caso-mas-btn { border-color: var(--caso-borde-boton, var(--border)); }
+.caso-acciones button { min-height: 2.4rem; }
 @media (max-width: 520px) {
-  .caso-acciones { flex-wrap: wrap; padding: 0.5rem 0.7rem; }
-  .caso-acciones .caso-acciones-salto { flex: 0 0 100%; height: 0; }
-  #caso-crear-informe, #caso-hoja-registro { flex: 1 1 0; }
-  #caso-volver { flex: 0 0 auto; }
-  #caso-guardar { flex: 1 1 auto; font-size: 0.95rem; }
+  .caso-acciones { padding: 0.45rem 0.6rem; gap: 0.3rem; }
+  .caso-acciones > button { padding: 0.3rem 0.55rem; }
 }
 
 /* Tarjetas y pestañas ocultas (p. ej. lo "en construcción" en la demo):
@@ -3900,7 +3902,11 @@ button, input, select, textarea { font-family: inherit; }
 .reg-p-alarma { border: 1px solid var(--border-soft); border-left: 3px solid var(--peligro); border-radius: 6px; padding: 0.4rem 0.5rem; display: flex; flex-direction: column; gap: 0.3rem; }
 .reg-p-al-l1 { display: grid; grid-template-columns: 2rem 5.4rem minmax(0, 1fr) 1.8rem; gap: 0.3rem; align-items: center; }
 .reg-p-al-l2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 0.3rem; }
-.reg-p-al-l3 { display: grid; grid-template-columns: minmax(0, 1fr) 6.5rem 5.4rem; gap: 0.3rem; }
+.reg-p-al-l3 { display: grid; grid-template-columns: minmax(0, 1fr) 9rem 9.5rem; gap: 0.3rem; align-items: start; }
+/* Casillas de nota, recuperación y hora con su rótulo encima (29-09-2026) */
+.reg-p-al-celda { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+.reg-p-al-et { font-size: 0.68rem; color: var(--text-muted); }
+.reg-p-al-dur { font-size: 0.7rem; color: var(--text-muted); }
 .reg-p-al-n { color: var(--peligro); font-size: 0.85rem; }
 @media (max-width: 520px) {
   .reg-basal.reg-p-ev .reg-basal-fila { grid-template-columns: 4.8rem 5.6rem minmax(0, 1fr) 1.8rem; }
@@ -4099,3 +4105,29 @@ body.sin-ayudas .coste-nota { display: none !important; }
   .caso-correlato-ctr { grid-template-columns: minmax(0, 1fr) 2.6rem; }
   .caso-correlato-ctr > select:first-child { grid-column: 1 / -1; }
 }
+/* Recuadros de texto libre (29-09-2026, pedido del usuario): sin tirador
+   para estirarlos con el dedo; crecen solos al escribir (ajustarAltoTexto()
+   en app.js), con su alto inicial (rows) como mínimo. */
+textarea { resize: none; overflow-y: hidden; }
+/* Globo de ayuda al mantener pulsado (29-09-2026): el nombre completo y la
+   descripción de una técnica con nombre corto. */
+.globo-ayuda {
+  position: fixed; z-index: 2000; padding: 0.35rem 0.55rem; border-radius: 4px;
+  background: var(--text); color: var(--bg); font-size: 0.78rem; line-height: 1.35;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.35); pointer-events: none;
+}
+[data-ayuda] { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+/* Ficha de un caso algo más clara que el resto en oscuro, con una línea
+   dorada arriba (29-09-2026, pedido del usuario: que se note que se está
+   dentro de un caso). Se redefinen las variables solo dentro del diálogo. */
+@media screen {
+  :root:not(.tema-claro) #dlg-caso {
+    --card-bg: #232323;
+    --tag-bg: #2c2c2c;
+    --border-soft: #3a3a3a;
+    --caso-borde-boton: #5a5a5a;
+    background: var(--card-bg);
+    border-top: 3px solid var(--accent);
+  }
+}
+.caso-acciones > button { white-space: nowrap; }

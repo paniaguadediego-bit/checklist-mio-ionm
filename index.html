@@ -24,7 +24,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260930t">
+<link rel="stylesheet" href="style.css?v=20260930v">
 </head>
 <body>
 
@@ -698,19 +698,20 @@
     <p class="dlg-error" id="caso-error" hidden></p>
   </div>
 
-  <!-- Barra de acciones (demo-congreso B1.F1): "Borrar caso" vive en el menú
-       ⋮ para dejar sitio; en el móvil la barra va en dos filas y Guardar ocupa
-       todo el ancho que quede, siempre visible (ver .caso-acciones en style.css). -->
+  <!-- Barra de acciones (demo-congreso B1.F1): en una sola fila desde el
+       29-09-2026 (pedido del usuario: ocupaba mucho en el móvil). Informe,
+       Hoja de registro y Borrar caso viven en el menú ⋮; abajo quedan
+       Cerrar/Reabrir caso, Volver y Guardar (ver .caso-acciones en style.css). -->
   <div class="dlg-botones caso-acciones">
     <div class="caso-mas" id="caso-mas">
       <button type="button" id="caso-mas-btn" class="caso-mas-btn" aria-haspopup="true" aria-expanded="false" data-i18n-title="caso_mas_tit">⋮</button>
       <div class="caso-mas-lista" id="caso-mas-lista" hidden>
+        <button type="button" id="caso-crear-informe" data-i18n="caso_crear_informe"></button>
+        <button type="button" id="caso-hoja-registro" data-i18n="caso_hoja_registro"></button>
         <button type="button" id="caso-borrar" class="peligro" hidden data-i18n="caso_borrar"></button>
       </div>
     </div>
-    <button type="button" id="caso-crear-informe" data-i18n="caso_crear_informe"></button>
-    <button type="button" id="caso-hoja-registro" data-i18n="caso_hoja_registro"></button>
-    <span class="barra-flex caso-acciones-salto"></span>
+    <span class="barra-flex"></span>
     <button type="button" id="caso-cerrar"></button>
     <button type="button" id="caso-volver" data-i18n="caso_volver"></button>
     <button type="button" id="caso-guardar" class="primario" data-i18n="guardar"></button>
@@ -1104,10 +1105,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20260930b"></script>
-<script src="data/i18n-en.js?v=20260930a"></script>
-<script src="data/guia.js?v=20260930k"></script>
+<script src="data/surgeries.js?v=20260930c"></script>
+<script src="data/i18n-en.js?v=20260930b"></script>
+<script src="data/guia.js?v=20260930l"></script>
 <script src="data/parametros-tecnicas.js?v=20260930a"></script>
-<script src="app.js?v=20260930za"></script>
+<script src="app.js?v=20260930zc"></script>
 </body>
 </html>

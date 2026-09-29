@@ -174,7 +174,7 @@ window.SURGERIES_I18N.en = {
     "t_pem": { "etiqueta": "t-MEP", "descripcion": "Transcranial motor evoked potentials" },
     "c_pem": { "etiqueta": "c-MEP", "descripcion": "MEP by direct cortical stimulation" },
     "c_pess": { "etiqueta": "c-SEP", "descripcion": "Cortical SSEP" },
-    "pem_corticobulbares": { "etiqueta": "Corticobulbar MEP", "descripcion": "Corticobulbar tracts (cranial nerves)" },
+    "pem_corticobulbares": { "etiqueta": "CoMEP", "descripcion": "Corticobulbar tracts (cranial nerves)" },
     "onda_d": { "etiqueta": "D wave", "descripcion": "Epidural D-wave recording" },
     "br": { "etiqueta": "Blink Reflex (BR)", "descripcion": "Blink reflex" },
     "rbc": { "etiqueta": "BCR", "descripcion": "Bulbocavernosus reflex" },

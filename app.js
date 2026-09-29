@@ -566,7 +566,7 @@
     caso_g_desarrollo:   { es: "Desarrollo intraoperatorio", en: "Intraoperative course" },
     caso_g_resultado:    { es: "Resultado / Correlación clínica", en: "Outcome / Clinical correlation" },
     caso_g_formacion:    { es: "Docencia / Meta", en: "Teaching / Meta" },
-    caso_volver:         { es: "Volver a la lista", en: "Back to the list" },
+    caso_volver:         { es: "Volver", en: "Back" },
     caso_borrar:         { es: "Borrar caso", en: "Delete case" },
     caso_mas_tit:        { es: "Más acciones", en: "More actions" },
     caso_crear_informe:  { es: "Informe (PDF)", en: "Report (PDF)" },
@@ -939,8 +939,8 @@
     tour_x_registro:     { es: "En quirófano, arriba de la hoja se apunta con dos toques: la fase una vez, y cada cambio como qué + qué pasa. La hora se pone sola y un «Recupera» cierra la alarma. Más abajo, el resto de la hoja (anestesia, basales, mapeo, cierre).",
                            en: "In the OR, at the top of the sheet you log with two taps: the phase once, and each change as what + what happens. The time is set automatically and a “Recovers” closes the alarm. Further down, the rest of the sheet (anaesthesia, baselines, mapping, closure)." },
     tour_t_salidas:      { es: "Hoja de registro e informe", en: "Record sheet and report" },
-    tour_x_salidas:      { es: "Desde la ficha, Hoja de registro imprime las dos páginas A4 para quirófano, ya rellenas con lo que sabe el caso, e Informe (PDF) hace el informe del caso. El Checklist pre-quirúrgico también se vincula al caso.",
-                           en: "From the case form, Record sheet prints the two A4 pages for the OR, already filled in with what the case knows, and Create report makes the case report as a PDF. The pre-surgical Checklist can also be linked to the case." },
+    tour_x_salidas:      { es: "En el menú ⋮ de la ficha, Hoja de registro imprime las dos páginas A4 para quirófano, ya rellenas con lo que sabe el caso, e Informe (PDF) hace el informe del caso. El Checklist pre-quirúrgico también se vincula al caso.",
+                           en: "In the case form ⋮ menu, Record sheet prints the two A4 pages for the OR, already filled in with what the case knows, and Create report makes the case report as a PDF. The pre-surgical Checklist can also be linked to the case." },
     tour_t_exportar:     { es: "Exportar y analizar", en: "Export and analyse" },
     tour_x_exportar:     { es: "Con los filtros de arriba eliges casos y los exportas: informe en PDF de varios casos, un CSV con una fila por caso u otro CSV con los eventos y alarmas del registro. Fuera de la demo todo se sincroniza con un repositorio privado. Puedes repetir esta visita desde Inicio.",
                            en: "Use the filters above to choose cases and export them: a PDF report of several cases, a CSV with one row per case, or another CSV with the log's events and alarms. Outside the demo everything syncs to a private repository. You can repeat this tour from Home." },
@@ -1233,6 +1233,8 @@
     reg_p_medidas:       { es: "Medidas adoptadas", en: "Measures taken" },
     reg_p_recup:         { es: "Recuperación", en: "Recovery" },
     reg_p_h_recup:       { es: "Hora de recuperación", en: "Recovery time" },
+    reg_p_recupero_ahora: { es: "Recuperó ahora: pone la hora actual", en: "Recovered now: sets the current time" },
+    reg_p_al_duracion:   { es: "{min} min de alarma", en: "{min} min of alarm" },
     reg_p_vaciar_alarma: { es: "¿Vaciar esta alarma?", en: "Clear this alarm?" },
     reg_p_causa_l:       { es: "Causa probable", en: "Probable cause" },
     reg_p_nota:          { es: "Nota breve", en: "Short note" },
@@ -7196,6 +7198,23 @@
     return t === clave ? valor : t;
   }
 
+  /* Rótulo de una técnica en los chips de pantalla: el nombre corto si lo
+     tiene («TVcR» en vez de «Reflejo trigémino-vocal (TVcR)»; 29-09-2026,
+     pedido del usuario: los reflejos ocupaban mucho). El nombre completo y
+     la descripción van en el title (ratón encima) y en data-ayuda (mantener
+     pulsado en el móvil, ver el globo de ayuda). En papel -hoja impresa,
+     informe- sigue el nombre completo. */
+  function ayudaTecnica(t) {
+    var d = campo(t, "descripcion"), e = campo(t, "etiqueta");
+    return d ? e + " — " + d : e;
+  }
+  function rotularChipTecnica(chip, t) {
+    chip.textContent = campo(t, "corta") || campo(t, "etiqueta");
+    chip.title = ayudaTecnica(t);
+    chip.setAttribute("data-ayuda", chip.title);
+    return chip;
+  }
+
   /* Chips de técnicas en la ficha del caso: reparte una lista ya filtrada
      en tres cestas -monitorización, reflejos, mapeo-, conservando el orden
      del catálogo dentro de cada una. Los reflejos (Blink Reflex, RBC, los
@@ -7606,7 +7625,7 @@
         var chip = document.createElement("span");
         chip.className = "chip chip-extra" + (elegidas.indexOf(t.id) !== -1 ? " activo" : "") +
           (t.activa === false ? " desactivada" : "");
-        chip.textContent = campo(t, "etiqueta");
+        rotularChipTecnica(chip, t);
         chip.addEventListener("click", function () {
           var i = elegidas.indexOf(t.id);
           if (i === -1) elegidas.push(t.id); else elegidas.splice(i, 1);
@@ -7651,7 +7670,7 @@
         anadirChipsAgrupados(filaAlt, realizadasTec, function (t) {
           var chip = document.createElement("span");
           chip.className = "chip chip-extra" + (alteradas.indexOf(t.id) !== -1 ? " activo" : "");
-          chip.textContent = campo(t, "etiqueta");
+          rotularChipTecnica(chip, t);
           chip.addEventListener("click", function () {
             var i = alteradas.indexOf(t.id);
             if (i === -1) alteradas.push(t.id); else alteradas.splice(i, 1);
@@ -8395,7 +8414,9 @@
     // no hay nada que borrar hasta el primer "Guardar".
     document.getElementById("caso-borrar").hidden = casoEsNuevo;
     // El menú ⋮ solo tiene "Borrar caso": sin él, el menú sobra.
-    document.getElementById("caso-mas").hidden = casoEsNuevo;
+    // El ⋮ se ve siempre: además de Borrar (solo si ya está guardado) lleva
+    // Informe y Hoja de registro, que valen también para uno nuevo.
+    document.getElementById("caso-mas").hidden = false;
     cerrarMenuCaso();
     document.getElementById("caso-error").hidden = true;
     pintarBotonCerrarCaso();
@@ -8830,6 +8851,10 @@
   });
   document.getElementById("dlg-caso").addEventListener("click", function (e) {
     if (!e.target.closest("#caso-mas")) cerrarMenuCaso();
+  });
+  // Elegir cualquier opción del ⋮ (Informe, Hoja de registro...) lo cierra
+  document.getElementById("caso-mas-lista").addEventListener("click", function (e) {
+    if (e.target.closest("button")) cerrarMenuCaso();
   });
   document.getElementById("caso-borrar").addEventListener("click", function () {
     cerrarMenuCaso();
@@ -9913,7 +9938,7 @@
       activos(TECNICAS).forEach(function (t) {
         var chip = document.createElement("span");
         chip.className = "chip chip-extra" + (elegidas.indexOf(t.id) !== -1 ? " activo" : "");
-        chip.textContent = campo(t, "etiqueta");
+        rotularChipTecnica(chip, t);
         chip.addEventListener("click", function () {
           var i = elegidas.indexOf(t.id);
           if (i === -1) elegidas.push(t.id); else elegidas.splice(i, 1);
@@ -10078,10 +10103,11 @@
         chip.className = "chip chip-extra" +
           (marcadas.indexOf(t.id) !== -1 ? " activo" : "") +
           (t.activa === false ? " desactivada" : "");
-        chip.textContent = campo(t, "etiqueta");
-        var desc = campo(t, "descripcion");
-        if (t.activa === false) desc = T("tec_desactivada") + (desc ? " · " + desc : "");
-        if (desc) chip.title = desc;
+        rotularChipTecnica(chip, t);
+        if (t.activa === false) {
+          chip.title = T("tec_desactivada") + " · " + chip.title;
+          chip.setAttribute("data-ayuda", chip.title);
+        }
         chip.addEventListener("click", function () { alternarTecnica(t.id); });
         fila.appendChild(chip);
       });
@@ -13826,8 +13852,8 @@
         ], 2.4)
       ], 3.2),
       simDiv("v", [
-        simH("R.CoBuBu", mep("", ["R.Oc", "R.Mnt", "R.Voc"])),
-        simH("L.CoBuBu", mep("", ["Voc.2-4", "Voc.6-8"]))
+        simH("R.CoMEP", mep("", ["R.Oc", "R.Mnt", "R.Voc"])),
+        simH("L.CoMEP", mep("", ["Voc.2-4", "Voc.6-8"]))
       ], 0.8)
     ]) };
     // Las que en la pantalla real quedan abajo, minimizadas.
@@ -15400,7 +15426,7 @@
      como el nativo. Quedan fuera los múltiples o con size, los marcados
      data-nativo y los ya sustituidos por mejorarSelectorCaso(). */
   var selAbierto = null;   // { sel, lista } de la lista abierta ahora
-  var selToque = null;     // <select> donde empezó el toque en curso
+  var selToque = null;     // { sel, x, y }: <select> y punto donde empezó el toque
 
   function selEsPropio(el) {
     return !!el && el.tagName === "SELECT" && !el.multiple && !(el.size > 1) &&
@@ -15479,22 +15505,33 @@
     }
     if (selAbierto && !selAbierto.lista.contains(e.target)) cerrarListaSelect(false);
   }, true);
-  // En táctil la lista nativa se abre con el toque, antes de cualquier
-  // mousedown: hay que cortarlo en touchstart y abrir la propia al soltar.
+  // En táctil la lista propia se abre al SOLTAR, y solo si fue un toque: si
+  // el dedo se movió es que se estaba desplazando la página (29-09-2026,
+  // pedido del usuario: empezar el scroll sobre un desplegable lo abría en
+  // vez de desplazar, porque antes se cortaba el gesto ya en touchstart).
+  // El preventDefault del touchend evita la lista nativa.
+  function selMovido(t) {
+    return !selToque || Math.abs(t.clientX - selToque.x) > 10 || Math.abs(t.clientY - selToque.y) > 10;
+  }
   document.addEventListener("touchstart", function (e) {
-    if (selEsPropio(e.target)) {
-      e.preventDefault();
-      selToque = e.target;
-    } else if (selAbierto && !selAbierto.lista.contains(e.target)) {
-      cerrarListaSelect(false);
+    if (selEsPropio(e.target) && e.touches.length === 1) {
+      selToque = { sel: e.target, x: e.touches[0].clientX, y: e.touches[0].clientY };
+    } else {
+      selToque = null;
+      if (selAbierto && !selAbierto.lista.contains(e.target)) cerrarListaSelect(false);
     }
-  }, { capture: true, passive: false });
+  }, { capture: true, passive: true });
+  document.addEventListener("touchmove", function (e) {
+    if (selToque && selMovido(e.touches[0])) selToque = null;
+  }, { capture: true, passive: true });
+  document.addEventListener("touchcancel", function () { selToque = null; }, true);
   document.addEventListener("touchend", function (e) {
     var s = selToque;
+    if (s && e.changedTouches[0] && selMovido(e.changedTouches[0])) s = null;
     selToque = null;
-    if (s && e.target === s) {
+    if (s && e.target === s.sel) {
       e.preventDefault();
-      alternarListaSelect(s);
+      alternarListaSelect(s.sel);
     }
   }, { capture: true, passive: false });
   document.addEventListener("keydown", function (e) {
@@ -15526,6 +15563,93 @@
     cerrarListaSelect(false);
   }, true);
   window.addEventListener("resize", function () { cerrarListaSelect(false); });
+
+  /* Mantener pulsado para ver la ayuda (29-09-2026, pedido del usuario): en
+     táctil no hay «ratón encima», así que un toque largo (0,5 s) sobre algo
+     con data-ayuda enseña ese texto en un globo. Al soltar, el globo se
+     queda un momento para leerlo y ese toque no cuenta como pulsación (no
+     marca ni desmarca el chip). Si el dedo se mueve, es scroll: nada. */
+  var ayudaGlobo = null, ayudaTimer = null, ayudaToque = null;
+  function quitarGloboAyuda() {
+    if (ayudaTimer) { clearTimeout(ayudaTimer); ayudaTimer = null; }
+    if (ayudaGlobo && ayudaGlobo.parentNode) ayudaGlobo.parentNode.removeChild(ayudaGlobo);
+    ayudaGlobo = null;
+  }
+  function mostrarGloboAyuda(el) {
+    quitarGloboAyuda();
+    var g = document.createElement("div");
+    g.className = "globo-ayuda";
+    g.textContent = el.getAttribute("data-ayuda");
+    (el.closest("dialog") || document.body).appendChild(g);
+    var r = el.getBoundingClientRect(), vw = document.documentElement.clientWidth;
+    var ancho = Math.min(280, vw - 16);
+    g.style.maxWidth = ancho + "px";
+    g.style.left = Math.max(8, Math.min(r.left, vw - 8 - g.offsetWidth)) + "px";
+    var arriba = r.top - g.offsetHeight - 6;
+    g.style.top = (arriba > 8 ? arriba : r.bottom + 6) + "px";
+    ayudaGlobo = g;
+  }
+  document.addEventListener("touchstart", function (e) {
+    quitarGloboAyuda();
+    var el = e.target.closest && e.target.closest("[data-ayuda]");
+    if (!el || e.touches.length !== 1) { ayudaToque = null; return; }
+    ayudaToque = { el: el, x: e.touches[0].clientX, y: e.touches[0].clientY, mostrado: false };
+    ayudaTimer = setTimeout(function () {
+      ayudaTimer = null;
+      if (!ayudaToque) return;
+      ayudaToque.mostrado = true;
+      mostrarGloboAyuda(ayudaToque.el);
+    }, 500);
+  }, { capture: true, passive: true });
+  document.addEventListener("touchmove", function (e) {
+    if (!ayudaToque || ayudaToque.mostrado) return;
+    var t = e.touches[0];
+    if (Math.abs(t.clientX - ayudaToque.x) > 10 || Math.abs(t.clientY - ayudaToque.y) > 10) {
+      ayudaToque = null;
+      quitarGloboAyuda();
+    }
+  }, { capture: true, passive: true });
+  document.addEventListener("touchend", function (e) {
+    var tq = ayudaToque;
+    ayudaToque = null;
+    if (ayudaTimer) { clearTimeout(ayudaTimer); ayudaTimer = null; }
+    if (tq && tq.mostrado) {
+      e.preventDefault();   // que no cuente como toque en el chip
+      var g = ayudaGlobo;
+      setTimeout(function () { if (ayudaGlobo === g) quitarGloboAyuda(); }, 1800);
+    }
+  }, { capture: true, passive: false });
+  document.addEventListener("touchcancel", function () { ayudaToque = null; quitarGloboAyuda(); }, true);
+  // El menú contextual del toque largo (copiar, seleccionar...) sobra aquí
+  document.addEventListener("contextmenu", function (e) {
+    if (e.target.closest && e.target.closest("[data-ayuda]")) e.preventDefault();
+  }, true);
+
+  /* Recuadros de texto libre que crecen solos (29-09-2026, pedido del
+     usuario): sin tirador para estirarlos con el dedo (style.css); el alto
+     se ajusta al texto al escribir, al aparecer -se crean al vuelo en la
+     ficha, el Registro, los apuntes...- y al hacerse visibles (un pliegue que
+     se abre, una pantalla o un diálogo que se muestra). El alto de "rows"
+     queda como mínimo, porque se mide partiendo de height "auto". Uno oculto
+     no se puede medir: se ajusta cuando se vea. */
+  function ajustarAltoTexto(t) {
+    if (!t || t.tagName !== "TEXTAREA" || !t.getClientRects().length) return;
+    t.style.height = "auto";
+    t.style.height = (t.scrollHeight + t.offsetHeight - t.clientHeight) + "px";
+  }
+  function ajustarTodosLosTextos() {
+    Array.prototype.forEach.call(document.querySelectorAll("textarea"), ajustarAltoTexto);
+  }
+  document.addEventListener("input", function (e) { ajustarAltoTexto(e.target); }, true);
+  if (window.MutationObserver) {
+    var altosProgramados = false;
+    new MutationObserver(function () {
+      if (altosProgramados) return;
+      altosProgramados = true;
+      requestAnimationFrame(function () { altosProgramados = false; ajustarTodosLosTextos(); });
+    }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["open", "class", "hidden"] });
+  }
+  window.addEventListener("resize", ajustarTodosLosTextos);
 
   var MARCA_ESTADO_CASO = {
     pendiente_planificar: "⚫",
@@ -15700,9 +15824,9 @@
     { v: "N", l: "N · nervio periférico", l_en: "N · peripheral nerve" }
   ];
   var REG_RECUP = [
-    { v: "S", l: "S · sí", l_en: "S · yes" },
-    { v: "P", l: "P · parcial", l_en: "P · partial" },
-    { v: "N", l: "N · no", l_en: "N · no" }
+    { v: "S", l: "S · recupera", l_en: "S · recovers" },
+    { v: "P", l: "P · recupera en parte", l_en: "P · partly recovers" },
+    { v: "N", l: "N · no recupera", l_en: "N · does not recover" }
   ];
   // Mismos ids que OPCIONES.recuperacion_senal: es el mismo dato que
   // «Resultado de la señal» de la ficha (compartido ⇄, 28-09-2026).
@@ -15733,9 +15857,15 @@
     { v: "tecnica", l: "Técnica (electrodos, equipo)", l_en: "Technical (electrodes, device)" },
     { v: "desconocida", l: "Desconocida", l_en: "Unknown" }
   ];
+  // Avisos al cirujano / anestesista primero (29-09-2026): es la medida que
+  // antes se busca después («¿se avisó?»). Reposicionar, causa frecuente en
+  // los SEP. Ids nuevos al final de nada: ninguno de antes cambia.
   var REG_MEDIDAS_AL = [
+    { v: "aviso_cir", l: "Aviso al cirujano", l_en: "Surgeon informed" },
+    { v: "aviso_an", l: "Aviso al anestesista", l_en: "Anaesthetist informed" },
     { v: "pausa", l: "Pausa / revertir maniobra", l_en: "Pause / reverse manoeuvre" },
     { v: "retraccion", l: "Liberar retracción o tracción", l_en: "Release retraction or traction" },
+    { v: "reposicionar", l: "Reposicionar cabeza, cuello o extremidad", l_en: "Reposition head, neck or limb" },
     { v: "suero", l: "Suero tibio", l_en: "Warm saline" },
     { v: "papaverina", l: "Papaverina", l_en: "Papaverine" },
     { v: "tam", l: "↑ TAM", l_en: "↑ MAP" },
@@ -15823,9 +15953,9 @@
     // distal (control) se añadió el 25-09-2026.
     { id: "onda_d", l: "Prox. D-Wave", l_en: "Prox. D-wave", tec: ["onda_d"], defecto: true },
     { id: "onda_d_dist", l: "Dist. D-Wave", l_en: "Dist. D-wave", tec: ["onda_d"], defecto: true },
-    { id: "cobu_vii_d", l: "CoBu VII D", tec: ["pem_corticobulbares"] }, { id: "cobu_vii_i", l: "CoBu VII I", tec: ["pem_corticobulbares"] },
-    { id: "cobu_ixx_d", l: "CoBu IX-X D", tec: ["pem_corticobulbares"] }, { id: "cobu_ixx_i", l: "CoBu IX-X I", tec: ["pem_corticobulbares"] },
-    { id: "cobu_xii_d", l: "CoBu XII D", tec: ["pem_corticobulbares"] }, { id: "cobu_xii_i", l: "CoBu XII I", tec: ["pem_corticobulbares"] },
+    { id: "cobu_vii_d", l: "CoMEP VII D", tec: ["pem_corticobulbares"] }, { id: "cobu_vii_i", l: "CoMEP VII I", tec: ["pem_corticobulbares"] },
+    { id: "cobu_ixx_d", l: "CoMEP IX-X D", tec: ["pem_corticobulbares"] }, { id: "cobu_ixx_i", l: "CoMEP IX-X I", tec: ["pem_corticobulbares"] },
+    { id: "cobu_xii_d", l: "CoMEP XII D", tec: ["pem_corticobulbares"] }, { id: "cobu_xii_i", l: "CoMEP XII I", tec: ["pem_corticobulbares"] },
     // H-R sóleo también es respuesta motora: columna de MEP (24-09-2026).
     { id: "hr_soleo_d", l: "H-R Sóleo D", l_en: "H-R Soleus R", tec: ["hr_popliteo"], defecto: true },
     { id: "hr_soleo_i", l: "H-R Sóleo I", l_en: "H-R Soleus L", tec: ["hr_popliteo"], defecto: true }
@@ -16897,7 +17027,7 @@
     };
     function casilla(obj, k, etiqueta) {
       box.appendChild(regNodo("span", "rr-editor-et", etiqueta));
-      box.appendChild(regInput(obj, k, "text", etiqueta, copiarAAlarma));
+      box.appendChild(regInputSinTexto(obj, k, "text", etiqueta, copiarAAlarma));
     }
     if (ev && ev.cod === "F") {
       casilla(ev, "fase", T("rr_fase"));
@@ -16978,6 +17108,15 @@
     return inp;
   }
 
+  // Casilla de una tabla con cabecera: sin texto dentro, que ya lo dice la
+  // cabecera (29-09-2026, pedido del usuario); el rótulo queda como
+  // aria-label para el lector de pantalla.
+  function regInputSinTexto(obj, clave, tipo, etiqueta, alCambiar, guardar) {
+    var inp = regInput(obj, clave, tipo, etiqueta, alCambiar, guardar);
+    inp.placeholder = "";
+    return inp;
+  }
+
   // Desplegable sobre una lista {v, l}: un valor guardado que no está en la
   // lista (texto libre de antes) se ofrece como una opción más.
   function regSelectLista(obj, clave, lista, etiqueta, alCambiar, guardar) {
@@ -17034,7 +17173,7 @@
     var fila = regNodo("div", "chip-fila");
     var hechas = c.tecnicas_realizadas || [];
     anadirChipsAgrupados(fila, TECNICAS.filter(function (t) { return hechas.indexOf(t.id) !== -1; }), function (t) {
-      return regNodo("span", "reg-p-chip", campo(t, "etiqueta"));
+      return rotularChipTecnica(regNodo("span", "reg-p-chip"), t);
     });
     cont.appendChild(fila);
     cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_tecnicas_ayuda")));
@@ -17112,8 +17251,8 @@
     [1, 2].forEach(function (n) {
       var f = regNodo("div", "reg-basal-fila");
       f.appendChild(regNodo("span", "reg-basal-rotulo", String(n)));
-      f.appendChild(regInput(d.v, "grid" + n + "_motor", "text", T("reg_p_motor"), null, guardar));
-      f.appendChild(regInput(d.v, "grid" + n + "_musculos", "text", T("reg_p_musculos"), null, guardar));
+      f.appendChild(regInputSinTexto(d.v, "grid" + n + "_motor", "text", T("reg_p_motor"), null, guardar));
+      f.appendChild(regInputSinTexto(d.v, "grid" + n + "_musculos", "text", T("reg_p_musculos"), null, guardar));
       tabla.appendChild(f);
     });
     cont.appendChild(tabla);
@@ -17152,12 +17291,12 @@
             guardar.cambiar();
           }
         }
-        if (conHora) { inpHora = regInput(m, "hora", "time", T("reg_p_hora"), tocar, guardar); f.appendChild(inpHora); }
-        f.appendChild(regInput(m, "punto", "text", T(conHora ? "reg_p_punto" : "reg_p_nervio"), tocar, guardar));
-        var um = regInput(m, "umbral", "text", T(conHora ? "reg_p_umbral" : "reg_p_intensidad"), tocar, guardar);
+        if (conHora) { inpHora = regInputSinTexto(m, "hora", "time", T("reg_p_hora"), tocar, guardar); f.appendChild(inpHora); }
+        f.appendChild(regInputSinTexto(m, "punto", "text", T(conHora ? "reg_p_punto" : "reg_p_nervio"), tocar, guardar));
+        var um = regInputSinTexto(m, "umbral", "text", T(conHora ? "reg_p_umbral" : "reg_p_intensidad"), tocar, guardar);
         um.inputMode = "decimal";
         f.appendChild(um);
-        f.appendChild(regInput(m, "respuesta", "text", T("reg_p_musculo"), tocar, guardar));
+        f.appendChild(regInputSinTexto(m, "respuesta", "text", T("reg_p_musculo"), tocar, guardar));
         if (!blanca) {
           var q = regNodo("button", "reg-fila-quitar", "✕");
           q.type = "button";
@@ -17320,19 +17459,32 @@
   }
 
   // Raíces y tornillos: nivel · izq. · der. Con caso, son los "Umbrales EMG
-  // por raíz" de la ficha (el mismo dato, ⇄); sin caso, la tabla suelta.
+  // por raíz" de la ficha (el mismo dato, ⇄). Sin caso (Modelo 0), la misma
+  // columna vertebral sobre d.raices (29-09-2026, pedido del usuario: la
+  // tabla suelta de antes era distinta y más fea); una hoja suelta que ya
+  // tenía escrita la tabla de antes (e_t_*) la sigue enseñando.
   function pintarMapeoRaices(cont, d) {
     var c = registroCaso();
-    if (!c) { pintarTornillosSueltos(cont, d); return; }
-    if (!c.umbral_raices_niveles) c.umbral_raices_niveles = { niveles: [], valores: {} };
-    var datos = c.umbral_raices_niveles;
+    var datos;
+    if (c) {
+      if (!c.umbral_raices_niveles) c.umbral_raices_niveles = { niveles: [], valores: {} };
+      datos = c.umbral_raices_niveles;
+    } else {
+      if (!(d.raices && (d.raices.niveles || []).length) && tornillosSueltosEscritos(d)) { pintarTornillosSueltos(cont, d); return; }
+      if (!d.raices) d.raices = { niveles: [], valores: {} };
+      datos = d.raices;
+    }
     if (!datos.niveles) datos.niveles = [];
     if (!datos.valores) datos.valores = {};
     // La misma columna vertebral que la ficha (28-09-2026, pedido del
     // usuario), sobre el mismo dato del caso.
     var contR = regNodo("div", "umbral-raices");
     cont.appendChild(contR);
-    pintarColumnaRaices(contR, datos, REG_GUARDAR, true);
+    pintarColumnaRaices(contR, datos, REG_GUARDAR, !!c);
+  }
+
+  function tornillosSueltosEscritos(d) {
+    return Object.keys(d.v || {}).some(function (k) { return /^e_t_/.test(k) && d.v[k]; });
   }
 
   // Sin caso vinculado: la tabla de tornillos de siempre (e_t_*)
@@ -17344,17 +17496,18 @@
     for (var i = 1; i <= REG_TORNILLOS.filas; i++) {
       var f = regNodo("div", "reg-basal-fila");
       REG_TORNILLOS.cols.forEach(function (col) {
-        f.appendChild(regInput(d.v, "e_t_" + i + "_" + col.id, "text", T("registro_tornillos") + " " + i + " — " + regL(col)));
+        f.appendChild(regInputSinTexto(d.v, "e_t_" + i + "_" + col.id, "text", T("registro_tornillos") + " " + i + " — " + regL(col)));
       });
       bloque.appendChild(f);
     }
     cont.appendChild(bloque);
   }
 
-  // Filas de la tabla de tornillos de la hoja impresa: con caso y niveles
-  // marcados, los "Umbrales EMG por raíz"; si no, la tabla suelta (e_t_*).
+  // Filas de la tabla de tornillos de la hoja impresa: con niveles marcados,
+  // los "Umbrales EMG por raíz" del caso o, sin caso, los de d.raices; si
+  // no, la tabla suelta (e_t_*).
   function regFilasTornillos(d, c) {
-    var datos = c && c.umbral_raices_niveles;
+    var datos = c ? c.umbral_raices_niveles : d.raices;
     if (datos && (datos.niveles || []).length) {
       var filas = datos.niveles.map(function (n) {
         var v = (datos.valores || {})[n] || {};
@@ -17458,12 +17611,46 @@
       chips.appendChild(chip);
     });
     cont.appendChild(chips);
+    // Con rótulo cada casilla (29-09-2026: la hora de recuperación salía
+    // vacía y sin decir qué era), «Ahora» para cerrar la alarma de un toque
+    // (solo en el Registro: la ficha se rellena después) y su duración.
     var l3 = regNodo("div", "reg-p-al-l3");
-    l3.appendChild(regInput(al, "medidas", "text", T("reg_p_nota"), alCambiar, guardar));
-    l3.appendChild(regSelectLista(al, "recup", REG_RECUP, T("reg_p_recup"), alCambiar, guardar));
-    var hRecup = regInput(al, "h_recup", "time", T("reg_p_h_recup"), alCambiar, guardar);
+    function celda(etiqueta, control) {
+      var c = regNodo("div", "reg-p-al-celda");
+      c.appendChild(regNodo("span", "reg-p-al-et", etiqueta));
+      c.appendChild(control);
+      l3.appendChild(c);
+      return c;
+    }
+    celda(T("reg_p_nota"), regInputSinTexto(al, "medidas", "text", T("reg_p_nota"), alCambiar, guardar));
+    var selRecup = regSelectLista(al, "recup", REG_RECUP, T("reg_p_recup"), alCambiar, guardar);
+    celda(T("reg_p_recup"), selRecup);
+    var duracion = regNodo("span", "reg-p-al-dur");
+    var pintarDur = function () {
+      var m = minutosEntre(al.hora, al.h_recup);
+      duracion.textContent = m === "" ? "" : T("reg_p_al_duracion", { min: m });
+    };
+    var hRecup = regInput(al, "h_recup", "time", T("reg_p_h_recup"), function () { alCambiar(); pintarDur(); }, guardar);
     if (alHoraRecup) hRecup.addEventListener("change", alHoraRecup);
-    l3.appendChild(hRecup);
+    var cajaHora = regNodo("div", "reg-hora");
+    cajaHora.appendChild(hRecup);
+    if (guardar !== REG_SIN_GUARDAR) {
+      var ahora = regNodo("button", "reg-ahora", T("registro_ahora"));
+      ahora.type = "button";
+      ahora.title = T("reg_p_recupero_ahora");
+      ahora.addEventListener("click", function () {
+        al.h_recup = horaAhora();
+        hRecup.value = al.h_recup;
+        if (!al.recup) { al.recup = "S"; selRecup.value = "S"; }
+        guardar.salir();
+        alCambiar();
+        pintarDur();
+        if (alHoraRecup) alHoraRecup();
+      });
+      cajaHora.appendChild(ahora);
+    }
+    celda(T("reg_p_h_recup"), cajaHora).appendChild(duracion);
+    pintarDur();
     cont.appendChild(l3);
   }
 
@@ -17547,7 +17734,7 @@
       // sitios (pedido del usuario, 28-09-2026).
       var chips = regNodo("div", "chip-fila");
       anadirChipsAgrupados(chips, tecs, function (t) {
-        var chip = regNodo("span", "chip chip-extra" + (c.tecnicas_alteradas.indexOf(t.id) !== -1 ? " activo" : ""), campo(t, "etiqueta"));
+        var chip = rotularChipTecnica(regNodo("span", "chip chip-extra" + (c.tecnicas_alteradas.indexOf(t.id) !== -1 ? " activo" : "")), t);
         chip.addEventListener("click", function () {
           var i = c.tecnicas_alteradas.indexOf(t.id);
           if (i === -1) c.tecnicas_alteradas.push(t.id); else c.tecnicas_alteradas.splice(i, 1);
@@ -18678,7 +18865,12 @@
       tourAbrirCaso(function () {
         if (!dlgCaso.open) { listo(null); return; }
         if (id === "caso") { listo(dlgCaso.querySelector(".caso-cab")); return; }
-        if (id === "salidas") { listo(dlgCaso.querySelector(".caso-acciones")); return; }
+        if (id === "salidas") {
+          // Informe y Hoja de registro están en el ⋮ (29-09-2026): se abre
+          document.getElementById("caso-mas-lista").hidden = false;
+          listo(document.getElementById("caso-mas-lista"));
+          return;
+        }
         // Un apartado de la ficha: se abre ese y se pliegan los demás, para
         // que quepa a la vista lo que se está explicando.
         GRUPOS_CASO.forEach(function (gr) {

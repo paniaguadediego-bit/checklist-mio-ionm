@@ -65,6 +65,18 @@ propia en *Después / consulta*).
   el **coste** de cada cirugía con precios inventados; **Quirófano** en Inicio
   con el Checklist y el Registro.
 
+**Novedades del 29-09-2026 (tarde):** en el móvil, empezar el scroll sobre un
+desplegable ya no lo abre; los recuadros de texto crecen solos al escribir (sin
+tirador); las casillas del Mapeo no repiten dentro lo que dice la cabecera; raíces
+y tornillos con la misma columna vertebral también sin caso vinculado; los
+corticobulbares se llaman **CoMEP**; los reflejos salen con nombre corto (BR,
+TVcR, TCR, THR, LAR) y el nombre completo aparece con el ratón encima o
+manteniendo pulsado; la ficha del caso tiene la barra de abajo en una sola fila
+(Informe y Hoja de registro en el ⋮) y un fondo algo más claro; en cada alarma,
+las medidas **Aviso al cirujano / anestesista** y **Reposicionar**, la
+recuperación como *recupera / en parte / no recupera*, rótulos en cada casilla,
+botón **Ahora** para la hora de recuperación y la duración de la alarma.
+
 **Novedades del 27-28/09/2026 (tras el congreso):**
 - **Registro intraoperatorio**: la **Hoja completa** sale por defecto y va
   simplificada en pantalla (la impresa no cambia): modalidades y anestesia de
@@ -643,11 +655,12 @@ pulsa **Cerrar caso** en la barra de abajo (guarda la ficha con el estado
 *Cerrado* y vuelve a la lista); en un caso cerrado el mismo botón es
 **Reabrir caso**. También se puede cambiar el campo **Estado** a mano. La barra
 de acciones fija de abajo del diálogo, siempre visible aunque hayas bajado
-en el scroll de los apartados, tiene el menú **⋮** (con **Borrar caso**),
-**Informe (PDF)** (un PDF imprimible de ese caso, ver más abajo) y **Hoja de
-registro**, y debajo **Cerrar caso**, **Volver a la lista** y **Guardar** —
-*Volver a la lista* no guarda ni cambia el estado, pero si hay cambios sin
-guardar pregunta antes.
+en el scroll de los apartados, va en una sola fila (29-09-2026): el menú **⋮**
+(con **Informe (PDF)** -un PDF imprimible de ese caso, ver más abajo-, **Hoja
+de registro** y **Borrar caso**), **Cerrar caso**, **Volver** y **Guardar** —
+*Volver* no guarda ni cambia el estado, pero si hay cambios sin guardar
+pregunta antes. En modo oscuro la ficha tiene un fondo algo más claro y una
+línea dorada arriba, para que se note que estás dentro de un caso.
 
 **Editar montaje de un caso ya guardado**: el botón vive en el sub-apartado
 "Cajas y entradas", dentro del apartado 5 (Montaje / Material) — abre las
