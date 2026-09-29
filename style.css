@@ -4371,10 +4371,15 @@ textarea { resize: none; overflow-y: hidden; }
    tarjetas (01-10-2026, pedido del usuario: al bajar se confundía con
    Catálogo, Cajas…). Solo un toque: fondo teñido del acento y sombra suave. */
 body:not(.editando-caso) .barra-caso {
-  background: var(--accent-soft);
+  /* Sin el tinte (01-10-2026): así no se confunde con la cabecera de
+     Plantillas de montajes, que sí lo lleva. La distinguen la franja gruesa
+     de acento, el rótulo en el acento y la sombra. */
+  background: var(--card-bg);
   border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  border-left: 6px solid var(--accent);
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.28);
 }
+body:not(.editando-caso) #barra-caso-prefijo { color: var(--accent); }
 
 /* Plantillas de montajes más compacta (01-10-2026, pedido del usuario): la
    lista se abre entera, sin scroll propio dentro del de la pantalla; botones
