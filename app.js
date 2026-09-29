@@ -1443,7 +1443,7 @@
                            en: "Decussation confirmed if SEP/MEP are lateralised" },
 
     /* --- Fase 4.1: biblioteca de montajes --- */
-    dlg_montajes_titulo: { es: "Plantillas de montaje", en: "Montage templates" },
+    dlg_montajes_titulo: { es: "Plantillas de montajes", en: "Setup templates" },
     montaje_en_blanco:   { es: "+ Plantilla en blanco", en: "+ Blank template" },
 
     /* --- Fase 1: cargar una plantilla sobre un caso --- */
@@ -5516,6 +5516,7 @@
       var nom = document.createElement("span");
       nom.className = "montaje-nombre";
       nom.textContent = campo(m, "nombre") || uid;
+      if (MODO_DEMO) nom.appendChild(nodoFicticio());
       var sub = document.createElement("span");
       sub.className = "montaje-autor";
       sub.textContent = autorDe(m) + " · " + T("plantilla_entradas", { n: contarOcupadas(m) }) +
@@ -11602,6 +11603,7 @@
       var nom = document.createElement("span");
       nom.className = "montaje-nombre";
       nom.textContent = campo(m, "nombre") || uid;
+      if (MODO_DEMO) nom.appendChild(nodoFicticio());
       var sub = document.createElement("span");
       sub.className = "montaje-autor";
       // El subtítulo es el autor y cuántas entradas tiene ocupadas: con
