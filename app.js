@@ -16748,7 +16748,9 @@
       det.addEventListener("toggle", function () { regRecordarAbierta(sec.id, det.open); });
       var sum = document.createElement("summary");
       var titulo = document.createElement("span");
-      titulo.textContent = regL(sec);
+      // Sin la letra de la hoja («E · », «E2 · », «I · ») en pantalla
+      // (30-09-2026, pedido del usuario): solo tiene sentido en la impresa.
+      titulo.textContent = regL(sec).replace(/^[A-Z]\d? · /, "");
       sum.appendChild(titulo);
       var cuenta = document.createElement("span");
       cuenta.className = "reg-cuenta";

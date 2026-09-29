@@ -4322,6 +4322,11 @@ textarea { resize: none; overflow-y: hidden; }
 
 /* Texto de las cabeceras (30-09-2026): ver --cab-texto. */
 @media screen { :root:not(.tema-claro) { --cab-texto: var(--accent); } }
+/* En azul, el texto de las cabeceras casi blanco (30-09-2026, pedido del
+   usuario: el azul claro sobre la cabecera marino no se leía bien); la
+   flecha se queda en el acento. */
+@media screen { :root:not(.tema-claro):not(.tema-oscuro) { --cab-texto: #e3edf8; } }
+.caso-grupo > summary::before { color: var(--accent); }
 .caso-grupo > summary, .card > summary.card-cab h2 { color: var(--cab-texto); }
 
 /* Demo: etiqueta «Ficticio» junto al nombre y aviso en la ficha (30-09-2026). */
