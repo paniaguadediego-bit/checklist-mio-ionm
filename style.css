@@ -4062,8 +4062,9 @@ body.sin-ayudas .coste-nota { display: none !important; }
 /* QUÉ en filas por tipo y corrección de lo apuntado (29-09-2026). */
 .rr-subtit { font-size: 0.68rem; color: var(--text-muted); margin: 0.3rem 0 0.15rem; }
 .rr-que-grupos > .rr-chips:last-child { margin-top: 0.35rem; }
-.rr-texto-editable { cursor: pointer; }
-.rr-editar-btn { border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 0.9rem; padding: 0 0.2rem; }
+.rr-editar-btn { border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 1rem; padding: 0 0.3rem; position: relative; }
+/* Zona táctil del ✎ más grande sin cambiar el aspecto (29-09-2026) */
+.rr-editar-btn::after { content: ""; position: absolute; top: -8px; bottom: -8px; left: -8px; right: -4px; }
 .rr-editar-btn.activo { color: var(--accent); }
 #pantalla-registro .rr-en-hoja .rr-linea .rr-editar-btn { min-height: 1.9rem; min-width: 1.9rem; }
 .rr-editor {
@@ -4131,3 +4132,17 @@ textarea { resize: none; overflow-y: hidden; }
   }
 }
 .caso-acciones > button { white-space: nowrap; }
+/* Alarma plegable en «Apuntado» (29-09-2026): una línea con el resumen */
+.rr-al-plegable { margin: 0.05rem 0 0.4rem 1.2rem; }
+.rr-al-plegable > summary {
+  list-style: none; cursor: pointer; display: flex; gap: 0.35rem; align-items: baseline;
+  font-size: 0.74rem; color: var(--text-muted); padding: 0.2rem 0;
+}
+.rr-al-plegable > summary::-webkit-details-marker { display: none; }
+.rr-al-plegable > summary::before { content: "▸"; color: var(--peligro); transition: transform 0.12s; }
+.rr-al-plegable[open] > summary::before { transform: rotate(90deg); }
+.rr-al-sum-tit { font-weight: 600; color: var(--peligro); white-space: nowrap; }
+.rr-al-resumen { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rr-al-plegable .rr-al-detalle { margin: 0.15rem 0 0; }
+#pantalla-registro .rr-al-plegable > summary { min-height: 1.9rem; }
+.rr-al-sum-tit[hidden] { display: none; }

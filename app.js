@@ -1276,6 +1276,7 @@
     rr_que_detalle:      { es: "Otro o detalle (opcional)", en: "Other or detail (optional)" },
     rr_falta_otro:       { es: "Con «Otro», escribe en la caja de debajo qué es.", en: "With “Other”, type what it is in the box below." },
     rr_en_hoja:          { es: "Apuntar fase, evento o alarma", en: "Log phase, event or alarm" },
+    rr_al_detalle:       { es: "Causa, medidas y recuperación", en: "Cause, measures and recovery" },
     rr_contexto:         { es: "Contexto quirúrgico (opcional)", en: "Surgical context (optional)" },
     rr_tof_apuntado:     { es: "TOF {v} ({hora}).", en: "TOF {v} ({hora})." },
     rr_grupo_tecnicas:   { es: "Técnicas", en: "Techniques" },
@@ -16765,6 +16766,7 @@
       ev.accion = n + (nota ? " · " + nota : "");
       ev.alarma_id = al.id;
       mensaje = T("rr_alarma_apuntada", { n: n, hora: hora });
+      regAlarmasAbiertas[al.id] = 1;   // recién apuntada: abierta para marcar el aviso
     } else if (cambio && cambio.recup && modalidad) {
       // Recuperación: cierra la última alarma de esa modalidad que siga
       // abierta (o solo parcialmente recuperada).
@@ -17016,15 +17018,14 @@
       if (fase || ctx) txt.appendChild(regNodo("small", null, " " + [fase ? T("rr_en_fase", { fase: fase }) : "", ctx].filter(Boolean).join(" · ")));
     }
     fila.appendChild(txt);
-    // Corregir la línea (29-09-2026, pedido del usuario): ✎ o tocar el texto
-    // abre sus casillas debajo; otra vez, o «Hecho», las cierra.
+    // Corregir la línea (29-09-2026, pedido del usuario): solo con ✎ (tocar
+    // el texto ya no la abre), que tiene la zona táctil ampliada; otra vez, o
+    // «Hecho», cierra las casillas.
     var clave = ev ? ev.id : al.id;
     var alternarEdicion = function () {
       regEditando = regEditando === clave ? "" : clave;
       renderRegistroContenido();
     };
-    txt.classList.add("rr-texto-editable");
-    txt.addEventListener("click", alternarEdicion);
     var ed = regNodo("button", "rr-editar-btn" + (regEditando === clave ? " activo" : ""), "✎");
     ed.type = "button";
     ed.title = T("rr_editar");
@@ -17049,10 +17050,34 @@
       // Debajo de cada alarma, lo que antes se completaba en G: causa
       // probable (29-09-2026, pedido del usuario), medidas adoptadas y
       // recuperación Sí / Parcial / No con su hora.
+      // Plegable (29-09-2026, pedido del usuario: ocupaban mucho): plegada
+      // enseña un resumen; se recuerda abierta o no mientras dura la sesión
+      // (regAlarmasAbiertas), y la recién apuntada sale abierta.
+      var plegable = document.createElement("details");
+      plegable.className = "rr-al-plegable";
+      plegable.open = !!regAlarmasAbiertas[al.id];
+      plegable.addEventListener("toggle", function () {
+        if (plegable.open) regAlarmasAbiertas[al.id] = 1; else delete regAlarmasAbiertas[al.id];
+      });
+      var sumAl = document.createElement("summary");
+      var titAl = regNodo("span", "rr-al-sum-tit", T("rr_al_detalle"));
+      var resumenAl = regNodo("span", "rr-al-resumen");
+      sumAl.appendChild(titAl);
+      sumAl.appendChild(resumenAl);
+      plegable.appendChild(sumAl);
+      // El rótulo solo si aún no hay nada; si no, el sitio es para el resumen
+      var pintarResumenAl = function () {
+        var txtR = resumenAlarma(al);
+        resumenAl.textContent = txtR;
+        titAl.hidden = !!txtR;
+      };
+      pintarResumenAl();
       var det = regNodo("div", "reg-p-alarma rr-al-detalle");
+      plegable.appendChild(det);
       var alCambiarAl = function () {
         var c = registroCaso();
         if (c && alarmasConDatos(d).length) c.alerta = true;
+        pintarResumenAl();
       };
       det.appendChild(regSelectLista(al, "causa", REG_CAUSA_AL, T("reg_p_causa_l"), alCambiarAl));
       pintarMedidasRecup(det, al, REG_GUARDAR, alCambiarAl, function () {
@@ -17063,9 +17088,24 @@
         registroGuardarYa();
         renderRegistroContenido();
       });
-      caja.appendChild(det);
+      caja.appendChild(plegable);
     }
     return caja;
+  }
+
+  var regAlarmasAbiertas = {};
+  // «Aviso al cirujano, ↑ TAM · recupera 09:20»: lo que hay dentro de una
+  // alarma plegada.
+  function resumenAlarma(al) {
+    var partes = [];
+    if (al.causa) partes.push(regTextoLista(REG_CAUSA_AL, al.causa));
+    // En el orden de la lista (los avisos primero), no en el que se marcaron
+    var med = REG_MEDIDAS_AL.filter(function (m) { return (al.medidas_l || []).indexOf(m.v) !== -1; })
+      .map(function (m) { return regOpcionLabel(m); });
+    if (al.medidas) med.push(al.medidas);
+    if (med.length) partes.push(med.join(", "));
+    if (al.recup) partes.push(regTextoLista(REG_RECUP, al.recup).replace(/^[SPN] · /, "") + (al.h_recup ? " " + al.h_recup : ""));
+    return partes.join(" · ");
   }
 
   // Casillas para corregir una línea de «Apuntado». Una alarma con evento se

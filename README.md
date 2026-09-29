@@ -945,11 +945,13 @@ hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
 - Debajo, **Apuntado**: todo lo apuntado, ordenado por hora (lo último
   arriba), también las alarmas escritas desde la ficha. La **hora** de cada
   línea se corrige tocándola (en una alarma o una recuperación cambia también
-  la de la alarma). Con **✎**, o tocando el texto, se abren debajo las
+  la de la alarma). Con **✎** (solo con él; tiene la zona de toque ampliada) se abren debajo las
   casillas para **corregir la línea**: qué, qué pasa, nota y fase (en una fase,
   su nombre y el detalle); en una alarma, lo corregido pasa también a su fila
   de alarmas (técnica, fase y criterio). «Hecho» las cierra. Debajo de cada **alarma**, lo que antes se completaba en
-  G: **causa probable**, **medidas adoptadas** (casillas + caja de texto) y
+  G, **plegado** con un resumen en una línea («Aviso al cirujano, ↑ TAM ·
+  recupera 09:20»; la alarma recién apuntada sale desplegada):
+  **causa probable**, **medidas adoptadas** (casillas + caja de texto) y
   **recuperación** Sí /
   Parcial / No con su hora (que mueve también la línea «Recupera»). La ✕
   quita una línea; si era una alarma, vacía su fila, y si era una
