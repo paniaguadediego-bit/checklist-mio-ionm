@@ -76,6 +76,12 @@ manteniendo pulsado; la ficha del caso tiene la barra de abajo en una sola fila
 las medidas **Aviso al cirujano / anestesista** y **Reposicionar**, la
 recuperación como *recupera / en parte / no recupera*, rótulos en cada casilla,
 botón **Ahora** para la hora de recuperación y la duración de la alarma.
+Además: **TOF 0/4 a 4/4** de un toque; **contexto quirúrgico** en lista cerrada
+para cada evento; las alarmas de «Apuntado» van **plegadas** con un resumen; solo
+se corrige una línea con el **✎**; modo oscuro por defecto con **Modo claro** en
+el menú ⋮; y la **correlación de cada alarma** con la evolución postquirúrgica
+(ficha → Resultado), que llega al informe, al CSV y a la pestaña
+`Correlacion_long` del Sheet.
 
 **Novedades del 27-28/09/2026 (tras el congreso):**
 - **Registro intraoperatorio**: la **Hoja completa** sale por defecto y va

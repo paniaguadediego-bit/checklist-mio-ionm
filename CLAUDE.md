@@ -202,7 +202,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Selector «Vincular a un caso» propio (Checklist y Registro; el `<select>` sigue oculto como fuente de verdad) | `mejorarSelectorCaso()`, `refrescarSelectorCaso()`, `pintarOpcionCaso()` | ver `grep` |
 | Registro ↔ ficha: campos compartidos (`caso: "campo"` en la definición; `soloCaso`; `leerCaso`) — `regGet()` los lee del caso y `regControl()` los escribe en el caso | `regGet()`, `regControl()`, `regNombresTecnicas()` | ver `grep` |
 | Registro: hoja completa simplificada en pantalla (la impresa no cambia) | `REG_PANTALLA` (id de sección → pintado propio; `null` = no se enseña), `pintarPantallaIdentificacion/Modalidades/Anestesia/Mapeo/Cierre()` (F y G a `null` desde el 29-09-2026), `REG_MAPEO_BLOQUES`, `pintarMapeoGrid/Filas/Raices()`, `regFilasTornillos()`, `regInput()`, `regSelectLista()` | ver `grep` |
-| Registro: panel «Apuntar fase, evento o alarma» (antes modo rápido; único sitio donde se apuntan, arriba de la Hoja completa; escribe en `eventos`/`alarmas`, sin datos propios; «Otro» + cajas; QUÉ en filas por tipo -técnicas, factores técnicos, anestesia con TOF, Otro-; lista «Apuntado» por hora con horas editables, ✎ para corregir cada línea y, bajo cada alarma, causa, medidas y recuperación) | `pintarPanelApuntar()`, `regItemsApuntados()`, `regLineaApuntada()`, `regEditorApuntado()` (`regEditando`, solo con ✎), alarma plegable con `resumenAlarma()` (`regAlarmasAbiertas`), `pintarMedidasRecup()` (también en la ficha), `regApuntar()`, `regMarcarFase()`, `regQuitarRapido()`, `regCajaRapida()`, `regApuntarTof()`, `REG_TOF`, `REG_CONTEXTO` (ev.contexto, ids), `REG_FASES_RAPIDAS`, `REG_CAMBIOS_RAPIDOS`, `REG_QUE_EXTRA`, `REG_QUE_OTRO`/`REG_CAMBIO_OTRO` | ver `grep` |
+| Registro: panel «Apuntar fase, evento o alarma» (antes modo rápido; único sitio donde se apuntan, arriba de la Hoja completa; escribe en `eventos`/`alarmas`, sin datos propios; «Otro» + cajas; QUÉ en filas por tipo -técnicas, factores técnicos, anestesia, Otro-; TOF 0/4…4/4 de un toque en su bloque; contexto quirúrgico; lista «Apuntado» por hora con horas editables, ✎ para corregir cada línea y, bajo cada alarma, causa, medidas y recuperación) | `pintarPanelApuntar()`, `regItemsApuntados()`, `regLineaApuntada()`, `regEditorApuntado()` (`regEditando`, solo con ✎), alarma plegable con `resumenAlarma()` (`regAlarmasAbiertas`), `pintarMedidasRecup()` (también en la ficha), `regApuntar()`, `regMarcarFase()`, `regQuitarRapido()`, `regCajaRapida()`, `regApuntarTof()`, `regTofActual()`, `REG_TOF`, `REG_CONTEXTO` (ev.contexto, ids), `REG_FASES_RAPIDAS`, `REG_CAMBIOS_RAPIDOS`, `REG_QUE_EXTRA`, `REG_QUE_OTRO`/`REG_CAMBIO_OTRO` | ver `grep` |
 | Registro intraoperatorio: hoja imprimible A4 | `construirHojaRegistro()`, `abrirHojaRegistro()`, `ESTILO_HOJA_REGISTRO` | ver `grep` |
 | Material, pantalla propia (todo el catálogo en filas) | `renderDocenteMaterial()`, `descripcionMaterial()` | ver `grep` |
 | Fotos en IndexedDB (todas las fotos) | `guardarFotoIDB()`, `hidratarFotosIDB()`, `quitarDataUrls()` | ver `grep` |
@@ -448,11 +448,18 @@ distinta a la anterior, no importa el formato exacto.
 >   fuera la categoría «Reflejos» (eran técnicas). Serrato anterior C5-C7 en
 >   miotomas. 20 categorías en orden lógico; `SERIES_MATERIAL` agrupa L./R.
 > - **Registro en pantalla**: una sola vista, la Hoja completa (`REG_PANTALLA`).
->   Fases, eventos y alarmas se apuntan SOLO en el panel de arriba (antes «modo
->   rápido», pestaña retirada el 29-09-2026; guarda ids de criterio y la fase en
->   `al.fase`); F y G no se pintan en pantalla. En «Apuntado», bajo cada alarma,
->   causa probable, medidas adoptadas y recuperación S/P/N con hora; ✎
->   corrige la línea (y su alarma). La impresa no cambia con lo de pantalla.
+>   Fases, eventos y alarmas se apuntan SOLO en el panel de arriba, «Apuntar
+>   fase, evento o alarma» (botón dorado relleno, `.reg-rapido`; antes «modo
+>   rápido», pestaña retirada el 29-09-2026); F y G no se pintan en pantalla.
+>   Bloques: **Fase** (un toque; caja = detalle u «Otra»), **TOF** 0/4…4/4 (un
+>   toque → evento `An`, modalidad «TOF», cambio «TOF 2/4»), **Evento o alarma**
+>   (QUÉ en filas técnicas / factores técnicos / anestesia / Otro, QUÉ PASA,
+>   **contexto quirúrgico** opcional en lista cerrada → `ev.contexto`, cajas de
+>   detalle u «Otro», Apuntar evento / alarma) y **Apuntado** (por hora; hora
+>   editable; ✎ -solo el lápiz- corrige la línea y su alarma; cada alarma con su
+>   detalle **plegado** y un resumen: causa, medidas -avisos primero- y
+>   recuperación S/P/N con hora, «Ahora» y duración). La impresa no cambia con lo
+>   de pantalla (salvo la fase de F, que lleva « · contexto»).
 > - **Dos equipos** (Inomed/Cadwell): `equipo_id`; **no confundir con `equipo`**.
 > - **Técnicas IONM, privada**: contenido en el repo privado
 >   (`referencia/tecnicas-mio.json`), se baja con el token. **No volver a meterlo
@@ -464,22 +471,30 @@ distinta a la anterior, no importa el formato exacto.
 >   privado `checklist-mio-datos` (`estado.json`, `casos/`, `montajes/`,
 >   `apuntes/` + `apuntes/fotos/`, `simulador/`, `referencia/`). Precios reales y
 >   material propio del usuario: `estado.json` (nunca en este repo).
-> - **Sheet**: `Codigo.gs` con la columna `evolucion_postop` (54 columnas base),
->   repegado por el usuario el 28-09 noche. El 29-09 se añadió la pestaña
->   **Correlacion_long** (una fila por grupo de alarmas): hay que repegarlo. Los campos de lista llegan como id.
+> - **Sheet**: `Codigo.gs` con la columna `evolucion_postop` (54 columnas base)
+>   y la pestaña **Correlacion_long** (una fila por grupo de alarmas), repegado y
+>   reconstruido por el usuario el 29-09. Los campos de lista llegan como id. Si
+>   vuelve a cambiar, darle el ARCHIVO ENTERO (adjunto o enlace raw de GitHub):
+>   no sabe insertar bloques sueltos.
 > - **Historial público reescrito** dos veces (27 y 28-09): copias
 >   `../copia-historial-codigo-2026-09-27.bundle` y `-28.bundle`. No borrarlas.
 > - **Licencia**: todos los derechos reservados (`LICENSE`).
-> - **Pendiente del usuario:** recargar la app en todos los dispositivos; revisar
->   en sus casos las evoluciones «déficit nuevo, evolución pendiente» y la ECL
->   L3-S1 (resultado esperable «similar»); probar en quirófano el Registro en
->   espejo; probar con dos dispositivos a la vez sobre el mismo caso (fusión y
->   aviso) y el gesto de atrás de Android con la ficha abierta. A
->   (identificación) del Registro se deja como está "por ahora".
+> - **Pendiente del usuario:** recargar la app en todos los dispositivos; probar
+>   en el móvil de verdad el scroll sobre desplegables y el toque largo de los
+>   reflejos (solo probados con toques simulados); decir la abreviatura del
+>   «Reflejo glosofaríngeo-trigeminal» si la hay; rellenar la correlación de cada
+>   alarma en sus casos para que entren en Correlacion_long; revisar en sus casos
+>   las evoluciones «déficit nuevo, evolución pendiente» y la ECL L3-S1
+>   (resultado esperable «similar»); probar en quirófano el Registro nuevo;
+>   probar con dos dispositivos a la vez sobre el mismo caso (fusión y aviso) y
+>   el gesto de atrás de Android con la ficha abierta. A (identificación) del
+>   Registro se deja como está "por ahora".
 > - **Ideas pendientes, no construidas:** que la demo enseñe más utilidades;
->   conversión Inomed ↔ Cadwell; sección del Registro en el Sheet (eventos y
->   alarmas); bloque "Cirugías con IONM"; Teoría básica; convertir en listas más
->   textos libres de la ficha si el usuario lo pide.
+>   conversión Inomed ↔ Cadwell; eventos del Registro en el Sheet (las alarmas
+>   ya van por grupos en Correlacion_long); que la concordancia del caso proponga
+>   FN si hay déficit sin alarma relacionada; bloque "Cirugías con IONM"; Teoría
+>   básica; convertir en listas más textos libres de la ficha si el usuario lo
+>   pide.
 > - **Convenciones que han fallado antes:** subir el `?v=` de `index.html` en cada
 >   cambio de `app.js`/`style.css`/`data/`; `git fetch`+`pull --ff-only` antes de
 >   tocar `checklist-mio-datos` (y otro `fetch` antes del push); con
@@ -491,7 +506,11 @@ distinta a la anterior, no importa el formato exacto.
 >   necesita su regla; `#pantalla-registro button` y `#dlg-caso select
 >   { min-height: 44px }` ganan por el id (excepciones con el id delante); un
 >   `::after` del padre se pinta sobre los hijos (`z-index` en el hijo); la hoja
->   impresa del Registro tiene que caber en A4.
+>   impresa del Registro tiene que caber en A4; un campo nuevo del caso que no
+>   sea texto (objeto) va en `CAMPOS_APARTE` del informe o sale «[object
+>   Object]»; `preventDefault` en `touchstart` impide el scroll (usar
+>   `touchend` y comprobar que el dedo no se movió); en un heredoc de bash, un
+>   apóstrofo dentro de un `r'''…'''` de Python rompe el comando.
 > - **Comprobación habitual:** `node --check app.js`, servidor `checklist` de
 >   `.claude/launch.json` (no `file://`), probar en el navegador con `?demo`
 >   (a 375 px para el móvil), commit y push (permiso permanente). Para medir la
