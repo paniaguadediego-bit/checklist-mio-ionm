@@ -1218,9 +1218,6 @@
     registro_corticales: { es: "Corticales / pares", en: "Cortical / cranial" },
     registro_fila_quitar: { es: "Quitar esta fila", en: "Remove this row" },
     reg_p_sin_caso:      { es: "Vincula un caso arriba para ver aquí lo que ya tiene.", en: "Link a case above to see what it already has here." },
-    reg_p_tecnicas_ayuda: { es: "Salen de la ficha del caso (Técnicas realizadas) y se cambian allí.", en: "They come from the case form (Techniques performed) and are changed there." },
-    reg_p_sin_tecnicas:  { es: "El caso no tiene técnicas marcadas.", en: "The case has no techniques ticked." },
-    reg_p_anest_ayuda:   { es: "Es el mismo dato que el apartado Anestesia de la ficha del caso: se escribe aquí o allí y se ve en los dos. Lo que cambie durante la cirugía (bolos, relajante, TAM…) va en los eventos de anestesia, con su hora.", en: "It is the same data as the Anaesthesia section of the case form: write it here or there and it shows in both. Whatever changes during surgery (boluses, relaxant, MAP…) goes in the anaesthesia events, with its time." },
     reg_p_motor:         { es: "Electrodo motor", en: "Motor electrode" },
     reg_p_musculos:      { es: "Músculos registrados", en: "Muscles recorded" },
     reg_p_hora:          { es: "Hora", en: "Time" },
@@ -1254,7 +1251,6 @@
     reg_p_intensidad:    { es: "Intensidad (mA)", en: "Intensity (mA)" },
     reg_p_musculo:       { es: "Músculo (respuesta)", en: "Muscle (response)" },
     reg_p_fila_nueva:    { es: "+ Fila", en: "+ Row" },
-    reg_p_compartido:    { es: "⇄ = el mismo dato que en la ficha del caso: lo que escribas aquí aparece allí, y al revés.", en: "⇄ = the same data as in the case form: what you type here appears there, and vice versa." },
     reg_p_solo_caso:     { es: "Sale de la ficha del caso; se cambia allí.", en: "Comes from the case form; change it there." },
     registro_fila_quitar_conf: { es: "¿Quitar esta fila? Tiene datos escritos.", en: "Remove this row? It has data." },
     registro_mod_cab:    { es: "Cabecera", en: "Header" },
@@ -6860,7 +6856,8 @@
     // conserva: ver resultadoEsperableId().
     resultado_esperable: ["similar", "empeoramiento", "mejoria", "indeterminado"],
     // Antes texto libre "Recuperación de la señal"; desde el 28-09-2026 es el
-    // mismo dato que el Resultado del Cierre del Registro (REG_RESULTADO).
+    // mismo dato que el Resultado del Cierre del Registro (que se retiró el
+    // 30-09-2026: con varias técnicas alteradas no tenía sentido uno solo).
     recuperacion_senal: ["sin_cambios", "transitorios", "persistentes"],
     // Nuevo el 28-09-2026: la evolución en lista, el texto queda de detalle.
     evolucion_postop: ["sin_deficit", "deficit_transitorio", "deficit_permanente", "deficit_pendiente", "no_valorable"],
@@ -15870,13 +15867,6 @@
     { v: "P", l: "P · recupera en parte", l_en: "P · partly recovers" },
     { v: "N", l: "N · no recupera", l_en: "N · does not recover" }
   ];
-  // Mismos ids que OPCIONES.recuperacion_senal: es el mismo dato que
-  // «Resultado de la señal» de la ficha (compartido ⇄, 28-09-2026).
-  var REG_RESULTADO = [
-    { v: "sin_cambios", l: "Sin cambios", l_en: "No changes" },
-    { v: "transitorios", l: "Cambios transitorios recuperados", l_en: "Transient changes, recovered" },
-    { v: "persistentes", l: "Cambios persistentes", l_en: "Persistent changes" }
-  ];
 
   /* Alarmas con listas cerradas (28-09-2026, pedido del usuario: menos texto
      libre para poder sacar datos). Se guardan ids; lo escrito antes a mano
@@ -16182,7 +16172,6 @@
       ayuda_en: "Label the first row · screws (level | R | L) · roots · CN · awake tasks · other" },
     { hoja: 2, id: "i", tipo: "campos", l: "I · Cierre", l_en: "I · Closure",
       campos: [
-        { id: "cierre_resultado", l: "Resultado de la señal", l_en: "Signal outcome", t: "sel", o: REG_RESULTADO, ancho: true, caso: "recuperacion_senal" },
         { id: "cierre_modalidades", l: "Técnicas con alteración", l_en: "Techniques with an alteration", t: "text", ancho: true,
           leerCaso: function (c) { return regNombresTecnicas(c.tecnicas_alteradas).join(", "); } },
         { id: "cierre_com_cir", l: "Comunicación final: Cirujano", l_en: "Final communication: Surgeon", t: "check" },
@@ -17537,9 +17526,13 @@
    *   déficit esperado, incidencias y perla docente.
    * Lo que no está en REG_PANTALLA se pinta como siempre. */
   var REG_PANTALLA = {
-    a: pintarPantallaIdentificacion,
-    b: pintarPantallaModalidades,
-    c: pintarPantallaAnestesia,
+    // A, B y C: fuera de la pantalla (30-09-2026, pedido del usuario: ya
+    // están en la ficha de Gestión de Casos). El Registro en pantalla es el
+    // panel para apuntar fases, eventos y alarmas, las basales, el mapeo y el
+    // cierre. Siguen en la hoja impresa.
+    a: null,
+    b: null,
+    c: null,
     d: null,
     e2: pintarPantallaMapeo,
     esquema: null,
@@ -17625,54 +17618,6 @@
   }
   function regTecnicasCaso(c) {
     return regNombresTecnicas(c ? c.tecnicas_realizadas : []);
-  }
-
-  // A, igual que siempre, más el aviso de los campos compartidos (⇄)
-  function pintarPantallaIdentificacion(sec, cont) {
-    pintarSeccionCampos(sec, cont);
-    if (registroCaso()) cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_compartido")));
-  }
-
-  function pintarPantallaModalidades(sec, cont) {
-    var c = registroCaso();
-    if (!c) { cont.appendChild(regNodo("p", "reg-ayuda reg-estado", T("reg_p_sin_caso"))); return; }
-    var nombres = regTecnicasCaso(c);
-    if (!nombres.length) { cont.appendChild(regNodo("p", "reg-ayuda reg-estado", T("reg_p_sin_tecnicas"))); return; }
-    // Agrupadas como en Gestión de Casos: monitorización, reflejos, mapeo.
-    var fila = regNodo("div", "chip-fila");
-    var hechas = c.tecnicas_realizadas || [];
-    anadirChipsAgrupados(fila, TECNICAS.filter(function (t) { return hechas.indexOf(t.id) !== -1; }), function (t) {
-      return rotularChipTecnica(regNodo("span", "reg-p-chip"), t);
-    });
-    cont.appendChild(fila);
-    cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_tecnicas_ayuda")));
-  }
-
-  /* C · Anestesia en espejo con la ficha (28-09-2026, pedido del usuario:
-     escribir en los dos lados). Los cuatro campos del apartado Anestesia de
-     la ficha, compartidos (⇄, "caso:" como el resto: regGet() los lee del
-     caso y regControl() los escribe en él), y debajo los eventos de
-     anestesia (cod "An" de F), la misma tabla que la ficha. La hoja impresa
-     no cambia. Sin caso vinculado no hay ficha que reflejar. */
-  function pintarPantallaAnestesia(sec, cont) {
-    var c = registroCaso();
-    if (!c) { cont.appendChild(regNodo("p", "reg-ayuda reg-estado", T("reg_p_sin_caso"))); return; }
-    var d = registroDatos();
-    function lista(grupo) {
-      return OPCIONES[grupo].map(function (v) { return { v: v, l: opcionTexto(grupo, v) }; });
-    }
-    var defs = [
-      { id: "an_tipo", l: T("caso_tipo_anestesia"), t: "sel", o: lista("anestesia"), caso: "tipo_anestesia" },
-      { id: "an_tof", l: T("caso_tof_monitorizado"), t: "sel", o: lista("sino"), caso: "tof_monitorizado" },
-      { id: "an_detalle", l: T("caso_tipo_anestesia_detalle"), t: "text", ancho: true, caso: "tipo_anestesia_detalle" },
-      { id: "an_incidencias", l: T("caso_incidencias_anestesicas"), t: "area", ancho: true, caso: "incidencias_anestesicas" }
-    ];
-    var grid = regNodo("div", "reg-grid");
-    defs.forEach(function (def) { grid.appendChild(regControl(def, d.v)); });
-    cont.appendChild(grid);
-    cont.appendChild(regNodo("div", "reg-basal-titulo reg-p-map-tit", T("caso_eventos_anestesia") + " ⇄"));
-    pintarEventosAn(cont, d, REG_GUARDAR, true);
-    cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_anest_ayuda")));
   }
 
   /* E2 · Mapeo en pantalla (28-09-2026, pedido del usuario): un bloque por
@@ -18172,14 +18117,10 @@
     var d = registroDatos();
     var def = {};
     sec.campos.forEach(function (x) { def[x.id] = x; });
-    var grid = regNodo("div", "reg-grid");
-    grid.appendChild(regControl(def.cierre_resultado, d.v));
-    cont.appendChild(grid);
-
     var c = registroCaso();
     var tecs = c ? TECNICAS.filter(function (t) { return (c.tecnicas_realizadas || []).indexOf(t.id) !== -1; }) : [];
     var bloque = regNodo("div", "campo reg-campo reg-ancho");
-    bloque.appendChild(regNodo("label", null, T("caso_tecnicas_alteradas") + (tecs.length ? " ⇄" : "")));
+    bloque.appendChild(regNodo("label", null, T("caso_tecnicas_alteradas") + (c ? " ⇄" : "")));
     if (tecs.length) {
       // Son las "Técnicas alteradas" de la ficha (ids). Lo escrito antes a
       // mano en la hoja: los nombres que son técnicas del caso pasan a
@@ -18215,7 +18156,10 @@
       bloque.appendChild(chips);
       if (sueltas.length) bloque.appendChild(regNodo("small", "reg-p-extra", sueltas.join(", ")));
     } else {
-      bloque.appendChild(regInput(d.v, "cierre_modalidades", "text", T("caso_tecnicas_alteradas")));
+      // Como la ficha (30-09-2026, pedido del usuario): sin técnicas
+      // realizadas no hay nada que marcar. Lo escrito antes a mano se enseña.
+      bloque.appendChild(regNodo("p", "reg-ayuda reg-estado", T(c ? "caso_sin_tecnicas_alt" : "reg_p_sin_caso")));
+      if (d.v.cierre_modalidades) bloque.appendChild(regNodo("small", "reg-p-extra", d.v.cierre_modalidades));
     }
     cont.appendChild(bloque);
 
@@ -18712,9 +18656,6 @@
     var res = nodoInforme(doc, "div", "hj-celda hj-s4");
     res.appendChild(nodoInforme(doc, "small", null, T("hoja_resultado")));
     var resV = nodoInforme(doc, "div", "hj-v hj-lin");
-    REG_RESULTADO.forEach(function (o) {
-      resV.appendChild(nodoInforme(doc, "span", "hj-it", hojaCasilla(regGet(d.v, hojaDef("cierre_resultado"), c) === o.v) + " " + regOpcionLabel(o)));
-    });
     resV.appendChild(nodoInforme(doc, "span", "hj-it", regL(hojaDef("cierre_modalidades")) + ": " + (V("cierre_modalidades") || "____________")));
     res.appendChild(resV);
     gI.appendChild(res);

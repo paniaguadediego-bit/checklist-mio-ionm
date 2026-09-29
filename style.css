@@ -2010,20 +2010,25 @@ dialog h3 {
    con el acento dorado se confundían), y borde más grueso para que se vea.
    La etiqueta del pie lleva el mismo color de fondo. */
 .caso-fila[class*="estado-"] { border-left-width: 5px; }
-/* Todo el recuadro del color de su estado, con el borde izquierdo más ancho
-   (29-09-2026, pedido del usuario: fuera la etiqueta de estado). */
-.caso-fila.estado-pendiente_planificar { border-color: var(--estado-pendiente); }
-.caso-fila.estado-preparado { border-color: var(--estado-preparado); }
-.caso-fila.estado-cerrado { border-color: var(--estado-cerrado); }
-.caso-fila.estado-cancelado { border-color: var(--estado-cancelado); }
+/* Solo el borde izquierdo del color de su estado y una bolita del mismo
+   color junto al número (30-09-2026, pedido del usuario: el recuadro entero
+   de color era demasiado; antes, 29-09, todo el borde). */
+.caso-fila.estado-pendiente_planificar { --est: var(--estado-pendiente); }
+.caso-fila.estado-preparado { --est: var(--estado-preparado); }
+.caso-fila.estado-cerrado { --est: var(--estado-cerrado); }
+.caso-fila.estado-cancelado { --est: var(--estado-cancelado); }
+.caso-fila[class*="estado-"], .caso-fila[class*="estado-"]:hover { border-left-color: var(--est, var(--text-muted)); }
+.caso-fila[class*="estado-"] .caso-fila-id-grupo::before {
+  content: ""; flex: 0 0 auto; width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--est, var(--text-muted));
+}
 /* Leyenda de colores bajo los filtros */
 .casos-leyenda { display: flex; flex-wrap: wrap; gap: 0.25rem 0.8rem; margin: 0.35rem 0 0.1rem; font-size: 0.72rem; color: var(--text-muted); }
 .casos-filtros .casos-leyenda-it { display: inline-flex; flex-direction: row; align-items: center; gap: 0.3rem; }
-.casos-leyenda-it::before { content: ""; width: 0.75rem; height: 0.75rem; border-radius: 2px; border: 2px solid var(--text-muted); }
-.casos-leyenda-it.estado-pendiente_planificar::before { border-color: var(--estado-pendiente); }
-.casos-leyenda-it.estado-preparado::before { border-color: var(--estado-preparado); }
-.casos-leyenda-it.estado-cerrado::before { border-color: var(--estado-cerrado); }
-.casos-leyenda-it.estado-cancelado::before { border-color: var(--estado-cancelado); }
+.casos-leyenda-it::before { content: ""; width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--text-muted); }
+.casos-leyenda-it.estado-pendiente_planificar::before { background: var(--estado-pendiente); }
+.casos-leyenda-it.estado-preparado::before { background: var(--estado-preparado); }
+.casos-leyenda-it.estado-cerrado::before { background: var(--estado-cerrado); }
+.casos-leyenda-it.estado-cancelado::before { background: var(--estado-cancelado); }
 
 .caso-fila-cab { display: flex; justify-content: space-between; font-size: 0.82rem; }
 .caso-fila-id-grupo { display: flex; align-items: center; gap: 0.3rem; }
@@ -2747,7 +2752,7 @@ dialog h3 {
     --aviso-border: #ff9f0a;
     --aviso-text: #ffb340;
     --tag-bg: #202a38;
-    --peligro: #ff5a50;
+    --peligro: #ef6f68;
     --quitar-bg: #3a1c1c;
     --panel: #0b0f15;
     --panel-borde: #283344;
@@ -4057,8 +4062,8 @@ body.sin-ayudas .coste-nota { display: none !important; }
 /* Tema oscuro: el borde negro de «Pendiente de planificar» no se veía sobre
    el fondo oscuro (contraste 1,08:1; auditoría, F8). */
 @media screen {
-  :root:not(.tema-claro) .caso-fila.estado-pendiente_planificar { border-color: #8a8374; }
-  :root:not(.tema-claro) .casos-leyenda-it.estado-pendiente_planificar::before { border-color: #8a8374; }
+  :root:not(.tema-claro) .caso-fila.estado-pendiente_planificar { --est: #8a8374; }
+  :root:not(.tema-claro) .casos-leyenda-it.estado-pendiente_planificar::before { background: #8a8374; }
 }
 
 /* «Ahora» junto a su casilla de hora: del mismo alto que ella (≈30 px) en
@@ -4244,7 +4249,11 @@ textarea { resize: none; overflow-y: hidden; }
 .rr-crono-filtros { margin-bottom: 0.45rem; }
 .rr-lista { gap: 0.4rem; }
 .rr-item { --g: var(--g-info); background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--g); border-radius: 6px; padding: 0.3rem 0.4rem 0.4rem 0.55rem; }
-.rr-g-critico { --g: var(--g-critico); background: color-mix(in srgb, var(--g-critico) 7%, var(--card-bg)); }
+.rr-g-critico { --g: var(--g-critico); }
+.rr-g-critico .rr-etiqueta { background: var(--g-critico); color: #ffffff; }
+.rr-item .rr-al-plegable > summary { color: var(--text-muted); }
+.rr-item .rr-al-sum-tit { color: var(--text-muted); font-weight: 500; }
+.rr-item .rr-al-plegable > summary::before { color: var(--g-critico); }
 .rr-g-aviso { --g: var(--g-aviso); }
 .rr-g-ok { --g: var(--g-ok); }
 .rr-g-info { --g: var(--g-info); }
