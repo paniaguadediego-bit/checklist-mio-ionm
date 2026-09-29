@@ -948,8 +948,8 @@ hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
   A2...) con técnica, criterio y fase. Un evento «Recupera» o «Recupera
   parcial» de la misma técnica cierra la última alarma abierta y rellena
   su hora de recuperación.
-- Debajo, **Apuntado**: todo lo apuntado, ordenado por hora (lo último
-  arriba), también las alarmas escritas desde la ficha. La **hora** de cada
+- Debajo, **Apuntado**: todo lo apuntado, ordenado por hora (de lo más antiguo a lo más
+  reciente, lo último abajo), también las alarmas escritas desde la ficha. La **hora** de cada
   línea se corrige tocándola (en una alarma o una recuperación cambia también
   la de la alarma). Con **✎** (solo con él; tiene la zona de toque ampliada) se abren debajo las
   casillas para **corregir la línea**: qué, qué pasa, nota y fase (en una fase,

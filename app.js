@@ -16920,7 +16920,7 @@
     botones.appendChild(bAl);
     bEvento.appendChild(botones);
 
-    // Lo apuntado, lo último arriba
+    // Lo apuntado, en orden de hora (lo último, abajo)
     panel.appendChild(regNodo("div", "rr-titulo", T("rr_apuntado_lista")));
     var lista = regNodo("div", "rr-lista");
     var items = regItemsApuntados(d);
@@ -16933,7 +16933,9 @@
   // Lo que sale en «Apuntado»: los eventos, cada uno con su alarma si la
   // tiene, y las alarmas escritas sin evento (de antes, de la ficha o de la
   // hoja): ya no hay sección G en pantalla donde verlas (29-09-2026). Por
-  // hora, lo último arriba; a igual hora, lo último apuntado.
+  // hora, de lo más antiguo a lo más reciente (29-09-2026, pedido del
+  // usuario: más natural); a igual hora, en el orden en que se apuntó; lo
+  // que no tenga hora, al final.
   function regItemsApuntados(d) {
     var items = [], conEvento = {};
     d.eventos.forEach(function (ev, k) {
@@ -16964,8 +16966,12 @@
     function hora(it) { return (it.ev ? it.ev.hora : it.al.hora) || ""; }
     return items.sort(function (x, y) {
       var hx = hora(x), hy = hora(y);
-      if (hx !== hy) return hx < hy ? 1 : -1;
-      return y.orden - x.orden;
+      if (hx !== hy) {
+        if (!hx) return 1;
+        if (!hy) return -1;
+        return hx < hy ? -1 : 1;
+      }
+      return x.orden - y.orden;
     });
   }
 
