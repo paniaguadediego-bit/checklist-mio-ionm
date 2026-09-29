@@ -4172,3 +4172,12 @@ textarea { resize: none; overflow-y: hidden; }
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
 }
 .rr-bloque-evento .rr-bloque-tit { color: var(--acento-apagado); }
+/* Pares craneales en QUÉ (29-09-2026): número pequeño y, debajo, I y D en
+   botoncitos. Con el id delante para ganar a los 1,9rem de los chips. */
+.rr-par { display: flex; flex-direction: column; align-items: center; gap: 0.1rem; }
+.rr-par-n { font-size: 0.68rem; color: var(--text-muted); line-height: 1; }
+.rr-par-lados { display: flex; gap: 0.2rem; }
+#pantalla-registro .rr-en-hoja .rr-chip.rr-chip-mini {
+  min-height: 0; height: 1.45rem; min-width: 1.45rem; padding: 0 0.3rem;
+  font-size: 0.68rem; line-height: 1;
+}

@@ -938,8 +938,9 @@ hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
   tornillos, RBC, Blink o EEG/ECoG si el caso tiene esa técnica), **Factores
   técnicos** (Técnico) y **Otro** en una fila, **Anestesia** con el TOF en otra;
   si el caso tiene **CoMEP**, los pares craneales en la misma tabla que t-SEP y
-  t-MEP (III · IV · VI / V · VII · VIII / IX · X · XI · XII, se apunta «CoMEP
-  VII») en lugar de las filas «CoMEP VII D…»; y los **reflejos** del caso con su
+  t-MEP (III · IV / V · VI · VII · VIII / IX · X · XI · XII), cada par con dos
+  botoncitos **I** y **D**, que apuntan «CoMEP VII I» (en lugar de las filas
+  «CoMEP VII D…»); y los **reflejos** del caso con su
   nombre corto (BR, TVcR...). La caja de debajo añade un detalle
   a la técnica («t-MEP MSD · deltoides») o, con **Otro**, dice qué es.
 - **Qué pasa**: ↑ umbral, ↓ amplitud, ↑ latencia, pérdida, HFD / descargas

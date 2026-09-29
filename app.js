@@ -16595,7 +16595,7 @@
   // Columnas de la cuadrícula de QUÉ (t-SEP, t-MEP... por miembro)
   var REG_MIEMBROS = ["MSD", "MSI", "MID", "MII"];
   // Pares craneales de QUÉ con CoMEP, en las filas que pidió el usuario
-  var REG_PARES_COMEP = [["III", "IV", "VI"], ["V", "VII", "VIII"], ["IX", "X", "XI", "XII"]];
+  var REG_PARES_COMEP = [["III", "IV"], ["V", "VI", "VII", "VIII"], ["IX", "X", "XI", "XII"]];
   // Contexto quirúrgico del evento o la alarma (29-09-2026), lista cerrada.
   // Se guarda el id en ev.contexto; nunca cambiar un id ya usado.
   var REG_CONTEXTO = [
@@ -16940,14 +16940,24 @@
               rotP.style.gridColumn = "1";
               cuadro.appendChild(rotP);
             }
+            // Cada par, con su número pequeño y dos botoncitos, I y D (29-09-2026,
+            // pedido del usuario): izquierdo a la izquierda, como en la tabla
+            // de raíces. Se apunta «CoMEP VII I», el nombre de las basales.
             pares.forEach(function (par, col) {
-              var nombre = "CoMEP " + par;
-              var b = chipQue([nombre, par]);
-              b.title = nombre;
-              b.setAttribute("aria-label", nombre);
-              b.style.gridRow = String(fila);
-              b.style.gridColumn = String(col + 2);
-              cuadro.appendChild(b);
+              var celda = regNodo("div", "rr-par");
+              celda.style.gridRow = String(fila);
+              celda.style.gridColumn = String(col + 2);
+              celda.appendChild(regNodo("span", "rr-par-n", par));
+              var lados = regNodo("div", "rr-par-lados");
+              ["I", "D"].forEach(function (lado) {
+                var nombre = "CoMEP " + par + " " + lado;
+                var b = chipQue([nombre, lado, "rr-chip-mini"]);
+                b.title = nombre;
+                b.setAttribute("aria-label", nombre);
+                lados.appendChild(b);
+              });
+              celda.appendChild(lados);
+              cuadro.appendChild(celda);
             });
           });
           dest.appendChild(cuadro);
@@ -16957,6 +16967,8 @@
         var reflejosCaso = TECNICAS.filter(function (t) { return t.reflejo && tecCaso.indexOf(t.id) !== -1; })
           .map(function (t) { var n = campo(t, "corta") || campo(t, "etiqueta"); return [n, n]; });
         if (reflejosCaso.length) {
+          // «Blink» (fila extra de QUÉ) es el mismo BR de Reflejos: una sola vez
+          if (tecCaso.indexOf("br") !== -1) resto = resto.filter(function (p) { return p[1] !== "Blink"; });
           resto = resto.slice();
           var filaR = regNodo("div", "rr-chips");
           reflejosCaso.forEach(function (p) { filaR.appendChild(chipQue(p)); });
