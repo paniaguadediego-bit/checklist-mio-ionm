@@ -221,7 +221,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Cajas con grupos, rejilla, puertos con luz y polos − / + (Cadwell) | `entradasDe()` (`grupos`, `polos`), `renderCajaFisica()` (`rejilla`, `recuadro`), `puertosEncendidos()`, `pintarPuertos()` | ver `grep` |
 | Registro ↔ ficha en espejo (28-09-2026): alarmas con listas cerradas (`REG_CRITERIO_AL`, `REG_CAUSA_AL`, `REG_MEDIDAS_AL`; ids, lo antiguo como opción más), mapeo E2 y eventos «An» pintados también en la ficha sobre la copia de trabajo (`guardar` = `REG_SIN_GUARDAR`); «Tipo de alerta»/«Medida correctora» se derivan al guardar; («Resultado de la señal» ya no está en el Registro desde el 30-09-2026: sigue solo en la ficha); evolución en lista + propuesta de concordancia | `pintarAlarmas()`, `alarmasEnCaso()` (en `guardarCaso()`), `textoAlarma()`, `regSelectLista()`, `regIdLista()`, `pintarEventosAn()`, `propuestaConcordancia()`, `t: "alarmas_reg"/"mapeo_reg"/"eventos_an"` en `campoCaso()` | ver `grep` |
 | Columna vertebral de umbrales por raíz (ficha y E2 del Registro; salto discontinuo) | `pintarColumnaRaices()`, `REG_NIVELES_RAICES` | ver `grep` |
-| Columnas de basales OP BSL/PostPos1/PostPos2/CL BSL | `REG_BASALES_COLS`, `regColBasal()` | ver `grep` |
+| Columnas de basales Basal/PostPos1/PostPos2/Cierre | `REG_BASALES_COLS`, `regColBasal()` | ver `grep` |
 | Eventos An (tabla de la ficha; C · Anestesia ya no sale en la pantalla del Registro) | `pintarEventosAn()` | ver `grep` |
 | Correlación de cada alarma con la evolución (ficha, Resultado): grupos automáticos por técnica + criterio; `correlato_alarmas` = {clave de grupo: {evol, momento}} con ids (`OPCIONES.correlato_evol/_momento`); concordancia por grupo | `gruposAlarmas()`, `filaCorrelato()`, `concordanciaGrupo()`, `filasCorrelato()` (→ `correlato_filas`), `textoCorrelato()`, `concordanciaDeGrupos()`, `seccionCorrelatoInforme()`, `repintarCorrelato`, `repintarPropuestaCaso`, `t: "correlato_alarmas"` en `campoCaso()` | ver `grep` |
 | Recuadros de texto que crecen solos (sin tirador): input + MutationObserver (childList y open/class/hidden) | `ajustarAltoTexto()`, `ajustarTodosLosTextos()`; `textarea { resize: none }` | ver `grep` |
@@ -361,7 +361,7 @@ distinta a la anterior, no importa el formato exacto.
 
 ## Estado del proyecto
 
-> **Resumen a 01-10-2026 (léelo primero; el diario cronológico está en
+> **Resumen a 30-09-2026 (léelo primero; el diario cronológico está en
 > el repositorio privado, ver al final de este archivo).**
 > - **Pantallas (Inicio en tres bloques, tarjetas centradas, una línea bajo cada
 >   nombre):** *Antes de quirófano*: Organizador de Montajes, Gestión de Casos.
@@ -375,10 +375,11 @@ distinta a la anterior, no importa el formato exacto.
 >   solo en la demo; nombre en el repo público por decisión del autor). Barra
 >   superior: botón redondo de **colores** (oscuro → azul → claro) y **Guía**
 >   junto al ⋮; en el ⋮ quedan Catálogos, EN y Ocultar ayudas.
-> - **Aspecto (30-09/01-10)**: paleta **azul marino** por defecto (#0F141C,
+> - **Aspecto (30-09)**: paleta **azul marino** por defecto (#0F141C,
 >   tarjetas #18202C, acento #7AA7DA con texto oscuro encima); «oscuro» = negro y
->   dorado de antes; claro con más contraste y cabeceras dorado claro con texto
->   marrón oscuro. Cabeceras de tarjeta y de apartado con fondo propio
+>   dorado de antes (el dorado, solo ahí); claro con más contraste, acento azul
+>   marino muy oscuro (#1B3A5C) y cabeceras azul grisáceo (#CFD9E4) con texto
+>   marino casi negro. Cabeceras de tarjeta y de apartado con fondo propio
 >   (`--cab-bg`) y texto `--cab-texto` (casi blanco en azul). Plantillas de
 >   montajes con cabecera centrada y teñida; «Plantilla seleccionada» con franja
 >   gruesa de acento y sombra (fijo al hacer scroll).

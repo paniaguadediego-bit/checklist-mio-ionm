@@ -3,7 +3,7 @@
 Herramienta interna, sin backend ni build step, para montar el material de
 cada cirugía monitorizada y saber exactamente qué hace falta.
 
-**Pantalla de inicio (06-09-2026; al día a 01-10-2026, 11 tarjetas en tres bloques):** el logo
+**Pantalla de inicio (06-09-2026; al día a 30-09-2026, 11 tarjetas en tres bloques):** el logo
 de la cabecera lleva siempre a una pantalla con tarjetas agrupadas por el
 momento de la cirugía — *Antes de quirófano*: **Organizador de Montajes** y
 **Gestión de Casos**; *Quirófano*: **Checklist pre-quirúrgico** y
@@ -110,7 +110,7 @@ caso, factores técnicos, Anestesia con **TOF 0/4 a 4/4** como contexto y sus
 **fármacos**) y **Hallazgo** (generales y, debajo, las **propias de la técnica**
 elegida; eventos del **GRID**; ↑/↓ perfusión, bolo, inicio o detención del
 fármaco); **contexto quirúrgico** en lista cerrada; un evento puede ser solo
-contexto y/o TOF; «Apuntado» en orden cronológico, con las alarmas **plegadas**
+contexto y/o TOF; el **Cronograma de eventos** en orden cronológico, plegable, con las alarmas **plegadas**
 y el **✎** para corregir; sin rótulos «Hoja 1 / Hoja 2». Modo oscuro por defecto
 con **Modo claro** en el menú ⋮, y la **correlación de cada alarma** con la
 evolución postquirúrgica (ficha → Resultado), que llega al informe, al CSV y a
@@ -272,7 +272,7 @@ un caso.
 
 ### La tarjeta Plantillas de montajes (la biblioteca de plantillas)
 
-Desde el 01-10-2026 cada plantilla se ve como un caso de Gestión de Casos:
+Desde el 30-09-2026 cada plantilla se ve como un caso de Gestión de Casos:
 nombre, fecha y marca del equipo a la derecha, autor y entradas, y una fila con
 sus técnicas (si no caben, «+n» y al tocarlo salen las demás). La lista se abre
 entera, sin scroll propio. La **★** marca una plantilla como **favorita**: las

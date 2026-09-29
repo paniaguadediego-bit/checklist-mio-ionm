@@ -316,8 +316,6 @@
     grupo_mapeo:         { es: "Técnicas de mapeo", en: "Mapping techniques" },
     tec_desactivada:     { es: "Desactivada: ya no se ofrece para casos nuevos, pero sigue marcada aquí",
                            en: "Deactivated: no longer offered for new cases, but still selected here" },
-    perfil_label:        { es: "Perfil", en: "Profile" },
-    perfil_elegir:       { es: "— sin resaltar —", en: "— no highlight —" },
 
     /* --- Cajas --- */
     cajas_titulo:        { es: "Cajas", en: "Boxes" },
@@ -987,8 +985,8 @@
     demo_privacidad:     { es: "MIO-Check no guarda número de historia ni etiquetas del paciente. Esta demo, además, no envía nada a ningún servidor: lo que escribas se queda en este navegador y se borra con «Restablecer demo». No introduzcas datos reales de pacientes.",
                            en: "MIO-Check never stores medical record numbers or patient labels. This demo also sends nothing to any server: whatever you type stays in this browser and is erased with “Reset demo”. Do not enter real patient data." },
     inicio_agradecimiento: { es: "Con la inestimable colaboración del Dr. Javier Urriza Mena.", en: "With the invaluable collaboration of Dr. Javier Urriza Mena." },
-    demo_autoria:        { es: "© 2026 P. Paniagua. Todos los derechos reservados. Uso solo con autorización. Contacto: paniagua.dediego@gmail.com",
-                           en: "© 2026 P. Paniagua. All rights reserved. Use only with permission. Contact: paniagua.dediego@gmail.com" },
+    demo_autoria:        { es: "© 2026 P. Paniagua. Todos los derechos reservados. Contacto: paniagua.dediego@gmail.com",
+                           en: "© 2026 P. Paniagua. All rights reserved. Contact: paniagua.dediego@gmail.com" },
     demo_restablecer:    { es: "Restablecer demo", en: "Reset demo" },
     demo_restablecer_conf: { es: "¿Borrar todo lo hecho en la demo y volver a los datos de ejemplo?", en: "Delete everything done in the demo and go back to the sample data?" },
     demo_centro:         { es: "Hospital de demostración", en: "Demo hospital" },
@@ -1155,7 +1153,6 @@
     tecmio_col_registro: { es: "Registro", en: "Recording" },
     tecmio_col_filtros_barrido: { es: "Filtros y barrido", en: "Filters and sweep" },
     tecmio_fuentes_titulo: { es: "Fuentes", en: "Sources" },
-    docente_titulo:      { es: "Miotomas: qué músculos monitorizar", en: "Myotomes: which muscles to monitor" },
     docente_intro:       { es: "Marca en <b>Columna</b> los niveles que abarca la cirugía. En <b>Músculos posibles</b> salen los que dependen de esas raíces: toca uno para pasarlo a <b>Monitorizados</b>, y tócalo allí para quitarlo. Los rangos son los que se enseñan habitualmente: la inervación se solapa y no todas las escuelas dan los mismos límites, así que están para discutirlos.",
                            en: "Tick in <b>Spine</b> the levels the surgery covers. <b>Possible muscles</b> shows the ones depending on those roots: tap one to move it to <b>Monitored</b>, and tap it there to remove it. The ranges are the ones usually taught: innervation overlaps and not every school gives the same limits, so they are there to be discussed." },
     docente_fuentes:      { es: "El detalle al pasar el ratón por un músculo, cuando lo lleva, cita: <b>[TD/L]</b> Toleikis, en Deletis et al., Neurophysiology in Neurosurgery, 2.ª ed., cap. 13, y Leppänen (ASNM) para el músculo y el nivel · <b>[Sch]</b> Schirmer 2011 y <b>[Lon]</b> London 2022 (J Neurosurg Spine) para la frecuencia real de solapamiento entre niveles. Los músculos sin ninguna marca no vienen de esta tabla: son rangos habituales de enseñanza, sin cita concreta detrás.",
@@ -1174,7 +1171,6 @@
     docente_cobertura_ok: { es: "Cubres los {n} niveles elegidos.", en: "You cover all {n} chosen levels." },
     docente_cobertura_falta: { es: "Sin cubrir: {niveles}", en: "Not covered: {niveles}" },
     docente_reiniciar_conf: { es: "¿Empezar el ejercicio de cero?", en: "Start the exercise over?" },
-    docente_titulo_gen:  { es: "Docente", en: "Teaching" },
     docente_tab_miotomas: { es: "Miotomas", en: "Myotomes" },
     docente_tab_cama:    { es: "Cama de quirófano", en: "Operating table" },
     cama_intro:          { es: "Elige la <b>posición del paciente</b> y reparte las cajas alrededor de la mesa. Pulsa una caja de abajo y luego la zona donde la pondrías; pulsa una ya colocada para retirarla. Lo que se practica es que el cable llegue: una caja en los pies no sirve para los electrodos de la cabeza.",
@@ -1236,10 +1232,6 @@
                            en: "Intraoperative record sheet, meant to be printed and kept in the OR: it comes pre-filled with the case data (techniques, anaesthesia, setup, where the Raabe is…) and with blank rows for baselines, mapping and events/alarms. Pick a case, fill in whatever you like here and press Print sheet. No patient label or record number is stored." },
     registro_ahora:      { es: "Ahora", en: "Now" },
     registro_ahora_tit:  { es: "Poner la hora actual", en: "Set the current time" },
-    registro_tecnicas_caso: { es: "Técnicas del caso:", en: "Case techniques:" },
-    registro_sin_tecnicas: { es: "ninguna marcada todavía en el caso", en: "none selected in the case yet" },
-    registro_mod_ayuda:  { es: "Las casillas con equivalente exacto en las técnicas del caso se marcan solas; el detalle (nervio, lado) se marca a mano.",
-                           en: "Boxes with an exact equivalent in the case techniques tick themselves; the detail (nerve, side) is ticked by hand." },
     registro_montaje:    { es: "Montaje", en: "Setup" },
     registro_otro:       { es: "Otro", en: "Other" },
     registro_sens_otros: { es: "Sensitivos / otros", en: "Sensory / other" },
@@ -1283,9 +1275,6 @@
     reg_p_fila_nueva:    { es: "+ Fila", en: "+ Row" },
     reg_p_solo_caso:     { es: "Sale de la ficha del caso; se cambia allí.", en: "Comes from the case form; change it there." },
     registro_fila_quitar_conf: { es: "¿Quitar esta fila? Tiene datos escritos.", en: "Remove this row? It has data." },
-    registro_mod_cab:    { es: "Cabecera", en: "Header" },
-    registro_mod_fila:   { es: "Fila {n}", en: "Row {n}" },
-    registro_mod_mas:    { es: "+ Fila", en: "+ Row" },
     registro_guardar:    { es: "Guardar", en: "Save" },
     registro_guardado:   { es: "Registro guardado.", en: "Record saved." },
     rr_intro:            { es: "Marca la fase una vez y lo que apuntes después la hereda. Un cambio de señal es técnica + hallazgo + Apuntar. La hora de cada línea se corrige tocándola; debajo de cada alarma, las medidas adoptadas y la recuperación.",
@@ -1363,7 +1352,6 @@
     hoja_grid_motor:     { es: "Electrodo motor", en: "Motor electrode" },
     hoja_musculos:       { es: "Músculos registrados", en: "Muscles recorded" },
     hoja_sensitivos:     { es: "Electrodo/s sensitivo/s", en: "Sensory electrode(s)" },
-    registro_otras_tecnicas: { es: "Otras técnicas", en: "Other techniques" },
     registro_tec_monitor:  { es: "Monitorización", en: "Monitoring" },
     registro_tec_reflejos: { es: "Reflejos", en: "Reflexes" },
     registro_tec_mapeo:    { es: "Mapeo", en: "Mapping" },
@@ -1511,7 +1499,6 @@
                            en: "Something called “{nombre}” already exists in this list." },
     cat_borrar_perfil:   { es: "¿Borrar el perfil “{nombre}”?\nLos escenarios que lo usaron no se tocan.",
                            en: "Delete the profile “{nombre}”?\nScenarios that used it are untouched." },
-    cat_desactivada_tag: { es: "desactivada", en: "deactivated" },
 
     /* --- Diálogo de sincronización --- */
     dlg_sync_titulo:     { es: "Sincronizar con GitHub", en: "Sync with GitHub" },
@@ -1946,7 +1933,7 @@
       if (pantallaActiva("registro")) renderRegistroContenido();
       if (tourPaso >= 0) tourPintarTextos();
       pintarEstadoSync();
-      // En la demo, sin texto (01-10-2026, pedido del usuario): la cabecera ya
+      // En la demo, sin texto (30-09-2026, pedido del usuario): la cabecera ya
       // dice «Modo demo · sin nube» y el aviso la hacía más alta.
       avisoGuardado(MODO_DEMO ? "" : T(syncActivo() ? "guardado_nube" : "guardado_local"));
     }
@@ -11576,7 +11563,7 @@
       return nombre.indexOf(busq) !== -1 || autorDe(m).toLowerCase().indexOf(busq) !== -1;
     });
     // Alfabético, sin importar de quién sea -pedido del usuario-; las
-    // favoritas, primero (01-10-2026).
+    // favoritas, primero (30-09-2026).
     uids.sort(compararPlantillasFav);
 
     document.getElementById("montajes-cuenta").textContent =
@@ -11621,7 +11608,7 @@
      lista de Plantillas de montajes y «Cargar plantilla…». */
   var PLANTILLA_MAX_TECS = 6;
 
-  /* Plantillas favoritas (01-10-2026, pedido del usuario): para tenerlas a
+  /* Plantillas favoritas (30-09-2026, pedido del usuario): para tenerlas a
      mano. Es una preferencia personal, así que va en este dispositivo y por
      perfil («quién eres»), no en la plantilla, que es compartida y se
      sincroniza. Lista de uids; si una plantilla se borra, su uid sobra y no
@@ -11705,7 +11692,7 @@
         fTecs.appendChild(regNodo("span", "plantilla-tec", campo(t, "corta") || campo(t, "etiqueta")));
       });
       if (tecs.length > PLANTILLA_MAX_TECS) {
-        // «+n»: al tocarlo, un globo con las técnicas que no caben (01-10-2026,
+        // «+n»: al tocarlo, un globo con las técnicas que no caben (30-09-2026,
         // pedido del usuario), sin cargar la plantilla.
         var mas = regNodo("span", "plantilla-tec plantilla-tec-mas", "+" + (tecs.length - PLANTILLA_MAX_TECS));
         var resto = tecs.slice(PLANTILLA_MAX_TECS).map(function (t) { return campo(t, "corta") || campo(t, "etiqueta"); }).join(" · ");
@@ -14941,7 +14928,7 @@
     else if (localStorage.getItem(TEMA_KEY_VIEJA) === "1") temaIni = "claro";
   } catch (e) { /* sin persistencia */ }
   aplicarTema(temaIni);
-  /* Alto real de la barra superior en --header-h (01-10-2026): estaba fijo
+  /* Alto real de la barra superior en --header-h (30-09-2026): estaba fijo
      a 72 px, medido a mano, pero la barra crece (aviso de la demo, texto de
      sincronización en dos líneas) y lo que va fijo debajo -el rótulo de la
      plantilla- quedaba tapado. Se mide al cargar y cada vez que cambia. */

@@ -8,16 +8,16 @@
   --border-soft: #cfd7df;
   --text: #1a2229;
   --text-muted: #62717c;
-  /* Acento dorado a juego con el logo (26-09-2026; antes verde #14705a). En
-     claro es un dorado oscuro para que el texto se lea sobre blanco; en
-     oscuro, más claro y parecido al del logo (ver el bloque de abajo). */
-  --accent: #8a6a1c;
-  --accent-soft: #f4ecd8;
+  /* Acento: en claro, azul marino muy oscuro (30-09-2026, pedido del
+     usuario: el dorado no ayudaba en claro; se queda para el modo oscuro).
+     Antes dorado oscuro #8a6a1c / #f4ecd8; antes aún verde #14705a. */
+  --accent: #1b3a5c;
+  --accent-soft: #e2e9f1;
   /* Texto sobre fondo --accent (botones principales, chips elegidos...). */
   --accent-texto: #ffffff;
   /* Barra "Corrigiendo el material del caso": algo más apagada que el
      acento (25-09-2026), para que no deslumbre ni se confunda con los botones. */
-  --barra-caso-bg: #6f5518;
+  --barra-caso-bg: #243f5e;
   --aviso-bg: #fdf3e3;
   --aviso-border: #d99a2b;
   --aviso-text: #7a520e;
@@ -43,7 +43,7 @@
      (06-09-2026, pantalla de inicio) y volvió a dos el 09-09-2026 (menú "⋮"
      arriba a la izquierda, sincronización en su propia fila debajo)
      -medido a mano en el navegador, no hay cálculo automático; hay que
-     remedirlo si cambia el contenido de la barra-. Desde el 01-10-2026 lo mide app.js al cargar y al
+     remedirlo si cambia el contenido de la barra-. Desde el 30-09-2026 lo mide app.js al cargar y al
      cambiar; este valor queda solo como punto de partida. */
   --header-h: 72px;
   --r: 5px;
@@ -55,12 +55,12 @@
      apartados de la ficha; en oscuro y azul se aclara aparte. En claro, un
      gris azulado bastante más oscuro que el fondo de la página (#eef1f4):
      con #e3e8ed no se distinguían (30-09-2026, pedido del usuario). */
-  /* En claro, un tono dorado claro con texto marrón muy oscuro (30-09-2026:
-     el gris azulado con letra dorada apenas se leía). */
-  --cab-bg: #efe4c6;
-  /* Texto de esas cabeceras: en claro, dorado más oscuro para leerse sobre
-     el gris azulado; en oscuro y azul, el acento de siempre. */
-  --cab-texto: #3b2c08;
+  /* En claro, azul grisáceo con texto marino casi negro (30-09-2026, pedido
+     del usuario: fuera el dorado del modo claro; antes #efe4c6 / #3b2c08). */
+  --cab-bg: #cfd9e4;
+  /* Texto de esas cabeceras: en claro, marino casi negro; en oscuro y azul,
+     el acento de siempre. */
+  --cab-texto: #0e2036;
   /* Colores fijos con nombre (auditoría 28-09-2026, E3). No cambian con el
      tema a propósito: la barra superior y sus controles son oscuros siempre,
      y el Simulador imita la pantalla oscura de un equipo de monitorización.
@@ -3311,21 +3311,6 @@ dialog h3 {
   padding: 0 0.5rem;
   border-radius: 4px;
 }
-.reg-tecnicas-caso { margin: 0 0 0.3rem; font-size: 0.82rem; }
-.reg-mod-fila {
-  display: grid;
-  grid-template-columns: 7rem 1fr;
-  gap: 0.5rem;
-  padding: 0.4rem 0;
-  border-top: 1px solid var(--border-soft);
-}
-.reg-mod-rotulo { font-size: 0.78rem; font-weight: 600; color: var(--accent); }
-.reg-mod-rotulo-suelto { margin: 0.6rem 0 0.2rem; border-top: 1px solid var(--border-soft); padding-top: 0.4rem; }
-.reg-mod-cuerpo { display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; align-items: center; }
-.reg-mod-grupo { display: flex; flex-wrap: wrap; gap: 0.2rem 0.7rem; align-items: center; }
-.reg-mod-grupo-l { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); }
-.reg-mod-item { font-size: 0.82rem; }
-.reg-mod-cuerpo .reg-campo { margin: 0; min-width: 9rem; }
 .reg-basales { display: grid; grid-template-columns: 1fr; gap: 0.8rem; }
 @media (min-width: 900px) { .reg-basales { grid-template-columns: 1fr 1fr 1fr; } }
 .reg-basal-titulo { font-size: 0.68rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.2rem; }
@@ -3339,7 +3324,7 @@ dialog h3 {
 }
 .reg-basal-cab { font-size: 0.68rem; font-weight: 600; color: var(--text-muted); }
 .reg-basal-rotulo { font-size: 0.78rem; font-weight: 600; }
-.reg-basal-fila input, .reg-modular input, .reg-fila input[type="text"], .reg-fila input[type="number"],
+.reg-basal-fila input, .reg-fila input[type="text"], .reg-fila input[type="number"],
 .reg-fila input[type="time"], .reg-fila select, .reg-fila textarea {
   font: inherit;
   font-size: 0.8rem;
@@ -3352,7 +3337,6 @@ dialog h3 {
   width: 100%;
   box-sizing: border-box;
 }
-.reg-lista-acciones { margin-bottom: 0.6rem; }
 .reg-fila {
   border: 1px solid var(--border-soft);
   border-radius: 6px;
@@ -3433,13 +3417,6 @@ dialog h3 {
   .rr-linea .reg-fila-quitar { min-width: 44px; }
 }
 .reg-fila .campo label { font-size: 0.68rem; }
-.reg-modular-scroll { overflow-x: auto; margin-bottom: 0.5rem; }
-.reg-modular { min-width: 46rem; }
-.reg-modular-fila { display: grid; grid-template-columns: repeat(10, minmax(4rem, 1fr)); gap: 0.2rem; margin-bottom: 0.2rem; }
-.reg-modular-cab input { font-weight: 600; background: var(--accent-soft); }
-@media (max-width: 600px) {
-  .reg-mod-fila { grid-template-columns: 1fr; gap: 0.2rem; }
-}
 
 /* ---- Docencia > Material (24-09-2026): una fila por material ------------ */
 .mat-fila {
@@ -4209,7 +4186,7 @@ textarea { resize: none; overflow-y: hidden; }
 /* «Evento o alarma» resaltado entero (29-09-2026, pedido del usuario): marco
    completo en un dorado más apagado y fondo ligeramente teñido, para que se
    distinga bien de la lista «Apuntado» de debajo. */
-:root { --acento-apagado: #a88c4a; }
+:root { --acento-apagado: #4a6689; }
 @media screen { :root:not(.tema-claro) { --acento-apagado: #4d7bab; } :root.tema-oscuro { --acento-apagado: #8c7540; } }
 .rr-bloque.rr-bloque-evento {
   border: 1.5px solid var(--acento-apagado);
@@ -4378,10 +4355,10 @@ textarea { resize: none; overflow-y: hidden; }
 .plantilla-tec-mas { color: var(--text-muted); }
 
 /* Rótulo «Plantilla» (fijo arriba al hacer scroll) algo distinto de las
-   tarjetas (01-10-2026, pedido del usuario: al bajar se confundía con
+   tarjetas (30-09-2026, pedido del usuario: al bajar se confundía con
    Catálogo, Cajas…). Solo un toque: fondo teñido del acento y sombra suave. */
 body:not(.editando-caso) .barra-caso {
-  /* Sin el tinte (01-10-2026): así no se confunde con la cabecera de
+  /* Sin el tinte (30-09-2026): así no se confunde con la cabecera de
      Plantillas de montajes, que sí lo lleva. La distinguen la franja gruesa
      de acento, el rótulo en el acento y la sombra. */
   background: var(--card-bg);
@@ -4391,7 +4368,7 @@ body:not(.editando-caso) .barra-caso {
 }
 body:not(.editando-caso) #barra-caso-prefijo { color: var(--accent); }
 
-/* Plantillas de montajes más compacta (01-10-2026, pedido del usuario): la
+/* Plantillas de montajes más compacta (30-09-2026, pedido del usuario): la
    lista se abre entera, sin scroll propio dentro del de la pantalla; botones
    Guardar plantilla / Más acciones más pequeños; y cada plantilla ocupa
    menos alto (título más pequeño, menos relleno, técnicas más pequeñas). */
@@ -4407,7 +4384,7 @@ body:not(.editando-caso) #barra-caso-prefijo { color: var(--accent); }
 .plantilla-fila .marca-ficticio { font-size: 0.55rem; padding: 0 0.3rem; }
 .plantilla-tec-mas { cursor: pointer; color: var(--accent); border-color: var(--accent); }
 
-/* Plantillas favoritas (01-10-2026) */
+/* Plantillas favoritas (30-09-2026) */
 .plantilla-cab { align-items: flex-start; }
 .plantilla-fav { flex: 0 0 auto; font-size: 1.05rem; line-height: 1; color: var(--text-muted); cursor: pointer; padding: 0 0.1rem; position: relative; }
 /* Zona táctil más grande sin cambiar el aspecto */
