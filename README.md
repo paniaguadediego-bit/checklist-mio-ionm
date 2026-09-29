@@ -58,7 +58,7 @@ propia en *Después / consulta*).
   postquirúrgica en listas, y una **propuesta de concordancia** que se aplica
   con un botón. Los textos que ya tenías se conservan al final del Resumen de la
   monitorización.
-- **Basales** con OP BSL · PostPos1 · PostPos2 · CL BSL; **umbrales por raíz** en
+- **Basales** con Basal · PostPos1 · PostPos2 · Cierre; **umbrales por raíz** en
   columna vertebral; ficha con **Montaje / Material** y **Técnicas** separados;
   casillas más compactas; botón **Ocultar ayudas** en el menú ⋮; **modo oscuro**
   siempre, con **Modo claro** en el menú ⋮ (29-09-2026); la demo enseña
@@ -1046,8 +1046,8 @@ se imprimen igual):
 
 - **Hoja 1**: A identificación y estado prequirúrgico · B técnicas
   (monitorización, reflejos y mapeo) · C anestesia · D cronograma de hitos
-  (con botón **Ahora**) · E basales y comparativa (OP BSL / PostPos1 / PostPos2
-  / CL BSL) · E2 mapeo (filas que se van añadiendo) · esquema (fotos del
+  (con botón **Ahora**) · E basales y comparativa (Basal / PostPos1 / PostPos2
+  / Cierre) · E2 mapeo (filas que se van añadiendo) · esquema (fotos del
   grid/craneotomía).
 - **Hoja 2**: F registro de eventos (**+ Evento** añade una fila con la hora
   actual) · G alarmas (5 filas, con checklist de respuesta NRF/An/Cir) · H
@@ -1064,8 +1064,8 @@ principal: genera **2 páginas A4** para llevar en papel a quirófano,
 prerrellenadas con lo que ya está en Gestión de Casos y con filas en blanco
 para escribir a mano. Hoja 1: identificación, **técnicas** del catálogo en
 tres filas -monitorización, reflejos y mapeo, como en Gestión de Casos- con las
-del caso ya marcadas, anestesia, hitos, **basales y comparativa** (OP BSL /
-PostPos1 / PostPos2 / CL BSL), **mapeo** con la línea de la **sonda Raabe** (y dónde
+del caso ya marcadas, anestesia, hitos, **basales y comparativa** (Basal /
+PostPos1 / PostPos2 / Cierre), **mapeo** con la línea de la **sonda Raabe** (y dónde
 está montada en el caso) y un **esquema** pequeño. Hoja 2: **eventos y
 alarmas en una sola tabla** -con la leyenda de respuesta NRF / Anest. / Cir.
 y los códigos F/E/A/M/An/T de la hoja original-, cierre, y los parámetros de
@@ -1813,14 +1813,14 @@ este orden:
 
 Nada de esto toca los casos ya guardados: no hay migraciones.
 
-## Basales (OP BSL, PostPos1, PostPos2 y CL BSL)
+## Basales (Basal, PostPos1, PostPos2 y Cierre)
 
 En la ficha del caso, **Desarrollo intraoperatorio → Basales**, encima del Resumen de la monitorización,
 está la misma tabla que en el **Registro intraoperatorio**: lo que escribas en un
-sitio sale en el otro y en la hoja impresa. Columnas: **OP BSL** (apertura),
+sitio sale en el otro y en la hoja impresa. Columnas: **Basal** (apertura; antes «OP BSL»),
 **PostPos1** y **PostPos2** (hasta dos basales tras cambios de posición, antes
-de empezar o a mitad de cirugía) y **CL BSL** (cierre). PostPos2 solo existe en
-las filas de t-SEP y t-MEP, y los c-MEP solo llevan OP BSL y CL BSL. Filas de t-SEP y t-MEP de cada extremidad y, según las
+de empezar o a mitad de cirugía) y **Cierre** (antes «CL BSL»). PostPos2 solo existe en
+las filas de t-SEP y t-MEP, y los c-MEP solo llevan Basal y Cierre. Filas de t-SEP y t-MEP de cada extremidad y, según las
 técnicas del caso, c-SEP, c-MEP, GRID (con el electrodo de estímulo y el contacto
 de la inversión de fase), corticobulbares, Onda D proximal y distal (Prox. y
 Dist. D-Wave), PEATC y H-R. Más filas libres para lo que haga falta. (Umbral MEP

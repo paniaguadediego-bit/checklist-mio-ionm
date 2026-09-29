@@ -734,8 +734,8 @@
     caso_tof_monitorizado: { es: "TOF monitorizado", en: "TOF monitored" },
     caso_incidencias_anestesicas: { es: "Incidencias anestésicas", en: "Anaesthetic incidents" },
     caso_resumen_monitorizacion: { es: "Resumen de la monitorización", en: "Monitoring summary" },
-    caso_resumen_monitorizacion_ay: { es: "De corrido: qué salió al empezar (OP BSL), qué pasó por el camino, y qué salió al cerrar (CL BSL). Por ejemplo: «SEP y MEP normales al inicio (OP BSL) […] descargas de alta frecuencia a las 14.20h, ceden solas […] CL BSL: similares a las de apertura».",
-                           en: "In sequence: what came out at the start (OP BSL), what happened along the way, and what came out at closing (CL BSL). E.g.: “SEP and MEP normal at baseline (OP BSL) […] high-frequency discharges at 2:20pm, resolve on their own […] CL BSL: similar to opening”." },
+    caso_resumen_monitorizacion_ay: { es: "De corrido: qué salió al empezar (basal), qué pasó por el camino, y qué salió al cerrar (cierre). Por ejemplo: «SEP y MEP normales en la basal […] descargas de alta frecuencia a las 14.20h, ceden solas […] al cierre, similares a las de apertura».",
+                           en: "In sequence: what came out at the start (baseline), what happened along the way, and what came out at closing. E.g.: “SEP and MEP normal at baseline […] high-frequency discharges at 2:20pm, resolve on their own […] at closing, similar to opening”." },
     caso_tipo_alerta:    { es: "Tipo de alerta", en: "Type of alert" },
     caso_medida_correctora: { es: "Medida correctora", en: "Corrective action" },
     caso_recuperacion_senal: { es: "Resultado de la señal", en: "Signal outcome" },
@@ -958,7 +958,7 @@
     tour_x_exportar:     { es: "Con los filtros de arriba eliges casos y los exportas: informe en PDF de varios casos, un CSV con una fila por caso u otro CSV con los eventos y alarmas del registro. Fuera de la demo todo se sincroniza con un repositorio privado. Puedes repetir esta visita desde Inicio.",
                            en: "Use the filters above to choose cases and export them: a PDF report of several cases, a CSV with one row per case, or another CSV with the log's events and alarms. Outside the demo everything syncs to a private repository. You can repeat this tour from Home." },
     casos_quitar_fecha:  { es: "Quitar la fecha", en: "Clear the date" },
-    caso_basales_registro: { es: "Basales (OP BSL, PostPos y CL BSL)", en: "Baselines (OP BSL, PostPos and CL BSL)" },
+    caso_basales_registro: { es: "Basales (Basal, PostPos y Cierre)", en: "Baselines (Baseline, PostPos and Closing)" },
     caso_basales_registro_ay: { es: "Es la misma tabla que la del Registro intraoperatorio: lo que escribas aquí sale allí y en la hoja impresa, y al revés. Las filas de c-SEP, c-MEP, GRID, corticobulbares, Onda D, PEATC y H-R aparecen según las técnicas marcadas.",
                               en: "It is the same table as in the Intraoperative record: whatever you write here appears there and on the printed sheet, and vice versa. The c-SEP, c-MEP, GRID, corticobulbar, D wave, BAEP and H-R rows appear depending on the techniques ticked." },
     caso_basales_grid_estimulo: { es: "GRID: electrodo de estímulo", en: "GRID: stimulating electrode" },
@@ -16215,12 +16215,13 @@
   // usuario): a veces hay que repetir basales por cambios de posición antes
   // de empezar o a mitad de cirugía. PostPos2 ("soloT") solo existe en las
   // filas t-SEP y t-MEP (regColBasal()). Los ids no cambian: lo escrito en
-  // Apertura/Post-posición/Cierre sigue en OP BSL/PostPos1/CL BSL.
+  // Apertura/Post-posición/Cierre sigue en Basal/PostPos1/Cierre (antes
+  // rotuladas OP BSL y CL BSL; cambiado el 30-09-2026, pedido del usuario).
   var REG_BASALES_COLS = [
-    { id: "basal", l: "OP BSL", l_en: "OP BSL", tit: "Basales de apertura, antes de empezar", tit_en: "Opening baselines, before starting" },
+    { id: "basal", l: "Basal", l_en: "Baseline", tit: "Basales de apertura, antes de empezar", tit_en: "Opening baselines, before starting" },
     { id: "post", l: "PostPos1", l_en: "PostPos1", tit: "Basales tras el primer cambio de posición", tit_en: "Baselines after the first position change" },
     { id: "post2", l: "PostPos2", l_en: "PostPos2", soloT: true, tit: "Basales tras el segundo cambio de posición (solo t-SEP y t-MEP)", tit_en: "Baselines after the second position change (t-SEP and t-MEP only)" },
-    { id: "final", l: "CL BSL", l_en: "CL BSL", tit: "Basales de cierre", tit_en: "Closing baselines" }
+    { id: "final", l: "Cierre", l_en: "Closing", tit: "Basales de cierre", tit_en: "Closing baselines" }
   ];
   // ¿Lleva la fila (id sin prefijo: "sep_msd", "libre1"...) esa columna?
   // Los c-MEP no tienen post-posición: solo OP BSL y CL BSL (pedido del
