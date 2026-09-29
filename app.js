@@ -988,6 +988,7 @@
     // contacto es el que dio el autor para la demo (28-09-2026).
     demo_privacidad:     { es: "MIO-Check no guarda número de historia ni etiquetas del paciente. Esta demo, además, no envía nada a ningún servidor: lo que escribas se queda en este navegador y se borra con «Restablecer demo». No introduzcas datos reales de pacientes.",
                            en: "MIO-Check never stores medical record numbers or patient labels. This demo also sends nothing to any server: whatever you type stays in this browser and is erased with “Reset demo”. Do not enter real patient data." },
+    inicio_agradecimiento: { es: "Con agradecimiento al Dr. Javier Urriza Mena.", en: "With thanks to Dr. Javier Urriza Mena." },
     demo_autoria:        { es: "© 2026 P. Paniagua. Todos los derechos reservados. Uso solo con autorización. Contacto: paniagua.dediego@gmail.com",
                            en: "© 2026 P. Paniagua. All rights reserved. Use only with permission. Contact: paniagua.dediego@gmail.com" },
     demo_restablecer:    { es: "Restablecer demo", en: "Reset demo" },

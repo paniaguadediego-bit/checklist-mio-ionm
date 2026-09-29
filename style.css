@@ -4344,3 +4344,9 @@ textarea { resize: none; overflow-y: hidden; }
   border-bottom-color: var(--accent);
 }
 #montajes > summary.card-cab h2 { font-size: 0.92rem; letter-spacing: 0.02em; color: var(--accent); }
+
+/* Pie del inicio: agradecimiento y autoría bajo el logo (30-09-2026). */
+.inicio-pie { text-align: center; margin: 0 auto 1.5rem; max-width: 34rem; padding: 0 1rem; }
+.inicio-agradecimiento { margin: 0 0 0.35rem; font-size: 0.85rem; font-style: italic; color: var(--text); }
+.inicio-pie .demo-autoria { margin: 0; font-size: 0.75rem; color: var(--text-muted); }
+@media print { .inicio-pie { display: none; } }
