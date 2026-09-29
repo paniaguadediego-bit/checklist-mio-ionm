@@ -4150,3 +4150,14 @@ textarea { resize: none; overflow-y: hidden; }
 .rr-al-plegable .rr-al-detalle { margin: 0.15rem 0 0; }
 #pantalla-registro .rr-al-plegable > summary { min-height: 1.9rem; }
 .rr-al-sum-tit[hidden] { display: none; }
+/* «Evento o alarma» resaltado entero (29-09-2026, pedido del usuario): marco
+   completo en un dorado más apagado y fondo ligeramente teñido, para que se
+   distinga bien de la lista «Apuntado» de debajo. */
+:root { --acento-apagado: #a88c4a; }
+@media screen { :root:not(.tema-claro) { --acento-apagado: #8c7540; } }
+.rr-bloque.rr-bloque-evento {
+  border: 1.5px solid var(--acento-apagado);
+  background: var(--accent-soft);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
+}
+.rr-bloque-evento .rr-bloque-tit { color: var(--acento-apagado); }
