@@ -4396,3 +4396,12 @@ body:not(.editando-caso) #barra-caso-prefijo { color: var(--accent); }
 .plantilla-tec { font-size: 0.6rem; padding: 0 0.3rem; }
 .plantilla-fila .marca-ficticio { font-size: 0.55rem; padding: 0 0.3rem; }
 .plantilla-tec-mas { cursor: pointer; color: var(--accent); border-color: var(--accent); }
+
+/* Plantillas favoritas (01-10-2026) */
+.plantilla-cab { align-items: flex-start; }
+.plantilla-fav { flex: 0 0 auto; font-size: 1.05rem; line-height: 1; color: var(--text-muted); cursor: pointer; padding: 0 0.1rem; position: relative; }
+/* Zona táctil más grande sin cambiar el aspecto */
+.plantilla-fav[role="button"]::after { content: ""; position: absolute; inset: -8px -6px; }
+.plantilla-fav.activa { color: var(--aviso-border); }
+.plantilla-cab .montaje-nombre { flex: 1 1 auto; min-width: 0; }
+.montajes-fav-filtro { align-self: flex-end; padding-bottom: 0.3rem; }

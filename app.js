@@ -1208,6 +1208,10 @@
     barra_caso_ay:       { es: "Se guarda solo, en el caso. La plantilla original no se toca.",
                            en: "Saved automatically, into the case. The original montage is untouched." },
     barra_caso_volver:   { es: "Volver al caso", en: "Back to the case" },
+    plantilla_solo_fav:  { es: "Solo favoritas ★", en: "Favourites only ★" },
+    plantilla_fav_poner: { es: "Añadir a favoritas", en: "Add to favourites" },
+    plantilla_fav_quitar: { es: "Quitar de favoritas", en: "Remove from favourites" },
+    plantilla_sin_fav:   { es: "Todavía no tienes plantillas favoritas: toca la ☆ de una plantilla para marcarla.", en: "You have no favourite templates yet: tap a template's ☆ to mark it." },
     barra_plantilla_texto: { es: "Plantilla seleccionada", en: "Selected template" },
     caso_reconstruccion_parcial: { es: "De este caso solo se han podido recolocar {recuperadas} de {esperadas} entradas.\n\nEs un caso antiguo, de antes de que se guardara el montaje completo, y alguna de sus entradas ya no existe en las cajas de ahora.\n\nSi sigues y cambias algo, el caso se quedará con las {recuperadas} que se ven. ¿Continuar?",
                            en: "Only {recuperadas} of {esperadas} inputs could be restored for this case.\n\nIt is an old case, from before the full montage was stored, and some of its inputs no longer exist in the current boxes.\n\nIf you continue and change anything, the case will keep only the {recuperadas} shown. Continue?" },
@@ -5501,7 +5505,7 @@
       var nombre = (campo(m, "nombre") || "").toLowerCase();
       return nombre.indexOf(busq) !== -1 || autorDe(m).toLowerCase().indexOf(busq) !== -1;
     });
-    uids.sort(compararMontajesPorNombre);
+    uids.sort(compararPlantillasFav);
 
     document.getElementById("plantilla-elegir-vacio").hidden = !!uids.length;
     if (!uids.length) {
@@ -11562,15 +11566,18 @@
     // Filtro por equipo (25-09-2026): arranca en el último equipo usado y
     // recuerda lo que se elija; "Todos" las enseña todas.
     var fEquipo = filtroEquipoPlantillas();
+    var soloFav = document.getElementById("montajes-solo-fav").checked;
     var uids = Object.keys(montajes).filter(function (uid) {
       if (fEquipo && equipoDe(montajes[uid]) !== fEquipo) return false;
+      if (soloFav && !esFavorita(uid)) return false;
       if (!busq) return true;
       var m = montajes[uid];
       var nombre = (campo(m, "nombre") || "").toLowerCase();
       return nombre.indexOf(busq) !== -1 || autorDe(m).toLowerCase().indexOf(busq) !== -1;
     });
-    // Alfabético, sin importar de quién sea -pedido del usuario-.
-    uids.sort(compararMontajesPorNombre);
+    // Alfabético, sin importar de quién sea -pedido del usuario-; las
+    // favoritas, primero (01-10-2026).
+    uids.sort(compararPlantillasFav);
 
     document.getElementById("montajes-cuenta").textContent =
       T("montajes_cuenta", { n: uids.length, total: Object.keys(montajes).length });
@@ -11578,7 +11585,7 @@
     if (!uids.length) {
       var vacio = document.createElement("p");
       vacio.className = "empty-hint";
-      vacio.textContent = T("plantilla_vacio");
+      vacio.textContent = T(soloFav && !favoritasPlantillas().length ? "plantilla_sin_fav" : "plantilla_vacio");
       cont.appendChild(vacio);
       return;
     }
@@ -11588,7 +11595,7 @@
       // El subtítulo es el autor y cuántas entradas tiene ocupadas: con
       // montajes compartidos hay que saber de quién es y cuánto trae antes
       // de abrirlo.
-      var fila = nodoFilaPlantilla(m, uid, calcularResumen(m).entradas, yo);
+      var fila = nodoFilaPlantilla(m, uid, calcularResumen(m).entradas, yo, true);
       if (uid === activo) fila.classList.add("activo");
       // Elegir un montaje no lleva confirmación: no destruye nada, cada
       // montaje es su propio archivo y el anterior queda guardado tal
@@ -11613,12 +11620,62 @@
      técnicas. Borde izquierdo grueso: en el acento si es tuya. La usan la
      lista de Plantillas de montajes y «Cargar plantilla…». */
   var PLANTILLA_MAX_TECS = 6;
-  function nodoFilaPlantilla(m, uid, entradas, yo) {
+
+  /* Plantillas favoritas (01-10-2026, pedido del usuario): para tenerlas a
+     mano. Es una preferencia personal, así que va en este dispositivo y por
+     perfil («quién eres»), no en la plantilla, que es compartida y se
+     sincroniza. Lista de uids; si una plantilla se borra, su uid sobra y no
+     molesta. */
+  var FAV_PLANTILLAS_KEY = "mio_ionm_plantillas_favoritas_v1";
+  function favoritasTodas() {
+    try { return JSON.parse(localStorage.getItem(FAV_PLANTILLAS_KEY) || "{}") || {}; } catch (e) { return {}; }
+  }
+  function claveFavoritas() {
+    var yo = usuarioActual();
+    return yo ? yo.id : "_";
+  }
+  function favoritasPlantillas() {
+    return (favoritasTodas()[claveFavoritas()] || []).filter(function (uid) { return !!montajes[uid]; });
+  }
+  function esFavorita(uid) { return favoritasPlantillas().indexOf(uid) !== -1; }
+  function alternarFavorita(uid) {
+    var todas = favoritasTodas(), k = claveFavoritas();
+    var lista = (todas[k] || []).slice();
+    var i = lista.indexOf(uid);
+    if (i === -1) lista.push(uid); else lista.splice(i, 1);
+    todas[k] = lista;
+    try { localStorage.setItem(FAV_PLANTILLAS_KEY, JSON.stringify(todas)); } catch (e) { /* sin persistencia */ }
+  }
+  // Favoritas primero; dentro de cada grupo, por nombre como siempre.
+  function compararPlantillasFav(a, b) {
+    var fa = esFavorita(a), fb = esFavorita(b);
+    if (fa !== fb) return fa ? -1 : 1;
+    return compararMontajesPorNombre(a, b);
+  }
+  function nodoFilaPlantilla(m, uid, entradas, yo, estrellaEditable) {
     var fila = document.createElement("button");
     fila.type = "button";
     fila.className = "montaje-fila plantilla-fila" + (puedoEditar(m) ? " mio" : "");
     var cab = document.createElement("span");
     cab.className = "plantilla-cab";
+    // ★ favorita: se toca en la lista de Plantillas de montajes (sin cargar
+    // la plantilla); en «Cargar plantilla…» solo se enseña si lo es.
+    var fav = esFavorita(uid);
+    if (estrellaEditable || fav) {
+      var est = regNodo("span", "plantilla-fav" + (fav ? " activa" : ""), fav ? "★" : "☆");
+      if (estrellaEditable) {
+        est.setAttribute("role", "button");
+        est.title = T(fav ? "plantilla_fav_quitar" : "plantilla_fav_poner");
+        est.setAttribute("aria-label", est.title);
+        est.addEventListener("click", function (e) {
+          e.stopPropagation();
+          e.preventDefault();
+          alternarFavorita(uid);
+          renderListaMontajesDialog();
+        });
+      }
+      cab.appendChild(est);
+    }
     var nom = document.createElement("span");
     nom.className = "montaje-nombre";
     nom.textContent = campo(m, "nombre") || uid;
@@ -11669,6 +11726,7 @@
   }
 
   document.getElementById("montajes-buscar").addEventListener("input", renderListaMontajesDialog);
+  document.getElementById("montajes-solo-fav").addEventListener("change", renderListaMontajesDialog);
 
   var PLANTILLAS_EQUIPO_KEY = "mio_ionm_plantillas_equipo";
   function filtroEquipoPlantillas() {
