@@ -926,7 +926,7 @@
     tour_x_exportar:     { es: "Con los filtros de arriba eliges casos y los exportas: informe en PDF de varios casos, un CSV con una fila por caso u otro CSV con los eventos y alarmas del registro. Fuera de la demo todo se sincroniza con un repositorio privado. Puedes repetir esta visita desde Inicio.",
                            en: "Use the filters above to choose cases and export them: a PDF report of several cases, a CSV with one row per case, or another CSV with the log's events and alarms. Outside the demo everything syncs to a private repository. You can repeat this tour from Home." },
     casos_quitar_fecha:  { es: "Quitar la fecha", en: "Clear the date" },
-    caso_basales_registro: { es: "Basales (OPBSL, PostPos y CL-BSL)", en: "Baselines (OPBSL, PostPos and CL-BSL)" },
+    caso_basales_registro: { es: "Basales (OP BSL, PostPos y CL BSL)", en: "Baselines (OP BSL, PostPos and CL BSL)" },
     caso_basales_registro_ay: { es: "Es la misma tabla que la del Registro intraoperatorio: lo que escribas aquí sale allí y en la hoja impresa, y al revés. Las filas de c-SEP, c-MEP, GRID, corticobulbares, Onda D, PEATC y H-R aparecen según las técnicas marcadas.",
                               en: "It is the same table as in the Intraoperative record: whatever you write here appears there and on the printed sheet, and vice versa. The c-SEP, c-MEP, GRID, corticobulbar, D wave, BAEP and H-R rows appear depending on the techniques ticked." },
     caso_basales_grid_estimulo: { es: "GRID: electrodo de estímulo", en: "GRID: stimulating electrode" },
@@ -15611,15 +15611,15 @@
   // usuario): a veces hay que repetir basales por cambios de posición antes
   // de empezar o a mitad de cirugía. PostPos2 ("soloT") solo existe en las
   // filas t-SEP y t-MEP (regColBasal()). Los ids no cambian: lo escrito en
-  // Apertura/Post-posición/Cierre sigue en OPBSL/PostPos1/CL-BSL.
+  // Apertura/Post-posición/Cierre sigue en OP BSL/PostPos1/CL BSL.
   var REG_BASALES_COLS = [
-    { id: "basal", l: "OPBSL", l_en: "OPBSL", tit: "Basales de apertura, antes de empezar", tit_en: "Opening baselines, before starting" },
+    { id: "basal", l: "OP BSL", l_en: "OP BSL", tit: "Basales de apertura, antes de empezar", tit_en: "Opening baselines, before starting" },
     { id: "post", l: "PostPos1", l_en: "PostPos1", tit: "Basales tras el primer cambio de posición", tit_en: "Baselines after the first position change" },
     { id: "post2", l: "PostPos2", l_en: "PostPos2", soloT: true, tit: "Basales tras el segundo cambio de posición (solo t-SEP y t-MEP)", tit_en: "Baselines after the second position change (t-SEP and t-MEP only)" },
-    { id: "final", l: "CL-BSL", l_en: "CL-BSL", tit: "Basales de cierre", tit_en: "Closing baselines" }
+    { id: "final", l: "CL BSL", l_en: "CL BSL", tit: "Basales de cierre", tit_en: "Closing baselines" }
   ];
   // ¿Lleva la fila (id sin prefijo: "sep_msd", "libre1"...) esa columna?
-  // Los c-MEP no tienen post-posición: solo OPBSL y CL-BSL (pedido del
+  // Los c-MEP no tienen post-posición: solo OP BSL y CL BSL (pedido del
   // usuario, 28-09-2026).
   function regColBasal(col, idFila) {
     if (/^cmep_/.test(idFila)) return col.id === "basal" || col.id === "final";

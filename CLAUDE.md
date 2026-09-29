@@ -221,7 +221,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Cajas con grupos, rejilla, puertos con luz y polos − / + (Cadwell) | `entradasDe()` (`grupos`, `polos`), `renderCajaFisica()` (`rejilla`, `recuadro`), `puertosEncendidos()`, `pintarPuertos()` | ver `grep` |
 | Registro ↔ ficha en espejo (28-09-2026): alarmas con listas cerradas (`REG_CRITERIO_AL`, `REG_CAUSA_AL`, `REG_MEDIDAS_AL`; ids, lo antiguo como opción más), mapeo E2 y eventos «An» pintados también en la ficha sobre la copia de trabajo (`guardar` = `REG_SIN_GUARDAR`); «Tipo de alerta»/«Medida correctora» se derivan al guardar; resultado de la señal ⇄ `cierre_resultado`; evolución en lista + propuesta de concordancia | `pintarAlarmas()`, `alarmasEnCaso()` (en `guardarCaso()`), `textoAlarma()`, `regSelectLista()`, `regIdLista()`, `pintarEventosAn()`, `propuestaConcordancia()`, `t: "alarmas_reg"/"mapeo_reg"/"eventos_an"` en `campoCaso()` | ver `grep` |
 | Columna vertebral de umbrales por raíz (ficha y E2 del Registro; salto discontinuo) | `pintarColumnaRaices()`, `REG_NIVELES_RAICES` | ver `grep` |
-| Columnas de basales OPBSL/PostPos1/PostPos2/CL-BSL | `REG_BASALES_COLS`, `regColBasal()` | ver `grep` |
+| Columnas de basales OP BSL/PostPos1/PostPos2/CL BSL | `REG_BASALES_COLS`, `regColBasal()` | ver `grep` |
 | Registro C · Anestesia en espejo y eventos An | `pintarPantallaAnestesia()`, `pintarEventosAn()` | ver `grep` |
 | Menú ⋮ «Ocultar ayudas» | `AYUDAS_KEY`, `aplicarAyudas()`, `body.sin-ayudas` en style.css | ver `grep` |
 | Precios inventados de la demo | `PRECIOS_DEMO`, `preciosDemo()` | ver `grep` |
@@ -406,9 +406,9 @@ distinta a la anterior, no importa el formato exacto.
 >   plantilla, + Plantilla en blanco); «Montaje» = cómo quedan las cajas (Editar
 >   montaje del caso, Organizador de Montajes); «Técnica · lado» (no
 >   «Modalidad»); «Informe (PDF)» / «Informe de casos (PDF)».
-> - **Basales**: columnas **OPBSL · PostPos1 · PostPos2 · CL-BSL** (ids `basal`,
->   `post`, `post2`, `final`); PostPos2 solo t-SEP/t-MEP, c-MEP solo OPBSL y
->   CL-BSL (`regColBasal()`). **Umbrales por raíz** en columna vertebral: niveles
+> - **Basales**: columnas **OP BSL · PostPos1 · PostPos2 · CL BSL** (ids `basal`,
+>   `post`, `post2`, `final`); PostPos2 solo t-SEP/t-MEP, c-MEP solo OP BSL y
+>   CL BSL (`regColBasal()`). **Umbrales por raíz** en columna vertebral: niveles
 >   en orden anatómico unidos por una línea (discontinua si no son contiguos).
 > - **Hoja impresa**: B · Técnicas en tres filas (monitorización, reflejos,
 >   mapeo) con las del caso marcadas; alarmas y resultado esperable con rótulos.
