@@ -1276,8 +1276,7 @@
     rr_en_hoja:          { es: "Apuntar fase, evento o alarma", en: "Log phase, event or alarm" },
     rr_al_detalle:       { es: "Causa, medidas y recuperación", en: "Cause, measures and recovery" },
     rr_contexto:         { es: "Contexto quirúrgico (opcional)", en: "Surgical context (optional)" },
-    rr_tof_apuntado:     { es: "TOF {v} ({hora}).", en: "TOF {v} ({hora})." },
-    rr_tof_fila:         { es: "TOF · se apunta al tocarlo", en: "TOF · logged when tapped" },
+    rr_tof_fila:         { es: "TOF (opcional)", en: "TOF (optional)" },
     rr_grupo_tecnicas:   { es: "Técnicas", en: "Techniques" },
     rr_grupo_factores:   { es: "Factores técnicos", en: "Technical factors" },
     rr_grupo_anestesia:  { es: "Anestesia", en: "Anaesthesia" },
@@ -16615,7 +16614,7 @@
   var REG_QUE_OTRO = "__otro", REG_CAMBIO_OTRO = "__otro";
   // Lo elegido y aún sin apuntar. No se guarda: se pierde al cambiar de caso.
   // queNota y faseNota son las cajas de Qué y de Fase; nota, la de Qué pasa.
-  function regRapidoVacio() { return { que: "", cambio: "", nota: "", queNota: "", faseNota: "", contexto: "" }; }
+  function regRapidoVacio() { return { que: "", cambio: "", nota: "", queNota: "", faseNota: "", contexto: "", tof: "" }; }
   var regRapido = regRapidoVacio();
 
   function regFaseActual(d) {
@@ -16690,23 +16689,6 @@
 
   // El detalle de la fase va en «Acción y resultado» de su fila de F, así el
   // nombre de la fase sigue siendo el del botón (y la heredan los eventos).
-  function regTofActual(d) {
-    for (var i = d.eventos.length - 1; i >= 0; i--) {
-      if (d.eventos[i].modalidad === "TOF" && REG_TOF.indexOf(String(d.eventos[i].cambio).replace(/^TOF /, "")) !== -1) {
-        return String(d.eventos[i].cambio).replace(/^TOF /, "");
-      }
-    }
-    return "";
-  }
-  function regApuntarTof(valor) {
-    var d = registroDatos();
-    var hora = horaAhora();
-    d.eventos.push({ id: uuid(), hora: hora, cod: "An", fase: regFaseActual(d), modalidad: "TOF", cambio: "TOF " + valor });
-    registroGuardarYa();
-    avisoGuardado(T("rr_tof_apuntado", { v: valor, hora: hora }));
-    renderRegistroContenido();
-  }
-
   function regMarcarFase(nombre, detalle) {
     var d = registroDatos();
     detalle = (detalle || "").trim();
@@ -16744,9 +16726,10 @@
     var ev = { id: uuid(), hora: hora, cod: esAlarma ? "A" : (esAn ? "An" : (esT ? "T" : "E")),
                fase: fase, modalidad: modalidad, cambio: textoCambio, accion: nota };
     if (regRapido.contexto) ev.contexto = regRapido.contexto;
-    // El TOF vigente (el último apuntado) va con cada evento y alarma
-    // (29-09-2026, pedido del usuario): «¿estaba relajado cuando cayó?».
-    var tofVigente = regTofActual(d);
+    // El TOF es contexto del evento o la alarma (29-09-2026, pedido del
+    // usuario): el elegido en su fila va con lo que se apunta («¿estaba
+    // relajado cuando cayó?»). Tocarlo ya no apunta nada por sí solo.
+    var tofVigente = regRapido.tof;
     if (tofVigente) ev.tof = tofVigente;
     var mensaje = T("rr_apuntado", { hora: hora });
     if (esAlarma) {
@@ -16788,7 +16771,10 @@
       }
     }
     d.eventos.push(ev);
-    var faseNota = regRapido.faseNota;   // la caja de Fase no es de este apunte
+    // La caja de Fase no es de este apunte. El TOF se desmarca como lo demás
+    // (29-09-2026, pedido del usuario: no se mide a cada momento, y uno de
+    // antes que se quedara marcado no sería el real).
+    var faseNota = regRapido.faseNota;
     regRapido = regRapidoVacio();
     regRapido.faseNota = faseNota;
     registroGuardarYa();
@@ -16945,16 +16931,14 @@
       });
     bEvento.appendChild(regCajaRapida("nota", T("rr_nota")));
 
-    // TOF dentro de «Evento o alarma» (29-09-2026, pedido del usuario: es
-    // parte del contexto de los dos), detrás del contexto quirúrgico. Sigue
-    // apuntándose al tocarlo, con su hora, como las fases; el botón dice
-    // solo «2/4» y se apunta «TOF 2/4». Marcado, el último.
-    var tofAct = regTofActual(d);
+    // TOF, contexto del evento o la alarma (29-09-2026, pedido del usuario),
+    // detrás del contexto quirúrgico: se elige como él y va con lo que se
+    // apunte (ev.tof / al.tof, «2/4»). Ya no se apunta solo al tocarlo.
     var filaTof;
     var ponerTof = function () {
       filaTof = regGrupoRapido(bEvento, T("rr_tof_fila"));
       REG_TOF.forEach(function (v) {
-        var bTofV = regChip(v, v === tofAct, function () { regApuntarTof(v); });
+        var bTofV = regChip(v, regRapido.tof === v, function () { regElegirEn(filaTof, bTofV, "tof", v); });
         bTofV.setAttribute("aria-label", "TOF " + v);
         filaTof.appendChild(bTofV);
       });
