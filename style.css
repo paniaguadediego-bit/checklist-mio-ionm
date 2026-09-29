@@ -47,6 +47,17 @@
      porque en modo oscuro tiene que cambiar: un blanco fijo con la letra
      clara encima deja el campo ilegible. */
   --campo-bg: #ffffff;
+  /* Colores fijos con nombre (auditoría 28-09-2026, E3). No cambian con el
+     tema a propósito: la barra superior y sus controles son oscuros siempre,
+     y el Simulador imita la pantalla oscura de un equipo de monitorización.
+     Los que siguen sueltos en este archivo también son intencionados: blanco
+     sobre fondos de color, colores físicos de los conectores, semáforo de
+     estados de caso e impresión. */
+  --barra-control: #24343e;
+  --barra-control-hover: #2f434f;
+  --barra-borde: #0f1a21;
+  --sim-oro: #d8b45c;
+  --sim-oscuro: #1f2b33;
 
   /* Color por familia de técnica en "Técnicas IONM" (pedido por Pani,
      05-09-2026): un tono de texto y un fondo suave por familia, mismo patrón
@@ -115,7 +126,7 @@ body {
   z-index: 30;
   background: var(--panel);
   color: var(--panel-texto);
-  border-bottom: 1px solid #0f1a21;
+  border-bottom: 1px solid var(--barra-borde);
 }
 .barra-fila {
   display: flex;
@@ -160,7 +171,7 @@ body {
   padding: 0.22rem 0.45rem;
   font: inherit;
   font-size: 0.84rem;
-  background: #24343e;
+  background: var(--barra-control);
   color: var(--panel-texto);
   border: 1px solid var(--panel-borde);
   border-radius: var(--r);
@@ -171,13 +182,13 @@ body {
   font-size: 0.78rem;
   padding: 0.25rem 0.7rem;
   border: 1px solid var(--panel-borde);
-  background: #24343e;
+  background: var(--barra-control);
   color: var(--panel-texto);
   border-radius: var(--r);
   cursor: pointer;
   white-space: nowrap;
 }
-.btn-modo:hover { background: #2f434f; }
+.btn-modo:hover { background: var(--barra-control-hover); }
 
 /* Guía de uso / Idioma / Docente, agrupados: de consulta ocasional, no
    compiten en ancho con los botones que se tocan a diario. */
@@ -215,7 +226,7 @@ body {
   cursor: pointer;
   white-space: nowrap;
 }
-.menu-lista button:hover { background: #2f434f; }
+.menu-lista button:hover { background: var(--barra-control-hover); }
 
 /* -------------------------------- Main --------------------------------- */
 main {
@@ -968,7 +979,7 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
 .caja-tab {
   width: 2.4rem;
   margin: 0 auto 0.3rem;
-  background: #24343e;
+  background: var(--barra-control);
   border-radius: 0 0 5px 5px;
   text-align: center;
   font-size: 0.6rem;
@@ -1231,7 +1242,7 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
   border: 1px solid var(--border);
   background: var(--card-bg);
   color: var(--text-muted);
-  border-radius: 999px;
+  border-radius: var(--r);   /* rectangular como el resto (auditoría, E1) */
   padding: 0.25rem 0.9rem;
   font-size: 0.8rem;
   cursor: pointer;
@@ -2837,9 +2848,9 @@ dialog h3 {
 .sim-preset-fila { display: flex; align-items: center; gap: 2px; border-radius: 3px; }
 .sim-preset-fila.activo { background: rgba(216, 180, 92, 0.18); }
 .sim-menu .sim-preset-nombre { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.sim-preset-fila.activo .sim-preset-nombre { color: #d8b45c; font-weight: 600; }
+.sim-preset-fila.activo .sim-preset-nombre { color: var(--sim-oro); font-weight: 600; }
 .sim-menu .sim-preset-acc { flex: 0 0 auto; padding: 0.3rem 0.35rem; }
-.sim-preset-rotulo { color: #d8b45c; }
+.sim-preset-rotulo { color: var(--sim-oro); }
 /* Selección de ▶ ■ ❚❚ (TODOS, una ventana o un grupo) y botones de grupo. */
 .sim-lat-sel {
   width: 100%;
@@ -2857,7 +2868,7 @@ dialog h3 {
   text-overflow: ellipsis;
   cursor: pointer;
 }
-.sim-lat-sel.elegida { color: #d8b45c; font-size: 0.85rem; }
+.sim-lat-sel.elegida { color: var(--sim-oro); font-size: 0.85rem; }
 .sim-grupos { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; }
 .sim-grupo {
   border: none;
@@ -2866,8 +2877,8 @@ dialog h3 {
   cursor: pointer;
 }
 .sim-grupo.corriendo { box-shadow: inset 0 0 0 2px #fff; }
-.sim-grupo.elegido { outline: 2px solid #d8b45c; outline-offset: 1px; }
-.sim-ventana.seleccionada { outline: 2px solid #d8b45c; outline-offset: -2px; }
+.sim-grupo.elegido { outline: 2px solid var(--sim-oro); outline-offset: 1px; }
+.sim-ventana.seleccionada { outline: 2px solid var(--sim-oro); outline-offset: -2px; }
 .sim-ventana.corriendo .sim-num::before { content: "▶"; margin-right: 2px; font-size: 0.55rem; color: #d8ff9e; }
 .sim-transporte { display: flex; justify-content: space-between; gap: 0.25rem; }
 .sim-transporte button {
@@ -2877,7 +2888,7 @@ dialog h3 {
   border-radius: 50%;
   border: none;
   background: #e9eef1;
-  color: #1f2b33;
+  color: var(--sim-oscuro);
   font-size: 0.8rem;
   cursor: pointer;
 }
@@ -2899,7 +2910,7 @@ dialog h3 {
 .sim-divisor { flex: 0 0 4px; touch-action: none; border-radius: 2px; }
 .sim-divisor-h { cursor: col-resize; }
 .sim-divisor-v { cursor: row-resize; }
-.sim-divisor:hover, .sim-divisor.activo { background: #d8b45c; }
+.sim-divisor:hover, .sim-divisor.activo { background: var(--sim-oro); }
 
 /* Ventana */
 .sim-ventana {
@@ -2987,7 +2998,7 @@ dialog h3 {
   cursor: pointer;
 }
 .sim-tecla:hover { background: #5d7686; }
-.sim-tecla:active { background: #d8b45c; color: #1f2b33; }
+.sim-tecla:active { background: var(--sim-oro); color: var(--sim-oscuro); }
 .sim-ylabel {
   flex: 1 1 auto;
   min-height: 0;
@@ -3076,12 +3087,12 @@ dialog h3 {
   height: 2rem;
   border-radius: 5px;
   background: rgba(31, 43, 51, 0.88);
-  border: 2px solid #d8b45c;
-  color: #d8b45c;
+  border: 2px solid var(--sim-oro);
+  color: var(--sim-oro);
   font-size: 0.85rem;
   pointer-events: auto;
 }
-.sim-guia-borde.activa, .sim-cruz > div.activa { background: #d8b45c; color: #1f2b33; }
+.sim-guia-borde.activa, .sim-cruz > div.activa { background: var(--sim-oro); color: var(--sim-oscuro); }
 .sim-guia-arriba { top: 4px; left: calc(50% - 1rem); }
 .sim-guia-abajo { bottom: 4px; left: calc(50% - 1rem); }
 .sim-guia-izq { left: 4px; top: calc(50% - 1rem); }
@@ -3096,7 +3107,7 @@ dialog h3 {
 .sim-previa {
   position: absolute;
   background: rgba(216, 180, 92, 0.28);
-  border: 2px solid #d8b45c;
+  border: 2px solid var(--sim-oro);
   border-radius: 3px;
   pointer-events: none;
 }
@@ -3569,13 +3580,13 @@ dialog:focus { outline: none; }
   gap: 0.5rem;
   padding: 0.3rem 0.5rem;
   background: #3a3218;
-  border-bottom: 2px solid #d8b45c;
+  border-bottom: 2px solid var(--sim-oro);
   font-size: 0.72rem;
 }
 .sim-caso-barra[hidden] { display: none; }
 .sim-caso-icono { font-size: 1.1rem; }
 .sim-caso-textos { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
-.sim-caso-textos strong { color: #d8b45c; }
+.sim-caso-textos strong { color: var(--sim-oro); }
 .sim-caso-textos span { color: #e9eef1; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .sim-caso-barrida { color: #9fb2bd; white-space: nowrap; }
 .sim-caso-barra button {
@@ -3588,9 +3599,9 @@ dialog:focus { outline: none; }
   cursor: pointer;
   white-space: nowrap;
 }
-.sim-caso-barra button.primario { background: #d8b45c; color: #1f2b33; border-color: #d8b45c; font-weight: 600; }
+.sim-caso-barra button.primario { background: var(--sim-oro); color: var(--sim-oscuro); border-color: var(--sim-oro); font-weight: 600; }
 .sim-caso-barra button.activo { background: #6ea832; border-color: #6ea832; }
-.sim-etiq-med { font-weight: 600; color: #1f2b33; background: #f6e7b8; padding: 0 2px; border-radius: 2px; }
+.sim-etiq-med { font-weight: 600; color: var(--sim-oscuro); background: #f6e7b8; padding: 0 2px; border-radius: 2px; }
 .sim-etiq-med[hidden] { display: none; }
 #dlg-sim-caso { max-width: 34rem; }
 .sim-caso-pregunta { font-weight: 600; }
@@ -3872,7 +3883,7 @@ button, input, select, textarea { font-family: inherit; }
 @media (pointer: coarse), (max-width: 900px) { .reg-p-nuevo { min-height: 44px; } }
 .reg-p-ev + .reg-p-nuevo { margin: 0.4rem 0 0; }
 .reg-p-blanco input, .reg-p-blanco select { opacity: 0.75; }
-.reg-p-chip { font-size: 0.78rem; padding: 0.15rem 0.5rem; border: 1px solid var(--border); border-radius: 999px; background: var(--campo-bg); }
+.reg-p-chip { font-size: 0.78rem; padding: 0.15rem 0.5rem; border: 1px solid var(--border); border-radius: var(--r); background: var(--campo-bg); }
 .reg-p-dato { margin: 0.15rem 0; font-size: 0.85rem; }
 .reg-basal.reg-p-mapeo .reg-basal-fila { grid-template-columns: 1.4rem minmax(0, 1fr) minmax(0, 1.4fr); }
 .reg-basal.reg-p-ev .reg-basal-fila { grid-template-columns: 5.4rem 6.6rem minmax(0, 1fr) 1.8rem; align-items: center; }
@@ -4020,3 +4031,13 @@ body.sin-ayudas .coste-nota { display: none !important; }
 @media (prefers-color-scheme: dark) {
   .caso-fila.estado-pendiente_planificar { border-left-color: #8a8374; }
 }
+
+/* «Ahora» junto a su casilla de hora: del mismo alto que ella (≈30 px) en
+   el Registro y la ficha, con la zona táctil ampliada en vertical para no
+   perder facilidad de toque (auditoría 28-09-2026, E2). */
+#pantalla-registro .reg-seccion .reg-hora input,
+#dlg-caso .reg-hora input { min-height: 0; height: 1.9rem; }
+#pantalla-registro .reg-seccion .reg-ahora,
+#dlg-caso .reg-ahora { min-height: 0; height: 1.9rem; position: relative; }
+#pantalla-registro .reg-seccion .reg-ahora::after,
+#dlg-caso .reg-ahora::after { content: ""; position: absolute; top: -7px; bottom: -7px; left: 0; right: 0; }
