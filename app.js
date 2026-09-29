@@ -4601,7 +4601,7 @@
      códigos (F/E/A..., S/P/N) salen tal cual, que son ids estables. */
   var COLUMNAS_CSV_EVENTOS = [
     "caso_uid", "ID_Caso", "fecha", "servicio", "diagnostico", "intervencion",
-    "tipo_fila", "n", "hora", "codigo", "fase_maniobra", "contexto", "modalidad_lado", "cambio",
+    "tipo_fila", "n", "hora", "codigo", "fase_maniobra", "contexto", "tof", "modalidad_lado", "cambio",
     "criterio", "causa_probable", "aviso_cirujano", "aviso_anestesia", "nrf", "an", "cir",
     "accion_medidas", "recuperacion", "hora_recuperacion", "min_hasta_recuperacion",
     "resultado_mio", "concordancia",
@@ -4665,7 +4665,8 @@
         });
       }
       sacar("evento", r.eventos, "", function (f) {
-        return { hora: f.hora, codigo: f.cod, fase_maniobra: f.fase, contexto: regTextoLista(REG_CONTEXTO, f.contexto), modalidad_lado: f.modalidad,
+        return { hora: f.hora, codigo: f.cod, fase_maniobra: f.fase, contexto: regTextoLista(REG_CONTEXTO, f.contexto),
+                 tof: f.tof ? "TOF " + f.tof : "", modalidad_lado: f.modalidad,
                  cambio: f.cambio, aviso_cirujano: !!f.av_cir, aviso_anestesia: !!f.av_an,
                  accion_medidas: f.accion };
       });
@@ -4684,7 +4685,7 @@
         } : {};
         var med = (f.medidas_l || []).map(function (v) { return regTextoLista(REG_MEDIDAS_AL, v); });
         if (f.medidas) med.push(f.medidas);
-        return { hora: f.hora, fase_maniobra: f.fase || "", modalidad_lado: f.modalidad,
+        return { hora: f.hora, fase_maniobra: f.fase || "", tof: f.tof ? "TOF " + f.tof : "", modalidad_lado: f.modalidad,
                  criterio: regTextoLista(REG_CRITERIO_AL, f.criterio),
                  causa_probable: regTextoLista(REG_CAUSA_AL, f.causa), nrf: !!f.nrf, an: !!f.an, cir: !!f.cir,
                  accion_medidas: med.join(", "), recuperacion: f.recup, hora_recuperacion: f.h_recup,
@@ -16743,6 +16744,10 @@
     var ev = { id: uuid(), hora: hora, cod: esAlarma ? "A" : (esAn ? "An" : (esT ? "T" : "E")),
                fase: fase, modalidad: modalidad, cambio: textoCambio, accion: nota };
     if (regRapido.contexto) ev.contexto = regRapido.contexto;
+    // El TOF vigente (el último apuntado) va con cada evento y alarma
+    // (29-09-2026, pedido del usuario): «¿estaba relajado cuando cayó?».
+    var tofVigente = regTofActual(d);
+    if (tofVigente) ev.tof = tofVigente;
     var mensaje = T("rr_apuntado", { hora: hora });
     if (esAlarma) {
       // Las alarmas nacen con filas vacías (min en REG_SECCIONES): se usa la
@@ -16756,6 +16761,7 @@
       // la "causa", que ahora se elige de REG_CAUSA_AL.
       al.criterio = otroCambio ? textoCambio : (cambio && !cambio.recup && cambio.id !== "sin_cambios" ? cambio.id : "");
       al.fase = fase;
+      if (tofVigente) al.tof = tofVigente;
       if (esAn) al.causa = "anestesica";
       if (esT) al.causa = "tecnica";
       al.medidas = nota;
@@ -17071,7 +17077,9 @@
       txt.textContent = partes.filter(Boolean).join(" · ");
       var fase = ev ? ev.fase : al.fase;
       var ctx = ev && ev.contexto ? regTextoLista(REG_CONTEXTO, ev.contexto) : "";
-      if (fase || ctx) txt.appendChild(regNodo("small", null, " " + [fase ? T("rr_en_fase", { fase: fase }) : "", ctx].filter(Boolean).join(" · ")));
+      var tofL = (ev && ev.tof) || (al && al.tof);
+      tofL = tofL ? "TOF " + tofL : "";
+      if (fase || ctx || tofL) txt.appendChild(regNodo("small", null, " " + [fase ? T("rr_en_fase", { fase: fase }) : "", ctx, tofL].filter(Boolean).join(" · ")));
     }
     fila.appendChild(txt);
     // Corregir la línea (29-09-2026, pedido del usuario): solo con ✎ (tocar
@@ -17813,7 +17821,7 @@
   // Texto de una alarma para el caso (Tipo de alerta / CSV / Sheet / informe).
   function textoAlarma(a, i) {
     var partes = [a.hora, a.modalidad, regTextoLista(REG_CRITERIO_AL, a.criterio),
-      regTextoLista(REG_CAUSA_AL, a.causa)].filter(Boolean);
+      regTextoLista(REG_CAUSA_AL, a.causa), a.tof ? "TOF " + a.tof : ""].filter(Boolean);
     if (a.recup) partes.push(T("reg_p_recup") + " " + regTextoLista(REG_RECUP, a.recup) + (a.h_recup ? " (" + a.h_recup + ")" : ""));
     return "A" + (i + 1) + ": " + partes.join(" · ");
   }
