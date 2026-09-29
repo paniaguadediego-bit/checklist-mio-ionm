@@ -3252,13 +3252,6 @@ dialog h3 {
 }
 
 /* ---- Registro intraoperatorio (24-09-2026) ---------------------------- */
-.reg-hoja {
-  margin: 1.1rem 0 0.4rem;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-}
 .reg-seccion > summary { display: flex; align-items: center; gap: 0.5rem; }
 .reg-cuenta:not(:empty) {
   margin-left: auto;

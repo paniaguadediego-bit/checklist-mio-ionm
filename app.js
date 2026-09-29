@@ -1203,8 +1203,6 @@
     tile_registro:       { es: "Registro intraoperatorio", en: "Intraoperative record" },
     registro_intro:      { es: "Hoja de registro intraoperatorio, pensada para imprimirla y tenerla en quirófano: sale prerrellenada con los datos del caso (técnicas, anestesia, montaje, dónde está el Raabe…) y con filas en blanco para basales, mapeo y eventos/alarmas. Elige un caso, rellena lo que quieras aquí y pulsa Imprimir hoja. No se guarda ninguna etiqueta ni nº de historia del paciente.",
                            en: "Intraoperative record sheet, meant to be printed and kept in the OR: it comes pre-filled with the case data (techniques, anaesthesia, setup, where the Raabe is…) and with blank rows for baselines, mapping and events/alarms. Pick a case, fill in whatever you like here and press Print sheet. No patient label or record number is stored." },
-    registro_hoja_1:     { es: "Hoja 1 · Preparación, basales y mapeo", en: "Sheet 1 · Setup, baselines and mapping" },
-    registro_hoja_2:     { es: "Hoja 2 · Desarrollo y cierre", en: "Sheet 2 · Course and closure" },
     registro_ahora:      { es: "Ahora", en: "Now" },
     registro_ahora_tit:  { es: "Poner la hora actual", en: "Set the current time" },
     registro_tecnicas_caso: { es: "Técnicas del caso:", en: "Case techniques:" },
@@ -16497,19 +16495,14 @@
     pintarPanelApuntar(cuerpoR);
     detR.appendChild(cuerpoR);
     cont.appendChild(detR);
-    var hojaActual = 0;
     REG_SECCIONES.forEach(function (sec) {
       // En pantalla, algunas secciones van simplificadas o no van (ver
       // REG_PANTALLA); la hoja impresa sigue saliendo entera.
       var enPantalla = Object.prototype.hasOwnProperty.call(REG_PANTALLA, sec.id) ? REG_PANTALLA[sec.id] : undefined;
       if (enPantalla === null) return;
-      if (sec.hoja !== hojaActual) {
-        hojaActual = sec.hoja;
-        var h = document.createElement("h3");
-        h.className = "reg-hoja";
-        h.textContent = T("registro_hoja_" + hojaActual);
-        cont.appendChild(h);
-      }
+      // Sin los rótulos «Hoja 1 / Hoja 2» en pantalla (29-09-2026, pedido del
+      // usuario): el orden de la pantalla ya no es el del papel. La hoja
+      // impresa sigue en sus dos páginas.
       var det = document.createElement("details");
       // Clase por hoja: la hoja 2 lleva casillas del tamaño de las del E2
       // (28-09-2026, pedido del usuario; ver .reg-hoja-2 en style.css).
