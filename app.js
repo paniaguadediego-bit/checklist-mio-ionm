@@ -844,6 +844,8 @@
     btn_guia:            { es: "Guía de uso", en: "User guide" },
     btn_ayudas_ocultar:  { es: "Ocultar ayudas", en: "Hide help texts" },
     btn_ayudas_mostrar:  { es: "Mostrar ayudas", en: "Show help texts" },
+    btn_tema_claro:      { es: "Modo claro", en: "Light mode" },
+    btn_tema_oscuro:     { es: "Modo oscuro", en: "Dark mode" },
     btn_guia_tit:        { es: "Cómo se usa MIO-Check, de un vistazo", en: "How to use MIO-Check, at a glance" },
     dlg_guia_titulo:     { es: "Guía de uso", en: "User guide" },
     guia_aviso_en:       { es: "This guide is only written in Spanish for now.", en: "This guide is only written in Spanish for now." },
@@ -14364,6 +14366,27 @@
     var sin = !document.body.classList.contains("sin-ayudas");
     aplicarAyudas(sin);
     try { localStorage.setItem(AYUDAS_KEY, sin ? "1" : "0"); } catch (e) { /* sin persistencia */ }
+  });
+
+  /* Modo claro (29-09-2026, pedido del usuario): la herramienta va en oscuro
+     siempre y el claro se elige en el menú ⋮, debajo del idioma. Pone la
+     clase "tema-claro" en <html> (ver style.css). Se recuerda en este
+     dispositivo, como «Ocultar ayudas». */
+  var TEMA_KEY = "mio_ionm_tema_claro_v1";
+  var btnTema = document.getElementById("btn-tema");
+  function aplicarTema(claro) {
+    document.documentElement.classList.toggle("tema-claro", claro);
+    var clave = claro ? "btn_tema_oscuro" : "btn_tema_claro";
+    btnTema.setAttribute("data-i18n", clave);
+    btnTema.textContent = T(clave);
+  }
+  var temaClaroIni = false;
+  try { temaClaroIni = localStorage.getItem(TEMA_KEY) === "1"; } catch (e) { /* sin persistencia */ }
+  aplicarTema(temaClaroIni);
+  btnTema.addEventListener("click", function () {
+    var claro = !document.documentElement.classList.contains("tema-claro");
+    aplicarTema(claro);
+    try { localStorage.setItem(TEMA_KEY, claro ? "1" : "0"); } catch (e) { /* sin persistencia */ }
   });
 
   /* ---------------------------------------------------------------- *

@@ -60,7 +60,8 @@ propia en *Después / consulta*).
   monitorización.
 - **Basales** con OP BSL · PostPos1 · PostPos2 · CL BSL; **umbrales por raíz** en
   columna vertebral; ficha con **Montaje / Material** y **Técnicas** separados;
-  casillas más compactas; botón **Ocultar ayudas** en el menú ⋮; la demo enseña
+  casillas más compactas; botón **Ocultar ayudas** en el menú ⋮; **modo oscuro**
+  siempre, con **Modo claro** en el menú ⋮ (29-09-2026); la demo enseña
   el **coste** de cada cirugía con precios inventados; **Quirófano** en Inicio
   con el Checklist y el Registro.
 

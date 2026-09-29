@@ -224,6 +224,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Columnas de basales OP BSL/PostPos1/PostPos2/CL BSL | `REG_BASALES_COLS`, `regColBasal()` | ver `grep` |
 | Registro C · Anestesia en espejo y eventos An | `pintarPantallaAnestesia()`, `pintarEventosAn()` | ver `grep` |
 | Menú ⋮ «Ocultar ayudas» | `AYUDAS_KEY`, `aplicarAyudas()`, `body.sin-ayudas` en style.css | ver `grep` |
+| Tema: oscuro siempre; «Modo claro» en el menú ⋮ (por dispositivo). Los colores oscuros van en `@media screen { :root:not(.tema-claro) … }`; al imprimir, siempre los claros | `TEMA_KEY`, `aplicarTema()`, `html.tema-claro` en style.css | ver `grep` |
 | Precios inventados de la demo | `PRECIOS_DEMO`, `preciosDemo()` | ver `grep` |
 | Ficha: autoguardado, salir y cerrar caso | `autoguardarFicha()`, `salirDeFicha()`, `firmaFicha()`, `fichaOrigen`, `casoCambiadoFuera()`, `pintarBotonCerrarCaso()` | ver `grep` |
 | Fusión de un caso en conflicto de subida | `fusionarCaso()` (dentro del 409/422 de `subirCasoYaHidratado()`) | ver `grep` |
@@ -359,8 +360,10 @@ distinta a la anterior, no importa el formato exacto.
 >   *Quirófano*: Checklist pre-quirúrgico, Registro intraoperatorio.
 >   *Después / consulta*: Técnicas IONM (solo con token), Material, Docencia
 >   (Miotomas, Cama, Teoría básica pendiente), Simulador, Mis apuntes,
->   Bibliografía recomendada. Menú ⋮: Catálogos, EN, Guía y **Ocultar/Mostrar
->   ayudas** (`body.sin-ayudas`, por dispositivo).
+>   Bibliografía recomendada. Menú ⋮: Catálogos, EN, **Modo claro/oscuro**
+>   (`html.tema-claro`; oscuro por defecto desde el 29-09-2026, ya no sigue al
+>   sistema), Guía y **Ocultar/Mostrar ayudas** (`body.sin-ayudas`); los dos,
+>   por dispositivo.
 > - **Idea rectora del usuario (28-09 noche):** lo que se recoge en quirófano se
 >   apunta en el **Registro** y la ficha de Gestión de Casos lo refleja **en
 >   espejo** (se escribe en cualquiera de los dos); **menos texto libre**, listas
