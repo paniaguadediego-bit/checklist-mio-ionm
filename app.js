@@ -18465,8 +18465,13 @@
     });
     tourCard.querySelector(".tour-ant").addEventListener("click", function () { tourIr(tourPaso - 1); });
     tourCard.querySelector(".tour-sig").addEventListener("click", function () {
-      if (tourPaso >= TOUR_PASOS.length - 1) tourTerminar();
-      else tourIr(tourPaso + 1);
+      // Al terminar la visita se vuelve a Inicio (29-09-2026, pedido del
+      // usuario): el último paso deja la pantalla en Gestión de Casos.
+      if (tourPaso >= TOUR_PASOS.length - 1) {
+        tourTerminar();
+        tourCerrarCaso();
+        irAPantalla("inicio");
+      } else tourIr(tourPaso + 1);
     });
     // Si se cierra la ficha con la tarjeta dentro, la tarjeta vuelve al body.
     dlgCaso.addEventListener("close", function () {
