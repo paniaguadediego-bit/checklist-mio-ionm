@@ -953,7 +953,10 @@ hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
   cambio N13 / N20), EMG (trenes A, neurotónicos, salvas, sin respuesta
   evocada), EEG / ECoG (enlentecimiento, atenuación / isoeléctrico,
   brote-supresión, epileptiforme) y PEATC (↑ interpico, pérdida de onda V o I).
-  En una alarma quedan como criterio (lista cerrada con ids). La caja de debajo es
+  En una alarma quedan como criterio (lista cerrada con ids). Con **GRID**
+  elegido (es el electrodo, no una técnica: sirve para c-MEP, s-MEP o ECoG) no
+  salen alteraciones sino sus **eventos**: colocación, phase reversal, se mueve
+  (pierde motor / sensitivo) y retirada, con su hora. La caja de debajo es
   una nota (acción o medidas) o, con **Otro**, el cambio.
 - **Contexto quirúrgico** (opcional, lista cerrada): disección, retracción,
   tracción / manipulación, coagulación, resección / aspiración, irrigación,

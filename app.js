@@ -1278,6 +1278,7 @@
     rr_contexto:         { es: "Contexto quirúrgico (opcional)", en: "Surgical context (optional)" },
     rr_grupo_reflejos:   { es: "Reflejos", en: "Reflexes" },
     rr_cambios_propios:  { es: "Propias de {tec}", en: "Specific to {tec}" },
+    rr_cambios_grid:     { es: "Eventos del GRID", en: "GRID events" },
     rr_grupo_tecnicas:   { es: "Técnicas", en: "Techniques" },
     rr_grupo_factores:   { es: "Factores técnicos", en: "Technical factors" },
     rr_grupo_anestesia:  { es: "Anestesia", en: "Anaesthesia" },
@@ -15872,6 +15873,7 @@
     { v: "peat_onda_v", l: "Pérdida onda V", l_en: "Wave V loss" },
     { v: "peat_onda_i", l: "Pérdida onda I", l_en: "Wave I loss" }
   ];
+  REG_CRITERIO_AL.push({ v: "grid_desplazamiento", l: "GRID se mueve (pierde motor / sensitivo)", l_en: "GRID moves (motor / sensory lost)" });
   var REG_CAUSA_AL = [
     { v: "quirurgica", l: "Maniobra quirúrgica", l_en: "Surgical manoeuvre" },
     { v: "anestesica", l: "Anestésica", l_en: "Anaesthetic" },
@@ -16626,11 +16628,18 @@
     { id: "eeg_epileptiforme", mod: "eeg", l: "Actividad epileptiforme", l_en: "Epileptiform activity", ayuda: "Espigas, punta-onda o crisis electrográficas: estimulación cortical directa (mapeo motor) o reperfusión.", ayuda_en: "Spikes, spike-wave or electrographic seizures: direct cortical stimulation (motor mapping) or reperfusion." },
     { id: "peat_interpico", mod: "peat", l: "↑ interpico (I-III, III-V, I-V)", l_en: "↑ interpeak (I-III, III-V, I-V)", ayuda: "Aumento de los intervalos interpico: estiramiento o compresión del VIII par o del tronco (frecuente en el neurinoma del acústico).", ayuda_en: "Longer interpeak intervals: stretch or compression of CN VIII or the brainstem (common in vestibular schwannoma)." },
     { id: "peat_onda_v", mod: "peat", l: "Pérdida onda V", l_en: "Wave V loss", ayuda: "Pérdida aislada de la onda V: afectación mesencefálica / del lemnisco lateral.", ayuda_en: "Isolated wave V loss: midbrain / lateral lemniscus involvement." },
-    { id: "peat_onda_i", mod: "peat", l: "Pérdida onda I", l_en: "Wave I loss", ayuda: "Pérdida de la onda I: problema periférico (coclear, asa vascular).", ayuda_en: "Wave I loss: peripheral problem (cochlear, vascular loop)." }
+    { id: "peat_onda_i", mod: "peat", l: "Pérdida onda I", l_en: "Wave I loss", ayuda: "Pérdida de la onda I: problema periférico (coclear, asa vascular).", ayuda_en: "Wave I loss: peripheral problem (cochlear, vascular loop)." },
+    // GRID (29-09-2026, pedido del usuario): no es una técnica sino el
+    // electrodo (c-MEP, s-MEP, ECoG); sus eventos, con su hora.
+    { id: "grid_colocacion", mod: "grid", l: "Colocación", l_en: "Placement", ayuda: "Colocación del GRID sobre la corteza.", ayuda_en: "GRID placed on the cortex." },
+    { id: "grid_phase_reversal", mod: "grid", l: "Phase reversal", l_en: "Phase reversal", ayuda: "Inversión de fase (localización del surco central).", ayuda_en: "Phase reversal (central sulcus localisation)." },
+    { id: "grid_desplazamiento", mod: "grid", l: "Se mueve (pierde motor / sensitivo)", l_en: "Moves (motor / sensory lost)", ayuda: "El GRID cambia de posición y se pierden las respuestas motoras y/o sensitivas que se tenían; en la caja de detalle, cuáles.", ayuda_en: "The GRID shifts and the motor and/or sensory responses are lost; say which in the detail box." },
+    { id: "grid_retirada", mod: "grid", l: "Retirada", l_en: "Removal", ayuda: "Retirada del GRID.", ayuda_en: "GRID removed." }
   ];
   // Modalidad de lo elegido en QUÉ, para las alteraciones propias
   function regModalidadDeQue(q) {
     q = String(q || "");
+    if (/^GRID/.test(q)) return "grid";
     if (/D-Wave|Onda D/i.test(q)) return "onda_d";
     if (/^(t-|c-)?MEP|^CoMEP/.test(q)) return "mep";
     if (/^(t-|c-)?SEP/.test(q)) return "sep";
@@ -17089,7 +17098,10 @@
       var elegida = REG_CAMBIOS_RAPIDOS.filter(function (c) { return c.id === regRapido.cambio; })[0];
       if (elegida && elegida.mod && elegida.mod !== mod) regRapido.cambio = "";
       filaEsp.textContent = "";
-      titEsp.textContent = lista.length ? T("rr_cambios_propios", { tec: regRapido.que }) : "";
+      // El GRID no tiene ↑ umbral, pérdida...: solo sus eventos
+      filaCambio.hidden = mod === "grid";
+      if (mod === "grid" && REG_CAMBIOS_RAPIDOS.filter(function (c) { return c.id === regRapido.cambio && !c.mod; }).length) regRapido.cambio = "";
+      titEsp.textContent = !lista.length ? "" : (mod === "grid" ? T("rr_cambios_grid") : T("rr_cambios_propios", { tec: regRapido.que }));
       titEsp.hidden = filaEsp.hidden = !lista.length;
       lista.forEach(function (c) {
         var b = regChip(campo(c, "l"), regRapido.cambio === c.id, function () { regElegirEn(cambioGrupos, b, "cambio", c.id); });
