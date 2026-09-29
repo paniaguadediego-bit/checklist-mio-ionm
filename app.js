@@ -18896,8 +18896,8 @@
     return ids.filter(function (id) { return !!TECS[id]; });
   }
 
-  function montajeDemo(nombre, tecnicas, asign, extras, notas) {
-    var m = montajeNuevo(nombre);
+  function montajeDemo(nombre, tecnicas, asign, extras, notas, equipo) {
+    var m = montajeNuevo(nombre, equipo);
     m.tecnicas = tecnicasDemo(tecnicas);
     m.asignaciones = asignacionesDemo(asign);
     m.extras = (extras || []).filter(function (id) { return !!ITEMS[id]; });
@@ -18913,7 +18913,11 @@
     c.centro = T("demo_centro");
     Object.keys(campos).forEach(function (k) { c[k] = campos[k]; });
     if (m) {
+      // El caso va con el equipo de su plantilla (Inomed o Cadwell): si no,
+      // el montaje se leería con las cajas del otro equipo.
+      c.equipo_id = m.equipo_id;
       volcarMontajeEnCaso(c, {
+        equipo_id: m.equipo_id,
         tecnicas: m.tecnicas.slice(), asignaciones: clonar(m.asignaciones),
         extras: m.extras.slice(), etiquetas: {}, conmutador: {},
         notas_montaje: m.notas_montaje
@@ -19144,6 +19148,98 @@
       hist_clinica: true, examen_neuro: true, consentimiento: true, definir_modalidades: true
     };
     guardarCaso(cGRID, true);
+
+    // Plantillas y casos con Cadwell (30-09-2026, pedido del usuario): otro
+    // equipo, con montajes y técnicas que no salen en los de Inomed (LSR,
+    // blink reflex, RBC, H-reflex, laríngeo recurrente con sensor de tubo).
+    // Ids de caja y de entrada de data/surgeries.js (cajas_cadwell): H1-H9
+    // del TCS son "h1"..; E1-E13 son "1"..; los módulos de extremidad, pares
+    // "1".."8" y salidas de estímulo "es1"..; el LCSwap, puertos "p1:menos".
+    var mJannetta = montajeDemo("Demo · Cadwell · Descompresión microvascular del facial",
+      ["lsr", "br", "peatc", "emg"],
+      {
+        cadwell_cortical: { "1": "cz_prima", "2": "a1", "3": "a2", "gnd": "tierra" },
+        cadwell_extremidad_1: { "1": "r_frontalis", "2": "r_ooc", "3": "r_oris", "4": "r_ment", "5": "l_ooc",
+          "es1": "r_n_cigomatica", "es2": "r_n_mandibular", "es3": "r_v1", "gnd": "tierra" }
+      }, ["auriculares_peatc"],
+      "Espasmo hemifacial derecho en el ejemplo. LSR: estímulo en la rama cigomática y registro en el mentoniano (y al revés). Blink reflex con estímulo supraorbitario. Los auriculares van al puerto naranja del módulo cortical y no ocupan entrada.", "cadwell");
+
+    var mTiroides = montajeDemo("Demo · Cadwell · Tiroidectomía (nervio laríngeo recurrente)",
+      ["emg", "mapeo_nervio_periferico"],
+      {
+        cadwell_extremidad_1: { "1": "voc_1_3", "2": "voc_2_4", "gnd": "tierra" },
+        cadwell_lcswap: { "p1:menos": "sonda_mono_esferica", "p1:mas": "ref_sonda" }
+      }, [],
+      "Sensor de tubo orotraqueal: comprobar la posición del tubo tras colocar al paciente. Estimular el vago antes y después de la tiroidectomía (V1-R1-R2-V2).", "cadwell");
+
+    var mCono = montajeDemo("Demo · Cadwell · Médula anclada (RBC + raíces sacras)",
+      ["t_pem", "t_pess", "rbc", "hr_popliteo", "emg", "mapeo_raices_tornillos"],
+      {
+        cadwell_cortical: { "h1": "c3", "h2": "c4", "h3": "c1", "h4": "c2", "1": "cz_prima", "2": "fz", "3": "cv2", "gnd": "tierra" },
+        cadwell_extremidad_1: { "1": "l_q", "2": "r_q", "3": "l_ta", "4": "r_ta", "5": "l_g", "6": "r_g", "7": "l_ah", "8": "r_ah",
+          "es1": "l_ptn", "es2": "r_ptn", "es3": "l_popliteo", "es4": "r_popliteo", "gnd": "tierra" },
+        cadwell_extremidad_2: { "1": "l_esfinter_anal_ext", "2": "r_esfinter_anal_ext", "es1": "n_dorsal_pene", "gnd": "tierra" },
+        cadwell_lcswap: { "p1:menos": "sonda_bip_concentrica" }
+      }, [],
+      "Esfínter anal externo en un módulo de extremidad aparte, con el estímulo del RBC en su salida ES1. H-reflex de sóleo con estímulo en el hueco poplíteo. Sonda bipolar para distinguir raíces funcionales del filum.", "cadwell");
+
+    var cJannetta = casoDemo(-14, {
+      nombre_caso: "Demo · Cadwell · Espasmo hemifacial derecho", estado: "cerrado",
+      hora_inicio: "08:30", hora_fin: "12:15",
+      edad: "56", sexo: "mujer", servicio_id: "neurocirugia",
+      antecedentes_relevantes: "Espasmo hemifacial derecho de 5 años de evolución, con respuesta parcial a toxina botulínica. Audición normal.",
+      diagnostico: "jannetta", anatomia_patologica: "Conflicto neurovascular de la AICA con la salida del VII par derecho",
+      intervencion: "Craneotomía retrosigmoidea derecha y descompresión microvascular", posicion: "park_bench", navegacion: "no",
+      tipo_anestesia: "tiva", tof_monitorizado: "si",
+      resumen_monitorizacion: "LSR presente en la basal (cigomático → mentoniano). Desaparece al separar la AICA del nervio y no reaparece tras colocar el teflón. Aumento de latencia de la onda V del PEATC durante la retracción del cerebelo, que se recupera al aflojarla.",
+      alerta: true, tecnicas_alteradas: ["peatc"],
+      recuperacion_senal: "transitorios", evolucion_postop: "sin_deficit",
+      deficit_postoperatorio: "Sin déficit nuevo. Audición conservada. Sin espasmo al alta.", concordancia: "PR",
+      rol: "residente", dificultad_1a5: "3", caso_destacado: true,
+      aprendizaje_clave: "La desaparición de la LSR al descomprimir confirma que el vaso liberado era el responsable."
+    }, mJannetta);
+    var alJ = uuid();
+    cJannetta.registro_intraop = {
+      v: { quirofano: "Quirófano 2", m_tof: true },
+      eventos: [
+        { id: uuid(), hora: "09:05", cod: "F", fase: "Basal tras la posición", modalidad: "Todas", cambio: "LSR presente; PEATC normales", accion: "Basal definitiva" },
+        { id: uuid(), hora: "09:40", cod: "T", fase: "Apertura dural", modalidad: "PEATC", cambio: "Artefacto del motor del craneotomo", accion: "Se promedia de nuevo" },
+        { id: uuid(), hora: "10:05", cod: "A", fase: "Retracción del cerebelo", modalidad: "PEATC D", cambio: "↑ latencia", alarma_id: alJ, av_cir: true },
+        { id: uuid(), hora: "10:12", cod: "E", fase: "Retracción del cerebelo", modalidad: "PEATC D", cambio: "Onda V recuperada", recupera_de: { id: alJ, recup: "", h_recup: "" } },
+        { id: uuid(), hora: "10:30", cod: "E", fase: "Descompresión de la AICA", modalidad: "LSR", cambio: "Desaparece la LSR", av_cir: true },
+        { id: uuid(), hora: "10:45", cod: "An", fase: "", modalidad: "", cambio: "TOF 4/4", tof: "4/4" },
+        { id: uuid(), hora: "11:40", cod: "F", fase: "Cierre dural", modalidad: "Todas", cambio: "LSR ausente; PEATC como la basal", accion: "" }
+      ],
+      mapeo: [],
+      alarmas: [
+        { id: alJ, hora: "10:05", modalidad: "PEATC D", criterio: "latencia", fase: "Retracción del cerebelo",
+          causa: "quirurgica", cir: true, medidas_l: ["aviso_cir", "retraccion"], recup: "S", h_recup: "10:12" }
+      ],
+      modular: [], imagenes: []
+    };
+    guardarCaso(cJannetta, true);
+
+    casoDemo(-3, {
+      nombre_caso: "Demo · Cadwell · Tiroidectomía total", estado: "cerrado",
+      hora_inicio: "09:00", hora_fin: "11:20",
+      edad: "44", sexo: "mujer", servicio_id: "endocrino",
+      antecedentes_relevantes: "Bocio multinodular. Movilidad de cuerdas vocales normal en la laringoscopia previa.",
+      intervencion: "Tiroidectomía total", posicion: "supino", navegacion: "no",
+      tipo_anestesia: "tiva", tof_monitorizado: "si",
+      resumen_monitorizacion: "Señal vagal (V1) y del recurrente (R1) presentes en ambos lados. R2 y V2 sin pérdida de amplitud tras la exéresis de cada lóbulo.",
+      recuperacion_senal: "sin_cambios", evolucion_postop: "sin_deficit",
+      deficit_postoperatorio: "Voz normal. Laringoscopia postoperatoria normal.", concordancia: "VN",
+      rol: "residente", dificultad_1a5: "2",
+      aprendizaje_clave: "Confirmar la posición del tubo con el EMG de cuerdas antes de la incisión ahorra falsas alarmas."
+    }, mTiroides);
+
+    casoDemo(3, {
+      nombre_caso: "Demo · Cadwell · Médula anclada", estado: "preparado",
+      edad: "9", sexo: "hombre", servicio_id: "neurocirugia",
+      antecedentes_relevantes: "Incontinencia urinaria de nueva aparición y pies cavos. Cono medular en L3 con filum engrosado en la RM.",
+      diagnostico: "loe_med", intervencion: "Sección del filum terminal", posicion: "prono", navegacion: "no",
+      tipo_anestesia: "tiva"
+    }, mCono);
 
     activo = mLumbar.montaje_uid;
     guardarMontajes();
