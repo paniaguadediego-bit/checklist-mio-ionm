@@ -24,7 +24,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260930zz2">
+<link rel="stylesheet" href="style.css?v=20260930zz3">
 </head>
 <body>
 
@@ -88,9 +88,6 @@
     <div class="inicio-tiles">
       <button type="button" class="tile" id="tile-organizador"><span class="tile-nombre" data-i18n="tile_organizador"></span><span class="tile-sub" data-i18n="tile_organizador_sub"></span></button>
       <button type="button" class="tile" id="tile-casos"><span class="tile-nombre" data-i18n="tile_casos"></span><span class="tile-sub" data-i18n="tile_casos_sub"></span></button>
-      <!-- Casos modelo (30-09-2026, pedido del usuario): biblioteca de casos
-           de ejemplo, para todos, por especialidad y equipo. En construcción. -->
-      <button type="button" class="tile" id="tile-casos-modelo"><span class="tile-nombre" data-i18n="tile_casos_modelo"></span><span class="tile-sub" data-i18n="tile_casos_modelo_sub"></span><span class="tile-obras" data-i18n="tile_en_obras"></span></button>
     </div>
   </section>
   <section class="inicio-grupo">
@@ -105,6 +102,10 @@
   <section class="inicio-grupo">
     <h2 class="inicio-grupo-tit" data-i18n="inicio_grupo_despues"></h2>
     <div class="inicio-tiles">
+      <!-- Biblioteca de montajes (30-09-2026, pedido del usuario; antes «Casos
+           modelo», en Antes de quirófano): montajes y casos
+           de ejemplo, para todos, por especialidad y equipo. En construcción. -->
+      <button type="button" class="tile" id="tile-casos-modelo"><span class="tile-nombre" data-i18n="tile_casos_modelo"></span><span class="tile-sub" data-i18n="tile_casos_modelo_sub"></span><span class="tile-obras" data-i18n="tile_en_obras"></span></button>
       <!-- Técnicas IONM aquí, antes de Material (28-09-2026, pedido del usuario). -->
       <button type="button" class="tile" id="tile-tecnicas-mio"><span class="tile-nombre" data-i18n="tile_tecnicas"></span><span class="tile-sub" data-i18n="tile_tecnicas_sub"></span></button>
       <button type="button" class="tile" id="tile-material"><span class="tile-nombre" data-i18n="tile_material"></span><span class="tile-sub" data-i18n="tile_material_sub"></span></button>
@@ -1101,7 +1102,7 @@
   </div>
 </div>
 
-<!-- Casos modelo (30-09-2026): de momento solo la idea, en construcción.
+<!-- Biblioteca de montajes (antes «Casos modelo», 30-09-2026): de momento solo la idea, en construcción.
      El contenido de «Qué habrá» lo pinta renderCasosModelo(). -->
 <div class="pantalla" id="pantalla-casos-modelo">
   <div class="pantalla-cab">
@@ -1162,6 +1163,6 @@
 <script src="data/i18n-en.js?v=20260930b"></script>
 <script src="data/guia.js?v=20260930ze"></script>
 <script src="data/parametros-tecnicas.js?v=20260930a"></script>
-<script src="app.js?v=20260930zzu"></script>
+<script src="app.js?v=20260930zzv"></script>
 </body>
 </html>

@@ -995,11 +995,11 @@
     demo_centro:         { es: "Hospital de demostración", en: "Demo hospital" },
     tile_simulador:      { es: "Simulador", en: "Simulator" },
     tile_bibliografia:   { es: "Bibliografía recomendada", en: "Recommended reading" },
-    tile_casos_modelo:   { es: "Casos modelo", en: "Model cases" },
-    tile_casos_modelo_sub: { es: "Montajes de referencia por especialidad y equipo", en: "Reference setups by specialty and equipment" },
+    tile_casos_modelo:   { es: "Biblioteca de montajes", en: "Setup library" },
+    tile_casos_modelo_sub: { es: "Montajes de ejemplo por especialidad y equipo", en: "Example setups by specialty and equipment" },
     tile_en_obras:       { es: "En construcción", en: "Under construction" },
-    cmod_intro:          { es: "Una biblioteca de casos de ejemplo, para todo el mundo, que sirva de punto de partida al planificar cualquier cirugía: cada uno con su montaje completo, sus técnicas y lo que se espera ver. Se podrán abrir, copiar como plantilla y adaptar.",
-                           en: "A library of example cases, for everyone, to use as a starting point when planning any surgery: each with its full setup, its techniques and what to expect. You will be able to open them, copy them as a template and adapt them." },
+    cmod_intro:          { es: "Una biblioteca de montajes de ejemplo, para todo el mundo, que sirva de punto de partida al planificar cualquier cirugía: cada uno con su montaje completo, sus técnicas y lo que se espera ver. Se podrán abrir, copiar como plantilla y adaptar.",
+                           en: "A library of example setups, for everyone, to use as a starting point when planning any surgery: each with its full setup, its techniques and what to expect. You will be able to open them, copy them as a template and adapt them." },
     cmod_especialidades: { es: "Por especialidad", en: "By specialty" },
     cmod_tecnicas:       { es: "Con técnicas como", en: "With techniques such as" },
     cmod_equipos:        { es: "En cada equipo", en: "On each equipment" },
@@ -1885,7 +1885,7 @@
     });
   }
 
-  // Casos modelo (30-09-2026): en construcción. Enseña qué habrá, con los
+  // Biblioteca de montajes (antes «Casos modelo», 30-09-2026): en construcción. Enseña qué habrá, con los
   // nombres del catálogo (especialidades, técnicas y equipos de verdad).
   var CMOD_TECNICAS = ["c_pem", "phase_reversal", "mapeo_subcortical", "mapeo_raices_tornillos", "onda_d",
     "pem_corticobulbares", "peatc", "lsr", "rbc", "mapeo_nervio_periferico", "eeg"];

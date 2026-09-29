@@ -4053,8 +4053,10 @@ body.sin-ayudas .coste-nota { display: none !important; }
 /* Tema oscuro: el borde negro de «Pendiente de planificar» no se veía sobre
    el fondo oscuro (contraste 1,08:1; auditoría, F8). */
 @media screen {
-  :root:not(.tema-claro) .caso-fila.estado-pendiente_planificar { --est: #8a8374; }
-  :root:not(.tema-claro) .casos-leyenda-it.estado-pendiente_planificar::before { background: #8a8374; }
+  :root:not(.tema-claro) .caso-fila.estado-pendiente_planificar { --est: #7d8ba0; }
+  :root:not(.tema-claro) .casos-leyenda-it.estado-pendiente_planificar::before { background: #7d8ba0; }
+  :root.tema-oscuro .caso-fila.estado-pendiente_planificar { --est: #8a8374; }
+  :root.tema-oscuro .casos-leyenda-it.estado-pendiente_planificar::before { background: #8a8374; }
 }
 
 /* «Ahora» junto a su casilla de hora: del mismo alto que ella (≈30 px) en
@@ -4171,13 +4173,21 @@ textarea { resize: none; overflow-y: hidden; }
    dorada arriba (29-09-2026, pedido del usuario: que se note que se está
    dentro de un caso). Se redefinen las variables solo dentro del diálogo. */
 @media screen {
+  /* En azul, tonos marino (30-09-2026: los grises neutros de abajo, pensados
+     para el negro, se veían marrones junto al azul). */
   :root:not(.tema-claro) #dlg-caso {
+    --card-bg: #1c2635;
+    --tag-bg: #243145;
+    --border-soft: #2f3d52;
+    --caso-borde-boton: #4a5b72;
+    background: var(--card-bg);
+    border-top: 3px solid var(--accent);
+  }
+  :root.tema-oscuro #dlg-caso {
     --card-bg: #232323;
     --tag-bg: #2c2c2c;
     --border-soft: #3a3a3a;
     --caso-borde-boton: #5a5a5a;
-    background: var(--card-bg);
-    border-top: 3px solid var(--accent);
   }
 }
 .caso-acciones > button { white-space: nowrap; }
