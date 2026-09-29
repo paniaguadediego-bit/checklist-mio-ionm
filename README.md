@@ -3,23 +3,21 @@
 Herramienta interna, sin backend ni build step, para montar el material de
 cada cirugía monitorizada y saber exactamente qué hace falta.
 
-**Pantalla de inicio (06-09-2026; desde el 28-09-2026, 10 tarjetas en tres bloques):** el logo
+**Pantalla de inicio (06-09-2026; al día a 01-10-2026, 11 tarjetas en tres bloques):** el logo
 de la cabecera lleva siempre a una pantalla con tarjetas agrupadas por el
 momento de la cirugía — *Antes de quirófano*: **Organizador de Montajes** y
 **Gestión de Casos**; *Quirófano*: **Checklist pre-quirúrgico** y
-**Registro intraoperatorio**; *Después / consulta*: **Técnicas IONM** (solo
-con la sincronización configurada), **Material**,
-**Docencia**, **Simulador**, **Mis apuntes** y **Bibliografía
-recomendada**—,
-cada una con una línea que dice para qué sirve y su propio espacio de trabajo. Se
-pulsa una y se trabaja solo ahí; el logo, o el botón **Inicio** junto al
-título de cada pantalla, son el único camino de vuelta al inicio, no hay más
-navegación cruzada entre pantallas. La pestaña *Teoría básica* de Docencia
-sigue "en construcción"; el resto está en uso. En **Material**, cada par
-izquierda/derecha sale en una sola fila («L./R.APB»), cada manta GRID en una
-(«GRID A (1–8)») y los tres contactos de cada kit de onda D en una
-(«Px.1–3DW», «Dst.1–3DW»), en vez de una fila por lado o por contacto. Las tarjetas de cada bloque van centradas: si
-un bloque no llena la fila, quedan en el medio.
+**Registro intraoperatorio**; *Después / consulta*: **Biblioteca de montajes**
+(en construcción), **Técnicas IONM** (solo con la sincronización configurada),
+**Material** (en construcción), **Miotomas**, **Simulador** (en construcción),
+**Mis apuntes** y **Bibliografía recomendada**—, cada una con una línea que
+dice para qué sirve y su propio espacio de trabajo. Se pulsa una y se trabaja
+solo ahí; el logo, o el botón **Inicio** junto al título de cada pantalla, son
+el único camino de vuelta al inicio. Al final del inicio, el logo en grande,
+el agradecimiento al Dr. Javier Urriza Mena y la autoría. En **Material**, cada
+par izquierda/derecha sale en una sola fila («L./R.APB»), cada manta GRID en
+una («GRID A (1–8)») y los tres contactos de cada kit de onda D en una
+(«Px.1–3DW», «Dst.1–3DW»). Las tarjetas de cada bloque van centradas.
 
 **Desplegables**: todos los de la app abren una lista propia, con la letra y
 los colores de la herramienta, en vez de la lista del sistema (que en el
@@ -34,6 +32,33 @@ con carpetas de colores, negrita/cursiva, fotos dentro de cada caja y
 **Exportar como Word**) y la pantalla **Material** (todo el catálogo
 de material en filas, con una breve descripción de uso de cada uno; tarjeta
 propia en *Después / consulta*).
+
+**Novedades del 30/09 y 01/10/2026:**
+- **Colores**: botón redondo junto al ⋮ que pasa por **oscuro** (negro y dorado),
+  **azul** (azul marino, el de por defecto) y **claro**; botón **Guía** al lado.
+  La guía se ha rehecho corta y visual (flujo de un día, una tarjeta por
+  pantalla, lo que conviene saber y dudas rápidas).
+- **Registro**: en pantalla solo *Apuntar fase, evento o alarma*, *Basales y
+  comparativa*, *Mapeo* y *Cierre* (sin las letras de la hoja; la identificación,
+  las técnicas y la anestesia están en Gestión de Casos; la hoja impresa sale
+  entera). Lo apuntado es ahora el **Cronograma de eventos**: tarjetas con una
+  franja de color (rojo alarma, naranja cambio, verde fase o recuperación, azul
+  lo demás) y filtros Todos / Críticos / Cambios / Info. Fuera «Resultado de la
+  señal» del Cierre (con varias técnicas alteradas no tenía sentido uno solo).
+- **Basales**: columnas **Basal** y **Cierre** (antes OP BSL y CL BSL).
+- **Gestión de Casos**: filtros agrupados en un panel (**Filtros (n)**), con
+  filtro nuevo de **Especialidad** y los filtros puestos como chips con ✕; cada
+  caso con el borde izquierdo y una bolita del color de su estado; «A
+  planificar» en vez de «Pendiente de planificar».
+- **Plantillas de montajes**: con el aspecto de los casos (fecha, equipo,
+  técnicas; «+n» enseña las que no caben), lista entera sin scroll propio y
+  **favoritas** ★ (salen primero; casilla «Solo favoritas»; se guardan en cada
+  dispositivo).
+- **Checklist** en 4 momentos (fuera «Con el campo abierto»); **Docencia** pasa
+  a llamarse **Miotomas**, con el aspecto de la ficha.
+- **Demo**: tres casos de **Cadwell** (espasmo hemifacial, tiroidectomía, médula
+  anclada), nombres con el equipo («Demo · Inomed · …») y etiqueta
+  **«Ficticio»**: son ejemplos inventados, no montajes de referencia.
 
 **Novedades del 29/09/2026 (tras la primera auditoría):**
 - La **ficha del caso se guarda sola** (como el Registro) y tiene **Cerrar caso**
@@ -209,17 +234,13 @@ cuatro pasos.
 
 ## Guía de uso, dentro de la propia herramienta
 
-Botón **⋮** de la barra superior (agrupa Catálogos, Idioma y Guía de uso,
-de consulta ocasional — Técnicas IONM y Docencia vivían aquí hasta el
-06-09-2026, ahora son tarjetas de la pantalla de inicio; Catálogos se unió
-al grupo el 09-09-2026) → **Guía de uso**. Seis tarjetas cortas (qué es la
-herramienta, el flujo de un día, que plantilla y caso no son lo mismo,
-catálogo/etiquetas, cajas/resumen, y lo demás) más un acordeón con quince
-puntos más detallados, todos plegados. Es la versión corta y orientada a la
-tarea —pensada para el móvil, a las 7:30 antes de entrar a quirófano—; este
-README sigue siendo la documentación de referencia. Contenido estático de
-[`data/guia.js`](data/guia.js), solo en castellano por ahora: en inglés
-avisa de que todavía no está traducida en vez de mostrarla a medias.
+Botón **Guía** de la barra superior, junto al ⋮ (desde el 30-09-2026; antes
+dentro del ⋮). Rehecha corta y visual el 30-09-2026: **Un día con MIO-Check**
+en cinco pasos numerados, una **tarjeta por pantalla** con dos o tres puntos,
+**Conviene saber** (cuatro líneas con icono) y **Dudas rápidas** plegadas, de
+una o dos frases. Este README sigue siendo la documentación de referencia.
+Contenido de [`data/guia.js`](data/guia.js), solo en castellano por ahora: en
+inglés avisa de que todavía no está traducida.
 
 ## Organizador de Montajes: el banco de trabajo, en el orden en que se trabaja
 
@@ -249,7 +270,17 @@ mapeo»* en dorado suave, o *«CASO 2026-011, Meningioma APC»* en dorado
 sólido con los botones de corrección en su lugar, cuando estás dentro de
 un caso.
 
-### La tarjeta Plantillas de montaje (la biblioteca de plantillas)
+### La tarjeta Plantillas de montajes (la biblioteca de plantillas)
+
+Desde el 01-10-2026 cada plantilla se ve como un caso de Gestión de Casos:
+nombre, fecha y marca del equipo a la derecha, autor y entradas, y una fila con
+sus técnicas (si no caben, «+n» y al tocarlo salen las demás). La lista se abre
+entera, sin scroll propio. La **★** marca una plantilla como **favorita**: las
+favoritas salen primero (también en «Cargar plantilla…») y la casilla **Solo
+favoritas ★** deja solo esas. Las favoritas se guardan en cada dispositivo y por
+perfil, no en la plantilla (que es compartida). Debajo, **Plantilla
+seleccionada** dice cuál está cargada y se queda fija arriba al hacer scroll.
+
 
 Primera tarjeta de la pantalla Organizador de Montajes, y la única que
 empieza **desplegada** —para que las plantillas estén a la vista nada más
@@ -710,12 +741,12 @@ archivo. No hay que exportar ni importar nada.
 
 ### Estados de un caso
 
-El **Estado** (apartado 1) puede ser **Pendiente de planificar** (negro:
+El **Estado** (apartado 1) puede ser **A planificar** (antes «Pendiente de planificar»; negro:
 apuntado, pero sin preparar todavía), **Preparado** (amarillo), **Cerrado**
-(verde) o **Cancelado** (rojo). El color sale en el borde y en la etiqueta
-de cada caso de la lista de Gestión de Casos, y como círculo (⚫🟡🟢🔴) en
+(verde) o **Cancelado** (rojo). El color sale en el borde izquierdo y en una
+bolita junto al número de cada caso de la lista de Gestión de Casos, y como círculo (⚫🟡🟢🔴) en
 los selectores de caso del Checklist y del Registro. Un caso nuevo nace
-*Pendiente de planificar*.
+*A planificar*.
 
 ### Cancelar un caso
 
@@ -764,30 +795,19 @@ Ningún dato que identifique al paciente. Ni nombre, ni apellidos, ni NHC, ni
 fecha de nacimiento. Solo el identificador del caso, edad, sexo y antecedentes
 relevantes.
 
-## Docencia
+## Miotomas
 
-Tarjeta **Docencia** de la pantalla de inicio (era **⋮ → Docente** hasta el
-06-09-2026). Tres pestañas, sin relación con la preparación de
-material — no tocan ningún montaje ni caso, y Miotomas/Cama de quirófano se
-guardan solo en ese navegador, no se sincronizan:
-
-- **Miotomas** — la columna vertebral entera (C1 a S5) en el centro, los
-  músculos posibles a la izquierda y los monitorizados a la derecha. Marcas
-  los niveles que abarca la cirugía y aparecen los músculos que dependen de
-  esas raíces; los llevas de un lado a otro pulsándolos. Es un ejercicio, no
-  una calculadora: la herramienta no elige por ti, solo avisa de qué niveles
-  se quedan sin ningún músculo que los cubra. Los rangos de `data/surgeries.js`
-  vienen en parte citados (Toleikis/Deletis, Leppänen, Schirmer, London — se
-  marcan con `[TD/L]`, `[Sch]`, `[Lon]` en el propio tooltip) y en parte son
-  cobertura de enseñanza habitual sin cita concreta detrás; la pantalla
-  explica cuál es cuál.
-- **Cama de quirófano** — eliges la posición del paciente (supino, supino con
-  brazos extendidos, prono, sentado) y repartes las cajas por cabecera,
-  laterales y pies con el mismo gesto de pulsar y colocar del resto de la
-  herramienta. Lo que se practica es que el cable llegue.
-- **Teoría básica de IONM** — pestaña del 06-09-2026, de momento "en
-  construcción": cubrirá conceptos como far-field/near-field, campo
-  abierto/cerrado, reflejo H, onda F, potencial de acción... Sin fecha todavía.
+Tarjeta **Miotomas** de la pantalla de inicio (hasta el 30-09-2026 «Docencia»,
+con tres pestañas; *Cama de quirófano* y *Teoría básica de IONM* están ocultas
+por ahora y la barra de pestañas no se ve). No toca ningún montaje ni caso y se
+guarda solo en ese navegador. Con el aspecto de la ficha: tres apartados
+plegables, **Columna** (niveles C1 a S5 en casillas; el nivel ya cubierto por
+algún músculo monitorizado lleva ✓), **Músculos posibles** (los que dependen de
+los niveles marcados; tocar uno lo pasa a monitorizados) y **Monitorizados**
+(tocar para quitar; avisa de los niveles que se quedan sin cubrir). Es un
+ejercicio, no una calculadora. Los rangos de `data/surgeries.js` vienen en parte
+citados (Toleikis/Deletis, Leppänen, Schirmer, London — `[TD/L]`, `[Sch]`,
+`[Lon]` en el tooltip) y en parte son cobertura de enseñanza habitual.
 
 ## Material
 
@@ -973,18 +993,23 @@ hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
 - **Contexto quirúrgico** (opcional, lista cerrada): disección, retracción,
   tracción / manipulación, coagulación, resección / aspiración, irrigación,
   clipaje / oclusión vascular, tornillo / implante, cambio de posición, cambio
-  anestésico, TA / hemodinámica. Se ve en la línea de «Apuntado», se corrige
+  anestésico, TA / hemodinámica. Se ve en la tarjeta del cronograma, se corrige
   con ✎ y sale en la hoja impresa (junto a la fase) y en el CSV de eventos.
 - **Apuntar evento** vale también solo con un contexto quirúrgico y/o un TOF
   («Disección · TOF 3/4», o solo «TOF 1/4», que queda como evento de
   anestesia); una alarma necesita su «Técnica».
 - Dos botones: **Apuntar evento** o **Apuntar
   alarma**. La alarma ocupa además la primera fila libre de alarmas (A1,
-  A2...) con técnica, criterio y fase. Para cerrarla, en su detalle de
-  «Apuntado»: **Recuperación** (recupera / en parte / no recupera) y su hora,
+  A2...) con técnica, criterio y fase. Para cerrarla, en su detalle del
+  cronograma: **Recuperación** (recupera / en parte / no recupera) y su hora,
   con **Ahora**.
-- Debajo, **Apuntado**: todo lo apuntado, ordenado por hora (de lo más antiguo a lo más
-  reciente, lo último abajo), también las alarmas escritas desde la ficha. La **hora** de cada
+- Debajo, el **Cronograma de eventos** (antes «Apuntado»): todo lo apuntado,
+  ordenado por hora (de lo más antiguo a lo más reciente, lo último abajo),
+  también las alarmas escritas desde la ficha, con el total a la derecha. Cada
+  línea es una tarjeta con una franja de color: **rojo** alarma, **naranja** un
+  cambio sin alarma o un factor técnico, **verde** fase o recuperación y
+  **azul** lo demás (anestesia, mapeo, contexto), con su etiqueta (FASE,
+  CAMBIO, ALARMA A1…). Filtros **Todos / Críticos / Cambios / Info/Normal**. La **hora** de cada
   línea se corrige tocándola (en una alarma o una recuperación cambia también
   la de la alarma). Con **✎** (solo con él; tiene la zona de toque ampliada) se abren debajo las
   casillas para **corregir la línea**: qué, qué pasa, nota y fase (en una fase,
@@ -1004,36 +1029,30 @@ ficha del caso (⇄) y en **Exportar eventos y alarmas (CSV)**.
 
 ### Hoja completa
 
-**En pantalla va simplificada** (28-09-2026); la hoja **impresa** sale igual
-que siempre, con todos sus apartados, y no se borra ningún dato:
+**En pantalla solo lo de quirófano** (30-09-2026): el panel de apuntar,
+**Basales y comparativa**, **Mapeo** y **Cierre**, sin la letra de la hoja
+(E, E2, I). La identificación, las técnicas y la anestesia (A, B, C) están en
+Gestión de Casos; hitos, esquema, fases y alarmas (F y G, que se apuntan en el
+panel) y la zona modular tampoco salen. La hoja **impresa** sale entera y no se
+borra ningún dato.
 
-- **B · Técnicas** (agrupadas como en Gestión de Casos): las del caso, de
-  lectura (se cambian en la ficha).
-- **C · Anestesia**: el mismo dato que el apartado Anestesia de la ficha (⇄):
-  tipo, TOF, detalle e incidencias, y debajo los **eventos de anestesia** (hora ·
-  qué pasó), que también se ven y se editan en la ficha.
-- **D · Hitos** y el **esquema** no se enseñan en pantalla.
-- **E · Basales y comparativa**, como siempre.
-- **E2 · Mapeo**: un bloque por cada técnica de mapeo marcada en la ficha
+- **Basales y comparativa**: columnas Basal · PostPos1 · PostPos2 · Cierre.
+- **Mapeo**: un bloque por cada técnica de mapeo marcada en la ficha
   (sin caso vinculado, todos): *c-MEP por GRID* (electrodo motor · músculos
   registrados), *mapeo cortical* y *subcortical* (hora · punto · umbral ·
   músculo), *nervio periférico* (nervio/punto · intensidad · músculo) y
   *estimulación de raíces y tornillos* (izq. · nivel · der., el mismo dato que
-  «Umbrales EMG por raíz» de la ficha; la tabla de tornillos ya no está en
-  Basales). Si el caso no tiene ninguna, lo dice.
-- **F · Fases y eventos** y **G · Alarmas**: no se enseñan en pantalla desde
-  el 29-09-2026; se apuntan y se corrigen en el panel de arriba (ver el
-  apartado anterior). Siguen en la hoja impresa.
-- **H · Zona modular**: no se enseña en pantalla (sigue en la impresa).
-- **I · Cierre**: resultado de la señal, técnicas con alteración (los mismos chips
-  marcables que en la ficha, con las técnicas del caso), resultado esperable
-  (lista), incidencias técnicas y perla docente. Sin
-  comunicación final, material ni pendientes (siguen en la hoja impresa).
+  «Umbrales EMG por raíz» de la ficha). Si el caso no tiene ninguna, lo dice.
+- **Cierre**: técnicas con alteración (los mismos chips marcables que en la
+  ficha, con las técnicas del caso; sin caso o sin técnicas, el aviso de la
+  ficha), resultado esperable (lista), incidencias técnicas y perla docente.
+  «Resultado de la señal» ya no está (con varias técnicas alteradas no tenía
+  sentido uno solo; sigue en la ficha).
 
 **Datos compartidos con la ficha del caso** (⇄, 28-09-2026): fecha, hora de
 inicio y de fin, nivel/localización (Anatomía patológica de la ficha),
 procedimiento, anestesia y eventos de anestesia, basales, mapeo, alarmas,
-técnicas con alteración, resultado de la señal, resultado esperable,
+técnicas con alteración, resultado esperable,
 incidencias técnicas y perla docente (= *Aprendizaje clave* y *Caso
 destacado*) son el mismo dato en los dos sitios: se escriban donde se
 escriban, se ven en el otro y en la hoja impresa. El diagnóstico se enseña de

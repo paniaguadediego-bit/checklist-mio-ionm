@@ -188,7 +188,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Montajes: modelo, autoría y sincronización | `montajeNuevo()`, `puedoEditar()`, `guardarMontaje()`, `subirMontaje()`, `bajarMontajes()` | ver `grep` |
 | Casos: modelo y ficha | `borrarCaso()`, `guardarCaso()`, `casoVacio()`, `renderFichaCaso()` | [2454](app.js:2454), [2467](app.js:2467), [2498](app.js:2498), [3669](app.js:3669) |
 | Casos: sincronización | `subirCaso()`, `bajarCasos()`, `borrarCasosPendientes()`, `guardarUnCasoLocal()`/`borrarUnCasoLocal()` (un caso por clave desde el 22-09-2026) | ver `grep` |
-| Casos: filtro/orden de Gestión de Casos | `casosFiltradosUids()`, `comparaDificultad()` | ver `grep` |
+| Casos: filtro/orden de Gestión de Casos (panel plegable «Filtros (n)», chips de filtros activos con ✕, Especialidad = `servicio_id`) | `casosFiltradosUids()`, `comparaDificultad()`, `pintarFiltrosActivos()`, `pintarFiltroServicio()`, `CASOS_FILTROS_SELECT` | ver `grep` |
 | Enlace de un Puente a su cork de referencia (22-09-2026; no confundir con la fila de abajo, "Puente" ahí es la metáfora plantilla↔caso, aquí es el ítem de catálogo) | `enlacePuente()`, `fijarEnlacePuente()`, `iniciarEnlacePuente()`, `completarEnlacePuente()` | ver `grep` |
 | Mis apuntes: carpetas con color, orden, editor con negrita/cursiva (24-09-2026) | `grupoCarpetaApunte()`, `crearSeccionApunte()`, `moverCarpetaApunte()`, `moverSeccionApunte()`, `apunteSanear()` | ver `grep` |
 | Mis apuntes: fotos como archivos aparte + sincronización | `subirApunteDocYaHidratado()`, `subirFotosApuntePendientes()`, `descargarFotosApunteFaltantes()`, `borrarFotosApunteRemotas()`, `apunteDocLigero()` | ver `grep` |
@@ -201,8 +201,8 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Bibliografía recomendada (Vancouver con DOI) | `BIBLIOGRAFIA`, `renderBibliografia()` | ver `grep` |
 | Selector «Vincular a un caso» propio (Checklist y Registro; el `<select>` sigue oculto como fuente de verdad) | `mejorarSelectorCaso()`, `refrescarSelectorCaso()`, `pintarOpcionCaso()` | ver `grep` |
 | Registro ↔ ficha: campos compartidos (`caso: "campo"` en la definición; `soloCaso`; `leerCaso`) — `regGet()` los lee del caso y `regControl()` los escribe en el caso | `regGet()`, `regControl()`, `regNombresTecnicas()` | ver `grep` |
-| Registro: hoja completa simplificada en pantalla (la impresa no cambia) | `REG_PANTALLA` (id de sección → pintado propio; `null` = no se enseña), `pintarPantallaIdentificacion/Modalidades/Anestesia/Mapeo/Cierre()` (F y G a `null` desde el 29-09-2026), `REG_MAPEO_BLOQUES`, `pintarMapeoGrid/Filas/Raices()`, `regFilasTornillos()`, `regInput()`, `regSelectLista()` | ver `grep` |
-| Registro: panel «Apuntar fase, evento o alarma» (antes modo rápido; único sitio donde se apuntan, arriba de la Hoja completa; escribe en `eventos`/`alarmas`, sin datos propios; «Otro» + cajas; QUÉ en filas por tipo -técnicas, factores técnicos, anestesia, Otro-; TOF 0/4…4/4 como contexto (regRapido.tof → ev.tof/al.tof); contexto quirúrgico; lista «Apuntado» por hora ascendente con horas editables, ✎ para corregir cada línea y, bajo cada alarma, causa, medidas y recuperación) | `pintarPanelApuntar()`, `regItemsApuntados()`, `regLineaApuntada()`, `regEditorApuntado()` (`regEditando`, solo con ✎), alarma plegable con `resumenAlarma()` (`regAlarmasAbiertas`), `pintarMedidasRecup()` (también en la ficha), `regApuntar()`, `regMarcarFase()`, `regQuitarRapido()`, `regCajaRapida()`, `REG_TOF`, `REG_CONTEXTO` (ev.contexto, ids), `REG_FASES_RAPIDAS`, `REG_CAMBIOS_RAPIDOS`, `REG_QUE_EXTRA`, `REG_QUE_OTRO`/`REG_CAMBIO_OTRO` | ver `grep` |
+| Registro: hoja completa simplificada en pantalla (la impresa no cambia) | `REG_PANTALLA` (id de sección → pintado propio; `null` = no se enseña: A, B, C, D, esquema, F, G y H; en pantalla solo E, E2 e I, sin la letra de la hoja), `pintarPantallaMapeo/Cierre()`, `REG_MAPEO_BLOQUES`, `pintarMapeoGrid/Filas/Raices()`, `regFilasTornillos()`, `regInput()`, `regSelectLista()` | ver `grep` |
+| Registro: panel «Apuntar fase, evento o alarma» (antes modo rápido; único sitio donde se apuntan, arriba de la Hoja completa; escribe en `eventos`/`alarmas`, sin datos propios; «Otro» + cajas; QUÉ en filas por tipo -técnicas, factores técnicos, anestesia, Otro-; TOF 0/4…4/4 como contexto (regRapido.tof → ev.tof/al.tof); contexto quirúrgico; «Cronograma de eventos» por hora ascendente: tarjetas con franja de color por gravedad y filtros Todos/Críticos/Cambios/Info, horas editables, ✎ para corregir cada línea y, bajo cada alarma, causa, medidas y recuperación) | `pintarPanelApuntar()`, `regItemsApuntados()`, `regTipoApuntado()` (gravedad y etiqueta), `regFiltroCrono`, `regLineaApuntada()`, `regEditorApuntado()` (`regEditando`, solo con ✎), alarma plegable con `resumenAlarma()` (`regAlarmasAbiertas`), `pintarMedidasRecup()` (también en la ficha), `regApuntar()`, `regMarcarFase()`, `regQuitarRapido()`, `regCajaRapida()`, `REG_TOF`, `REG_CONTEXTO` (ev.contexto, ids), `REG_FASES_RAPIDAS`, `REG_CAMBIOS_RAPIDOS`, `REG_QUE_EXTRA`, `REG_QUE_OTRO`/`REG_CAMBIO_OTRO` | ver `grep` |
 | Registro intraoperatorio: hoja imprimible A4 | `construirHojaRegistro()`, `abrirHojaRegistro()`, `ESTILO_HOJA_REGISTRO` | ver `grep` |
 | Material, pantalla propia (todo el catálogo en filas) | `renderDocenteMaterial()`, `descripcionMaterial()` | ver `grep` |
 | Fotos en IndexedDB (todas las fotos) | `guardarFotoIDB()`, `hidratarFotosIDB()`, `quitarDataUrls()` | ver `grep` |
@@ -215,20 +215,24 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Exportación manual de casos a CSV | `casosACsv()`, `COLUMNAS_CSV_CASOS`, `descargarCsv()` | ver `grep` |
 | Exportación de eventos y alarmas del Registro a CSV (una fila por evento/alarma) | `eventosACsv()`, `COLUMNAS_CSV_EVENTOS`, `minutosEntre()` | ver `grep` |
 | Informe en PDF (imprimible), uno o varios casos | `abrirInformeCasos()`, `construirInformeCaso()`, `seccionInforme()` y el resto de `seccion*Informe()` | ver `grep` |
-| Guía de uso (contenido en `data/guia.js`) | `renderGuia()`, `abrirGuia()` | ver `grep` |
+| Guía de uso (botón «Guía» de la barra; contenido corto en `data/guia.js`: `flujo`, `pantallas`, `claves`, `dudas`) | `renderGuia()`, `abrirGuia()` | ver `grep` |
 | Checklist pre-quirúrgico (Modelo 0 suelto o vinculado a un caso) | `CHECKLIST_ITEMS`, `checklistValores()`, `renderChecklist()`, `abrirChecklist()` | ver `grep` |
 | Equipos (Inomed/Cadwell): cajas por equipo, elección, filtros, rótulos | `equipoDe()`, `cajasDe()`, `CAJAS_TODAS`, `equiposConCajas()`, `elegirEquipo()`, `nodoMarcaEquipo()`, `itemEnEquipo()` | ver `grep` |
 | Cajas con grupos, rejilla, puertos con luz y polos − / + (Cadwell) | `entradasDe()` (`grupos`, `polos`), `renderCajaFisica()` (`rejilla`, `recuadro`), `puertosEncendidos()`, `pintarPuertos()` | ver `grep` |
-| Registro ↔ ficha en espejo (28-09-2026): alarmas con listas cerradas (`REG_CRITERIO_AL`, `REG_CAUSA_AL`, `REG_MEDIDAS_AL`; ids, lo antiguo como opción más), mapeo E2 y eventos «An» pintados también en la ficha sobre la copia de trabajo (`guardar` = `REG_SIN_GUARDAR`); «Tipo de alerta»/«Medida correctora» se derivan al guardar; resultado de la señal ⇄ `cierre_resultado`; evolución en lista + propuesta de concordancia | `pintarAlarmas()`, `alarmasEnCaso()` (en `guardarCaso()`), `textoAlarma()`, `regSelectLista()`, `regIdLista()`, `pintarEventosAn()`, `propuestaConcordancia()`, `t: "alarmas_reg"/"mapeo_reg"/"eventos_an"` en `campoCaso()` | ver `grep` |
+| Registro ↔ ficha en espejo (28-09-2026): alarmas con listas cerradas (`REG_CRITERIO_AL`, `REG_CAUSA_AL`, `REG_MEDIDAS_AL`; ids, lo antiguo como opción más), mapeo E2 y eventos «An» pintados también en la ficha sobre la copia de trabajo (`guardar` = `REG_SIN_GUARDAR`); «Tipo de alerta»/«Medida correctora» se derivan al guardar; («Resultado de la señal» ya no está en el Registro desde el 30-09-2026: sigue solo en la ficha); evolución en lista + propuesta de concordancia | `pintarAlarmas()`, `alarmasEnCaso()` (en `guardarCaso()`), `textoAlarma()`, `regSelectLista()`, `regIdLista()`, `pintarEventosAn()`, `propuestaConcordancia()`, `t: "alarmas_reg"/"mapeo_reg"/"eventos_an"` en `campoCaso()` | ver `grep` |
 | Columna vertebral de umbrales por raíz (ficha y E2 del Registro; salto discontinuo) | `pintarColumnaRaices()`, `REG_NIVELES_RAICES` | ver `grep` |
 | Columnas de basales OP BSL/PostPos1/PostPos2/CL BSL | `REG_BASALES_COLS`, `regColBasal()` | ver `grep` |
-| Registro C · Anestesia en espejo y eventos An | `pintarPantallaAnestesia()`, `pintarEventosAn()` | ver `grep` |
+| Eventos An (tabla de la ficha; C · Anestesia ya no sale en la pantalla del Registro) | `pintarEventosAn()` | ver `grep` |
 | Correlación de cada alarma con la evolución (ficha, Resultado): grupos automáticos por técnica + criterio; `correlato_alarmas` = {clave de grupo: {evol, momento}} con ids (`OPCIONES.correlato_evol/_momento`); concordancia por grupo | `gruposAlarmas()`, `filaCorrelato()`, `concordanciaGrupo()`, `filasCorrelato()` (→ `correlato_filas`), `textoCorrelato()`, `concordanciaDeGrupos()`, `seccionCorrelatoInforme()`, `repintarCorrelato`, `repintarPropuestaCaso`, `t: "correlato_alarmas"` en `campoCaso()` | ver `grep` |
 | Recuadros de texto que crecen solos (sin tirador): input + MutationObserver (childList y open/class/hidden) | `ajustarAltoTexto()`, `ajustarTodosLosTextos()`; `textarea { resize: none }` | ver `grep` |
 | Nombre corto de técnica en los chips de pantalla (`"corta"` en `data/surgeries.js`: BR, TVcR, TCR, THR, LAR, H-R Masetero) + ayuda al mantener pulsado (`data-ayuda`) | `rotularChipTecnica()`, `ayudaTecnica()`, `mostrarGloboAyuda()`, `.globo-ayuda` | ver `grep` |
 | Casillas de tabla sin texto dentro (la cabecera ya lo dice) | `regInputSinTexto()` | ver `grep` |
 | Menú ⋮ «Ocultar ayudas» | `AYUDAS_KEY`, `aplicarAyudas()`, `body.sin-ayudas` en style.css | ver `grep` |
-| Tema: oscuro siempre; «Modo claro» en el menú ⋮ (por dispositivo). Los colores oscuros van en `@media screen { :root:not(.tema-claro) … }`; al imprimir, siempre los claros | `TEMA_KEY`, `aplicarTema()`, `html.tema-claro` en style.css | ver `grep` |
+| Colores: tres modos con el botón redondo junto al ⋮ (ciclo oscuro → azul → claro; azul por defecto; por dispositivo, `mio_ionm_tema_v2`). Azul en `@media screen { :root:not(.tema-claro) … }`, oscuro (negro y dorado) en `:root.tema-oscuro` justo después, claro = `:root` sin más; al imprimir, siempre los claros. `--cab-bg`/`--cab-texto` para cabeceras | `TEMAS`, `aplicarTema()`, `#btn-colores`, `html.tema-claro` / `html.tema-oscuro` en style.css | ver `grep` |
+| Alto real de la barra superior en `--header-h` (lo usan los sticky de debajo) | IIFE junto a `aplicarTema()` con `ResizeObserver` | ver `grep` |
+| Plantillas: fila con aspecto de caso (fecha, marca del equipo, técnicas, «+n» con globo) y favoritas por dispositivo y perfil | `nodoFilaPlantilla()`, `PLANTILLA_MAX_TECS`, `favoritasPlantillas()`, `esFavorita()`, `alternarFavorita()`, `compararPlantillasFav()`, `FAV_PLANTILLAS_KEY` | ver `grep` |
+| Demo: etiqueta «Ficticio» y aviso en la ficha | `nodoFicticio()`, `#caso-aviso-demo` | ver `grep` |
+| Biblioteca de montajes (en construcción; ids «casos-modelo») | `renderCasosModelo()`, `CMOD_TECNICAS`, `#pantalla-casos-modelo` | ver `grep` |
 | Precios inventados de la demo | `PRECIOS_DEMO`, `preciosDemo()` | ver `grep` |
 | Ficha: autoguardado, salir y cerrar caso | `autoguardarFicha()`, `salirDeFicha()`, `firmaFicha()`, `fichaOrigen`, `casoCambiadoFuera()`, `pintarBotonCerrarCaso()` | ver `grep` |
 | Fusión de un caso en conflicto de subida | `fusionarCaso()` (dentro del 409/422 de `subirCasoYaHidratado()`) | ver `grep` |
@@ -357,17 +361,27 @@ distinta a la anterior, no importa el formato exacto.
 
 ## Estado del proyecto
 
-> **Resumen a 29-09-2026 (léelo primero; el diario cronológico está en
+> **Resumen a 01-10-2026 (léelo primero; el diario cronológico está en
 > el repositorio privado, ver al final de este archivo).**
 > - **Pantallas (Inicio en tres bloques, tarjetas centradas, una línea bajo cada
 >   nombre):** *Antes de quirófano*: Organizador de Montajes, Gestión de Casos.
->   *Quirófano*: Checklist pre-quirúrgico, Registro intraoperatorio.
->   *Después / consulta*: Técnicas IONM (solo con token), Material, Docencia
->   (Miotomas, Cama, Teoría básica pendiente), Simulador, Mis apuntes,
->   Bibliografía recomendada. Menú ⋮: Catálogos, EN, **Modo claro/oscuro**
->   (`html.tema-claro`; oscuro por defecto desde el 29-09-2026, ya no sigue al
->   sistema), Guía y **Ocultar/Mostrar ayudas** (`body.sin-ayudas`); los dos,
->   por dispositivo.
+>   *Quirófano*: Checklist pre-quirúrgico (4 momentos; «Con el campo abierto»
+>   quitado), Registro intraoperatorio. *Después / consulta*: **Biblioteca de
+>   montajes** (en construcción; ids `casos-modelo`), Técnicas IONM (solo con
+>   token), Material (en construcción), **Miotomas** (antes «Docencia»; id
+>   `docente`; Cama y Teoría ocultas con `hidden`), Simulador (en construcción),
+>   Mis apuntes, Bibliografía recomendada. Al final del inicio, logo grande,
+>   «Con agradecimiento al Dr. Javier Urriza Mena» y la autoría (siempre, no
+>   solo en la demo; nombre en el repo público por decisión del autor). Barra
+>   superior: botón redondo de **colores** (oscuro → azul → claro) y **Guía**
+>   junto al ⋮; en el ⋮ quedan Catálogos, EN y Ocultar ayudas.
+> - **Aspecto (30-09/01-10)**: paleta **azul marino** por defecto (#0F141C,
+>   tarjetas #18202C, acento #7AA7DA con texto oscuro encima); «oscuro» = negro y
+>   dorado de antes; claro con más contraste y cabeceras dorado claro con texto
+>   marrón oscuro. Cabeceras de tarjeta y de apartado con fondo propio
+>   (`--cab-bg`) y texto `--cab-texto` (casi blanco en azul). Plantillas de
+>   montajes con cabecera centrada y teñida; «Plantilla seleccionada» con franja
+>   gruesa de acento y sombra (fijo al hacer scroll).
 > - **Idea rectora del usuario (28-09 noche):** lo que se recoge en quirófano se
 >   apunta en el **Registro** y la ficha de Gestión de Casos lo refleja **en
 >   espejo** (se escribe en cualquiera de los dos); **menos texto libre**, listas
@@ -380,8 +394,8 @@ distinta a la anterior, no importa el formato exacto.
 >   `pintarColumnaRaices()` en los dos sitios), **alarmas** (`pintarAlarmas()`:
 >   modalidad, criterio, causa, medidas en chips, recup S/P/N; «Tipo de alerta» y
 >   «Medida correctora» se derivan al guardar con `alarmasEnCaso()`), **técnicas
->   con alteración** (chips), **resultado de la señal** (= `cierre_resultado`),
->   **resultado esperable** (lista), incidencias técnicas y perla. La ficha
+>   con alteración** (chips, como en la ficha; sin caso o sin técnicas, el aviso
+>   de la ficha), **resultado esperable** (lista), incidencias técnicas y perla. La ficha
 >   trabaja sobre la copia de trabajo (`guardar` = `REG_SIN_GUARDAR`) y guarda con
 >   «Guardar»; el Registro guarda solo (`REG_GUARDAR`). Sin caso (Modelo 0) no hay
 >   espejo.
@@ -434,10 +448,11 @@ distinta a la anterior, no importa el formato exacto.
 >   plantilla, + Plantilla en blanco); «Montaje» = cómo quedan las cajas (Editar
 >   montaje del caso, Organizador de Montajes); «Técnica · lado» (no
 >   «Modalidad»); «Informe (PDF)» / «Informe de casos (PDF)».
-> - **Basales**: columnas **OP BSL · PostPos1 · PostPos2 · CL BSL** (ids `basal`,
->   `post`, `post2`, `final`); PostPos2 solo t-SEP/t-MEP, c-MEP solo OP BSL y
->   CL BSL (`regColBasal()`). **Umbrales por raíz** en columna vertebral: niveles
->   en orden anatómico unidos por una línea (discontinua si no son contiguos).
+> - **Basales**: columnas **Basal · PostPos1 · PostPos2 · Cierre** (antes OP BSL
+>   y CL BSL; ids `basal`, `post`, `post2`, `final`); PostPos2 solo t-SEP/t-MEP,
+>   c-MEP solo Basal y Cierre (`regColBasal()`). **Umbrales por raíz** en columna
+>   vertebral: niveles en orden anatómico unidos por una línea (discontinua si no
+>   son contiguos).
 > - **Hoja impresa**: B · Técnicas en tres filas (monitorización, reflejos,
 >   mapeo) con las del caso marcadas; alarmas y resultado esperable con rótulos.
 >   Tiene que caber en A4 (hoja 1 ≈1000-1045 px de ≈1077).
@@ -447,11 +462,11 @@ distinta a la anterior, no importa el formato exacto.
 > - **Material**: «Estimulación trigeminal» (V1-V3 + N.Maset, id `l_rx_maset`);
 >   fuera la categoría «Reflejos» (eran técnicas). Serrato anterior C5-C7 en
 >   miotomas. 20 categorías en orden lógico; `SERIES_MATERIAL` agrupa L./R.
-> - **Registro en pantalla**: una sola vista, la Hoja completa (`REG_PANTALLA`),
->   sin rótulos «Hoja 1 / Hoja 2»; F y G no se pintan en pantalla (sí en la hoja
->   impresa). Fases, eventos y alarmas se apuntan SOLO en el panel de arriba,
->   «Apuntar fase, evento o alarma» (botón dorado relleno y centrado, flecha a los
->   dos lados, `.reg-rapido`; antes «modo rápido»). Dentro:
+> - **Registro en pantalla** (30-09-2026): SOLO el panel «Apuntar fase, evento o
+>   alarma» + Basales y comparativa + Mapeo + Cierre, sin la letra de la hoja
+>   (A, B y C están en Gestión de Casos; D, esquema, F, G y H tampoco salen; la
+>   hoja impresa sale entera). Cierre sin «Resultado de la señal». Fases,
+>   eventos y alarmas se apuntan SOLO en el panel (`.reg-rapido`). Dentro:
 >   - **Fase**: un toque; caja = detalle u «Otra».
 >   - **Evento o alarma** (recuadro resaltado en dorado apagado) con dos
 >     recuadros: **Técnica** (antes «Qué»): t-SEP / t-MEP / c-SEP en tabla por
@@ -472,22 +487,35 @@ distinta a la anterior, no importa el formato exacto.
 >     quirúrgico** opcional (`ev.contexto`) y Apuntar evento / alarma. Un evento
 >     puede ser solo contexto y/o TOF (solo TOF → An «TOF 1/4»); la alarma
 >     necesita técnica.
->   - **Apuntado**: por hora, de lo más antiguo a lo más reciente; hora editable;
->     ✎ (solo el lápiz) corrige la línea y su alarma; cada alarma con su detalle
->     **plegado** y resumen (causa, medidas -avisos primero-, recuperación S/P/N
->     con hora, «Ahora» y duración).
+>   - **Cronograma de eventos** (antes «Apuntado»): tarjetas por hora, de lo más
+>     antiguo a lo más reciente, con franja de color por gravedad
+>     (`regTipoApuntado()`: alarma = rojo, cambio sin alarma o factor técnico =
+>     naranja, fase o recuperación = verde, resto = azul), etiqueta (FASE, CAMBIO,
+>     ALARMA A1…), total a la derecha y filtros Todos / Críticos / Cambios /
+>     Info/Normal. Hora editable; ✎ (solo el lápiz) corrige la línea y su
+>     alarma; cada alarma con su detalle **plegado** y resumen.
 >   - La impresa no cambia con lo de pantalla (salvo la fase de F, que lleva
 >     « · contexto»).
-> - **Gestión de Casos**: cada caso en un recuadro del color de su estado (borde
->   izquierdo 5 px), sin etiqueta de estado (queda en `title`); leyenda de
->   colores (`.casos-leyenda`) bajo Destacados / Seguimiento.
+> - **Gestión de Casos**: borde izquierdo y bolita del color del estado («A
+>   planificar», Preparado, Cerrado, Cancelado); a la vista solo «▸ Filtros (n)»
+>   y «Ordenar por»; el panel plegable tiene Estado, **Especialidad**,
+>   Concordancia, Equipo, Desde, Hasta, Destacados y Seguimiento; los filtros
+>   puestos salen como chips con ✕. Los mismos filtros valen para el informe y
+>   los CSV.
+> - **Plantillas de montajes**: lista entera sin scroll propio; filas con aspecto
+>   de caso (`nodoFilaPlantilla()`); ★ **favoritas** (primero y casilla «Solo
+>   favoritas»; por dispositivo y perfil, no se sincronizan).
 > - **Dos equipos** (Inomed/Cadwell): `equipo_id`; **no confundir con `equipo`**.
 > - **Técnicas IONM, privada**: contenido en el repo privado
 >   (`referencia/tecnicas-mio.json`), se baja con el token. **No volver a meterlo
 >   aquí.**
 > - **Modo demo** `?demo`: datos ficticios aislados; precios INVENTADOS
 >   (`PRECIOS_DEMO`, `preciosDemo()`) para enseñar el coste; visita guiada de 12
->   pasos. `localStorage` a secas, nunca `window.localStorage`.
+>   pasos. Plantillas y casos «Demo · Inomed · …» y «Demo · Cadwell · …» (3 de
+>   Cadwell: espasmo hemifacial con LSR/BR/PEATC, tiroidectomía con NLR, médula
+>   anclada con RBC y H-reflex). Etiqueta **«Ficticio»** junto a cada caso y
+>   plantilla y aviso en la ficha: no son montajes de referencia. Sin el aviso de
+>   texto en la cabecera. `localStorage` a secas, nunca `window.localStorage`.
 > - **Dónde vive cada dato:** localStorage (texto) · IndexedDB (fotos) · repo
 >   privado `checklist-mio-datos` (`estado.json`, `casos/`, `montajes/`,
 >   `apuntes/` + `apuntes/fotos/`, `simulador/`, `referencia/`). Precios reales y
@@ -508,14 +536,18 @@ distinta a la anterior, no importa el formato exacto.
 >   las evoluciones «déficit nuevo, evolución pendiente» y la ECL L3-S1
 >   (resultado esperable «similar»); probar en quirófano el Registro nuevo;
 >   probar con dos dispositivos a la vez sobre el mismo caso (fusión y aviso) y
->   el gesto de atrás de Android con la ficha abierta. A (identificación) del
->   Registro se deja como está "por ahora".
+>   el gesto de atrás de Android con la ficha abierta; «Restablecer demo» para
+>   ver los casos de Cadwell y los nombres con «Inomed ·»; ver en el móvil los
+>   tres modos de color y el Registro reducido en quirófano; marcar sus
+>   plantillas favoritas en cada dispositivo.
 > - **Ideas pendientes, no construidas:** que la demo enseñe más utilidades;
 >   conversión Inomed ↔ Cadwell; eventos del Registro en el Sheet (las alarmas
 >   ya van por grupos en Correlacion_long); que la concordancia del caso proponga
 >   FN si hay déficit sin alarma relacionada; bloque "Cirugías con IONM"; Teoría
 >   básica; convertir en listas más textos libres de la ficha si el usuario lo
->   pide.
+>   pide; **contenido de la Biblioteca de montajes** (montajes de ejemplo por
+>   especialidad y equipo, copiables como plantilla); favoritas sincronizadas
+>   entre dispositivos si el usuario lo pide.
 > - **Convenciones que han fallado antes:** subir el `?v=` de `index.html` en cada
 >   cambio de `app.js`/`style.css`/`data/`; `git fetch`+`pull --ff-only` antes de
 >   tocar `checklist-mio-datos` (y otro `fetch` antes del push); con
@@ -531,7 +563,10 @@ distinta a la anterior, no importa el formato exacto.
 >   sea texto (objeto) va en `CAMPOS_APARTE` del informe o sale «[object
 >   Object]»; `preventDefault` en `touchstart` impide el scroll (usar
 >   `touchend` y comprobar que el dedo no se movió); en un heredoc de bash, un
->   apóstrofo dentro de un `r'''…'''` de Python rompe el comando.
+>   apóstrofo dentro de un `r'''…'''` de Python rompe el comando; los colores
+>   fijos pensados para el negro (#232323…) se ven marrones en el azul: dar
+>   valores propios a `:root.tema-oscuro` y a `:root:not(.tema-claro)`;
+>   `--header-h` ya lo mide app.js, no fijarlo a mano.
 > - **Comprobación habitual:** `node --check app.js`, servidor `checklist` de
 >   `.claude/launch.json` (no `file://`), probar en el navegador con `?demo`
 >   (a 375 px para el móvil), commit y push (permiso permanente). Para medir la

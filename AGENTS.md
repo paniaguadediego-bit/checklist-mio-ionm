@@ -16,7 +16,8 @@ Instrucciones para cualquier asistente de código que trabaje en este repositori
 - El **diario** de cambios (qué se hizo, cuándo y por qué) vive en el repositorio
   privado: `../checklist-mio-datos/docs/DIARIO-CODIGO.md`. Cada cambio se apunta
   ahí, no en este repositorio. Aquí **nunca** precios reales, costes, números de
-  caso reales, nombres de personas o del centro.
+  caso reales, nombres de personas o del centro (única excepción, por decisión
+  del autor: la autoría y el agradecimiento del pie del inicio).
 - La consola del usuario es PowerShell 5.1: en los comandos que se le den, nada
   de `&&`; mejor `git -C "ruta" ...`, una orden por bloque.
 - La **auditoría periódica** (informe vivo con seguimiento, y el encargo para
@@ -40,3 +41,7 @@ Instrucciones para cualquier asistente de código que trabaje en este repositori
 - Los scripts de Python largos para editar archivos van en un archivo aparte
   (no en un heredoc de bash): dentro del heredoc, los `\n` y `\d` de las
   cadenas de JavaScript llegan rotos. Después, siempre `node --check`.
+- Colores: tres modos (azul por defecto, `tema-oscuro`, `tema-claro`). Un
+  color fijo nuevo para el oscuro necesita también su valor para el azul (si no,
+  los grises neutros se ven marrones junto al marino). `--header-h` lo mide
+  `app.js`: no fijarlo a mano.

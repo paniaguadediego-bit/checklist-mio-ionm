@@ -82,6 +82,8 @@ window.GUIA = {
       respuesta: "Positivo reversible: hubo un cambio significativo, se recuperó tras actuar y no quedó déficit nuevo." },
     { pregunta: "¿Por qué hay material «sin precio»?",
       respuesta: "Se lista aparte para que el total no parezca completo sin serlo. Los precios se ponen en Etiquetas; solo cuenta lo fungible." },
+    { pregunta: "¿Cómo tengo mis plantillas más a mano?",
+      respuesta: "Toca la ☆ de una plantilla: las favoritas salen primero, y «Solo favoritas» deja solo esas. Se guardan en cada dispositivo." },
     { pregunta: "¿Puedo usar la plantilla de un compañero?",
       respuesta: "Sí: Más acciones → Duplicar. La copia es tuya y el original no se toca." },
     { pregunta: "¿Inomed o Cadwell?",
