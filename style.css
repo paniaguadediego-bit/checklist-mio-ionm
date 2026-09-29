@@ -4041,3 +4041,19 @@ body.sin-ayudas .coste-nota { display: none !important; }
 #dlg-caso .reg-ahora { min-height: 0; height: 1.9rem; position: relative; }
 #pantalla-registro .reg-seccion .reg-ahora::after,
 #dlg-caso .reg-ahora::after { content: ""; position: absolute; top: -7px; bottom: -7px; left: 0; right: 0; }
+
+/* Panel del modo rápido dentro de la Hoja completa (29-09-2026, pedido del
+   usuario): con los tamaños de la hoja -casillas ≈30 px y letra 0,8rem-, no
+   los de pulgar del modo rápido. Los selectores llevan el id para ganar a
+   "#pantalla-registro button { min-height: 44px }" y a ".rr-chip { 40px }". */
+.rr-en-hoja .rr-chip { font-size: 0.78rem; padding: 0.2rem 0.5rem; }
+.rr-en-hoja .rr-nota { margin-top: 0.4rem; border-radius: 4px; }
+.rr-en-hoja .rr-bloque { margin: 0.4rem 0; }
+.rr-en-hoja .rr-titulo { margin: 0.45rem 0 0.25rem; }
+.rr-en-hoja .rr-fase-actual { font-size: 0.8rem; margin: 0.1rem 0 0.3rem; }
+.rr-en-hoja .rr-botones { margin-top: 0.4rem; }
+.rr-en-hoja .rr-botones button { font-size: 0.8rem; padding: 0.35rem 0.5rem; }
+.rr-en-hoja .rr-linea { font-size: 0.8rem; padding: 0.15rem 0; }
+#pantalla-registro .rr-en-hoja .rr-chip { min-height: 1.9rem; }
+#pantalla-registro .rr-en-hoja .rr-botones button { min-height: 2.2rem; }
+#pantalla-registro .rr-en-hoja .rr-linea .reg-fila-quitar { min-height: 1.9rem; min-width: 1.9rem; }

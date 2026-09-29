@@ -1255,13 +1255,18 @@
     rr_hora_editar:      { es: "Cambiar la hora", en: "Change the time" },
     rr_fase_actual:      { es: "Fase actual: {fase}", en: "Current phase: {fase}" },
     rr_sin_fase:         { es: "Sin fase marcada", en: "No phase marked" },
-    rr_fase_otra:        { es: "+ Otra", en: "+ Other" },
+    rr_fase_otra:        { es: "Otra", en: "Other" },
     rr_fase_nueva:       { es: "Nombre de la fase:", en: "Phase name:" },
+    rr_fase_detalle:     { es: "Otra fase o detalle (opcional)", en: "Other phase or detail (optional)" },
+    rr_otro:             { es: "Otro", en: "Other" },
+    rr_que_detalle:      { es: "Otro o detalle (opcional)", en: "Other or detail (optional)" },
+    rr_falta_otro:       { es: "Con «Otro», escribe en la caja de debajo qué es.", en: "With “Other”, type what it is in the box below." },
+    rr_en_hoja:          { es: "Apuntar fase, evento o alarma", en: "Log phase, event or alarm" },
     rr_que:              { es: "Qué", en: "What" },
     rr_que_pasa:         { es: "Qué pasa", en: "What happens" },
     rr_que_anestesia:    { es: "Anestesia", en: "Anaesthesia" },
     rr_que_tecnico:      { es: "Técnico", en: "Technical" },
-    rr_nota:             { es: "Nota (opcional)", en: "Note (optional)" },
+    rr_nota:             { es: "Otro o nota (opcional)", en: "Other or note (optional)" },
     rr_apuntar_evento:   { es: "Apuntar evento", en: "Log event" },
     rr_apuntar_alarma:   { es: "Apuntar alarma", en: "Log alarm" },
     rr_falta_que:        { es: "Elige primero qué ha cambiado.", en: "First choose what changed." },
@@ -16115,6 +16120,20 @@
       document.getElementById("registro-vaciar").hidden = !!registroCaso();
       return;
     }
+    // El panel del modo rápido también arriba de la Hoja completa (29-09-2026,
+    // pedido del usuario), para apuntar fase, evento o alarma sin salir de
+    // ella. Abierto salvo que se pliegue (se recuerda al revés que el resto).
+    var detR = document.createElement("details");
+    detR.className = "caso-grupo reg-seccion reg-rapido";
+    detR.open = !regAbierta("rapido_plegado");
+    detR.addEventListener("toggle", function () { regRecordarAbierta("rapido_plegado", !detR.open); });
+    var sumR = document.createElement("summary");
+    sumR.appendChild(regNodo("span", "", T("rr_en_hoja")));
+    detR.appendChild(sumR);
+    var cuerpoR = regNodo("div", "caso-grupo-campos");
+    pintarModoRapido(cuerpoR, true);
+    detR.appendChild(cuerpoR);
+    cont.appendChild(detR);
     var hojaActual = 0;
     REG_SECCIONES.forEach(function (sec) {
       // En pantalla, algunas secciones van simplificadas o no van (ver
@@ -16205,8 +16224,13 @@
     { id: "sin_cambios", l: "Sin cambios", l_en: "No change" }
   ];
   var REG_QUE_ANESTESIA = "__an", REG_QUE_TECNICO = "__t";
+  // «Otro» en Qué y en Qué pasa (29-09-2026, pedido del usuario): lo que
+  // sea se escribe en la caja de debajo, que si no es un detalle opcional.
+  var REG_QUE_OTRO = "__otro", REG_CAMBIO_OTRO = "__otro";
   // Lo elegido y aún sin apuntar. No se guarda: se pierde al cambiar de caso.
-  var regRapido = { que: "", cambio: "", nota: "" };
+  // queNota y faseNota son las cajas de Qué y de Fase; nota, la de Qué pasa.
+  function regRapidoVacio() { return { que: "", cambio: "", nota: "", queNota: "", faseNota: "" }; }
+  var regRapido = regRapidoVacio();
 
   // Hoja completa por defecto (28-09-2026, pedido del usuario); el modo
   // rápido es la alternativa que se elige.
@@ -16301,11 +16325,17 @@
     if (!ya) boton.classList.add("activo");
   }
 
-  function regMarcarFase(nombre) {
+  // El detalle de la fase va en «Acción y resultado» de su fila de F, así el
+  // nombre de la fase sigue siendo el del botón (y la heredan los eventos).
+  function regMarcarFase(nombre, detalle) {
     var d = registroDatos();
-    if (!nombre || nombre === regFaseActual(d)) return;
+    detalle = (detalle || "").trim();
+    if (!nombre || (nombre === regFaseActual(d) && !detalle)) return;
     var hora = horaAhora();
-    d.eventos.push({ id: uuid(), hora: hora, cod: "F", fase: nombre });
+    var ev = { id: uuid(), hora: hora, cod: "F", fase: nombre };
+    if (detalle) ev.accion = detalle;
+    d.eventos.push(ev);
+    regRapido.faseNota = "";
     registroGuardarYa();
     avisoGuardado(T("rr_fase_marcada", { fase: nombre, hora: hora }));
     renderRegistroContenido();
@@ -16314,14 +16344,23 @@
   function regApuntar(esAlarma) {
     var d = registroDatos();
     var q = regRapido.que;
+    var queNota = regRapido.queNota.trim();
+    var nota = regRapido.nota.trim();
     if (!q) { avisoGuardado(T("rr_falta_que"), true); return; }
+    if (q === REG_QUE_OTRO && !queNota) { avisoGuardado(T("rr_falta_otro"), true); return; }
+    var otroCambio = regRapido.cambio === REG_CAMBIO_OTRO;
+    if (otroCambio && !nota) { avisoGuardado(T("rr_falta_otro"), true); return; }
     var cambio = REG_CAMBIOS_RAPIDOS.filter(function (x) { return x.id === regRapido.cambio; })[0];
     var hora = horaAhora();
     var fase = regFaseActual(d);
     var esAn = q === REG_QUE_ANESTESIA, esT = q === REG_QUE_TECNICO;
-    var modalidad = (esAn || esT) ? "" : q;
-    var textoCambio = cambio ? campo(cambio, "l") : "";
-    var nota = regRapido.nota.trim();
+    // "base": la técnica del botón, sin detalle, para cerrar su alarma al
+    // recuperarse aunque una de las dos líneas lleve detalle y la otra no.
+    var base = (esAn || esT || q === REG_QUE_OTRO) ? "" : q;
+    var modalidad = [base, queNota].filter(Boolean).join(" · ");
+    // Con «Otro» en Qué pasa, la caja es el cambio; si no, es la nota.
+    var textoCambio = otroCambio ? nota : (cambio ? campo(cambio, "l") : "");
+    if (otroCambio) nota = "";
     var ev = { id: uuid(), hora: hora, cod: esAlarma ? "A" : (esAn ? "An" : (esT ? "T" : "E")),
                fase: fase, modalidad: modalidad, cambio: textoCambio, accion: nota };
     var mensaje = T("rr_apuntado", { hora: hora });
@@ -16335,7 +16374,7 @@
       al.modalidad = modalidad || T(esAn ? "rr_que_anestesia" : "rr_que_tecnico");
       // Ids de las listas cerradas (28-09-2026); la fase va aparte: ya no es
       // la "causa", que ahora se elige de REG_CAUSA_AL.
-      al.criterio = cambio && !cambio.recup && cambio.id !== "sin_cambios" ? cambio.id : "";
+      al.criterio = otroCambio ? textoCambio : (cambio && !cambio.recup && cambio.id !== "sin_cambios" ? cambio.id : "");
       al.fase = fase;
       if (esAn) al.causa = "anestesica";
       if (esT) al.causa = "tecnica";
@@ -16350,7 +16389,9 @@
       // abierta (o solo parcialmente recuperada).
       var abierta = null;
       d.alarmas.forEach(function (a, i) {
-        if (a.modalidad === modalidad && a.hora && a.recup !== "S") abierta = { a: a, i: i };
+        var m = String(a.modalidad || "");
+        var misma = m === modalidad || (base && (m === base || m.indexOf(base + " · ") === 0));
+        if (misma && a.hora && a.recup !== "S") abierta = { a: a, i: i };
       });
       if (abierta) {
         ev.recupera_de = { id: abierta.a.id, recup: abierta.a.recup || "", h_recup: abierta.a.h_recup || "" };
@@ -16360,7 +16401,9 @@
       }
     }
     d.eventos.push(ev);
-    regRapido = { que: "", cambio: "", nota: "" };
+    var faseNota = regRapido.faseNota;   // la caja de Fase no es de este apunte
+    regRapido = regRapidoVacio();
+    regRapido.faseNota = faseNota;
     registroGuardarYa();
     avisoGuardado(mensaje);
     renderRegistroContenido();
@@ -16382,10 +16425,23 @@
     renderRegistroContenido();
   }
 
-  function pintarModoRapido(cont) {
+  // Caja de texto de un bloque del panel, enlazada a su clave de regRapido.
+  function regCajaRapida(clave, placeholder) {
+    var caja = document.createElement("input");
+    caja.type = "text";
+    caja.className = "rr-nota";
+    caja.placeholder = placeholder;
+    caja.value = regRapido[clave];
+    caja.addEventListener("input", function () { regRapido[clave] = caja.value; });
+    return caja;
+  }
+
+  // "enHoja": el mismo panel dentro de la Hoja completa (29-09-2026, pedido
+  // del usuario), con los tamaños compactos de la hoja (.rr-en-hoja).
+  function pintarModoRapido(cont, enHoja) {
     var d = registroDatos();
     var panel = document.createElement("div");
-    panel.className = "rr";
+    panel.className = "rr" + (enHoja ? " rr-en-hoja" : "");
     var intro = document.createElement("p");
     intro.className = "reg-ayuda";
     intro.textContent = T("rr_intro");
@@ -16410,37 +16466,37 @@
       if (e.cod === "F" && e.fase && nombres.indexOf(e.fase) === -1) nombres.push(e.fase);
     });
     nombres.forEach(function (nombre) {
-      filaFases.appendChild(regChip(nombre, nombre === faseAct, function () { regMarcarFase(nombre); }));
+      filaFases.appendChild(regChip(nombre, nombre === faseAct, function () { regMarcarFase(nombre, regRapido.faseNota); }));
     });
+    // «Otra»: la fase es lo escrito en la caja (antes, un prompt()).
     filaFases.appendChild(regChip(T("rr_fase_otra"), false, function () {
-      var nombre = prompt(T("rr_fase_nueva"));
-      if (nombre) regMarcarFase(nombre.trim());
+      var nombre = regRapido.faseNota.trim();
+      if (!nombre) { avisoGuardado(T("rr_falta_otro"), true); return; }
+      regMarcarFase(nombre);
     }, "rr-chip-otra"));
+    bFase.appendChild(regCajaRapida("faseNota", T("rr_fase_detalle")));
 
     var bEvento = regNodo("div", "rr-bloque rr-bloque-evento");
     bEvento.appendChild(regNodo("div", "rr-bloque-tit", T("rr_evento_alarma")));
     panel.appendChild(bEvento);
     var filaQue = regGrupoRapido(bEvento, T("rr_que"));
     regQueRapidos(d).map(function (l) { return [l, l]; })
-      .concat([[REG_QUE_ANESTESIA, T("rr_que_anestesia")], [REG_QUE_TECNICO, T("rr_que_tecnico")]])
+      .concat([[REG_QUE_ANESTESIA, T("rr_que_anestesia")], [REG_QUE_TECNICO, T("rr_que_tecnico")],
+               [REG_QUE_OTRO, T("rr_otro"), "rr-chip-otra"]])
       .forEach(function (p) {
-        var b = regChip(p[1], regRapido.que === p[0], function () { regElegirEn(filaQue, b, "que", p[0]); });
+        var b = regChip(p[1], regRapido.que === p[0], function () { regElegirEn(filaQue, b, "que", p[0]); }, p[2]);
         filaQue.appendChild(b);
       });
+    bEvento.appendChild(regCajaRapida("queNota", T("rr_que_detalle")));
 
     var filaCambio = regGrupoRapido(bEvento, T("rr_que_pasa"));
-    REG_CAMBIOS_RAPIDOS.forEach(function (c) {
-      var b = regChip(campo(c, "l"), regRapido.cambio === c.id, function () { regElegirEn(filaCambio, b, "cambio", c.id); });
-      filaCambio.appendChild(b);
-    });
-
-    var nota = document.createElement("input");
-    nota.type = "text";
-    nota.className = "rr-nota";
-    nota.placeholder = T("rr_nota");
-    nota.value = regRapido.nota;
-    nota.addEventListener("input", function () { regRapido.nota = nota.value; });
-    bEvento.appendChild(nota);
+    REG_CAMBIOS_RAPIDOS.map(function (c) { return [c.id, campo(c, "l")]; })
+      .concat([[REG_CAMBIO_OTRO, T("rr_otro"), "rr-chip-otra"]])
+      .forEach(function (p) {
+        var b = regChip(p[1], regRapido.cambio === p[0], function () { regElegirEn(filaCambio, b, "cambio", p[0]); }, p[2]);
+        filaCambio.appendChild(b);
+      });
+    bEvento.appendChild(regCajaRapida("nota", T("rr_nota")));
 
     var botones = document.createElement("div");
     botones.className = "rr-botones";
@@ -16499,7 +16555,7 @@
       var txt = document.createElement("span");
       txt.className = "rr-texto";
       if (ev.cod === "F") {
-        txt.textContent = ev.fase || "";
+        txt.textContent = [ev.fase, ev.accion].filter(Boolean).join(" · ");
       } else {
         txt.textContent = [ev.modalidad, ev.cambio, ev.accion].filter(Boolean).join(" · ");
         if (ev.fase) {
@@ -17378,7 +17434,7 @@
   document.getElementById("registro-caso-select").addEventListener("change", function (e) {
     registroVaciarPendiente();
     registroCasoUid = e.target.value || null;
-    regRapido = { que: "", cambio: "", nota: "" };
+    regRapido = regRapidoVacio();
     renderRegistroContenido();
   });
   document.getElementById("registro-guardar").addEventListener("click", function () {
@@ -18413,7 +18469,7 @@
       tourCerrarCaso();
       registroVaciarPendiente();
       registroCasoUid = tourCasoDemo();
-      regRapido = { que: "", cambio: "", nota: "" };
+      regRapido = regRapidoVacio();
       try { localStorage.setItem(REG_VISTA_KEY, "rapida"); } catch (e) { /* solo esta vez */ }
       renderRegistro();
       irAPantalla("registro");

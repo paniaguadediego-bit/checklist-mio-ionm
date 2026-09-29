@@ -884,23 +884,30 @@ sin caso** (hoja suelta en este navegador, sin sincronizar) o un **caso**
 (la hoja vive dentro del caso, `registro_intraop`, y se sincroniza con él).
 Arriba hay dos vistas, **Hoja completa** (la que sale por defecto desde el
 28-09-2026) y **Modo rápido**; el navegador recuerda la última que usaste.
+Desde el 29-09-2026 la **Hoja completa** lleva arriba el mismo panel del modo
+rápido («Apuntar fase, evento o alarma», plegable), con los tamaños compactos
+de la hoja, para apuntar sin cambiar de vista.
 
 ### Modo rápido (para quirófano)
 
 Añadido el 27-09-2026 porque la hoja completa tiene demasiados campos y
-desplegables para usarla con prisa. Todo se hace con toques, sin escribir:
+desplegables para usarla con prisa. Casi todo se hace con toques:
 
 - **Fase**: tocas la fase en la que está la cirugía (Basal, Posición,
   Incisión, Exposición, Apertura dural, Descompresión, Resección,
-  Instrumentación, Hemostasia, Cierre, o **+ Otra**). Se apunta con la hora
-  y todo lo que apuntes después la hereda hasta que marques otra.
+  Instrumentación, Hemostasia, Cierre, o **Otra**). Se apunta con la hora
+  y todo lo que apuntes después la hereda hasta que marques otra. La caja de
+  debajo es un detalle opcional de la fase (va en «Acción y resultado» de su
+  fila de F) o, con **Otra**, el nombre de la fase.
 - **Qué**: las técnicas del caso, que salen de las mismas filas que las
   basales (t-SEP, t-MEP, c-MEP, PEAT, Onda D, TOF...), más EMG libre,
-  tornillos, RBC, Blink o EEG/ECoG si el caso tiene esa técnica, y
-  **Anestesia** / **Técnico**.
+  tornillos, RBC, Blink o EEG/ECoG si el caso tiene esa técnica,
+  **Anestesia** / **Técnico** y **Otro**. La caja de debajo añade un detalle
+  a la técnica («t-MEP MSD · deltoides») o, con **Otro**, dice qué es.
 - **Qué pasa**: ↓ amplitud, pérdida, ↑ latencia, ↑ umbral, HFD / descargas,
-  recupera parcial, recupera, sin cambios.
-- Una **nota** opcional y dos botones: **Apuntar evento** o **Apuntar
+  recupera parcial, recupera, sin cambios u **Otro**. La caja de debajo es
+  una nota (acción o medidas) o, con **Otro**, el cambio.
+- Dos botones: **Apuntar evento** o **Apuntar
   alarma**. La alarma ocupa además la primera fila libre de alarmas (A1,
   A2...) con técnica, criterio y fase. Un evento «Recupera» o «Recupera
   parcial» de la misma técnica cierra la última alarma abierta y rellena
