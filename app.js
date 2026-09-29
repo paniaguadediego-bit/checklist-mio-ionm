@@ -998,6 +998,11 @@
     tile_casos_modelo:   { es: "Biblioteca de montajes", en: "Setup library" },
     tile_casos_modelo_sub: { es: "Montajes de ejemplo por especialidad y equipo", en: "Example setups by specialty and equipment" },
     tile_en_obras:       { es: "En construcción", en: "Under construction" },
+    demo_ficticio:       { es: "Ficticio", en: "Fictitious" },
+    demo_ficticio_ay:    { es: "Ejemplo inventado para probar la herramienta: el montaje, los parámetros y los datos no son de referencia ni reflejan la práctica real.",
+                           en: "Made-up example to try the tool: the setup, parameters and data are not a reference and do not reflect real practice." },
+    demo_ficticio_aviso: { es: "Caso ficticio de demostración. El montaje, las técnicas y los datos son de prueba, no una referencia clínica: no lo uses para planificar una cirugía real.",
+                           en: "Fictitious demo case. The setup, techniques and data are for testing, not a clinical reference: do not use it to plan a real surgery." },
     cmod_intro:          { es: "Una biblioteca de montajes de ejemplo, para todo el mundo, que sirva de punto de partida al planificar cualquier cirugía: cada uno con su montaje completo, sus técnicas y lo que se espera ver. Se podrán abrir, copiar como plantilla y adaptar.",
                            en: "A library of example setups, for everyone, to use as a starting point when planning any surgery: each with its full setup, its techniques and what to expect. You will be able to open them, copy them as a template and adapt them." },
     cmod_especialidades: { es: "Por especialidad", en: "By specialty" },
@@ -8217,6 +8222,8 @@
 
     document.getElementById("caso-subtitulo").textContent =
       T("caso_subtitulo_prefijo") + " " + (c.ID_Caso || "—") + (c.nombre_caso ? ", " + c.nombre_caso : "");
+    if (MODO_DEMO) document.getElementById("caso-subtitulo").appendChild(nodoFicticio());
+    document.getElementById("caso-aviso-demo").hidden = !MODO_DEMO;
     pintarEquipoSubtitulo(equipoDe(c));
 
     // Los 8 apartados son <details> fijos en el HTML (caso-g-<grupo>), cada
@@ -8884,6 +8891,7 @@
       // El nombre que le hayas puesto manda sobre la intervención resuelta:
       // es justo lo que pediste para reconocer el caso de un vistazo.
       det.textContent = c.nombre_caso || (intervencionDe(c) || c.escenario_nombre || T("caso_sin_intervencion"));
+      if (MODO_DEMO) det.appendChild(nodoFicticio());
       fila.appendChild(det);
 
       // Sin etiqueta de estado (29-09-2026, pedido del usuario): lo dice el
@@ -11692,6 +11700,18 @@
     el.appendChild(chip);
   }
 
+  // Etiqueta «Ficticio» junto al nombre de cada caso y plantilla de la demo
+  // (30-09-2026, pedido del usuario): son ejemplos inventados, no montajes de
+  // referencia. Con la explicación al pasar el ratón o mantener pulsado.
+  function nodoFicticio() {
+    var s = document.createElement("span");
+    s.className = "marca-ficticio";
+    s.textContent = T("demo_ficticio");
+    s.title = T("demo_ficticio_ay");
+    s.setAttribute("data-ayuda", T("demo_ficticio_ay"));
+    return s;
+  }
+
   function renderBarraCaso() {
     var barra = document.getElementById("barra-caso");
     var prefijo = document.getElementById("barra-caso-prefijo");
@@ -11704,6 +11724,7 @@
       prefijo.textContent = T("barra_caso_texto");
       nombre.textContent = caso ? ((caso.ID_Caso || "") + (caso.nombre_caso ? " — " + caso.nombre_caso : "")) : "";
       if (caso) anadirRotuloEquipo(nombre, caso);
+      if (MODO_DEMO) nombre.appendChild(nodoFicticio());
       ay.textContent = T("barra_caso_ay");
       acciones.hidden = false;
     } else {
@@ -11716,6 +11737,7 @@
       prefijo.textContent = T("barra_plantilla_texto");
       nombre.textContent = esc ? campo(esc, "nombre") : "";
       if (esc) anadirRotuloEquipo(nombre, esc);
+      if (MODO_DEMO && esc) nombre.appendChild(nodoFicticio());
       ay.textContent = "";
       acciones.hidden = true;
     }

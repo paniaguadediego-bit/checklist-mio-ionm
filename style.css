@@ -4323,3 +4323,8 @@ textarea { resize: none; overflow-y: hidden; }
 /* Texto de las cabeceras (30-09-2026): ver --cab-texto. */
 @media screen { :root:not(.tema-claro) { --cab-texto: var(--accent); } }
 .caso-grupo > summary, .card > summary.card-cab h2 { color: var(--cab-texto); }
+
+/* Demo: etiqueta «Ficticio» junto al nombre y aviso en la ficha (30-09-2026). */
+.marca-ficticio { display: inline-block; margin-left: 0.4rem; vertical-align: 0.12em; font-family: var(--mono); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.08rem 0.35rem; border-radius: 4px; color: var(--aviso-text); background: var(--aviso-bg); border: 1px solid var(--aviso-border); white-space: nowrap; }
+.aviso-ficticio { margin: 0.35rem 0 0; padding: 0.35rem 0.55rem; font-size: 0.75rem; line-height: 1.35; color: var(--aviso-text); background: var(--aviso-bg); border: 1px solid var(--aviso-border); border-radius: 4px; }
+.aviso-ficticio[hidden] { display: none; }
