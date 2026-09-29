@@ -24,7 +24,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20260930zw">
+<link rel="stylesheet" href="style.css?v=20260930zz">
 </head>
 <body>
 
@@ -88,6 +88,9 @@
     <div class="inicio-tiles">
       <button type="button" class="tile" id="tile-organizador"><span class="tile-nombre" data-i18n="tile_organizador"></span><span class="tile-sub" data-i18n="tile_organizador_sub"></span></button>
       <button type="button" class="tile" id="tile-casos"><span class="tile-nombre" data-i18n="tile_casos"></span><span class="tile-sub" data-i18n="tile_casos_sub"></span></button>
+      <!-- Casos modelo (30-09-2026, pedido del usuario): biblioteca de casos
+           de ejemplo, para todos, por especialidad y equipo. En construcción. -->
+      <button type="button" class="tile" id="tile-casos-modelo"><span class="tile-nombre" data-i18n="tile_casos_modelo"></span><span class="tile-sub" data-i18n="tile_casos_modelo_sub"></span><span class="tile-obras" data-i18n="tile_en_obras"></span></button>
     </div>
   </section>
   <section class="inicio-grupo">
@@ -105,8 +108,8 @@
       <!-- Técnicas IONM aquí, antes de Material (28-09-2026, pedido del usuario). -->
       <button type="button" class="tile" id="tile-tecnicas-mio"><span class="tile-nombre" data-i18n="tile_tecnicas"></span><span class="tile-sub" data-i18n="tile_tecnicas_sub"></span></button>
       <button type="button" class="tile" id="tile-material"><span class="tile-nombre" data-i18n="tile_material"></span><span class="tile-sub" data-i18n="tile_material_sub"></span></button>
-      <button type="button" class="tile" id="tile-docente"><span class="tile-nombre" data-i18n="tile_docencia"></span><span class="tile-sub" data-i18n="tile_docencia_sub"></span></button>
-      <button type="button" class="tile" id="tile-simulador"><span class="tile-nombre" data-i18n="tile_simulador"></span><span class="tile-sub" data-i18n="tile_simulador_sub"></span></button>
+      <button type="button" class="tile" id="tile-docente"><span class="tile-nombre" data-i18n="tile_docencia"></span><span class="tile-sub" data-i18n="tile_docencia_sub"></span><span class="tile-obras" data-i18n="tile_en_obras"></span></button>
+      <button type="button" class="tile" id="tile-simulador"><span class="tile-nombre" data-i18n="tile_simulador"></span><span class="tile-sub" data-i18n="tile_simulador_sub"></span><span class="tile-obras" data-i18n="tile_en_obras"></span></button>
       <button type="button" class="tile" id="tile-apuntes"><span class="tile-nombre" data-i18n="tile_apuntes"></span><span class="tile-sub" data-i18n="tile_apuntes_sub"></span></button>
       <button type="button" class="tile" id="tile-bibliografia"><span class="tile-nombre" data-i18n="tile_bibliografia"></span><span class="tile-sub" data-i18n="tile_bibliografia_sub"></span></button>
     </div>
@@ -939,7 +942,8 @@
     <button type="button" class="btn-pantalla-inicio" data-i18n="btn_inicio_pantalla" data-i18n-title="logo_inicio_tit"></button>
   </div>
 
-  <div class="pestanas" id="docente-pestanas">
+  <!-- Con una sola pestaña (Miotomas) la barra sobra: oculta (30-09-2026). -->
+  <div class="pestanas" id="docente-pestanas" hidden>
     <button type="button" class="pestana activa" data-pane="miotomas" data-i18n="docente_tab_miotomas"></button>
     <!-- Cama de quirófano y Teoría básica, ocultas por ahora (30-09-2026,
          pedido del usuario): solo Miotomas. Quitar el hidden para volver. -->
@@ -1097,6 +1101,18 @@
   </div>
 </div>
 
+<!-- Casos modelo (30-09-2026): de momento solo la idea, en construcción.
+     El contenido de «Qué habrá» lo pinta renderCasosModelo(). -->
+<div class="pantalla" id="pantalla-casos-modelo">
+  <div class="pantalla-cab">
+    <h2 data-i18n="tile_casos_modelo"></h2>
+    <button type="button" class="btn-pantalla-inicio" data-i18n="btn_inicio_pantalla" data-i18n-title="logo_inicio_tit"></button>
+  </div>
+  <p class="obras-aviso"><span class="tile-obras" data-i18n="tile_en_obras"></span></p>
+  <p class="dlg-intro" data-i18n="cmod_intro"></p>
+  <div id="casos-modelo-cuerpo"></div>
+</div>
+
 <div class="pantalla" id="pantalla-bibliografia">
   <div class="pantalla-cab">
     <h2 data-i18n="tile_bibliografia"></h2>
@@ -1144,8 +1160,8 @@
 
 <script src="data/surgeries.js?v=20260930c"></script>
 <script src="data/i18n-en.js?v=20260930b"></script>
-<script src="data/guia.js?v=20260930zc"></script>
+<script src="data/guia.js?v=20260930zd"></script>
 <script src="data/parametros-tecnicas.js?v=20260930a"></script>
-<script src="app.js?v=20260930zzq"></script>
+<script src="app.js?v=20260930zzt"></script>
 </body>
 </html>

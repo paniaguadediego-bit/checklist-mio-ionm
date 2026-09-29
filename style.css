@@ -1,8 +1,11 @@
 :root {
-  --bg: #eef1f4;
+  /* Modo claro con más contraste (30-09-2026, pedido del usuario: «blanco
+     sobre blanco»). Fondo gris azulado claramente más oscuro que las
+     tarjetas blancas, y bordes que se ven. Antes #eef1f4 / #cfd6dd / #e3e8ec. */
+  --bg: #dde3ea;
   --card-bg: #ffffff;
-  --border: #cfd6dd;
-  --border-soft: #e3e8ec;
+  --border: #aeb9c5;
+  --border-soft: #cfd7df;
   --text: #1a2229;
   --text-muted: #62717c;
   /* Acento dorado a juego con el logo (26-09-2026; antes verde #14705a). En
@@ -18,7 +21,7 @@
   --aviso-bg: #fdf3e3;
   --aviso-border: #d99a2b;
   --aviso-text: #7a520e;
-  --tag-bg: #eaeef1;
+  --tag-bg: #e6ebf0;
   --peligro: #a63428;
   --quitar-bg: #fae9e7;
   /* Cabecera en negro neutro, como el fondo del logo (26-09-2026; antes gris
@@ -51,7 +54,12 @@
      apartados de la ficha; en oscuro y azul se aclara aparte. En claro, un
      gris azulado bastante más oscuro que el fondo de la página (#eef1f4):
      con #e3e8ed no se distinguían (30-09-2026, pedido del usuario). */
-  --cab-bg: #cdd7e1;
+  /* En claro, un tono dorado claro con texto marrón muy oscuro (30-09-2026:
+     el gris azulado con letra dorada apenas se leía). */
+  --cab-bg: #efe4c6;
+  /* Texto de esas cabeceras: en claro, dorado más oscuro para leerse sobre
+     el gris azulado; en oscuro y azul, el acento de siempre. */
+  --cab-texto: #3b2c08;
   /* Colores fijos con nombre (auditoría 28-09-2026, E3). No cambian con el
      tema a propósito: la barra superior y sus controles son oscuros siempre,
      y el Simulador imita la pantalla oscura de un equipo de monitorización.
@@ -261,7 +269,7 @@ main {
    Docencia) y las nuevas (Simulador, Bibliografía) comparten el mismo ancho
    que <main>, para que las 6 pantallas se sientan parte de la misma app. */
 #pantalla-casos, #pantalla-tecnicas-mio, #pantalla-docente,
-#pantalla-simulador, #pantalla-bibliografia, #pantalla-checklist, #pantalla-registro, #pantalla-material,
+#pantalla-simulador, #pantalla-bibliografia, #pantalla-casos-modelo, #pantalla-checklist, #pantalla-registro, #pantalla-material,
 #pantalla-apuntes {
   max-width: 1500px;
   margin: 0 auto;
@@ -4289,3 +4297,16 @@ textarea { resize: none; overflow-y: hidden; }
 .casos-filtros-activos[hidden] { display: none; }
 .casos-filtro-chip { font: inherit; font-size: 0.76rem; padding: 0.2rem 0.5rem; border: 1px solid var(--accent); border-radius: 4px; background: var(--accent-soft); color: var(--accent); cursor: pointer; }
 .casos-filtros-pie { margin-bottom: 0.4rem; }
+
+/* «En construcción» en las tarjetas del inicio y en Casos modelo
+   (30-09-2026): etiqueta pequeña, rectangular, en ámbar. */
+.tile-obras { display: inline-block; font-family: var(--mono); font-size: 0.6rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.1rem 0.35rem; border-radius: 4px; color: var(--aviso-text); background: var(--aviso-bg); border: 1px solid var(--aviso-border); }
+.obras-aviso { margin: 0 0 0.4rem; }
+.cmod-fila { margin-bottom: 0.3rem; }
+.cmod-mientras { margin-top: 1rem; }
+.cmod-demo { display: inline-block; font-size: 0.85rem; font-weight: 600; padding: 0.45rem 0.9rem; border: 1px solid var(--accent); border-radius: 4px; color: var(--accent); background: var(--accent-soft); text-decoration: none; }
+.pestanas[hidden] { display: none; }
+
+/* Texto de las cabeceras (30-09-2026): ver --cab-texto. */
+@media screen { :root:not(.tema-claro) { --cab-texto: var(--accent); } }
+.caso-grupo > summary, .card > summary.card-cab h2 { color: var(--cab-texto); }

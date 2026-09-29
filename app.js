@@ -884,7 +884,9 @@
     tile_casos:          { es: "Gestión de Casos", en: "Case Management" },
     tile_checklist:      { es: "Checklist pre-quirúrgico", en: "Pre-surgical checklist" },
     tile_tecnicas:       { es: "Técnicas IONM", en: "IONM Techniques" },
-    tile_docencia:       { es: "Docencia", en: "Teaching" },
+    // «Miotomas» en vez de «Docencia» (30-09-2026, pedido del usuario): es lo
+    // único que queda en esa pantalla; la clave y el id "docente" no cambian.
+    tile_docencia:       { es: "Miotomas", en: "Myotomes" },
     tile_material:       { es: "Material", en: "Material" },
     // Inicio en tres bloques, con una línea bajo cada tarjeta (demo-congreso B2.F1).
     inicio_grupo_antes:   { es: "Antes de quirófano", en: "Before surgery" },
@@ -896,7 +898,7 @@
     tile_material_sub:    { es: "Cada electrodo y sonda, y para qué sirve", en: "Every electrode and probe, and what it is for" },
     tile_registro_sub:    { es: "Hoja de quirófano imprimible: hitos, eventos, alarmas", en: "Printable OR sheet: milestones, events, alarms" },
     tile_tecnicas_sub:    { es: "Parámetros de estímulo y registro, con su fuente", en: "Stimulation and recording parameters, with sources" },
-    tile_docencia_sub:    { es: "Miotomas: qué músculos cubren cada raíz", en: "Myotomes: which muscles cover each root" },
+    tile_docencia_sub:    { es: "Qué músculos cubren cada raíz", en: "Which muscles cover each root" },
     tile_simulador_sub:   { es: "Pantalla de monitorización para practicar alarmas", en: "Monitoring screen to practise alarms" },
     tile_apuntes_sub:     { es: "Tus notas y fotos, en todos tus dispositivos", en: "Your notes and photos, on all your devices" },
     tile_bibliografia_sub: { es: "Libros, guías y artículos en los que se basa", en: "Books, guidelines and papers it is based on" },
@@ -993,6 +995,16 @@
     demo_centro:         { es: "Hospital de demostración", en: "Demo hospital" },
     tile_simulador:      { es: "Simulador", en: "Simulator" },
     tile_bibliografia:   { es: "Bibliografía recomendada", en: "Recommended reading" },
+    tile_casos_modelo:   { es: "Casos modelo", en: "Model cases" },
+    tile_casos_modelo_sub: { es: "Montajes de referencia por especialidad y equipo", en: "Reference setups by specialty and equipment" },
+    tile_en_obras:       { es: "En construcción", en: "Under construction" },
+    cmod_intro:          { es: "Una biblioteca de casos de ejemplo, para todo el mundo, que sirva de punto de partida al planificar cualquier cirugía: cada uno con su montaje completo, sus técnicas y lo que se espera ver. Se podrán abrir, copiar como plantilla y adaptar.",
+                           en: "A library of example cases, for everyone, to use as a starting point when planning any surgery: each with its full setup, its techniques and what to expect. You will be able to open them, copy them as a template and adapt them." },
+    cmod_especialidades: { es: "Por especialidad", en: "By specialty" },
+    cmod_tecnicas:       { es: "Con técnicas como", en: "With techniques such as" },
+    cmod_equipos:        { es: "En cada equipo", en: "On each equipment" },
+    cmod_mientras:       { es: "Mientras tanto, los casos de la demo son el primer ejemplo: se abren aparte, sin tocar tus datos.", en: "Meanwhile, the demo cases are the first example: they open separately, without touching your data." },
+    cmod_ver_demo:       { es: "Ver los casos de la demo", en: "See the demo cases" },
     docente_tab_teoria:  { es: "Teoría básica de IONM", en: "IONM basic theory" },
     en_construccion:     { es: "En construcción.", en: "Under construction." },
     docente_material_intro: { es: "Todo el material del catálogo, agrupado por categoría, con una breve descripción de cada uno. El color y el borde de cada ítem dicen su tipo físico (leyenda de abajo). El icono 📷 abre la foto cuando la hay.",
@@ -1657,7 +1669,7 @@
    * sin depender del orden del CSS, así que este patrón evita el bug entero
    * en vez de tener que acotarlo cada vez.
    * ---------------------------------------------------------------- */
-  var PANTALLAS = ["inicio", "organizador", "casos", "checklist", "registro", "material", "tecnicas-mio", "docente", "simulador", "bibliografia", "apuntes"];
+  var PANTALLAS = ["inicio", "organizador", "casos", "casos-modelo", "checklist", "registro", "material", "tecnicas-mio", "docente", "simulador", "bibliografia", "apuntes"];
 
   function irAPantalla(nombre) {
     // Registro intraoperatorio guarda con retardo mientras se escribe: al
@@ -1872,6 +1884,39 @@
       cont.appendChild(ol);
     });
   }
+
+  // Casos modelo (30-09-2026): en construcción. Enseña qué habrá, con los
+  // nombres del catálogo (especialidades, técnicas y equipos de verdad).
+  var CMOD_TECNICAS = ["c_pem", "phase_reversal", "mapeo_subcortical", "mapeo_raices_tornillos", "onda_d",
+    "pem_corticobulbares", "peatc", "lsr", "rbc", "mapeo_nervio_periferico", "eeg"];
+  function renderCasosModelo() {
+    var cont = document.getElementById("casos-modelo-cuerpo");
+    cont.textContent = "";
+    function bloque(titulo, nombres) {
+      if (!nombres.length) return;
+      cont.appendChild(regNodo("div", "guia-seccion-tit", titulo));
+      var fila = regNodo("div", "chip-fila cmod-fila");
+      nombres.forEach(function (n) { fila.appendChild(regNodo("span", "reg-p-chip", n)); });
+      cont.appendChild(fila);
+    }
+    bloque(T("cmod_especialidades"), activos(SERVICIOS).map(function (s) { return campo(s, "nombre"); }));
+    bloque(T("cmod_tecnicas"), CMOD_TECNICAS.filter(function (id) { return !!TECS[id]; }).map(function (id) { return campo(TECS[id], "etiqueta"); }));
+    bloque(T("cmod_equipos"), equiposConCajas().filter(function (e) { return EQUIPOS[e].activo !== false; }).map(nombreEquipo));
+    if (!MODO_DEMO) {
+      cont.appendChild(regNodo("p", "dlg-intro cmod-mientras", T("cmod_mientras")));
+      var a = document.createElement("a");
+      a.className = "cmod-demo";
+      a.href = "?demo";
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.textContent = T("cmod_ver_demo");
+      cont.appendChild(a);
+    }
+  }
+  document.getElementById("tile-casos-modelo").addEventListener("click", function () {
+    renderCasosModelo();
+    irAPantalla("casos-modelo");
+  });
 
   document.getElementById("tile-bibliografia").addEventListener("click", function () {
     renderBibliografia();
