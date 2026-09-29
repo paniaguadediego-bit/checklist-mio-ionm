@@ -16862,7 +16862,11 @@
     bTof.appendChild(regNodo("div", "rr-bloque-tit", "TOF"));
     var filaTof = regNodo("div", "rr-chips");
     REG_TOF.forEach(function (v) {
-      filaTof.appendChild(regChip("TOF " + v, v === tofAct, function () { regApuntarTof(v); }));
+      // Solo «2/4» en el botón (29-09-2026, pedido del usuario): «TOF» ya va
+      // en el título del bloque. Se apunta igual «TOF 2/4».
+      var bTofV = regChip(v, v === tofAct, function () { regApuntarTof(v); });
+      bTofV.setAttribute("aria-label", "TOF " + v);
+      filaTof.appendChild(bTofV);
     });
     bTof.appendChild(filaTof);
     panel.appendChild(bTof);
