@@ -1276,6 +1276,8 @@
     rr_que_detalle:      { es: "Otro o detalle (opcional)", en: "Other or detail (optional)" },
     rr_falta_otro:       { es: "Con «Otro», escribe en la caja de debajo qué es.", en: "With “Other”, type what it is in the box below." },
     rr_en_hoja:          { es: "Apuntar fase, evento o alarma", en: "Log phase, event or alarm" },
+    rr_contexto:         { es: "Contexto quirúrgico (opcional)", en: "Surgical context (optional)" },
+    rr_tof_apuntado:     { es: "TOF {v} ({hora}).", en: "TOF {v} ({hora})." },
     rr_grupo_tecnicas:   { es: "Técnicas", en: "Techniques" },
     rr_grupo_factores:   { es: "Factores técnicos", en: "Technical factors" },
     rr_grupo_anestesia:  { es: "Anestesia", en: "Anaesthesia" },
@@ -4599,7 +4601,7 @@
      códigos (F/E/A..., S/P/N) salen tal cual, que son ids estables. */
   var COLUMNAS_CSV_EVENTOS = [
     "caso_uid", "ID_Caso", "fecha", "servicio", "diagnostico", "intervencion",
-    "tipo_fila", "n", "hora", "codigo", "fase_maniobra", "modalidad_lado", "cambio",
+    "tipo_fila", "n", "hora", "codigo", "fase_maniobra", "contexto", "modalidad_lado", "cambio",
     "criterio", "causa_probable", "aviso_cirujano", "aviso_anestesia", "nrf", "an", "cir",
     "accion_medidas", "recuperacion", "hora_recuperacion", "min_hasta_recuperacion",
     "resultado_mio", "concordancia",
@@ -4663,7 +4665,7 @@
         });
       }
       sacar("evento", r.eventos, "", function (f) {
-        return { hora: f.hora, codigo: f.cod, fase_maniobra: f.fase, modalidad_lado: f.modalidad,
+        return { hora: f.hora, codigo: f.cod, fase_maniobra: f.fase, contexto: regTextoLista(REG_CONTEXTO, f.contexto), modalidad_lado: f.modalidad,
                  cambio: f.cambio, aviso_cirujano: !!f.av_cir, aviso_anestesia: !!f.av_an,
                  accion_medidas: f.accion };
       });
@@ -16588,12 +16590,32 @@
     { id: "sin_cambios", l: "Sin cambios", l_en: "No change" }
   ];
   var REG_QUE_ANESTESIA = "__an", REG_QUE_TECNICO = "__t";
+  // TOF (29-09-2026, pedido del usuario): las cinco respuestas posibles, ni
+  // más ni menos, como eventos de anestesia de un toque (cod "An",
+  // modalidad "TOF", cambio "TOF 2/4": así se lee solo en la tabla de
+  // eventos de anestesia de la ficha).
+  var REG_TOF = ["0/4", "1/4", "2/4", "3/4", "4/4"];
+  // Contexto quirúrgico del evento o la alarma (29-09-2026), lista cerrada.
+  // Se guarda el id en ev.contexto; nunca cambiar un id ya usado.
+  var REG_CONTEXTO = [
+    { v: "diseccion", l: "Disección", l_en: "Dissection" },
+    { v: "retraccion", l: "Retracción", l_en: "Retraction" },
+    { v: "traccion", l: "Tracción / manipulación", l_en: "Traction / handling" },
+    { v: "coagulacion", l: "Coagulación", l_en: "Coagulation" },
+    { v: "reseccion", l: "Resección / aspiración", l_en: "Resection / suction" },
+    { v: "irrigacion", l: "Irrigación", l_en: "Irrigation" },
+    { v: "vascular", l: "Clipaje / oclusión vascular", l_en: "Clipping / vascular occlusion" },
+    { v: "implante", l: "Tornillo / implante", l_en: "Screw / implant" },
+    { v: "posicion", l: "Cambio de posición", l_en: "Position change" },
+    { v: "anestesia", l: "Cambio anestésico", l_en: "Anaesthetic change" },
+    { v: "hemodinamica", l: "TA / hemodinámica", l_en: "BP / haemodynamics" }
+  ];
   // «Otro» en Qué y en Qué pasa (29-09-2026, pedido del usuario): lo que
   // sea se escribe en la caja de debajo, que si no es un detalle opcional.
   var REG_QUE_OTRO = "__otro", REG_CAMBIO_OTRO = "__otro";
   // Lo elegido y aún sin apuntar. No se guarda: se pierde al cambiar de caso.
   // queNota y faseNota son las cajas de Qué y de Fase; nota, la de Qué pasa.
-  function regRapidoVacio() { return { que: "", cambio: "", nota: "", queNota: "", faseNota: "" }; }
+  function regRapidoVacio() { return { que: "", cambio: "", nota: "", queNota: "", faseNota: "", contexto: "" }; }
   var regRapido = regRapidoVacio();
 
   function regFaseActual(d) {
@@ -16668,6 +16690,23 @@
 
   // El detalle de la fase va en «Acción y resultado» de su fila de F, así el
   // nombre de la fase sigue siendo el del botón (y la heredan los eventos).
+  function regTofActual(d) {
+    for (var i = d.eventos.length - 1; i >= 0; i--) {
+      if (d.eventos[i].modalidad === "TOF" && REG_TOF.indexOf(String(d.eventos[i].cambio).replace(/^TOF /, "")) !== -1) {
+        return String(d.eventos[i].cambio).replace(/^TOF /, "");
+      }
+    }
+    return "";
+  }
+  function regApuntarTof(valor) {
+    var d = registroDatos();
+    var hora = horaAhora();
+    d.eventos.push({ id: uuid(), hora: hora, cod: "An", fase: regFaseActual(d), modalidad: "TOF", cambio: "TOF " + valor });
+    registroGuardarYa();
+    avisoGuardado(T("rr_tof_apuntado", { v: valor, hora: hora }));
+    renderRegistroContenido();
+  }
+
   function regMarcarFase(nombre, detalle) {
     var d = registroDatos();
     detalle = (detalle || "").trim();
@@ -16704,6 +16743,7 @@
     if (otroCambio) nota = "";
     var ev = { id: uuid(), hora: hora, cod: esAlarma ? "A" : (esAn ? "An" : (esT ? "T" : "E")),
                fase: fase, modalidad: modalidad, cambio: textoCambio, accion: nota };
+    if (regRapido.contexto) ev.contexto = regRapido.contexto;
     var mensaje = T("rr_apuntado", { hora: hora });
     if (esAlarma) {
       // Las alarmas nacen con filas vacías (min en REG_SECCIONES): se usa la
@@ -16817,6 +16857,17 @@
     }, "rr-chip-otra"));
     bFase.appendChild(regCajaRapida("faseNota", T("rr_fase_detalle")));
 
+    // TOF: cinco botones que se apuntan al tocar, como las fases
+    var bTof = regNodo("div", "rr-bloque");
+    var tofAct = regTofActual(d);
+    bTof.appendChild(regNodo("div", "rr-bloque-tit", "TOF"));
+    var filaTof = regNodo("div", "rr-chips");
+    REG_TOF.forEach(function (v) {
+      filaTof.appendChild(regChip("TOF " + v, v === tofAct, function () { regApuntarTof(v); }));
+    });
+    bTof.appendChild(filaTof);
+    panel.appendChild(bTof);
+
     var bEvento = regNodo("div", "rr-bloque rr-bloque-evento");
     bEvento.appendChild(regNodo("div", "rr-bloque-tit", T("rr_evento_alarma")));
     panel.appendChild(bEvento);
@@ -16829,7 +16880,7 @@
     var tecnicasQue = regQueRapidos(d).filter(function (l) { return l !== "TOF"; });
     [["rr_grupo_tecnicas", tecnicasQue.map(function (l) { return [l, l]; })],
      ["rr_grupo_factores", [[REG_QUE_TECNICO, T("rr_que_tecnico")]]],
-     ["rr_grupo_anestesia", [[REG_QUE_ANESTESIA, T("rr_que_anestesia")], ["TOF", "TOF"]]],
+     ["rr_grupo_anestesia", [[REG_QUE_ANESTESIA, T("rr_que_anestesia")]]],
      [null, [[REG_QUE_OTRO, T("rr_otro"), "rr-chip-otra"]]]
     ].forEach(function (g) {
       if (!g[1].length) return;
@@ -16851,6 +16902,12 @@
         filaCambio.appendChild(b);
       });
     bEvento.appendChild(regCajaRapida("nota", T("rr_nota")));
+
+    var filaCtx = regGrupoRapido(bEvento, T("rr_contexto"));
+    REG_CONTEXTO.forEach(function (c) {
+      var b = regChip(campo(c, "l"), regRapido.contexto === c.v, function () { regElegirEn(filaCtx, b, "contexto", c.v); });
+      filaCtx.appendChild(b);
+    });
 
     var botones = document.createElement("div");
     botones.className = "rr-botones";
@@ -16952,10 +17009,11 @@
       // En una alarma, la nota ya no se enseña aquí: está en sus medidas.
       var partes = al
         ? [al.modalidad || (ev && ev.modalidad), ev ? ev.cambio : regTextoLista(REG_CRITERIO_AL, al.criterio), "A" + it.n]
-        : [ev.modalidad, ev.cambio, ev.accion];
+        : [ev.cambio && ev.modalidad && String(ev.cambio).indexOf(ev.modalidad) === 0 ? "" : ev.modalidad, ev.cambio, ev.accion];
       txt.textContent = partes.filter(Boolean).join(" · ");
       var fase = ev ? ev.fase : al.fase;
-      if (fase) txt.appendChild(regNodo("small", null, " " + T("rr_en_fase", { fase: fase })));
+      var ctx = ev && ev.contexto ? regTextoLista(REG_CONTEXTO, ev.contexto) : "";
+      if (fase || ctx) txt.appendChild(regNodo("small", null, " " + [fase ? T("rr_en_fase", { fase: fase }) : "", ctx].filter(Boolean).join(" · ")));
     }
     fila.appendChild(txt);
     // Corregir la línea (29-09-2026, pedido del usuario): ✎ o tocar el texto
@@ -17038,6 +17096,8 @@
       // En una alarma, la nota son sus medidas (debajo)
       if (!al) casilla(ev, "accion", T("rr_nota_l"));
       casilla(ev, "fase", T("rr_fase"));
+      box.appendChild(regNodo("span", "rr-editor-et", T("rr_contexto")));
+      box.appendChild(regSelectLista(ev, "contexto", REG_CONTEXTO, T("rr_contexto")));
     } else {
       casilla(al, "modalidad", T("rr_que"));
       box.appendChild(regNodo("span", "rr-editor-et", T("reg_p_criterio")));
@@ -18212,7 +18272,7 @@
     var evDef = REG_SECCIONES.filter(function (s) { return s.id === "f"; })[0].cols;
     var alDef = REG_SECCIONES.filter(function (s) { return s.id === "g"; })[0].cols;
     var filasEv = d.eventos.filter(function (f) { return regFilaConContenido(f, evDef); }).map(function (f) {
-      return { hora: f.hora || "", celdas: [f.hora, f.cod, f.fase, f.modalidad, f.cambio,
+      return { hora: f.hora || "", celdas: [f.hora, f.cod, [f.fase, regTextoLista(REG_CONTEXTO, f.contexto)].filter(Boolean).join(" · "), f.modalidad, f.cambio,
         hojaCasilla(!!f.av_cir), hojaCasilla(!!f.av_an), "", f.accion, ""] };
     });
     // Listas cerradas (28-09-2026): se imprimen los rótulos, no los ids.
