@@ -378,7 +378,7 @@ distinta a la anterior, no importa el formato exacto.
 > - **Aspecto (30-09)**: paleta **azul marino** por defecto (#0F141C,
 >   tarjetas #18202C, acento #7AA7DA con texto oscuro encima); «oscuro» = negro y
 >   dorado de antes (el dorado, solo ahí); claro con más contraste, acento azul
->   marino muy oscuro (#1B3A5C) y cabeceras azul grisáceo (#CFD9E4) con texto
+>   marino muy oscuro (#0F2A47) y cabeceras azul grisáceo (#CFD9E4) con texto
 >   marino casi negro. Cabeceras de tarjeta y de apartado con fondo propio
 >   (`--cab-bg`) y texto `--cab-texto` (casi blanco en azul). Plantillas de
 >   montajes con cabecera centrada y teñida; «Plantilla seleccionada» con franja

@@ -9,15 +9,16 @@
   --text: #1a2229;
   --text-muted: #62717c;
   /* Acento: en claro, azul marino muy oscuro (30-09-2026, pedido del
-     usuario: el dorado no ayudaba en claro; se queda para el modo oscuro).
+     usuario: el dorado no ayudaba en claro; se queda para el modo oscuro;
+     luego aún más oscuro para más contraste, antes #1b3a5c).
      Antes dorado oscuro #8a6a1c / #f4ecd8; antes aún verde #14705a. */
-  --accent: #1b3a5c;
+  --accent: #0f2a47;
   --accent-soft: #e2e9f1;
   /* Texto sobre fondo --accent (botones principales, chips elegidos...). */
   --accent-texto: #ffffff;
   /* Barra "Corrigiendo el material del caso": algo más apagada que el
      acento (25-09-2026), para que no deslumbre ni se confunda con los botones. */
-  --barra-caso-bg: #243f5e;
+  --barra-caso-bg: #17324f;
   --aviso-bg: #fdf3e3;
   --aviso-border: #d99a2b;
   --aviso-text: #7a520e;
@@ -60,7 +61,7 @@
   --cab-bg: #cfd9e4;
   /* Texto de esas cabeceras: en claro, marino casi negro; en oscuro y azul,
      el acento de siempre. */
-  --cab-texto: #0e2036;
+  --cab-texto: #07182b;
   /* Colores fijos con nombre (auditoría 28-09-2026, E3). No cambian con el
      tema a propósito: la barra superior y sus controles son oscuros siempre,
      y el Simulador imita la pantalla oscura de un equipo de monitorización.
@@ -4186,7 +4187,7 @@ textarea { resize: none; overflow-y: hidden; }
 /* «Evento o alarma» resaltado entero (29-09-2026, pedido del usuario): marco
    completo en un dorado más apagado y fondo ligeramente teñido, para que se
    distinga bien de la lista «Apuntado» de debajo. */
-:root { --acento-apagado: #4a6689; }
+:root { --acento-apagado: #34506f; }
 @media screen { :root:not(.tema-claro) { --acento-apagado: #4d7bab; } :root.tema-oscuro { --acento-apagado: #8c7540; } }
 .rr-bloque.rr-bloque-evento {
   border: 1.5px solid var(--acento-apagado);
