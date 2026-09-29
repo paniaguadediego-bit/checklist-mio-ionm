@@ -23,6 +23,9 @@ Instrucciones para cualquier asistente de código que trabaje en este repositori
   repetirla) vive en el repositorio privado: `../checklist-mio-datos/docs/`
   (`AUDITORIA.md` y `PROMPT-AUDITORIA.md`). Al arreglar un hallazgo, marca su
   fila como hecha.
+- En `data/parametros-tecnicas.js`, cada `"opciones"` lleva al lado `"ids"`:
+  el caso guarda el id. Se puede corregir el texto de una opción, pero **nunca
+  cambiar un id ya usado**; una opción nueva va al final de las dos listas.
 - El contenido de **Técnicas IONM** (apuntes del autor sacados de libros y
   artículos) vive SOLO en el repositorio privado (`referencia/`): no lo copies
   nunca a este repositorio público.

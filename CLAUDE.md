@@ -193,7 +193,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Mis apuntes: carpetas con color, orden, editor con negrita/cursiva (24-09-2026) | `grupoCarpetaApunte()`, `crearSeccionApunte()`, `moverCarpetaApunte()`, `moverSeccionApunte()`, `apunteSanear()` | ver `grep` |
 | Mis apuntes: fotos como archivos aparte + sincronización | `subirApunteDocYaHidratado()`, `subirFotosApuntePendientes()`, `descargarFotosApunteFaltantes()`, `borrarFotosApunteRemotas()`, `apunteDocLigero()` | ver `grep` |
 | Mis apuntes: exportar a Word (.docx, sin librerías) | `exportarApuntesWord()`, `zipSinComprimir()`, `docxParrafosDeHtml()` | ver `grep` |
-| Registro intraoperatorio: pantalla digital | `REG_SECCIONES`, `regControl()`, `regGet()`, `pintarSeccion*()` | ver `grep` |
+| Registro intraoperatorio: pantalla digital | `REG_SECCIONES`, `regControl()`, `regGet()`, `REG_PANTALLA` (pintado propio por sección), `pintarSeccionCampos()` (A), `pintarSeccionBasales()` (E) | ver `grep` |
 | Lista propia de TODOS los desplegables (el `<select>` cerrado no cambia; un manejador en `document` en captura; `data-nativo` para excluir uno) | `selEsPropio()`, `abrirListaSelect()`, `colocarListaSelect()`, `cerrarListaSelect()` | ver `grep` |
 | Técnicas IONM desde el repo privado | `bajarTecnicasMio()`, `hayTecnicasMio()`, `pintarTileTecnicasMio()`, `olvidarTecnicasMio()`, `TECMIO_KEY` | ver `grep` |
 | Catálogo del Organizador en el móvil (sin scroll propio; al elegir sube a las cajas y al colocar vuelve al material) | `plegarCatalogo()`, `anclaCatalogo`, `catalogoConScrollPropio()`, `altoBarrasFijas()` | ver `grep` |
@@ -225,6 +225,11 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Registro C · Anestesia en espejo y eventos An | `pintarPantallaAnestesia()`, `pintarEventosAn()` | ver `grep` |
 | Menú ⋮ «Ocultar ayudas» | `AYUDAS_KEY`, `aplicarAyudas()`, `body.sin-ayudas` en style.css | ver `grep` |
 | Precios inventados de la demo | `PRECIOS_DEMO`, `preciosDemo()` | ver `grep` |
+| Ficha: autoguardado, salir y cerrar caso | `autoguardarFicha()`, `salirDeFicha()`, `firmaFicha()`, `fichaOrigen`, `casoCambiadoFuera()`, `pintarBotonCerrarCaso()` | ver `grep` |
+| Fusión de un caso en conflicto de subida | `fusionarCaso()` (dentro del 409/422 de `subirCasoYaHidratado()`) | ver `grep` |
+| Copia completa (exportar/importar) | handler de `btn-exportar`, `importarCopiaCompleta()` | ver `grep` |
+| Ids de opción de «Cómo se realizó cada técnica» | `tecParIdDe()`, `tecParTextoDe()`, `"ids"` en `data/parametros-tecnicas.js` | ver `grep` |
+| Alarmas: qué cuenta como escrita y derivación al caso | `alarmaEscrita()`, `alarmasEnCaso()`, `concordanciaDudosa()`, `motivoConcordancia()` | ver `grep` |
 | Basales compartidas ficha ↔ Registro | `REG_BASALES_SENS/MOT`, `regFilasBasales()`, `pintarBloqueBasales()`, `seccionBasalesInforme()`, `t: "basales_reg"` en `campoCaso()` | ver `grep` |
 | Modo demostración (?demo) | `MODO_DEMO`, `almacenDemo()`, `sembrarDemo()`, `restablecerDemo()`, `prepararDemo()`; bloqueo de `fetch` a otros orígenes al principio del archivo | ver `grep` |
 | Visita guiada opcional (antes "Empieza aquí"; solo ?demo) | `TOUR_PASOS`, `TOUR_GRUPO_CASO`, `tourIr()`, `tourPreparar()`, `tourPintarTextos()`, `tourReservarSitio()`, `tourTerminar()` | ver `grep` |
@@ -347,7 +352,7 @@ distinta a la anterior, no importa el formato exacto.
 
 ## Estado del proyecto
 
-> **Resumen a 28-09-2026, noche (léelo primero; el diario cronológico está en
+> **Resumen a 29-09-2026 (léelo primero; el diario cronológico está en
 > el repositorio privado, ver al final de este archivo).**
 > - **Pantallas (Inicio en tres bloques, tarjetas centradas, una línea bajo cada
 >   nombre):** *Antes de quirófano*: Organizador de Montajes, Gestión de Casos.
@@ -379,6 +384,28 @@ distinta a la anterior, no importa el formato exacto.
 >   (`evolucion_postop`) + detalle, y **propuesta de concordancia**
 >   (`propuestaConcordancia()`) con botón Aplicar. Fuera «¿Hubo cambios respecto
 >   al plan?». Caso destacado y Hacer seguimiento en la misma fila (`par`).
+>   **Se guarda sola** ~1,5 s tras cada cambio (`autoguardarFicha()`: guarda una
+>   COPIA de `casoAbierto`, porque los controles y las tablas espejo siguen
+>   enlazados a él); «Guardar» queda como confirmación. Se para y avisa si falta
+>   la fecha o si el caso cambió fuera (`casoCambiadoFuera()`). **Cerrar caso /
+>   Reabrir caso** en la barra (`guardarFicha(true)`, `pintarBotonCerrarCaso()`).
+>   Ojo: `leerFichaCaso()` copia el formulario sobre `casoAbierto`; no llamarlo
+>   después de guardar sin repintar (ya pasó: «Reabrir» se deshacía).
+> - **Robustez de datos (auditoría 28-29/09):** conflicto al subir un caso →
+>   `fusionarCaso()` (vacío toma del otro, gana el que sube, listas con id se
+>   juntan, `editado_en` unido); «Exportar copia» es completa (`completa: {casos,
+>   montajes, apuntes}`) e «Importar» solo añade lo que falta
+>   (`importarCopiaCompleta()`); «Cómo se realizó cada técnica» guarda **ids**
+>   (`"ids"` junto a cada `"opciones"` en `parametros-tecnicas.js`, NUNCA cambiar
+>   un id usado; `tecParIdDe()`/`tecParTextoDe()`); una alarma sin nada escrito
+>   no cuenta (`alarmaEscrita()`) y lo derivado se deshace al quitarlas; el
+>   Registro y el autoguardado sellan `editado_en` como mucho cada 30 min; las
+>   fotos no se reescriben en IndexedDB (`fotosYaEnIDB`). «Vaciar» del Registro y
+>   del Checklist, solo en Modelo 0. «Pasar al caso» retirado.
+> - **Nombres:** «Plantilla» = lo guardado en la biblioteca (Guardar/Cargar
+>   plantilla, + Plantilla en blanco); «Montaje» = cómo quedan las cajas (Editar
+>   montaje del caso, Organizador de Montajes); «Técnica · lado» (no
+>   «Modalidad»); «Informe (PDF)» / «Informe de casos (PDF)».
 > - **Basales**: columnas **OPBSL · PostPos1 · PostPos2 · CL-BSL** (ids `basal`,
 >   `post`, `post2`, `final`); PostPos2 solo t-SEP/t-MEP, c-MEP solo OPBSL y
 >   CL-BSL (`regColBasal()`). **Umbrales por raíz** en columna vertebral: niveles
@@ -414,7 +441,9 @@ distinta a la anterior, no importa el formato exacto.
 > - **Pendiente del usuario:** recargar la app en todos los dispositivos; revisar
 >   en sus casos las evoluciones «déficit nuevo, evolución pendiente» y la ECL
 >   L3-S1 (resultado esperable «similar»); probar en quirófano el Registro en
->   espejo. A (identificación) del Registro se deja como está "por ahora".
+>   espejo; probar con dos dispositivos a la vez sobre el mismo caso (fusión y
+>   aviso) y el gesto de atrás de Android con la ficha abierta. A
+>   (identificación) del Registro se deja como está "por ahora".
 > - **Ideas pendientes, no construidas:** que la demo enseñe más utilidades;
 >   conversión Inomed ↔ Cadwell; sección del Registro en el Sheet (eventos y
 >   alarmas); bloque "Cirugías con IONM"; Teoría básica; convertir en listas más

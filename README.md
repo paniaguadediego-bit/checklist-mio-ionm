@@ -35,6 +35,19 @@ con carpetas de colores, negrita/cursiva, fotos dentro de cada caja y
 de material en filas, con una breve descripción de uso de cada uno; tarjeta
 propia en *Después / consulta*).
 
+**Novedades del 29/09/2026 (tras la primera auditoría):**
+- La **ficha del caso se guarda sola** (como el Registro) y tiene **Cerrar caso**
+  / **Reabrir caso** en la barra de abajo.
+- **Más difícil perder datos**: si el mismo caso se cambia en dos dispositivos,
+  se juntan las dos versiones; **Exportar copia** ya incluye casos, plantillas y
+  apuntes; **Vaciar** del Registro y del Checklist solo sin caso vinculado.
+- **Alarmas y concordancia**: una alarma en blanco ya no cuenta como alerta, y
+  la propuesta de concordancia dice qué regla aplica (las dudosas, entre «¿…?»).
+- **Nombres unificados**: *plantilla* (lo que guardas en la biblioteca) y
+  *montaje* (cómo quedan las cajas); *técnica* en vez de *modalidad*.
+- Casillas y botones más coherentes, sin formas de píldora, y la herramienta
+  algo más ligera por dentro.
+
 **Novedades del 28/09/2026 (noche): el Registro como volcador de datos.**
 - Lo que se recoge en quirófano se apunta en el **Registro intraoperatorio** y
   la ficha de **Gestión de Casos** lo refleja **en espejo** (se puede escribir en
