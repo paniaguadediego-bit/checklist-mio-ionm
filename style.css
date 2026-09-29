@@ -4064,3 +4064,18 @@ body.sin-ayudas .coste-nota { display: none !important; }
   border: 1px solid var(--accent); background: var(--accent); color: var(--accent-texto); border-radius: 4px; cursor: pointer;
 }
 #pantalla-registro .rr-editor .rr-editor-hecho { min-height: 1.9rem; }
+/* «Apuntar fase, evento o alarma» como botón principal, distinto de las
+   demás secciones (29-09-2026, pedido del usuario: es lo que se usa sin
+   parar en quirófano). Relleno de acento, algo más grande; sigue plegándose. */
+.caso-grupo.reg-rapido { border: 2px solid var(--accent); }
+.caso-grupo.reg-rapido > summary {
+  background: var(--accent);
+  color: var(--accent-texto);
+  font-size: 0.95rem;
+  padding: 0.65rem 0.8rem;
+  letter-spacing: 0.01em;
+}
+.caso-grupo.reg-rapido > summary:hover { filter: brightness(1.06); }
+.caso-grupo.reg-rapido[open] > summary { border-bottom-color: var(--accent); }
+.caso-grupo.reg-rapido > summary { border-radius: calc(var(--r) - 2px); }
+.caso-grupo.reg-rapido[open] > summary { border-radius: calc(var(--r) - 2px) calc(var(--r) - 2px) 0 0; }
