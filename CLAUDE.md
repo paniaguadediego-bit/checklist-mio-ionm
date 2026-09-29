@@ -451,7 +451,7 @@ distinta a la anterior, no importa el formato exacto.
 >   Fases, eventos y alarmas se apuntan SOLO en el panel de arriba, «Apuntar
 >   fase, evento o alarma» (botón dorado relleno, `.reg-rapido`; antes «modo
 >   rápido», pestaña retirada el 29-09-2026); F y G no se pintan en pantalla.
->   Bloques: **Fase** (un toque; caja = detalle u «Otra»), **TOF** 0/4…4/4 (un
+>   Bloques: **Fase** (un toque; caja = detalle u «Otra»), **TOF** 0/4…4/4 (dentro de Evento o alarma, un
 >   toque → evento `An`, modalidad «TOF», cambio «TOF 2/4»), **Evento o alarma**
 >   (QUÉ: t-SEP/t-MEP/c-SEP en tabla por miembro + factores técnicos, anestesia
 >   y Otro en una fila; QUÉ PASA sin botones de recuperación -se marca en la

@@ -1277,6 +1277,7 @@
     rr_al_detalle:       { es: "Causa, medidas y recuperación", en: "Cause, measures and recovery" },
     rr_contexto:         { es: "Contexto quirúrgico (opcional)", en: "Surgical context (optional)" },
     rr_tof_apuntado:     { es: "TOF {v} ({hora}).", en: "TOF {v} ({hora})." },
+    rr_tof_fila:         { es: "TOF · se apunta al tocarlo", en: "TOF · logged when tapped" },
     rr_grupo_tecnicas:   { es: "Técnicas", en: "Techniques" },
     rr_grupo_factores:   { es: "Factores técnicos", en: "Technical factors" },
     rr_grupo_anestesia:  { es: "Anestesia", en: "Anaesthesia" },
@@ -16856,21 +16857,6 @@
     }, "rr-chip-otra"));
     bFase.appendChild(regCajaRapida("faseNota", T("rr_fase_detalle")));
 
-    // TOF: cinco botones que se apuntan al tocar, como las fases
-    var bTof = regNodo("div", "rr-bloque");
-    var tofAct = regTofActual(d);
-    bTof.appendChild(regNodo("div", "rr-bloque-tit", "TOF"));
-    var filaTof = regNodo("div", "rr-chips");
-    REG_TOF.forEach(function (v) {
-      // Solo «2/4» en el botón (29-09-2026, pedido del usuario): «TOF» ya va
-      // en el título del bloque. Se apunta igual «TOF 2/4».
-      var bTofV = regChip(v, v === tofAct, function () { regApuntarTof(v); });
-      bTofV.setAttribute("aria-label", "TOF " + v);
-      filaTof.appendChild(bTofV);
-    });
-    bTof.appendChild(filaTof);
-    panel.appendChild(bTof);
-
     var bEvento = regNodo("div", "rr-bloque rr-bloque-evento");
     bEvento.appendChild(regNodo("div", "rr-bloque-tit", T("rr_evento_alarma")));
     panel.appendChild(bEvento);
@@ -16953,11 +16939,27 @@
       });
     bEvento.appendChild(regCajaRapida("nota", T("rr_nota")));
 
+    // TOF dentro de «Evento o alarma» (29-09-2026, pedido del usuario: es
+    // parte del contexto de los dos), detrás del contexto quirúrgico. Sigue
+    // apuntándose al tocarlo, con su hora, como las fases; el botón dice
+    // solo «2/4» y se apunta «TOF 2/4». Marcado, el último.
+    var tofAct = regTofActual(d);
+    var filaTof;
+    var ponerTof = function () {
+      filaTof = regGrupoRapido(bEvento, T("rr_tof_fila"));
+      REG_TOF.forEach(function (v) {
+        var bTofV = regChip(v, v === tofAct, function () { regApuntarTof(v); });
+        bTofV.setAttribute("aria-label", "TOF " + v);
+        filaTof.appendChild(bTofV);
+      });
+    };
     var filaCtx = regGrupoRapido(bEvento, T("rr_contexto"));
     REG_CONTEXTO.forEach(function (c) {
       var b = regChip(campo(c, "l"), regRapido.contexto === c.v, function () { regElegirEn(filaCtx, b, "contexto", c.v); });
       filaCtx.appendChild(b);
     });
+
+    ponerTof();
 
     var botones = document.createElement("div");
     botones.className = "rr-botones";

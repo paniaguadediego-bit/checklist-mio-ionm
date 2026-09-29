@@ -928,8 +928,9 @@ hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
   y todo lo que apuntes después la hereda hasta que marques otra. La caja de
   debajo es un detalle opcional de la fase (va en «Acción y resultado» de su
   fila de F) o, con **Otra**, el nombre de la fase.
-- **TOF**: cinco botones, **TOF 0/4 · 1/4 · 2/4 · 3/4 · 4/4**, que se apuntan
-  al tocarlos (como las fases) como evento de anestesia; el último queda
+- **TOF** (dentro de «Evento o alarma», tras el contexto quirúrgico): cinco
+  botones, **0/4 · 1/4 · 2/4 · 3/4 · 4/4**, que se apuntan al tocarlos (como las
+  fases) como evento de anestesia «TOF 2/4»; el último queda
   marcado y sale también en los eventos de anestesia de la ficha.
 - **Qué**, en filas por tipo: **Técnicas** (t-SEP, t-MEP y c-SEP en una tabla,
   una fila por técnica y una columna por miembro MSD · MSI · MID · MII; las del caso, de las mismas
