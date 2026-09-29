@@ -3782,6 +3782,9 @@ body:not(.editando-caso) .barra-caso {
   border: 1px solid var(--border);
   border-left: 3px solid var(--accent);
   padding: 0.5rem 0.8rem;
+  /* Centrado (30-09-2026, pedido del usuario) */
+  justify-content: center;
+  text-align: center;
 }
 body:not(.editando-caso) #barra-caso-prefijo {
   display: block;
@@ -4257,7 +4260,7 @@ textarea { resize: none; overflow-y: hidden; }
 .rr-item .rr-al-plegable, .rr-item .rr-editor { margin-left: 0; }
 
 /* Botón de colores junto al ⋮ (30-09-2026): una bolita con el color del
-   modo puesto; al tocarlo pasa al siguiente (azul → oscuro → claro). */
+   modo puesto; al tocarlo pasa al siguiente (oscuro → azul → claro). */
 .btn-colores { display: inline-flex; align-items: center; justify-content: center; padding-left: 0.4rem; padding-right: 0.4rem; }
 .btn-colores-muestra { width: 0.8rem; height: 0.8rem; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.55); background: #0a84ff; }
 .btn-colores[data-tema="oscuro"] .btn-colores-muestra { background: #d8b45c; }

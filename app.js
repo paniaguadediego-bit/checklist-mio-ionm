@@ -14800,7 +14800,8 @@
      sí/no) se sigue leyendo. */
   var TEMA_KEY = "mio_ionm_tema_v2";
   var TEMA_KEY_VIEJA = "mio_ionm_tema_claro_v1";
-  var TEMAS = ["azul", "oscuro", "claro"];
+  // Orden del ciclo: oscuro → azul → claro (30-09-2026, pedido del usuario).
+  var TEMAS = ["oscuro", "azul", "claro"];
   var btnColores = document.getElementById("btn-colores");
   var temaActual = "azul";
   function aplicarTema(tema) {

@@ -87,7 +87,7 @@ window.GUIA = {
     { pregunta: "¿Inomed o Cadwell?",
       respuesta: "Cada plantilla y cada caso son de un equipo; solo cambian las cajas. Solo se cargan plantillas del mismo equipo." },
     { pregunta: "¿Cómo cambio los colores o quito las ayudas?",
-      respuesta: "El botón redondo junto al ⋮ pasa por azul, oscuro y claro. «Ocultar ayudas» está en el ⋮." },
+      respuesta: "El botón redondo junto al ⋮ pasa por oscuro, azul y claro. «Ocultar ayudas» está en el ⋮." },
     { pregunta: "¿Algún truco para el móvil?",
       respuesta: "Toca y coloca en vez de arrastrar. En el Registro, mantén pulsado un botón para ver qué significa." }
   ]
