@@ -453,7 +453,9 @@ distinta a la anterior, no importa el formato exacto.
 >   rápido», pestaña retirada el 29-09-2026); F y G no se pintan en pantalla.
 >   Bloques: **Fase** (un toque; caja = detalle u «Otra»), **TOF** 0/4…4/4 (un
 >   toque → evento `An`, modalidad «TOF», cambio «TOF 2/4»), **Evento o alarma**
->   (QUÉ en filas técnicas / factores técnicos / anestesia / Otro, QUÉ PASA,
+>   (QUÉ: t-SEP/t-MEP/c-SEP en tabla por miembro + factores técnicos, anestesia
+>   y Otro en una fila; QUÉ PASA sin botones de recuperación -se marca en la
+>   alarma-,
 >   **contexto quirúrgico** opcional en lista cerrada → `ev.contexto`, cajas de
 >   detalle u «Otro», Apuntar evento / alarma) y **Apuntado** (por hora, de lo más antiguo a lo más reciente; hora
 >   editable; ✎ -solo el lápiz- corrige la línea y su alarma; cada alarma con su

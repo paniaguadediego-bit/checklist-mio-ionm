@@ -936,8 +936,8 @@
     tour_x_caso_docencia: { es: "Rol, supervisor, dificultad y aprendizaje clave de cada caso. Marca los destacados o los que quieres seguir, y encuéntralos después con los filtros: el registro de casos se convierte en un portafolio formativo.",
                            en: "Role, supervisor, difficulty and key learning point of each case. Flag notable cases or ones to follow up, and find them later with the filters: the case log becomes a training portfolio." },
     tour_t_registro:     { es: "Registro intraoperatorio", en: "Intraoperative log" },
-    tour_x_registro:     { es: "En quirófano, arriba de la hoja se apunta con dos toques: la fase una vez, y cada cambio como qué + qué pasa. La hora se pone sola y un «Recupera» cierra la alarma. Más abajo, el resto de la hoja (anestesia, basales, mapeo, cierre).",
-                           en: "In the OR, at the top of the sheet you log with two taps: the phase once, and each change as what + what happens. The time is set automatically and a “Recovers” closes the alarm. Further down, the rest of the sheet (anaesthesia, baselines, mapping, closure)." },
+    tour_x_registro:     { es: "En quirófano, arriba de la hoja se apunta con dos toques: la fase una vez, y cada cambio como qué + qué pasa. La hora se pone sola y la alarma se cierra con su recuperación y «Ahora». Más abajo, el resto de la hoja (anestesia, basales, mapeo, cierre).",
+                           en: "In the OR, at the top of the sheet you log with two taps: the phase once, and each change as what + what happens. The time is set automatically and the alarm is closed with its recovery and “Now”. Further down, the rest of the sheet (anaesthesia, baselines, mapping, closure)." },
     tour_t_salidas:      { es: "Hoja de registro e informe", en: "Record sheet and report" },
     tour_x_salidas:      { es: "En el menú ⋮ de la ficha, Hoja de registro imprime las dos páginas A4 para quirófano, ya rellenas con lo que sabe el caso, e Informe (PDF) hace el informe del caso. El Checklist pre-quirúrgico también se vincula al caso.",
                            en: "In the case form ⋮ menu, Record sheet prints the two A4 pages for the OR, already filled in with what the case knows, and Create report makes the case report as a PDF. The pre-surgical Checklist can also be linked to the case." },
@@ -15844,10 +15844,10 @@
      los de REG_CAMBIOS_RAPIDOS. "medidas_l" es la lista de medidas; "medidas"
      (texto) queda como nota breve. */
   var REG_CRITERIO_AL = [
-    { v: "baja", l: "↓ amplitud", l_en: "↓ amplitude" },
-    { v: "perdida", l: "Pérdida", l_en: "Loss" },
-    { v: "latencia", l: "↑ latencia", l_en: "↑ latency" },
     { v: "umbral", l: "↑ umbral", l_en: "↑ threshold" },
+    { v: "baja", l: "↓ amplitud", l_en: "↓ amplitude" },
+    { v: "latencia", l: "↑ latencia", l_en: "↑ latency" },
+    { v: "perdida", l: "Pérdida", l_en: "Loss" },
     { v: "hfd", l: "HFD / descargas", l_en: "HFD / discharges" }
   ];
   var REG_CAUSA_AL = [
@@ -16573,11 +16573,13 @@
   ];
   // "recup": los dos de recuperación cierran la última alarma abierta de la
   // misma modalidad (S/P, los mismos valores que REG_RECUP).
+  // Orden (29-09-2026, pedido del usuario): ↑ umbral, ↓ amplitud, ↑ latencia
+  // y pérdida; los ids no cambian.
   var REG_CAMBIOS_RAPIDOS = [
-    { id: "baja", l: "↓ amplitud", l_en: "↓ amplitude" },
-    { id: "perdida", l: "Pérdida", l_en: "Loss" },
-    { id: "latencia", l: "↑ latencia", l_en: "↑ latency" },
     { id: "umbral", l: "↑ umbral", l_en: "↑ threshold" },
+    { id: "baja", l: "↓ amplitud", l_en: "↓ amplitude" },
+    { id: "latencia", l: "↑ latencia", l_en: "↑ latency" },
+    { id: "perdida", l: "Pérdida", l_en: "Loss" },
     { id: "hfd", l: "HFD / descargas", l_en: "HFD / discharges" },
     { id: "recupera_p", l: "Recupera parcial", l_en: "Partial recovery", recup: "P" },
     { id: "recupera", l: "Recupera", l_en: "Recovers", recup: "S" },
@@ -16589,6 +16591,8 @@
   // modalidad "TOF", cambio "TOF 2/4": así se lee solo en la tabla de
   // eventos de anestesia de la ficha).
   var REG_TOF = ["0/4", "1/4", "2/4", "3/4", "4/4"];
+  // Columnas de la cuadrícula de QUÉ (t-SEP, t-MEP... por miembro)
+  var REG_MIEMBROS = ["MSD", "MSI", "MID", "MII"];
   // Contexto quirúrgico del evento o la alarma (29-09-2026), lista cerrada.
   // Se guarda el id en ev.contexto; nunca cambiar un id ya usado.
   var REG_CONTEXTO = [
@@ -16885,19 +16889,59 @@
       if (!g[1].length) return;
       var dest = g[2] === queGrupos ? queGrupos : regNodo("div", "rr-que-sub");
       dest.appendChild(regNodo("div", "rr-subtit", g[0] ? T(g[0]) : "\u00a0"));
+      var chipQue = function (p) {
+        return regChip(p[1], regRapido.que === p[0], function (e) { regElegirEn(queGrupos, e.currentTarget, "que", p[0]); }, p[2]);
+      };
+      // Técnicas de los cuatro miembros (t-SEP, t-MEP, c-SEP...) en cuadrícula
+      // (29-09-2026, pedido del usuario): una fila por técnica y cada miembro
+      // en su columna, MSD · MSI · MID · MII. El resto, en fila normal debajo.
+      var resto = g[1];
+      if (g[0] === "rr_grupo_tecnicas") {
+        var filasMiembros = {}, ordenFilas = [];
+        resto = g[1].filter(function (p) {
+          var m = /^(.+) (MSD|MSI|MID|MII)$/.exec(p[1]);
+          if (!m) return true;
+          if (!filasMiembros[m[1]]) { filasMiembros[m[1]] = []; ordenFilas.push(m[1]); }
+          filasMiembros[m[1]].push({ p: p, col: REG_MIEMBROS.indexOf(m[2]) + 1 });
+          return false;
+        });
+        if (ordenFilas.length) {
+          var cuadro = regNodo("div", "rr-que-cuadro");
+          // Rótulo de la técnica a la izquierda y, en cada botón, solo el
+          // miembro: el nombre entero no cabía a 375 px. Se apunta igual el
+          // nombre completo («t-MEP MID»), que va también en el title.
+          ordenFilas.forEach(function (pref, fila) {
+            var rot = regNodo("span", "rr-que-cuadro-rot", pref);
+            rot.style.gridRow = String(fila + 1);
+            rot.style.gridColumn = "1";
+            cuadro.appendChild(rot);
+            filasMiembros[pref].forEach(function (x) {
+              var b = chipQue(x.p);
+              b.textContent = REG_MIEMBROS[x.col - 1];
+              b.title = x.p[1];
+              b.setAttribute("aria-label", x.p[1]);
+              b.style.gridRow = String(fila + 1);
+              b.style.gridColumn = String(x.col + 1);
+              cuadro.appendChild(b);
+            });
+          });
+          dest.appendChild(cuadro);
+        }
+      }
       var filaG = regNodo("div", "rr-chips");
-      g[1].forEach(function (p) {
-        var b = regChip(p[1], regRapido.que === p[0], function () { regElegirEn(queGrupos, b, "que", p[0]); }, p[2]);
-        filaG.appendChild(b);
-      });
-      dest.appendChild(filaG);
+      resto.forEach(function (p) { filaG.appendChild(chipQue(p)); });
+      if (resto.length) dest.appendChild(filaG);
       if (dest !== queGrupos) filaCorta.appendChild(dest);
     });
     queGrupos.appendChild(filaCorta);
     bEvento.appendChild(regCajaRapida("queNota", T("rr_que_detalle")));
 
     var filaCambio = regGrupoRapido(bEvento, T("rr_que_pasa"));
-    REG_CAMBIOS_RAPIDOS.map(function (c) { return [c.id, campo(c, "l")]; })
+    // Sin «Recupera parcial», «Recupera» ni «Sin cambios» (29-09-2026, pedido
+    // del usuario: la recuperación se marca en su sitio, dentro de cada
+    // alarma, con «Ahora»). Siguen en la lista para leer lo ya apuntado.
+    REG_CAMBIOS_RAPIDOS.filter(function (c) { return !c.recup && c.id !== "sin_cambios"; })
+      .map(function (c) { return [c.id, campo(c, "l")]; })
       .concat([[REG_CAMBIO_OTRO, T("rr_otro"), "rr-chip-otra"]])
       .forEach(function (p) {
         var b = regChip(p[1], regRapido.cambio === p[0], function () { regElegirEn(filaCambio, b, "cambio", p[0]); }, p[2]);

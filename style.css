@@ -4056,6 +4056,10 @@ body.sin-ayudas .coste-nota { display: none !important; }
 .rr-subtit { font-size: 0.68rem; color: var(--text-muted); margin: 0.3rem 0 0.15rem; }
 /* Factores técnicos, Anestesia y Otro en una fila (29-09-2026) */
 .rr-que-fila { display: flex; flex-wrap: wrap; gap: 0 0.9rem; align-items: flex-end; }
+/* t-SEP / t-MEP / c-SEP por miembro en cuadrícula de 4 columnas (29-09-2026) */
+.rr-que-cuadro { display: grid; grid-template-columns: auto repeat(4, minmax(0, 1fr)); gap: 0.3rem; margin-bottom: 0.3rem; align-items: center; }
+.rr-que-cuadro .rr-chip { white-space: nowrap; padding-left: 0.3rem; padding-right: 0.3rem; }
+.rr-que-cuadro-rot { font-size: 0.78rem; font-weight: 600; padding-right: 0.2rem; white-space: nowrap; }
 .rr-editar-btn { border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 1rem; padding: 0 0.3rem; position: relative; }
 /* Zona táctil del ✎ más grande sin cambiar el aspecto (29-09-2026) */
 .rr-editar-btn::after { content: ""; position: absolute; top: -8px; bottom: -8px; left: -8px; right: -4px; }
