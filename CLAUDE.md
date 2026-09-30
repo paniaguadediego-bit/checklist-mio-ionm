@@ -549,6 +549,17 @@ distinta a la anterior, no importa el formato exacto.
 >   tornillo» y «Reducir la corrección o la distracción»; hoja impresa sin «hora
 >   del equipo»; plantillas Inomed de la demo con el **conmutador** en la
 >   anodal (nunca sacacorchos de estimulación en la catodal); siglas en la Guía.
+> - **Basales con dos medidas por fase (30-09-2026)**: sensitivos Amp (µV) +
+>   Lat (ms), motores Amp (µV) + Umbral (mA/V), según las guías (ASNM 2013,
+>   ISIN 2019); claves `e_<fila>_<fase>_amp/_lat/_umb` (`REG_BASALES_MEDIDAS`,
+>   `regBasalValor()` lee también la casilla antigua «a/b» y
+>   `regBasalMigrar()` la parte al escribir; `regBasalTexto()` para hoja e
+>   informe). Ningún caso real tenía basales. Cierre del Registro sin «Perla
+>   docente» (sigue en la ficha). Ficha con campos cortos en una fila
+>   (`fila` en `CAMPOS_CASO` → `.campos-fila`): Equipo+Estado, Horas,
+>   Edad+Sexo+Servicio, Mi papel+Supervisor+Dificultad. `Codigo.gs`:
+>   `Magnitud_pct` en Correlacion_long (de `correlato_filas.magnitud_pct`,
+>   el mayor del grupo): el usuario tiene que repegarlo.
 > - **Preguntas abiertas del usuario (30-09-2026)**: dónde guardar los datos de
 >   un usuario normal (hoy, repo privado de GitHub con token; no revisado por
 >   protección de datos ni informática; no es aplicación sanitaria: solo recoge

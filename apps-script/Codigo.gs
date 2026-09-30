@@ -408,7 +408,9 @@ function construirTecnicasLong_(casos, cat) {
 // aquí solo se copia: la lógica (agrupar, concordancia) vive en un solo sitio.
 // Listas en id, como en Casos. Los casos cancelados no cuentan.
 function construirCorrelacionLong_(casos, cat) {
-  var cabecera = ["ID_Caso", "Fecha", "servicio", "Alarmas", "N_alarmas", "Tecnica", "Criterio",
+  // Magnitud_pct (30-09-2026): el mayor cambio del grupo respecto a la basal,
+  // en %, ya calculado en la app (correlato_filas); vacío si no se apuntó.
+  var cabecera = ["ID_Caso", "Fecha", "servicio", "Alarmas", "N_alarmas", "Tecnica", "Criterio", "Magnitud_pct",
     "Hora_inicio", "Hora_fin", "Recuperacion", "Evolucion", "Valorado", "Concordancia_grupo", "Concordancia_caso"];
   var iFecha = cabecera.indexOf("Fecha"), iIdCaso = cabecera.indexOf("ID_Caso"), iAl = cabecera.indexOf("Alarmas");
   var filas = [];
@@ -416,6 +418,7 @@ function construirCorrelacionLong_(casos, cat) {
     var serv = cat.SERV[c.servicio_id];
     (c.correlato_filas || []).forEach(function (f) {
       filas.push([c.ID_Caso, aFecha_(c.fecha), serv ? serv.nombre : "", f.alarmas, f.n_alarmas, f.tecnica, f.criterio,
+        f.magnitud_pct === "" || f.magnitud_pct == null ? "" : Number(f.magnitud_pct),
         f.hora_inicio, f.hora_fin, f.recuperacion, f.evolucion, f.valorado, f.concordancia, c.concordancia || ""]);
     });
   });

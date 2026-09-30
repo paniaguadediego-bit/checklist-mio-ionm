@@ -4413,3 +4413,18 @@ body:not(.editando-caso) #barra-caso-prefijo { color: var(--accent); }
 @media screen { :root:not(.tema-claro) .reg-basal-comp-it.fuerte { color: var(--aviso-border); } }
 /* Borrador del resumen desde el Registro */
 .caso-borrador-resumen { margin-top: 0.35rem; font: inherit; font-size: 0.78rem; padding: 0.35rem 0.7rem; border: 1px solid var(--accent); border-radius: 4px; background: var(--accent-soft); color: var(--accent); cursor: pointer; }
+/* Basales con dos medidas por fase (30-09-2026, pedido del usuario):
+   amplitud y latencia (sensitivos) o amplitud y umbral (motores). La fase
+   ocupa dos columnas y debajo van las unidades; 8 casillas por fila. */
+.reg-basal.reg-basal-2 .reg-basal-fila { grid-template-columns: 4.6rem repeat(8, minmax(0, 1fr)); gap: 0.12rem; }
+.reg-basal.reg-basal-2 .reg-basal-cab .reg-basal-fase { grid-column: span 2; text-align: center; border-bottom: 1px solid var(--border-soft); }
+.reg-basal.reg-basal-2 .reg-basal-unidades { margin-bottom: 0.1rem; }
+.reg-basal.reg-basal-2 .reg-basal-unidades span { text-align: center; font-weight: 500; font-size: 0.56rem; white-space: nowrap; }
+.reg-basal.reg-basal-2 .reg-basal-cab > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#pantalla-registro .reg-seccion .reg-basales .reg-basal-2 .reg-basal-fila input[type="text"],
+#dlg-caso .reg-basales .reg-basal-2 .reg-basal-fila input[type="text"],
+.reg-basales .reg-basal-2 .reg-basal-fila input[type="text"] { padding: 0.12rem 0.08rem; text-align: center; font-size: 0.68rem; }
+/* Ficha: campos cortos en una misma línea (30-09-2026, pedido del usuario) */
+.campos-fila { display: grid; gap: 0 0.5rem; align-items: start; }
+.campos-fila > .campo { min-width: 0; }
+.campos-fila > .campo select, .campos-fila > .campo input { width: 100%; box-sizing: border-box; min-width: 0; }

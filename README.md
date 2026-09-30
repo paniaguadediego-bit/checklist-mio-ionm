@@ -998,6 +998,10 @@ hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
 - **Apuntar evento** vale también solo con un contexto quirúrgico y/o un TOF
   («Disección · TOF 3/4», o solo «TOF 1/4», que queda como evento de
   anestesia); una alarma necesita su «Técnica».
+- **Basales**: cada fase (Basal, PostPos1, PostPos2, Cierre) tiene dos
+  casillas con la unidad en el encabezado: **sensitivos** amplitud (µV) y
+  latencia (ms); **motores** amplitud (µV) y umbral (mA o V); sin respuesta,
+  amplitud 0. Debajo, «Respecto a la basal» con el cambio en % de cada medida.
 - **Varias técnicas a la vez**: se pueden marcar varias técnicas y lados
   (bilateral, hemicorporal, brazo-pierna-cara, cruzado…) y se apuntan juntas
   como **una sola** alarma o evento («t-MEP MSD + t-MEP MID»), con una causa,

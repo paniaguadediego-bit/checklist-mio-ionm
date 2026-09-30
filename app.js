@@ -960,7 +960,9 @@
     tour_x_exportar:     { es: "Con los filtros de arriba eliges casos y los exportas: informe en PDF de varios casos, un CSV con una fila por caso u otro CSV con los eventos y alarmas del registro. Fuera de la demo todo se sincroniza con un repositorio privado. Puedes repetir esta visita desde Inicio.",
                            en: "Use the filters above to choose cases and export them: a PDF report of several cases, a CSV with one row per case, or another CSV with the log's events and alarms. Outside the demo everything syncs to a private repository. You can repeat this tour from Home." },
     casos_quitar_fecha:  { es: "Quitar la fecha", en: "Clear the date" },
-    caso_basales_registro: { es: "Basales (Basal, PostPos y Cierre)", en: "Baselines (Baseline, PostPos and Closing)" },
+    caso_basales_registro: { es: "Basales (Basal, Post posicionar y Cierre)", en: "Baselines (Baseline, Post-positioning and Closing)" },
+    registro_basales_leyenda: { es: "Sensitivos: amplitud (µV) / latencia (ms). Motores: amplitud (µV) / umbral (mA o V).",
+                           en: "Sensory: amplitude (µV) / latency (ms). Motor: amplitude (µV) / threshold (mA or V)." },
     caso_basales_registro_ay: { es: "Es la misma tabla que la del Registro intraoperatorio: lo que escribas aquí sale allí y en la hoja impresa, y al revés. Las filas de c-SEP, c-MEP, GRID, corticobulbares, Onda D, PEATC y H-R aparecen según las técnicas marcadas.",
                               en: "It is the same table as in the Intraoperative record: whatever you write here appears there and on the printed sheet, and vice versa. The c-SEP, c-MEP, GRID, corticobulbar, D wave, BAEP and H-R rows appear depending on the techniques ticked." },
     caso_basales_grid_estimulo: { es: "GRID: electrodo de estímulo", en: "GRID: stimulating electrode" },
@@ -5011,7 +5013,7 @@
       var defs = t[1].map(function (r) { return { id: r.id, rotulo: campo(r, "l") }; });
       for (var i = 1; i <= t[2]; i++) defs.push({ id: "libre" + i, rotulo: d.v["e_" + t[0] + "libre" + i + "_l"] || T("registro_otro") });
       defs.forEach(function (r) {
-        var vals = REG_BASALES_COLS.map(function (col) { return regColBasal(col, r.id) ? d.v["e_" + t[0] + r.id + "_" + col.id] || "" : ""; });
+        var vals = REG_BASALES_COLS.map(function (col) { return regColBasal(col, r.id) ? regBasalTexto(d.v, t[0] + r.id, col.id) : ""; });
         if (vals.some(Boolean)) filas.push([r.rotulo].concat(vals));
       });
     });
@@ -5021,6 +5023,7 @@
     if (!filas.length && !extras.length) return null;
     var sec = nodoInforme(doc, "section", "informe-seccion");
     sec.appendChild(nodoInforme(doc, "h3", null, T("caso_basales_registro")));
+    if (filas.length) sec.appendChild(nodoInforme(doc, "p", "informe-nota", T("registro_basales_leyenda")));
     if (filas.length) {
       var tabla = nodoInforme(doc, "table", "informe-tabla-basales");
       var cab = nodoInforme(doc, "tr");
@@ -6940,19 +6943,21 @@
   var CAMPOS_CASO = [
     // 1. Identificación / Trazabilidad
     { g: "traza", c: "ID_Caso", t: "ro" },
-    { g: "traza", c: "equipo_id", t: "equipo", ay: "caso_equipo_id_ay" },
-    { g: "traza", c: "estado", t: "sel", o: "estado" },
+    // «fila»: los campos cortos seguidos con la misma fila van juntos en una
+    // línea (30-09-2026, pedido del usuario: menos ruido vertical).
+    { g: "traza", c: "equipo_id", t: "equipo", ay: "caso_equipo_id_ay", fila: "equipo_estado" },
+    { g: "traza", c: "estado", t: "sel", o: "estado", fila: "equipo_estado" },
     { g: "traza", c: "motivo_cancelacion", t: "area", dependeDe: { c: "estado", v: "cancelado" } },
     { g: "traza", c: "fecha", t: "date", ay: "caso_fecha_ay" },
     { g: "traza", c: "nombre_caso", t: "text", ay: "caso_nombre_caso_ay" },
     { g: "traza", c: "centro", t: "text" },
-    { g: "traza", c: "hora_inicio", t: "time" },
-    { g: "traza", c: "hora_fin", t: "time" },
+    { g: "traza", c: "hora_inicio", t: "time", fila: "horas" },
+    { g: "traza", c: "hora_fin", t: "time", fila: "horas" },
 
     // 2. Paciente
-    { g: "paciente", c: "edad", t: "num" },
-    { g: "paciente", c: "sexo", t: "sel", o: "sexo" },
-    { g: "paciente", c: "servicio_id", t: "cat", cat: "servicios" },
+    { g: "paciente", c: "edad", t: "num", fila: "paciente" },
+    { g: "paciente", c: "sexo", t: "sel", o: "sexo", fila: "paciente" },
+    { g: "paciente", c: "servicio_id", t: "cat", cat: "servicios", fila: "paciente" },
     { g: "paciente", c: "antecedentes_relevantes", t: "area", rows: 8, ay: "caso_antecedentes_relevantes_ay" },
     { g: "paciente", c: "informes_imagenes", t: "imagenes_montaje", ay: "caso_informes_imagenes_ay" },
 
@@ -7091,9 +7096,9 @@
     { g: "resultado", c: "concordancia", t: "sel", o: "concordancia", ay: "caso_concordancia_ay" },
 
     // 8. Docencia / Meta
-    { g: "formacion", c: "rol", t: "sel", o: "rol" },
-    { g: "formacion", c: "supervisor", t: "text" },
-    { g: "formacion", c: "dificultad_1a5", t: "sel", o: "dificultad" },
+    { g: "formacion", c: "rol", t: "sel", o: "rol", fila: "formacion" },
+    { g: "formacion", c: "supervisor", t: "text", fila: "formacion" },
+    { g: "formacion", c: "dificultad_1a5", t: "sel", o: "dificultad", fila: "formacion" },
     { g: "formacion", c: "aprendizaje_clave", t: "area", rows: 8 },
     // "par": las dos casillas en la misma fila (28-09-2026, pedido del usuario).
     { g: "formacion", c: "caso_destacado", t: "check", par: true },
@@ -7180,7 +7185,10 @@
       var horas = g.alarmas.map(function (x) { return x.a.hora; }).filter(Boolean).sort();
       var recs = [];
       g.alarmas.forEach(function (x) { if (x.a.recup && recs.indexOf(x.a.recup) === -1) recs.push(x.a.recup); });
+      // El mayor cambio del grupo, en % (30-09-2026): lo lee el Sheet
+      var mags = g.alarmas.map(function (x) { return parseFloat(x.a.magnitud); }).filter(function (n) { return !isNaN(n); });
       return {
+        magnitud_pct: mags.length ? String(Math.max.apply(null, mags)) : "",
         alarmas: g.alarmas.map(function (x) { return "A" + x.n; }).join(", "),
         n_alarmas: g.alarmas.length, tecnica: g.tec, criterio: g.crit,
         hora_inicio: horas[0] || "", hora_fin: horas[horas.length - 1] || "",
@@ -8371,6 +8379,7 @@
         // ficha y en el Organizador confundía sobre cuál de los dos montajes
         // se estaba guardando-.
       }
+      var filasCampos = {};
       CAMPOS_CASO.filter(function (def) { return def.g === g; }).forEach(function (def) {
         // Un caso de antes de este cambio no trae estos campos ya resueltos:
         // se precargan resueltos desde los que tenía, igual que "intervencion".
@@ -8387,7 +8396,18 @@
         var destino = def.sub === "cajas" ? contCajas
           : def.sub === "material" ? contMaterial
           : cont;
-        destino.appendChild(elCampo);
+        if (def.fila) {
+          // Campos cortos en una misma línea (ver «fila» en CAMPOS_CASO)
+          if (!filasCampos[def.fila]) {
+            filasCampos[def.fila] = regNodo("div", "campos-fila");
+            destino.appendChild(filasCampos[def.fila]);
+          }
+          var envol = filasCampos[def.fila];
+          envol.appendChild(elCampo);
+          envol.style.gridTemplateColumns = "repeat(" + envol.children.length + ", minmax(0, 1fr))";
+        } else {
+          destino.appendChild(elCampo);
+        }
         if (def.c === "resumen_monitorizacion") {
           // Borrador desde el cronograma del Registro (ver borradorResumenCaso)
           var bBorr = regNodo("button", "caso-borrador-resumen", T("caso_borrador_resumen"));
@@ -16355,6 +16375,46 @@
   ];
   // Filas libres al final de cada tabla (pedido del usuario, 24-09-2026).
   var REG_BASALES_LIBRES = { sens: 2, mot: 1 };
+  // Dos medidas por fase (30-09-2026, pedido del usuario, según las guías):
+  // sensitivos (SEP, PEAT) amplitud y latencia -ISIN 2019; Park 2018 para la
+  // onda V-; motores (MEP, onda D, H-R, CoMEP, GRID) amplitud y umbral -ASNM
+  // 2013: la latencia del MEP no es criterio-. Claves e_<fila>_<fase>_amp,
+  // _lat y _umb. La casilla de antes, una por fase («2,1/19,4»), se lee
+  // partida por la barra hasta que se reescribe (regBasalMigrar).
+  var REG_BASALES_MEDIDAS = {
+    s_: [{ id: "amp", u: "µV", l: "Amplitud", l_en: "Amplitude" }, { id: "lat", u: "ms", l: "Latencia", l_en: "Latency" }],
+    m_: [{ id: "amp", u: "µV", l: "Amplitud", l_en: "Amplitude" }, { id: "umb", u: "mA/V", l: "Umbral", l_en: "Threshold" }]
+  };
+  // idFila lleva el prefijo de su tabla («s_sep_msd», «m_libre1»)
+  function regMedidasBasal(idFila) { return REG_BASALES_MEDIDAS[String(idFila).indexOf("m_") === 0 ? "m_" : "s_"]; }
+  function regBasalValor(v, idFila, colId, medId) {
+    var k = "e_" + idFila + "_" + colId;
+    if (v[k + "_" + medId]) return v[k + "_" + medId];
+    if (!v[k]) return "";
+    var partes = String(v[k]).split("/");
+    return (medId === "amp" ? partes[0] : partes.slice(1).join("/")).trim();
+  }
+  function regBasalMigrar(v, idFila, colId) {
+    var k = "e_" + idFila + "_" + colId;
+    if (!v[k]) return;
+    regMedidasBasal(idFila).forEach(function (m) {
+      var x = regBasalValor(v, idFila, colId, m.id);
+      if (x) v[k + "_" + m.id] = x;
+    });
+    delete v[k];
+  }
+  function regBasalEscrita(v, idFila, colId) {
+    var k = "e_" + idFila + "_" + colId;
+    return !!(v[k] || v[k + "_amp"] || v[k + "_lat"] || v[k + "_umb"]);
+  }
+  // «2,1 / 19,4» para la hoja impresa y el informe
+  function regBasalTexto(v, idFila, colId) {
+    var vals = regMedidasBasal(idFila).map(function (m) { return regBasalValor(v, idFila, colId, m.id); });
+    return vals[0] || vals[1] ? vals.map(function (x) { return x || "–"; }).join(" / ") : "";
+  }
+  function regUnidadesBasal(idFila) {
+    return regMedidasBasal(idFila).map(function (m) { return m.u; }).join(" / ");
+  }
   // Tercera tabla: estimulación de tornillos, IZQ | NIVEL | DER, 8 filas.
   // Claves e_t_<n>_izq / _nivel / _der.
   var REG_TORNILLOS = { filas: 8, cols: [
@@ -16387,7 +16447,7 @@
   function regFilasBasales(filas, prefijo, d, tecnicas) {
     return filas.filter(function (r) {
       if (!r.tec) return true;
-      var escrita = REG_BASALES_COLS.some(function (col) { return !!d.v["e_" + prefijo + r.id + "_" + col.id]; });
+      var escrita = REG_BASALES_COLS.some(function (col) { return regBasalEscrita(d.v, prefijo + r.id, col.id); });
       if (escrita) return true;
       if (!tecnicas) return !!r.defecto;
       return r.tec.some(function (t) { return tecnicas.indexOf(t) !== -1; });
@@ -16450,8 +16510,8 @@
       ] },
     { hoja: 1, id: "d", tipo: "campos", l: "D · Cronograma de hitos", l_en: "D · Milestone timeline", campos: REG_HITOS, compacto: true },
     { hoja: 1, id: "e", tipo: "basales", l: "E · Basales y comparativa", l_en: "E · Baselines and comparison",
-      ayuda: "SEP amp/lat · PEAT lat V · MEP umbral o presencia · Onda D amp · Reflejos presencia/umbral",
-      ayuda_en: "SEP amp/lat · BAEP lat V · MEP threshold or presence · D wave amp · Reflexes presence/threshold" },
+      ayuda: "Sensitivos: amplitud (µV) y latencia (ms). Motores: amplitud (µV) y umbral (mA o V); sin respuesta, amplitud 0.",
+      ayuda_en: "Sensory: amplitude (µV) and latency (ms). Motor: amplitude (µV) and threshold (mA or V); no response, amplitude 0." },
     { hoja: 1, id: "e2", tipo: "lista", lista: "mapeo", l: "E2 · Mapeo", l_en: "E2 · Mapping",
       ayuda: "Tipo: G grid/strip · C cortical · S subcortical (Raabe) · IV suelo IV v. · PC par craneal · R raíz",
       ayuda_en: "Type: G grid/strip · C cortical · S subcortical (Raabe) · IV 4th ventricle floor · PC cranial nerve · R root",
@@ -16772,7 +16832,10 @@
   function pintarBloqueBasales(titulo, filas, prefijo, libres, cont, d, guardar) {
     guardar = guardar || { cambiar: registroGuardar, salir: registroGuardarYa };
     var bloque = document.createElement("div");
-    bloque.className = "reg-basal";
+    bloque.className = "reg-basal reg-basal-2";
+    var medidas = regMedidasBasal(prefijo);
+    // Dos filas de cabecera: la fase sobre sus dos casillas y, debajo, las
+    // unidades de cada una (µV · ms, o µV · mA/V).
     var cab = document.createElement("div");
     cab.className = "reg-basal-fila reg-basal-cab";
     var t0 = document.createElement("span");
@@ -16780,11 +16843,24 @@
     cab.appendChild(t0);
     REG_BASALES_COLS.forEach(function (col) {
       var s = document.createElement("span");
+      s.className = "reg-basal-fase";
       s.textContent = regL(col);
       s.title = campo(col, "tit");   // la jerga, explicada al pasar o mantener (F9)
       cab.appendChild(s);
     });
     bloque.appendChild(cab);
+    var cabU = document.createElement("div");
+    cabU.className = "reg-basal-fila reg-basal-cab reg-basal-unidades";
+    cabU.appendChild(document.createElement("span"));
+    REG_BASALES_COLS.forEach(function () {
+      medidas.forEach(function (m) {
+        var u = document.createElement("span");
+        u.textContent = m.u;
+        u.title = campo(m, "l") + " (" + m.u + ")";
+        cabU.appendChild(u);
+      });
+    });
+    bloque.appendChild(cabU);
     function fila(rotulo, idFila, editable, idSinPrefijo) {
       var f = document.createElement("div");
       f.className = "reg-basal-fila";
@@ -16805,17 +16881,25 @@
       }
       REG_BASALES_COLS.forEach(function (col) {
         if (!regColBasal(col, idSinPrefijo)) {
-          f.appendChild(document.createElement("span"));   // hueco en la rejilla
+          medidas.forEach(function () { f.appendChild(document.createElement("span")); });   // huecos en la rejilla
           return;
         }
-        var clave = "e_" + idFila + "_" + col.id;
-        var inp = document.createElement("input");
-        inp.type = "text";
-        inp.value = d.v[clave] || "";
-        inp.setAttribute("aria-label", (rotulo || T("registro_otro")) + " — " + regL(col));
-        inp.addEventListener("input", function () { d.v[clave] = inp.value; guardar.cambiar(); pintarComparacion(); });
-        inp.addEventListener("change", function () { guardar.salir(); });
-        f.appendChild(inp);
+        medidas.forEach(function (m) {
+          var clave = "e_" + idFila + "_" + col.id + "_" + m.id;
+          var inp = document.createElement("input");
+          inp.type = "text";
+          inp.inputMode = "decimal";
+          inp.value = regBasalValor(d.v, idFila, col.id, m.id);
+          inp.setAttribute("aria-label", (rotulo || T("registro_otro")) + " — " + regL(col) + " — " + campo(m, "l") + " (" + m.u + ")");
+          inp.addEventListener("input", function () {
+            regBasalMigrar(d.v, idFila, col.id);
+            if (inp.value) d.v[clave] = inp.value; else delete d.v[clave];
+            guardar.cambiar();
+            pintarComparacion();
+          });
+          inp.addEventListener("change", function () { guardar.salir(); });
+          f.appendChild(inp);
+        });
       });
       return f;
     }
@@ -16851,22 +16935,33 @@
     return m ? parseFloat(m[0].replace(",", ".")) : null;
   }
   // [{t: "t-SEP MSD · Cierre −58 %", fuerte}] de las filas {id, rot} dadas
+  // Por medida: amplitud y latencia (o umbral) de la última fase escrita
+  // frente a la Basal. Se resalta una caída de amplitud ≥50 %, una latencia
+  // ≥10 % más larga o un umbral ≥50 % más alto (criterios clásicos).
   function regComparacionesBasales(d, filasComp) {
     var v = (d && d.v) || {};
     var partes = [];
     filasComp.forEach(function (fc) {
-      var b = regNumeroBasal(v["e_" + fc.id + "_basal"]);
-      if (!b) return;
-      var ult = null;
-      REG_BASALES_COLS.forEach(function (col) {
-        if (col.id === "basal") return;
-        var n = regNumeroBasal(v["e_" + fc.id + "_" + col.id]);
-        if (n !== null) ult = { col: col, v: n };
+      var trozos = [], fuerte = false, fase = null;
+      regMedidasBasal(fc.id).forEach(function (m) {
+        var b = regNumeroBasal(regBasalValor(v, fc.id, "basal", m.id));
+        if (!b) return;
+        var ult = null;
+        REG_BASALES_COLS.forEach(function (col) {
+          if (col.id === "basal") return;
+          var n = regNumeroBasal(regBasalValor(v, fc.id, col.id, m.id));
+          if (n !== null) ult = { col: col, v: n };
+        });
+        if (!ult) return;
+        var pct = Math.round((ult.v - b) / b * 100);
+        if ((m.id === "amp" && pct <= -50) || (m.id === "lat" && pct >= 10) || (m.id === "umb" && pct >= 50)) fuerte = true;
+        fase = fase || ult.col;
+        // Si esta medida se escribió en otra fase que la primera, se dice
+        trozos.push(campo(m, "l").toLowerCase() + (ult.col !== fase ? " (" + regL(ult.col) + ")" : "") + " " + (pct > 0 ? "+" : (pct < 0 ? "\u2212" : "")) + Math.abs(pct) + " %");
       });
-      if (!ult) return;
-      var pct = Math.round((ult.v - b) / b * 100);
+      if (!trozos.length) return;
       var rot = fc.rot || v["e_" + fc.id + "_l"] || T("registro_otro");
-      partes.push({ t: rot + " · " + regL(ult.col) + " " + (pct > 0 ? "+" : (pct < 0 ? "−" : "")) + Math.abs(pct) + " %", fuerte: Math.abs(pct) >= 50 });
+      partes.push({ t: rot + " · " + regL(fase) + ": " + trozos.join(", "), fuerte: fuerte });
     });
     return partes;
   }
@@ -18735,7 +18830,10 @@
     cont.appendChild(bloque);
 
     var grid2 = regNodo("div", "reg-grid");
-    ["cierre_esperable", "cierre_incidencias", "cierre_perla_check", "cierre_perla"].forEach(function (id) {
+    // Sin «Perla docente» ni «caso para sesión» (30-09-2026, pedido del
+    // usuario tras la prueba con tres usuarios): en quirófano no se escriben;
+    // siguen en la ficha.
+    ["cierre_esperable", "cierre_incidencias"].forEach(function (id) {
       if (def[id]) grid2.appendChild(regControl(def[id], d.v));
     });
     cont.appendChild(grid2);
@@ -19092,21 +19190,21 @@
       var cols = [{ l: tituloTabla, w: "30%", cls: "hj-rot" }].concat(colsT.map(function (col) { return { l: regL(col) }; }));
       var filas = visibles.map(function (x) {
         return { celdas: [regL(x.r)].concat(colsT.map(function (col) {
-          return regColBasal(col, x.r.id) ? d.v["e_" + x.prefijo + x.r.id + "_" + col.id] || "" : "—";
+          return regColBasal(col, x.r.id) ? regBasalTexto(d.v, x.prefijo + x.r.id, col.id) : "—";
         })) };
       });
       for (var i = 1; i <= libres; i++) {
         var k = "libre" + i;
         filas.push({ celdas: [d.v["e_" + prefijoLibres + k + "_l"] || (i <= 2 ? rotuloLibre : "")].concat(colsT.map(function (col) {
-          return regColBasal(col, k) ? d.v["e_" + prefijoLibres + k + "_" + col.id] || "" : "—";
+          return regColBasal(col, k) ? regBasalTexto(d.v, prefijoLibres + k, col.id) : "—";
         })) });
       }
       maxFilasBasales = Math.max(maxFilasBasales, filas.length);
       // Tabla larga: filas algo más bajas para que la hoja 1 quepa en un A4.
       return hojaTabla(doc, cols, filas, { cls: "hj-basales" + (filas.length > 10 ? " hj-basales-larga" : "") });
     }
-    par.appendChild(tablaBasales(T("registro_sens_otros"), sensVis, "s_", REG_BASALES_LIBRES.sens, T("registro_otro") + ":"));
-    par.appendChild(tablaBasales(T("registro_motores"), motVis, "m_", REG_BASALES_LIBRES.mot, ""));
+    par.appendChild(tablaBasales(T("registro_sens_otros") + " (" + regUnidadesBasal("s_") + ")", sensVis, "s_", REG_BASALES_LIBRES.sens, T("registro_otro") + ":"));
+    par.appendChild(tablaBasales(T("registro_motores") + " (" + regUnidadesBasal("m_") + ")", motVis, "m_", REG_BASALES_LIBRES.mot, ""));
     if (cortVis.length) {
       par.classList.add("hj-par4");
       par.appendChild(tablaBasales(T("registro_corticales"), cortVis, "", 0, ""));
@@ -19612,16 +19710,17 @@
         h_entrada_q: "08:15", h_intubacion: "08:25", h_inicio_montaje: "08:30", h_fin_montaje: "08:50",
         h_basal_pre: "08:55", h_volteo: "09:00", h_basal_post: "09:15", h_incision: "09:25",
         h_apertura_dural: "10:20", h_fase_critica: "10:45", h_cierre: "13:30", h_fin_mio: "14:20",
-        e_s_sep_msd_basal: "2,1/19,4", e_s_sep_msd_post: "2,0/19,5", e_s_sep_msd_final: "1,9/19,6",
-        e_s_sep_msi_basal: "2,3/19,2", e_s_sep_msi_post: "2,2/19,3", e_s_sep_msi_final: "2,1/19,4",
-        e_s_sep_mid_basal: "0,8/40,6", e_s_sep_mid_post: "0,7/40,9", e_s_sep_mid_final: "Ausente",
-        e_s_sep_mii_basal: "0,6/41,2", e_s_sep_mii_post: "0,6/41,5", e_s_sep_mii_final: "Ausente",
-        e_m_mep_msd_basal: "Presente", e_m_mep_msd_post: "Presente", e_m_mep_msd_final: "Presente",
-        e_m_mep_msi_basal: "Presente", e_m_mep_msi_post: "Presente", e_m_mep_msi_final: "Presente",
-        e_m_mep_mid_basal: "TA + AH", e_m_mep_mid_post: "TA + AH", e_m_mep_mid_final: "TA + AH",
-        e_m_mep_mii_basal: "TA + AH", e_m_mep_mii_post: "TA + AH", e_m_mep_mii_final: "Solo TA",
-        e_m_onda_d_basal: "22 µV", e_m_onda_d_post: "21 µV", e_m_onda_d_final: "20 µV",
-        e_m_onda_d_dist_basal: "14 µV", e_m_onda_d_dist_post: "14 µV", e_m_onda_d_dist_final: "12,5 µV",
+        e_s_sep_msd_basal_amp: "2,1", e_s_sep_msd_basal_lat: "19,4", e_s_sep_msd_post_amp: "2,0", e_s_sep_msd_post_lat: "19,5", e_s_sep_msd_final_amp: "1,9", e_s_sep_msd_final_lat: "19,6",
+        e_s_sep_msi_basal_amp: "2,3", e_s_sep_msi_basal_lat: "19,2", e_s_sep_msi_post_amp: "2,2", e_s_sep_msi_post_lat: "19,3", e_s_sep_msi_final_amp: "2,1", e_s_sep_msi_final_lat: "19,4",
+        e_s_sep_mid_basal_amp: "0,8", e_s_sep_mid_basal_lat: "40,6", e_s_sep_mid_post_amp: "0,7", e_s_sep_mid_post_lat: "40,9", e_s_sep_mid_final_amp: "0",
+        e_s_sep_mii_basal_amp: "0,6", e_s_sep_mii_basal_lat: "41,2", e_s_sep_mii_post_amp: "0,6", e_s_sep_mii_post_lat: "41,5", e_s_sep_mii_final_amp: "0",
+        // MEP en µV y umbral en mA (Inomed), inventados; MII cae al final
+        e_m_mep_msd_basal_amp: "520", e_m_mep_msd_basal_umb: "80", e_m_mep_msd_post_amp: "500", e_m_mep_msd_post_umb: "80", e_m_mep_msd_final_amp: "480", e_m_mep_msd_final_umb: "85",
+        e_m_mep_msi_basal_amp: "480", e_m_mep_msi_basal_umb: "85", e_m_mep_msi_post_amp: "470", e_m_mep_msi_post_umb: "85", e_m_mep_msi_final_amp: "450", e_m_mep_msi_final_umb: "90",
+        e_m_mep_mid_basal_amp: "210", e_m_mep_mid_basal_umb: "110", e_m_mep_mid_post_amp: "190", e_m_mep_mid_post_umb: "110", e_m_mep_mid_final_amp: "170", e_m_mep_mid_final_umb: "120",
+        e_m_mep_mii_basal_amp: "180", e_m_mep_mii_basal_umb: "115", e_m_mep_mii_post_amp: "160", e_m_mep_mii_post_umb: "120", e_m_mep_mii_final_amp: "40", e_m_mep_mii_final_umb: "150",
+        e_m_onda_d_basal_amp: "22", e_m_onda_d_post_amp: "21", e_m_onda_d_final_amp: "20",
+        e_m_onda_d_dist_basal_amp: "14", e_m_onda_d_dist_post_amp: "14", e_m_onda_d_dist_final_amp: "12,5",
         cierre_resultado: "persistentes",
         cierre_modalidades: "MEP MII izq. (AH ausente, TA con umbral +40 mA). SEP de miembros inferiores (mielotomía).",
         cierre_com_cir: true, cierre_com_an: true, cierre_com_h: "14:15",
