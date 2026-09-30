@@ -1806,6 +1806,13 @@ dialog h3 {
    compartida junto a "Pantallas" más arriba-, solo dlg-caso (la ficha,
    sigue siendo un <dialog> de verdad) mantiene el suyo. */
 #dlg-caso { max-width: 620px; }
+/* 30-09-2026: en ordenador y tablet la ficha aprovecha la pantalla (ancha y
+   de alto fijo, así no cambia de tamaño al plegar/desplegar apartados). En
+   el móvil sigue como estaba. */
+@media (min-width: 760px) {
+  #dlg-caso { width: calc(100vw - 3rem); max-width: 1200px; }
+  #dlg-caso[open] { height: calc(100vh - 2rem); }
+}
 
 .casos-acciones {
   display: flex;
