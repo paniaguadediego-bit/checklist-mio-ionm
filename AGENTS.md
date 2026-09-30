@@ -44,7 +44,8 @@ Instrucciones para cualquier asistente de código que trabaje en este repositori
   (−, ·, µ), no su escape `\uXXXX`. Después, siempre `node --check`.
 - Basales: dos medidas por fase, claves `e_<fila>_<fase>_amp` y `_lat`
   (sensitivos) o `_umb` (motores); lee siempre con `regBasalValor()`, que
-  entiende también la casilla antigua «a/b».
+  entiende también la casilla antigua «a/b». En pantalla son una lista por técnica, no una
+  rejilla (elección del usuario): no volver a la rejilla de casillas.
 - Colores: tres modos (azul por defecto, `tema-oscuro`, `tema-claro`). Un
   color fijo nuevo para el oscuro necesita también su valor para el azul (si no,
   los grises neutros se ven marrones junto al marino). `--header-h` lo mide

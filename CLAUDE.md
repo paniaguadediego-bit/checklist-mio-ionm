@@ -183,7 +183,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Catálogos editables (técnicas/servicios/intervenciones/perfiles/escenarios/usuarios) | `fusionarCatalogo()`, `reconstruirCatalogos()` | ver `grep` |
 | Carga y guardado del estado | `cargarEstado()`, `guardarEstado()` | [1159](app.js:1159), [1281](app.js:1281) |
 | Entradas de una caja | `entradasDe()` | [1510](app.js:1510) |
-| Selección y colocación (pulsar y colocar) | `seleccionar()`, `colocar()` | ver `grep` |
+| Selección y colocación (pulsar y colocar); chip con el nombre en `.chip-nombre` (se parte en entradas estrechas) | `seleccionar()`, `colocar()`, `crearChip()` | ver `grep` |
 | Sincronización de `estado.json` | `estadoActual()`, `aplicarEstado()`, `programarSubida()`, `subirAuto()`, `bajarAuto()` | [2057](app.js:2057)–[2224](app.js:2224) |
 | Montajes: modelo, autoría y sincronización | `montajeNuevo()`, `puedoEditar()`, `guardarMontaje()`, `subirMontaje()`, `bajarMontajes()` | ver `grep` |
 | Casos: modelo y ficha | `borrarCaso()`, `guardarCaso()`, `casoVacio()`, `renderFichaCaso()` | [2454](app.js:2454), [2467](app.js:2467), [2498](app.js:2498), [3669](app.js:3669) |
@@ -235,13 +235,13 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Demo: etiqueta «Ficticio» y aviso en la ficha | `nodoFicticio()`, `#caso-aviso-demo` | ver `grep` |
 | Biblioteca de montajes (en construcción; ids «casos-modelo») | `renderCasosModelo()`, `CMOD_TECNICAS`, `#pantalla-casos-modelo` | ver `grep` |
 | Precios inventados de la demo | `PRECIOS_DEMO`, `preciosDemo()` | ver `grep` |
-| Ficha: autoguardado, salir y cerrar caso | `autoguardarFicha()`, `salirDeFicha()`, `firmaFicha()`, `fichaOrigen`, `casoCambiadoFuera()`, `pintarBotonCerrarCaso()` | ver `grep` |
+| Ficha: autoguardado, salir y cerrar caso | `autoguardarFicha()`, `salirDeFicha()`, `firmaFicha()`, `fichaOrigen`, `casoCambiadoFuera()`, `pintarBotonCerrarCaso()`; aviso de lo que falta al cerrar; campos cortos en una fila (`fila` en `CAMPOS_CASO` → `.campos-fila`); ⋮ Abrir en el Registro (`#caso-ir-registro`); `borradorResumenCaso()` | ver `grep` |
 | Fusión de un caso en conflicto de subida | `fusionarCaso()` (dentro del 409/422 de `subirCasoYaHidratado()`) | ver `grep` |
 | Copia completa (exportar/importar) | handler de `btn-exportar`, `importarCopiaCompleta()` | ver `grep` |
 | Ids de opción de «Cómo se realizó cada técnica» | `tecParIdDe()`, `tecParTextoDe()`, `"ids"` en `data/parametros-tecnicas.js` | ver `grep` |
 | Alarmas: qué cuenta como escrita y derivación al caso | `alarmaEscrita()`, `alarmasEnCaso()`, `concordanciaDudosa()`, `motivoConcordancia()` | ver `grep` |
-| Basales compartidas ficha ↔ Registro | `REG_BASALES_SENS/MOT`, `regFilasBasales()`, `pintarBloqueBasales()`, `seccionBasalesInforme()`, `t: "basales_reg"` en `campoCaso()` | ver `grep` |
-| Modo demostración (?demo) | `MODO_DEMO`, `almacenDemo()`, `sembrarDemo()`, `restablecerDemo()`, `prepararDemo()`; bloqueo de `fetch` a otros orígenes al principio del archivo | ver `grep` |
+| Basales compartidas ficha ↔ Registro | `REG_BASALES_SENS/MOT`, `regFilasBasales()`, `pintarBloqueBasales()`, `seccionBasalesInforme()`, `t: "basales_reg"` en `campoCaso()`; en pantalla, lista por técnica (una línea con valores y %, casillas grandes al tocarla, «= Basal»): `regComparacionFila()`, `regBasalAbiertas`; dos medidas por fase: `REG_BASALES_MEDIDAS`, `regBasalValor()`, `regBasalMigrar()`, `regBasalTexto()` | ver `grep` |
+| Modo demostración (?demo) | `MODO_DEMO`, `almacenDemo()`, `sembrarDemo()`, `restablecerDemo()`, `prepararDemo()`; bloqueo de `fetch` a otros orígenes al principio del archivo; registros de ejemplo con `registroDemo(v, lineas)` | ver `grep` |
 | Visita guiada opcional (antes "Empieza aquí"; solo ?demo) | `TOUR_PASOS`, `TOUR_GRUPO_CASO`, `tourIr()`, `tourPreparar()`, `tourPintarTextos()`, `tourReservarSitio()`, `tourTerminar()` | ver `grep` |
 | Revisión del montaje (avisos del Resumen, no se guardan) | `revisarMontaje()`, `matTecGrupos()`; datos en `material_tecnicas` de `data/surgeries.js` | ver `grep` |
 | Equipo de lo nuevo / rótulo del equipo | `equipoNuevo()` (`"por_defecto"` en `equipos`), `anadirRotuloEquipo()` (`.barra-caso-equipo`) | ver `grep` |
