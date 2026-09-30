@@ -1320,6 +1320,9 @@
     rr_borrador_alarma:  { es: "Alarma", en: "Alarm" },
     registro_comparativa: { es: "Respecto a la basal", en: "Compared with baseline" },
     registro_hoy:        { es: "hoy", en: "today" },
+    registro_basal_igual: { es: "Igual que la basal: copia sus valores aquí", en: "Same as baseline: copies its values here" },
+    registro_basal_sin_basal: { es: "Esta técnica aún no tiene basal que copiar.", en: "This technique has no baseline to copy yet." },
+    registro_basal_nombre: { es: "Qué es (esfínter, VII, IX-X...)", en: "What it is (sphincter, VII, IX-X...)" },
     rr_apuntar_evento:   { es: "Apuntar evento", en: "Log event" },
     rr_apuntar_alarma:   { es: "Apuntar alarma", en: "Log alarm" },
     rr_falta_que:        { es: "Elige la técnica (un evento también puede ser solo un contexto o un TOF).", en: "Choose the technique (an event can also be just a context or a TOF)." },
@@ -16386,8 +16389,8 @@
   // _lat y _umb. La casilla de antes, una por fase («2,1/19,4»), se lee
   // partida por la barra hasta que se reescribe (regBasalMigrar).
   var REG_BASALES_MEDIDAS = {
-    s_: [{ id: "amp", u: "µV", l: "Amplitud", l_en: "Amplitude" }, { id: "lat", u: "ms", l: "Latencia", l_en: "Latency" }],
-    m_: [{ id: "amp", u: "µV", l: "Amplitud", l_en: "Amplitude" }, { id: "umb", u: "mA/V", l: "Umbral", l_en: "Threshold" }]
+    s_: [{ id: "amp", u: "µV", l: "Amplitud", l_en: "Amplitude", c: "amp" }, { id: "lat", u: "ms", l: "Latencia", l_en: "Latency", c: "lat" }],
+    m_: [{ id: "amp", u: "µV", l: "Amplitud", l_en: "Amplitude", c: "amp" }, { id: "umb", u: "mA/V", l: "Umbral", l_en: "Threshold", c: "umb" }]
   };
   // idFila lleva el prefijo de su tabla («s_sep_msd», «m_libre1»)
   function regMedidasBasal(idFila) { return REG_BASALES_MEDIDAS[String(idFila).indexOf("m_") === 0 ? "m_" : "s_"]; }
@@ -16833,105 +16836,148 @@
 
   // "guardar" = { cambiar, salir }: por defecto el guardado del Registro. La
   // ficha del caso pasa los suyos (allí se guarda con "Guardar").
+  // Lista por técnica (30-09-2026, pedido del usuario: la rejilla llenaba la
+  // pantalla de cuadritos). Cada técnica es una línea con lo que ya tiene
+  // («Basal 2,1 / 19,4 · Cierre 1,9 / 19,6» y el cambio en %); al tocarla se
+  // abre debajo con casillas grandes por fase y, en PostPos y Cierre, «= Basal»
+  // copia los valores de la basal. Los datos, en las mismas claves de siempre.
+  var regBasalAbiertas = {};   // filas abiertas mientras dura la sesión
   function pintarBloqueBasales(titulo, filas, prefijo, libres, cont, d, guardar) {
     guardar = guardar || { cambiar: registroGuardar, salir: registroGuardarYa };
-    var bloque = document.createElement("div");
-    bloque.className = "reg-basal reg-basal-2";
     var medidas = regMedidasBasal(prefijo);
-    // Dos filas de cabecera: la fase sobre sus dos casillas y, debajo, las
-    // unidades de cada una (µV · ms, o µV · mA/V).
-    var cab = document.createElement("div");
-    cab.className = "reg-basal-fila reg-basal-cab";
-    var t0 = document.createElement("span");
-    t0.textContent = titulo;
-    cab.appendChild(t0);
-    REG_BASALES_COLS.forEach(function (col) {
-      var s = document.createElement("span");
-      s.className = "reg-basal-fase";
-      s.textContent = regL(col);
-      s.title = campo(col, "tit");   // la jerga, explicada al pasar o mantener (F9)
-      cab.appendChild(s);
-    });
+    var bloque = regNodo("div", "reg-bl");
+    var cab = regNodo("div", "reg-bl-tit");
+    cab.appendChild(regNodo("span", null, titulo));
+    cab.appendChild(regNodo("span", "reg-bl-unid", medidas.map(function (m) { return campo(m, "l").toLowerCase() + " (" + m.u + ")"; }).join(" · ")));
     bloque.appendChild(cab);
-    var cabU = document.createElement("div");
-    cabU.className = "reg-basal-fila reg-basal-cab reg-basal-unidades";
-    cabU.appendChild(document.createElement("span"));
-    REG_BASALES_COLS.forEach(function () {
-      medidas.forEach(function (m) {
-        var u = document.createElement("span");
-        u.textContent = m.u;
-        u.title = campo(m, "l") + " (" + m.u + ")";
-        cabU.appendChild(u);
-      });
-    });
-    bloque.appendChild(cabU);
-    function fila(rotulo, idFila, editable, idSinPrefijo) {
-      var f = document.createElement("div");
-      f.className = "reg-basal-fila";
-      if (editable) {
+    var defs = filas.map(function (r) { return { id: prefijo + r.id, sin: r.id, rot: regL(r) }; });
+    // Filas libres: las que ya tienen algo y, detrás, una vacía para añadir
+    var hayVacia = false;
+    for (var i = 1; i <= libres; i++) {
+      var idL = prefijo + "libre" + i;
+      var usada = !!d.v["e_" + idL + "_l"] || REG_BASALES_COLS.some(function (col) { return regBasalEscrita(d.v, idL, col.id); });
+      if (!usada && hayVacia) continue;
+      if (!usada) hayVacia = true;
+      defs.push({ id: idL, sin: "libre" + i, rot: "", libre: true, vacia: !usada });
+    }
+    defs.forEach(function (fd) { bloque.appendChild(filaBasal(fd)); });
+    cont.appendChild(bloque);
+
+    function rotuloDe(fd) {
+      if (!fd.libre) return fd.rot;
+      return d.v["e_" + fd.id + "_l"] || (fd.vacia ? "+ " + T("registro_otro") : T("registro_otro"));
+    }
+    function escribir(idFila, colId, medId, valor) {
+      regBasalMigrar(d.v, idFila, colId);
+      var clave = "e_" + idFila + "_" + colId + "_" + medId;
+      if (valor) d.v[clave] = valor; else delete d.v[clave];
+    }
+    function filaBasal(fd) {
+      var caja = regNodo("div", "reg-bl-fila");
+      var sum = regNodo("button", "reg-bl-cab");
+      sum.type = "button";
+      var rot = regNodo("span", "reg-bl-rot");
+      var res = regNodo("span", "reg-bl-res");
+      var pct = regNodo("span", "reg-bl-pct");
+      sum.appendChild(rot);
+      sum.appendChild(res);
+      sum.appendChild(pct);
+      caja.appendChild(sum);
+      var ed = null;
+      function pintarResumen() {
+        rot.textContent = rotuloDe(fd);
+        var partes = [];
+        REG_BASALES_COLS.forEach(function (col) {
+          if (!regColBasal(col, fd.sin)) return;
+          var t = regBasalTexto(d.v, fd.id, col.id);
+          if (t) partes.push(regL(col) + " " + t);
+        });
+        res.textContent = partes.join(" · ");
+        var c = regComparacionFila(d.v, fd.id, true);
+        pct.textContent = c ? c.trozos.join(" · ") : "";
+        pct.classList.toggle("fuerte", !!(c && c.fuerte));
+        caja.classList.toggle("vacia", !partes.length);
+      }
+      function abrir(si) {
+        if (si) regBasalAbiertas[fd.id] = 1; else delete regBasalAbiertas[fd.id];
+        caja.classList.toggle("abierta", si);
+        sum.setAttribute("aria-expanded", si ? "true" : "false");
+        if (si && !ed) { ed = editorBasal(fd, pintarResumen); caja.appendChild(ed); }
+        if (ed) ed.hidden = !si;
+      }
+      sum.addEventListener("click", function () { abrir(!regBasalAbiertas[fd.id]); });
+      pintarResumen();
+      abrir(!!regBasalAbiertas[fd.id]);
+      return caja;
+    }
+    function editorBasal(fd, alCambiar) {
+      var ed = regNodo("div", "reg-bl-ed");
+      if (fd.libre) {
         var inpL = document.createElement("input");
         inpL.type = "text";
-        inpL.className = "reg-basal-otro";
-        inpL.placeholder = T("registro_otro");
-        inpL.value = d.v["e_" + idFila + "_l"] || "";
-        inpL.addEventListener("input", function () { d.v["e_" + idFila + "_l"] = inpL.value; guardar.cambiar(); });
+        inpL.className = "reg-bl-nombre";
+        inpL.placeholder = T("registro_basal_nombre");
+        inpL.value = d.v["e_" + fd.id + "_l"] || "";
+        inpL.addEventListener("input", function () {
+          if (inpL.value) d.v["e_" + fd.id + "_l"] = inpL.value; else delete d.v["e_" + fd.id + "_l"];
+          guardar.cambiar();
+          alCambiar();
+        });
         inpL.addEventListener("change", function () { guardar.salir(); });
-        f.appendChild(inpL);
-      } else {
-        var s = document.createElement("span");
-        s.className = "reg-basal-rotulo";
-        s.textContent = rotulo;
-        f.appendChild(s);
+        ed.appendChild(inpL);
       }
+      var cabE = regNodo("div", "reg-bl-ed-fila reg-bl-ed-cab");
+      cabE.appendChild(regNodo("span"));
+      medidas.forEach(function (m) { cabE.appendChild(regNodo("span", null, campo(m, "l") + " (" + m.u + ")")); });
+      cabE.appendChild(regNodo("span"));
+      ed.appendChild(cabE);
       REG_BASALES_COLS.forEach(function (col) {
-        if (!regColBasal(col, idSinPrefijo)) {
-          medidas.forEach(function () { f.appendChild(document.createElement("span")); });   // huecos en la rejilla
-          return;
-        }
+        if (!regColBasal(col, fd.sin)) return;
+        var f = regNodo("div", "reg-bl-ed-fila");
+        var et = regNodo("span", "reg-bl-fase", regL(col));
+        et.title = campo(col, "tit");
+        f.appendChild(et);
+        var inps = {};
         medidas.forEach(function (m) {
-          var clave = "e_" + idFila + "_" + col.id + "_" + m.id;
           var inp = document.createElement("input");
           inp.type = "text";
           inp.inputMode = "decimal";
-          inp.value = regBasalValor(d.v, idFila, col.id, m.id);
-          inp.setAttribute("aria-label", (rotulo || T("registro_otro")) + " — " + regL(col) + " — " + campo(m, "l") + " (" + m.u + ")");
+          inp.value = regBasalValor(d.v, fd.id, col.id, m.id);
+          inp.setAttribute("aria-label", rotuloDe(fd) + " — " + regL(col) + " — " + campo(m, "l") + " (" + m.u + ")");
           inp.addEventListener("input", function () {
-            regBasalMigrar(d.v, idFila, col.id);
-            if (inp.value) d.v[clave] = inp.value; else delete d.v[clave];
+            escribir(fd.id, col.id, m.id, inp.value);
             guardar.cambiar();
-            pintarComparacion();
+            alCambiar();
           });
           inp.addEventListener("change", function () { guardar.salir(); });
+          inps[m.id] = inp;
           f.appendChild(inp);
         });
+        if (col.id !== "basal") {
+          // «= Basal»: sin cambios respecto a la basal, un toque
+          var igual = regNodo("button", "reg-bl-igual", "= " + regL(REG_BASALES_COLS[0]));
+          igual.type = "button";
+          igual.title = T("registro_basal_igual");
+          igual.addEventListener("click", function () {
+            var hay = medidas.some(function (m) { return !!regBasalValor(d.v, fd.id, "basal", m.id); });
+            if (!hay) { avisoGuardado(T("registro_basal_sin_basal"), true); return; }
+            medidas.forEach(function (m) {
+              var v = regBasalValor(d.v, fd.id, "basal", m.id);
+              escribir(fd.id, col.id, m.id, v);
+              inps[m.id].value = v;
+            });
+            guardar.cambiar();
+            guardar.salir();
+            alCambiar();
+          });
+          f.appendChild(igual);
+        } else {
+          f.appendChild(regNodo("span"));
+        }
+        ed.appendChild(f);
       });
-      return f;
+      return ed;
     }
-    var filasComp = [];
-    filas.forEach(function (r) {
-      filasComp.push({ id: prefijo + r.id, rot: regL(r) });
-      bloque.appendChild(fila(regL(r), prefijo + r.id, false, r.id));
-    });
-    for (var i = 1; i <= libres; i++) {
-      filasComp.push({ id: prefijo + "libre" + i, rot: "" });
-      bloque.appendChild(fila("", prefijo + "libre" + i, true, "libre" + i));
-    }
-    // Comparativa (30-09-2026, tras la prueba con tres usuarios: la sección
-    // se llamaba así pero no comparaba nada): el primer número de la última
-    // columna escrita frente al de la Basal, en %. No juzga si es bueno o
-    // malo (en MEP puede ser un umbral); a partir de ±50 % se resalta.
-    var comp = regNodo("div", "reg-basal-comp");
-    function pintarComparacion() {
-      var partes = regComparacionesBasales(d, filasComp);
-      comp.textContent = "";
-      comp.hidden = !partes.length;
-      if (!partes.length) return;
-      comp.appendChild(regNodo("span", "reg-basal-comp-tit", T("registro_comparativa")));
-      partes.forEach(function (p) { comp.appendChild(regNodo("span", "reg-basal-comp-it" + (p.fuerte ? " fuerte" : ""), p.t)); });
-    }
-    pintarComparacion();
-    bloque.appendChild(comp);
-    cont.appendChild(bloque);
   }
   // Primer número de una casilla de basales («1,2/40» → 1.2); null si no hay.
   function regNumeroBasal(v) {
@@ -16942,30 +16988,36 @@
   // Por medida: amplitud y latencia (o umbral) de la última fase escrita
   // frente a la Basal. Se resalta una caída de amplitud ≥50 %, una latencia
   // ≥10 % más larga o un umbral ≥50 % más alto (criterios clásicos).
+  // Una fila: {fase, trozos: ["amplitud −10 %", "latencia +1 %"], fuerte}, o null
+  // «corto»: amp / lat / umb, para la línea de la lista
+  function regComparacionFila(v, idFila, corto) {
+    var trozos = [], fuerte = false, fase = null;
+    regMedidasBasal(idFila).forEach(function (m) {
+      var b = regNumeroBasal(regBasalValor(v, idFila, "basal", m.id));
+      if (!b) return;
+      var ult = null;
+      REG_BASALES_COLS.forEach(function (col) {
+        if (col.id === "basal") return;
+        var n = regNumeroBasal(regBasalValor(v, idFila, col.id, m.id));
+        if (n !== null) ult = { col: col, v: n };
+      });
+      if (!ult) return;
+      var pct = Math.round((ult.v - b) / b * 100);
+      if ((m.id === "amp" && pct <= -50) || (m.id === "lat" && pct >= 10) || (m.id === "umb" && pct >= 50)) fuerte = true;
+      fase = fase || ult.col;
+      // Si esta medida se escribió en otra fase que la primera, se dice
+      trozos.push((corto ? m.c : campo(m, "l").toLowerCase()) + (ult.col !== fase ? " (" + regL(ult.col) + ")" : "") + " " + (pct > 0 ? "+" : (pct < 0 ? "\u2212" : "")) + Math.abs(pct) + " %");
+    });
+    return trozos.length ? { fase: fase, trozos: trozos, fuerte: fuerte } : null;
+  }
   function regComparacionesBasales(d, filasComp) {
     var v = (d && d.v) || {};
     var partes = [];
     filasComp.forEach(function (fc) {
-      var trozos = [], fuerte = false, fase = null;
-      regMedidasBasal(fc.id).forEach(function (m) {
-        var b = regNumeroBasal(regBasalValor(v, fc.id, "basal", m.id));
-        if (!b) return;
-        var ult = null;
-        REG_BASALES_COLS.forEach(function (col) {
-          if (col.id === "basal") return;
-          var n = regNumeroBasal(regBasalValor(v, fc.id, col.id, m.id));
-          if (n !== null) ult = { col: col, v: n };
-        });
-        if (!ult) return;
-        var pct = Math.round((ult.v - b) / b * 100);
-        if ((m.id === "amp" && pct <= -50) || (m.id === "lat" && pct >= 10) || (m.id === "umb" && pct >= 50)) fuerte = true;
-        fase = fase || ult.col;
-        // Si esta medida se escribió en otra fase que la primera, se dice
-        trozos.push(campo(m, "l").toLowerCase() + (ult.col !== fase ? " (" + regL(ult.col) + ")" : "") + " " + (pct > 0 ? "+" : (pct < 0 ? "\u2212" : "")) + Math.abs(pct) + " %");
-      });
-      if (!trozos.length) return;
+      var c = regComparacionFila(v, fc.id);
+      if (!c) return;
       var rot = fc.rot || v["e_" + fc.id + "_l"] || T("registro_otro");
-      partes.push({ t: rot + " · " + regL(fase) + ": " + trozos.join(", "), fuerte: fuerte });
+      partes.push({ t: rot + " · " + regL(c.fase) + ": " + c.trozos.join(", "), fuerte: c.fuerte });
     });
     return partes;
   }

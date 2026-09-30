@@ -39,9 +39,10 @@ propia en *Después / consulta*).
   **«Cuánto respecto a la basal (%)»**; las técnicas con alteración se marcan
   solas; botones de apuntar siempre a la vista con **↓** al cronograma; los
   casos de hoy, primeros en el selector; el Cierre ya no lleva la perla docente.
-- **Basales** en dos casillas por fase con su unidad: sensitivos amplitud (µV) y
-  latencia (ms); motores amplitud (µV) y umbral (mA o V); debajo, el cambio en %
-  respecto a la basal.
+- **Basales** como lista por técnica: una línea con lo apuntado y el cambio en %
+  respecto a la basal; al tocarla, casillas grandes por fase (sensitivos
+  amplitud en µV y latencia en ms; motores amplitud en µV y umbral en mA o V) y
+  **= Basal** para copiar la basal cuando no hay cambios.
 - **Ficha**: campos cortos en una misma fila; ⋮ → **Abrir en el Registro**;
   **Borrador desde el Registro** para el resumen; aviso de lo que falta al
   cerrar el caso; diagnósticos nuevos (tiroides, médula anclada, nervio

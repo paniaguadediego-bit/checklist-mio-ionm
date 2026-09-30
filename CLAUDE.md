@@ -467,8 +467,12 @@ distinta a la anterior, no importa el formato exacto.
 >   2019): sensitivos Amp (µV) + Lat (ms), motores Amp (µV) + Umbral (mA/V);
 >   claves `e_<fila>_<fase>_amp/_lat/_umb` (`REG_BASALES_MEDIDAS`,
 >   `regBasalValor()` lee también la casilla antigua «a/b», `regBasalMigrar()`
->   la parte al escribir, `regBasalTexto()` para hoja e informe). Debajo,
->   «Respecto a la basal» en % por medida (`regComparacionesBasales()`).
+>   la parte al escribir, `regBasalTexto()` para hoja e informe). En pantalla
+>   (Registro y ficha) ya no es una rejilla: **lista por técnica**
+>   (`pintarBloqueBasales()`), una línea con los valores y el % por medida
+>   (`regComparacionFila()`, «amp / lat / umb»); al tocarla, casillas grandes
+>   por fase y **«= Basal»** en PostPos y Cierre; las filas libres, las usadas
+>   y una «+ Otro»; abiertas en `regBasalAbiertas` (sesión).
 >   Título en la ficha: «Basales (Basal, Post posicionar y Cierre)». **Umbrales por raíz** en columna
 >   vertebral: niveles en orden anatómico unidos por una línea (discontinua si no
 >   son contiguos).
