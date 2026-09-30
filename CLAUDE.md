@@ -526,8 +526,8 @@ distinta a la anterior, no importa el formato exacto.
 >   `apuntes/` + `apuntes/fotos/`, `simulador/`, `referencia/`). Precios reales y
 >   material propio del usuario: `estado.json` (nunca en este repo).
 > - **Sheet**: `Codigo.gs` con la columna `evolucion_postop` (54 columnas base)
->   y la pestaña **Correlacion_long** (una fila por grupo de alarmas), repegado y
->   reconstruido por el usuario el 29-09. Los campos de lista llegan como id. Si
+>   y la pestaña **Correlacion_long** (una fila por grupo de alarmas), con `Magnitud_pct`, repegado y
+>   reconstruido por el usuario el 30-09. Los campos de lista llegan como id. Si
 >   vuelve a cambiar, darle el ARCHIVO ENTERO (adjunto o enlace raw de GitHub):
 >   no sabe insertar bloques sueltos.
 > - **Historial público reescrito** dos veces (27 y 28-09): copias
@@ -559,7 +559,7 @@ distinta a la anterior, no importa el formato exacto.
 >   (`fila` en `CAMPOS_CASO` → `.campos-fila`): Equipo+Estado, Horas,
 >   Edad+Sexo+Servicio, Posición+Navegación, Mi papel+Supervisor+Dificultad. `Codigo.gs`:
 >   `Magnitud_pct` en Correlacion_long (de `correlato_filas.magnitud_pct`,
->   el mayor del grupo): el usuario tiene que repegarlo.
+>   el mayor del grupo): repegado y reconstruido el 30-09.
 > - **Preguntas abiertas del usuario (30-09-2026)**: dónde guardar los datos de
 >   un usuario normal (hoy, repo privado de GitHub con token; no revisado por
 >   protección de datos ni informática; no es aplicación sanitaria: solo recoge
