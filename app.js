@@ -961,8 +961,8 @@
                            en: "Use the filters above to choose cases and export them: a PDF report of several cases, a CSV with one row per case, or another CSV with the log's events and alarms. Outside the demo everything syncs to a private repository. You can repeat this tour from Home." },
     casos_quitar_fecha:  { es: "Quitar la fecha", en: "Clear the date" },
     caso_basales_registro: { es: "Basales (Basal, Post posicionar y Cierre)", en: "Baselines (Baseline, Post-positioning and Closing)" },
-    registro_basales_leyenda: { es: "Sensitivos: amplitud (µV) / latencia (ms). Motores: amplitud (µV) / umbral (mA o V).",
-                           en: "Sensory: amplitude (µV) / latency (ms). Motor: amplitude (µV) / threshold (mA or V)." },
+    registro_basales_leyenda: { es: "Sensitivos: amplitud (µV) / latencia (ms). Motores: amplitud (µV o mV) / umbral (mA o V).",
+                           en: "Sensory: amplitude (µV) / latency (ms). Motor: amplitude (µV or mV) / threshold (mA or V)." },
     caso_basales_registro_ay: { es: "Es la misma tabla que la del Registro intraoperatorio: lo que escribas aquí sale allí y en la hoja impresa, y al revés. Las filas de c-SEP, c-MEP, GRID, corticobulbares, Onda D, PEATC y H-R aparecen según las técnicas marcadas.",
                               en: "It is the same table as in the Intraoperative record: whatever you write here appears there and on the printed sheet, and vice versa. The c-SEP, c-MEP, GRID, corticobulbar, D wave, BAEP and H-R rows appear depending on the techniques ticked." },
     caso_basales_grid_estimulo: { es: "GRID: electrodo de estímulo", en: "GRID: stimulating electrode" },
@@ -1320,6 +1320,7 @@
     rr_borrador_alarma:  { es: "Alarma", en: "Alarm" },
     registro_comparativa: { es: "Respecto a la basal", en: "Compared with baseline" },
     registro_hoy:        { es: "hoy", en: "today" },
+    registro_basal_unidad: { es: "Toca para cambiar la amplitud de esta técnica entre µV y mV", en: "Tap to switch this technique's amplitude between µV and mV" },
     registro_basal_igual: { es: "Igual que la basal: copia sus valores aquí", en: "Same as baseline: copies its values here" },
     registro_basal_sin_basal: { es: "Esta técnica aún no tiene basal que copiar.", en: "This technique has no baseline to copy yet." },
     registro_basal_nombre: { es: "Qué es (esfínter, VII, IX-X...)", en: "What it is (sphincter, VII, IX-X...)" },
@@ -16390,8 +16391,15 @@
   // partida por la barra hasta que se reescribe (regBasalMigrar).
   var REG_BASALES_MEDIDAS = {
     s_: [{ id: "amp", u: "µV", l: "Amplitud", l_en: "Amplitude", c: "amp" }, { id: "lat", u: "ms", l: "Latencia", l_en: "Latency", c: "lat" }],
-    m_: [{ id: "amp", u: "µV", l: "Amplitud", l_en: "Amplitude", c: "amp" }, { id: "umb", u: "mA/V", l: "Umbral", l_en: "Threshold", c: "umb" }]
+    m_: [{ id: "amp", u: "µV", alt: "mV", l: "Amplitud", l_en: "Amplitude", c: "amp" }, { id: "umb", u: "mA/V", l: "Umbral", l_en: "Threshold", c: "umb" }]
   };
+  // Unidad de una medida en esa fila. La amplitud de los motores se puede
+  // apuntar en mV (30-09-2026, pedido del usuario: los MEP de músculos grandes
+  // llegan a varios mV). Una unidad por fila, la misma en todas las fases, así
+  // que el % frente a la basal no cambia. Clave e_<fila>_ampu = "mV".
+  function regUnidadMedida(v, idFila, m) {
+    return m.alt && v && v["e_" + idFila + "_" + m.id + "u"] === m.alt ? m.alt : m.u;
+  }
   // idFila lleva el prefijo de su tabla («s_sep_msd», «m_libre1»)
   function regMedidasBasal(idFila) { return REG_BASALES_MEDIDAS[String(idFila).indexOf("m_") === 0 ? "m_" : "s_"]; }
   function regBasalValor(v, idFila, colId, medId) {
@@ -16416,11 +16424,15 @@
   }
   // «2,1 / 19,4» para la hoja impresa y el informe
   function regBasalTexto(v, idFila, colId) {
-    var vals = regMedidasBasal(idFila).map(function (m) { return regBasalValor(v, idFila, colId, m.id); });
+    // Solo se escribe la unidad cuando no es la de la cabecera (mV)
+    var vals = regMedidasBasal(idFila).map(function (m) {
+      var x = regBasalValor(v, idFila, colId, m.id), u = regUnidadMedida(v, idFila, m);
+      return x && u !== m.u ? x + " " + u : x;
+    });
     return vals[0] || vals[1] ? vals.map(function (x) { return x || "–"; }).join(" / ") : "";
   }
   function regUnidadesBasal(idFila) {
-    return regMedidasBasal(idFila).map(function (m) { return m.u; }).join(" / ");
+    return regMedidasBasal(idFila).map(function (m) { return m.u + (m.alt ? " o " + m.alt : ""); }).join(" / ");
   }
   // Tercera tabla: estimulación de tornillos, IZQ | NIVEL | DER, 8 filas.
   // Claves e_t_<n>_izq / _nivel / _der.
@@ -16517,8 +16529,8 @@
       ] },
     { hoja: 1, id: "d", tipo: "campos", l: "D · Cronograma de hitos", l_en: "D · Milestone timeline", campos: REG_HITOS, compacto: true },
     { hoja: 1, id: "e", tipo: "basales", l: "E · Basales y comparativa", l_en: "E · Baselines and comparison",
-      ayuda: "Sensitivos: amplitud (µV) y latencia (ms). Motores: amplitud (µV) y umbral (mA o V); sin respuesta, amplitud 0.",
-      ayuda_en: "Sensory: amplitude (µV) and latency (ms). Motor: amplitude (µV) and threshold (mA or V); no response, amplitude 0." },
+      ayuda: "Sensitivos: amplitud (µV) y latencia (ms). Motores: amplitud (µV, o mV tocando la cabecera) y umbral (mA o V); sin respuesta, amplitud 0.",
+      ayuda_en: "Sensory: amplitude (µV) and latency (ms). Motor: amplitude (µV, or mV by tapping the header) and threshold (mA or V); no response, amplitude 0." },
     { hoja: 1, id: "e2", tipo: "lista", lista: "mapeo", l: "E2 · Mapeo", l_en: "E2 · Mapping",
       ayuda: "Tipo: G grid/strip · C cortical · S subcortical (Raabe) · IV suelo IV v. · PC par craneal · R raíz",
       ayuda_en: "Type: G grid/strip · C cortical · S subcortical (Raabe) · IV 4th ventricle floor · PC cranial nerve · R root",
@@ -16848,7 +16860,7 @@
     var bloque = regNodo("div", "reg-bl");
     var cab = regNodo("div", "reg-bl-tit");
     cab.appendChild(regNodo("span", null, titulo));
-    cab.appendChild(regNodo("span", "reg-bl-unid", medidas.map(function (m) { return campo(m, "l").toLowerCase() + " (" + m.u + ")"; }).join(" · ")));
+    cab.appendChild(regNodo("span", "reg-bl-unid", medidas.map(function (m) { return campo(m, "l").toLowerCase() + " (" + m.u + (m.alt ? " o " + m.alt : "") + ")"; }).join(" · ")));
     bloque.appendChild(cab);
     var defs = filas.map(function (r) { return { id: prefijo + r.id, sin: r.id, rot: regL(r) }; });
     // Filas libres: las que ya tienen algo y, detrás, una vacía para añadir
@@ -16928,7 +16940,25 @@
       }
       var cabE = regNodo("div", "reg-bl-ed-fila reg-bl-ed-cab");
       cabE.appendChild(regNodo("span"));
-      medidas.forEach(function (m) { cabE.appendChild(regNodo("span", null, campo(m, "l") + " (" + m.u + ")")); });
+      var inpsFila = [];   // casillas de cada fase, para rehacer su aria-label
+      function etiqueta(m) { return campo(m, "l") + " (" + regUnidadMedida(d.v, fd.id, m) + ")"; }
+      medidas.forEach(function (m) {
+        if (!m.alt) { cabE.appendChild(regNodo("span", null, etiqueta(m))); return; }
+        // «Amplitud (µV)» se toca para pasar a mV y al revés
+        var bu = regNodo("button", "reg-bl-unidad", etiqueta(m));
+        bu.type = "button";
+        bu.title = T("registro_basal_unidad");
+        bu.addEventListener("click", function () {
+          var k = "e_" + fd.id + "_" + m.id + "u";
+          if (d.v[k] === m.alt) delete d.v[k]; else d.v[k] = m.alt;
+          bu.textContent = etiqueta(m);
+          inpsFila.forEach(function (x) { if (x.m === m) x.inp.setAttribute("aria-label", rotuloDe(fd) + " — " + x.fase + " — " + etiqueta(m)); });
+          guardar.cambiar();
+          guardar.salir();
+          alCambiar();
+        });
+        cabE.appendChild(bu);
+      });
       cabE.appendChild(regNodo("span"));
       ed.appendChild(cabE);
       REG_BASALES_COLS.forEach(function (col) {
@@ -16943,7 +16973,8 @@
           inp.type = "text";
           inp.inputMode = "decimal";
           inp.value = regBasalValor(d.v, fd.id, col.id, m.id);
-          inp.setAttribute("aria-label", rotuloDe(fd) + " — " + regL(col) + " — " + campo(m, "l") + " (" + m.u + ")");
+          inp.setAttribute("aria-label", rotuloDe(fd) + " — " + regL(col) + " — " + etiqueta(m));
+          inpsFila.push({ m: m, inp: inp, fase: regL(col) });
           inp.addEventListener("input", function () {
             escribir(fd.id, col.id, m.id, inp.value);
             guardar.cambiar();
