@@ -397,7 +397,8 @@ distinta a la anterior, no importa el formato exacto.
 >   modalidad, criterio, causa, medidas en chips, recup S/P/N; «Tipo de alerta» y
 >   «Medida correctora» se derivan al guardar con `alarmasEnCaso()`), **técnicas
 >   con alteración** (chips, como en la ficha; sin caso o sin técnicas, el aviso
->   de la ficha), **resultado esperable** (lista), incidencias técnicas y perla. La ficha
+>   de la ficha), **resultado esperable** (lista) e incidencias técnicas (la perla
+>   docente, desde el 30-09, solo en la ficha y en la hoja impresa). La ficha
 >   trabaja sobre la copia de trabajo (`guardar` = `REG_SIN_GUARDAR`) y guarda con
 >   «Guardar»; el Registro guarda solo (`REG_GUARDAR`). Sin caso (Modelo 0) no hay
 >   espejo.
@@ -435,6 +436,15 @@ distinta a la anterior, no importa el formato exacto.
 >   Reabrir caso** en la barra (`guardarFicha(true)`, `pintarBotonCerrarCaso()`).
 >   Ojo: `leerFichaCaso()` copia el formulario sobre `casoAbierto`; no llamarlo
 >   después de guardar sin repintar (ya pasó: «Reabrir» se deshacía).
+>   Desde el 30-09: **campos cortos en una fila** (`fila` en `CAMPOS_CASO` →
+>   `.campos-fila`): Equipo+Estado, Hora inicio+fin, Edad+Sexo+Servicio,
+>   Posición+Navegación (el detalle debajo), Mi papel+Supervisor+Dificultad; ⋮
+>   con **Abrir en el Registro** (`#caso-ir-registro`), Informe (PDF),
+>   **Imprimir hoja de registro** y Borrar; **Borrador desde el Registro** bajo
+>   el Resumen de la monitorización (`borradorResumenCaso()`: cronograma +
+>   comparativa de basales); al **cerrar**, aviso de lo que falta (diagnóstico,
+>   intervención, resumen, evolución, concordancia) sin impedirlo; diagnósticos
+>   nuevos tiroides, disrafismo, nervio_periferico y otro.
 > - **Robustez de datos (auditoría 28-29/09):** conflicto al subir un caso →
 >   `fusionarCaso()` (vacío toma del otro, gana el que sube, listas con id se
 >   juntan, `editado_en` unido); «Exportar copia» es completa (`completa: {casos,
@@ -452,7 +462,14 @@ distinta a la anterior, no importa el formato exacto.
 >   «Modalidad»); «Informe (PDF)» / «Informe de casos (PDF)».
 > - **Basales**: columnas **Basal · PostPos1 · PostPos2 · Cierre** (antes OP BSL
 >   y CL BSL; ids `basal`, `post`, `post2`, `final`); PostPos2 solo t-SEP/t-MEP,
->   c-MEP solo Basal y Cierre (`regColBasal()`). **Umbrales por raíz** en columna
+>   c-MEP solo Basal y Cierre (`regColBasal()`). Desde el 30-09, **dos medidas
+>   por fase** con la unidad en el encabezado, según las guías (ASNM 2013, ISIN
+>   2019): sensitivos Amp (µV) + Lat (ms), motores Amp (µV) + Umbral (mA/V);
+>   claves `e_<fila>_<fase>_amp/_lat/_umb` (`REG_BASALES_MEDIDAS`,
+>   `regBasalValor()` lee también la casilla antigua «a/b», `regBasalMigrar()`
+>   la parte al escribir, `regBasalTexto()` para hoja e informe). Debajo,
+>   «Respecto a la basal» en % por medida (`regComparacionesBasales()`).
+>   Título en la ficha: «Basales (Basal, Post posicionar y Cierre)». **Umbrales por raíz** en columna
 >   vertebral: niveles en orden anatómico unidos por una línea (discontinua si no
 >   son contiguos).
 > - **Hoja impresa**: B · Técnicas en tres filas (monitorización, reflejos,
@@ -467,26 +484,36 @@ distinta a la anterior, no importa el formato exacto.
 > - **Registro en pantalla** (30-09-2026): SOLO el panel «Apuntar fase, evento o
 >   alarma» + Basales y comparativa + Mapeo + Cierre, sin la letra de la hoja
 >   (A, B y C están en Gestión de Casos; D, esquema, F, G y H tampoco salen; la
->   hoja impresa sale entera). Cierre sin «Resultado de la señal». Fases,
+>   hoja impresa sale entera). Cierre sin «Resultado de la señal» ni perla
+>   docente. Selector de caso con los de **hoy** primero («· hoy»). Fases,
 >   eventos y alarmas se apuntan SOLO en el panel (`.reg-rapido`). Dentro:
 >   - **Fase**: un toque; caja = detalle u «Otra».
 >   - **Evento o alarma** (recuadro resaltado en dorado apagado) con dos
 >     recuadros: **Técnica** (antes «Qué»): t-SEP / t-MEP / c-SEP en tabla por
 >     miembro (MSD · MSI · MID · MII) y, con CoMEP, los pares craneales en la
 >     misma tabla (`REG_PARES_COMEP`, botoncitos I/D → «CoMEP VII I»); el resto de
->     técnicas; **Reflejos** del caso con nombre corto; Factores técnicos + Otro
+>     técnicas; **Reflejos** del caso con nombre corto. Las técnicas se marcan
+>     **varias a la vez** (bilateral, hemicorporal, brazo-pierna-cara, cruzado:
+>     `regElegirQue()`, `regRapido.queMas`, `regQuesElegidos()`) y se apuntan
+>     como UNA alarma o evento con la modalidad «A + B»; al apuntar un cambio o
+>     una alarma, su técnica se marca sola en Técnicas con alteración
+>     (`regTecnicasDeQue()`). Factores técnicos + Otro
 >     en una fila; **Anestesia + TOF 0/4…4/4** en otra (TOF = contexto:
 >     `ev.tof`/`al.tof`, `data-clave="tof"`, se desmarca al apuntar); con
 >     Anestesia, fila **Fármaco** (`REG_FARMACOS` → `ev.farmaco`). **Hallazgo**
 >     (antes «Qué pasa»): ↑ umbral, ↓ amplitud, ↑ latencia, pérdida, HFD, Otro (sin
->     botones de recuperación: se marca en la alarma) y debajo las **propias de la
+>     botones de recuperación: se marca en la alarma), con «Cuánto respecto a la
+>     basal (%)» en ↑ umbral, ↓ amplitud, ↑ latencia y ↓ onda D
+>     (`REG_CAMBIOS_MAGNITUD` → `ev/al.magnitud`, `regConMagnitud()`; en ficha,
+>     hoja, cronograma, CSV `magnitud_pct` y Sheet `Magnitud_pct`), y debajo las **propias de la
 >     técnica elegida** (`mod` en `REG_CAMBIOS_RAPIDOS`, mismos ids en
 >     `REG_CRITERIO_AL`, `regModalidadDeQue()`, `actualizarCambiosPropios()`,
 >     `miembro` sup/inf: N13/N20 o N22/P37; ayuda al mantener pulsado); con GRID
 >     solo sus eventos (colocación, phase reversal, se mueve, retirada) y con
 >     Anestesia solo ↑/↓ perfusión, bolo, inicio, detención
 >     (`REG_MODS_SIN_GENERAL`) → An «Propofol · Bolo». Luego **contexto
->     quirúrgico** opcional (`ev.contexto`) y Apuntar evento / alarma. Un evento
+>     quirúrgico** opcional (`ev.contexto`) y Apuntar evento / alarma (botones
+>     pegados abajo mientras se ve el recuadro, con «↓» al cronograma). Un evento
 >     puede ser solo contexto y/o TOF (solo TOF → An «TOF 1/4»); la alarma
 >     necesita técnica.
 >   - **Cronograma de eventos** (antes «Apuntado»): tarjetas por hora, de lo más
@@ -518,7 +545,9 @@ distinta a la anterior, no importa el formato exacto.
 >   (`PRECIOS_DEMO`, `preciosDemo()`) para enseñar el coste; visita guiada de 12
 >   pasos. Plantillas y casos «Demo · Inomed · …» y «Demo · Cadwell · …» (3 de
 >   Cadwell: espasmo hemifacial con LSR/BR/PEATC, tiroidectomía con NLR, médula
->   anclada con RBC y H-reflex). Etiqueta **«Ficticio»** junto a cada caso y
+>   anclada con RBC y H-reflex). Plantillas Inomed con el **conmutador** en la
+>   columna anodal (los sacacorchos de estimulación van siempre por él; en la
+>   catodal, solo referencias). Etiqueta **«Ficticio»** junto a cada caso y
 >   plantilla y aviso en la ficha: no son montajes de referencia. Sin el aviso de
 >   texto en la cabecera. `localStorage` a secas, nunca `window.localStorage`.
 > - **Dónde vive cada dato:** localStorage (texto) · IndexedDB (fotos) · repo
@@ -533,33 +562,12 @@ distinta a la anterior, no importa el formato exacto.
 > - **Historial público reescrito** dos veces (27 y 28-09): copias
 >   `../copia-historial-codigo-2026-09-27.bundle` y `-28.bundle`. No borrarlas.
 > - **Licencia**: todos los derechos reservados (`LICENSE`).
-> - **Prueba con tres usuarios (30-09-2026)**, corregido: técnicas **varias a
->   la vez** en el panel (`regElegirQue()`, `regRapido.queMas`,
->   `regQuesElegidos()`) → UNA alarma o evento con la modalidad «A + B»;
->   **magnitud %** (`REG_CAMBIOS_MAGNITUD`, `ev/al.magnitud`, `regConMagnitud()`,
->   columna `magnitud_pct` del CSV de eventos); **técnicas con alteración** que
->   se marcan solas al apuntar (`regTecnicasDeQue()`); botones de apuntar
->   *sticky* + «↓» al cronograma; **comparativa de basales** (primer número de
->   la última columna frente a la Basal, `regComparacionesBasales()`);
->   ficha: ⋮ **Abrir en el Registro** (`#caso-ir-registro`) y «Imprimir hoja de
->   registro»; **Borrador desde el Registro** en el Resumen
->   (`borradorResumenCaso()`); aviso de lo que falta al **cerrar** un caso;
->   selector del Registro con los casos de **hoy** primero; diagnósticos
->   tiroides, disrafismo, nervio periférico y otro; medidas «Retirar o recolocar
->   tornillo» y «Reducir la corrección o la distracción»; hoja impresa sin «hora
->   del equipo»; plantillas Inomed de la demo con el **conmutador** en la
->   anodal (nunca sacacorchos de estimulación en la catodal); siglas en la Guía.
-> - **Basales con dos medidas por fase (30-09-2026)**: sensitivos Amp (µV) +
->   Lat (ms), motores Amp (µV) + Umbral (mA/V), según las guías (ASNM 2013,
->   ISIN 2019); claves `e_<fila>_<fase>_amp/_lat/_umb` (`REG_BASALES_MEDIDAS`,
->   `regBasalValor()` lee también la casilla antigua «a/b» y
->   `regBasalMigrar()` la parte al escribir; `regBasalTexto()` para hoja e
->   informe). Ningún caso real tenía basales. Cierre del Registro sin «Perla
->   docente» (sigue en la ficha). Ficha con campos cortos en una fila
->   (`fila` en `CAMPOS_CASO` → `.campos-fila`): Equipo+Estado, Horas,
->   Edad+Sexo+Servicio, Posición+Navegación, Mi papel+Supervisor+Dificultad. `Codigo.gs`:
->   `Magnitud_pct` en Correlacion_long (de `correlato_filas.magnitud_pct`,
->   el mayor del grupo): repegado y reconstruido el 30-09.
+> - **Prueba con tres usuarios (30-09-2026)**: recorrido de la demo como experto,
+>   residente y escéptico (informe en el diario privado); lo corregible está
+>   hecho (ver Registro, Basales, Ficha y Demo arriba), más medidas de columna
+>   («Retirar o recolocar tornillo / implante», «Reducir la corrección o la
+>   distracción»), hoja impresa sin «hora del equipo» (la hora, sin decir de qué
+>   reloj) y siglas en la Guía.
 > - **Preguntas abiertas del usuario (30-09-2026)**: dónde guardar los datos de
 >   un usuario normal (hoy, repo privado de GitHub con token; no revisado por
 >   protección de datos ni informática; no es aplicación sanitaria: solo recoge
@@ -576,7 +584,11 @@ distinta a la anterior, no importa el formato exacto.
 >   el gesto de atrás de Android con la ficha abierta; «Restablecer demo» para
 >   ver los casos de Cadwell y los nombres con «Inomed ·»; ver en el móvil los
 >   tres modos de color y el Registro reducido en quirófano; marcar sus
->   plantillas favoritas en cada dispositivo.
+>   plantillas favoritas en cada dispositivo; «Restablecer demo» para ver las
+>   basales numéricas y el conmutador de Inomed; probar en quirófano las
+>   alarmas con varias técnicas, la magnitud % y las basales en dos columnas;
+>   si quiere la magnitud de alarmas antiguas en el Sheet, ponerla en la ficha
+>   y volver a guardar el caso.
 > - **Ideas pendientes, no construidas:** que la demo enseñe más utilidades;
 >   conversión Inomed ↔ Cadwell; eventos del Registro en el Sheet (las alarmas
 >   ya van por grupos en Correlacion_long); que la concordancia del caso proponga
@@ -584,7 +596,10 @@ distinta a la anterior, no importa el formato exacto.
 >   básica; convertir en listas más textos libres de la ficha si el usuario lo
 >   pide; **contenido de la Biblioteca de montajes** (montajes de ejemplo por
 >   especialidad y equipo, copiables como plantilla); favoritas sincronizadas
->   entre dispositivos si el usuario lo pide.
+>   entre dispositivos si el usuario lo pide; aviso en el Resumen si en Inomed
+>   hay un sacacorchos de estimulación en la catodal; antes del congreso,
+>   ocultar o terminar en la demo las pantallas «En construcción»; cronometrar
+>   en vivo «caso cerrado en menos de 3 minutos».
 > - **Convenciones que han fallado antes:** subir el `?v=` de `index.html` en cada
 >   cambio de `app.js`/`style.css`/`data/`; `git fetch`+`pull --ff-only` antes de
 >   tocar `checklist-mio-datos` (y otro `fetch` antes del push); con
@@ -592,6 +607,8 @@ distinta a la anterior, no importa el formato exacto.
 >   `data/i18n-en.js` tiene saltos mixtos: detectar el salto, normalizar, editar y
 >   restaurarlo; los scripts de Python largos, en un archivo del scratchpad y no
 >   en un heredoc de bash (los `\n` y `\d` de las cadenas JS llegaban rotos);
+>   en el texto a buscar de esos scripts va el carácter real (−, ·, µ), no su
+>   escape `\uXXXX`, o no coincide;
 >   ES5 (`var`, sin flechas); `[hidden]` sobre clases con `display` propio
 >   necesita su regla; `#pantalla-registro button` y `#dlg-caso select
 >   { min-height: 44px }` ganan por el id (excepciones con el id delante); un

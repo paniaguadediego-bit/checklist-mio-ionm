@@ -4428,3 +4428,13 @@ body:not(.editando-caso) #barra-caso-prefijo { color: var(--accent); }
 .campos-fila { display: grid; gap: 0 0.5rem; align-items: start; }
 .campos-fila > .campo { min-width: 0; }
 .campos-fila > .campo select, .campos-fila > .campo input { width: 100%; box-sizing: border-box; min-width: 0; }
+/* Chips colocados en entradas estrechas (30-09-2026, pedido del usuario: con
+   tres cajas en fila, «Referencia de sonda» y «S. monopolar recta» echaban la
+   ✕ fuera). El chip no pasa del ancho de la entrada y se lee como texto: el
+   nombre se parte por los espacios (una palabra más larga que la entrada, por
+   donde haga falta) y la ✕ y el 📷 van al final de la última línea. Menos
+   relleno para que «Conmutador ✕» quepa en una. */
+.slot { padding-left: 0.06rem; padding-right: 0.06rem; }
+.slot > .chip-colocado { display: block; min-width: 0; max-width: 100%; overflow-wrap: break-word; padding-left: 0.12rem; padding-right: 0.12rem; }
+.slot > .chip-colocado > .chip-quitar, .slot > .chip-colocado > .chip-foto { display: inline-block; vertical-align: middle; margin-left: 0.08rem; padding: 0 0.05rem; }
+.slot > .chip-colocado > .color-dot { display: inline-block; vertical-align: middle; margin-right: 0.2rem; }

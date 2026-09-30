@@ -3069,7 +3069,9 @@
       dot.className = "color-dot color-" + item.color;
       chip.appendChild(dot);
     }
-    chip.appendChild(document.createTextNode(campo(item, "nombre")));
+    // El nombre en su propio span (30-09-2026): así puede partirse cuando la
+    // entrada es estrecha (tres cajas en fila) sin echar la ✕ fuera del chip.
+    chip.appendChild(regNodo("span", "chip-nombre", campo(item, "nombre")));
 
     // Foto de referencia (de momento solo algunas sondas): un icono que
     // abre la imagen en un visor propio, para identificar la sonda física

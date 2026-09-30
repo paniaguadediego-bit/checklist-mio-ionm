@@ -33,7 +33,23 @@ con carpetas de colores, negrita/cursiva, fotos dentro de cada caja y
 de material en filas, con una breve descripción de uso de cada uno; tarjeta
 propia en *Después / consulta*).
 
-**Novedades del 30/09 y 01/10/2026:**
+**Novedades del 30/09/2026, tras una prueba con tres tipos de usuario:**
+- **Registro**: varias técnicas y lados a la vez (bilateral, hemicorporal,
+  brazo-pierna-cara, cruzado) se apuntan como **una sola alarma**; casilla
+  **«Cuánto respecto a la basal (%)»**; las técnicas con alteración se marcan
+  solas; botones de apuntar siempre a la vista con **↓** al cronograma; los
+  casos de hoy, primeros en el selector; el Cierre ya no lleva la perla docente.
+- **Basales** en dos casillas por fase con su unidad: sensitivos amplitud (µV) y
+  latencia (ms); motores amplitud (µV) y umbral (mA o V); debajo, el cambio en %
+  respecto a la basal.
+- **Ficha**: campos cortos en una misma fila; ⋮ → **Abrir en el Registro**;
+  **Borrador desde el Registro** para el resumen; aviso de lo que falta al
+  cerrar el caso; diagnósticos nuevos (tiroides, médula anclada, nervio
+  periférico, otro) y medidas de columna.
+- **Demo**: las plantillas Inomed usan el **conmutador** (columna anodal) para la
+  estimulación transcraneal.
+
+**Novedades del 30/09/2026 (mañana):**
 - **Colores**: botón redondo junto al ⋮ que pasa por **oscuro** (negro y dorado),
   **azul** (azul marino, el de por defecto) y **claro**; botón **Guía** al lado.
   La guía se ha rehecho corta y visual (flujo de un día, una tarjeta por
