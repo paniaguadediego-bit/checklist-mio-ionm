@@ -6972,9 +6972,11 @@
     // (con su código de hospital) sigue existiendo y editable en Catálogos,
     // simplemente ya no está enlazado a este campo.
     { g: "cirugia", c: "intervencion", t: "text" },
-    { g: "cirugia", c: "posicion", t: "sel", o: "posicion" },
+    // Posición y Navegación en una fila (30-09-2026, pedido del usuario); el
+    // detalle de la posición, debajo.
+    { g: "cirugia", c: "posicion", t: "sel", o: "posicion", fila: "posicion_nav" },
+    { g: "cirugia", c: "navegacion", t: "sel", o: "sino", ay: "caso_navegacion_ay", fila: "posicion_nav" },
     { g: "cirugia", c: "posicion_detalle", t: "area", ay: "caso_posicion_detalle_ay" },
-    { g: "cirugia", c: "navegacion", t: "sel", o: "sino", ay: "caso_navegacion_ay" },
     { g: "cirugia", c: "otros_datos_quirurgicos", t: "area" },
 
     // 4. Anestesia

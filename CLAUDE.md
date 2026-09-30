@@ -557,7 +557,7 @@ distinta a la anterior, no importa el formato exacto.
 >   informe). Ningún caso real tenía basales. Cierre del Registro sin «Perla
 >   docente» (sigue en la ficha). Ficha con campos cortos en una fila
 >   (`fila` en `CAMPOS_CASO` → `.campos-fila`): Equipo+Estado, Horas,
->   Edad+Sexo+Servicio, Mi papel+Supervisor+Dificultad. `Codigo.gs`:
+>   Edad+Sexo+Servicio, Posición+Navegación, Mi papel+Supervisor+Dificultad. `Codigo.gs`:
 >   `Magnitud_pct` en Correlacion_long (de `correlato_filas.magnitud_pct`,
 >   el mayor del grupo): el usuario tiene que repegarlo.
 > - **Preguntas abiertas del usuario (30-09-2026)**: dónde guardar los datos de
