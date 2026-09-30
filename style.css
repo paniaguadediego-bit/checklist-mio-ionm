@@ -4456,12 +4456,6 @@ body:not(.editando-caso) #barra-caso-prefijo { color: var(--accent); }
 .reg-bl-ed-fila { display: grid; grid-template-columns: 4.4rem minmax(0, 4.8rem) minmax(0, 4.8rem) auto; gap: 0.35rem; align-items: center; margin-top: 0.3rem; }
 .reg-bl-ed-cab { font-size: 0.62rem; font-weight: 600; color: var(--text-muted); margin-top: 0.1rem; }
 .reg-bl-ed-cab span { text-align: center; }
-/* Amplitud de los motores: «Amplitud (µV)» se toca para pasar a mV */
-#pantalla-registro .reg-bl-unidad, #dlg-caso .reg-bl-unidad, .reg-bl-unidad {
-  font: inherit; min-height: 0; padding: 0.05rem 0.2rem; border: 1px dashed var(--border);
-  border-radius: 3px; background: none; color: var(--accent); cursor: pointer;
-}
-.reg-bl-unidad:hover { border-style: solid; }
 .reg-bl-fase { font-size: 0.74rem; font-weight: 600; }
 #pantalla-registro .reg-bl-ed input, #dlg-caso .reg-bl-ed input, .reg-bl-ed input {
   font: inherit; font-size: 0.9rem; height: 2rem; min-height: 0; padding: 0.2rem 0.35rem;

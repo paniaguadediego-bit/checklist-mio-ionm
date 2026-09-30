@@ -961,8 +961,8 @@
                            en: "Use the filters above to choose cases and export them: a PDF report of several cases, a CSV with one row per case, or another CSV with the log's events and alarms. Outside the demo everything syncs to a private repository. You can repeat this tour from Home." },
     casos_quitar_fecha:  { es: "Quitar la fecha", en: "Clear the date" },
     caso_basales_registro: { es: "Basales (Basal, Post posicionar y Cierre)", en: "Baselines (Baseline, Post-positioning and Closing)" },
-    registro_basales_leyenda: { es: "Sensitivos: amplitud (µV) / latencia (ms). Motores: amplitud (µV o mV) / umbral (mA o V).",
-                           en: "Sensory: amplitude (µV) / latency (ms). Motor: amplitude (µV or mV) / threshold (mA or V)." },
+    registro_basales_leyenda: { es: "Sensitivos: amplitud (µV) / latencia (ms). Motores: amplitud (mV) / umbral (mA o V).",
+                           en: "Sensory: amplitude (µV) / latency (ms). Motor: amplitude (mV) / threshold (mA or V)." },
     caso_basales_registro_ay: { es: "Es la misma tabla que la del Registro intraoperatorio: lo que escribas aquí sale allí y en la hoja impresa, y al revés. Las filas de c-SEP, c-MEP, GRID, corticobulbares, Onda D, PEATC y H-R aparecen según las técnicas marcadas.",
                               en: "It is the same table as in the Intraoperative record: whatever you write here appears there and on the printed sheet, and vice versa. The c-SEP, c-MEP, GRID, corticobulbar, D wave, BAEP and H-R rows appear depending on the techniques ticked." },
     caso_basales_grid_estimulo: { es: "GRID: electrodo de estímulo", en: "GRID: stimulating electrode" },
@@ -1320,7 +1320,6 @@
     rr_borrador_alarma:  { es: "Alarma", en: "Alarm" },
     registro_comparativa: { es: "Respecto a la basal", en: "Compared with baseline" },
     registro_hoy:        { es: "hoy", en: "today" },
-    registro_basal_unidad: { es: "Toca para cambiar la amplitud de esta técnica entre µV y mV", en: "Tap to switch this technique's amplitude between µV and mV" },
     registro_basal_igual: { es: "Igual que la basal: copia sus valores aquí", en: "Same as baseline: copies its values here" },
     registro_basal_sin_basal: { es: "Esta técnica aún no tiene basal que copiar.", en: "This technique has no baseline to copy yet." },
     registro_basal_nombre: { es: "Qué es (esfínter, VII, IX-X...)", en: "What it is (sphincter, VII, IX-X...)" },
@@ -16386,20 +16385,15 @@
   // Dos medidas por fase (30-09-2026, pedido del usuario, según las guías):
   // sensitivos (SEP, PEAT) amplitud y latencia -ISIN 2019; Park 2018 para la
   // onda V-; motores (MEP, onda D, H-R, CoMEP, GRID) amplitud y umbral -ASNM
-  // 2013: la latencia del MEP no es criterio-. Claves e_<fila>_<fase>_amp,
+  // 2013: la latencia del MEP no es criterio-. La amplitud de los motores, en
+  // mV (30-09-2026, pedido del usuario; antes µV, ningún caso real tenía
+  // basales de motores escritas). Claves e_<fila>_<fase>_amp,
   // _lat y _umb. La casilla de antes, una por fase («2,1/19,4»), se lee
   // partida por la barra hasta que se reescribe (regBasalMigrar).
   var REG_BASALES_MEDIDAS = {
     s_: [{ id: "amp", u: "µV", l: "Amplitud", l_en: "Amplitude", c: "amp" }, { id: "lat", u: "ms", l: "Latencia", l_en: "Latency", c: "lat" }],
-    m_: [{ id: "amp", u: "µV", alt: "mV", l: "Amplitud", l_en: "Amplitude", c: "amp" }, { id: "umb", u: "mA/V", l: "Umbral", l_en: "Threshold", c: "umb" }]
+    m_: [{ id: "amp", u: "mV", l: "Amplitud", l_en: "Amplitude", c: "amp" }, { id: "umb", u: "mA/V", l: "Umbral", l_en: "Threshold", c: "umb" }]
   };
-  // Unidad de una medida en esa fila. La amplitud de los motores se puede
-  // apuntar en mV (30-09-2026, pedido del usuario: los MEP de músculos grandes
-  // llegan a varios mV). Una unidad por fila, la misma en todas las fases, así
-  // que el % frente a la basal no cambia. Clave e_<fila>_ampu = "mV".
-  function regUnidadMedida(v, idFila, m) {
-    return m.alt && v && v["e_" + idFila + "_" + m.id + "u"] === m.alt ? m.alt : m.u;
-  }
   // idFila lleva el prefijo de su tabla («s_sep_msd», «m_libre1»)
   function regMedidasBasal(idFila) { return REG_BASALES_MEDIDAS[String(idFila).indexOf("m_") === 0 ? "m_" : "s_"]; }
   function regBasalValor(v, idFila, colId, medId) {
@@ -16424,15 +16418,11 @@
   }
   // «2,1 / 19,4» para la hoja impresa y el informe
   function regBasalTexto(v, idFila, colId) {
-    // Solo se escribe la unidad cuando no es la de la cabecera (mV)
-    var vals = regMedidasBasal(idFila).map(function (m) {
-      var x = regBasalValor(v, idFila, colId, m.id), u = regUnidadMedida(v, idFila, m);
-      return x && u !== m.u ? x + " " + u : x;
-    });
+    var vals = regMedidasBasal(idFila).map(function (m) { return regBasalValor(v, idFila, colId, m.id); });
     return vals[0] || vals[1] ? vals.map(function (x) { return x || "–"; }).join(" / ") : "";
   }
   function regUnidadesBasal(idFila) {
-    return regMedidasBasal(idFila).map(function (m) { return m.u + (m.alt ? " o " + m.alt : ""); }).join(" / ");
+    return regMedidasBasal(idFila).map(function (m) { return m.u; }).join(" / ");
   }
   // Tercera tabla: estimulación de tornillos, IZQ | NIVEL | DER, 8 filas.
   // Claves e_t_<n>_izq / _nivel / _der.
@@ -16529,8 +16519,8 @@
       ] },
     { hoja: 1, id: "d", tipo: "campos", l: "D · Cronograma de hitos", l_en: "D · Milestone timeline", campos: REG_HITOS, compacto: true },
     { hoja: 1, id: "e", tipo: "basales", l: "E · Basales y comparativa", l_en: "E · Baselines and comparison",
-      ayuda: "Sensitivos: amplitud (µV) y latencia (ms). Motores: amplitud (µV, o mV tocando la cabecera) y umbral (mA o V); sin respuesta, amplitud 0.",
-      ayuda_en: "Sensory: amplitude (µV) and latency (ms). Motor: amplitude (µV, or mV by tapping the header) and threshold (mA or V); no response, amplitude 0." },
+      ayuda: "Sensitivos: amplitud (µV) y latencia (ms). Motores: amplitud (mV) y umbral (mA o V); sin respuesta, amplitud 0.",
+      ayuda_en: "Sensory: amplitude (µV) and latency (ms). Motor: amplitude (mV) and threshold (mA or V); no response, amplitude 0." },
     { hoja: 1, id: "e2", tipo: "lista", lista: "mapeo", l: "E2 · Mapeo", l_en: "E2 · Mapping",
       ayuda: "Tipo: G grid/strip · C cortical · S subcortical (Raabe) · IV suelo IV v. · PC par craneal · R raíz",
       ayuda_en: "Type: G grid/strip · C cortical · S subcortical (Raabe) · IV 4th ventricle floor · PC cranial nerve · R root",
@@ -16860,7 +16850,7 @@
     var bloque = regNodo("div", "reg-bl");
     var cab = regNodo("div", "reg-bl-tit");
     cab.appendChild(regNodo("span", null, titulo));
-    cab.appendChild(regNodo("span", "reg-bl-unid", medidas.map(function (m) { return campo(m, "l").toLowerCase() + " (" + m.u + (m.alt ? " o " + m.alt : "") + ")"; }).join(" · ")));
+    cab.appendChild(regNodo("span", "reg-bl-unid", medidas.map(function (m) { return campo(m, "l").toLowerCase() + " (" + m.u + ")"; }).join(" · ")));
     bloque.appendChild(cab);
     var defs = filas.map(function (r) { return { id: prefijo + r.id, sin: r.id, rot: regL(r) }; });
     // Filas libres: las que ya tienen algo y, detrás, una vacía para añadir
@@ -16940,25 +16930,7 @@
       }
       var cabE = regNodo("div", "reg-bl-ed-fila reg-bl-ed-cab");
       cabE.appendChild(regNodo("span"));
-      var inpsFila = [];   // casillas de cada fase, para rehacer su aria-label
-      function etiqueta(m) { return campo(m, "l") + " (" + regUnidadMedida(d.v, fd.id, m) + ")"; }
-      medidas.forEach(function (m) {
-        if (!m.alt) { cabE.appendChild(regNodo("span", null, etiqueta(m))); return; }
-        // «Amplitud (µV)» se toca para pasar a mV y al revés
-        var bu = regNodo("button", "reg-bl-unidad", etiqueta(m));
-        bu.type = "button";
-        bu.title = T("registro_basal_unidad");
-        bu.addEventListener("click", function () {
-          var k = "e_" + fd.id + "_" + m.id + "u";
-          if (d.v[k] === m.alt) delete d.v[k]; else d.v[k] = m.alt;
-          bu.textContent = etiqueta(m);
-          inpsFila.forEach(function (x) { if (x.m === m) x.inp.setAttribute("aria-label", rotuloDe(fd) + " — " + x.fase + " — " + etiqueta(m)); });
-          guardar.cambiar();
-          guardar.salir();
-          alCambiar();
-        });
-        cabE.appendChild(bu);
-      });
+      medidas.forEach(function (m) { cabE.appendChild(regNodo("span", null, campo(m, "l") + " (" + m.u + ")")); });
       cabE.appendChild(regNodo("span"));
       ed.appendChild(cabE);
       REG_BASALES_COLS.forEach(function (col) {
@@ -16973,8 +16945,7 @@
           inp.type = "text";
           inp.inputMode = "decimal";
           inp.value = regBasalValor(d.v, fd.id, col.id, m.id);
-          inp.setAttribute("aria-label", rotuloDe(fd) + " — " + regL(col) + " — " + etiqueta(m));
-          inpsFila.push({ m: m, inp: inp, fase: regL(col) });
+          inp.setAttribute("aria-label", rotuloDe(fd) + " — " + regL(col) + " — " + campo(m, "l") + " (" + m.u + ")");
           inp.addEventListener("input", function () {
             escribir(fd.id, col.id, m.id, inp.value);
             guardar.cambiar();
@@ -19816,10 +19787,10 @@
       e_s_sep_msi_basal_amp: "2,2", e_s_sep_msi_basal_lat: "19,3", e_s_sep_msi_post_amp: "2,2", e_s_sep_msi_post_lat: "19,3", e_s_sep_msi_final_amp: "2,1", e_s_sep_msi_final_lat: "19,4",
       e_s_sep_mid_basal_amp: "1,1", e_s_sep_mid_basal_lat: "39,8", e_s_sep_mid_post_amp: "1,0", e_s_sep_mid_post_lat: "40,0", e_s_sep_mid_final_amp: "0,9", e_s_sep_mid_final_lat: "40,4",
       e_s_sep_mii_basal_amp: "1,0", e_s_sep_mii_basal_lat: "40,1", e_s_sep_mii_post_amp: "1,0", e_s_sep_mii_post_lat: "40,2", e_s_sep_mii_final_amp: "0,9", e_s_sep_mii_final_lat: "40,5",
-      e_m_mep_msd_basal_amp: "610", e_m_mep_msd_basal_umb: "70", e_m_mep_msd_post_amp: "600", e_m_mep_msd_post_umb: "70", e_m_mep_msd_final_amp: "590", e_m_mep_msd_final_umb: "75",
-      e_m_mep_msi_basal_amp: "580", e_m_mep_msi_basal_umb: "75", e_m_mep_msi_post_amp: "570", e_m_mep_msi_post_umb: "75", e_m_mep_msi_final_amp: "560", e_m_mep_msi_final_umb: "75",
-      e_m_mep_mid_basal_amp: "260", e_m_mep_mid_basal_umb: "95", e_m_mep_mid_post_amp: "240", e_m_mep_mid_post_umb: "95", e_m_mep_mid_final_amp: "230", e_m_mep_mid_final_umb: "100",
-      e_m_mep_mii_basal_amp: "240", e_m_mep_mii_basal_umb: "100", e_m_mep_mii_post_amp: "230", e_m_mep_mii_post_umb: "100", e_m_mep_mii_final_amp: "210", e_m_mep_mii_final_umb: "105"
+      e_m_mep_msd_basal_amp: "0,61", e_m_mep_msd_basal_umb: "70", e_m_mep_msd_post_amp: "0,6", e_m_mep_msd_post_umb: "70", e_m_mep_msd_final_amp: "0,59", e_m_mep_msd_final_umb: "75",
+      e_m_mep_msi_basal_amp: "0,58", e_m_mep_msi_basal_umb: "75", e_m_mep_msi_post_amp: "0,57", e_m_mep_msi_post_umb: "75", e_m_mep_msi_final_amp: "0,56", e_m_mep_msi_final_umb: "75",
+      e_m_mep_mid_basal_amp: "0,26", e_m_mep_mid_basal_umb: "95", e_m_mep_mid_post_amp: "0,24", e_m_mep_mid_post_umb: "95", e_m_mep_mid_final_amp: "0,23", e_m_mep_mid_final_umb: "100",
+      e_m_mep_mii_basal_amp: "0,24", e_m_mep_mii_basal_umb: "100", e_m_mep_mii_post_amp: "0,23", e_m_mep_mii_post_umb: "100", e_m_mep_mii_final_amp: "0,21", e_m_mep_mii_final_umb: "105"
     }, [
       ["F", "08:40", "Basal", "En supino, antes del volteo"],
       ["TOF", "08:45", "4/4"],
@@ -19893,13 +19864,13 @@
         e_s_sep_msi_basal_amp: "2,3", e_s_sep_msi_basal_lat: "19,2", e_s_sep_msi_post_amp: "2,2", e_s_sep_msi_post_lat: "19,3", e_s_sep_msi_final_amp: "2,1", e_s_sep_msi_final_lat: "19,4",
         e_s_sep_mid_basal_amp: "0,8", e_s_sep_mid_basal_lat: "40,6", e_s_sep_mid_post_amp: "0,7", e_s_sep_mid_post_lat: "40,9", e_s_sep_mid_final_amp: "0",
         e_s_sep_mii_basal_amp: "0,6", e_s_sep_mii_basal_lat: "41,2", e_s_sep_mii_post_amp: "0,6", e_s_sep_mii_post_lat: "41,5", e_s_sep_mii_final_amp: "0",
-        // MEP en µV y umbral en mA (Inomed), inventados; MII cae al final
-        e_m_mep_msd_basal_amp: "520", e_m_mep_msd_basal_umb: "80", e_m_mep_msd_post_amp: "500", e_m_mep_msd_post_umb: "80", e_m_mep_msd_final_amp: "480", e_m_mep_msd_final_umb: "85",
-        e_m_mep_msi_basal_amp: "480", e_m_mep_msi_basal_umb: "85", e_m_mep_msi_post_amp: "470", e_m_mep_msi_post_umb: "85", e_m_mep_msi_final_amp: "450", e_m_mep_msi_final_umb: "90",
-        e_m_mep_mid_basal_amp: "210", e_m_mep_mid_basal_umb: "110", e_m_mep_mid_post_amp: "190", e_m_mep_mid_post_umb: "110", e_m_mep_mid_final_amp: "170", e_m_mep_mid_final_umb: "120",
-        e_m_mep_mii_basal_amp: "180", e_m_mep_mii_basal_umb: "115", e_m_mep_mii_post_amp: "160", e_m_mep_mii_post_umb: "120", e_m_mep_mii_final_amp: "40", e_m_mep_mii_final_umb: "150",
-        e_m_onda_d_basal_amp: "22", e_m_onda_d_post_amp: "21", e_m_onda_d_final_amp: "20",
-        e_m_onda_d_dist_basal_amp: "14", e_m_onda_d_dist_post_amp: "14", e_m_onda_d_dist_final_amp: "12,5",
+        // MEP en mV y umbral en mA (Inomed), inventados; MII cae al final
+        e_m_mep_msd_basal_amp: "0,52", e_m_mep_msd_basal_umb: "80", e_m_mep_msd_post_amp: "0,5", e_m_mep_msd_post_umb: "80", e_m_mep_msd_final_amp: "0,48", e_m_mep_msd_final_umb: "85",
+        e_m_mep_msi_basal_amp: "0,48", e_m_mep_msi_basal_umb: "85", e_m_mep_msi_post_amp: "0,47", e_m_mep_msi_post_umb: "85", e_m_mep_msi_final_amp: "0,45", e_m_mep_msi_final_umb: "90",
+        e_m_mep_mid_basal_amp: "0,21", e_m_mep_mid_basal_umb: "110", e_m_mep_mid_post_amp: "0,19", e_m_mep_mid_post_umb: "110", e_m_mep_mid_final_amp: "0,17", e_m_mep_mid_final_umb: "120",
+        e_m_mep_mii_basal_amp: "0,18", e_m_mep_mii_basal_umb: "115", e_m_mep_mii_post_amp: "0,16", e_m_mep_mii_post_umb: "120", e_m_mep_mii_final_amp: "0,04", e_m_mep_mii_final_umb: "150",
+        e_m_onda_d_basal_amp: "0,022", e_m_onda_d_post_amp: "0,021", e_m_onda_d_final_amp: "0,02",
+        e_m_onda_d_dist_basal_amp: "0,014", e_m_onda_d_dist_post_amp: "0,014", e_m_onda_d_dist_final_amp: "0,0125",
         cierre_resultado: "persistentes",
         cierre_modalidades: "MEP MII izq. (AH ausente, TA con umbral +40 mA). SEP de miembros inferiores (mielotomía).",
         cierre_com_cir: true, cierre_com_an: true, cierre_com_h: "14:15",
@@ -19917,7 +19888,7 @@
       ["F", "09:15", "Basal", "Tras la posición: sin cambios frente al supino"],
       ["F", "09:25", "Incisión"],
       ["F", "09:40", "Exposición", "Laminotomía D8-D9"],
-      ["E", "10:05", "Prox. D-Wave", "", { nota: "Electrodos epidurales proximal y distal colocados; Onda D basal 22 µV" }],
+      ["E", "10:05", "Prox. D-Wave", "", { nota: "Electrodos epidurales proximal y distal colocados; Onda D basal 0,022 mV" }],
       ["F", "10:20", "Apertura dural"],
       ["F", "10:45", "Resección", "Mielotomía media posterior"],
       ["E", "10:48", "t-SEP MID + t-SEP MII", "perdida", { ctx: "diseccion", nota: "Esperable por la mielotomía: se informa, sin alarma" }],
@@ -19954,12 +19925,12 @@
       e_s_sep_msi_basal_amp: "2,1", e_s_sep_msi_basal_lat: "19,4", e_s_sep_msi_post_amp: "2,0", e_s_sep_msi_post_lat: "19,5", e_s_sep_msi_final_amp: "2,0", e_s_sep_msi_final_lat: "19,5",
       e_s_peat_d_basal_amp: "0,45", e_s_peat_d_basal_lat: "5,9", e_s_peat_d_post_amp: "0,44", e_s_peat_d_post_lat: "5,9", e_s_peat_d_final_amp: "0",
       e_s_peat_i_basal_amp: "0,50", e_s_peat_i_basal_lat: "5,7", e_s_peat_i_post_amp: "0,50", e_s_peat_i_post_lat: "5,7", e_s_peat_i_final_amp: "0,48", e_s_peat_i_final_lat: "5,8",
-      e_m_mep_msd_basal_amp: "450", e_m_mep_msd_basal_umb: "75", e_m_mep_msd_final_amp: "430", e_m_mep_msd_final_umb: "80",
-      e_m_mep_msi_basal_amp: "470", e_m_mep_msi_basal_umb: "75", e_m_mep_msi_final_amp: "460", e_m_mep_msi_final_umb: "75",
-      e_m_cobu_vii_d_basal_amp: "350", e_m_cobu_vii_d_basal_umb: "60", e_m_cobu_vii_d_post_amp: "340", e_m_cobu_vii_d_post_umb: "60", e_m_cobu_vii_d_final_amp: "190", e_m_cobu_vii_d_final_umb: "75",
-      e_m_cobu_vii_i_basal_amp: "330", e_m_cobu_vii_i_basal_umb: "60", e_m_cobu_vii_i_final_amp: "320", e_m_cobu_vii_i_final_umb: "60",
-      e_m_cobu_ixx_d_basal_amp: "150", e_m_cobu_ixx_d_basal_umb: "65", e_m_cobu_ixx_d_final_amp: "130", e_m_cobu_ixx_d_final_umb: "70",
-      e_m_cobu_xii_d_basal_amp: "210", e_m_cobu_xii_d_basal_umb: "60", e_m_cobu_xii_d_final_amp: "190", e_m_cobu_xii_d_final_umb: "65"
+      e_m_mep_msd_basal_amp: "0,45", e_m_mep_msd_basal_umb: "75", e_m_mep_msd_final_amp: "0,43", e_m_mep_msd_final_umb: "80",
+      e_m_mep_msi_basal_amp: "0,47", e_m_mep_msi_basal_umb: "75", e_m_mep_msi_final_amp: "0,46", e_m_mep_msi_final_umb: "75",
+      e_m_cobu_vii_d_basal_amp: "0,35", e_m_cobu_vii_d_basal_umb: "60", e_m_cobu_vii_d_post_amp: "0,34", e_m_cobu_vii_d_post_umb: "60", e_m_cobu_vii_d_final_amp: "0,19", e_m_cobu_vii_d_final_umb: "75",
+      e_m_cobu_vii_i_basal_amp: "0,33", e_m_cobu_vii_i_basal_umb: "60", e_m_cobu_vii_i_final_amp: "0,32", e_m_cobu_vii_i_final_umb: "60",
+      e_m_cobu_ixx_d_basal_amp: "0,15", e_m_cobu_ixx_d_basal_umb: "65", e_m_cobu_ixx_d_final_amp: "0,13", e_m_cobu_ixx_d_final_umb: "70",
+      e_m_cobu_xii_d_basal_amp: "0,21", e_m_cobu_xii_d_basal_umb: "60", e_m_cobu_xii_d_final_amp: "0,19", e_m_cobu_xii_d_final_umb: "65"
     }, [
       ["F", "08:35", "Basal", "En supino"],
       ["TOF", "08:40", "4/4"],
@@ -20094,17 +20065,17 @@
     }, mTiroides);
     cTir.registro_intraop = registroDemo({
       quirofano: "Quirófano 5",
-      e_m_libre1_l: "Vago izq. (V1 → V2)", e_m_libre1_basal_amp: "820", e_m_libre1_basal_umb: "1", e_m_libre1_final_amp: "780", e_m_libre1_final_umb: "1"
+      e_m_libre1_l: "Vago izq. (V1 → V2)", e_m_libre1_basal_amp: "0,82", e_m_libre1_basal_umb: "1", e_m_libre1_final_amp: "0,78", e_m_libre1_final_umb: "1"
     }, [
       ["F", "09:05", "Basal", "EMG de cuerdas: tubo bien colocado"],
       ["TOF", "09:10", "4/4"],
       ["F", "09:15", "Incisión"],
       ["F", "09:30", "Exposición"],
-      ["E", "09:45", "Vago izq. (V1)", "", { nota: "820 µV a 1 mA" }],
-      ["E", "10:05", "Recurrente izq. (R1)", "", { nota: "650 µV" }],
+      ["E", "09:45", "Vago izq. (V1)", "", { nota: "0,82 mV a 1 mA" }],
+      ["E", "10:05", "Recurrente izq. (R1)", "", { nota: "0,65 mV" }],
       ["F", "10:20", "Resección", "Lóbulo izquierdo"],
       ["E", "10:35", "Recurrente izq. (R2)", "baja", { ctx: "traccion", mag: 20, nota: "Tracción del lóbulo: se afloja y se recupera" }],
-      ["E", "10:40", "Vago izq. (V2)", "", { nota: "780 µV: −5 % respecto a V1" }],
+      ["E", "10:40", "Vago izq. (V2)", "", { nota: "0,78 mV: −5 % respecto a V1" }],
       ["F", "10:50", "Resección", "Lóbulo derecho"],
       ["E", "11:05", "Vago der. (V2)", "", { nota: "Sin cambios respecto a V1" }],
       ["F", "11:10", "Hemostasia"],

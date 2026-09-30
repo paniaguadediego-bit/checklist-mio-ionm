@@ -464,8 +464,7 @@ distinta a la anterior, no importa el formato exacto.
 >   y CL BSL; ids `basal`, `post`, `post2`, `final`); PostPos2 solo t-SEP/t-MEP,
 >   c-MEP solo Basal y Cierre (`regColBasal()`). Desde el 30-09, **dos medidas
 >   por fase** con la unidad en el encabezado, según las guías (ASNM 2013, ISIN
->   2019): sensitivos Amp (µV) + Lat (ms), motores Amp (µV, o mV por fila
->   tocando «Amplitud (µV)»: `e_<fila>_ampu`, `regUnidadMedida()`) + Umbral (mA/V);
+>   2019): sensitivos Amp (µV) + Lat (ms), motores Amp (mV, desde el 30-09) + Umbral (mA/V);
 >   claves `e_<fila>_<fase>_amp/_lat/_umb` (`REG_BASALES_MEDIDAS`,
 >   `regBasalValor()` lee también la casilla antigua «a/b», `regBasalMigrar()`
 >   la parte al escribir, `regBasalTexto()` para hoja e informe). En pantalla
