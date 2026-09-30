@@ -961,8 +961,8 @@
                            en: "Use the filters above to choose cases and export them: a PDF report of several cases, a CSV with one row per case, or another CSV with the log's events and alarms. Outside the demo everything syncs to a private repository. You can repeat this tour from Home." },
     casos_quitar_fecha:  { es: "Quitar la fecha", en: "Clear the date" },
     caso_basales_registro: { es: "Basales (Basal, Post posicionar y Cierre)", en: "Baselines (Baseline, Post-positioning and Closing)" },
-    registro_basales_leyenda: { es: "Sensitivos: amplitud (µV) / latencia (ms). Motores: amplitud (mV) / umbral (mA o V).",
-                           en: "Sensory: amplitude (µV) / latency (ms). Motor: amplitude (mV) / threshold (mA or V)." },
+    registro_basales_leyenda: { es: "Sensitivos: amplitud (µV) / latencia (ms). Motores: amplitud (mV; onda D en µV) / umbral (mA o V).",
+                           en: "Sensory: amplitude (µV) / latency (ms). Motor: amplitude (mV; D-wave in µV) / threshold (mA or V)." },
     caso_basales_registro_ay: { es: "Es la misma tabla que la del Registro intraoperatorio: lo que escribas aquí sale allí y en la hoja impresa, y al revés. Las filas de c-SEP, c-MEP, GRID, corticobulbares, Onda D, PEATC y H-R aparecen según las técnicas marcadas.",
                               en: "It is the same table as in the Intraoperative record: whatever you write here appears there and on the printed sheet, and vice versa. The c-SEP, c-MEP, GRID, corticobulbar, D wave, BAEP and H-R rows appear depending on the techniques ticked." },
     caso_basales_grid_estimulo: { es: "GRID: electrodo de estímulo", en: "GRID: stimulating electrode" },
@@ -16395,7 +16395,23 @@
     m_: [{ id: "amp", u: "mV", l: "Amplitud", l_en: "Amplitude", c: "amp" }, { id: "umb", u: "mA/V", l: "Umbral", l_en: "Threshold", c: "umb" }]
   };
   // idFila lleva el prefijo de su tabla («s_sep_msd», «m_libre1»)
-  function regMedidasBasal(idFila) { return REG_BASALES_MEDIDAS[String(idFila).indexOf("m_") === 0 ? "m_" : "s_"]; }
+  // Filas con otra unidad que la de su tabla: la onda D va en µV aunque el
+  // resto de motores vaya en mV (30-09-2026, pedido del usuario: son ~20 µV).
+  // «uTabla» guarda la de la tabla para escribir la unidad en hoja e informe.
+  var REG_BASALES_UNIDAD_FILA = { m_onda_d: { amp: "µV" }, m_onda_d_dist: { amp: "µV" } };
+  function regMedidasBasal(idFila) {
+    var base = REG_BASALES_MEDIDAS[String(idFila).indexOf("m_") === 0 ? "m_" : "s_"];
+    var otra = REG_BASALES_UNIDAD_FILA[idFila];
+    if (!otra) return base;
+    return base.map(function (m) {
+      if (!otra[m.id]) return m;
+      var c = {};
+      for (var k in m) c[k] = m[k];
+      c.uTabla = m.u;
+      c.u = otra[m.id];
+      return c;
+    });
+  }
   function regBasalValor(v, idFila, colId, medId) {
     var k = "e_" + idFila + "_" + colId;
     if (v[k + "_" + medId]) return v[k + "_" + medId];
@@ -16418,7 +16434,11 @@
   }
   // «2,1 / 19,4» para la hoja impresa y el informe
   function regBasalTexto(v, idFila, colId) {
-    var vals = regMedidasBasal(idFila).map(function (m) { return regBasalValor(v, idFila, colId, m.id); });
+    // La unidad solo se escribe si no es la de la tabla (onda D en µV)
+    var vals = regMedidasBasal(idFila).map(function (m) {
+      var x = regBasalValor(v, idFila, colId, m.id);
+      return x && m.uTabla ? x + " " + m.u : x;
+    });
     return vals[0] || vals[1] ? vals.map(function (x) { return x || "–"; }).join(" / ") : "";
   }
   function regUnidadesBasal(idFila) {
@@ -16519,8 +16539,8 @@
       ] },
     { hoja: 1, id: "d", tipo: "campos", l: "D · Cronograma de hitos", l_en: "D · Milestone timeline", campos: REG_HITOS, compacto: true },
     { hoja: 1, id: "e", tipo: "basales", l: "E · Basales y comparativa", l_en: "E · Baselines and comparison",
-      ayuda: "Sensitivos: amplitud (µV) y latencia (ms). Motores: amplitud (mV) y umbral (mA o V); sin respuesta, amplitud 0.",
-      ayuda_en: "Sensory: amplitude (µV) and latency (ms). Motor: amplitude (mV) and threshold (mA or V); no response, amplitude 0." },
+      ayuda: "Sensitivos: amplitud (µV) y latencia (ms). Motores: amplitud (mV; onda D en µV) y umbral (mA o V); sin respuesta, amplitud 0.",
+      ayuda_en: "Sensory: amplitude (µV) and latency (ms). Motor: amplitude (mV; D-wave in µV) and threshold (mA or V); no response, amplitude 0." },
     { hoja: 1, id: "e2", tipo: "lista", lista: "mapeo", l: "E2 · Mapeo", l_en: "E2 · Mapping",
       ayuda: "Tipo: G grid/strip · C cortical · S subcortical (Raabe) · IV suelo IV v. · PC par craneal · R raíz",
       ayuda_en: "Type: G grid/strip · C cortical · S subcortical (Raabe) · IV 4th ventricle floor · PC cranial nerve · R root",
@@ -16850,7 +16870,7 @@
     var bloque = regNodo("div", "reg-bl");
     var cab = regNodo("div", "reg-bl-tit");
     cab.appendChild(regNodo("span", null, titulo));
-    cab.appendChild(regNodo("span", "reg-bl-unid", medidas.map(function (m) { return campo(m, "l").toLowerCase() + " (" + m.u + ")"; }).join(" · ")));
+    cab.appendChild(regNodo("span", "reg-bl-unid", medidas.map(function (m) { return campo(m, "l").toLowerCase() + " (" + m.u + (prefijo === "m_" && m.id === "amp" ? "; onda D en µV" : "") + ")"; }).join(" · ")));
     bloque.appendChild(cab);
     var defs = filas.map(function (r) { return { id: prefijo + r.id, sin: r.id, rot: regL(r) }; });
     // Filas libres: las que ya tienen algo y, detrás, una vacía para añadir
@@ -16913,6 +16933,7 @@
       return caja;
     }
     function editorBasal(fd, alCambiar) {
+      var medidas = regMedidasBasal(fd.id);   // la onda D, con su unidad
       var ed = regNodo("div", "reg-bl-ed");
       if (fd.libre) {
         var inpL = document.createElement("input");
@@ -19869,8 +19890,8 @@
         e_m_mep_msi_basal_amp: "0,48", e_m_mep_msi_basal_umb: "85", e_m_mep_msi_post_amp: "0,47", e_m_mep_msi_post_umb: "85", e_m_mep_msi_final_amp: "0,45", e_m_mep_msi_final_umb: "90",
         e_m_mep_mid_basal_amp: "0,21", e_m_mep_mid_basal_umb: "110", e_m_mep_mid_post_amp: "0,19", e_m_mep_mid_post_umb: "110", e_m_mep_mid_final_amp: "0,17", e_m_mep_mid_final_umb: "120",
         e_m_mep_mii_basal_amp: "0,18", e_m_mep_mii_basal_umb: "115", e_m_mep_mii_post_amp: "0,16", e_m_mep_mii_post_umb: "120", e_m_mep_mii_final_amp: "0,04", e_m_mep_mii_final_umb: "150",
-        e_m_onda_d_basal_amp: "0,022", e_m_onda_d_post_amp: "0,021", e_m_onda_d_final_amp: "0,02",
-        e_m_onda_d_dist_basal_amp: "0,014", e_m_onda_d_dist_post_amp: "0,014", e_m_onda_d_dist_final_amp: "0,0125",
+        e_m_onda_d_basal_amp: "22", e_m_onda_d_post_amp: "21", e_m_onda_d_final_amp: "20",
+        e_m_onda_d_dist_basal_amp: "14", e_m_onda_d_dist_post_amp: "14", e_m_onda_d_dist_final_amp: "12,5",
         cierre_resultado: "persistentes",
         cierre_modalidades: "MEP MII izq. (AH ausente, TA con umbral +40 mA). SEP de miembros inferiores (mielotomía).",
         cierre_com_cir: true, cierre_com_an: true, cierre_com_h: "14:15",
@@ -19888,7 +19909,7 @@
       ["F", "09:15", "Basal", "Tras la posición: sin cambios frente al supino"],
       ["F", "09:25", "Incisión"],
       ["F", "09:40", "Exposición", "Laminotomía D8-D9"],
-      ["E", "10:05", "Prox. D-Wave", "", { nota: "Electrodos epidurales proximal y distal colocados; Onda D basal 0,022 mV" }],
+      ["E", "10:05", "Prox. D-Wave", "", { nota: "Electrodos epidurales proximal y distal colocados; Onda D basal 22 µV" }],
       ["F", "10:20", "Apertura dural"],
       ["F", "10:45", "Resección", "Mielotomía media posterior"],
       ["E", "10:48", "t-SEP MID + t-SEP MII", "perdida", { ctx: "diseccion", nota: "Esperable por la mielotomía: se informa, sin alarma" }],
