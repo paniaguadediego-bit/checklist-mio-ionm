@@ -19654,6 +19654,68 @@
     var corticalSEP = { "1": "cz_prima", "2": "c3_prima", "3": "c4_prima", "4": "fz", "5": "cv2", "gnd": "tierra" };
     var mmii = { "9": "l_q", "10": "r_q", "11": "l_ta", "12": "r_ta", "13": "l_ah", "14": "r_ah", "15": "l_g", "16": "r_g", "gnd": "tierra" };
 
+    // Registro de un caso de ejemplo (30-09-2026, pedido del usuario: que los
+    // casos de la demo parezcan reales, con fases, eventos, anestesia, TOF,
+    // factores técnicos y alarmas). Cada línea, como se apuntaría en el panel:
+    //   ["F", hora, fase, detalle]           fase (la heredan los siguientes)
+    //   ["E", hora, técnica, cambio, extra]  evento (cambio = id de REG_CAMBIOS_RAPIDOS)
+    //   ["T", hora, qué, extra]              factor técnico
+    //   ["An", hora, fármaco, acción, extra] anestesia (ids de REG_FARMACOS y an_*)
+    //   ["TOF", hora, "4/4"]
+    //   ["A", hora, técnica, criterio, extra] alarma, con causa, medidas y recuperación
+    // extra: { ctx, mag, tof, nota, causa, medidas, recup, h_recup }.
+    function registroDemo(v, lineas) {
+      var d = { v: v || {}, eventos: [], alarmas: [], mapeo: [], modular: [], imagenes: [] };
+      var fase = "";
+      var rotulo = function (id) {
+        var c = REG_CAMBIOS_RAPIDOS.filter(function (x) { return x.id === id; })[0];
+        return c ? campo(c, "l") : (id || "");
+      };
+      lineas.forEach(function (l) {
+        var tipo = l[0], hora = l[1];
+        if (tipo === "F") {
+          fase = l[2];
+          var evF = { id: uuid(), hora: hora, cod: "F", fase: fase };
+          if (l[3]) evF.accion = l[3];
+          d.eventos.push(evF);
+          return;
+        }
+        var ev = { id: uuid(), hora: hora, fase: fase }, x = {};
+        if (tipo === "TOF") {
+          ev.cod = "An"; ev.modalidad = "TOF"; ev.cambio = "TOF " + l[2]; ev.tof = l[2];
+          d.eventos.push(ev);
+          return;
+        }
+        if (tipo === "T") {
+          x = l[3] || {};
+          ev.cod = "T"; ev.modalidad = l[2]; ev.cambio = ""; ev.accion = x.nota || "";
+        } else if (tipo === "An") {
+          x = l[4] || {};
+          var f = REG_FARMACOS.filter(function (y) { return y.v === l[2]; })[0];
+          ev.cod = "An"; ev.farmaco = l[2]; ev.modalidad = campo(f, "l");
+          ev.cambio = campo(f, "l") + " · " + rotulo(l[3]); ev.accion = x.nota || "";
+        } else {
+          x = l[4] || {};
+          ev.cod = tipo === "A" ? "A" : "E"; ev.modalidad = l[2]; ev.cambio = l[3] ? rotulo(l[3]) : ""; ev.accion = x.nota || "";
+        }
+        if (x.ctx) ev.contexto = x.ctx;
+        if (x.tof) ev.tof = x.tof;
+        if (x.mag) ev.magnitud = String(x.mag);
+        if (tipo === "A") {
+          var al = { id: uuid(), hora: hora, modalidad: l[2], criterio: l[3], fase: fase,
+                     causa: x.causa || "", medidas_l: x.medidas || [], medidas: x.nota || "" };
+          if (x.mag) al.magnitud = String(x.mag);
+          if (x.tof) al.tof = x.tof;
+          if (x.recup) { al.recup = x.recup; if (x.h_recup) al.h_recup = x.h_recup; }
+          d.alarmas.push(al);
+          ev.alarma_id = al.id;
+          ev.accion = "A" + d.alarmas.length;
+        }
+        d.eventos.push(ev);
+      });
+      return d;
+    }
+
     var mLumbar = montajeDemo("Demo · Inomed · Columna lumbar (SEP + MEP + EMG)",
       ["t_pess", "t_pem", "emg", "mapeo_raices_tornillos"],
       {
@@ -19700,7 +19762,7 @@
       }, [],
       "Hemisferio izquierdo en el ejemplo: registro motor en el lado derecho.");
 
-    casoDemo(-38, {
+    var cLumbar = casoDemo(-38, {
       nombre_caso: "Demo · Inomed · Artrodesis lumbar L4-S1", estado: "cerrado",
       hora_inicio: "08:30", hora_fin: "12:40",
       edad: "64", sexo: "hombre", servicio_id: "cot",
@@ -19708,7 +19770,8 @@
       diagnostico: "ecl", anatomia_patologica: "Espondilolistesis degenerativa L5-S1",
       intervencion: "Artrodesis instrumentada L4-S1", posicion: "prono", navegacion: "no",
       tipo_anestesia: "tiva", tof_monitorizado: "si",
-      resumen_monitorizacion: "Basales reproducibles en SEP de tibiales y medianos y en MEP de los cuatro miembros. Sin cambios significativos durante la instrumentación ni tras la reducción. Free-EMG sin descargas mantenidas.",
+      resumen_monitorizacion: "Basales reproducibles en SEP de tibiales y medianos y en MEP de los cuatro miembros, sin cambios tras el volteo. Salvas breves en L5 izquierda al retraer la raíz, que ceden al soltar el separador. Tornillos L4-S1 con umbrales > 18 mA. Durante la reducción L5-S1, caída del 25 % del MEP de ambos miembros inferiores, por debajo del criterio de alarma, que se recupera al terminar. Cierre similar a la basal.",
+      tecnicas_alteradas: ["emg", "t_pem"],
       umbral_raices_niveles: { niveles: ["L4", "L5", "S1"], valores: {
         L4: { izq: "24", der: "22" }, L5: { izq: "19", der: "26" }, S1: { izq: "28", der: "25" } } },
       recuperacion_senal: "sin_cambios", evolucion_postop: "sin_deficit",
@@ -19716,6 +19779,35 @@
       rol: "residente", dificultad_1a5: "2",
       aprendizaje_clave: "Estimular cada tornillo tras colocarlo, antes de pasar al siguiente nivel."
     }, mLumbar);
+    cLumbar.registro_intraop = registroDemo({
+      quirofano: "Quirófano 1",
+      e_s_sep_msd_basal_amp: "2,4", e_s_sep_msd_basal_lat: "19,1", e_s_sep_msd_post_amp: "2,3", e_s_sep_msd_post_lat: "19,2", e_s_sep_msd_final_amp: "2,2", e_s_sep_msd_final_lat: "19,3",
+      e_s_sep_msi_basal_amp: "2,2", e_s_sep_msi_basal_lat: "19,3", e_s_sep_msi_post_amp: "2,2", e_s_sep_msi_post_lat: "19,3", e_s_sep_msi_final_amp: "2,1", e_s_sep_msi_final_lat: "19,4",
+      e_s_sep_mid_basal_amp: "1,1", e_s_sep_mid_basal_lat: "39,8", e_s_sep_mid_post_amp: "1,0", e_s_sep_mid_post_lat: "40,0", e_s_sep_mid_final_amp: "0,9", e_s_sep_mid_final_lat: "40,4",
+      e_s_sep_mii_basal_amp: "1,0", e_s_sep_mii_basal_lat: "40,1", e_s_sep_mii_post_amp: "1,0", e_s_sep_mii_post_lat: "40,2", e_s_sep_mii_final_amp: "0,9", e_s_sep_mii_final_lat: "40,5",
+      e_m_mep_msd_basal_amp: "610", e_m_mep_msd_basal_umb: "70", e_m_mep_msd_post_amp: "600", e_m_mep_msd_post_umb: "70", e_m_mep_msd_final_amp: "590", e_m_mep_msd_final_umb: "75",
+      e_m_mep_msi_basal_amp: "580", e_m_mep_msi_basal_umb: "75", e_m_mep_msi_post_amp: "570", e_m_mep_msi_post_umb: "75", e_m_mep_msi_final_amp: "560", e_m_mep_msi_final_umb: "75",
+      e_m_mep_mid_basal_amp: "260", e_m_mep_mid_basal_umb: "95", e_m_mep_mid_post_amp: "240", e_m_mep_mid_post_umb: "95", e_m_mep_mid_final_amp: "230", e_m_mep_mid_final_umb: "100",
+      e_m_mep_mii_basal_amp: "240", e_m_mep_mii_basal_umb: "100", e_m_mep_mii_post_amp: "230", e_m_mep_mii_post_umb: "100", e_m_mep_mii_final_amp: "210", e_m_mep_mii_final_umb: "105"
+    }, [
+      ["F", "08:40", "Basal", "En supino, antes del volteo"],
+      ["TOF", "08:45", "4/4"],
+      ["F", "08:55", "Posición", "Prono sobre marco de Wilson"],
+      ["F", "09:05", "Basal", "Tras el volteo: sin cambios frente al supino"],
+      ["F", "09:15", "Incisión"],
+      ["F", "09:25", "Exposición", "Musculatura paravertebral L4-S1"],
+      ["E", "09:48", "EMG libre", "hfd", { ctx: "retraccion", nota: "Salvas breves en L5 izquierda; ceden al soltar el separador" }],
+      ["F", "10:05", "Instrumentación", "Tornillos L4, L5 y S1"],
+      ["E", "10:25", "Tornillos", "", { ctx: "implante", nota: "Estimulación de los seis tornillos: todos por encima de 18 mA" }],
+      ["T", "10:30", "Aguja de TA izquierdo desconectada", { nota: "Recolocada; vuelve la señal" }],
+      ["An", "10:50", "remifentanilo", "an_sube", { nota: "Respuesta hemodinámica a la instrumentación" }],
+      ["F", "11:15", "Descompresión", "Reducción de la listesis L5-S1"],
+      ["E", "11:25", "t-MEP MID + t-MEP MII", "baja", { ctx: "implante", mag: 25, nota: "Por debajo del criterio de alarma; se avisa y se vigila" }],
+      ["E", "11:40", "t-MEP MID + t-MEP MII", "", { nota: "De vuelta a la basal al terminar la reducción" }],
+      ["F", "12:05", "Hemostasia"],
+      ["F", "12:20", "Cierre", "Basales de cierre similares a las de apertura"]
+    ]);
+    guardarCaso(cLumbar, true);
 
     // Caso estrella de la demo (demo-congreso B2.F3): el del recorrido
     // guiado, con todos los apartados de la ficha, la checklist y la hoja de
@@ -19737,7 +19829,7 @@
       incidencias_anestesicas: "Hipotensión (TAM 72 mmHg) durante la resección del polo inferior; corregida con vasopresor hasta TAM > 90 mmHg.",
       resumen_monitorizacion: "Basales reproducibles tras la posición, sin cambios respecto al supino.\nTras la mielotomía media posterior se pierden los SEP de tibiales de forma bilateral: esperable por la mielotomía, se informa y no se toma como criterio de alarma.\nDurante la resección del polo inferior, pérdida del MEP muscular en tibial anterior y abductor del hallux izquierdos con Onda D estable (caída < 20 %). Alarma A1: pausa, irrigación con suero templado y TAM > 90 mmHg. El tibial anterior reaparece a los 18 min con umbral 40 mA mayor; el abductor del hallux no se recupera al cierre.\nOnda D sin cambios hasta el final. Free-EMG sin trenes mantenidos.",
       hubo_cambios_plan: false,
-      alerta: true, tecnicas_alteradas: ["t_pem"],
+      alerta: true, tecnicas_alteradas: ["t_pem", "t_pess"],
       recuperacion_senal: "persistentes", evolucion_postop: "deficit_transitorio",
       resultado_esperable: "empeoramiento",
       incidencias_tecnicas: "Ninguna. Impedancias correctas durante toda la cirugía.",
@@ -19785,26 +19877,32 @@
         cierre_perla: "Onda D conservada + pérdida del MEP muscular: déficit habitualmente transitorio.",
         cierre_firma: "Usuario demo"
       },
-      eventos: [
-        { id: uuid(), hora: "09:15", cod: "F", fase: "Basal tras la posición en prono", modalidad: "Todas", cambio: "Sin cambios frente al supino", accion: "Basal definitiva" },
-        { id: uuid(), hora: "10:20", cod: "F", fase: "Apertura dural", modalidad: "Todas", cambio: "Sin cambios", accion: "" },
-        { id: uuid(), hora: "10:45", cod: "E", fase: "Mielotomía media posterior", modalidad: "SEP tibiales bilat.", cambio: "Pérdida", av_cir: true, accion: "Esperable por la mielotomía; se informa, sin alarma" },
-        { id: uuid(), hora: "11:40", cod: "A", fase: "Resección del polo inferior", modalidad: "MEP MII izq.", cambio: "Pérdida de TA y AH; Onda D estable", av_cir: true, av_an: true, accion: "Alarma A1" },
-        { id: uuid(), hora: "11:42", cod: "An", fase: "Pausa de la resección", modalidad: "", cambio: "TAM 72 → 92 mmHg", av_an: true, accion: "Vasopresor" },
-        { id: uuid(), hora: "11:58", cod: "E", fase: "Reanuda la resección", modalidad: "MEP MII izq.", cambio: "TA reaparece (+40 mA)", av_cir: true, accion: "Se continúa con cautela" },
-        { id: uuid(), hora: "13:30", cod: "F", fase: "Cierre dural", modalidad: "Todas", cambio: "Basales de cierre", accion: "Onda D sin cambios" }
-      ],
-      mapeo: [],
-      alarmas: [
-        { id: uuid(), hora: "11:40", modalidad: "t-MEP MII", criterio: "perdida", fase: "Resección",
-          causa: "quirurgica", nrf: true, an: true, cir: true, medidas_l: ["pausa", "suero", "tam"],
-          medidas: "TA vuelve con umbral +40 mA; AH no", recup: "P", h_recup: "11:58" }
-      ],
-      modular: [], imagenes: []
+      mapeo: [], modular: [], imagenes: []
     };
+    cEpend.registro_intraop = registroDemo(cEpend.registro_intraop.v, [
+      ["F", "08:55", "Basal", "En supino, antes del volteo"],
+      ["TOF", "09:05", "4/4"],
+      ["F", "09:10", "Posición", "Prono sobre almohadillas; bloques de mordida"],
+      ["F", "09:15", "Basal", "Tras la posición: sin cambios frente al supino"],
+      ["F", "09:25", "Incisión"],
+      ["F", "09:40", "Exposición", "Laminotomía D8-D9"],
+      ["E", "10:05", "Prox. D-Wave", "", { nota: "Electrodos epidurales proximal y distal colocados; Onda D basal 22 µV" }],
+      ["F", "10:20", "Apertura dural"],
+      ["F", "10:45", "Resección", "Mielotomía media posterior"],
+      ["E", "10:48", "t-SEP MID + t-SEP MII", "perdida", { ctx: "diseccion", nota: "Esperable por la mielotomía: se informa, sin alarma" }],
+      ["T", "11:10", "Ruido de 50 Hz en el registro cortical", { nota: "Se aleja el cable de la manta térmica" }],
+      ["A", "11:40", "t-MEP MII", "perdida", { ctx: "reseccion", causa: "quirurgica", medidas: ["aviso_cir", "aviso_an", "pausa", "suero", "tam"], recup: "P", h_recup: "11:58", nota: "TA vuelve con umbral +40 mA; AH no" }],
+      ["E", "11:41", "Prox. D-Wave", "baja", { ctx: "reseccion", mag: 15, nota: "Estable: caída < 20 %" }],
+      ["An", "11:42", "noradrenalina", "an_inicio", { nota: "TAM 72 → 92 mmHg" }],
+      ["E", "11:58", "t-MEP MII", "umbral", { ctx: "reseccion", mag: 35, nota: "Reaparece el TA con 40 mA más; el AH sigue ausente" }],
+      ["TOF", "12:30", "4/4"],
+      ["F", "13:10", "Hemostasia"],
+      ["F", "13:30", "Cierre", "Cierre dural; Onda D sin cambios"]
+    ]);
+    cEpend.correlato_alarmas = { "t-mep mii|perdida": { evol: "recupera", momento: "1m" } };
     guardarCaso(cEpend, true);
 
-    casoDemo(-9, {
+    var cNeur = casoDemo(-9, {
       nombre_caso: "Demo · Inomed · Neurinoma del acústico derecho", estado: "cerrado",
       hora_inicio: "08:00", hora_fin: "15:10",
       edad: "52", sexo: "mujer", servicio_id: "neurocirugia",
@@ -19812,12 +19910,49 @@
       diagnostico: "loe_it", anatomia_patologica: "Schwannoma vestibular derecho",
       intervencion: "Craneotomía retrosigmoidea derecha", posicion: "park_bench", navegacion: "si",
       tipo_anestesia: "tiva", tof_monitorizado: "si",
-      resumen_monitorizacion: "MEP corticobulbar del orbicular de los labios estable. Descargas neurotónicas breves en el EMG facial durante la disección, sin trenes mantenidos. PEATC con pérdida de la onda V al final de la resección.",
+      resumen_monitorizacion: "Basales reproducibles tras la posición en park bench. Descargas neurotónicas breves en el EMG facial durante la disección, sin trenes mantenidos. Pérdida de la onda V del PEATC derecho durante la resección del polo intracanalicular, sin recuperación. Caída del 60 % del CoMEP del orbicular de los labios al disecar el nervio del polo anterior: pausa, suero templado y papaverina; se recupera en parte (55 % de la basal al cierre).",
+      alerta: true, tecnicas_alteradas: ["peatc", "pem_corticobulbares", "emg"],
       recuperacion_senal: "persistentes", evolucion_postop: "deficit_pendiente",
       deficit_postoperatorio: "Paresia facial leve (House-Brackmann II). Cofosis derecha.", concordancia: "VP",
       rol: "residente", dificultad_1a5: "5", hacer_seguimiento: true,
       aprendizaje_clave: "La relación final/basal del MEP corticobulbar orienta el pronóstico facial."
     }, mAPC);
+    cNeur.registro_intraop = registroDemo({
+      quirofano: "Quirófano 3",
+      e_s_sep_msd_basal_amp: "2,0", e_s_sep_msd_basal_lat: "19,6", e_s_sep_msd_post_amp: "1,9", e_s_sep_msd_post_lat: "19,7", e_s_sep_msd_final_amp: "1,9", e_s_sep_msd_final_lat: "19,8",
+      e_s_sep_msi_basal_amp: "2,1", e_s_sep_msi_basal_lat: "19,4", e_s_sep_msi_post_amp: "2,0", e_s_sep_msi_post_lat: "19,5", e_s_sep_msi_final_amp: "2,0", e_s_sep_msi_final_lat: "19,5",
+      e_s_peat_d_basal_amp: "0,45", e_s_peat_d_basal_lat: "5,9", e_s_peat_d_post_amp: "0,44", e_s_peat_d_post_lat: "5,9", e_s_peat_d_final_amp: "0",
+      e_s_peat_i_basal_amp: "0,50", e_s_peat_i_basal_lat: "5,7", e_s_peat_i_post_amp: "0,50", e_s_peat_i_post_lat: "5,7", e_s_peat_i_final_amp: "0,48", e_s_peat_i_final_lat: "5,8",
+      e_m_mep_msd_basal_amp: "450", e_m_mep_msd_basal_umb: "75", e_m_mep_msd_final_amp: "430", e_m_mep_msd_final_umb: "80",
+      e_m_mep_msi_basal_amp: "470", e_m_mep_msi_basal_umb: "75", e_m_mep_msi_final_amp: "460", e_m_mep_msi_final_umb: "75",
+      e_m_cobu_vii_d_basal_amp: "350", e_m_cobu_vii_d_basal_umb: "60", e_m_cobu_vii_d_post_amp: "340", e_m_cobu_vii_d_post_umb: "60", e_m_cobu_vii_d_final_amp: "190", e_m_cobu_vii_d_final_umb: "75",
+      e_m_cobu_vii_i_basal_amp: "330", e_m_cobu_vii_i_basal_umb: "60", e_m_cobu_vii_i_final_amp: "320", e_m_cobu_vii_i_final_umb: "60",
+      e_m_cobu_ixx_d_basal_amp: "150", e_m_cobu_ixx_d_basal_umb: "65", e_m_cobu_ixx_d_final_amp: "130", e_m_cobu_ixx_d_final_umb: "70",
+      e_m_cobu_xii_d_basal_amp: "210", e_m_cobu_xii_d_basal_umb: "60", e_m_cobu_xii_d_final_amp: "190", e_m_cobu_xii_d_final_umb: "65"
+    }, [
+      ["F", "08:35", "Basal", "En supino"],
+      ["TOF", "08:40", "4/4"],
+      ["F", "08:50", "Posición", "Park bench izquierdo, cabeza fijada con Mayfield"],
+      ["F", "09:00", "Basal", "Tras la posición: sin cambios"],
+      ["F", "09:10", "Incisión"],
+      ["F", "09:30", "Exposición", "Craneotomía retrosigmoidea derecha"],
+      ["F", "09:55", "Apertura dural"],
+      ["T", "10:10", "Artefacto del aspirador en el PEATC", { nota: "Se promedia con más barridos" }],
+      ["F", "10:20", "Resección", "Vaciamiento intratumoral"],
+      ["E", "10:45", "EMG libre", "emg_neurotonicos", { ctx: "diseccion", nota: "Breves en el orbicular de los labios; ceden solas" }],
+      ["An", "11:05", "propofol", "an_baja", { nota: "Profundidad adecuada; se ajusta" }],
+      ["E", "11:30", "CoMEP VII D", "baja", { ctx: "diseccion", mag: 30, nota: "Se avisa; se sigue con cautela" }],
+      ["A", "12:10", "PEATC D", "peat_onda_v", { ctx: "reseccion", causa: "quirurgica", medidas: ["aviso_cir", "pausa", "suero"], recup: "N", nota: "Resección del polo intracanalicular" }],
+      ["A", "12:40", "CoMEP VII D", "baja", { ctx: "diseccion", mag: 60, causa: "quirurgica", medidas: ["aviso_cir", "pausa", "suero", "papaverina"], recup: "P", h_recup: "13:05" }],
+      ["TOF", "13:20", "4/4"],
+      ["F", "13:50", "Hemostasia"],
+      ["F", "14:30", "Cierre", "CoMEP VII D al 55 % de la basal; onda V derecha ausente"]
+    ]);
+    cNeur.correlato_alarmas = {
+      "peatc d|peat_onda_v": { evol: "estable", momento: "72h" },
+      "comep vii d|baja": { evol: "pendiente", momento: "72h" }
+    };
+    guardarCaso(cNeur, true);
 
     casoDemo(-6, {
       nombre_caso: "Demo · Inomed · Escoliosis idiopática", estado: "cancelado",
@@ -19887,28 +20022,33 @@
       rol: "residente", dificultad_1a5: "3", caso_destacado: true,
       aprendizaje_clave: "La desaparición de la LSR al descomprimir confirma que el vaso liberado era el responsable."
     }, mJannetta);
-    var alJ = uuid();
-    cJannetta.registro_intraop = {
-      v: { quirofano: "Quirófano 2", m_tof: true },
-      eventos: [
-        { id: uuid(), hora: "09:05", cod: "F", fase: "Basal tras la posición", modalidad: "Todas", cambio: "LSR presente; PEATC normales", accion: "Basal definitiva" },
-        { id: uuid(), hora: "09:40", cod: "T", fase: "Apertura dural", modalidad: "PEATC", cambio: "Artefacto del motor del craneotomo", accion: "Se promedia de nuevo" },
-        { id: uuid(), hora: "10:05", cod: "A", fase: "Retracción del cerebelo", modalidad: "PEATC D", cambio: "↑ latencia", alarma_id: alJ, av_cir: true },
-        { id: uuid(), hora: "10:12", cod: "E", fase: "Retracción del cerebelo", modalidad: "PEATC D", cambio: "Onda V recuperada", recupera_de: { id: alJ, recup: "", h_recup: "" } },
-        { id: uuid(), hora: "10:30", cod: "E", fase: "Descompresión de la AICA", modalidad: "LSR", cambio: "Desaparece la LSR", av_cir: true },
-        { id: uuid(), hora: "10:45", cod: "An", fase: "", modalidad: "", cambio: "TOF 4/4", tof: "4/4" },
-        { id: uuid(), hora: "11:40", cod: "F", fase: "Cierre dural", modalidad: "Todas", cambio: "LSR ausente; PEATC como la basal", accion: "" }
-      ],
-      mapeo: [],
-      alarmas: [
-        { id: alJ, hora: "10:05", modalidad: "PEATC D", criterio: "latencia", fase: "Retracción del cerebelo",
-          causa: "quirurgica", cir: true, medidas_l: ["aviso_cir", "retraccion"], recup: "S", h_recup: "10:12" }
-      ],
-      modular: [], imagenes: []
-    };
+    cJannetta.registro_intraop = registroDemo({
+      quirofano: "Quirófano 2", m_tof: true,
+      e_s_peat_d_basal_amp: "0,52", e_s_peat_d_basal_lat: "5,8", e_s_peat_d_post_amp: "0,50", e_s_peat_d_post_lat: "5,9", e_s_peat_d_final_amp: "0,50", e_s_peat_d_final_lat: "5,9",
+      e_s_peat_i_basal_amp: "0,55", e_s_peat_i_basal_lat: "5,7", e_s_peat_i_final_amp: "0,55", e_s_peat_i_final_lat: "5,7",
+      // Filas libres: la LSR y el blink reflex, que no tienen fila propia
+      e_s_libre1_l: "LSR cig. → ment.", e_s_libre1_basal_amp: "150", e_s_libre1_basal_lat: "10,4", e_s_libre1_post_amp: "140", e_s_libre1_post_lat: "10,5", e_s_libre1_final_amp: "0",
+      e_s_libre2_l: "Blink R1 der.", e_s_libre2_basal_amp: "180", e_s_libre2_basal_lat: "11,2", e_s_libre2_final_amp: "170", e_s_libre2_final_lat: "11,3"
+    }, [
+      ["F", "08:40", "Basal", "Supino: LSR presente, PEATC normales"],
+      ["TOF", "08:45", "4/4"],
+      ["F", "08:50", "Posición", "Park bench izquierdo"],
+      ["F", "09:05", "Basal", "Tras la posición: LSR presente"],
+      ["F", "09:15", "Incisión"],
+      ["F", "09:30", "Exposición", "Craneotomía retrosigmoidea derecha"],
+      ["F", "09:40", "Apertura dural"],
+      ["T", "09:45", "Artefacto del craneotomo en el PEATC", { nota: "Se promedia de nuevo" }],
+      ["A", "10:05", "PEATC D", "latencia", { ctx: "retraccion", mag: 17, causa: "quirurgica", medidas: ["aviso_cir", "retraccion"], recup: "S", h_recup: "10:12" }],
+      ["F", "10:25", "Descompresión", "Separación de la AICA del VII par"],
+      ["E", "10:30", "LSR", "perdida", { ctx: "traccion", nota: "Desaparece al separar la AICA: vaso responsable" }],
+      ["An", "11:20", "remifentanilo", "an_baja"],
+      ["F", "11:30", "Hemostasia"],
+      ["F", "11:40", "Cierre", "LSR ausente; PEATC como la basal"]
+    ]);
+    cJannetta.correlato_alarmas = { "peatc d|latencia": { evol: "sin_deficit", momento: "72h" } };
     guardarCaso(cJannetta, true);
 
-    casoDemo(-3, {
+    var cTir = casoDemo(-3, {
       nombre_caso: "Demo · Cadwell · Tiroidectomía total", estado: "cerrado",
       hora_inicio: "09:00", hora_fin: "11:20",
       edad: "44", sexo: "mujer", servicio_id: "endocrino",
@@ -19921,6 +20061,25 @@
       rol: "residente", dificultad_1a5: "2",
       aprendizaje_clave: "Confirmar la posición del tubo con el EMG de cuerdas antes de la incisión ahorra falsas alarmas."
     }, mTiroides);
+    cTir.registro_intraop = registroDemo({
+      quirofano: "Quirófano 5",
+      e_m_libre1_l: "Vago izq. (V1 → V2)", e_m_libre1_basal_amp: "820", e_m_libre1_basal_umb: "1", e_m_libre1_final_amp: "780", e_m_libre1_final_umb: "1"
+    }, [
+      ["F", "09:05", "Basal", "EMG de cuerdas: tubo bien colocado"],
+      ["TOF", "09:10", "4/4"],
+      ["F", "09:15", "Incisión"],
+      ["F", "09:30", "Exposición"],
+      ["E", "09:45", "Vago izq. (V1)", "", { nota: "820 µV a 1 mA" }],
+      ["E", "10:05", "Recurrente izq. (R1)", "", { nota: "650 µV" }],
+      ["F", "10:20", "Resección", "Lóbulo izquierdo"],
+      ["E", "10:35", "Recurrente izq. (R2)", "baja", { ctx: "traccion", mag: 20, nota: "Tracción del lóbulo: se afloja y se recupera" }],
+      ["E", "10:40", "Vago izq. (V2)", "", { nota: "780 µV: −5 % respecto a V1" }],
+      ["F", "10:50", "Resección", "Lóbulo derecho"],
+      ["E", "11:05", "Vago der. (V2)", "", { nota: "Sin cambios respecto a V1" }],
+      ["F", "11:10", "Hemostasia"],
+      ["F", "11:15", "Cierre"]
+    ]);
+    guardarCaso(cTir, true);
 
     casoDemo(3, {
       nombre_caso: "Demo · Cadwell · Médula anclada", estado: "preparado",

@@ -48,7 +48,9 @@ propia en *Después / consulta*).
   cerrar el caso; diagnósticos nuevos (tiroides, médula anclada, nervio
   periférico, otro) y medidas de columna.
 - **Demo**: las plantillas Inomed usan el **conmutador** (columna anodal) para la
-  estimulación transcraneal.
+  estimulación transcraneal. Los casos ya operados tienen un cronograma completo
+  (fases de basal a cierre, anestesia, TOF, factores técnicos, cambios, alarmas
+  con su recuperación) y basales rellenas, como si fueran reales.
 - **Organizador**: con tres cajas en fila, los nombres largos («Referencia de
   sonda», «S. monopolar recta») pasan a dos líneas sin sacar la ✕ del chip.
 

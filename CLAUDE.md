@@ -551,7 +551,13 @@ distinta a la anterior, no importa el formato exacto.
 >   Cadwell: espasmo hemifacial con LSR/BR/PEATC, tiroidectomía con NLR, médula
 >   anclada con RBC y H-reflex). Plantillas Inomed con el **conmutador** en la
 >   columna anodal (los sacacorchos de estimulación van siempre por él; en la
->   catodal, solo referencias). Etiqueta **«Ficticio»** junto a cada caso y
+>   catodal, solo referencias). Los cinco casos ya operados (artrodesis,
+>   ependimoma, neurinoma, espasmo hemifacial, tiroidectomía) llevan un
+>   **registro completo como si fueran reales**: fases, eventos, anestesia, TOF,
+>   factores técnicos, cambios sin alarma, alarmas con causa, medidas,
+>   recuperación y magnitud, basales en lista y correlación de cada alarma;
+>   se siembran con `registroDemo(v, lineas)` dentro de `sembrarDemo()`
+>   (una línea por apunte, como en el panel). Etiqueta **«Ficticio»** junto a cada caso y
 >   plantilla y aviso en la ficha: no son montajes de referencia. Sin el aviso de
 >   texto en la cabecera. `localStorage` a secas, nunca `window.localStorage`.
 > - **Dónde vive cada dato:** localStorage (texto) · IndexedDB (fotos) · repo
