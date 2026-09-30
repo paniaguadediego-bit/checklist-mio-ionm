@@ -478,8 +478,8 @@
 
     /* --- Casos --- */
     casos_nuevo_cero:    { es: "Crear caso", en: "Create case" },
-    casos_nuevo_cero_ay: { es: "Te lleva al Organizador de Montajes para construir el montaje de este caso -a mano, o a partir de una plantilla-. Rellenas el resto de la ficha cuando quieras.",
-                           en: "Takes you to the Montage Organizer to build this case's montage -from scratch, or from a template-. Fill in the rest of the form whenever you like." },
+    casos_nuevo_cero_ay: { es: "Eliges el equipo y se abre la ficha del caso nuevo. El montaje, en Montaje / Material → Editar montaje (a mano o cargando una plantilla); el resto, cuando quieras.",
+                           en: "Pick the equipment and the new case form opens. The montage goes in Montage / Material → Edit montage (by hand or loading a template); the rest, whenever you like." },
     casos_filtro_estado: { es: "Estado", en: "Status" },
     casos_filtro_servicio: { es: "Especialidad", en: "Specialty" },
     casos_filtros_btn:   { es: "Filtros", en: "Filters" },
@@ -648,6 +648,10 @@
     opc_diagnostico_fractvert: { es: "FractVert — fractura vertebral", en: "FractVert — vertebral fracture" },
     opc_diagnostico_loe_vert: { es: "LOE Vert — LOE vertebral (columna, cualquier nivel)",
                            en: "SOL — vertebral (spine, any level)" },
+    opc_diagnostico_tiroides: { es: "Tiroides / paratiroides", en: "Thyroid / parathyroid" },
+    opc_diagnostico_disrafismo: { es: "Médula anclada / disrafismo espinal", en: "Tethered cord / spinal dysraphism" },
+    opc_diagnostico_nervio_periferico: { es: "Nervio periférico / plexo", en: "Peripheral nerve / plexus" },
+    opc_diagnostico_otro: { es: "Otro (detalle en Intervención)", en: "Other (details in Procedure)" },
     caso_posicion:       { es: "Posición", en: "Position" },
     caso_posicion_detalle: { es: "Detalle de la posición", en: "Position detail" },
     caso_posicion_detalle_ay: { es: "Lo que no cabe en el desplegable: colocación de los brazos, cabezal, almohadillados, lado del lateral/park bench, o en qué momento se volteó.",
@@ -1228,8 +1232,8 @@
     checklist_guardar:   { es: "Guardar", en: "Save" },
     checklist_guardado:  { es: "Checklist guardada.", en: "Checklist saved." },
     tile_registro:       { es: "Registro intraoperatorio", en: "Intraoperative record" },
-    registro_intro:      { es: "Hoja de registro intraoperatorio, pensada para imprimirla y tenerla en quirófano: sale prerrellenada con los datos del caso (técnicas, anestesia, montaje, dónde está el Raabe…) y con filas en blanco para basales, mapeo y eventos/alarmas. Elige un caso, rellena lo que quieras aquí y pulsa Imprimir hoja. No se guarda ninguna etiqueta ni nº de historia del paciente.",
-                           en: "Intraoperative record sheet, meant to be printed and kept in the OR: it comes pre-filled with the case data (techniques, anaesthesia, setup, where the Raabe is…) and with blank rows for baselines, mapping and events/alarms. Pick a case, fill in whatever you like here and press Print sheet. No patient label or record number is stored." },
+    registro_intro:      { es: "Lo que pasa en quirófano, con su hora. Elige el caso: lo que apuntes aquí sale en su ficha, y en papel con Imprimir hoja. Ningún dato del paciente.",
+                           en: "What happens in the OR, with its time. Pick the case: what you log here shows in its form, and on paper with Print sheet. No patient data." },
     registro_ahora:      { es: "Ahora", en: "Now" },
     registro_ahora_tit:  { es: "Poner la hora actual", en: "Set the current time" },
     registro_montaje:    { es: "Montaje", en: "Setup" },
@@ -1277,8 +1281,8 @@
     registro_fila_quitar_conf: { es: "¿Quitar esta fila? Tiene datos escritos.", en: "Remove this row? It has data." },
     registro_guardar:    { es: "Guardar", en: "Save" },
     registro_guardado:   { es: "Registro guardado.", en: "Record saved." },
-    rr_intro:            { es: "Marca la fase una vez y lo que apuntes después la hereda. Un cambio de señal es técnica + hallazgo + Apuntar. La hora de cada línea se corrige tocándola; debajo de cada alarma, las medidas adoptadas y la recuperación.",
-                           en: "Mark the phase once and whatever you log afterwards inherits it. A signal change is what + what happens + Log. Tap a line's time to correct it; under each alarm, the measures taken and the recovery." },
+    rr_intro:            { es: "Marca la fase una vez y lo que apuntes después la hereda. Un cambio de señal es técnica + hallazgo + Apuntar. Puedes marcar varias técnicas a la vez (bilateral, hemicorporal, cruzado…): van juntas en una sola alarma. Debajo de cada alarma, la causa, las medidas y la recuperación.",
+                           en: "Mark the phase once and whatever you log afterwards inherits it. A signal change is technique + finding + Log. You can pick several techniques at once (bilateral, hemibody, crossed…): they go together as one alarm. Under each alarm, the cause, the measures and the recovery." },
     rr_fase:             { es: "Fase", en: "Phase" },
     rr_evento_alarma:    { es: "Evento o alarma", en: "Event or alarm" },
     rr_hora_editar:      { es: "Cambiar la hora", en: "Change the time" },
@@ -1309,6 +1313,11 @@
     rr_que_anestesia:    { es: "Anestesia", en: "Anaesthesia" },
     rr_que_tecnico:      { es: "Técnico", en: "Technical" },
     rr_nota:             { es: "Otro o nota (opcional)", en: "Other or note (optional)" },
+    rr_magnitud:         { es: "Cuánto respecto a la basal", en: "How much vs baseline" },
+    rr_ir_crono:         { es: "Ir al cronograma", en: "Go to the timeline" },
+    rr_borrador_alarma:  { es: "Alarma", en: "Alarm" },
+    registro_comparativa: { es: "Respecto a la basal", en: "Compared with baseline" },
+    registro_hoy:        { es: "hoy", en: "today" },
     rr_apuntar_evento:   { es: "Apuntar evento", en: "Log event" },
     rr_apuntar_alarma:   { es: "Apuntar alarma", en: "Log alarm" },
     rr_falta_que:        { es: "Elige la técnica (un evento también puede ser solo un contexto o un TOF).", en: "Choose the technique (an event can also be just a context or a TOF)." },
@@ -1387,7 +1396,13 @@
     registro_equipo_neutro: { es: "equipo", en: "equipment" },
     hoja_datos_caso:     { es: "Datos del caso (parámetros y notas)", en: "Case data (parameters and notes)" },
     registro_imprimir:   { es: "Imprimir hoja", en: "Print sheet" },
-    caso_hoja_registro:  { es: "Hoja de registro", en: "Record sheet" },
+    caso_hoja_registro:  { es: "Imprimir hoja de registro", en: "Print record sheet" },
+    caso_ir_registro:    { es: "Abrir en el Registro", en: "Open in the Record" },
+    caso_cerrar_faltan:  { es: "Faltan: {lista}.\n¿Cerrar el caso igualmente?", en: "Missing: {lista}.\nClose the case anyway?" },
+    caso_borrador_resumen: { es: "Borrador desde el Registro", en: "Draft from the Record" },
+    caso_borrador_vacio: { es: "No hay nada apuntado en el Registro de este caso.", en: "Nothing has been logged in this case's Record." },
+    caso_borrador_anadir: { es: "Ya hay texto en el resumen: el borrador se añade al final. ¿Seguir?",
+                           en: "The summary already has text: the draft is added at the end. Continue?" },
     checklist_g_planificacion: { es: "Días antes",
                            en: "Days before" },
     checklist_g_dia_antes: { es: "El día, antes de quirófano",
@@ -1430,7 +1445,7 @@
                            en: "Nerves at risk from positioning (ulnar, popliteal, brachial plexus)" },
     checklist_basal_definitiva: { es: "Basal definitiva antes de la incisión",
                            en: "Final baseline before incision" },
-    checklist_confirmar_decusacion: { es: "Decusación confirmada si PESS/PEM lateralizados",
+    checklist_confirmar_decusacion: { es: "Decusación confirmada si SEP/MEP lateralizados",
                            en: "Decussation confirmed if SEP/MEP are lateralised" },
 
     /* --- Fase 4.1: biblioteca de montajes --- */
@@ -4668,7 +4683,9 @@
     "accion_medidas", "recuperacion", "hora_recuperacion", "min_hasta_recuperacion",
     "resultado_mio", "concordancia",
     // Correlación de la alarma con la evolución, por grupo (29-09-2026)
-    "grupo_alarmas", "evolucion_alarma", "valorado", "concordancia_alarma"
+    "grupo_alarmas", "evolucion_alarma", "valorado", "concordancia_alarma",
+    // Cuánto cambió respecto a la basal, en % (30-09-2026)
+    "magnitud_pct"
   ];
 
   // Una fila del Registro sin nada escrito -las alarmas nacen con 5 filas
@@ -4730,7 +4747,7 @@
         return { hora: f.hora, codigo: f.cod, fase_maniobra: f.fase, contexto: regTextoLista(REG_CONTEXTO, f.contexto),
                  tof: f.tof ? "TOF " + f.tof : "", modalidad_lado: f.modalidad,
                  cambio: f.cambio, aviso_cirujano: !!f.av_cir, aviso_anestesia: !!f.av_an,
-                 accion_medidas: f.accion };
+                 accion_medidas: f.accion, magnitud_pct: f.magnitud || "" };
       });
       // Grupo de cada alarma (misma técnica y criterio) con su correlato
       var grupoDe = {};
@@ -4753,7 +4770,8 @@
                  accion_medidas: med.join(", "), recuperacion: f.recup, hora_recuperacion: f.h_recup,
                  min_hasta_recuperacion: minutosEntre(f.hora, f.h_recup),
                  grupo_alarmas: corr.grupo_alarmas, evolucion_alarma: corr.evolucion_alarma,
-                 valorado: corr.valorado, concordancia_alarma: corr.concordancia_alarma };
+                 valorado: corr.valorado, concordancia_alarma: corr.concordancia_alarma,
+                 magnitud_pct: f.magnitud || "" };
       });
     });
     // BOM, igual que casosACsv(), para que Excel abra bien los acentos.
@@ -6902,7 +6920,11 @@
     // para agrupar y contar. La anatomía patológica real o el nivel exacto
     // van en su propio campo de texto.
     diagnostico: ["ecc", "ecd", "ecl", "escoliosis", "loe_med", "loe_st", "loe_it",
-                  "parotida", "mav", "hipofisis", "chiari", "jannetta", "fractvert", "loe_vert"]
+                  "parotida", "mav", "hipofisis", "chiari", "jannetta", "fractvert", "loe_vert",
+                  // 30-09-2026, tras la prueba con tres usuarios: faltaban
+                  // tiroides, médula anclada y nervio periférico, y no había
+                  // salida para lo demás (el detalle, en Intervención).
+                  "tiroides", "disrafismo", "nervio_periferico", "otro"]
   };
 
   /* Los 9 puntos de la ficha: los 8 primeros son <details> plegados por
@@ -8366,6 +8388,24 @@
           : def.sub === "material" ? contMaterial
           : cont;
         destino.appendChild(elCampo);
+        if (def.c === "resumen_monitorizacion") {
+          // Borrador desde el cronograma del Registro (ver borradorResumenCaso)
+          var bBorr = regNodo("button", "caso-borrador-resumen", T("caso_borrador_resumen"));
+          bBorr.type = "button";
+          bBorr.addEventListener("click", function () {
+            var area = camposCaso.resumen_monitorizacion;
+            var texto = borradorResumenCaso(casoAbierto);
+            if (!texto) { avisoGuardado(T("caso_borrador_vacio"), true); return; }
+            if (area.value.trim()) {
+              if (!confirm(T("caso_borrador_anadir"))) return;
+              area.value = area.value.replace(/\s+$/, "") + "\n\n" + texto;
+            } else {
+              area.value = texto;
+            }
+            ajustarAltoTexto(area);
+          });
+          elCampo.appendChild(bBorr);
+        }
         // Coste del material (pedido por el usuario, 06-09-2026; metido dentro
         // del propio pliegue de "Material (montaje base)" el 07-09-2026,
         // para que abrir/cerrar uno abra/cierre el otro, y desde el
@@ -9029,6 +9069,17 @@
   }
   document.getElementById("caso-cerrar").addEventListener("click", function () {
     var estabaCerrado = camposCaso.estado && camposCaso.estado.value === "cerrado";
+    // Al cerrar, aviso ligero de lo básico que falta, sin impedirlo
+    // (30-09-2026, tras la prueba con tres usuarios: se cerraba un caso sin
+    // diagnóstico, intervención ni resumen, y así no sirve para estadísticas).
+    if (!estabaCerrado) {
+      var faltan = [["diagnostico", "caso_diagnostico"], ["intervencion", "caso_intervencion"],
+                    ["resumen_monitorizacion", "caso_resumen_monitorizacion"], ["evolucion_postop", "caso_evolucion_postop"],
+                    ["concordancia", "caso_concordancia"]]
+        .filter(function (x) { return camposCaso[x[0]] && !String(camposCaso[x[0]].value || "").trim(); })
+        .map(function (x) { return T(x[1]); });
+      if (faltan.length && !confirm(T("caso_cerrar_faltan", { lista: faltan.join(", ") }))) return;
+    }
     if (!guardarFicha(true)) return;
     if (estabaCerrado) { renderFichaCaso(); return; }
     dlgCaso.close();
@@ -16202,6 +16253,9 @@
     { v: "pausa", l: "Pausa / revertir maniobra", l_en: "Pause / reverse manoeuvre" },
     { v: "retraccion", l: "Liberar retracción o tracción", l_en: "Release retraction or traction" },
     { v: "reposicionar", l: "Reposicionar cabeza, cuello o extremidad", l_en: "Reposition head, neck or limb" },
+    // De columna (30-09-2026, tras la prueba con tres usuarios)
+    { v: "tornillo", l: "Retirar o recolocar tornillo / implante", l_en: "Remove or reposition screw / implant" },
+    { v: "correccion", l: "Reducir la corrección o la distracción", l_en: "Reduce correction or distraction" },
     { v: "suero", l: "Suero tibio", l_en: "Warm saline" },
     { v: "papaverina", l: "Papaverina", l_en: "Papaverine" },
     { v: "tam", l: "↑ TAM", l_en: "↑ MAP" },
@@ -16364,7 +16418,7 @@
       campos: [
         { id: "fecha", l: "Fecha", l_en: "Date", t: "date", caso: "fecha", der: function (c) { return c.fecha; } },
         { id: "quirofano", l: "Quirófano", l_en: "Operating room", t: "text" },
-        { id: "hora_inicio_mio", l: "Hora inicio MIO ({equipo})", l_en: "IONM start time ({equipo})", t: "time", caso: "hora_inicio", der: function (c) { return c.hora_inicio; } },
+        { id: "hora_inicio_mio", l: "Hora inicio MIO", l_en: "IONM start time", t: "time", caso: "hora_inicio", der: function (c) { return c.hora_inicio; } },
         { id: "cirujano", l: "Cirujano", l_en: "Surgeon", t: "text" },
         { id: "anestesista", l: "Anestesista", l_en: "Anaesthetist", t: "text" },
         { id: "neurofisiologo", l: "Neurofisiólogo / técnico", l_en: "Neurophysiologist / technician", t: "text" },
@@ -16394,7 +16448,7 @@
         { id: "an_tam", l: "TAM objetivo", l_en: "Target MAP", t: "text" },
         { id: "an_temp", l: "Tª", l_en: "Temp.", t: "text" }
       ] },
-    { hoja: 1, id: "d", tipo: "campos", l: "D · Cronograma de hitos (hora del {equipo})", l_en: "D · Milestone timeline ({equipo} clock)", campos: REG_HITOS, compacto: true },
+    { hoja: 1, id: "d", tipo: "campos", l: "D · Cronograma de hitos", l_en: "D · Milestone timeline", campos: REG_HITOS, compacto: true },
     { hoja: 1, id: "e", tipo: "basales", l: "E · Basales y comparativa", l_en: "E · Baselines and comparison",
       ayuda: "SEP amp/lat · PEAT lat V · MEP umbral o presencia · Onda D amp · Reflejos presencia/umbral",
       ayuda_en: "SEP amp/lat · BAEP lat V · MEP threshold or presence · D wave amp · Reflexes presence/threshold" },
@@ -16759,15 +16813,98 @@
         inp.type = "text";
         inp.value = d.v[clave] || "";
         inp.setAttribute("aria-label", (rotulo || T("registro_otro")) + " — " + regL(col));
-        inp.addEventListener("input", function () { d.v[clave] = inp.value; guardar.cambiar(); });
+        inp.addEventListener("input", function () { d.v[clave] = inp.value; guardar.cambiar(); pintarComparacion(); });
         inp.addEventListener("change", function () { guardar.salir(); });
         f.appendChild(inp);
       });
       return f;
     }
-    filas.forEach(function (r) { bloque.appendChild(fila(regL(r), prefijo + r.id, false, r.id)); });
-    for (var i = 1; i <= libres; i++) bloque.appendChild(fila("", prefijo + "libre" + i, true, "libre" + i));
+    var filasComp = [];
+    filas.forEach(function (r) {
+      filasComp.push({ id: prefijo + r.id, rot: regL(r) });
+      bloque.appendChild(fila(regL(r), prefijo + r.id, false, r.id));
+    });
+    for (var i = 1; i <= libres; i++) {
+      filasComp.push({ id: prefijo + "libre" + i, rot: "" });
+      bloque.appendChild(fila("", prefijo + "libre" + i, true, "libre" + i));
+    }
+    // Comparativa (30-09-2026, tras la prueba con tres usuarios: la sección
+    // se llamaba así pero no comparaba nada): el primer número de la última
+    // columna escrita frente al de la Basal, en %. No juzga si es bueno o
+    // malo (en MEP puede ser un umbral); a partir de ±50 % se resalta.
+    var comp = regNodo("div", "reg-basal-comp");
+    function pintarComparacion() {
+      var partes = regComparacionesBasales(d, filasComp);
+      comp.textContent = "";
+      comp.hidden = !partes.length;
+      if (!partes.length) return;
+      comp.appendChild(regNodo("span", "reg-basal-comp-tit", T("registro_comparativa")));
+      partes.forEach(function (p) { comp.appendChild(regNodo("span", "reg-basal-comp-it" + (p.fuerte ? " fuerte" : ""), p.t)); });
+    }
+    pintarComparacion();
+    bloque.appendChild(comp);
     cont.appendChild(bloque);
+  }
+  // Primer número de una casilla de basales («1,2/40» → 1.2); null si no hay.
+  function regNumeroBasal(v) {
+    var m = /\d+(?:[.,]\d+)?/.exec(String(v || ""));
+    return m ? parseFloat(m[0].replace(",", ".")) : null;
+  }
+  // [{t: "t-SEP MSD · Cierre −58 %", fuerte}] de las filas {id, rot} dadas
+  function regComparacionesBasales(d, filasComp) {
+    var v = (d && d.v) || {};
+    var partes = [];
+    filasComp.forEach(function (fc) {
+      var b = regNumeroBasal(v["e_" + fc.id + "_basal"]);
+      if (!b) return;
+      var ult = null;
+      REG_BASALES_COLS.forEach(function (col) {
+        if (col.id === "basal") return;
+        var n = regNumeroBasal(v["e_" + fc.id + "_" + col.id]);
+        if (n !== null) ult = { col: col, v: n };
+      });
+      if (!ult) return;
+      var pct = Math.round((ult.v - b) / b * 100);
+      var rot = fc.rot || v["e_" + fc.id + "_l"] || T("registro_otro");
+      partes.push({ t: rot + " · " + regL(ult.col) + " " + (pct > 0 ? "+" : (pct < 0 ? "−" : "")) + Math.abs(pct) + " %", fuerte: Math.abs(pct) >= 50 });
+    });
+    return partes;
+  }
+
+  /* Borrador del «Resumen de la monitorización» (30-09-2026, tras la prueba
+     con tres usuarios: había que escribirlo entero a mano con todo ya
+     apuntado). Una línea por cada cosa del cronograma, en orden de hora, y la
+     comparativa de basales al final. Es un borrador: se corrige a mano. */
+  function borradorResumenCaso(c) {
+    var r = (c && c.registro_intraop) || {};
+    var d = { v: r.v || {}, eventos: r.eventos || [], alarmas: r.alarmas || [] };
+    var lineas = regItemsApuntados(d).map(function (it) {
+      var ev = it.ev, al = it.al;
+      var hora = (ev ? ev.hora : al.hora) || "";
+      var texto;
+      if (ev && ev.cod === "F") {
+        texto = T("rr_fase") + ": " + [ev.fase, ev.accion].filter(Boolean).join(" · ");
+      } else {
+        var partes = al
+          ? [T("rr_borrador_alarma") + " A" + it.n + ": " + (al.modalidad || (ev && ev.modalidad) || ""),
+             regConMagnitud(ev ? ev.cambio : regTextoLista(REG_CRITERIO_AL, al.criterio), al)]
+          : [ev.modalidad, regConMagnitud(ev.cambio, ev), ev.accion];
+        texto = partes.filter(Boolean).join(" · ");
+        var ctx = ev && ev.contexto ? regTextoLista(REG_CONTEXTO, ev.contexto) : "";
+        if (ctx) texto += " (" + ctx + ")";
+        if (al && resumenAlarma(al)) texto += " — " + resumenAlarma(al);
+      }
+      return [hora, texto].filter(Boolean).join(" · ");
+    });
+    var tec = c.tecnicas_realizadas || [];
+    var filasComp = [];
+    [[REG_BASALES_SENS, "s_", REG_BASALES_LIBRES.sens], [REG_BASALES_MOT, "m_", REG_BASALES_LIBRES.mot]].forEach(function (g) {
+      regFilasBasales(g[0], g[1], d, tec).forEach(function (fr) { filasComp.push({ id: g[1] + fr.id, rot: regL(fr) }); });
+      for (var i = 1; i <= g[2]; i++) filasComp.push({ id: g[1] + "libre" + i, rot: "" });
+    });
+    var comp = regComparacionesBasales(d, filasComp).map(function (p) { return p.t; });
+    if (comp.length) lineas.push(T("registro_comparativa") + ": " + comp.join("; "));
+    return lineas.join("\n");
   }
 
   function pintarSeccionBasales(sec, cont) {
@@ -17023,8 +17160,58 @@
   var REG_QUE_OTRO = "__otro", REG_CAMBIO_OTRO = "__otro";
   // Lo elegido y aún sin apuntar. No se guarda: se pierde al cambiar de caso.
   // queNota y faseNota son las cajas de Qué y de Fase; nota, la de Qué pasa.
-  function regRapidoVacio() { return { que: "", cambio: "", nota: "", queNota: "", faseNota: "", contexto: "", tof: "", farmaco: "" }; }
+  // queMas: las demás técnicas elegidas a la vez que «que» (ver regElegirQue).
+  function regRapidoVacio() { return { que: "", queMas: [], cambio: "", magnitud: "", nota: "", queNota: "", faseNota: "", contexto: "", tof: "", farmaco: "" }; }
   var regRapido = regRapidoVacio();
+
+  // Magnitud del cambio (30-09-2026, pedido del usuario): % respecto a la
+  // basal, solo en los hallazgos que se miden así. Se guarda como número en
+  // texto («60») en ev.magnitud y al.magnitud; sin nada, no se guarda.
+  var REG_CAMBIOS_MAGNITUD = ["umbral", "baja", "latencia", "onda_d_baja"];
+  function regLimpiarMagnitud(v) {
+    var m = /\d+(?:[.,]\d+)?/.exec(String(v || ""));
+    return m ? m[0].replace(",", ".") : "";
+  }
+  // «↓ amplitud» + «60» → «↓ amplitud 60 %»
+  function regConMagnitud(texto, obj) {
+    return [texto, obj && obj.magnitud ? obj.magnitud + " %" : ""].filter(Boolean).join(" ");
+  }
+
+  // Técnica: varias a la vez (30-09-2026, tras la prueba con tres usuarios:
+  // una caída de MEP en las dos piernas, o de SEP y MEP juntos, se apunta de
+  // una vez, una línea por técnica). Factores técnicos, Anestesia y Otro
+  // siguen siendo una sola elección y excluyen a las técnicas.
+  function regEsQueSuelto(v) { return v === REG_QUE_TECNICO || v === REG_QUE_OTRO || v === REG_QUE_ANESTESIA; }
+  function regQuesElegidos() { return [regRapido.que].concat(regRapido.queMas || []).filter(Boolean); }
+  function regElegirQue(fila, valor) {
+    var lista = regQuesElegidos();
+    var i = lista.indexOf(valor);
+    if (i !== -1) lista.splice(i, 1);
+    else if (regEsQueSuelto(valor) || (lista.length && regEsQueSuelto(lista[0]))) lista = [valor];
+    else lista.push(valor);
+    regRapido.que = lista[0] || "";
+    regRapido.queMas = lista.slice(1);
+    Array.prototype.forEach.call(fila.querySelectorAll(".rr-chip"), function (b) {
+      var v = b.getAttribute("data-que");
+      if (v !== null) b.classList.toggle("activo", lista.indexOf(v) !== -1);
+    });
+  }
+
+  // Ids de técnica de lo elegido en QUÉ («t-MEP MII» → t_pem, «CoMEP VII I» →
+  // pem_corticobulbares, «BR» → br...), para marcar solas las «Técnicas con
+  // alteración» del caso al apuntar un cambio o una alarma (30-09-2026).
+  function regTecnicasDeQue(q) {
+    q = String(q || "");
+    if (!q || regEsQueSuelto(q)) return [];
+    var s = /^CoMEP/.test(q) ? "CoMEP" : q.replace(/ (MSD|MSI|MID|MII|D|I)$/, "");
+    if (s === "Blink") s = "BR";
+    var ids = TECNICAS.filter(function (t) {
+      return [t.etiqueta, t.corta, campo(t, "etiqueta"), campo(t, "corta")].indexOf(s) !== -1;
+    }).map(function (t) { return t.id; });
+    if (ids.length) return ids;
+    if (/Tornillos/.test(q)) return ["mapeo_raices_tornillos"];
+    return { emg: ["emg"], peat: ["peatc"], onda_d: ["onda_d"], eeg: ["eeg", "ecog"] }[regModalidadDeQue(q)] || [];
+  }
 
   function regFaseActual(d) {
     for (var i = d.eventos.length - 1; i >= 0; i--) {
@@ -17118,7 +17305,12 @@
 
   function regApuntar(esAlarma) {
     var d = registroDatos();
-    var q = regRapido.que;
+    // Varias técnicas a la vez (bilateral, hemicorporal, brazo-pierna-cara,
+    // cruzado...) = UNA sola alarma o evento, «t-MEP MSD + t-MEP MID»: es un
+    // único suceso, con una causa, unas medidas y una recuperación
+    // (30-09-2026, pedido del usuario).
+    var ques = regQuesElegidos();
+    var q = ques.join(" + ");
     var queNota = regRapido.queNota.trim();
     var nota = regRapido.nota.trim();
     // Un evento puede ser solo contexto y/o TOF (29-09-2026, pedido del
@@ -17153,6 +17345,21 @@
     // también en los eventos de anestesia de la ficha).
     if (soloTof) { ev.cod = "An"; ev.modalidad = "TOF"; ev.cambio = "TOF " + regRapido.tof; }
     if (regRapido.contexto) ev.contexto = regRapido.contexto;
+    // Cuánto cambió respecto a la basal, en % (30-09-2026, pedido del
+    // usuario: sin esto no se puede decir qué criterio de alarma se aplicó).
+    var magnitud = cambio && REG_CAMBIOS_MAGNITUD.indexOf(cambio.id) !== -1 ? regLimpiarMagnitud(regRapido.magnitud) : "";
+    if (magnitud) ev.magnitud = magnitud;
+    // Técnicas con alteración del caso: se marcan solas con un cambio o una
+    // alarma (30-09-2026; antes había que volver a marcarlas en el Cierre).
+    var cAlt = registroCaso();
+    if (cAlt && (esAlarma || textoCambio)) {
+      if (!cAlt.tecnicas_alteradas) cAlt.tecnicas_alteradas = [];
+      ques.forEach(function (qi) {
+        regTecnicasDeQue(qi).forEach(function (id) {
+          if ((cAlt.tecnicas_realizadas || []).indexOf(id) !== -1 && cAlt.tecnicas_alteradas.indexOf(id) === -1) cAlt.tecnicas_alteradas.push(id);
+        });
+      });
+    }
     // El TOF es contexto del evento o la alarma (29-09-2026, pedido del
     // usuario): el elegido en su fila va con lo que se apunta («¿estaba
     // relajado cuando cayó?»). Tocarlo ya no apunta nada por sí solo.
@@ -17171,6 +17378,7 @@
       // la "causa", que ahora se elige de REG_CAUSA_AL.
       al.criterio = otroCambio ? textoCambio : (cambio && !cambio.recup && cambio.id !== "sin_cambios" ? cambio.id : "");
       al.fase = fase;
+      if (magnitud) al.magnitud = magnitud;
       if (tofVigente) al.tof = tofVigente;
       if (esAn) al.causa = "anestesica";
       if (esT) al.causa = "tecnica";
@@ -17307,10 +17515,12 @@
       var dest = g[2] === queGrupos ? queGrupos : regNodo("div", "rr-que-sub");
       dest.appendChild(regNodo("div", "rr-subtit", g[0] ? T(g[0]) : "\u00a0"));
       var chipQue = function (p) {
-        return regChip(p[1], regRapido.que === p[0], function (e) {
-          regElegirEn(queGrupos, e.currentTarget, "que", p[0]);
+        var b = regChip(p[1], regQuesElegidos().indexOf(p[0]) !== -1, function () {
+          regElegirQue(queGrupos, p[0]);
           actualizarCambiosPropios();
         }, p[2]);
+        b.setAttribute("data-que", p[0]);
+        return b;
       };
       // Técnicas de los cuatro miembros (t-SEP, t-MEP, c-SEP...) en cuadrícula
       // (29-09-2026, pedido del usuario): una fila por técnica y cada miembro
@@ -17461,10 +17671,20 @@
     cambioGrupos.appendChild(titEsp);
     cambioGrupos.appendChild(filaEsp);
     actualizarCambiosPropios = function () {
-      var mod = regModalidadDeQue(regRapido.que);
+      // Con varias técnicas elegidas, las propias solo si son todas de la
+      // misma modalidad (t-MEP MID y MII sí; t-SEP y t-MEP, no).
+      var elegidas = regQuesElegidos();
+      var mods = [];
+      elegidas.forEach(function (q) { var m = regModalidadDeQue(q); if (mods.indexOf(m) === -1) mods.push(m); });
+      var mod = mods.length === 1 ? mods[0] : "";
       // Las que dependen del miembro (N13/N20 arriba, N22/P37 abajo), solo
-      // con el suyo; sin miembro en el nombre, las dos.
-      var miembro = /MS[DI]$/.test(regRapido.que || "") ? "sup" : (/MI[DI]$/.test(regRapido.que || "") ? "inf" : "");
+      // con el suyo; sin miembro en el nombre, o con los dos, todas.
+      var miembros = [];
+      elegidas.forEach(function (q) {
+        var m = /MS[DI]$/.test(q) ? "sup" : (/MI[DI]$/.test(q) ? "inf" : "");
+        if (miembros.indexOf(m) === -1) miembros.push(m);
+      });
+      var miembro = miembros.length === 1 ? miembros[0] : "";
       var lista = REG_CAMBIOS_RAPIDOS.filter(function (c) {
         return c.mod && c.mod === mod && (!c.miembro || !miembro || c.miembro === miembro);
       });
@@ -17483,7 +17703,7 @@
         Array.prototype.forEach.call(filaFarm.children, function (b) { b.classList.remove("activo"); });
       }
       titEsp.textContent = !lista.length ? "" : (mod === "grid" ? T("rr_cambios_grid") :
-        (mod === "anestesia" ? T("rr_cambios_anestesia") : T("rr_cambios_propios", { tec: regRapido.que })));
+        (mod === "anestesia" ? T("rr_cambios_anestesia") : T("rr_cambios_propios", { tec: elegidas.join(", ") })));
       titEsp.hidden = filaEsp.hidden = !lista.length;
       lista.forEach(function (c) {
         var b = regChip(campo(c, "l"), regRapido.cambio === c.id, function () { regElegirEn(cambioGrupos, b, "cambio", c.id); });
@@ -17491,8 +17711,27 @@
         b.setAttribute("data-ayuda", b.title);
         filaEsp.appendChild(b);
       });
+      if (actualizarMagnitud) actualizarMagnitud();
     };
     actualizarCambiosPropios();
+    // Cuánto (%), solo con ↑ umbral, ↓ amplitud, ↑ latencia y ↓ onda D.
+    var filaMag = regNodo("label", "rr-magnitud");
+    filaMag.appendChild(regNodo("span", "rr-magnitud-et", T("rr_magnitud")));
+    var inpMag = document.createElement("input");
+    inpMag.type = "text";
+    inpMag.inputMode = "decimal";
+    inpMag.value = regRapido.magnitud;
+    inpMag.setAttribute("aria-label", T("rr_magnitud"));
+    inpMag.addEventListener("input", function () { regRapido.magnitud = inpMag.value; });
+    filaMag.appendChild(inpMag);
+    filaMag.appendChild(regNodo("span", "rr-magnitud-et", "%"));
+    subHallazgo.appendChild(filaMag);
+    var actualizarMagnitud = function () {
+      filaMag.hidden = REG_CAMBIOS_MAGNITUD.indexOf(regRapido.cambio) === -1;
+    };
+    actualizarMagnitud();
+    // Después del clic del botón (que ya cambió regRapido.cambio)
+    cambioGrupos.addEventListener("click", actualizarMagnitud);
     subHallazgo.appendChild(regCajaRapida("nota", T("rr_nota")));
 
     var filaCtx = regGrupoRapido(bEvento, T("rr_contexto"));
@@ -17515,6 +17754,20 @@
     bAl.addEventListener("click", function () { regApuntar(true); });
     botones.appendChild(bEv);
     botones.appendChild(bAl);
+    // Los botones se quedan pegados abajo mientras se ve el recuadro, y «↓»
+    // baja al cronograma (30-09-2026, tras la prueba con tres usuarios:
+    // «Apuntar alarma» quedaba a pantalla y media y el cronograma, más abajo).
+    var bIr = regNodo("button", "rr-ir-crono", "↓");
+    bIr.type = "button";
+    bIr.title = T("rr_ir_crono");
+    bIr.setAttribute("aria-label", T("rr_ir_crono"));
+    bIr.addEventListener("click", function () {
+      var cr = document.querySelector("#pantalla-registro .rr-crono");
+      if (!cr) return;
+      cr.open = true;
+      window.scrollTo(0, cr.getBoundingClientRect().top + window.pageYOffset - altoBarrasFijas() - 8);
+    });
+    botones.appendChild(bIr);
     bEvento.appendChild(botones);
 
     // Lo apuntado, en orden de hora (lo último, abajo). «Cronograma de
@@ -17661,8 +17914,8 @@
     } else {
       // En una alarma, la nota ya no se enseña aquí: está en sus medidas.
       var partes = al
-        ? [al.modalidad || (ev && ev.modalidad), ev ? ev.cambio : regTextoLista(REG_CRITERIO_AL, al.criterio), "A" + it.n]
-        : [ev.cambio && ev.modalidad && String(ev.cambio).indexOf(ev.modalidad) === 0 ? "" : ev.modalidad, ev.cambio, ev.accion];
+        ? [al.modalidad || (ev && ev.modalidad), regConMagnitud(ev ? ev.cambio : regTextoLista(REG_CRITERIO_AL, al.criterio), al), "A" + it.n]
+        : [ev.cambio && ev.modalidad && String(ev.cambio).indexOf(ev.modalidad) === 0 ? "" : ev.modalidad, regConMagnitud(ev.cambio, ev), ev.accion];
       var fase = ev ? ev.fase : al.fase;
       var ctx = ev && ev.contexto ? regTextoLista(REG_CONTEXTO, ev.contexto) : "";
       var tofL = (ev && ev.tof) || (al && al.tof);
@@ -17779,6 +18032,7 @@
         return !x.recup && x.id !== "sin_cambios" && campo(x, "l") === ev.cambio;
       })[0];
       al.criterio = c ? c.id : (ev.cambio || "");
+      if (ev.magnitud) al.magnitud = ev.magnitud; else delete al.magnitud;
     };
     function casilla(obj, k, etiqueta) {
       box.appendChild(regNodo("span", "rr-editor-et", etiqueta));
@@ -17790,6 +18044,7 @@
     } else if (ev) {
       casilla(ev, "modalidad", T("rr_que"));
       casilla(ev, "cambio", T("rr_que_pasa"));
+      casilla(ev, "magnitud", T("rr_magnitud") + " (%)");
       // En una alarma, la nota son sus medidas (debajo)
       if (!al) casilla(ev, "accion", T("rr_nota_l"));
       casilla(ev, "fase", T("rr_fase"));
@@ -17799,6 +18054,7 @@
       casilla(al, "modalidad", T("rr_que"));
       box.appendChild(regNodo("span", "rr-editor-et", T("reg_p_criterio")));
       box.appendChild(regSelectLista(al, "criterio", REG_CRITERIO_AL, T("reg_p_criterio")));
+      casilla(al, "magnitud", T("rr_magnitud") + " (%)");
       casilla(al, "fase", T("rr_fase"));
     }
     var hecho = regNodo("button", "rr-editor-hecho", T("rr_editar_hecho"));
@@ -18282,6 +18538,22 @@
         ficha.appendChild(l1);
         var l2 = regNodo("div", "reg-p-al-l2");
         l2.appendChild(regSelectLista(al, "criterio", REG_CRITERIO_AL, T("reg_p_criterio"), alCambiar, guardar));
+        // Magnitud (%), el mismo dato que en el Registro (30-09-2026)
+        var mag = document.createElement("input");
+        mag.type = "text";
+        mag.inputMode = "decimal";
+        mag.className = "reg-p-magnitud";
+        mag.placeholder = "%";
+        mag.value = al.magnitud || "";
+        mag.title = T("rr_magnitud") + " (%)";
+        mag.setAttribute("aria-label", mag.title);
+        mag.addEventListener("input", function () {
+          var v = regLimpiarMagnitud(mag.value);
+          if (v) al.magnitud = v; else delete al.magnitud;
+          guardar.cambiar();
+        });
+        mag.addEventListener("change", function () { guardar.salir(); alCambiar(); });
+        l2.appendChild(mag);
         l2.appendChild(regSelectLista(al, "causa", REG_CAUSA_AL, T("reg_p_causa_l"), alCambiar, guardar));
         ficha.appendChild(l2);
         pintarMedidasRecup(ficha, al, guardar, alCambiar);
@@ -18369,7 +18641,7 @@
 
   // Texto de una alarma para el caso (Tipo de alerta / CSV / Sheet / informe).
   function textoAlarma(a, i) {
-    var partes = [a.hora, a.modalidad, regTextoLista(REG_CRITERIO_AL, a.criterio),
+    var partes = [a.hora, a.modalidad, regConMagnitud(regTextoLista(REG_CRITERIO_AL, a.criterio), a),
       regTextoLista(REG_CAUSA_AL, a.causa), a.tof ? "TOF " + a.tof : ""].filter(Boolean);
     if (a.recup) partes.push(T("reg_p_recup") + " " + regTextoLista(REG_RECUP, a.recup) + (a.h_recup ? " (" + a.h_recup + ")" : ""));
     return "A" + (i + 1) + ": " + partes.join(" · ");
@@ -18476,16 +18748,22 @@
     op0.value = "";
     op0.textContent = T("checklist_modelo_cero");
     sel.appendChild(op0);
+    // Los de hoy, primero y marcados (30-09-2026, tras la prueba con tres
+    // usuarios); luego el resto, del más reciente al más antiguo. Sin nombre
+    // del caso, la intervención, para reconocerlo.
+    var hoy = hoyISO();
     Object.keys(casos).sort(function (a, b) {
-      return (casos[b].fecha || "").localeCompare(casos[a].fecha || "");
+      var ha = casos[a].fecha === hoy ? 1 : 0, hb = casos[b].fecha === hoy ? 1 : 0;
+      return (hb - ha) || (casos[b].fecha || "").localeCompare(casos[a].fecha || "");
     }).forEach(function (uid) {
       var c = casos[uid];
       var op = document.createElement("option");
       op.value = uid;
-      op.textContent = (MARCA_ESTADO_CASO[c.estado] ? MARCA_ESTADO_CASO[c.estado] + " " : "") +
-        (c.ID_Caso || "?") + (c.nombre_caso ? " — " + c.nombre_caso : "");
+      var nombre = c.nombre_caso || intervencionDe(c);
+      var texto = (c.ID_Caso || "?") + (nombre ? " — " + nombre : "") + (c.fecha === hoy ? " · " + T("registro_hoy") : "");
+      op.textContent = (MARCA_ESTADO_CASO[c.estado] ? MARCA_ESTADO_CASO[c.estado] + " " : "") + texto;
       op.setAttribute("data-estado", c.estado || "");
-      op.setAttribute("data-texto", (c.ID_Caso || "?") + (c.nombre_caso ? " — " + c.nombre_caso : ""));
+      op.setAttribute("data-texto", texto);
       sel.appendChild(op);
     });
     if (registroCasoUid && !casos[registroCasoUid]) registroCasoUid = null;
@@ -18924,7 +19202,7 @@
     var evDef = REG_SECCIONES.filter(function (s) { return s.id === "f"; })[0].cols;
     var alDef = REG_SECCIONES.filter(function (s) { return s.id === "g"; })[0].cols;
     var filasEv = d.eventos.filter(function (f) { return regFilaConContenido(f, evDef); }).map(function (f) {
-      return { hora: f.hora || "", celdas: [f.hora, f.cod, [f.fase, regTextoLista(REG_CONTEXTO, f.contexto)].filter(Boolean).join(" · "), f.modalidad, f.cambio,
+      return { hora: f.hora || "", celdas: [f.hora, f.cod, [f.fase, regTextoLista(REG_CONTEXTO, f.contexto)].filter(Boolean).join(" · "), f.modalidad, regConMagnitud(f.cambio, f),
         hojaCasilla(!!f.av_cir), hojaCasilla(!!f.av_an), "", f.accion, ""] };
     });
     // Listas cerradas (28-09-2026): se imprimen los rótulos, no los ids.
@@ -18932,7 +19210,7 @@
       var med = (f.medidas_l || []).map(function (v) { return regTextoLista(REG_MEDIDAS_AL, v); });
       if (f.medidas) med.push(f.medidas);
       return { hora: f.hora || "", celdas: [f.hora, "A", [f.fase, regTextoLista(REG_CAUSA_AL, f.causa)].filter(Boolean).join(" · "),
-        f.modalidad, regTextoLista(REG_CRITERIO_AL, f.criterio),
+        f.modalidad, regConMagnitud(regTextoLista(REG_CRITERIO_AL, f.criterio), f),
         "", "", (f.nrf ? "N" : "") + (f.an ? " A" : "") + (f.cir ? " C" : ""), med.join(", "), f.recup || ""], cls: "hj-alarma" };
     });
     var todas = filasEv.concat(filasAl);
@@ -19096,6 +19374,19 @@
     registroGuardarYa();
     abrirHojaRegistro(registroCaso());
   });
+  // De la ficha al Registro de ese mismo caso (30-09-2026, tras la prueba con
+  // tres usuarios: había que salir al inicio y buscar el caso en la lista).
+  document.getElementById("caso-ir-registro").addEventListener("click", function () {
+    if (!guardarFicha(false)) return;
+    var uid = casoAbierto && casoAbierto.caso_uid;
+    if (fichaAutoTimer) { clearTimeout(fichaAutoTimer); fichaAutoTimer = null; }
+    dlgCaso.close();
+    registroVaciarPendiente();
+    registroCasoUid = uid && casos[uid] ? uid : null;
+    regRapido = regRapidoVacio();
+    abrirRegistro();
+    window.scrollTo(0, 0);
+  });
   document.getElementById("caso-hoja-registro").addEventListener("click", function () {
     // Como "Crear informe": lo que haya ahora en la ficha, sin exigir Guardar.
     leerFichaCaso();
@@ -19201,14 +19492,18 @@
     // Antes de crear los casos: su coste se calcula al volcar el montaje.
     preciosDemo();
     // Cajas que se repiten en varias plantillas
-    var tesC3C4 = { "5:anodal": "c3", "5:catodal": "c4", "6:anodal": "c1", "6:catodal": "c2" };
+    // Inomed: la estimulación transcraneal con sacacorchos va SIEMPRE por el
+    // conmutador, en la columna anodal (reparte en C1-C4, Cz-1 y Cz+6). En la
+    // catodal no van sacacorchos de estimulación, solo referencias (30-09-2026,
+    // corrección del usuario: la demo ponía C4 y C2 en catodal).
+    var tesConmutador = { "6:anodal": "conmutador" };
     var corticalSEP = { "1": "cz_prima", "2": "c3_prima", "3": "c4_prima", "4": "fz", "5": "cv2", "gnd": "tierra" };
     var mmii = { "9": "l_q", "10": "r_q", "11": "l_ta", "12": "r_ta", "13": "l_ah", "14": "r_ah", "15": "l_g", "16": "r_g", "gnd": "tierra" };
 
     var mLumbar = montajeDemo("Demo · Inomed · Columna lumbar (SEP + MEP + EMG)",
       ["t_pess", "t_pem", "emg", "mapeo_raices_tornillos"],
       {
-        tes_mep: { "5:anodal": "c3", "5:catodal": "c4", "6:anodal": "c1", "6:catodal": "c2", "12:catodal": "sonda_mono_recta", "12:anodal": "ref_sonda" },
+        tes_mep: { "6:anodal": "conmutador", "12:catodal": "sonda_mono_recta", "12:anodal": "ref_sonda" },
         registro_cortical: corticalSEP,
         caja_estimulo: { "1": "l_ptn", "2": "r_ptn", "3": "l_mediano", "4": "r_mediano" },
         registro_muscular_mmss: { "1": "l_apb", "2": "r_apb" },
@@ -19219,7 +19514,7 @@
     var mMedular = montajeDemo("Demo · Inomed · Tumor medular (Onda D)",
       ["t_pess", "t_pem", "onda_d", "emg"],
       {
-        tes_mep: tesC3C4,
+        tes_mep: tesConmutador,
         registro_cortical: corticalSEP,
         caja_estimulo: { "1": "l_ptn", "2": "r_ptn", "3": "l_mediano", "4": "r_mediano" },
         registro_muscular_mmss: { "1": "l_apb", "2": "r_apb", "3": "l_bcps", "4": "r_bcps", "gnd": "tierra" },
@@ -19231,7 +19526,7 @@
     var mAPC = montajeDemo("Demo · Inomed · Ángulo pontocerebeloso",
       ["t_pess", "t_pem", "pem_corticobulbares", "peatc", "emg"],
       {
-        tes_mep: { "5:anodal": "c3", "5:catodal": "c4", "6:anodal": "c5", "6:catodal": "c6" },
+        tes_mep: { "6:anodal": "conmutador", "5:anodal": "c5", "7:anodal": "c6" },
         registro_cortical: { "1": "cz_prima", "2": "c3_prima", "3": "c4_prima", "4": "fz", "5": "cv2", "9": "a1", "10": "a2", "gnd": "tierra" },
         caja_estimulo: { "1": "l_ptn", "2": "r_ptn", "3": "l_mediano", "4": "r_mediano" },
         caja_etiqueta_3: { "1": "r_frontalis", "2": "r_ooc", "3": "r_oris", "4": "r_ment", "5": "r_mass", "6": "r_len", "7": "r_trapecio", "gnd": "tierra" },
@@ -19243,7 +19538,7 @@
     var mGRID = montajeDemo("Demo · Inomed · Supratentorial con GRID",
       ["t_pem", "c_pem", "phase_reversal", "mapeo_cortical", "eeg"],
       {
-        tes_mep: tesC3C4,
+        tes_mep: tesConmutador,
         registro_cortical: { "1": "grid1", "2": "grid2", "3": "grid3", "4": "grid4", "5": "grid5", "6": "grid6", "7": "grid7", "8": "grid8", "gnd": "tierra" },
         caja_estimulo: { "1": "r_mediano" },
         registro_muscular_mmss: { "1": "r_apb", "2": "r_fdio", "3": "r_ext", "4": "r_bcps", "5": "r_delt", "gnd": "tierra" },
@@ -19463,7 +19758,7 @@
       hora_inicio: "09:00", hora_fin: "11:20",
       edad: "44", sexo: "mujer", servicio_id: "endocrino",
       antecedentes_relevantes: "Bocio multinodular. Movilidad de cuerdas vocales normal en la laringoscopia previa.",
-      intervencion: "Tiroidectomía total", posicion: "supino", navegacion: "no",
+      diagnostico: "tiroides", intervencion: "Tiroidectomía total", posicion: "supino", navegacion: "no",
       tipo_anestesia: "tiva", tof_monitorizado: "si",
       resumen_monitorizacion: "Señal vagal (V1) y del recurrente (R1) presentes en ambos lados. R2 y V2 sin pérdida de amplitud tras la exéresis de cada lóbulo.",
       recuperacion_senal: "sin_cambios", evolucion_postop: "sin_deficit",
@@ -19476,7 +19771,7 @@
       nombre_caso: "Demo · Cadwell · Médula anclada", estado: "preparado",
       edad: "9", sexo: "hombre", servicio_id: "neurocirugia",
       antecedentes_relevantes: "Incontinencia urinaria de nueva aparición y pies cavos. Cono medular en L3 con filum engrosado en la RM.",
-      diagnostico: "loe_med", intervencion: "Sección del filum terminal", posicion: "prono", navegacion: "no",
+      diagnostico: "disrafismo", intervencion: "Sección del filum terminal", posicion: "prono", navegacion: "no",
       tipo_anestesia: "tiva"
     }, mCono);
 

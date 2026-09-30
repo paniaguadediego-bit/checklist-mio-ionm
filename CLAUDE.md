@@ -202,6 +202,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Selector «Vincular a un caso» propio (Checklist y Registro; el `<select>` sigue oculto como fuente de verdad) | `mejorarSelectorCaso()`, `refrescarSelectorCaso()`, `pintarOpcionCaso()` | ver `grep` |
 | Registro ↔ ficha: campos compartidos (`caso: "campo"` en la definición; `soloCaso`; `leerCaso`) — `regGet()` los lee del caso y `regControl()` los escribe en el caso | `regGet()`, `regControl()`, `regNombresTecnicas()` | ver `grep` |
 | Registro: hoja completa simplificada en pantalla (la impresa no cambia) | `REG_PANTALLA` (id de sección → pintado propio; `null` = no se enseña: A, B, C, D, esquema, F, G y H; en pantalla solo E, E2 e I, sin la letra de la hoja), `pintarPantallaMapeo/Cierre()`, `REG_MAPEO_BLOQUES`, `pintarMapeoGrid/Filas/Raices()`, `regFilasTornillos()`, `regInput()`, `regSelectLista()` | ver `grep` |
+| Registro: varias técnicas a la vez = una alarma «A + B»; magnitud %; técnicas con alteración solas; comparativa de basales; borrador del resumen | `regElegirQue()`, `regQuesElegidos()`, `regTecnicasDeQue()`, `REG_CAMBIOS_MAGNITUD`, `regConMagnitud()`, `regComparacionesBasales()`, `borradorResumenCaso()` | ver `grep` |
 | Registro: panel «Apuntar fase, evento o alarma» (antes modo rápido; único sitio donde se apuntan, arriba de la Hoja completa; escribe en `eventos`/`alarmas`, sin datos propios; «Otro» + cajas; QUÉ en filas por tipo -técnicas, factores técnicos, anestesia, Otro-; TOF 0/4…4/4 como contexto (regRapido.tof → ev.tof/al.tof); contexto quirúrgico; «Cronograma de eventos» por hora ascendente: tarjetas con franja de color por gravedad y filtros Todos/Críticos/Cambios/Info, horas editables, ✎ para corregir cada línea y, bajo cada alarma, causa, medidas y recuperación) | `pintarPanelApuntar()`, `regItemsApuntados()`, `regTipoApuntado()` (gravedad y etiqueta), `regFiltroCrono`, `regLineaApuntada()`, `regEditorApuntado()` (`regEditando`, solo con ✎), alarma plegable con `resumenAlarma()` (`regAlarmasAbiertas`), `pintarMedidasRecup()` (también en la ficha), `regApuntar()`, `regMarcarFase()`, `regQuitarRapido()`, `regCajaRapida()`, `REG_TOF`, `REG_CONTEXTO` (ev.contexto, ids), `REG_FASES_RAPIDAS`, `REG_CAMBIOS_RAPIDOS`, `REG_QUE_EXTRA`, `REG_QUE_OTRO`/`REG_CAMBIO_OTRO` | ver `grep` |
 | Registro intraoperatorio: hoja imprimible A4 | `construirHojaRegistro()`, `abrirHojaRegistro()`, `ESTILO_HOJA_REGISTRO` | ver `grep` |
 | Material, pantalla propia (todo el catálogo en filas) | `renderDocenteMaterial()`, `descripcionMaterial()` | ver `grep` |
@@ -532,6 +533,27 @@ distinta a la anterior, no importa el formato exacto.
 > - **Historial público reescrito** dos veces (27 y 28-09): copias
 >   `../copia-historial-codigo-2026-09-27.bundle` y `-28.bundle`. No borrarlas.
 > - **Licencia**: todos los derechos reservados (`LICENSE`).
+> - **Prueba con tres usuarios (30-09-2026)**, corregido: técnicas **varias a
+>   la vez** en el panel (`regElegirQue()`, `regRapido.queMas`,
+>   `regQuesElegidos()`) → UNA alarma o evento con la modalidad «A + B»;
+>   **magnitud %** (`REG_CAMBIOS_MAGNITUD`, `ev/al.magnitud`, `regConMagnitud()`,
+>   columna `magnitud_pct` del CSV de eventos); **técnicas con alteración** que
+>   se marcan solas al apuntar (`regTecnicasDeQue()`); botones de apuntar
+>   *sticky* + «↓» al cronograma; **comparativa de basales** (primer número de
+>   la última columna frente a la Basal, `regComparacionesBasales()`);
+>   ficha: ⋮ **Abrir en el Registro** (`#caso-ir-registro`) y «Imprimir hoja de
+>   registro»; **Borrador desde el Registro** en el Resumen
+>   (`borradorResumenCaso()`); aviso de lo que falta al **cerrar** un caso;
+>   selector del Registro con los casos de **hoy** primero; diagnósticos
+>   tiroides, disrafismo, nervio periférico y otro; medidas «Retirar o recolocar
+>   tornillo» y «Reducir la corrección o la distracción»; hoja impresa sin «hora
+>   del equipo»; plantillas Inomed de la demo con el **conmutador** en la
+>   anodal (nunca sacacorchos de estimulación en la catodal); siglas en la Guía.
+> - **Preguntas abiertas del usuario (30-09-2026)**: dónde guardar los datos de
+>   un usuario normal (hoy, repo privado de GitHub con token; no revisado por
+>   protección de datos ni informática; no es aplicación sanitaria: solo recoge
+>   datos); cómo compartir casos dentro del servicio y entre hospitales
+>   (multicéntrico); más equipos (Natus, Nihon Kohden); quién la mantiene.
 > - **Pendiente del usuario:** recargar la app en todos los dispositivos; probar
 >   en el móvil de verdad el scroll sobre desplegables y el toque largo de los
 >   reflejos (solo probados con toques simulados); decir la abreviatura del

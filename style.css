@@ -4393,3 +4393,23 @@ body:not(.editando-caso) #barra-caso-prefijo { color: var(--accent); }
 .plantilla-fav.activa { color: var(--aviso-border); }
 .plantilla-cab .montaje-nombre { flex: 1 1 auto; min-width: 0; }
 .montajes-fav-filtro { align-self: flex-end; padding-bottom: 0.3rem; }
+
+/* Prueba con tres usuarios (30-09-2026) ---------------------------------
+   Botones de apuntar pegados abajo mientras se ve el recuadro «Evento o
+   alarma», con «↓» para bajar al cronograma. */
+#pantalla-registro .rr-en-hoja .rr-botones { position: sticky; bottom: 0; z-index: 3; grid-template-columns: 1fr 1fr auto; padding: 0.4rem 0 0.45rem; margin-bottom: -0.2rem; background: var(--accent-soft); box-shadow: 0 -6px 8px -6px rgba(0, 0, 0, 0.35); }
+.rr-ir-crono { font: inherit; font-weight: 700; min-width: 2.6rem; padding: 0 0.6rem; border: 1px solid var(--border); border-radius: 6px; background: var(--card-bg); color: var(--accent); cursor: pointer; }
+/* Cuánto cambió respecto a la basal (%), solo con umbral, amplitud, latencia y onda D */
+.rr-magnitud { display: flex; align-items: center; gap: 0.35rem; margin: 0.3rem 0 0.1rem; font-size: 0.78rem; color: var(--text-muted); }
+.rr-magnitud[hidden] { display: none; }
+.rr-magnitud input { width: 4.2rem; font: inherit; font-size: 0.85rem; padding: 0.2rem 0.35rem; border: 1px solid var(--border); border-radius: 4px; background: var(--campo-bg); color: var(--text); text-align: right; }
+.reg-p-magnitud { width: 3.6rem; font: inherit; font-size: 0.8rem; padding: 0.2rem 0.3rem; border: 1px solid var(--border); border-radius: 4px; background: var(--campo-bg); color: var(--text); text-align: right; }
+/* Comparativa de basales: cambio de la última columna frente a la Basal */
+.reg-basal-comp { display: flex; flex-wrap: wrap; gap: 0.2rem 0.6rem; margin-top: 0.35rem; font-size: 0.72rem; color: var(--text-muted); }
+.reg-basal-comp[hidden] { display: none; }
+.reg-basal-comp-tit { font-weight: 600; }
+.reg-basal-comp-it { font-family: var(--mono); }
+.reg-basal-comp-it.fuerte { color: var(--aviso-text); font-weight: 700; }
+@media screen { :root:not(.tema-claro) .reg-basal-comp-it.fuerte { color: var(--aviso-border); } }
+/* Borrador del resumen desde el Registro */
+.caso-borrador-resumen { margin-top: 0.35rem; font: inherit; font-size: 0.78rem; padding: 0.35rem 0.7rem; border: 1px solid var(--accent); border-radius: 4px; background: var(--accent-soft); color: var(--accent); cursor: pointer; }

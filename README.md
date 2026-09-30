@@ -998,8 +998,20 @@ hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
 - **Apuntar evento** vale también solo con un contexto quirúrgico y/o un TOF
   («Disección · TOF 3/4», o solo «TOF 1/4», que queda como evento de
   anestesia); una alarma necesita su «Técnica».
+- **Varias técnicas a la vez**: se pueden marcar varias técnicas y lados
+  (bilateral, hemicorporal, brazo-pierna-cara, cruzado…) y se apuntan juntas
+  como **una sola** alarma o evento («t-MEP MSD + t-MEP MID»), con una causa,
+  unas medidas y una recuperación. Factores técnicos, Anestesia y Otro siguen
+  siendo una sola elección.
+- **Cuánto respecto a la basal (%)**: con ↑ umbral, ↓ amplitud, ↑ latencia o
+  ↓ onda D sale una casilla para el porcentaje; se ve en el cronograma, en la
+  ficha (junto al criterio de la alarma), en la hoja impresa y en el CSV de
+  eventos (columna `magnitud_pct`).
+- Al apuntar un cambio o una alarma, su técnica se marca sola en **Técnicas con
+  alteración** del caso.
 - Dos botones: **Apuntar evento** o **Apuntar
-  alarma**. La alarma ocupa además la primera fila libre de alarmas (A1,
+  alarma**, pegados abajo mientras se ve el recuadro, con **↓** para bajar al
+  cronograma. La alarma ocupa además la primera fila libre de alarmas (A1,
   A2...) con técnica, criterio y fase. Para cerrarla, en su detalle del
   cronograma: **Recuperación** (recupera / en parte / no recupera) y su hora,
   con **Ahora**.
