@@ -57,7 +57,7 @@ window.GUIA = {
       { titulo: "Registro intraoperatorio", texto: "Lo que pasa en quirófano, con la hora.", puntos: [
         "Fase: un toque; lo siguiente la hereda.",
         "Técnica + hallazgo → Apuntar evento o alarma; varias técnicas a la vez = una sola alarma.",
-        "Basales: debajo sale el cambio en % respecto a la basal.",
+        "Basales: dos casillas por fase (µV y ms; en motores, µV y umbral) y, debajo, el cambio en %.",
         "En el cronograma, toca la hora o ✎ para corregir."
       ] }
     ] },

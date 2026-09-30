@@ -40,7 +40,11 @@ Instrucciones para cualquier asistente de código que trabaje en este repositori
   salto de línea que tenga cada archivo al editarlo.
 - Los scripts de Python largos para editar archivos van en un archivo aparte
   (no en un heredoc de bash): dentro del heredoc, los `\n` y `\d` de las
-  cadenas de JavaScript llegan rotos. Después, siempre `node --check`.
+  cadenas de JavaScript llegan rotos. En el texto a buscar va el carácter real
+  (−, ·, µ), no su escape `\uXXXX`. Después, siempre `node --check`.
+- Basales: dos medidas por fase, claves `e_<fila>_<fase>_amp` y `_lat`
+  (sensitivos) o `_umb` (motores); lee siempre con `regBasalValor()`, que
+  entiende también la casilla antigua «a/b».
 - Colores: tres modos (azul por defecto, `tema-oscuro`, `tema-claro`). Un
   color fijo nuevo para el oscuro necesita también su valor para el azul (si no,
   los grises neutros se ven marrones junto al marino). `--header-h` lo mide

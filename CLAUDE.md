@@ -567,7 +567,10 @@ distinta a la anterior, no importa el formato exacto.
 >   hecho (ver Registro, Basales, Ficha y Demo arriba), más medidas de columna
 >   («Retirar o recolocar tornillo / implante», «Reducir la corrección o la
 >   distracción»), hoja impresa sin «hora del equipo» (la hora, sin decir de qué
->   reloj) y siglas en la Guía.
+>   reloj) y siglas en la Guía. Organizador: el nombre del chip va en
+>   `.chip-nombre` (`crearChip()`); en una entrada estrecha (tres cajas en
+>   fila) el chip colocado es de bloque, se parte por los espacios y la ✕ y el
+>   📷 quedan al final de la última línea, sin salirse.
 > - **Preguntas abiertas del usuario (30-09-2026)**: dónde guardar los datos de
 >   un usuario normal (hoy, repo privado de GitHub con token; no revisado por
 >   protección de datos ni informática; no es aplicación sanitaria: solo recoge

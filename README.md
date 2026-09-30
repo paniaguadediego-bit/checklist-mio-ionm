@@ -48,6 +48,8 @@ propia en *Después / consulta*).
   periférico, otro) y medidas de columna.
 - **Demo**: las plantillas Inomed usan el **conmutador** (columna anodal) para la
   estimulación transcraneal.
+- **Organizador**: con tres cajas en fila, los nombres largos («Referencia de
+  sonda», «S. monopolar recta») pasan a dos líneas sin sacar la ✕ del chip.
 
 **Novedades del 30/09/2026 (mañana):**
 - **Colores**: botón redondo junto al ⋮ que pasa por **oscuro** (negro y dorado),
