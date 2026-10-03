@@ -50,3 +50,11 @@ Instrucciones para cualquier asistente de código que trabaje en este repositori
   color fijo nuevo para el oscuro necesita también su valor para el azul (si no,
   los grises neutros se ven marrones junto al marino). `--header-h` lo mide
   `app.js`: no fijarlo a mano.
+- Los scripts de Node que insertan código con plantillas `` `...` ``: un `\n`
+  dentro de una cadena JS se vuelve un salto de línea real y rompe `app.js`.
+  Escríbelo como `String.fromCharCode(92) + "n"` o con `JSON.stringify`, y
+  comprueba siempre con `node --check app.js`.
+- Colores por familia de técnica (plantillas y casos): `--fam-*` en
+  `style.css`, con valor para el claro y para azul/oscuro; qué técnica va en
+  qué familia lo decide `familiaTecnica()` en `app.js` (colores elegidos por
+  el usuario: no cambiarlos sin que lo pida).

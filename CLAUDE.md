@@ -149,11 +149,11 @@ configurada, `bajarAuto()` ([app.js:1695](app.js:1695)) se trae la última versi
 del repositorio. Si además hubieras perdido el token, se vuelve a generar en
 GitHub y se pega en el diálogo ☁.
 
-### Si sale «Conflicto» en el botón ☁
+### Si sale «Elegir versión» en el botón ☁ (antes «Conflicto»)
 
-Significa que otro dispositivo subió cambios que este no tiene. **La app nunca
-decide por su cuenta**: elige tú *Subir* (gana lo de este dispositivo) o *Bajar*
-(gana lo del repositorio). Si dudas cuál conserva más trabajo, exporta primero
+Significa que otro dispositivo subió cambios de `estado.json` que este no tiene.
+**La app nunca decide por su cuenta**: elige tú *Quedarme con lo de este
+dispositivo* (antes *Subir*) o *Quedarme con lo de la nube* (antes *Bajar*). Si dudas cuál conserva más trabajo, exporta primero
 una copia local y compárala con la del repositorio.
 
 ### Antes de cualquier cambio grande en el código
@@ -367,7 +367,7 @@ distinta a la anterior, no importa el formato exacto.
 
 ## Estado del proyecto
 
-> **Resumen a 30-09-2026 (léelo primero; el diario cronológico está en
+> **Resumen a 04-10-2026 (léelo primero; el diario cronológico está en
 > el repositorio privado, ver al final de este archivo).**
 > - **Pantallas (Inicio en tres bloques, tarjetas centradas, una línea bajo cada
 >   nombre):** *Antes de quirófano*: Organizador de Montajes, Gestión de Casos.
@@ -540,9 +540,13 @@ distinta a la anterior, no importa el formato exacto.
 > - **Gestión de Casos**: borde izquierdo y bolita del color del estado («A
 >   planificar», Preparado, Cerrado, Cancelado); a la vista solo «▸ Filtros (n)»
 >   y «Ordenar por»; el panel plegable tiene Estado, **Especialidad**,
->   Concordancia, Equipo, Desde, Hasta, Destacados y Seguimiento; los filtros
->   puestos salen como chips con ✕. Los mismos filtros valen para el informe y
->   los CSV.
+>   Concordancia, Equipo, (Centro, si hay centros), Desde, Hasta, Destacados y
+>   Seguimiento; los filtros puestos salen como chips con ✕. Los mismos filtros
+>   valen para el informe y los CSV. Desde el 04-10: cada fila lleva sus
+>   **técnicas hechas** con el color de su familia (`nodoEtiquetasTecnicas()`,
+>   compartida con las plantillas); **Papelera** de casos (30 días, por
+>   dispositivo; Borrar ya no pierde nada); la **ficha a pantalla completa**
+>   (sigue siendo el `<dialog>`; tapa la barra superior mientras está abierta).
 > - **Organizador en dos pantallas** (04-10-2026): lista de plantillas como Gestión de Casos («Crear plantilla», filtros, filas) y, al tocar una, su pantalla de edición con «← Plantillas». **Plantillas de montajes**: una debajo de otra (una columna, 03-10-2026); lista entera sin scroll propio; filas con aspecto
 >   de caso (`nodoFilaPlantilla()`); ★ **favoritas** (se quedan en su sitio desde el 04-10; casilla «Solo
 >   favoritas»; por dispositivo y perfil, no se sincronizan).
@@ -592,6 +596,12 @@ distinta a la anterior, no importa el formato exacto.
 >   protección de datos ni informática; no es aplicación sanitaria: solo recoge
 >   datos); cómo compartir casos dentro del servicio y entre hospitales
 >   (multicéntrico); más equipos (Natus, Nihon Kohden); quién la mantiene.
+> - **Pendiente del usuario (nuevo, 04-10):** probar el Organizador en dos
+>   pantallas (lista ↔ edición, «Plantillas ›», atrás del móvil), los colores por
+>   familia, «Ordenar por», la Papelera y la ficha a pantalla completa en el
+>   móvil y el portátil; marcar en Catálogos > Centros su centro solo cuando
+>   retome el estudio multicéntrico (aparcado; antes, preguntar en su hospital si
+>   tienen REDCap).
 > - **Pendiente del usuario:** recargar la app en todos los dispositivos; probar
 >   en el móvil de verdad el scroll sobre desplegables y el toque largo de los
 >   reflejos (solo probados con toques simulados); decir la abreviatura del
@@ -608,7 +618,10 @@ distinta a la anterior, no importa el formato exacto.
 >   alarmas con varias técnicas, la magnitud % y las basales en dos columnas;
 >   si quiere la magnitud de alarmas antiguas en el Sheet, ponerla en la ficha
 >   y volver a guardar el caso.
-> - **Ideas pendientes, no construidas:** que la demo enseñe más utilidades;
+> - **Ideas pendientes, no construidas:** convertir la ficha del caso en una
+>   pantalla de verdad (hoy `<dialog>` a pantalla completa: la barra superior
+>   queda tapada); exportación compatible con REDCap (diccionario de datos + CSV)
+>   si el estudio multicéntrico se retoma; que la demo enseñe más utilidades;
 >   conversión Inomed ↔ Cadwell; eventos del Registro en el Sheet (las alarmas
 >   ya van por grupos en Correlacion_long); que la concordancia del caso proponga
 >   FN si hay déficit sin alarma relacionada; bloque "Cirugías con IONM"; Teoría
@@ -626,6 +639,10 @@ distinta a la anterior, no importa el formato exacto.
 >   `data/i18n-en.js` tiene saltos mixtos: detectar el salto, normalizar, editar y
 >   restaurarlo; los scripts de Python largos, en un archivo del scratchpad y no
 >   en un heredoc de bash (los `\n` y `\d` de las cadenas JS llegaban rotos);
+>   en los scripts de Node con plantillas `...`, un `\n` dentro de una cadena
+>   JS a insertar se vuelve un salto real y rompe app.js: escribirlo como
+>   `String.fromCharCode(92) + "n"` o con `JSON.stringify`; y nada de
+>   `node -e "..."` con escapes dentro de comillas dobles de bash;
 >   en el texto a buscar de esos scripts va el carácter real (−, ·, µ), no su
 >   escape `\uXXXX`, o no coincide;
 >   ES5 (`var`, sin flechas); `[hidden]` sobre clases con `display` propio

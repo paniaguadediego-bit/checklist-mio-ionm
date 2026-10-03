@@ -33,6 +33,33 @@ con carpetas de colores, negrita/cursiva, fotos dentro de cada caja y
 de material en filas, con una breve descripción de uso de cada uno; tarjeta
 propia en *Después / consulta*).
 
+**Novedades del 1 al 4/10/2026:**
+- **Organizador de Montajes en dos pantallas**, como Gestión de Casos: al entrar,
+  solo la **lista de plantillas** (botón **Crear plantilla**, filtros, **Ordenar
+  por** nombre o última modificación); al tocar una, su pantalla de edición, con
+  **Cajas** ya abierta. Para volver: **Plantillas** en la ruta del título
+  («Plantillas › nombre»), **← Todas las plantillas** en el rótulo o el atrás del
+  móvil.
+- **Colores por familia de técnica** en las plantillas y en cada caso de Gestión
+  de Casos: sensitivas ámbar, motoras rojo, EMG verde, reflejos rojo-violeta,
+  EEG y ECoG azulado y mapeo rosa. Cada plantilla lleva a la izquierda una franja
+  con los colores de lo que monitoriza; las vacías salen atenuadas con «Vacía».
+  Las favoritas ★ ya no suben arriba: se quedan en su sitio.
+- **Ficha del caso a pantalla completa** (antes una ventana flotante).
+- **Papelera de casos**: borrar un caso lo manda a la **Papelera** de ese
+  dispositivo (botón al pie de Gestión de Casos), donde se recupera durante 30
+  días.
+- **Basales**: la amplitud de los motores va en **mV** (la onda D, en µV).
+- **Resumen de técnicas y material**: en el portátil, el material y las cajas
+  ya no se solapan (si no caben en dos columnas, el material va encima).
+- **Centros** (preparado para un estudio entre dos hospitales, sin usar todavía):
+  catálogo de centros con un código que va delante del número del caso
+  (H1-2026-003), filtro Centro y usuarios por centro. Sin centros dados de alta,
+  todo se ve como antes.
+- **La nube en lenguaje llano**: «Guardar en la nube» y «Traer de la nube»; si
+  dos dispositivos chocan, «Quedarme con lo de este dispositivo» o «Quedarme con
+  lo de la nube».
+
 **Novedades del 30/09/2026, tras una prueba con tres tipos de usuario:**
 - **Registro**: varias técnicas y lados a la vez (bilateral, hemicorporal,
   brazo-pierna-cara, cruzado) se apuntan como **una sola alarma**; casilla
@@ -265,55 +292,42 @@ inglés avisa de que todavía no está traducida.
 
 ## Organizador de Montajes: el banco de trabajo, en el orden en que se trabaja
 
-Es la primera tarjeta de la pantalla de inicio. Dentro: Plantillas de
-montajes → Técnicas → Catálogo → Cajas → Resumen —en móvil, donde todo va
-en una sola columna sin sitio para un lateral, Catálogo se ve el primero de
-todos (06-09-2026): no es parte de una plantilla de montaje, es lo que
-nutre a las cajas—. Es un banco único: el mismo tanto si estás editando una
-plantilla suelta como si estás corrigiendo el material de un caso concreto
-— nunca hay dos copias de estas cinco tarjetas (corregir el material de un
-caso desde **Gestión de Casos** te trae aquí mismo, con el rótulo
-permanente en dorado sólido avisando de que estás mid-corrección). Las
-cinco son `<details>` plegables por igual, cada una a su aire (menos el
-catálogo, que en pantalla ancha es la columna lateral fija de siempre).
-**Arrancan todas plegadas, salvo Plantillas de montaje** —al ser lo
-primero que se ve al entrar aquí, desde el 05-09-2026 se abre sola—;
-despliega las demás según te interese en cada momento. El orden es el del
-flujo real: qué montaje cargas, qué técnicas vas a hacer,
-qué material hay, dónde va y qué sale de todo ello.
+Es la primera tarjeta de la pantalla de inicio. Desde el 04-10-2026 funciona
+como Gestión de Casos, en **dos pantallas**:
 
-Qué montaje hay cargado en ese banco de trabajo se elige aparte, desde la
-tarjeta **Plantillas de montaje** o desde la ficha de un caso. Justo
-debajo de esa tarjeta, un **rótulo permanente** (06-09-2026: vive aquí
-dentro, no en las otras 5 pantallas, y solo aparece si hay algo que
-mostrar) dice cuál de las dos cosas estás tocando: *«Plantilla: ECL con
-mapeo»* en dorado suave, o *«CASO 2026-011, Meningioma APC»* en dorado
-sólido con los botones de corrección en su lugar, cuando estás dentro de
-un caso.
+1. **La lista de plantillas** (lo que ves al entrar): **Crear plantilla** arriba
+   (eliges el equipo y se abre la nueva), Buscar, Equipo, Solo favoritas ★ y
+   **Ordenar por** (nombre o última modificación), y la lista.
+2. **La edición de una plantilla** (al tocarla): el **rótulo** con su nombre,
+   **Guardar plantilla** y **Más acciones** (Duplicar, Renombrar, Vaciar, Borrar);
+   debajo **Cajas** (ya abierta), **Técnicas**, **Resumen** y **Notas**, con el
+   **Catálogo** al lado (en el móvil, encima). Se vuelve a la lista con
+   **Plantillas** en el título («Plantillas › nombre»), con **← Todas las
+   plantillas** en el rótulo o con el atrás del móvil.
+
+Es un banco único: el mismo tanto si editas una plantilla suelta como si
+corriges el material de un caso concreto (desde la ficha, *Montaje / Material →
+Editar montaje* te trae a la edición, con el rótulo del caso y **Volver al
+caso**, sin la lista de plantillas).
 
 ### La tarjeta Plantillas de montajes (la biblioteca de plantillas)
 
-Desde el 30-09-2026 cada plantilla se ve como un caso de Gestión de Casos:
-nombre, fecha y marca del equipo a la derecha, autor y entradas, y una fila con
-sus técnicas (si no caben, «+n» y al tocarlo salen las demás). La lista se abre
-entera, sin scroll propio. La **★** marca una plantilla como **favorita**: las
-favoritas salen primero (también en «Cargar plantilla…») y la casilla **Solo
-favoritas ★** deja solo esas. Las favoritas se guardan en cada dispositivo y por
-perfil, no en la plantilla (que es compartida). Debajo, **Plantilla
-seleccionada** dice cuál está cargada y se queda fija arriba al hacer scroll.
+Cada plantilla se ve como un caso de Gestión de Casos: nombre, fecha y marca
+del equipo a la derecha, autor y entradas, y sus técnicas como etiquetas con el
+**color de su familia** (sensitivas ámbar, motoras rojo, EMG verde, reflejos
+rojo-violeta, EEG y ECoG azulado, mapeo rosa; leyenda encima de la lista; si no
+caben, «+n» y al tocarlo salen las demás). La franja izquierda lleva los colores
+de las familias que monitoriza, y las plantillas sin nada colocado salen
+atenuadas con la etiqueta «Vacía». La lista va entera, una debajo de otra y sin
+scroll propio, por **nombre** o por **última modificación** (lo elegido se
+recuerda en cada dispositivo). La **★** marca una plantilla como **favorita**: se
+queda en su sitio y la casilla **Solo favoritas ★** deja solo esas. Las
+favoritas se guardan en cada dispositivo y por perfil, no en la plantilla (que
+es compartida).
 
-
-Primera tarjeta de la pantalla Organizador de Montajes, y la única que
-empieza **desplegada** —para que las plantillas estén a la vista nada más
-entrar, sin tener que pulsar nada—. Lista plana con buscador por nombre o
-autor, siempre en
-**orden alfabético** —da
-igual de quién sea cada montaje, y también para los que vayas creando—, y
-cuántas entradas tiene ocupadas cada uno. **+ Plantilla en blanco**, fijo
-arriba de la lista, crea uno nuevo y vacío al momento. Elegir un montaje
-**lo carga directo en el banco de trabajo y pliega la tarjeta sola, sin
-preguntar** — no hay ningún riesgo: cada montaje es su propio archivo y el
-anterior se queda guardado tal cual.
+Elegir una plantilla **la abre en su pantalla de edición, sin preguntar**: no hay
+ningún riesgo, cada montaje es su propio archivo y el anterior se queda
+guardado tal cual.
 
 **Duplicar, Renombrar, Vaciar y Borrar** (en el menú **Más acciones ▾**, junto
 al botón principal **Guardar plantilla**) actúan sobre el montaje que tengas
@@ -485,7 +499,14 @@ Se recalcula solo con cada cambio y es el objetivo de la herramienta:
 El botón **Imprimir resumen** saca solo esta sección en papel — sale entera
 aunque la tengas plegada en pantalla en ese momento.
 
-## Catálogos: técnicas, servicios, intervenciones, perfiles y usuarios
+## Catálogos: técnicas, servicios, intervenciones, perfiles, usuarios y centros
+
+**Centros** (04-10-2026, pensado para un estudio entre hospitales): cada centro
+lleva un nombre y un **código** corto (H1, H2…) que va delante del número de los
+casos nuevos (H1-2026-003, con numeración propia por centro y año). Arriba de la
+lista se elige **de qué centro es este dispositivo**: los casos nuevos salen con
+ese centro y en «quién eres» solo aparecen sus usuarios. Sin ningún centro dado
+de alta, la app se ve como siempre.
 
 El botón **Catálogos**, dentro del menú **⋮** de la barra superior
 (09-09-2026: antes iba suelto en la barra, junto al selector de perfil),
@@ -574,6 +595,14 @@ material como siempre— o cargas una plantilla encima con **Cargar plantilla…
 se toca siempre desde ahí, no hay otro camino. El resto de la ficha
 —diagnóstico, anestesia, resultado…— se rellena cuando quieras; desde el
 Organizador se vuelve con **Volver al caso** en el rótulo permanente.
+
+La **ficha** ocupa toda la pantalla (04-10-2026). En la lista, cada caso lleva
+debajo del nombre sus **técnicas hechas**, con el color de su familia, como las
+plantillas. **Borrar** un caso (⋮ de la ficha) lo manda a la **Papelera** de ese
+dispositivo: el botón **Papelera (n)**, al pie de la lista, deja **Recuperar**
+(vuelve a la lista y a la nube, con sus fotos) o **Borrar para siempre**; a los
+30 días se vacía sola. El historial del repositorio de datos guarda igualmente
+todo lo que se borra.
 
 Un caso marcado como **caso destacado** (punto 8, Docencia/Meta) lleva una
 ★ ámbar junto a su identificador en el propio listado, y uno marcado
@@ -1380,12 +1409,15 @@ Repite el paso 5 con el mismo token en el móvil, y los dos quedan conectados.
 - **Sin conexión** sigue funcionando con normalidad y reintenta cuando vuelve.
 - Si has tocado algo en el móvil sin subirlo y abres el ordenador, **no se
   pisa nada**: sube lo tuyo en vez de bajar.
-- Si dos dispositivos han cambiado cosas distintas, avisa de **Conflicto** y
-  decides tú con **Subir** o **Bajar** desde el diálogo. Nunca sobrescribe sin
-  preguntar.
+- Si dos dispositivos han cambiado a la vez los catálogos o el material propio,
+  el botón dice **Elegir versión** y el diálogo lo explica: **Quedarme con lo de
+  este dispositivo** o **Quedarme con lo de la nube**. Nunca sobrescribe sin
+  preguntar. (Los casos no entran en esto: se juntan solos.)
 
 El estado se ve en el propio botón: *Sin conectar*, *Guardando…*,
-*Sinc. 12/08 19:30*, *Sin subir* o *Conflicto*.
+*En la nube · 12/08 19:30*, *Pendiente* o *Elegir versión*. En el diálogo,
+**Guardar en la nube** y **Traer de la nube** solo hacen falta la primera vez;
+una vez conectado quedan en *Opciones avanzadas*.
 
 El token se guarda solo en ese navegador. **Desconectar** lo borra del
 dispositivo (no toca ni tus montajes ni lo guardado en GitHub), y siempre
@@ -1881,6 +1913,10 @@ técnicas del caso, c-SEP, c-MEP, GRID (con el electrodo de estímulo y el conta
 de la inversión de fase), corticobulbares, Onda D proximal y distal (Prox. y
 Dist. D-Wave), PEATC y H-R. Más filas libres para lo que haga falta. (Umbral MEP
 y TOF se quitaron el 28-09-2026; el TOF sigue como botón del panel de apuntar.)
+
+Unidades (en la cabecera de cada tabla): sensitivos, amplitud en **µV** y
+latencia en ms; motores, amplitud en **mV** (la onda D, en **µV**) y umbral en
+mA o V.
 
 ## Modo demostración
 
