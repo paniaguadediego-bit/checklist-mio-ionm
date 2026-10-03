@@ -4558,3 +4558,20 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 
 /* «Ordenar por» de las plantillas, a la derecha de los filtros (04-10-2026) */
 .org-lista-cont .montajes-orden { margin-left: auto; }
+
+/* Ficha del caso a pantalla completa (04-10-2026, pedido del usuario: «no una
+   pantalla flotante, sino una pantalla plena»). Sigue siendo el mismo <dialog>
+   (autoguardado, Volver, Esc y atrás del móvil no cambian); solo ocupa toda la
+   ventana. En pantallas muy anchas el contenido se centra hasta 1400 px. */
+#dlg-caso[open] {
+  width: 100vw; max-width: 100vw;
+  height: 100vh; height: 100dvh; max-height: none;
+  margin: 0; inset: 0;
+  border: none; border-radius: 0;
+}
+@media screen { :root:not(.tema-claro) #dlg-caso[open] { border-top: 3px solid var(--accent); } }
+#dlg-caso::backdrop { background: var(--bg); }
+#dlg-caso .caso-cab, #dlg-caso .caso-scroll, #dlg-caso .caso-acciones {
+  padding-left: max(1.1rem, calc((100vw - 1400px) / 2));
+  padding-right: max(1.1rem, calc((100vw - 1400px) / 2));
+}
