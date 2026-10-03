@@ -161,6 +161,10 @@
   // los nombres de personas reales no se escriben en este repositorio, que es
   // público. Creados desde la interfaz viven en estado.json, que es privado.
   var USUARIOS_BASE = [];
+  // Centros (hospitales) del estudio multicéntrico (03-10-2026). VACÍO de
+  // fábrica por la misma razón: el nombre del centro no se escribe en el
+  // repositorio público. Se crean en Catálogos > Centros.
+  var CENTROS_BASE = [];
   // Solo para la ventana docente: qué músculo depende de qué raíces
   var MIOTOMAS = DATA.miotomas || [];
   // "Cómo se realizó cada técnica" (10-09-2026): campos propios por técnica,
@@ -193,7 +197,7 @@
   var TEXTOS = {
     /* --- Barra superior y herramientas --- */
     idioma_titulo:       { es: "Switch to English", en: "Cambiar a español" },
-    sync_titulo:         { es: "Sincronizar con GitHub", en: "Sync with GitHub" },
+    sync_titulo:         { es: "Guardar en la nube", en: "Save to the cloud" },
     btn_exportar_casos:  { es: "Informe de casos (PDF)", en: "Cases report (PDF)" },
     btn_exportar_casos_tit: { es: "Abre un informe imprimible de los casos que cumplen los filtros de arriba (Estado/Desde/Hasta/Destacados/Seguimiento) -usa \"Guardar como PDF\" en el diálogo de impresión del navegador. En pruebas: dilo si algo no sale bien.",
                            en: "Opens a printable report of the cases matching the filters above (Status/From/To/Notable/Follow-up) -use \"Save as PDF\" in the browser's print dialog. Still being tested: let me know if something looks off." },
@@ -239,14 +243,14 @@
                            en: "Case {id} does not fit in this phone's browser storage (too many photos). It was still uploaded to GitHub -don't close the app until \"Synced\" updates above-." },
     traido_de_github:    { es: "Traído de GitHub · {hora}", en: "Fetched from GitHub · {hora}" },
     sync_sin_conectar:   { es: "Sin conectar", en: "Not connected" },
-    sync_conflicto:      { es: "Conflicto", en: "Conflict" },
+    sync_conflicto:      { es: "Elegir versión", en: "Choose version" },
     sync_sincronizando:  { es: "Sincronizando…", en: "Syncing…" },
-    sync_sin_subir:      { es: "Sin subir", en: "Not uploaded" },
+    sync_sin_subir:      { es: "Pendiente", en: "Pending" },
     sync_guardando:      { es: "Guardando…", en: "Saving…" },
     sync_conectado:      { es: "Conectado", en: "Connected" },
-    sync_fecha:          { es: "Sinc. {fecha}", en: "Synced {fecha}" },
-    sync_conflicto_tit:  { es: "En GitHub hay una versión más reciente. Abre para resolverlo.",
-                           en: "There is a newer version on GitHub. Open to resolve it." },
+    sync_fecha:          { es: "En la nube · {fecha}", en: "In the cloud · {fecha}" },
+    sync_conflicto_tit:  { es: "Este dispositivo y la nube tienen cambios distintos. Toca para elegir con cuál quedarte.",
+                           en: "This device and the cloud have different changes. Tap to choose which to keep." },
     sync_subiendo:       { es: "Subiendo…", en: "Uploading…" },
     sync_bajando:        { es: "Bajando…", en: "Downloading…" },
     sync_subido:         { es: "Subido correctamente.", en: "Uploaded successfully." },
@@ -254,22 +258,28 @@
     sync_faltan_datos:   { es: "Hacen falta el repositorio y el token.", en: "Repository and token are required." },
     sync_formato_repo:   { es: "El repositorio debe tener el formato usuario/repositorio.",
                            en: "The repository must be in the format user/repository." },
-    sync_desconectado:   { es: "Desconectado de GitHub.", en: "Disconnected from GitHub." },
-    sync_vacio:          { es: "Todavía no hay nada guardado en ese repositorio. Pulsa «Subir» para crearlo.",
-                           en: "Nothing saved in that repository yet. Press “Upload” to create it." },
+    sync_desconectado:   { es: "Este dispositivo ya no está conectado a la nube.", en: "This device is no longer connected to the cloud." },
+    sync_vacio:          { es: "La nube todavía está vacía. Pulsa «Guardar en la nube» para empezar.",
+                           en: "The cloud is still empty. Press “Save to the cloud” to start." },
     sync_mal_formato:    { es: "El archivo remoto no tiene el formato esperado.",
                            en: "The remote file is not in the expected format." },
-    sync_cancelado_sub:  { es: "Subida cancelada. Pulsa «Bajar» para traer la versión de GitHub.",
-                           en: "Upload cancelled. Press “Download” to fetch the GitHub version." },
-    sync_cancelado_baj:  { es: "Descarga cancelada.", en: "Download cancelled." },
+    sync_cancelado_sub:  { es: "No se ha subido nada.",
+                           en: "Nothing was uploaded." },
+    sync_cancelado_baj:  { es: "No se ha traído nada.", en: "Nothing was fetched." },
     sync_error_subir:    { es: "No se ha podido subir.", en: "Could not upload." },
     sync_error_bajar:    { es: "No se ha podido bajar.", en: "Could not download." },
-    sync_olvidar_conf:   { es: "¿Olvidar el token y el repositorio en este dispositivo?\nTus escenarios no se borran, y lo guardado en GitHub tampoco.",
-                           en: "Forget the token and repository on this device?\nYour scenarios are not deleted, nor is anything stored on GitHub." },
-    sync_pisar:          { es: "En GitHub hay una versión más reciente ({fecha}) que no tienes en este dispositivo.\n\nSi subes ahora, la sustituyes y pierdes esos cambios.\nCancela y pulsa «Bajar» si prefieres traértela primero.\n\n¿Subir de todas formas?",
-                           en: "There is a newer version on GitHub ({fecha}) that you do not have on this device.\n\nUploading now replaces it and loses those changes.\nCancel and press “Download” if you would rather fetch it first.\n\nUpload anyway?" },
-    sync_traer:          { es: "Traer de GitHub la versión del {fecha}:\n· {escenarios} escenario(s)\n· {materiales} material(es) propios\n\nSustituye lo que tengas en este dispositivo. ¿Continuar?",
-                           en: "Fetch the GitHub version from {fecha}:\n· {escenarios} scenario(s)\n· {materiales} custom material(s)\n\nThis replaces what you have on this device. Continue?" },
+    sync_olvidar_conf:   { es: "¿Desconectar este dispositivo de la nube?\nNo se borra nada: ni lo que hay en este dispositivo ni lo guardado en la nube.",
+                           en: "Disconnect this device from the cloud?\nNothing is deleted: neither what is on this device nor what is stored in the cloud." },
+    sync_pisar:          { es: "En la nube hay cambios del {fecha} que este dispositivo no tiene.\n\nSi sigues, se queda lo de este dispositivo y esos cambios de la nube se pierden.\n\n¿Seguir?",
+                           en: "The cloud has changes from {fecha} that this device does not have.\n\nIf you continue, this device’s version is kept and those cloud changes are lost.\n\nContinue?" },
+    sync_traer:          { es: "Traer de la nube la versión del {fecha} ({materiales} material(es) propio(s)).\n\nSustituye los catálogos y el material propio de este dispositivo. Los casos, las plantillas y los apuntes no se tocan.\n\n¿Seguir?",
+                           en: "Fetch the cloud version from {fecha} ({materiales} custom material(s)).\n\nThis replaces the catalogues and custom material on this device. Cases, templates and notes are untouched.\n\nContinue?" },
+    sync_linea_ok:       { es: "Conectado. Todo se guarda solo en la nube (última vez: {fecha}). No tienes que pulsar nada.", en: "Connected. Everything is saved to the cloud automatically (last time: {fecha}). You do not need to press anything." },
+    sync_linea_pendiente: { es: "Conectado, pero ahora no llega a la nube (¿sin conexión?). Lo guardado sigue en este dispositivo y se mandará solo cuando vuelva la conexión.", en: "Connected, but the cloud cannot be reached right now (offline?). What you saved stays on this device and will be sent automatically when the connection returns." },
+    sync_choque:         { es: "Otro dispositivo ha cambiado los catálogos o el material propio a la vez que este. Elige con qué versión te quedas; la otra se pierde (aunque la nube guarda el historial). Los casos no están en juego: se juntan solos.", en: "Another device changed the catalogues or custom material at the same time as this one. Choose which version to keep; the other is lost (although the cloud keeps the history). Cases are not affected: they are merged automatically." },
+    sync_quedar_dispositivo: { es: "Quedarme con lo de este dispositivo", en: "Keep this device’s version" },
+    sync_quedar_nube:    { es: "Quedarme con lo de la nube", en: "Keep the cloud version" },
+    sync_avanzado:       { es: "Opciones avanzadas", en: "Advanced options" },
     sync_fecha_desc:     { es: "fecha desconocida", en: "unknown date" },
     err_token:           { es: "Token no válido o caducado.", en: "Invalid or expired token." },
     err_permiso:         { es: "El token no tiene permiso de escritura sobre ese repositorio.",
@@ -621,11 +631,15 @@
     caso_estado:         { es: "Estado", en: "Status" },
     caso_motivo_cancelacion: { es: "Motivo de cancelación", en: "Cancellation reason" },
     caso_centro:         { es: "Centro", en: "Hospital" },
+    caso_centro_id:      { es: "Centro", en: "Hospital" },
+    caso_centro_id_ay:   { es: "Su código va delante del número del caso.", en: "Its code goes before the case number." },
+    caso_centro_texto:   { es: "Centro (escrito antes)", en: "Hospital (typed before)" },
+    casos_filtro_centro: { es: "Centro", en: "Hospital" },
     caso_hora_inicio:    { es: "Hora de inicio", en: "Start time" },
     caso_hora_fin:       { es: "Hora de fin", en: "End time" },
     caso_antecedentes_relevantes: { es: "Resumen de historia clínica", en: "Clinical history summary" },
-    caso_antecedentes_relevantes_ay: { es: "Historia clínica relevante, exploración física u otro dato del paciente que quieras dejar anotado.",
-                           en: "Relevant clinical history, physical exam findings, or anything else about the patient worth noting." },
+    caso_antecedentes_relevantes_ay: { es: "Historia clínica relevante, exploración física u otro dato del paciente que quieras dejar anotado. Sin nombre, NHC ni fecha de nacimiento.",
+                           en: "Relevant clinical history, physical exam findings, or anything else about the patient worth noting. No name, record number or date of birth." },
     caso_informes_imagenes: { es: "Pruebas de imagen", en: "Imaging tests" },
     caso_informes_imagenes_ay: { es: "Fotos o capturas de informes de imagen (RM, TC…) que te resulten interesantes para este caso. Encuadra solo la imagen o el hallazgo — nunca la cabecera con el nombre, NHC o fecha de nacimiento del paciente. Se comprimen solas al añadirlas.",
                            en: "Photos or screenshots of imaging reports (MRI, CT…) worth keeping for this case. Frame only the image or the finding — never the header with the patient's name, ID or date of birth. They're compressed automatically when added." },
@@ -852,6 +866,19 @@
     tab_servicios:       { es: "Servicios", en: "Specialties" },
     tab_perfiles:        { es: "Perfiles", en: "Profiles" },
     tab_usuarios:        { es: "Usuarios", en: "Users" },
+    tab_centros:         { es: "Centros", en: "Hospitals" },
+    cat_intro_centros:   { es: "Los hospitales que usan la herramienta, para el estudio multicéntrico. Cada caso lleva su centro y el <b>código</b> va delante de su número (H1-2026-003), así que dos hospitales no repiten número. Abajo eliges de qué centro es este dispositivo. Los nombres viven en tu repositorio de datos privado, nunca en el del código.",
+                           en: "The hospitals using the tool, for the multicentre study. Each case carries its hospital and the <b>code</b> goes before its number (H1-2026-003), so two hospitals never repeat a number. Below you choose which hospital this device belongs to. Names live in your private data repository, never in the code one." },
+    cat_nueva_centros:   { es: "Centro nuevo", en: "New hospital" },
+    cat_editar_centros:  { es: "Editar centro", en: "Edit hospital" },
+    cat_campo_codigo_centro: { es: "Código", en: "Code" },
+    cat_campo_codigo_centro_ay: { es: "Corto, sin espacios: H1, H2, HUA… Va delante del número de cada caso nuevo.", en: "Short, no spaces: H1, H2, HUA… It goes before the number of each new case." },
+    cat_centro_codigo_mal: { es: "El código tiene que ser de 1 a 6 letras o números, sin espacios ni guiones.", en: "The code must be 1 to 6 letters or digits, with no spaces or hyphens." },
+    cat_centro_codigo_rep: { es: "Ya hay otro centro con el código {codigo}.", en: "Another hospital already uses the code {codigo}." },
+    cat_campo_centro:    { es: "Centro", en: "Hospital" },
+    cat_sin_centro:      { es: "— sin centro —", en: "— no hospital —" },
+    cat_centro_dispositivo: { es: "Este dispositivo es de", en: "This device belongs to" },
+    cat_centro_dispositivo_ay: { es: "Los casos nuevos salen con este centro y en «quién eres» se ven sus usuarios. Es de este dispositivo: no se sincroniza.", en: "New cases get this hospital and “who are you” shows its users. It belongs to this device: it is not synced." },
     cat_intro_usuarios:  { es: "Quién usa la herramienta. Sirve para <b>firmar las plantillas</b>: cada una lleva el nombre de quien la creó, y solo su autor puede editarla o borrarla. No es una contraseña ni protege nada — cualquiera puede cambiar de perfil desde la barra de arriba. Estos nombres viven en tu repositorio de datos privado, nunca en el del código.",
                            en: "Who uses the tool. It is used to <b>sign montages</b>: each one carries the name of whoever created it, and only its author can edit or delete it. It is not a password and protects nothing — anyone can switch profile from the top bar. These names live in your private data repository, never in the code one." },
     perfil_usuario_aria: { es: "Quién eres", en: "Who you are" },
@@ -1521,9 +1548,9 @@
                            en: "Delete the profile “{nombre}”?\nScenarios that used it are untouched." },
 
     /* --- Diálogo de sincronización --- */
-    dlg_sync_titulo:     { es: "Sincronizar con GitHub", en: "Sync with GitHub" },
-    dlg_sync_intro:      { es: "Guarda tus escenarios, etiquetas y material propio en un repositorio privado de GitHub, para tenerlos en el móvil y en el ordenador. Una vez conectado <b>se sincroniza solo</b>: baja lo último al abrir y sube unos segundos después de cada cambio. En <b>Modo quirófano</b> la subida se pausa —no depende de la red durante la cirugía— y se manda al salir. Sin conexión sigue funcionando y reintenta cuando vuelve. Los botones de abajo fuerzan una subida o bajada a mano.",
-                           en: "Stores your scenarios, labels and custom material in a private GitHub repository, so you have them on your phone and your computer. Once connected it <b>syncs on its own</b>: it fetches the latest on opening and uploads a few seconds after each change. In <b>Theatre mode</b> uploading is paused —no network dependency during surgery— and is sent on exit. Offline it keeps working and retries when the connection returns. The buttons below force a manual upload or download." },
+    dlg_sync_titulo:     { es: "Guardar en la nube", en: "Save to the cloud" },
+    dlg_sync_intro:      { es: "La «nube» es una carpeta privada en GitHub donde se guarda una copia de tus datos, para tenerlos en todos tus dispositivos. <b>Una vez conectado, todo va solo</b>: al abrir la app se trae lo nuevo, y unos segundos después de cada cambio se guarda en la nube. Sin conexión sigue funcionando y lo manda cuando vuelve. No tienes que pulsar nada más.",
+                           en: "The “cloud” is a private folder on GitHub that keeps a copy of your data, so you have it on all your devices. <b>Once connected, everything is automatic</b>: opening the app fetches what is new, and a few seconds after each change it is saved to the cloud. Offline it keeps working and sends it when the connection returns. You do not need to press anything else." },
     dlg_sync_ayuda:      { es: "Cómo preparar esto la primera vez", en: "How to set this up the first time" },
     sync_paso1:          { es: "Crea un repositorio <b>privado</b> nuevo y vacío en GitHub, solo para los datos (p. ej. <code>checklist-mio-datos</code>). No uses el del código: es público y dejaría los escenarios a la vista.",
                            en: "Create a new, empty <b>private</b> repository on GitHub, just for the data (e.g. <code>checklist-mio-datos</code>). Do not use the code one: it is public and would expose your scenarios." },
@@ -1541,8 +1568,8 @@
     campo_token_ayuda:   { es: "Se guarda solo en este navegador y nunca sale de él salvo hacia GitHub.",
                            en: "Stored only in this browser and never leaves it except towards GitHub." },
     btn_desconectar:     { es: "Desconectar", en: "Disconnect" },
-    btn_bajar:           { es: "Bajar", en: "Download" },
-    btn_subir:           { es: "Subir", en: "Upload" }
+    btn_bajar:           { es: "Traer de la nube", en: "Fetch from the cloud" },
+    btn_subir:           { es: "Guardar en la nube", en: "Save to the cloud" }
   };
 
   /* Vuelca data/i18n-<idioma>.js dentro de los objetos de datos como campos
@@ -2155,7 +2182,7 @@
    * Ojo con el nombre "etiqueta": en una técnica es su texto visible, y no
    * tiene nada que ver con las etiquetas de material (tipos físicos).
    * ---------------------------------------------------------------- */
-  var CATALOGOS = ["tecnicas", "servicios", "intervenciones", "perfiles", "usuarios"];
+  var CATALOGOS = ["tecnicas", "servicios", "intervenciones", "perfiles", "usuarios", "centros"];
   var GRUPOS_TECNICA = ["monitorizacion", "mapeo"];
 
   // nombre -> { version, actualizado_en, propios[], orden[], borrados[] }
@@ -2166,6 +2193,7 @@
   var INTERVENCIONES = [], INTERV = {};
   var PERFILES = [], PERF = {};
   var USUARIOS = [], USRS = {};
+  var CENTROS = [], CENTS = {};
 
   function reiniciarCatalogos() {
     catalogos = {};
@@ -2217,6 +2245,8 @@
     PERFILES = p.lista; PERF = p.indice;
     var u = fusionarCatalogo(USUARIOS_BASE, catalogos.usuarios);
     USUARIOS = u.lista; USRS = u.indice;
+    var ce = fusionarCatalogo(CENTROS_BASE, catalogos.centros);
+    CENTROS = ce.lista; CENTS = ce.indice;
   }
 
   // Lo desactivado deja de ofrecerse para casos nuevos, pero sigue existiendo
@@ -2279,7 +2309,7 @@
     var meta = catalogos[nombre];
     var lista = { tecnicas: TECNICAS, servicios: SERVICIOS,
                   intervenciones: INTERVENCIONES, perfiles: PERFILES,
-                  usuarios: USUARIOS }[nombre];
+                  usuarios: USUARIOS, centros: CENTROS }[nombre];
     // El orden se fija por primera vez con el que se está viendo, para que
     // mover un elemento no reordene de golpe todo lo demás.
     var ids = lista.map(function (e) { return e.id; });
@@ -3718,6 +3748,7 @@
 
   function pintarEstadoSync() {
     if (typeof pintarEstadoApunteGuardado === "function") pintarEstadoApunteGuardado();
+    if (typeof pintarDlgSync === "function") pintarDlgSync();
     var el = document.getElementById("sync-estado");
     var btn = document.getElementById("btn-sync");
     var estado = "ok";
@@ -4066,12 +4097,47 @@
 
   var dlgSync = document.getElementById("dlg-sync");
 
+  /* Diálogo de la nube en lenguaje llano (03-10-2026, estudio multicéntrico):
+     conectado y sin choque, Subir/Bajar no hacen falta y se esconden tras
+     «Opciones avanzadas»; con choque, se explica y los botones dicen con qué
+     te quedas. Solo cambia lo que se ve: subir() y bajar() son los de siempre. */
+  var syncAvanzado = false;
+  function pintarDlgSync() {
+    if (!dlgSync || !dlgSync.open) return;
+    var conectado = syncActivo();
+    var bSubir = document.getElementById("sync-subir");
+    var bBajar = document.getElementById("sync-bajar");
+    var linea = document.getElementById("sync-linea");
+    var choque = document.getElementById("sync-choque");
+    var avanz = document.getElementById("sync-avanzado");
+    choque.hidden = !(conectado && conflicto);
+    linea.hidden = !conectado || conflicto;
+    if (conectado && !conflicto) {
+      linea.textContent = ultimoFallo ? T("sync_linea_pendiente")
+        : T("sync_linea_ok", { fecha: sync.fecha ? new Date(sync.fecha).toLocaleString(localeActual(), {
+            day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) : "—" });
+    }
+    var verBotones = !conectado || conflicto || syncAvanzado;
+    bSubir.hidden = !verBotones;
+    bBajar.hidden = !verBotones;
+    avanz.hidden = !conectado || conflicto || syncAvanzado;
+    bSubir.textContent = T(conflicto ? "sync_quedar_dispositivo" : "btn_subir");
+    bBajar.textContent = T(conflicto ? "sync_quedar_nube" : "btn_bajar");
+    document.getElementById("sync-olvidar").hidden = !conectado;
+  }
+  document.getElementById("sync-avanzado").addEventListener("click", function () {
+    syncAvanzado = true;
+    pintarDlgSync();
+  });
+
   document.getElementById("btn-sync").addEventListener("click", function () {
     if (MODO_DEMO) { alert(T("demo_sin_sync")); return; }
     document.getElementById("sync-repo").value = sync.repo || "";
     document.getElementById("sync-token").value = sync.token || "";
     mensajeSync(null);
+    syncAvanzado = false;
     dlgSync.showModal();
+    pintarDlgSync();
   });
 
   function leerCamposSync() {
@@ -4407,16 +4473,72 @@
 
   // Correlativo AAAA-NNN a partir del año de la fecha de la cirugía, tomando
   // el máximo de lo que ya se conoce (que tras bajar es todo el repositorio).
-  function siguienteIdCaso(fecha) {
+  // Con centro, su código delante y correlativo propio (H1-2026-003): dos
+  // hospitales no repiten número (03-10-2026). Sin centro, como siempre.
+  var RE_ID_CASO = /^(?:([A-Z0-9]{1,6})-)?(\d{4})-(\d+)$/;
+  function siguienteIdCaso(fecha, centroId) {
     var anio = (fecha || "").slice(0, 4) || String(new Date().getFullYear());
+    var pref = codigoCentro(centroId);
     var max = 0;
     Object.keys(casos).forEach(function (uid) {
-      var m = /^(\d{4})-(\d+)$/.exec(casos[uid].ID_Caso || "");
-      if (m && m[1] === anio) max = Math.max(max, parseInt(m[2], 10));
+      var m = RE_ID_CASO.exec(casos[uid].ID_Caso || "");
+      if (m && m[2] === anio && (m[1] || "") === pref) max = Math.max(max, parseInt(m[3], 10));
     });
     var n = String(max + 1);
     while (n.length < 3) n = "0" + n;
-    return anio + "-" + n;
+    return (pref ? pref + "-" : "") + anio + "-" + n;
+  }
+  /* Antes de guardar: el texto «centro» sale del catálogo (lo leen el Sheet,
+     el CSV y el informe, que no cambian), y el número se rehace si el centro
+     elegido no es el de su prefijo. Solo en un caso nuevo o que ya llevaba
+     prefijo: los números antiguos sin centro (AAAA-NNN) no se tocan nunca. */
+  function ajustarCentroCaso(c, esNuevo) {
+    if (!c.centro_id || !CENTS[c.centro_id]) return;
+    c.centro = campo(CENTS[c.centro_id], "nombre");
+    recordarCentroId(c.centro_id);
+    var m = RE_ID_CASO.exec(c.ID_Caso || "");
+    var pref = codigoCentro(c.centro_id);
+    if (m && (m[1] || "") !== pref && (esNuevo || m[1])) {
+      c.ID_Caso = siguienteIdCaso(c.fecha, c.centro_id);
+      pintarSubtituloCaso(c);
+    }
+  }
+
+  /* Centro de este dispositivo (03-10-2026): de este dispositivo y no del
+     equipo, como el perfil, así que vive en localStorage y no se sincroniza.
+     Se fija en Catálogos > Centros, y también al guardar un caso con centro. */
+  var CENTRO_ID_KEY = "mio_ionm_centro_id";
+  function centroIdDispositivo() {
+    var id = "";
+    try { id = localStorage.getItem(CENTRO_ID_KEY) || ""; } catch (e) { id = ""; }
+    return CENTS[id] && CENTS[id].activa !== false ? id : "";
+  }
+  function recordarCentroId(id) {
+    try {
+      if (id) localStorage.setItem(CENTRO_ID_KEY, id); else localStorage.removeItem(CENTRO_ID_KEY);
+    } catch (e) { /* sin persistencia */ }
+  }
+  function hayCentros() { return activos(CENTROS).length > 0; }
+  function codigoCentro(id) { return CENTS[id] && CENTS[id].codigo ? CENTS[id].codigo : ""; }
+  // Los activos, más el que ya tuviera guardado aunque se haya desactivado
+  function opcionesCentros(valor) {
+    return CENTROS.filter(function (e) { return e.activa !== false || e.id === valor; })
+      .map(function (e) { return { valor: e.id, texto: campo(e, "nombre") + (e.codigo ? " (" + e.codigo + ")" : "") }; });
+  }
+  function selectorCentroDispositivo() {
+    var div = regNodo("div", "cat-centro-disp");
+    var lab = regNodo("label", null, T("cat_centro_dispositivo"));
+    lab.setAttribute("for", "cat-centro-disp");
+    var sel = catSelect([{ valor: "", texto: T("cat_sin_centro") }].concat(opcionesCentros(centroIdDispositivo())), centroIdDispositivo());
+    sel.id = "cat-centro-disp";
+    sel.addEventListener("change", function () {
+      recordarCentroId(sel.value);
+      renderPerfilUsuario();
+    });
+    div.appendChild(lab);
+    div.appendChild(sel);
+    div.appendChild(regNodo("small", null, T("cat_centro_dispositivo_ay")));
+    return div;
   }
 
   function centroPorDefecto() {
@@ -4429,16 +4551,18 @@
 
   function casoVacio() {
     var fecha = hoyISO();
+    var centroId = centroIdDispositivo();
     return {
       caso_uid: uuid(),
-      ID_Caso: siguienteIdCaso(fecha),
+      ID_Caso: siguienteIdCaso(fecha, centroId),
       nombre_caso: "",
       equipo_id: equipoNuevo(),
       // Nace sin planificar (26-09-2026); pasa a "preparado" al prepararlo.
       estado: "pendiente_planificar",
       motivo_cancelacion: "",
       fecha: fecha,
-      centro: centroPorDefecto(),
+      centro_id: centroId,
+      centro: centroId ? campo(CENTS[centroId], "nombre") : centroPorDefecto(),
       hora_inicio: "", hora_fin: "",
       escenario_nombre: "", perfil: "",
       edad: "", sexo: "", antecedentes_relevantes: "", informes_imagenes: [],
@@ -4812,7 +4936,7 @@
     if (def.t === "sel") return v ? opcionTexto(def.o, v) : "";
     if (def.t === "equipo") return hayVariosEquipos() ? nombreEquipo(equipoDe(c)) : "";
     if (def.t === "cat") {
-      var lista = def.cat === "servicios" ? SERVICIOS : INTERVENCIONES;
+      var lista = listaCatalogoCaso(def.cat);
       var ent = (lista || []).filter(function (e) { return e.id === v; })[0];
       return ent ? campo(ent, "nombre") : (v || "");
     }
@@ -4820,6 +4944,10 @@
     if (def.c === "tipo_alerta") return tipoAlertaDe(c);
     if (def.c === "dificultad_1a5") return (v || v === 0) ? (v + "/5") : "";
     return v;
+  }
+
+  function listaCatalogoCaso(nombre) {
+    return nombre === "servicios" ? SERVICIOS : nombre === "centros" ? CENTROS : INTERVENCIONES;
   }
 
   function nodoInforme(doc, tag, cls, texto) {
@@ -5241,7 +5369,9 @@
       "tecnicas_realizadas", "tecnicas_alteradas", "tecnicas_parametros",
       "umbral_raices_niveles", "material_previsto", "material_real", "imagenes_montaje",
       "informes_imagenes", "basales_registro", "alarmas_registro", "mapeo_registro", "eventos_anestesia",
-      "correlato_alarmas"
+      "correlato_alarmas",
+      // Su nombre ya sale en «centro», que se rellena al guardar
+      "centro_id"
     ];
     // Identificación en 2 columnas y Paciente en 3 (edad, sexo y servicio son
     // siempre descripciones cortas), con el nombre del caso y los textos
@@ -6955,6 +7085,10 @@
     { g: "traza", c: "motivo_cancelacion", t: "area", dependeDe: { c: "estado", v: "cancelado" } },
     { g: "traza", c: "fecha", t: "date", ay: "caso_fecha_ay" },
     { g: "traza", c: "nombre_caso", t: "text", ay: "caso_nombre_caso_ay" },
+    // Centro: lista cerrada (catálogo Centros) desde el 03-10-2026. Solo sale
+    // si hay centros dados de alta; el texto de antes («centro») sale solo
+    // si no los hay, o en un caso que lo tenga escrito sin centro elegido.
+    { g: "traza", c: "centro_id", t: "cat", cat: "centros", ay: "caso_centro_id_ay" },
     { g: "traza", c: "centro", t: "text" },
     { g: "traza", c: "hora_inicio", t: "time", fila: "horas" },
     { g: "traza", c: "hora_fin", t: "time", fila: "horas" },
@@ -8165,9 +8299,7 @@
       vacia.value = "";
       vacia.textContent = T("opc_vacio");
       control.appendChild(vacia);
-      var lista = def.t === "cat"
-        ? (def.cat === "servicios" ? SERVICIOS : INTERVENCIONES)
-        : null;
+      var lista = def.t === "cat" ? listaCatalogoCaso(def.cat) : null;
       if (lista) {
         // Se ofrece lo activo, más lo que ya tuviera el caso aunque esté
         // desactivado, para no perder el dato al abrir un caso antiguo.
@@ -8176,7 +8308,7 @@
         }).forEach(function (e) {
           var o = document.createElement("option");
           o.value = e.id;
-          o.textContent = campo(e, "nombre");
+          o.textContent = campo(e, "nombre") + (def.cat === "centros" && e.codigo ? " (" + e.codigo + ")" : "");
           control.appendChild(o);
         });
       } else {
@@ -8231,6 +8363,12 @@
   // de la ficha (auditoría 28-09-2026, T7): lo usan el campo Equipo y
   // «Montaje / Material».
   var resumenFicha = null;
+  function pintarSubtituloCaso(c) {
+    document.getElementById("caso-subtitulo").textContent =
+      T("caso_subtitulo_prefijo") + " " + (c.ID_Caso || "—") + (c.nombre_caso ? ", " + c.nombre_caso : "");
+    if (MODO_DEMO) document.getElementById("caso-subtitulo").appendChild(nodoFicticio());
+  }
+
   function renderFichaCaso() {
     resumenFicha = casoAbierto ? calcularResumen(montajeDesdeCaso(casoAbierto)) : null;
     camposCaso = {};
@@ -8238,9 +8376,7 @@
     condicionalesPendientes = [];
     var c = casoAbierto;
 
-    document.getElementById("caso-subtitulo").textContent =
-      T("caso_subtitulo_prefijo") + " " + (c.ID_Caso || "—") + (c.nombre_caso ? ", " + c.nombre_caso : "");
-    if (MODO_DEMO) document.getElementById("caso-subtitulo").appendChild(nodoFicticio());
+    pintarSubtituloCaso(c);
     document.getElementById("caso-aviso-demo").hidden = !MODO_DEMO;
     pintarEquipoSubtitulo(equipoDe(c));
 
@@ -8388,6 +8524,8 @@
       }
       var filasCampos = {};
       CAMPOS_CASO.filter(function (def) { return def.g === g; }).forEach(function (def) {
+        if (def.c === "centro_id" && !hayCentros() && !c.centro_id) return;
+        if (def.c === "centro" && hayCentros() && (c.centro_id || !c.centro)) return;
         // Un caso de antes de este cambio no trae estos campos ya resueltos:
         // se precargan resueltos desde los que tenía, igual que "intervencion".
         var valor = def.c === "intervencion" ? intervencionDe(c)
@@ -8397,6 +8535,11 @@
           : def.c === "resultado_esperable" ? resultadoEsperableId(c[def.c])
           : c[def.c];
         var elCampo = campoCaso(def, valor);
+        // Texto antiguo junto a la lista de centros: que se note cuál es cuál
+        if (def.c === "centro" && hayCentros()) {
+          var labCentro = elCampo.querySelector("label");
+          if (labCentro) labCentro.textContent = T("caso_centro_texto");
+        }
         // "montaje" reparte sus campos entre los 3 sub-apartados de arriba
         // según "def.sub"; el resto de grupos, y los campos de "montaje"
         // sin "sub" (imágenes), van directos a `cont` como siempre.
@@ -8599,6 +8742,7 @@
     if (!casoEsNuevo && fichaOrigen && casos[c.caso_uid] && casos[c.caso_uid] !== fichaOrigen &&
         !confirm(T("caso_cambiado_fuera"))) return false;
     if (cerrar) c.estado = c.estado === "cerrado" ? "preparado" : "cerrado";
+    ajustarCentroCaso(c, casoEsNuevo);
     recordarCentro(c.centro);
     guardarCaso(c, casoEsNuevo);
     casoEsNuevo = false;
@@ -8643,6 +8787,7 @@
     var c = casoAbierto;
     if (!c.fecha) return false;
     if (casoCambiadoFuera()) { avisoGuardado(T("caso_cambiado_fuera_auto"), true); return false; }
+    ajustarCentroCaso(c, casoEsNuevo);
     guardarCaso(clonar(c), casoEsNuevo, true);
     casoEsNuevo = false;
     fichaOrigen = casos[c.caso_uid];
@@ -8712,6 +8857,24 @@
     llenarSelectEquipos(sel, sel.value);
   }
 
+  // Filtro "Centro": solo con centros dados de alta (03-10-2026).
+  function pintarFiltroCentro() {
+    var envoltura = document.getElementById("casos-centro-filtro");
+    var sel = document.getElementById("casos-centro");
+    envoltura.hidden = !hayCentros();
+    if (envoltura.hidden) return;
+    var valor = sel.value;
+    sel.textContent = "";
+    [{ valor: "", texto: T("casos_filtro_todos") }].concat(opcionesCentros(valor)).forEach(function (o) {
+      var op = document.createElement("option");
+      op.value = o.valor;
+      op.textContent = o.texto;
+      sel.appendChild(op);
+    });
+    sel.value = valor;
+    if (sel.value !== valor) sel.value = "";
+  }
+
   // "Todos" + un equipo por opción. Lo usan los filtros de Gestión de Casos y
   // de Plantillas de montajes.
   function llenarSelectEquipos(sel, valor) {
@@ -8739,8 +8902,10 @@
     var soloSeguimiento = document.getElementById("casos-seguimiento").checked;
     var fEquipo = hayVariosEquipos() ? document.getElementById("casos-equipo").value : "";
     var fServicio = document.getElementById("casos-servicio").value;
+    var fCentro = hayCentros() ? document.getElementById("casos-centro").value : "";
     return Object.keys(casos).filter(function (uid) {
       var c = casos[uid];
+      if (fCentro && (c.centro_id || "") !== fCentro) return false;
       if (fEquipo && equipoDe(c) !== fEquipo) return false;
       if (fServicio && c.servicio_id !== fServicio) return false;
       if (fEstado && c.estado !== fEstado) return false;
@@ -8790,7 +8955,7 @@
   }
 
   // «Filtros (n)» y, debajo, un chip con ✕ por cada filtro puesto (30-09-2026).
-  var CASOS_FILTROS_SELECT = ["casos-estado", "casos-servicio", "casos-concordancia", "casos-equipo"];
+  var CASOS_FILTROS_SELECT = ["casos-estado", "casos-servicio", "casos-concordancia", "casos-equipo", "casos-centro"];
   function pintarFiltrosActivos() {
     var cont = document.getElementById("casos-filtros-activos");
     cont.textContent = "";
@@ -8798,6 +8963,7 @@
     CASOS_FILTROS_SELECT.forEach(function (id) {
       var sel = document.getElementById(id);
       if (id === "casos-equipo" && !hayVariosEquipos()) return;
+      if (id === "casos-centro" && !hayCentros()) return;
       if (sel.value) activos.push({ texto: sel.options[sel.selectedIndex].textContent, quitar: function () { sel.value = ""; } });
     });
     [["casos-desde", "casos_filtro_desde_chip"], ["casos-hasta", "casos_filtro_hasta_chip"]].forEach(function (x) {
@@ -8843,6 +9009,7 @@
 
   function renderListaCasos() {
     pintarFiltroEquipo();
+    pintarFiltroCentro();
     pintarFiltroServicio();
     pintarBotonesQuitarFecha();
     pintarFiltrosActivos();
@@ -8973,7 +9140,7 @@
   }
 
   document.getElementById("tile-casos").addEventListener("click", abrirListaCasos);
-  ["casos-estado", "casos-servicio", "casos-concordancia", "casos-equipo", "casos-desde", "casos-hasta", "casos-orden", "casos-destacado", "casos-seguimiento"].forEach(function (id) {
+  ["casos-estado", "casos-servicio", "casos-concordancia", "casos-equipo", "casos-centro", "casos-desde", "casos-hasta", "casos-orden", "casos-destacado", "casos-seguimiento"].forEach(function (id) {
     document.getElementById(id).addEventListener("change", renderListaCasos);
   });
 
@@ -9100,7 +9267,7 @@
     // (30-09-2026, tras la prueba con tres usuarios: se cerraba un caso sin
     // diagnóstico, intervención ni resumen, y así no sirve para estadísticas).
     if (!estabaCerrado) {
-      var faltan = [["diagnostico", "caso_diagnostico"], ["intervencion", "caso_intervencion"],
+      var faltan = [["centro_id", "caso_centro_id"], ["diagnostico", "caso_diagnostico"], ["intervencion", "caso_intervencion"],
                     ["resumen_monitorizacion", "caso_resumen_monitorizacion"], ["evolucion_postop", "caso_evolucion_postop"],
                     ["concordancia", "caso_concordancia"]]
         .filter(function (x) { return camposCaso[x[0]] && !String(camposCaso[x[0]].value || "").trim(); })
@@ -9947,18 +10114,18 @@
   var catEditando = null;    // id que se está editando, o null si es nuevo
   var catCampos = {};        // clave -> elemento del formulario
   var PREFIJO_ID = { tecnicas: "t_", servicios: "s_", intervenciones: "i_", perfiles: "p_",
-                     usuarios: "u_" };
+                     usuarios: "u_", centros: "c_" };
 
   function catLista() {
     return { tecnicas: TECNICAS, servicios: SERVICIOS,
              intervenciones: INTERVENCIONES, perfiles: PERFILES,
-             usuarios: USUARIOS }[catPestana];
+             usuarios: USUARIOS, centros: CENTROS }[catPestana];
   }
 
   function catIndice() {
     return { tecnicas: TECS, servicios: SERV,
              intervenciones: INTERV, perfiles: PERF,
-             usuarios: USRS }[catPestana];
+             usuarios: USRS, centros: CENTS }[catPestana];
   }
 
   // Las técnicas llaman "etiqueta" a su texto visible; el resto, "nombre".
@@ -9994,6 +10161,7 @@
     cont.innerHTML = "";
     var lista = catLista();
     var clave = catClaveTexto();
+    if (catPestana === "centros" && activos(CENTROS).length) cont.appendChild(selectorCentroDispositivo());
 
     if (!lista.length) {
       var vacio = document.createElement("p");
@@ -10044,6 +10212,10 @@
           .filter(Boolean).join(" · ");
       } else if (catPestana === "perfiles") {
         extra.textContent = T("cat_n_tecnicas", { n: (e.tecnicas || []).length });
+      } else if (catPestana === "centros") {
+        extra.textContent = e.codigo || "";
+      } else if (catPestana === "usuarios" && e.centro_id && CENTS[e.centro_id]) {
+        extra.textContent = CENTS[e.centro_id].codigo || campo(CENTS[e.centro_id], "nombre");
       }
       fila.appendChild(extra);
 
@@ -10135,6 +10307,19 @@
         catSelect(ops, actual ? actual.servicio : "")));
     }
 
+    if (catPestana === "centros") {
+      cont.appendChild(catCampo("codigo", T("cat_campo_codigo_centro"),
+        catInput(actual ? actual.codigo : "", 6), T("cat_campo_codigo_centro_ay")));
+    }
+
+    // Con centros dados de alta, cada usuario puede ir con el suyo: el
+    // selector «quién eres» enseña solo los del centro de este dispositivo.
+    if (catPestana === "usuarios" && activos(CENTROS).length) {
+      cont.appendChild(catCampo("centro", T("cat_campo_centro"),
+        catSelect([{ valor: "", texto: T("cat_sin_centro") }].concat(opcionesCentros(actual && actual.centro_id)),
+          actual ? actual.centro_id : centroIdDispositivo())));
+    }
+
     if (catPestana === "perfiles") {
       cont.appendChild(catCampo("nota", T("cat_campo_nota"),
         catInput(actual ? campo(actual, "nota") : "", 300), T("cat_campo_nota_ay")));
@@ -10196,7 +10381,7 @@
     renderCatPestanas();
     var intros = { tecnicas: "cat_intro_tecnicas", intervenciones: "cat_intro_interv",
                    servicios: "cat_intro_serv", perfiles: "cat_intro_perfiles",
-                   usuarios: "cat_intro_usuarios" };
+                   usuarios: "cat_intro_usuarios", centros: "cat_intro_centros" };
     document.getElementById("cat-intro").innerHTML = T(intros[catPestana]);
     renderCatLista();
     renderCatVersion();
@@ -10249,6 +10434,16 @@
     } else if (catPestana === "perfiles") {
       fijarTexto(dato, "nota", (catCampos.nota.value || "").trim());
       dato.tecnicas = catCampos.tecnicas.slice();
+    } else if (catPestana === "centros") {
+      // El código va delante del número de caso (H1-2026-003): corto, sin
+      // espacios ni guiones, y distinto del de los otros centros.
+      var cod = (catCampos.codigo.value || "").trim().toUpperCase();
+      if (!/^[A-Z0-9]{1,6}$/.test(cod)) { catError(T("cat_centro_codigo_mal")); return; }
+      var codRep = CENTROS.filter(function (e) { return e.id !== catEditando && e.codigo === cod; })[0];
+      if (codRep) { catError(T("cat_centro_codigo_rep", { codigo: cod })); return; }
+      dato.codigo = cod;
+    } else if (catPestana === "usuarios" && catCampos.centro) {
+      dato.centro_id = catCampos.centro.value;
     }
 
     guardarEnCatalogo(catPestana, dato);
@@ -10381,8 +10576,13 @@
     sel.appendChild(vacio);
     // Se ofrece lo activo, más el tuyo aunque lo hayan desactivado: si no,
     // desactivar a alguien le dejaría el selector en blanco sin explicación.
+    // Con centro en este dispositivo, solo los usuarios de ese centro (y los
+    // que no tienen centro), más el tuyo siempre (03-10-2026).
+    var centroDisp = centroIdDispositivo();
     USUARIOS.filter(function (u) {
-      return u.activa !== false || u.id === perfilUsuario;
+      if (u.id === perfilUsuario) return true;
+      if (u.activa === false) return false;
+      return !centroDisp || !u.centro_id || u.centro_id === centroDisp;
     }).forEach(function (u) {
       var o = document.createElement("option");
       o.value = u.id;
@@ -10411,7 +10611,7 @@
       return (campo(u, "nombre") || "").toLowerCase() === nombre.toLowerCase();
     })[0];
     var id = yaEsta ? yaEsta.id : idLibreEn(USRS, "u_", nombre);
-    if (!yaEsta) guardarEnCatalogo("usuarios", { id: id, nombre: nombre, activa: true });
+    if (!yaEsta) guardarEnCatalogo("usuarios", { id: id, nombre: nombre, activa: true, centro_id: centroIdDispositivo() });
     fijarPerfilUsuario(id);
     guardarEstado();
     renderPerfilUsuario();

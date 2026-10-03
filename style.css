@@ -4381,6 +4381,9 @@ body:not(.editando-caso) #barra-caso-prefijo { color: var(--accent); }
    Guardar plantilla / Más acciones más pequeños; y cada plantilla ocupa
    menos alto (título más pequeño, menos relleno, técnicas más pequeñas). */
 #dlg-montajes-lista { max-height: none; overflow: visible; gap: 0.3rem; }
+/* Una plantilla debajo de otra, a todo el ancho (03-10-2026, pedido del
+   usuario: en rejilla los nombres largos se partían en muchas líneas). */
+#dlg-montajes-lista { grid-template-columns: 1fr; }
 .montajes-acciones button { font-size: 0.78rem; min-height: 32px; padding: 0.2rem 0.7rem; }
 .plantilla-fila { padding: 0.32rem 0.55rem; gap: 0.1rem; }
 .plantilla-fila .montaje-nombre { font-size: 0.8rem; line-height: 1.25; }
@@ -4468,3 +4471,14 @@ body:not(.editando-caso) #barra-caso-prefijo { color: var(--accent); }
   border: 1px solid var(--border); border-radius: 4px; background: var(--card-bg); color: var(--accent);
   cursor: pointer; white-space: nowrap;
 }
+
+/* Estudio multicéntrico, bloque 1 (03-10-2026) */
+/* Catálogos > Centros: de qué centro es este dispositivo */
+.cat-centro-disp { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.5rem; margin-bottom: 0.6rem; padding: 0.45rem 0.55rem; border: 1px solid var(--border-soft); border-radius: 5px; }
+.cat-centro-disp label { font-size: 0.78rem; font-weight: 600; }
+.cat-centro-disp small { flex: 1 0 100%; font-size: 0.7rem; color: var(--text-muted); }
+/* Diálogo de la nube: estado en una línea y aviso de choque */
+.sync-linea { margin: 0 0 0.5rem; font-size: 0.78rem; color: var(--text); }
+.sync-choque { margin: 0 0 0.5rem; padding: 0.45rem 0.55rem; font-size: 0.78rem; border: 1px solid var(--aviso-border); border-radius: 5px; background: var(--aviso-bg, transparent); color: var(--text); }
+.sync-linea[hidden], .sync-choque[hidden] { display: none; }
+.dlg-botones button.sync-avanzado { border: none; background: none; color: var(--text-muted); text-decoration: underline; padding: 0 0.3rem; }

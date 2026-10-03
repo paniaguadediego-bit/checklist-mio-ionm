@@ -180,7 +180,9 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Idioma | `volcarTraducciones()`, `campo()` | [599](app.js:599), [681](app.js:681) |
 | Etiquetas (tipos físicos) | `reconstruirEtiquetas()` | [751](app.js:751) |
 | Catálogo de material | `reconstruirCatalogo()` | [840](app.js:840) |
-| Catálogos editables (técnicas/servicios/intervenciones/perfiles/escenarios/usuarios) | `fusionarCatalogo()`, `reconstruirCatalogos()` | ver `grep` |
+| Catálogos editables (técnicas/servicios/intervenciones/perfiles/escenarios/usuarios/centros) | `fusionarCatalogo()`, `reconstruirCatalogos()` | ver `grep` |
+| Centros (estudio multicéntrico, 03-10-2026): catálogo `centros` {id, nombre, codigo}, vacío de fábrica; centro del dispositivo en `mio_ionm_centro_id` (no se sincroniza); `centro_id` en el caso (el texto `centro` se deriva al guardar); número «H1-2026-003»; filtro «Centro»; usuarios con `centro_id` | `CENTROS_BASE`, `centroIdDispositivo()`, `selectorCentroDispositivo()`, `siguienteIdCaso(fecha, centroId)`, `RE_ID_CASO`, `ajustarCentroCaso()`, `pintarFiltroCentro()`, `opcionesCentros()`, `listaCatalogoCaso()` | ver `grep` |
+| Diálogo de la nube en lenguaje llano (Subir/Bajar escondidos si no hay choque) | `pintarDlgSync()`, `syncAvanzado` | ver `grep` |
 | Carga y guardado del estado | `cargarEstado()`, `guardarEstado()` | [1159](app.js:1159), [1281](app.js:1281) |
 | Entradas de una caja | `entradasDe()` | [1510](app.js:1510) |
 | Selección y colocación (pulsar y colocar); chip con el nombre en `.chip-nombre` (se parte en entradas estrechas) | `seleccionar()`, `colocar()`, `crearChip()` | ver `grep` |
@@ -272,7 +274,7 @@ editables.
 
 ### Catálogos editables
 
-`tecnicas`, `servicios`, `intervenciones`, `perfiles` y `usuarios` se editan
+`tecnicas`, `servicios`, `intervenciones`, `perfiles`, `usuarios` y `centros` (03-10-2026) se editan
 desde el diálogo **Catálogos** (botón en la barra de herramientas). Su
 estado vive en `catalogos` y se guarda dentro de `estado.json`. **Ya no hay
 `escenarios`** (los tipos de cirugía) en esta lista desde el 31-08-2026 —se
@@ -538,7 +540,7 @@ distinta a la anterior, no importa el formato exacto.
 >   Concordancia, Equipo, Desde, Hasta, Destacados y Seguimiento; los filtros
 >   puestos salen como chips con ✕. Los mismos filtros valen para el informe y
 >   los CSV.
-> - **Plantillas de montajes**: lista entera sin scroll propio; filas con aspecto
+> - **Plantillas de montajes**: una debajo de otra (una columna, 03-10-2026); lista entera sin scroll propio; filas con aspecto
 >   de caso (`nodoFilaPlantilla()`); ★ **favoritas** (primero y casilla «Solo
 >   favoritas»; por dispositivo y perfil, no se sincronizan).
 > - **Dos equipos** (Inomed/Cadwell): `equipo_id`; **no confundir con `equipo`**.
@@ -581,6 +583,7 @@ distinta a la anterior, no importa el formato exacto.
 >   `.chip-nombre` (`crearChip()`); en una entrada estrecha (tres cajas en
 >   fila) el chip colocado es de bloque, se parte por los espacios y la ✕ y el
 >   📷 quedan al final de la última línea, sin salirse.
+> - **Estudio multicéntrico (03-10-2026, preparado, no en marcha)**: dos hospitales, 0-2 cirugías/día cada uno, unos meses, para el congreso nacional. Decidido: **opción B** (una cuenta de GitHub por hospital; el administrador configura cada dispositivo), **plantillas comunes**, los casos actuales del usuario **no entran**. **Bloque 1 hecho**: catálogo Centros (código delante del número de caso, por centro y año; los números antiguos sin centro no cambian), centro del dispositivo, filtro Centro, usuarios por centro, aviso al cerrar si falta el centro, diálogo de la nube en lenguaje llano («Guardar en la nube» / «Traer de la nube»; con choque, «Quedarme con lo de este dispositivo / de la nube»), aviso de privacidad en Antecedentes. Sin centros dados de alta todo se ve como antes. **Pendiente (bloque 2, cuando el DPD y el CEIm digan dónde alojar)**: repositorio común aparte del personal (la app conectada a dos sitios), `estado.json` por centro, «código de configuración» en un paso (nunca en un enlace), organización de GitHub si se queda allí, Mis apuntes fuera del común (hoy un solo `apuntes/documento.json`), `centro_id` en el CSV y el Sheet; **bloque 3**: guía de una página para médicos y guía de administrador. Alojamiento: plataforma institucional (REDCap) > servidor UE (Forgejo/Gitea) > GitHub; lo decide el DPD.
 > - **Preguntas abiertas del usuario (30-09-2026)**: dónde guardar los datos de
 >   un usuario normal (hoy, repo privado de GitHub con token; no revisado por
 >   protección de datos ni informática; no es aplicación sanitaria: solo recoge

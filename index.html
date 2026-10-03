@@ -24,7 +24,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20261001q">
+<link rel="stylesheet" href="style.css?v=20261003a">
 </head>
 <body>
 
@@ -318,11 +318,14 @@
     <small data-i18n="campo_token_ayuda"></small>
   </div>
 
+  <p class="sync-linea" id="sync-linea" hidden></p>
+  <p class="sync-choque" id="sync-choque" data-i18n="sync_choque" hidden></p>
   <p class="dlg-error" id="sync-error" hidden></p>
   <p class="dlg-ok" id="sync-ok" hidden></p>
 
   <div class="dlg-botones">
     <button type="button" id="sync-olvidar" class="peligro" data-i18n="btn_desconectar"></button>
+    <button type="button" id="sync-avanzado" class="sync-avanzado" data-i18n="sync_avanzado" hidden></button>
     <span class="barra-flex"></span>
     <button type="button" id="sync-cerrar" data-i18n="cerrar"></button>
     <button type="button" id="sync-bajar" data-i18n="btn_bajar"></button>
@@ -642,6 +645,10 @@
           <option value="FN" data-i18n="opc_concordancia_FN"></option>
           <option value="PR" data-i18n="opc_concordancia_PR"></option>
         </select>
+      </span>
+      <span id="casos-centro-filtro" hidden>
+        <label for="casos-centro" data-i18n="casos_filtro_centro"></label>
+        <select id="casos-centro"></select>
       </span>
       <span id="casos-equipo-filtro" hidden>
         <label for="casos-equipo" data-i18n="casos_filtro_equipo"></label>
@@ -1177,6 +1184,6 @@
 <script src="data/i18n-en.js?v=20260930b"></script>
 <script src="data/guia.js?v=20261001d"></script>
 <script src="data/parametros-tecnicas.js?v=20260930a"></script>
-<script src="app.js?v=20261001u"></script>
+<script src="app.js?v=20261003a"></script>
 </body>
 </html>
