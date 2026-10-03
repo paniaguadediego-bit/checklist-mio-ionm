@@ -223,7 +223,8 @@
     plantilla_vacia:     { es: "Vacía", en: "Empty" },
     plantilla_leyenda_sens: { es: "Sensitivas", en: "Sensory" },
     plantilla_leyenda_mot: { es: "Motoras", en: "Motor" },
-    plantilla_leyenda_emg: { es: "EMG y reflejos", en: "EMG and reflexes" },
+    plantilla_leyenda_emg: { es: "EMG", en: "EMG" },
+    plantilla_leyenda_ref: { es: "Reflejos", en: "Reflexes" },
     plantilla_leyenda_eeg: { es: "EEG", en: "EEG" },
     plantilla_leyenda_map: { es: "Mapeo", en: "Mapping" },
     org_migas_plantillas: { es: "Plantillas", en: "Templates" },
@@ -12107,7 +12108,11 @@
      con el color de su familia y la franja izquierda de la plantilla lleva
      los colores de las familias que monitoriza. Colores en --fam-* (style.css,
      uno por modo de color). */
-  var FAMILIAS_TEC = ["sens", "mot", "emg", "eeg", "map"];
+  // Colores elegidos por el usuario (04-10-2026): sensitivas ámbar, motoras
+  // rojo-violeta, EMG verde, reflejos rojo, EEG/ECoG azulado, mapeo rosa.
+  var FAMILIAS_TEC = ["sens", "mot", "emg", "ref", "eeg", "map"];
+  // Reflejos aparte de la EMG: los «rx_» de tronco, los H-R y estos
+  var REFLEJOS_TEC = ["br", "rbc", "reflejo_h"];
   var FAMILIA_TEC = {
     t_pess: "sens", c_pess: "sens", peatc: "sens", pev: "sens", c_pev: "sens", erg: "sens", retino: "sens",
     t_pem: "mot", c_pem: "mot", pem_corticobulbares: "mot", onda_d: "mot",
@@ -12116,7 +12121,8 @@
   function familiaTecnica(t) {
     if (FAMILIA_TEC[t.id]) return FAMILIA_TEC[t.id];
     if (t.grupo === "mapeo") return "map";
-    return "emg";   // EMG libre, reflejos, H, LSR, nervios y el resto
+    if (REFLEJOS_TEC.indexOf(t.id) !== -1 || /^(rx|hr)_/.test(t.id)) return "ref";
+    return "emg";   // EMG libre, LSR, PRM, ARM, PAN, onda F, ENG y el resto
   }
   function nodoFilaPlantilla(m, uid, entradas, yo, estrellaEditable) {
     var fila = document.createElement("button");

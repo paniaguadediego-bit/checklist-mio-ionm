@@ -4520,9 +4520,9 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 
 /* Lista de plantillas con color (04-10-2026): familias de técnica. Claro =
    tonos oscuros legibles en blanco; azul y oscuro = tonos vivos. */
-:root { --fam-sens: #1f6fd1; --fam-mot: #1e8a5a; --fam-emg: #a86b00; --fam-eeg: #7a4fc4; --fam-map: #c2386b; }
+:root { --fam-sens: #a86b00; --fam-mot: #9c1f63; --fam-emg: #1e8a5a; --fam-ref: #c62828; --fam-eeg: #1f6fd1; --fam-map: #d6609a; }
 @media screen {
-  :root:not(.tema-claro) { --fam-sens: #5aa9ff; --fam-mot: #4cc38a; --fam-emg: #f0b429; --fam-eeg: #b18cf0; --fam-map: #f2709c; }
+  :root:not(.tema-claro) { --fam-sens: #f0b429; --fam-mot: #c8408f; --fam-emg: #4cc38a; --fam-ref: #ef4444; --fam-eeg: #5aa9ff; --fam-map: #f7a6c8; }
 }
 .plantilla-fila { position: relative; border-left-color: transparent; }
 .plantilla-fila.mio { border-left-color: transparent; }
@@ -4535,6 +4535,7 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 .plantilla-tec.fam-sens { color: var(--fam-sens); border-color: color-mix(in srgb, var(--fam-sens) 45%, transparent); background: color-mix(in srgb, var(--fam-sens) 14%, transparent); }
 .plantilla-tec.fam-mot { color: var(--fam-mot); border-color: color-mix(in srgb, var(--fam-mot) 45%, transparent); background: color-mix(in srgb, var(--fam-mot) 14%, transparent); }
 .plantilla-tec.fam-emg { color: var(--fam-emg); border-color: color-mix(in srgb, var(--fam-emg) 45%, transparent); background: color-mix(in srgb, var(--fam-emg) 14%, transparent); }
+.plantilla-tec.fam-ref { color: var(--fam-ref); border-color: color-mix(in srgb, var(--fam-ref) 45%, transparent); background: color-mix(in srgb, var(--fam-ref) 14%, transparent); }
 .plantilla-tec.fam-eeg { color: var(--fam-eeg); border-color: color-mix(in srgb, var(--fam-eeg) 45%, transparent); background: color-mix(in srgb, var(--fam-eeg) 14%, transparent); }
 .plantilla-tec.fam-map { color: var(--fam-map); border-color: color-mix(in srgb, var(--fam-map) 45%, transparent); background: color-mix(in srgb, var(--fam-map) 14%, transparent); }
 .plantillas-leyenda { margin: 0 0 0.45rem; }
@@ -4542,6 +4543,7 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 .casos-leyenda-it.fam-sens::before { background: var(--fam-sens); }
 .casos-leyenda-it.fam-mot::before { background: var(--fam-mot); }
 .casos-leyenda-it.fam-emg::before { background: var(--fam-emg); }
+.casos-leyenda-it.fam-ref::before { background: var(--fam-ref); }
 .casos-leyenda-it.fam-eeg::before { background: var(--fam-eeg); }
 .casos-leyenda-it.fam-map::before { background: var(--fam-map); }
 /* Migas «Plantillas › nombre» en la cabecera de la edición */
