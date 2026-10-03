@@ -9281,6 +9281,10 @@
       det.textContent = c.nombre_caso || (intervencionDe(c) || c.escenario_nombre || T("caso_sin_intervencion"));
       if (MODO_DEMO) det.appendChild(nodoFicticio());
       fila.appendChild(det);
+      // Técnicas hechas, con el color de su familia (04-10-2026, pedido del
+      // usuario), en el orden del catálogo como en las plantillas.
+      var tecsCaso = TECNICAS.filter(function (t) { return (c.tecnicas_realizadas || []).indexOf(t.id) !== -1; });
+      if (tecsCaso.length) fila.appendChild(nodoEtiquetasTecnicas(tecsCaso));
 
       // Sin etiqueta de estado (29-09-2026, pedido del usuario): lo dice el
       // color del recuadro (leyenda bajo los filtros); queda en el title y
@@ -12218,31 +12222,35 @@
         return "var(--fam-" + f + ") " + (i * paso) + "% " + ((i + 1) * paso) + "%";
       }).join(", ") + ")");
     }
-    if (tecs.length) {
-      var fTecs = document.createElement("span");
-      fTecs.className = "plantilla-tecs";
-      tecs.slice(0, PLANTILLA_MAX_TECS).forEach(function (t) {
-        fTecs.appendChild(regNodo("span", "plantilla-tec fam-" + familiaTecnica(t), campo(t, "corta") || campo(t, "etiqueta")));
-      });
-      if (tecs.length > PLANTILLA_MAX_TECS) {
-        // «+n»: al tocarlo, un globo con las técnicas que no caben (30-09-2026,
-        // pedido del usuario), sin cargar la plantilla.
-        var mas = regNodo("span", "plantilla-tec plantilla-tec-mas", "+" + (tecs.length - PLANTILLA_MAX_TECS));
-        var resto = tecs.slice(PLANTILLA_MAX_TECS).map(function (t) { return campo(t, "corta") || campo(t, "etiqueta"); }).join(" · ");
-        mas.title = resto;
-        mas.setAttribute("data-ayuda", resto);
-        mas.addEventListener("click", function (e) {
-          e.stopPropagation();
-          e.preventDefault();
-          mostrarGloboAyuda(mas);
-          var g = ayudaGlobo;
-          setTimeout(function () { if (ayudaGlobo === g) quitarGloboAyuda(); }, 3500);
-        });
-        fTecs.appendChild(mas);
-      }
-      fila.appendChild(fTecs);
-    }
+    if (tecs.length) fila.appendChild(nodoEtiquetasTecnicas(tecs));
     return fila;
+  }
+
+  /* Línea de etiquetas de técnica con el color de su familia (plantillas y,
+     desde el 04-10-2026, las técnicas hechas en cada caso de Gestión de
+     Casos). «+n»: al tocarlo, un globo con las que no caben (30-09-2026,
+     pedido del usuario), sin abrir la fila. */
+  function nodoEtiquetasTecnicas(tecs) {
+    var fTecs = document.createElement("span");
+    fTecs.className = "plantilla-tecs";
+    tecs.slice(0, PLANTILLA_MAX_TECS).forEach(function (t) {
+      fTecs.appendChild(regNodo("span", "plantilla-tec fam-" + familiaTecnica(t), campo(t, "corta") || campo(t, "etiqueta")));
+    });
+    if (tecs.length > PLANTILLA_MAX_TECS) {
+      var mas = regNodo("span", "plantilla-tec plantilla-tec-mas", "+" + (tecs.length - PLANTILLA_MAX_TECS));
+      var resto = tecs.slice(PLANTILLA_MAX_TECS).map(function (t) { return campo(t, "corta") || campo(t, "etiqueta"); }).join(" · ");
+      mas.title = resto;
+      mas.setAttribute("data-ayuda", resto);
+      mas.addEventListener("click", function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        mostrarGloboAyuda(mas);
+        var g = ayudaGlobo;
+        setTimeout(function () { if (ayudaGlobo === g) quitarGloboAyuda(); }, 3500);
+      });
+      fTecs.appendChild(mas);
+    }
+    return fTecs;
   }
 
   document.getElementById("montajes-buscar").addEventListener("input", renderListaMontajesDialog);

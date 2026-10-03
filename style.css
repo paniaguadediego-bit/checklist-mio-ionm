@@ -4575,3 +4575,6 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
   padding-left: max(1.1rem, calc((100vw - 1400px) / 2));
   padding-right: max(1.1rem, calc((100vw - 1400px) / 2));
 }
+
+/* Técnicas hechas en las filas de Gestión de Casos (04-10-2026) */
+.caso-fila .plantilla-tecs { display: flex; flex-wrap: wrap; gap: 0.15rem; margin-top: 0.2rem; }
