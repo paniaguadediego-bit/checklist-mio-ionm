@@ -5648,7 +5648,7 @@
       var nombre = (campo(m, "nombre") || "").toLowerCase();
       return nombre.indexOf(busq) !== -1 || autorDe(m).toLowerCase().indexOf(busq) !== -1;
     });
-    uids.sort(compararPlantillasFav);
+    uids.sort(compararMontajesPorNombre);
 
     document.getElementById("plantilla-elegir-vacio").hidden = !!uids.length;
     if (!uids.length) {
@@ -11840,9 +11840,10 @@
       var nombre = (campo(m, "nombre") || "").toLowerCase();
       return nombre.indexOf(busq) !== -1 || autorDe(m).toLowerCase().indexOf(busq) !== -1;
     });
-    // Alfabético, sin importar de quién sea -pedido del usuario-; las
-    // favoritas, primero (30-09-2026).
-    uids.sort(compararPlantillasFav);
+    // Alfabético, sin importar de quién sea -pedido del usuario-. Las
+    // favoritas ya no suben arriba (04-10-2026, pedido del usuario): se
+    // quedan en su sitio y se filtran con «Solo favoritas».
+    uids.sort(compararMontajesPorNombre);
 
     document.getElementById("montajes-cuenta").textContent =
       T("montajes_cuenta", { n: uids.length, total: Object.keys(montajes).length });
@@ -11910,12 +11911,6 @@
     if (i === -1) lista.push(uid); else lista.splice(i, 1);
     todas[k] = lista;
     try { localStorage.setItem(FAV_PLANTILLAS_KEY, JSON.stringify(todas)); } catch (e) { /* sin persistencia */ }
-  }
-  // Favoritas primero; dentro de cada grupo, por nombre como siempre.
-  function compararPlantillasFav(a, b) {
-    var fa = esFavorita(a), fb = esFavorita(b);
-    if (fa !== fb) return fa ? -1 : 1;
-    return compararMontajesPorNombre(a, b);
   }
   function nodoFilaPlantilla(m, uid, entradas, yo, estrellaEditable) {
     var fila = document.createElement("button");

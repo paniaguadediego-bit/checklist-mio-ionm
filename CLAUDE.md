@@ -233,7 +233,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Menú ⋮ «Ocultar ayudas» | `AYUDAS_KEY`, `aplicarAyudas()`, `body.sin-ayudas` en style.css | ver `grep` |
 | Colores: tres modos con el botón redondo junto al ⋮ (ciclo oscuro → azul → claro; azul por defecto; por dispositivo, `mio_ionm_tema_v2`). Azul en `@media screen { :root:not(.tema-claro) … }`, oscuro (negro y dorado) en `:root.tema-oscuro` justo después, claro = `:root` sin más; al imprimir, siempre los claros. `--cab-bg`/`--cab-texto` para cabeceras | `TEMAS`, `aplicarTema()`, `#btn-colores`, `html.tema-claro` / `html.tema-oscuro` en style.css | ver `grep` |
 | Alto real de la barra superior en `--header-h` (lo usan los sticky de debajo) | IIFE junto a `aplicarTema()` con `ResizeObserver` | ver `grep` |
-| Plantillas: fila con aspecto de caso (fecha, marca del equipo, técnicas, «+n» con globo) y favoritas por dispositivo y perfil | `nodoFilaPlantilla()`, `PLANTILLA_MAX_TECS`, `favoritasPlantillas()`, `esFavorita()`, `alternarFavorita()`, `compararPlantillasFav()`, `FAV_PLANTILLAS_KEY` | ver `grep` |
+| Plantillas: fila con aspecto de caso (fecha, marca del equipo, técnicas, «+n» con globo) y favoritas por dispositivo y perfil | `nodoFilaPlantilla()`, `PLANTILLA_MAX_TECS`, `favoritasPlantillas()`, `esFavorita()`, `alternarFavorita()`, `FAV_PLANTILLAS_KEY` (orden solo por nombre: las favoritas no suben arriba desde el 04-10-2026) | ver `grep` |
 | Demo: etiqueta «Ficticio» y aviso en la ficha | `nodoFicticio()`, `#caso-aviso-demo` | ver `grep` |
 | Biblioteca de montajes (en construcción; ids «casos-modelo») | `renderCasosModelo()`, `CMOD_TECNICAS`, `#pantalla-casos-modelo` | ver `grep` |
 | Precios inventados de la demo | `PRECIOS_DEMO`, `preciosDemo()` | ver `grep` |
@@ -541,7 +541,7 @@ distinta a la anterior, no importa el formato exacto.
 >   puestos salen como chips con ✕. Los mismos filtros valen para el informe y
 >   los CSV.
 > - **Plantillas de montajes**: una debajo de otra (una columna, 03-10-2026); lista entera sin scroll propio; filas con aspecto
->   de caso (`nodoFilaPlantilla()`); ★ **favoritas** (primero y casilla «Solo
+>   de caso (`nodoFilaPlantilla()`); ★ **favoritas** (se quedan en su sitio desde el 04-10; casilla «Solo
 >   favoritas»; por dispositivo y perfil, no se sincronizan).
 > - **Dos equipos** (Inomed/Cadwell): `equipo_id`; **no confundir con `equipo`**.
 > - **Técnicas IONM, privada**: contenido en el repo privado

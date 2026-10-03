@@ -751,10 +751,11 @@ details.card:not([open]):not(.caja-card) { padding: 0; }
   color: var(--text-muted);
 }
 .coste-falta { color: var(--peligro); }
+/* Se parte por las comas si no cabe (04-10-2026): sin partir medía ~205 px y
+   sacaba la tabla del material por encima de las cajas del Resumen. */
 .resumen-nota-conmutador {
   font-size: 0.68rem;
   color: var(--text-muted);
-  white-space: nowrap;
 }
 .campo-ayuda {
   font-size: 0.68rem;
@@ -842,15 +843,18 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
   margin-bottom: 0.25rem;
 }
 
+/* Material a la izquierda (~320 px) y cajas a la derecha; si el hueco no da
+   para las dos (portátil con el catálogo al lado), el material pasa encima en
+   vez de solaparse con las cajas (04-10-2026). Flex con salto de línea y no
+   una rejilla fija: depende del ancho de la tarjeta, no de la ventana. */
 .resumen-cols {
-  display: grid;
-  grid-template-columns: minmax(200px, 300px) minmax(0, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.9rem;
-  align-items: start;
+  align-items: flex-start;
 }
-@media (max-width: 820px) {
-  .resumen-cols { grid-template-columns: 1fr; }
-}
+.resumen-cols > :first-child { flex: 1 1 320px; min-width: 0; }
+.resumen-cols > :last-child { flex: 999 1 380px; min-width: 0; }
 
 .resumen-bloque { margin-top: 0.6rem; }
 .resumen-bloque h3 {
