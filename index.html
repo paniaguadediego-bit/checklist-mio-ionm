@@ -24,7 +24,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20261004a">
+<link rel="stylesheet" href="style.css?v=20261004b">
 </head>
 <body>
 
@@ -694,8 +694,21 @@
     <button type="button" id="btn-exportar-casos-csv" data-i18n-title="btn_exportar_casos_csv_tit" data-i18n="btn_exportar_casos_csv"></button>
     <button type="button" id="btn-exportar-eventos-csv" data-i18n-title="btn_exportar_eventos_csv_tit" data-i18n="btn_exportar_eventos_csv"></button>
     <button type="button" id="btn-exportar-casos" data-i18n-title="btn_exportar_casos_tit" data-i18n="btn_exportar_casos"></button>
+    <span class="barra-flex"></span>
+    <button type="button" id="btn-papelera-casos" hidden></button>
   </div>
 </div>
+
+<dialog id="dlg-papelera" class="no-print">
+  <h3 data-i18n="papelera_titulo"></h3>
+  <p class="dlg-intro" data-i18n="papelera_intro"></p>
+  <div id="papelera-lista" class="papelera-lista"></div>
+  <div class="dlg-botones">
+    <button type="button" id="papelera-vaciar" class="peligro" data-i18n="papelera_vaciar"></button>
+    <span class="barra-flex"></span>
+    <button type="button" id="papelera-cerrar" data-i18n="cerrar"></button>
+  </div>
+</dialog>
 
 <dialog id="dlg-caso" class="no-print">
   <div class="caso-cab">
@@ -1184,6 +1197,6 @@
 <script src="data/i18n-en.js?v=20260930b"></script>
 <script src="data/guia.js?v=20261001d"></script>
 <script src="data/parametros-tecnicas.js?v=20260930a"></script>
-<script src="app.js?v=20261004a"></script>
+<script src="app.js?v=20261004b"></script>
 </body>
 </html>

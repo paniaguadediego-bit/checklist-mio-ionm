@@ -238,6 +238,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Biblioteca de montajes (en construcción; ids «casos-modelo») | `renderCasosModelo()`, `CMOD_TECNICAS`, `#pantalla-casos-modelo` | ver `grep` |
 | Precios inventados de la demo | `PRECIOS_DEMO`, `preciosDemo()` | ver `grep` |
 | Ficha: autoguardado, salir y cerrar caso | `autoguardarFicha()`, `salirDeFicha()`, `firmaFicha()`, `fichaOrigen`, `casoCambiadoFuera()`, `pintarBotonCerrarCaso()`; aviso de lo que falta al cerrar; campos cortos en una fila (`fila` en `CAMPOS_CASO` → `.campos-fila`); ⋮ Abrir en el Registro (`#caso-ir-registro`); `borradorResumenCaso()` | ver `grep` |
+| Papelera de casos (04-10-2026): Borrar manda el caso a una papelera DE ESTE DISPOSITIVO (30 días, se vacía sola); el borrado en GitHub sigue igual (el Sheet no cambia); Recuperar lo vuelve a subir (cancela el borrado si no había llegado); fotos en IndexedDB hasta vaciarla; sus números no se reutilizan | `PAPELERA_KEY`, `papeleraCasos`, `meterEnPapelera()`, `recuperarDePapelera()`, `vaciarDePapelera()`, `cargarPapelera()`, `renderPapelera()`, `#dlg-papelera`, `#btn-papelera-casos` | ver `grep` |
 | Fusión de un caso en conflicto de subida | `fusionarCaso()` (dentro del 409/422 de `subirCasoYaHidratado()`) | ver `grep` |
 | Copia completa (exportar/importar) | handler de `btn-exportar`, `importarCopiaCompleta()` | ver `grep` |
 | Ids de opción de «Cómo se realizó cada técnica» | `tecParIdDe()`, `tecParTextoDe()`, `"ids"` en `data/parametros-tecnicas.js` | ver `grep` |

@@ -4486,3 +4486,15 @@ body:not(.editando-caso) #barra-caso-prefijo { color: var(--accent); }
 .sync-choque { margin: 0 0 0.5rem; padding: 0.45rem 0.55rem; font-size: 0.78rem; border: 1px solid var(--aviso-border); border-radius: 5px; background: var(--aviso-bg, transparent); color: var(--text); }
 .sync-linea[hidden], .sync-choque[hidden] { display: none; }
 .dlg-botones button.sync-avanzado { border: none; background: none; color: var(--text-muted); text-decoration: underline; padding: 0 0.3rem; }
+
+/* Papelera de casos (04-10-2026) */
+#dlg-papelera { max-width: 560px; }
+.papelera-lista { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.6rem; }
+.papelera-fila { display: flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.5rem; border: 1px solid var(--border-soft); border-radius: 5px; }
+.papelera-txt { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+.papelera-id { font-weight: 600; font-size: 0.82rem; overflow-wrap: anywhere; }
+.papelera-txt small { font-size: 0.7rem; color: var(--text-muted); }
+.papelera-fila button { font: inherit; font-size: 0.74rem; padding: 0.25rem 0.55rem; border: 1px solid var(--border); border-radius: 4px; background: var(--card-bg); color: var(--text); cursor: pointer; white-space: nowrap; }
+.papelera-fila button.primario { background: var(--accent); color: var(--accent-texto); border-color: var(--accent); }
+.papelera-fila button.peligro { color: var(--peligro); }
+#btn-papelera-casos[hidden], #papelera-vaciar[hidden] { display: none; }

@@ -591,9 +591,20 @@
     import_completa_apuntes: { es: "También se han recuperado los apuntes (aquí no había ninguno).", en: "Notes were restored too (there were none here)." },
     caso_reabrir:        { es: "Reabrir caso", en: "Reopen case" },
     caso_informe_proximamente: { es: "Crear informe: todavía no hace nada, en camino.", en: "Create report: not wired up yet, coming soon." },
-    caso_borrar_conf:    { es: "¿Borrar el caso “{caso}”?\nSe borra también del repositorio en cuanto haya conexión. No se puede deshacer desde la app, aunque queda recuperable en el historial de git.",
-                           en: "Delete the case “{caso}”?\nAlso deleted from the repository as soon as there is a connection. This cannot be undone from the app, though it stays recoverable in the git history." },
-    caso_borrado:        { es: "Caso borrado.", en: "Case deleted." },
+    caso_borrar_conf:    { es: "¿Borrar el caso “{caso}”?\nVa a la papelera de este dispositivo (Gestión de Casos → Papelera) y puedes recuperarlo durante 30 días.",
+                           en: "Delete the case “{caso}”?\nIt goes to this device’s bin (Case management → Bin) and you can restore it for 30 days." },
+    papelera_btn:        { es: "Papelera ({n})", en: "Bin ({n})" },
+    papelera_titulo:     { es: "Papelera", en: "Bin" },
+    papelera_intro:      { es: "Los casos borrados en este dispositivo se quedan aquí 30 días. «Recuperar» los devuelve a la lista y a la nube, con sus fotos.", en: "Cases deleted on this device stay here for 30 days. “Restore” puts them back in the list and in the cloud, with their photos." },
+    papelera_vacia:      { es: "La papelera está vacía.", en: "The bin is empty." },
+    papelera_info:       { es: "Cirugía {fecha} · borrado el {borrado} · quedan {dias} días", en: "Surgery {fecha} · deleted on {borrado} · {dias} days left" },
+    papelera_recuperar:  { es: "Recuperar", en: "Restore" },
+    papelera_recuperado: { es: "Caso recuperado.", en: "Case restored." },
+    papelera_borrar:     { es: "Borrar para siempre", en: "Delete forever" },
+    papelera_borrar_conf: { es: "¿Borrar para siempre el caso {caso}?\nYa no se podrá recuperar desde la app.", en: "Delete case {caso} forever?\nIt can no longer be restored from the app." },
+    papelera_vaciar:     { es: "Vaciar papelera", en: "Empty bin" },
+    papelera_vaciar_conf: { es: "¿Vaciar la papelera?\nLos casos que hay en ella ya no se podrán recuperar desde la app.", en: "Empty the bin?\nThe cases in it can no longer be restored from the app." },
+    caso_borrado:        { es: "Caso movido a la papelera.", en: "Case moved to the bin." },
     caso_guardado:       { es: "Caso guardado.", en: "Case saved." },
     caso_falta_fecha:    { es: "La fecha es obligatoria.", en: "The date is required." },
     caso_montaje_res:    { es: "{cajas} caja(s) · {canales} entradas ocupadas", en: "{cajas} box(es) · {canales} inputs used" },
@@ -4438,11 +4449,83 @@
   // borrado llegue al repositorio.
   function borrarCaso(uid) {
     var caso = casos[uid];
+    meterEnPapelera(uid, caso);
     delete casos[uid];
     delete casosSinSubir[uid];
     if (casosSha[uid]) casosBorrados[uid] = casosSha[uid];
     delete casosSha[uid];
-    borrarUnCasoLocal(uid, caso);
+    // Sin pasar el caso: así borrarUnCasoLocal() NO quita sus fotos de
+    // IndexedDB, que hacen falta si se recupera. Se quitan al vaciarla.
+    borrarUnCasoLocal(uid);
+    guardarCasos();
+    programarEnvio();
+    pintarEstadoSync();
+  }
+
+  /* Papelera de casos (04-10-2026, pedido del usuario: «por si acaso se borra
+     por error»). Es de ESTE dispositivo: el borrado en GitHub sigue igual que
+     antes (y el historial de git lo guarda todo igualmente), así el Sheet, que
+     lee la carpeta casos/, no cuenta los borrados y Codigo.gs no cambia.
+     Recuperar vuelve a guardar el caso como pendiente de subir: si el borrado
+     no había llegado aún a GitHub se cancela, y si ya había llegado, el
+     archivo se crea de nuevo. Se guarda el caso ligero (sin fotos: siguen en
+     IndexedDB con las mismas claves) y se vacía sola a los 30 días. */
+  var PAPELERA_KEY = "mio_ionm_papelera_v1";
+  var PAPELERA_DIAS = 30;
+  var papeleraCasos = {};   // caso_uid -> { caso (ligero), borrado_en }
+  function cargarPapelera() {
+    try { papeleraCasos = JSON.parse(localStorage.getItem(PAPELERA_KEY) || "{}") || {}; }
+    catch (e) { papeleraCasos = {}; }
+    // Lo que lleve más de 30 días, fuera (con sus fotos)
+    var limite = Date.now() - PAPELERA_DIAS * 86400000;
+    var caducados = Object.keys(papeleraCasos).filter(function (uid) {
+      return Date.parse(papeleraCasos[uid].borrado_en || "") < limite;
+    });
+    caducados.forEach(function (uid) { vaciarDePapelera(uid, true); });
+    if (caducados.length) guardarPapelera();
+  }
+  function guardarPapelera() {
+    try { localStorage.setItem(PAPELERA_KEY, JSON.stringify(papeleraCasos)); }
+    catch (e) { avisoGuardado(T("guardado_error", { error: e.message }), true); }
+  }
+  function meterEnPapelera(uid, caso) {
+    if (!caso) return;
+    // La copia ligera que ya está en localStorage (las fotos, solo con su id);
+    // si no la hubiera, la del caso en memoria sin las fotos incrustadas.
+    var ligero = null;
+    try { ligero = JSON.parse(localStorage.getItem(CASO_PREFIJO + uid) || "null"); } catch (e) { ligero = null; }
+    if (!ligero) {
+      ligero = Object.assign({}, caso);
+      CAMPOS_IMG_CASO.forEach(function (campo) {
+        if (caso[campo] && caso[campo].length) ligero[campo] = quitarDataUrls(caso[campo], "dataUrl");
+      });
+    }
+    papeleraCasos[uid] = { caso: ligero, borrado_en: new Date().toISOString() };
+    guardarPapelera();
+  }
+  // Quita un caso de la papelera para siempre, con sus fotos. Si mientras
+  // tanto el caso ha vuelto a la lista (lo bajó otro dispositivo), sus fotos
+  // son las suyas: entonces solo se quita la entrada.
+  function vaciarDePapelera(uid, sinGuardar) {
+    var e = papeleraCasos[uid];
+    delete papeleraCasos[uid];
+    if (e && e.caso && !casos[uid]) borrarUnCasoLocal(uid, e.caso);
+    if (!sinGuardar) guardarPapelera();
+  }
+  function recuperarDePapelera(uid) {
+    var e = papeleraCasos[uid];
+    if (!e || !e.caso) return;
+    var caso = e.caso;
+    delete papeleraCasos[uid];
+    guardarPapelera();
+    casos[uid] = caso;
+    // Borrado aún sin llegar a GitHub: se cancela y se sube encima
+    if (casosBorrados[uid]) { casosSha[uid] = casosBorrados[uid]; delete casosBorrados[uid]; }
+    try { localStorage.setItem(CASO_PREFIJO + uid, JSON.stringify(caso)); } catch (e2) { /* sin cuota */ }
+    // Se marca para subir cuando las fotos estén otra vez en memoria:
+    // subirCaso() espera a casosHidratados[uid] antes de mandar nada.
+    casosHidratados[uid] = hidratarCasoIDB(uid);
+    if (!MODO_DEMO) casosSinSubir[uid] = true;
     guardarCasos();
     programarEnvio();
     pintarEstadoSync();
@@ -4480,8 +4563,11 @@
     var anio = (fecha || "").slice(0, 4) || String(new Date().getFullYear());
     var pref = codigoCentro(centroId);
     var max = 0;
-    Object.keys(casos).forEach(function (uid) {
-      var m = RE_ID_CASO.exec(casos[uid].ID_Caso || "");
+    // También los de la papelera: si se recuperan, no chocan con uno nuevo
+    var ids = Object.keys(casos).map(function (uid) { return casos[uid].ID_Caso; })
+      .concat(Object.keys(papeleraCasos).map(function (uid) { return (papeleraCasos[uid].caso || {}).ID_Caso; }));
+    ids.forEach(function (id) {
+      var m = RE_ID_CASO.exec(id || "");
       if (m && m[2] === anio && (m[1] || "") === pref) max = Math.max(max, parseInt(m[3], 10));
     });
     var n = String(max + 1);
@@ -9007,7 +9093,71 @@
     renderListaCasos();
   });
 
+  // «Papelera (n)» al pie de Gestión de Casos; sin nada dentro, no sale
+  function pintarBotonPapelera() {
+    var n = Object.keys(papeleraCasos).length;
+    var b = document.getElementById("btn-papelera-casos");
+    b.hidden = !n;
+    b.textContent = T("papelera_btn", { n: n });
+  }
+  var dlgPapelera = document.getElementById("dlg-papelera");
+  function renderPapelera() {
+    var cont = document.getElementById("papelera-lista");
+    cont.textContent = "";
+    var uids = Object.keys(papeleraCasos).sort(function (a, b) {
+      return (papeleraCasos[b].borrado_en || "").localeCompare(papeleraCasos[a].borrado_en || "");
+    });
+    if (!uids.length) cont.appendChild(regNodo("p", "empty-hint", T("papelera_vacia")));
+    uids.forEach(function (uid) {
+      var e = papeleraCasos[uid], c = e.caso || {};
+      var fila = regNodo("div", "papelera-fila");
+      var txt = regNodo("div", "papelera-txt");
+      txt.appendChild(regNodo("span", "papelera-id", (c.ID_Caso || T("caso_sin_id")) + (c.nombre_caso ? " · " + c.nombre_caso : "")));
+      var borrado = new Date(e.borrado_en);
+      var dias = Math.max(0, PAPELERA_DIAS - Math.floor((Date.now() - borrado.getTime()) / 86400000));
+      txt.appendChild(regNodo("small", null, T("papelera_info", {
+        fecha: c.fecha ? fechaCorta(c.fecha) : "—",
+        borrado: borrado.toLocaleDateString(localeActual()),
+        dias: dias
+      })));
+      fila.appendChild(txt);
+      var rec = regNodo("button", "primario", T("papelera_recuperar"));
+      rec.type = "button";
+      rec.addEventListener("click", function () {
+        recuperarDePapelera(uid);
+        avisoGuardado(T("papelera_recuperado"));
+        renderPapelera();
+        renderListaCasos();
+      });
+      var bor = regNodo("button", "peligro", T("papelera_borrar"));
+      bor.type = "button";
+      bor.addEventListener("click", function () {
+        if (!confirm(T("papelera_borrar_conf", { caso: c.ID_Caso || "" }))) return;
+        vaciarDePapelera(uid);
+        renderPapelera();
+        renderListaCasos();
+      });
+      fila.appendChild(rec);
+      fila.appendChild(bor);
+      cont.appendChild(fila);
+    });
+    document.getElementById("papelera-vaciar").hidden = !uids.length;
+  }
+  document.getElementById("btn-papelera-casos").addEventListener("click", function () {
+    renderPapelera();
+    dlgPapelera.showModal();
+  });
+  document.getElementById("papelera-cerrar").addEventListener("click", function () { dlgPapelera.close(); });
+  document.getElementById("papelera-vaciar").addEventListener("click", function () {
+    if (!confirm(T("papelera_vaciar_conf"))) return;
+    Object.keys(papeleraCasos).forEach(function (uid) { vaciarDePapelera(uid, true); });
+    guardarPapelera();
+    renderPapelera();
+    renderListaCasos();
+  });
+
   function renderListaCasos() {
+    pintarBotonPapelera();
     pintarFiltroEquipo();
     pintarFiltroCentro();
     pintarFiltroServicio();
@@ -20649,6 +20799,7 @@
   sembrarMontajes();
   limpiarMontajesHeredados();
   cargarCasos();
+  cargarPapelera();
   cargarApunteDoc();
   cargarSync();
   cargarPerfilUsuario();
