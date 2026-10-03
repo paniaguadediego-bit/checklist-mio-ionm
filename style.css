@@ -4555,3 +4555,6 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 /* «← Todas las plantillas» en el rótulo, más a la vista */
 .barra-caso .barra-volver { border-color: var(--accent); color: var(--accent); }
 .barra-caso .barra-volver:hover { background: var(--accent-soft); }
+
+/* «Ordenar por» de las plantillas, a la derecha de los filtros (04-10-2026) */
+.org-lista-cont .montajes-orden { margin-left: auto; }

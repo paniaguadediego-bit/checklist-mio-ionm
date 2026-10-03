@@ -24,7 +24,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20261004e">
+<link rel="stylesheet" href="style.css?v=20261004f">
 </head>
 <body>
 
@@ -193,6 +193,16 @@
         <span class="casos-filtro-check montajes-fav-filtro">
           <input type="checkbox" id="montajes-solo-fav">
           <label for="montajes-solo-fav" data-i18n="plantilla_solo_fav"></label>
+        </span>
+        <!-- Orden (04-10-2026, pedido del usuario): por nombre, creación o modificación -->
+        <span class="montajes-orden">
+          <label for="montajes-orden" data-i18n="casos_filtro_orden"></label>
+          <select id="montajes-orden">
+            <option value="nombre" data-i18n="plantilla_orden_nombre"></option>
+            <option value="creado" data-i18n="plantilla_orden_creado"></option>
+            <option value="creado_asc" data-i18n="plantilla_orden_creado_asc"></option>
+            <option value="modificado" data-i18n="plantilla_orden_modificado"></option>
+          </select>
         </span>
       </div>
 
@@ -1219,6 +1229,6 @@
 <script src="data/i18n-en.js?v=20260930b"></script>
 <script src="data/guia.js?v=20261004a"></script>
 <script src="data/parametros-tecnicas.js?v=20260930a"></script>
-<script src="app.js?v=20261004e"></script>
+<script src="app.js?v=20261004f"></script>
 </body>
 </html>

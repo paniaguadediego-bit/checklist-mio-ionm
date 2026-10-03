@@ -228,6 +228,10 @@
     plantilla_leyenda_eeg: { es: "EEG", en: "EEG" },
     plantilla_leyenda_map: { es: "Mapeo", en: "Mapping" },
     org_migas_plantillas: { es: "Plantillas", en: "Templates" },
+    plantilla_orden_nombre: { es: "Nombre (A-Z)", en: "Name (A-Z)" },
+    plantilla_orden_creado: { es: "Creación (recientes primero)", en: "Created (newest first)" },
+    plantilla_orden_creado_asc: { es: "Creación (antiguas primero)", en: "Created (oldest first)" },
+    plantilla_orden_modificado: { es: "Última modificación", en: "Last modified" },
     plantilla_crear:     { es: "Crear plantilla", en: "Create template" },
     plantilla_crear_ay:  { es: "Eliges el equipo y se abre la plantilla nueva para ir colocando el material en las cajas.", en: "You choose the equipment and the new template opens so you can place the material in the boxes." },
     barra_plantillas_volver: { es: "← Todas las plantillas", en: "← All templates" },
@@ -11801,6 +11805,38 @@
     return (campo(montajes[a], "nombre") || "").localeCompare(campo(montajes[b], "nombre") || "");
   }
 
+  /* «Ordenar por» de la lista de plantillas (04-10-2026): nombre, creación
+     (recientes o antiguas primero) o última modificación. Se recuerda en este
+     dispositivo, como el filtro de equipo. A igual fecha, por nombre. */
+  var PLANTILLAS_ORDEN_KEY = "mio_ionm_plantillas_orden";
+  var ORDENES_PLANTILLAS = ["nombre", "creado", "creado_asc", "modificado"];
+  function ordenPlantillas() {
+    var v = "";
+    try { v = localStorage.getItem(PLANTILLAS_ORDEN_KEY) || ""; } catch (e) { v = ""; }
+    return ORDENES_PLANTILLAS.indexOf(v) !== -1 ? v : "nombre";
+  }
+  function fechaCreacionMontaje(m) { return (m && m.creado_en) || ""; }
+  function fechaModificacionMontaje(m) {
+    var ed = m && m.editado_en && m.editado_en.length ? m.editado_en[m.editado_en.length - 1] : "";
+    return ed || fechaCreacionMontaje(m);
+  }
+  function comparadorPlantillas(orden) {
+    if (orden === "nombre") return compararMontajesPorNombre;
+    var fecha = orden === "modificado" ? fechaModificacionMontaje : fechaCreacionMontaje;
+    var signo = orden === "creado_asc" ? 1 : -1;
+    return function (a, b) {
+      var fa = fecha(montajes[a]), fb = fecha(montajes[b]);
+      // Sin fecha, siempre al final
+      if (!fa !== !fb) return fa ? -1 : 1;
+      return signo * fa.localeCompare(fb) || compararMontajesPorNombre(a, b);
+    };
+  }
+  document.getElementById("montajes-orden").addEventListener("change", function () {
+    try { localStorage.setItem(PLANTILLAS_ORDEN_KEY, this.value); } catch (e) { /* sin persistencia */ }
+    renderListaMontajesDialog();
+  });
+  document.getElementById("montajes-orden").value = ordenPlantillas();
+
   function renderTodo() {
     aplicarModoOrganizador();
     renderSelect();
@@ -11986,10 +12022,10 @@
       var nombre = (campo(m, "nombre") || "").toLowerCase();
       return nombre.indexOf(busq) !== -1 || autorDe(m).toLowerCase().indexOf(busq) !== -1;
     });
-    // Alfabético, sin importar de quién sea -pedido del usuario-. Las
-    // favoritas ya no suben arriba (04-10-2026, pedido del usuario): se
-    // quedan en su sitio y se filtran con «Solo favoritas».
-    uids.sort(compararMontajesPorNombre);
+    // Alfabético, sin importar de quién sea -pedido del usuario-, o por
+    // creación o modificación («Ordenar por», 04-10-2026). Las favoritas no
+    // suben arriba: se quedan en su sitio y se filtran con «Solo favoritas».
+    uids.sort(comparadorPlantillas(ordenPlantillas()));
 
     document.getElementById("montajes-cuenta").textContent =
       T("montajes_cuenta", { n: uids.length, total: Object.keys(montajes).length });
