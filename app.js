@@ -12145,7 +12145,7 @@
      los colores de las familias que monitoriza. Colores en --fam-* (style.css,
      uno por modo de color). */
   // Colores elegidos por el usuario (04-10-2026): sensitivas ámbar, motoras
-  // rojo-violeta, EMG verde, reflejos rojo, EEG/ECoG azulado, mapeo rosa.
+  // rojo, EMG verde, reflejos rojo-violeta (intercambiados el mismo día), EEG/ECoG azulado, mapeo rosa.
   var FAMILIAS_TEC = ["sens", "mot", "emg", "ref", "eeg", "map"];
   // Reflejos aparte de la EMG: los «rx_» de tronco, los H-R y estos
   var REFLEJOS_TEC = ["br", "rbc", "reflejo_h"];
