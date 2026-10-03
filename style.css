@@ -4498,3 +4498,22 @@ body:not(.editando-caso) #barra-caso-prefijo { color: var(--accent); }
 .papelera-fila button.primario { background: var(--accent); color: var(--accent-texto); border-color: var(--accent); }
 .papelera-fila button.peligro { color: var(--peligro); }
 #btn-papelera-casos[hidden], #papelera-vaciar[hidden] { display: none; }
+
+/* Organizador en dos pantallas (04-10-2026): body.org-lista = solo la lista
+   de plantillas; sin ella, la edición de la abierta (y la lista, fuera). */
+body.org-lista #pantalla-organizador #barra-caso,
+body.org-lista #pantalla-organizador #panel-catalogo,
+body.org-lista #pantalla-organizador #cajas,
+body.org-lista #pantalla-organizador #tecnicas,
+body.org-lista #pantalla-organizador #resumen,
+body.org-lista #pantalla-organizador #montaje-notas,
+body.org-lista #barra-seleccion { display: none !important; }
+body:not(.org-lista) #pantalla-organizador #montajes { display: none; }
+body.org-lista #pantalla-organizador .columna-principal { display: block; }
+.org-lista-cont .casos-filtros { margin: 0.6rem 0; }
+/* Rótulo de la edición: «← Plantillas» delante y las acciones al final */
+.barra-caso .barra-volver { font: inherit; font-size: 0.8rem; font-weight: 600; padding: 0.3rem 0.65rem; border: 1px solid var(--border); border-radius: 4px; background: var(--card-bg); color: var(--text); cursor: pointer; white-space: nowrap; }
+.barra-caso .barra-volver:hover { border-color: var(--accent); }
+.barra-caso .montajes-acciones { margin: 0 0 0 auto; }
+body.editando-caso #barra-plantillas-volver,
+body.editando-caso .barra-caso .montajes-acciones { display: none; }

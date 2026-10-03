@@ -220,6 +220,9 @@
     btn_renombrar:       { es: "Renombrar", en: "Rename" },
     btn_vaciar:          { es: "Vaciar", en: "Empty" },
     btn_borrar:          { es: "Borrar", en: "Delete" },
+    plantilla_crear:     { es: "Crear plantilla", en: "Create template" },
+    plantilla_crear_ay:  { es: "Eliges el equipo y se abre la plantilla nueva para ir colocando el material en las cajas.", en: "You choose the equipment and the new template opens so you can place the material in the boxes." },
+    barra_plantillas_volver: { es: "← Plantillas", en: "← Templates" },
     btn_guardar_montaje: { es: "Guardar plantilla", en: "Save template" },
     montajes_mas:        { es: "Más acciones", en: "More actions" },
     dlg_guardar_montaje_titulo: { es: "Guardar plantilla", en: "Save template" },
@@ -1493,7 +1496,6 @@
 
     /* --- Fase 4.1: biblioteca de montajes --- */
     dlg_montajes_titulo: { es: "Plantillas de montajes", en: "Setup templates" },
-    montaje_en_blanco:   { es: "+ Plantilla en blanco", en: "+ Blank template" },
 
     /* --- Fase 1: cargar una plantilla sobre un caso --- */
     dlg_elegir_plantilla_titulo: { es: "Elegir plantilla", en: "Choose template" },
@@ -1837,6 +1839,13 @@
         cerrarMontajeDeCaso(true);
         return;
       }
+      // Atrás editando una plantilla (04-10-2026): vuelve a la lista de
+      // plantillas, como «← Plantillas»; el siguiente atrás ya sale a Inicio.
+      if (pantallaActiva("organizador") && orgEditor) {
+        fijarNivelHistorial(NIVEL_SUBPANTALLA, true);
+        volverAListaPlantillas();
+        return;
+      }
       // Atrás desde una subpantalla normal: solo hay que reflejar Inicio,
       // sin preguntar nada -es exactamente lo mismo que pulsar el logo-.
       if (!pantallaActiva("inicio")) irAPantalla("inicio");
@@ -1873,7 +1882,11 @@
   document.querySelectorAll(".btn-pantalla-inicio").forEach(function (btn) {
     btn.addEventListener("click", function () { irAPantalla("inicio"); });
   });
-  document.getElementById("tile-organizador").addEventListener("click", function () { irAPantalla("organizador"); });
+  document.getElementById("tile-organizador").addEventListener("click", function () {
+    orgEditor = false;
+    aplicarModoOrganizador();
+    irAPantalla("organizador");
+  });
   document.getElementById("tile-simulador").addEventListener("click", function () { abrirSimulador(); });
   /* Bibliografía recomendada (27-09-2026, pedido del usuario): las fuentes
      usadas para construir la herramienta, en estilo Vancouver y numeradas de
@@ -11781,6 +11794,7 @@
   }
 
   function renderTodo() {
+    aplicarModoOrganizador();
     renderSelect();
     // La lista de usuarios puede haber cambiado al bajar de GitHub: si Javier
     // se dio de alta en su móvil, aquí tiene que aparecer sin recargar.
@@ -11810,7 +11824,7 @@
   // nombre viejo, o un montaje ya borrado, hasta que se cierre y se
   // reabra. Mismo patrón que "if (dlgCasos && dlgCasos.open) renderListaCasos()".
   function sincronizarDlgMontajesSiAbierto() {
-    if (dlgMontajes && dlgMontajes.open) renderListaMontajesDialog();
+    renderListaMontajesDialog();
   }
 
   // Clona un montaje a tu nombre, con un uid propio, y lo deja activo. Lo
@@ -11895,6 +11909,7 @@
     activo = Object.keys(montajes)[0] || null;
     guardarMontajes();
     programarEnvio();
+    orgEditor = false;
     renderTodo();
   });
 
@@ -11951,33 +11966,6 @@
     var busq = (document.getElementById("montajes-buscar").value || "").toLowerCase();
     var yo = usuarioActual();
 
-    // "Montaje en blanco": fijo en primera posición, siempre visible pase
-    // lo que pase el filtro -no es una fila de la biblioteca, es la acción
-    // "crear uno nuevo y ponerme a trabajar", equivalente al viejo botón
-    // "Nuevo". No se puede sobrescribir porque cada pulsación crea un
-    // montaje distinto, con su propio uid.
-    var blanco = document.createElement("button");
-    blanco.type = "button";
-    blanco.className = "montaje-fila montaje-en-blanco";
-    var blancoNom = document.createElement("span");
-    blancoNom.className = "montaje-nombre";
-    blancoNom.textContent = T("montaje_en_blanco");
-    blanco.appendChild(blancoNom);
-    blanco.addEventListener("click", function () {
-      elegirEquipo(function (eq) {
-        // Si la lista está filtrada por otro equipo, la plantilla nueva
-        // quedaría oculta: el filtro pasa a su equipo.
-        try {
-          if (localStorage.getItem(PLANTILLAS_EQUIPO_KEY)) localStorage.setItem(PLANTILLAS_EQUIPO_KEY, eq);
-        } catch (e) { /* sin persistencia */ }
-        var m = montajeNuevo(T("esc_nuevo_def"), eq);
-        activo = m.montaje_uid;
-        guardarMontaje(m, true);
-        renderTodo();
-      });
-    });
-    cont.appendChild(blanco);
-
     // Filtro por equipo (25-09-2026): arranca en el último equipo usado y
     // recuerda lo que se elija; "Todos" las enseña todas.
     var fEquipo = filtroEquipoPlantillas();
@@ -12023,11 +12011,45 @@
       fila.addEventListener("click", function () {
         activo = uid;
         guardarMontajes();
-        renderTodo();
+        abrirEditorPlantilla();
       });
       cont.appendChild(fila);
     });
   }
+
+  /* Organizador en dos pantallas (04-10-2026): la lista de plantillas, sola,
+     o la edición de una (body.org-lista quita una u otra con CSS). Corregir
+     el montaje de un caso (body.editando-caso) es siempre la de edición. */
+  var orgEditor = false;
+  function aplicarModoOrganizador() {
+    document.body.classList.toggle("org-lista",
+      !orgEditor && !document.body.classList.contains("editando-caso"));
+  }
+  function abrirEditorPlantilla() {
+    orgEditor = true;
+    renderTodo();
+    window.scrollTo(0, 0);
+  }
+  function volverAListaPlantillas() {
+    orgEditor = false;
+    renderTodo();
+    window.scrollTo(0, 0);
+  }
+  document.getElementById("barra-plantillas-volver").addEventListener("click", volverAListaPlantillas);
+  // «Crear plantilla»: elige el equipo, crea una en blanco y la abre
+  document.getElementById("btn-crear-plantilla").addEventListener("click", function () {
+    elegirEquipo(function (eq) {
+      // Si la lista está filtrada por otro equipo, la plantilla nueva
+      // quedaría oculta: el filtro pasa a su equipo.
+      try {
+        if (localStorage.getItem(PLANTILLAS_EQUIPO_KEY)) localStorage.setItem(PLANTILLAS_EQUIPO_KEY, eq);
+      } catch (e) { /* sin persistencia */ }
+      var m = montajeNuevo(T("esc_nuevo_def"), eq);
+      activo = m.montaje_uid;
+      guardarMontaje(m, true);
+      abrirEditorPlantilla();
+    });
+  });
 
   /* Fila de una plantilla con el aspecto de las de Gestión de Casos
      (30-09-2026, pedido del usuario: las plantillas no resultaban nada
@@ -12157,16 +12179,6 @@
     renderListaMontajesDialog();
   });
 
-  // Bug real (05-09-2026): abrir la tarjeta a mano -pulsando su <summary>-
-  // no pasaba por ningún render: sincronizarDlgMontajesSiAbierto() solo
-  // repinta si YA estaba abierta cuando algo más llama a renderTodo(), así
-  // que la primera vez que se despliega desde cerrada (el estado de fábrica)
-  // se queda con la lista vacía hasta que cualquier otra acción dispare un
-  // renderTodo(). El evento nativo "toggle" del <details> es justo lo que
-  // faltaba para cubrir ese primer despliegue.
-  dlgMontajes.addEventListener("toggle", function () {
-    if (dlgMontajes.open) renderListaMontajesDialog();
-  });
 
   /* ---------------------------------------------------------------- *
    * Fase 4.2: rótulo permanente. #barra-caso deja de ser exclusivo de la
@@ -20623,7 +20635,9 @@
       tourCerrarCaso();
       if (!pantallaActiva("organizador")) irAPantalla("organizador");
       var uid = tourMontajeDemo();
-      if (uid && uid !== activo) { activo = uid; guardarMontajes(); renderTodo(); }
+      if (uid && uid !== activo) { activo = uid; guardarMontajes(); }
+      orgEditor = true;
+      renderTodo();
       var det = document.getElementById(id === "plantilla" ? "cajas" : id);
       det.open = true;
       listo(det);

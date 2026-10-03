@@ -212,7 +212,8 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Cálculo del resumen (con coste) | `calcularResumen()`, `calcularCoste()` (dato) → `renderResumen()` (pintado) | [4785](app.js:4785), [4868](app.js:4868) |
 | Pantalla Docencia (miotomas, cama de quirófano) | `renderDocente()`, `renderCama()` | ver `grep` |
 | Puente plantilla↔caso (cargar/guardar) | `iniciarCargaPlantilla()`, `aplicarPlantillaSobreDestino()`, `guardarMontajeComoPlantilla()` | ver `grep` |
-| Biblioteca de plantillas ("Plantillas de montajes" desde el 06-09-2026, tarjeta ya no diálogo desde la Fase 6) | `renderListaMontajesDialog()`, `montajeNuevo()`, `compararMontajesPorNombre()`, `limpiarMontajesHeredados()` | ver `grep` |
+| Organizador en dos pantallas (04-10-2026, «como Gestión de Casos»): lista de plantillas sola al entrar (`body.org-lista`, botón «Crear plantilla», filtros) y, al tocar una, su edición (rótulo con «← Plantillas», Guardar plantilla y Más acciones; Cajas, Técnicas, Resumen, Notas y Catálogo). Corregir el montaje de un caso (`editando-caso`) es siempre la edición. Atrás del móvil en la edición → lista | `orgEditor`, `aplicarModoOrganizador()` (en `renderTodo()`), `abrirEditorPlantilla()`, `volverAListaPlantillas()`, `#btn-crear-plantilla`, `#barra-plantillas-volver` | ver `grep` |
+| Biblioteca de plantillas ("Plantillas de montajes" desde el 06-09-2026, tarjeta ya no diálogo desde la Fase 6; desde el 04-10-2026 `#montajes` es un <div>, la lista de la primera pantalla) | `renderListaMontajesDialog()`, `montajeNuevo()`, `compararMontajesPorNombre()`, `limpiarMontajesHeredados()` | ver `grep` |
 | Pantalla de inicio y router de pantallas (Fase 7) | `irAPantalla()`, `pantallaActiva()` | ver `grep` |
 | Rótulo permanente | `renderBarraCaso()` | ver `grep` |
 | Exportación manual de casos a CSV | `casosACsv()`, `COLUMNAS_CSV_CASOS`, `descargarCsv()` | ver `grep` |
@@ -541,7 +542,7 @@ distinta a la anterior, no importa el formato exacto.
 >   Concordancia, Equipo, Desde, Hasta, Destacados y Seguimiento; los filtros
 >   puestos salen como chips con ✕. Los mismos filtros valen para el informe y
 >   los CSV.
-> - **Plantillas de montajes**: una debajo de otra (una columna, 03-10-2026); lista entera sin scroll propio; filas con aspecto
+> - **Organizador en dos pantallas** (04-10-2026): lista de plantillas como Gestión de Casos («Crear plantilla», filtros, filas) y, al tocar una, su pantalla de edición con «← Plantillas». **Plantillas de montajes**: una debajo de otra (una columna, 03-10-2026); lista entera sin scroll propio; filas con aspecto
 >   de caso (`nodoFilaPlantilla()`); ★ **favoritas** (se quedan en su sitio desde el 04-10; casilla «Solo
 >   favoritas»; por dispositivo y perfil, no se sincronizan).
 > - **Dos equipos** (Inomed/Cadwell): `equipo_id`; **no confundir con `equipo`**.

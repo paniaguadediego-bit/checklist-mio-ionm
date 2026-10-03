@@ -24,7 +24,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20261004b">
+<link rel="stylesheet" href="style.css?v=20261004c">
 </head>
 <body>
 
@@ -161,10 +161,18 @@
          está. Mismo contenido que antes (buscador, acciones, lista), solo
          cambia el envoltorio: de <dialog> a <details> igual que el resto de
          tarjetas. -->
-    <details class="card no-print" id="montajes">
-      <summary class="card-cab">
-        <h2 data-i18n="dlg_montajes_titulo"></h2>
-      </summary>
+    <!-- Desde el 04-10-2026 (pedido del usuario: «como Gestión de Casos») el
+         Organizador tiene dos pantallas: esta lista, sola, al entrar; y, al
+         tocar una plantilla, su pantalla de edición (rótulo con «← Plantillas»,
+         Cajas, Técnicas, Resumen, Notas y Catálogo). Lo decide body.org-lista
+         (ver aplicarModoOrganizador()). Antes era una tarjeta plegable encima
+         del banco de trabajo, todo en una página larga. -->
+    <div class="no-print org-lista-cont" id="montajes">
+
+      <div class="casos-acciones">
+        <button type="button" id="btn-crear-plantilla" class="primario" data-i18n="plantilla_crear"></button>
+        <small data-i18n="plantilla_crear_ay"></small>
+      </div>
 
       <div class="casos-filtros">
         <span>
@@ -182,25 +190,9 @@
         </span>
       </div>
 
-      <!-- Acciones agrupadas (28-09-2026, pedido del usuario: los cinco botones
-           sueltos no pegaban con el estilo): Guardar montaje a la vista como
-           acción principal y el resto en el menú "Más acciones". -->
-      <div class="montajes-acciones no-print">
-        <button type="button" id="btn-guardar-montaje" class="primario" data-i18n="btn_guardar_montaje"></button>
-        <div class="montajes-mas" id="montajes-mas">
-          <button type="button" id="montajes-mas-btn" class="montajes-mas-btn" aria-haspopup="true" aria-expanded="false"><span data-i18n="montajes_mas"></span> ▾</button>
-          <div class="montajes-mas-lista" id="montajes-mas-lista" hidden>
-            <button type="button" id="btn-duplicar" data-i18n="btn_duplicar"></button>
-            <button type="button" id="btn-renombrar" data-i18n="btn_renombrar"></button>
-            <button type="button" id="btn-vaciar" data-i18n="btn_vaciar"></button>
-            <button type="button" id="btn-borrar" class="peligro" data-i18n="btn_borrar"></button>
-          </div>
-        </div>
-      </div>
-
       <div id="dlg-montajes-lista"></div>
       <p class="cat-version" id="montajes-cuenta"></p>
-    </details>
+    </div>
 
     <!-- Rótulo permanente (Fase 4.2, reubicado a la Fase 7.1 -06-09-2026-):
          dice qué plantilla está cargada, o qué caso se está corrigiendo.
@@ -210,6 +202,7 @@
          oculto del todo si no hay ninguna plantilla cargada -ver
          renderBarraCaso()-. -->
     <div class="barra-caso no-print" id="barra-caso" hidden>
+      <button type="button" id="barra-plantillas-volver" class="barra-volver" data-i18n="barra_plantillas_volver"></button>
       <span class="barra-caso-info">
         <span id="barra-caso-prefijo"></span>
         <b id="barra-caso-nombre"></b>
@@ -220,6 +213,21 @@
         <button type="button" id="barra-caso-guardar-plantilla" data-i18n="caso_guardar_plantilla"></button>
         <button type="button" id="barra-caso-volver" class="primario" data-i18n="barra_caso_volver"></button>
       </span>
+        <!-- Acciones agrupadas (28-09-2026, pedido del usuario: los cinco botones
+             sueltos no pegaban con el estilo): Guardar montaje a la vista como
+             acción principal y el resto en el menú "Más acciones". -->
+        <div class="montajes-acciones no-print">
+          <button type="button" id="btn-guardar-montaje" class="primario" data-i18n="btn_guardar_montaje"></button>
+          <div class="montajes-mas" id="montajes-mas">
+            <button type="button" id="montajes-mas-btn" class="montajes-mas-btn" aria-haspopup="true" aria-expanded="false"><span data-i18n="montajes_mas"></span> ▾</button>
+            <div class="montajes-mas-lista" id="montajes-mas-lista" hidden>
+              <button type="button" id="btn-duplicar" data-i18n="btn_duplicar"></button>
+              <button type="button" id="btn-renombrar" data-i18n="btn_renombrar"></button>
+              <button type="button" id="btn-vaciar" data-i18n="btn_vaciar"></button>
+              <button type="button" id="btn-borrar" class="peligro" data-i18n="btn_borrar"></button>
+            </div>
+          </div>
+        </div>
     </div>
 
     <!-- Conserva la clase panel-catalogo: es a lo que apunta el soltar
@@ -1195,8 +1203,8 @@
 
 <script src="data/surgeries.js?v=20260930c"></script>
 <script src="data/i18n-en.js?v=20260930b"></script>
-<script src="data/guia.js?v=20261001d"></script>
+<script src="data/guia.js?v=20261004a"></script>
 <script src="data/parametros-tecnicas.js?v=20260930a"></script>
-<script src="app.js?v=20261004b"></script>
+<script src="app.js?v=20261004c"></script>
 </body>
 </html>

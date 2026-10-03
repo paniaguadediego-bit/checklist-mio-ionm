@@ -38,6 +38,7 @@ window.GUIA = {
   pantallas: [
     { grupo: "Antes de quirófano", tarjetas: [
       { titulo: "Organizador de Montajes", texto: "Qué electrodo va en cada canal.", puntos: [
+        "Crear plantilla, o toca una de la lista para abrirla; «← Plantillas» vuelve a la lista.",
         "Toca un material y luego la entrada de la caja.",
         "Se guarda solo con cada cambio.",
         "El Resumen te da material, coste y avisos."
@@ -47,7 +48,8 @@ window.GUIA = {
         "La ficha se guarda sola; «Cerrar caso» al terminar.",
         "⋮ → Abrir en el Registro, para apuntar en ese caso.",
         "Resumen: «Borrador desde el Registro» lo escribe a partir del cronograma.",
-        "Informe en PDF y CSV de los casos filtrados."
+        "Informe en PDF y CSV de los casos filtrados.",
+        "Borrar manda el caso a la Papelera: se recupera durante 30 días."
       ] }
     ] },
     { grupo: "Quirófano", tarjetas: [
