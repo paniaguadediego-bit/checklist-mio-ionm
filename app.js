@@ -220,9 +220,16 @@
     btn_renombrar:       { es: "Renombrar", en: "Rename" },
     btn_vaciar:          { es: "Vaciar", en: "Empty" },
     btn_borrar:          { es: "Borrar", en: "Delete" },
+    plantilla_vacia:     { es: "Vacía", en: "Empty" },
+    plantilla_leyenda_sens: { es: "Sensitivas", en: "Sensory" },
+    plantilla_leyenda_mot: { es: "Motoras", en: "Motor" },
+    plantilla_leyenda_emg: { es: "EMG y reflejos", en: "EMG and reflexes" },
+    plantilla_leyenda_eeg: { es: "EEG", en: "EEG" },
+    plantilla_leyenda_map: { es: "Mapeo", en: "Mapping" },
+    org_migas_plantillas: { es: "Plantillas", en: "Templates" },
     plantilla_crear:     { es: "Crear plantilla", en: "Create template" },
     plantilla_crear_ay:  { es: "Eliges el equipo y se abre la plantilla nueva para ir colocando el material en las cajas.", en: "You choose the equipment and the new template opens so you can place the material in the boxes." },
-    barra_plantillas_volver: { es: "← Plantillas", en: "← Templates" },
+    barra_plantillas_volver: { es: "← Todas las plantillas", en: "← All templates" },
     btn_guardar_montaje: { es: "Guardar plantilla", en: "Save template" },
     montajes_mas:        { es: "Más acciones", en: "More actions" },
     dlg_guardar_montaje_titulo: { es: "Guardar plantilla", en: "Save template" },
@@ -12022,11 +12029,21 @@
      el montaje de un caso (body.editando-caso) es siempre la de edición. */
   var orgEditor = false;
   function aplicarModoOrganizador() {
-    document.body.classList.toggle("org-lista",
-      !orgEditor && !document.body.classList.contains("editando-caso"));
+    var editandoCaso = document.body.classList.contains("editando-caso");
+    document.body.classList.toggle("org-lista", !orgEditor && !editandoCaso);
+    // En la edición de una plantilla el título de la pantalla es una ruta,
+    // «Plantillas › nombre», y «Plantillas» vuelve a la lista (04-10-2026,
+    // pedido del usuario: volver tenía que ser más intuitivo).
+    var migas = document.getElementById("org-migas");
+    var esc = escenarioActual();
+    migas.hidden = !(orgEditor && !editandoCaso && esc);
+    document.getElementById("org-titulo").hidden = !migas.hidden;
+    if (!migas.hidden) document.getElementById("org-migas-nombre").textContent = campo(esc, "nombre");
   }
   function abrirEditorPlantilla() {
     orgEditor = true;
+    // Cajas abierta: es a lo que se entra casi siempre (pedido del usuario)
+    document.getElementById("cajas").open = true;
     renderTodo();
     window.scrollTo(0, 0);
   }
@@ -12036,6 +12053,7 @@
     window.scrollTo(0, 0);
   }
   document.getElementById("barra-plantillas-volver").addEventListener("click", volverAListaPlantillas);
+  document.getElementById("org-migas-volver").addEventListener("click", volverAListaPlantillas);
   // «Crear plantilla»: elige el equipo, crea una en blanco y la abre
   document.getElementById("btn-crear-plantilla").addEventListener("click", function () {
     elegirEquipo(function (eq) {
@@ -12084,6 +12102,22 @@
     todas[k] = lista;
     try { localStorage.setItem(FAV_PLANTILLAS_KEY, JSON.stringify(todas)); } catch (e) { /* sin persistencia */ }
   }
+  /* Familias de técnica, para dar color a la lista de plantillas (04-10-2026,
+     pedido del usuario: «muy plana, sin alma»). Cada etiqueta de técnica va
+     con el color de su familia y la franja izquierda de la plantilla lleva
+     los colores de las familias que monitoriza. Colores en --fam-* (style.css,
+     uno por modo de color). */
+  var FAMILIAS_TEC = ["sens", "mot", "emg", "eeg", "map"];
+  var FAMILIA_TEC = {
+    t_pess: "sens", c_pess: "sens", peatc: "sens", pev: "sens", c_pev: "sens", erg: "sens", retino: "sens",
+    t_pem: "mot", c_pem: "mot", pem_corticobulbares: "mot", onda_d: "mot",
+    eeg: "eeg", ecog: "eeg"
+  };
+  function familiaTecnica(t) {
+    if (FAMILIA_TEC[t.id]) return FAMILIA_TEC[t.id];
+    if (t.grupo === "mapeo") return "map";
+    return "emg";   // EMG libre, reflejos, H, LSR, nervios y el resto
+  }
   function nodoFilaPlantilla(m, uid, entradas, yo, estrellaEditable) {
     var fila = document.createElement("button");
     fila.type = "button";
@@ -12112,6 +12146,11 @@
     nom.className = "montaje-nombre";
     nom.textContent = campo(m, "nombre") || uid;
     if (MODO_DEMO) nom.appendChild(nodoFicticio());
+    // Sin nada colocado: atenuada y con «Vacía»
+    if (!entradas) {
+      fila.classList.add("vacia");
+      nom.appendChild(regNodo("span", "plantilla-vacia", T("plantilla_vacia")));
+    }
     cab.appendChild(nom);
     var der = document.createElement("span");
     der.className = "plantilla-der";
@@ -12130,11 +12169,21 @@
       " · " + T("plantilla_entradas", { n: entradas });
     fila.appendChild(sub);
     var tecs = TECNICAS.filter(function (t) { return (m.tecnicas || []).indexOf(t.id) !== -1; });
+    // Franja izquierda: un tramo por cada familia presente, en orden fijo
+    var fams = FAMILIAS_TEC.filter(function (f) {
+      return tecs.some(function (t) { return familiaTecnica(t) === f; });
+    });
+    if (fams.length) {
+      var paso = 100 / fams.length;
+      fila.style.setProperty("--franja", "linear-gradient(to bottom, " + fams.map(function (f, i) {
+        return "var(--fam-" + f + ") " + (i * paso) + "% " + ((i + 1) * paso) + "%";
+      }).join(", ") + ")");
+    }
     if (tecs.length) {
       var fTecs = document.createElement("span");
       fTecs.className = "plantilla-tecs";
       tecs.slice(0, PLANTILLA_MAX_TECS).forEach(function (t) {
-        fTecs.appendChild(regNodo("span", "plantilla-tec", campo(t, "corta") || campo(t, "etiqueta")));
+        fTecs.appendChild(regNodo("span", "plantilla-tec fam-" + familiaTecnica(t), campo(t, "corta") || campo(t, "etiqueta")));
       });
       if (tecs.length > PLANTILLA_MAX_TECS) {
         // «+n»: al tocarlo, un globo con las técnicas que no caben (30-09-2026,

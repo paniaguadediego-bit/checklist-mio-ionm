@@ -4517,3 +4517,39 @@ body.org-lista #pantalla-organizador .columna-principal { display: block; }
 .barra-caso .montajes-acciones { margin: 0 0 0 auto; }
 body.editando-caso #barra-plantillas-volver,
 body.editando-caso .barra-caso .montajes-acciones { display: none; }
+
+/* Lista de plantillas con color (04-10-2026): familias de técnica. Claro =
+   tonos oscuros legibles en blanco; azul y oscuro = tonos vivos. */
+:root { --fam-sens: #1f6fd1; --fam-mot: #1e8a5a; --fam-emg: #a86b00; --fam-eeg: #7a4fc4; --fam-map: #c2386b; }
+@media screen {
+  :root:not(.tema-claro) { --fam-sens: #5aa9ff; --fam-mot: #4cc38a; --fam-emg: #f0b429; --fam-eeg: #b18cf0; --fam-map: #f2709c; }
+}
+.plantilla-fila { position: relative; border-left-color: transparent; }
+.plantilla-fila.mio { border-left-color: transparent; }
+/* La franja: los colores de las familias que lleva; sin técnicas, gris */
+.plantilla-fila::before { content: ""; position: absolute; left: -5px; top: -1px; bottom: -1px; width: 5px; border-radius: 5px 0 0 5px; background: var(--franja, var(--border)); }
+.plantilla-fila.vacia { opacity: 0.6; }
+.plantilla-fila.vacia:hover { opacity: 1; }
+.plantilla-vacia { margin-left: 0.4rem; padding: 0 0.35rem; font-size: 0.6rem; font-weight: 600; border: 1px dashed var(--text-muted); border-radius: 3px; color: var(--text-muted); vertical-align: middle; }
+.plantilla-fila .montaje-nombre { font-size: 0.88rem; }
+.plantilla-tec.fam-sens { color: var(--fam-sens); border-color: color-mix(in srgb, var(--fam-sens) 45%, transparent); background: color-mix(in srgb, var(--fam-sens) 14%, transparent); }
+.plantilla-tec.fam-mot { color: var(--fam-mot); border-color: color-mix(in srgb, var(--fam-mot) 45%, transparent); background: color-mix(in srgb, var(--fam-mot) 14%, transparent); }
+.plantilla-tec.fam-emg { color: var(--fam-emg); border-color: color-mix(in srgb, var(--fam-emg) 45%, transparent); background: color-mix(in srgb, var(--fam-emg) 14%, transparent); }
+.plantilla-tec.fam-eeg { color: var(--fam-eeg); border-color: color-mix(in srgb, var(--fam-eeg) 45%, transparent); background: color-mix(in srgb, var(--fam-eeg) 14%, transparent); }
+.plantilla-tec.fam-map { color: var(--fam-map); border-color: color-mix(in srgb, var(--fam-map) 45%, transparent); background: color-mix(in srgb, var(--fam-map) 14%, transparent); }
+.plantillas-leyenda { margin: 0 0 0.45rem; }
+.plantillas-leyenda .casos-leyenda-it { display: inline-flex; align-items: center; gap: 0.3rem; }
+.casos-leyenda-it.fam-sens::before { background: var(--fam-sens); }
+.casos-leyenda-it.fam-mot::before { background: var(--fam-mot); }
+.casos-leyenda-it.fam-emg::before { background: var(--fam-emg); }
+.casos-leyenda-it.fam-eeg::before { background: var(--fam-eeg); }
+.casos-leyenda-it.fam-map::before { background: var(--fam-map); }
+/* Migas «Plantillas › nombre» en la cabecera de la edición */
+.org-migas { display: flex; align-items: baseline; gap: 0.4rem; min-width: 0; flex-wrap: wrap; }
+.org-migas[hidden] { display: none; }
+.org-migas button { font: inherit; padding: 0; border: none; background: none; color: var(--accent); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.org-migas-sep { color: var(--text-muted); }
+#org-migas-nombre { overflow-wrap: anywhere; }
+/* «← Todas las plantillas» en el rótulo, más a la vista */
+.barra-caso .barra-volver { border-color: var(--accent); color: var(--accent); }
+.barra-caso .barra-volver:hover { background: var(--accent-soft); }
