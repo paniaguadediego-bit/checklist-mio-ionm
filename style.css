@@ -3973,6 +3973,10 @@ button, input, select, textarea { font-family: inherit; }
 .reg-basal.reg-p-an .reg-basal-fila { grid-template-columns: 6rem minmax(0, 1fr) 1.8rem; }
 .caso-espejo .reg-p-nuevo { margin-top: 0.3rem; }
 .caso-espejo .reg-p-map-tit:first-child { margin-top: 0.1rem; }
+/* Bloques de Mapeo con el color de su técnica (04-10-2026) */
+.reg-p-map-bloque.rr-fam { border-left: 3px solid var(--fam); padding-left: 0.5rem; margin-top: 0.7rem; }
+.reg-p-map-bloque.rr-fam > .reg-p-map-tit { color: var(--fam); margin-top: 0; }
+.caso-espejo .reg-p-map-bloque:first-child { margin-top: 0.1rem; }
 .caso-propuesta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; margin-top: 0.3rem; font-size: 0.8rem; color: var(--accent); }
 .caso-propuesta[hidden] { display: none; }
 .caso-propuesta-aplicar { font: inherit; font-size: 0.78rem; padding: 0.15rem 0.6rem; border: 1px solid var(--accent); border-radius: 4px; background: transparent; color: var(--accent); cursor: pointer; }

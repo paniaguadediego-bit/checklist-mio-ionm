@@ -42,7 +42,10 @@ propia en *Después / consulta*).
   también la fase en que pasó. Lo que estuvieras eligiendo para un apunte nuevo
   sigue ahí al terminar. Arriba de la hoja, **Evento | Alarma** convierte un
   evento en alarma (toma el siguiente número libre) o una alarma en evento (se
-  quitan su número, causa, medidas marcadas y recuperación; la nota se queda).
+  quitan su número, causa, medidas marcadas y recuperación; la nota se queda; si
+  era la última alarma, el caso deja de estar marcado «con alerta»).
+- **Mapeo** (Registro y ficha del caso): cada bloque lleva el color de su
+  técnica: c-MEP por GRID en rojo (motoras) y el resto en rosa (mapeo).
 - **Plantillas**: una casilla en cada fila para marcar **varias** y usar *Más
   acciones* con todas a la vez. Se quitó «← Todas las plantillas»: hacía lo
   mismo que *Plantillas* en la ruta del título.

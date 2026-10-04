@@ -8401,10 +8401,7 @@
             return b.tec !== "mapeo_raices_tornillos" && tecR().indexOf(b.tec) !== -1;
           });
           if (!bloquesR.length) { contR.appendChild(regNodo("p", "caso-ro", T("reg_p_mapeo_ninguna"))); return; }
-          bloquesR.forEach(function (b) {
-            contR.appendChild(regNodo("div", "reg-basal-titulo reg-p-map-tit", T(b.t)));
-            b.pintar(contR, dR, REG_SIN_GUARDAR);
-          });
+          bloquesR.forEach(function (b) { b.pintar(nodoBloqueMapeo(contR, b), dR, REG_SIN_GUARDAR); });
         } else {
           pintarEventosAn(contR, dR, REG_SIN_GUARDAR, false);
         }
@@ -18550,6 +18547,10 @@
         var ia = d.alarmas.indexOf(ed.al);
         if (ia !== -1) d.alarmas[ia] = { id: ed.al.id };
         delete regAlarmasAbiertas[ed.al.id];
+        // Sin ninguna alarma ya, el caso deja de estar «con alerta» (04-10-2026,
+        // pedido del usuario; solo al convertir, no al tocarla a mano)
+        var cSinAl = registroCaso();
+        if (cSinAl && !alarmasConDatos(d).length) cSinAl.alerta = false;
       }
       var idEd = ed.ev ? ed.ev.id : (esAlarma ? ed.al.id : ev.id);
       registroGuardarYa();
@@ -19422,10 +19423,18 @@
     cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_mapeo_nota")));
     var bloques = REG_MAPEO_BLOQUES.filter(function (b) { return !tec || tec.indexOf(b.tec) !== -1; });
     if (!bloques.length) { cont.appendChild(regNodo("p", "reg-ayuda reg-estado", T("reg_p_mapeo_ninguna"))); return; }
-    bloques.forEach(function (b) {
-      cont.appendChild(regNodo("div", "reg-basal-titulo reg-p-map-tit", T(b.t)));
-      b.pintar(cont, d);
-    });
+    bloques.forEach(function (b) { b.pintar(nodoBloqueMapeo(cont, b), d); });
+  }
+
+  // Caja de un bloque de Mapeo con su título, en el color de su técnica
+  // (04-10-2026, pedido del usuario): GRID con el de c-MEP, el resto con el
+  // de mapeo. Franja izquierda y título, como las filas de Basales.
+  function nodoBloqueMapeo(cont, b) {
+    var t = TECNICAS.filter(function (x) { return x.id === b.tec; })[0];
+    var caja = regNodo("div", "reg-p-map-bloque" + (t ? " rr-fam fam-" + familiaTecnica(t) : ""));
+    caja.appendChild(regNodo("div", "reg-basal-titulo reg-p-map-tit", T(b.t)));
+    cont.appendChild(caja);
+    return caja;
   }
 
   // Electrodo motor y músculos registrados: los mismos gridN_motor /
