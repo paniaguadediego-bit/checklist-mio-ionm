@@ -4583,10 +4583,7 @@ body:not(.org-lista) #pantalla-organizador #montajes { display: none; }
 body.org-lista #pantalla-organizador .columna-principal { display: block; }
 .org-lista-cont .casos-filtros { margin: 0.6rem 0; }
 /* Rótulo de la edición: «← Plantillas» delante y las acciones al final */
-.barra-caso .barra-volver { font: inherit; font-size: 0.8rem; font-weight: 600; padding: 0.3rem 0.65rem; border: 1px solid var(--border); border-radius: 4px; background: var(--card-bg); color: var(--text); cursor: pointer; white-space: nowrap; }
-.barra-caso .barra-volver:hover { border-color: var(--accent); }
 .barra-caso .montajes-acciones { margin: 0 0 0 auto; }
-body.editando-caso #barra-plantillas-volver,
 body.editando-caso .barra-caso .montajes-acciones { display: none; }
 
 /* Lista de plantillas con color (04-10-2026): familias de técnica. Claro =
@@ -4643,9 +4640,17 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 .org-migas button { font: inherit; padding: 0; border: none; background: none; color: var(--accent); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .org-migas-sep { color: var(--text-muted); }
 #org-migas-nombre { overflow-wrap: anywhere; }
-/* «← Todas las plantillas» en el rótulo, más a la vista */
-.barra-caso .barra-volver { border-color: var(--accent); color: var(--accent); }
-.barra-caso .barra-volver:hover { background: var(--accent-soft); }
+/* Varias plantillas a la vez (04-10-2026): casilla en cada fila y barra
+   con «Más acciones» encima de la lista mientras haya alguna marcada */
+.plantilla-sel { flex: 0 0 auto; position: relative; width: 1rem; height: 1rem; margin-top: 0.05rem; border: 1.5px solid var(--text-muted); border-radius: 3px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; line-height: 1; cursor: pointer; }
+.plantilla-sel::after { content: ""; position: absolute; inset: -8px -6px; }
+.plantilla-sel.activa { background: var(--accent); border-color: var(--accent); color: var(--accent-texto); }
+.plantilla-fila.seleccionada { border-color: var(--accent); background: var(--accent-soft); }
+.montajes-lote { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem 0.8rem; margin: 0 0 0.5rem; padding: 0.4rem 0.6rem; border: 1px solid var(--accent); border-radius: var(--r); background: var(--accent-soft); }
+.montajes-lote[hidden] { display: none; }
+.montajes-lote b { font-size: 0.82rem; }
+.montajes-lote .montajes-acciones { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0; }
+.montajes-lote .montajes-acciones button[hidden] { display: none; }
 
 /* «Ordenar por» de las plantillas, a la derecha de los filtros (04-10-2026) */
 .org-lista-cont .montajes-orden { margin-left: auto; }

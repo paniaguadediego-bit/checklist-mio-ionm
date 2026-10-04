@@ -213,6 +213,25 @@
         <span class="casos-leyenda-it fam-eeg" data-i18n="plantilla_leyenda_eeg"></span>
         <span class="casos-leyenda-it fam-map" data-i18n="plantilla_leyenda_map"></span>
       </div>
+      <!-- Selección de varias plantillas (04-10-2026, pedido del usuario): la
+           casilla de cada fila las marca y aquí aparece «Más acciones» para
+           todas a la vez. -->
+      <div class="montajes-lote" id="montajes-lote" hidden>
+        <b id="montajes-lote-cuenta"></b>
+        <div class="montajes-acciones">
+          <div class="montajes-mas" id="lote-mas">
+            <button type="button" id="lote-mas-btn" class="montajes-mas-btn primario" aria-haspopup="true" aria-expanded="false"><span data-i18n="montajes_mas"></span> ▾</button>
+            <div class="montajes-mas-lista" id="lote-mas-lista" hidden>
+              <button type="button" id="lote-duplicar" data-i18n="btn_duplicar"></button>
+              <button type="button" id="lote-renombrar" data-i18n="btn_renombrar"></button>
+              <button type="button" id="lote-vaciar" data-i18n="btn_vaciar"></button>
+              <button type="button" id="lote-borrar" class="peligro" data-i18n="btn_borrar"></button>
+            </div>
+          </div>
+          <button type="button" id="lote-todas" data-i18n="plantillas_sel_todas"></button>
+          <button type="button" id="lote-quitar" data-i18n="plantillas_sel_quitar"></button>
+        </div>
+      </div>
       <div id="dlg-montajes-lista"></div>
       <p class="cat-version" id="montajes-cuenta"></p>
     </div>
@@ -225,7 +244,6 @@
          oculto del todo si no hay ninguna plantilla cargada -ver
          renderBarraCaso()-. -->
     <div class="barra-caso no-print" id="barra-caso" hidden>
-      <button type="button" id="barra-plantillas-volver" class="barra-volver" data-i18n="barra_plantillas_volver"></button>
       <span class="barra-caso-info">
         <span id="barra-caso-prefijo"></span>
         <b id="barra-caso-nombre"></b>

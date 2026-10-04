@@ -38,7 +38,7 @@ window.GUIA = {
   pantallas: [
     { grupo: "Antes de quirófano", tarjetas: [
       { titulo: "Organizador de Montajes", texto: "Qué electrodo va en cada canal.", puntos: [
-        "Crear plantilla, o toca una de la lista para abrirla; «← Todas las plantillas» vuelve a la lista.",
+        "Crear plantilla, o toca una de la lista para abrirla; «Plantillas» en el título vuelve a la lista. La casilla de cada fila marca varias para «Más acciones».",
         "Toca un material y luego la entrada de la caja.",
         "Se guarda solo con cada cambio.",
         "El Resumen te da material, coste y avisos."

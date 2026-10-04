@@ -235,7 +235,6 @@
     plantilla_orden_modificado: { es: "Última modificación", en: "Last modified" },
     plantilla_crear:     { es: "Crear plantilla", en: "Create template" },
     plantilla_crear_ay:  { es: "Eliges el equipo y se abre la plantilla nueva para ir colocando el material en las cajas.", en: "You choose the equipment and the new template opens so you can place the material in the boxes." },
-    barra_plantillas_volver: { es: "← Todas las plantillas", en: "← All templates" },
     btn_guardar_montaje: { es: "Guardar plantilla", en: "Save template" },
     montajes_mas:        { es: "Más acciones", en: "More actions" },
     dlg_guardar_montaje_titulo: { es: "Guardar plantilla", en: "Save template" },
@@ -1269,6 +1268,17 @@
     plantilla_solo_fav:  { es: "Solo favoritas ★", en: "Favourites only ★" },
     plantilla_fav_poner: { es: "Añadir a favoritas", en: "Add to favourites" },
     plantilla_fav_quitar: { es: "Quitar de favoritas", en: "Remove from favourites" },
+    plantilla_sel_poner: { es: "Seleccionar", en: "Select" },
+    plantillas_sel:      { es: "{n} seleccionadas", en: "{n} selected" },
+    plantillas_sel_una:  { es: "1 seleccionada", en: "1 selected" },
+    plantillas_sel_todas: { es: "Seleccionar todas", en: "Select all" },
+    plantillas_sel_quitar: { es: "Quitar selección", en: "Clear selection" },
+    esc_vaciar_lote_conf: { es: "¿Vaciar estas {n} plantillas?\n{nombres}\n\nSe quita todo el material colocado, pero las plantillas se conservan.",
+                           en: "Empty these {n} templates?\n{nombres}\n\nAll placed material is removed, but the templates are kept." },
+    esc_borrar_lote_conf: { es: "¿Borrar estas {n} plantillas?\n{nombres}\n\nEsta acción no se puede deshacer.",
+                           en: "Delete these {n} templates?\n{nombres}\n\nThis cannot be undone." },
+    lote_ajenas:         { es: "{n} de las seleccionadas no son tuyas y se han dejado como estaban. Usa «Duplicar» para hacerte una copia.",
+                           en: "{n} of the selected ones are not yours and were left untouched. Use “Duplicate” to make your own copy." },
     plantilla_sin_fav:   { es: "Todavía no tienes plantillas favoritas: toca la ☆ de una plantilla para marcarla.", en: "You have no favourite templates yet: tap a template's ☆ to mark it." },
     barra_plantilla_texto: { es: "Plantilla seleccionada", en: "Selected template" },
     caso_reconstruccion_parcial: { es: "De este caso solo se han podido recolocar {recuperadas} de {esperadas} entradas.\n\nEs un caso antiguo, de antes de que se guardara el montaje completo, y alguna de sus entradas ya no existe en las cajas de ahora.\n\nSi sigues y cambias algo, el caso se quedará con las {recuperadas} que se ven. ¿Continuar?",
@@ -11986,30 +11996,36 @@
     var esc = escenarioActual();
     if (!esc || !exigeSerAutor(esc)) return;
     if (!confirm(T("esc_vaciar_conf", { nombre: campo(esc, "nombre") }))) return;
+    vaciarMontaje(esc);
+    renderTodo();
+  });
+  // Quita el material colocado; la plantilla se conserva
+  function vaciarMontaje(esc) {
     esc.asignaciones = {};
     esc.conmutador = {};
     esc.etiquetas = {};
     esc.extras = [];
     guardarMontaje(esc);
-    renderTodo();
-  });
+  }
 
   document.getElementById("btn-borrar").addEventListener("click", function () {
     var esc = escenarioActual();
     if (!esc || !exigeSerAutor(esc)) return;
     if (!confirm(T("esc_borrar_conf", { nombre: campo(esc, "nombre") }))) return;
-    var uid = activo;
-    delete montajes[uid];
-    delete montajesSinSubir[uid];
-    // Solo hay que borrarlo en GitHub si llegó a existir allí
-    if (montajesSha[uid]) montajesBorrados[uid] = montajesSha[uid];
-    delete montajesSha[uid];
-    activo = Object.keys(montajes)[0] || null;
+    quitarMontaje(activo);
     guardarMontajes();
     programarEnvio();
     orgEditor = false;
     renderTodo();
   });
+  function quitarMontaje(uid) {
+    delete montajes[uid];
+    delete montajesSinSubir[uid];
+    // Solo hay que borrarlo en GitHub si llegó a existir allí
+    if (montajesSha[uid]) montajesBorrados[uid] = montajesSha[uid];
+    delete montajesSha[uid];
+    if (activo === uid) activo = Object.keys(montajes)[0] || null;
+  }
 
   // "Guardar montaje": a diferencia de Duplicar/Renombrar/Vaciar/Borrar, el
   // material ya se autoguarda en cada colocación (colocar() → guardarMontajeActivo());
@@ -12080,6 +12096,8 @@
     // creación o modificación («Ordenar por», 04-10-2026). Las favoritas no
     // suben arriba: se quedan en su sitio y se filtran con «Solo favoritas».
     uids.sort(comparadorPlantillas(ordenPlantillas()));
+    plantillasVisibles = uids;
+    renderLotePlantillas();
 
     document.getElementById("montajes-cuenta").textContent =
       T("montajes_cuenta", { n: uids.length, total: Object.keys(montajes).length });
@@ -12099,6 +12117,7 @@
       // de abrirlo.
       var fila = nodoFilaPlantilla(m, uid, calcularResumen(m).entradas, yo, true);
       if (uid === activo) fila.classList.add("activo");
+      if (plantillasSel[uid]) fila.classList.add("seleccionada");
       // Elegir un montaje no lleva confirmación: no destruye nada, cada
       // montaje es su propio archivo y el anterior queda guardado tal
       // cual. La confirmación de la Fase 1 es solo para aplicar contenido
@@ -12143,7 +12162,6 @@
     renderTodo();
     window.scrollTo(0, 0);
   }
-  document.getElementById("barra-plantillas-volver").addEventListener("click", volverAListaPlantillas);
   document.getElementById("org-migas-volver").addEventListener("click", volverAListaPlantillas);
   // «Crear plantilla»: elige el equipo, crea una en blanco y la abre
   document.getElementById("btn-crear-plantilla").addEventListener("click", function () {
@@ -12224,6 +12242,22 @@
     cab.className = "plantilla-cab";
     // ★ favorita: se toca en la lista de Plantillas de montajes (sin cargar
     // la plantilla); en «Cargar plantilla…» solo se enseña si lo es.
+    // Casilla de selección (04-10-2026): solo en la lista de Plantillas
+    if (estrellaEditable) {
+      var sel = !!plantillasSel[uid];
+      var cas = regNodo("span", "plantilla-sel" + (sel ? " activa" : ""), sel ? "✓" : "");
+      cas.setAttribute("role", "checkbox");
+      cas.setAttribute("aria-checked", sel ? "true" : "false");
+      cas.title = T("plantilla_sel_poner");
+      cas.setAttribute("aria-label", cas.title);
+      cas.addEventListener("click", function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        if (plantillasSel[uid]) delete plantillasSel[uid]; else plantillasSel[uid] = true;
+        renderListaMontajesDialog();
+      });
+      cab.appendChild(cas);
+    }
     var fav = esFavorita(uid);
     if (estrellaEditable || fav) {
       var est = regNodo("span", "plantilla-fav" + (fav ? " activa" : ""), fav ? "★" : "☆");
@@ -12328,6 +12362,122 @@
   document.getElementById("montajes-equipo").addEventListener("change", function () {
     try { localStorage.setItem(PLANTILLAS_EQUIPO_KEY, this.value); } catch (e) { /* sin persistencia */ }
     renderListaMontajesDialog();
+  });
+
+  /* Varias plantillas a la vez (04-10-2026, pedido del usuario): la casilla
+     de cada fila las marca y la barra de encima de la lista ofrece el mismo
+     «Más acciones» que dentro de una. Solo cuentan las que se ven con los
+     filtros puestos. Renombrar, solo con una. Vaciar y Borrar se saltan las
+     que no son tuyas, y lo dicen. */
+  var plantillasSel = {};
+  var plantillasVisibles = [];
+  function uidsSeleccionados() {
+    return plantillasVisibles.filter(function (uid) { return plantillasSel[uid]; });
+  }
+  function renderLotePlantillas() {
+    // Lo que ya no está (borrado, o fuera de los filtros) deja de contar
+    Object.keys(plantillasSel).forEach(function (uid) {
+      if (plantillasVisibles.indexOf(uid) === -1) delete plantillasSel[uid];
+    });
+    var n = uidsSeleccionados().length;
+    document.getElementById("montajes-lote").hidden = !n;
+    if (!n) cerrarMenuLote();
+    document.getElementById("montajes-lote-cuenta").textContent =
+      n === 1 ? T("plantillas_sel_una") : T("plantillas_sel", { n: n });
+    document.getElementById("lote-renombrar").hidden = n !== 1;
+    document.getElementById("lote-todas").hidden = n === plantillasVisibles.length;
+  }
+  function cerrarMenuLote() {
+    document.getElementById("lote-mas-lista").hidden = true;
+    document.getElementById("lote-mas-btn").setAttribute("aria-expanded", "false");
+  }
+  document.getElementById("lote-mas-btn").addEventListener("click", function (e) {
+    e.stopPropagation();
+    var lista = document.getElementById("lote-mas-lista");
+    lista.hidden = !lista.hidden;
+    this.setAttribute("aria-expanded", lista.hidden ? "false" : "true");
+  });
+  document.getElementById("lote-mas-lista").addEventListener("click", cerrarMenuLote);
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest("#lote-mas")) cerrarMenuLote();
+  });
+  document.getElementById("lote-todas").addEventListener("click", function () {
+    plantillasVisibles.forEach(function (uid) { plantillasSel[uid] = true; });
+    renderListaMontajesDialog();
+  });
+  document.getElementById("lote-quitar").addEventListener("click", function () {
+    plantillasSel = {};
+    renderListaMontajesDialog();
+  });
+  // Lista de nombres para las confirmaciones
+  function nombresLote(uids) {
+    return uids.map(function (uid) { return "· " + (campo(montajes[uid], "nombre") || uid); }).join("\n");
+  }
+  // Se queda con las tuyas y avisa si alguna de otro autor se queda fuera
+  function propiasDelLote(uids) {
+    var propias = uids.filter(function (uid) { return puedoEditar(montajes[uid]); });
+    if (propias.length < uids.length) alert(T("lote_ajenas", { n: uids.length - propias.length }));
+    return propias;
+  }
+  document.getElementById("lote-duplicar").addEventListener("click", function () {
+    var uids = uidsSeleccionados();
+    if (!uids.length) return;
+    // Con una, como dentro de la plantilla: pide el nombre de la copia
+    if (uids.length === 1) {
+      var antes = activo;
+      if (!duplicarMontajeComo(montajes[uids[0]])) return;
+      activo = antes;
+    } else {
+      var yo = usuarioActual();
+      uids.forEach(function (uid) {
+        var m = clonar(montajes[uid]);
+        m.montaje_uid = uuid();
+        m.nombre = campo(montajes[uid], "nombre") + T("esc_copia_sufijo");
+        delete m.nombre_en;
+        delete m.de_fabrica;
+        m.autor_id = yo ? yo.id : "";
+        m.creado_en = new Date().toISOString();
+        m.editado_en = [];
+        guardarMontaje(m, true);
+      });
+    }
+    plantillasSel = {};
+    renderTodo();
+  });
+  document.getElementById("lote-renombrar").addEventListener("click", function () {
+    var uids = uidsSeleccionados();
+    if (uids.length !== 1) return;
+    var esc = montajes[uids[0]];
+    if (!exigeSerAutor(esc)) return;
+    var nombre = prompt(T("esc_renombrar"), campo(esc, "nombre"));
+    if (!nombre) return;
+    esc.nombre = nombre;
+    delete esc.nombre_en;
+    guardarMontaje(esc);
+    renderTodo();
+  });
+  document.getElementById("lote-vaciar").addEventListener("click", function () {
+    var uids = propiasDelLote(uidsSeleccionados());
+    if (!uids.length) return;
+    var ok = uids.length === 1
+      ? confirm(T("esc_vaciar_conf", { nombre: campo(montajes[uids[0]], "nombre") }))
+      : confirm(T("esc_vaciar_lote_conf", { n: uids.length, nombres: nombresLote(uids) }));
+    if (!ok) return;
+    uids.forEach(function (uid) { vaciarMontaje(montajes[uid]); });
+    renderTodo();
+  });
+  document.getElementById("lote-borrar").addEventListener("click", function () {
+    var uids = propiasDelLote(uidsSeleccionados());
+    if (!uids.length) return;
+    var ok = uids.length === 1
+      ? confirm(T("esc_borrar_conf", { nombre: campo(montajes[uids[0]], "nombre") }))
+      : confirm(T("esc_borrar_lote_conf", { n: uids.length, nombres: nombresLote(uids) }));
+    if (!ok) return;
+    uids.forEach(quitarMontaje);
+    plantillasSel = {};
+    guardarMontajes();
+    programarEnvio();
+    renderTodo();
   });
 
 

@@ -62,8 +62,9 @@ propia en *Después / consulta*).
   solo la **lista de plantillas** (botón **Crear plantilla**, filtros, **Ordenar
   por** nombre o última modificación); al tocar una, su pantalla de edición, con
   **Cajas** ya abierta. Para volver: **Plantillas** en la ruta del título
-  («Plantillas › nombre»), **← Todas las plantillas** en el rótulo o el atrás del
-  móvil.
+  («Plantillas › nombre») o el atrás del móvil. La **casilla** de cada fila marca
+  varias plantillas y encima de la lista sale **Más acciones** (Duplicar, Vaciar,
+  Borrar; Renombrar con una sola) para todas a la vez.
 - **Colores por familia de técnica** en las plantillas y en cada caso de Gestión
   de Casos: sensitivas ámbar, motoras rojo, EMG verde, reflejos rojo-violeta,
   EEG y ECoG azulado y mapeo rosa. Cada plantilla lleva a la izquierda una franja
