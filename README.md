@@ -33,6 +33,20 @@ con carpetas de colores, negrita/cursiva, fotos dentro de cada caja y
 de material en filas, con una breve descripción de uso de cada uno; tarjeta
 propia en *Después / consulta*).
 
+**Novedades del 4/10/2026 (noche):**
+- **Corregir en el Registro con los mismos botones**: el **✎** de cada línea del
+  cronograma abre la misma hoja que para apuntarla (*Corregir evento*, *Corregir
+  alarma*, *Corregir fase*), con los botones de lo apuntado ya marcados. Se
+  cambia lo que haga falta y **Guardar cambios** corrige la línea en su sitio:
+  la hora y el número de la alarma no cambian. En *Contexto* se puede cambiar
+  también la fase en que pasó. Lo que estuvieras eligiendo para un apunte nuevo
+  sigue ahí al terminar.
+- **Plantillas**: una casilla en cada fila para marcar **varias** y usar *Más
+  acciones* con todas a la vez. Se quitó «← Todas las plantillas»: hacía lo
+  mismo que *Plantillas* en la ruta del título.
+- **Modo claro**: el gris de los textos secundarios es más oscuro y se lee bien
+  sobre todos los fondos.
+
 **Novedades del 4/10/2026 (tarde):**
 - **Registro intraoperatorio, nuevo aspecto**: el **cronograma** ocupa el centro,
   con una línea por evento (hora, texto, ✎ y ✕; el color de la franja dice si es
@@ -1111,10 +1125,12 @@ elegido. Lo que hay dentro es lo de siempre, casi todo con toques:
   **azul** lo demás (anestesia, mapeo, contexto), con su etiqueta (FASE,
   CAMBIO, ALARMA A1…). Filtros **Todos / Críticos / Cambios / Info/Normal**. La **hora** de cada
   línea se corrige tocándola (en una alarma o una recuperación cambia también
-  la de la alarma). Con **✎** (solo con él; tiene la zona de toque ampliada) se abren debajo las
-  casillas para **corregir la línea**: qué, qué pasa, nota y fase (en una fase,
-  su nombre y el detalle); en una alarma, lo corregido pasa también a su fila
-  de alarmas (técnica, fase y criterio). «Hecho» las cierra. Debajo de cada **alarma**, lo que antes se completaba en
+  la de la alarma). Con **✎** (solo con él; tiene la zona de toque ampliada) se abre la
+  **misma hoja que para apuntarla**, con sus botones marcados (técnica,
+  hallazgo, magnitud, nota, contexto, TOF y, en *Contexto*, la fase en que
+  pasó; en una fase, su nombre y el detalle). **Guardar cambios** corrige la
+  línea en su sitio (la hora y el número de alarma no cambian); en una alarma,
+  lo corregido pasa también a su fila de alarmas (técnica, fase y criterio). Debajo de cada **alarma**, lo que antes se completaba en
   G, **plegado** con un resumen en una línea («Aviso al cirujano, ↑ TAM ·
   recupera 09:20»; la alarma recién apuntada sale desplegada):
   **causa probable**, **medidas adoptadas** (casillas + caja de texto) y

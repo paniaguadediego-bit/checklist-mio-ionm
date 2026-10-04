@@ -4113,17 +4113,6 @@ body.sin-ayudas .coste-nota { display: none !important; }
 .rr-editar-btn::after { content: ""; position: absolute; top: -8px; bottom: -8px; left: -8px; right: -4px; }
 .rr-editar-btn.activo { color: var(--accent); }
 #pantalla-registro .rr-en-hoja .rr-linea .rr-editar-btn { min-height: 1.9rem; min-width: 1.9rem; }
-.rr-editor {
-  display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); gap: 0.25rem 0.4rem; align-items: center;
-  margin: 0.1rem 0 0.45rem 1.2rem; padding: 0.35rem 0.45rem;
-  border: 1px solid var(--border-soft); border-left: 3px solid var(--accent); border-radius: 6px;
-}
-.rr-editor-et { font-size: 0.72rem; color: var(--text-muted); }
-.rr-editor-hecho {
-  grid-column: 1 / -1; justify-self: end; font: inherit; font-size: 0.8rem; padding: 0.25rem 0.9rem;
-  border: 1px solid var(--accent); background: var(--accent); color: var(--accent-texto); border-radius: 4px; cursor: pointer;
-}
-#pantalla-registro .rr-editor .rr-editor-hecho { min-height: 1.9rem; }
 /* «Apuntar fase, evento o alarma» como botón principal, distinto de las
    demás secciones (29-09-2026, pedido del usuario: es lo que se usa sin
    parar en quirófano). Relleno de acento, algo más grande; sigue plegándose. */
@@ -4338,7 +4327,7 @@ textarea { resize: none; overflow-y: hidden; }
 .rr-item .rr-texto small { display: block; font-family: var(--mono); font-size: 0.72rem; margin-top: 0.1rem; }
 .rr-item .rr-linea-alarma .rr-texto { color: var(--text); }
 .rr-item .rr-linea-fase .rr-texto { color: var(--text); }
-.rr-item .rr-al-plegable, .rr-item .rr-editor { margin-left: 0; }
+.rr-item .rr-al-plegable { margin-left: 0; }
 
 /* Botón de colores junto al ⋮ (30-09-2026): una bolita con el color del
    modo puesto; al tocarlo pasa al siguiente (oscuro → azul → claro). */

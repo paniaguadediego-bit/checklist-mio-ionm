@@ -1382,7 +1382,12 @@
     rr_grupo_factores:   { es: "Factores técnicos", en: "Technical factors" },
     rr_grupo_anestesia:  { es: "Anestesia", en: "Anaesthesia" },
     rr_editar:           { es: "Corregir esta línea", en: "Edit this line" },
-    rr_editar_hecho:     { es: "Hecho", en: "Done" },
+    rr_hoja_ed_fase:     { es: "Corregir fase", en: "Edit phase" },
+    rr_hoja_ed_evento:   { es: "Corregir evento", en: "Edit event" },
+    rr_hoja_ed_alarma:   { es: "Corregir alarma", en: "Edit alarm" },
+    rr_guardar_cambios:  { es: "Guardar cambios", en: "Save changes" },
+    rr_cambios_guardados: { es: "Cambios guardados.", en: "Changes saved." },
+    rr_fase_de_linea:    { es: "Fase", en: "Phase" },
     rr_detalle:          { es: "Detalle", en: "Detail" },
     rr_nota_l:           { es: "Nota", en: "Note" },
     rr_que:              { es: "Técnica", en: "Technique" },
@@ -17939,14 +17944,128 @@
   // regRapido: cerrar sin apuntar no lo borra.
   var regHoja = "", regPaso = 0;
   function regAbrirHoja(modo) {
+    regTerminarEdicion();
     regHoja = modo;
     regPaso = 0;
     renderRegistroContenido();
   }
   function regCerrarHoja() {
     if (!regHoja) return;
+    regTerminarEdicion();
     regHoja = "";
     renderRegistroContenido();
+  }
+
+  /* Corregir una línea del Cronograma (04-10-2026, pedido del usuario: las
+     casillas de texto eran otra forma distinta de la de apuntar). Se abre la
+     MISMA hoja, con los botones de lo apuntado ya marcados, y «Guardar
+     cambios» lo corrige en su sitio: la hora (se cambia en la línea), el id y
+     el número de la alarma no cambian. Lo que hubiera a medio elegir para un
+     apunte nuevo se aparta y vuelve al cerrar. */
+  var regEditandoAp = null, regRapidoAparte = null;
+  function regAbrirEdicion(ev, al) {
+    if (!regEditandoAp) regRapidoAparte = regRapido;
+    regEditandoAp = { ev: ev || null, al: al || null };
+    regRapido = regRapidoDeApunte(ev, al);
+    regHoja = ev && ev.cod === "F" ? "fase" : (al ? "alarma" : "evento");
+    regPaso = 0;
+    renderRegistroContenido();
+  }
+  function regTerminarEdicion() {
+    if (!regEditandoAp) return;
+    regEditandoAp = null;
+    regRapido = regRapidoAparte || regRapidoVacio();
+    regRapidoAparte = null;
+  }
+  // Al cambiar de caso: nada a medio elegir ni a medio corregir
+  function regRapidoReiniciar() {
+    if (regEditandoAp) regHoja = "";
+    regEditandoAp = null;
+    regRapidoAparte = null;
+    regRapido = regRapidoVacio();
+  }
+  // Lo que pueden ser los botones de Técnica, aunque ahora no se vean
+  // (pares de CoMEP y reflejos solo salen si el caso tiene la técnica)
+  function regQuesConocidos(d) {
+    var l = regQueRapidos(d).slice();
+    REG_PARES_COMEP.forEach(function (f) {
+      f.forEach(function (p) { l.push("CoMEP " + p + " I", "CoMEP " + p + " D"); });
+    });
+    TECNICAS.forEach(function (t) { if (t.reflejo) l.push(campo(t, "corta") || campo(t, "etiqueta")); });
+    return l;
+  }
+  // Un hallazgo guardado como texto (en el idioma en que se apuntó) → su id
+  function regCambioDeTexto(txt) {
+    return REG_CAMBIOS_RAPIDOS.filter(function (c) {
+      return txt && (c.l === txt || c.l_en === txt || campo(c, "l") === txt);
+    })[0];
+  }
+  // Lo contrario de regApuntar(): de lo guardado, los botones marcados
+  function regRapidoDeApunte(ev, al) {
+    var r = regRapidoVacio();
+    if (ev && ev.cod === "F") {
+      r.fase = ev.fase || "";
+      r.faseNota = ev.accion || "";
+      return r;
+    }
+    var d = registroDatos();
+    r.fase = (ev ? ev.fase : al.fase) || "";
+    r.tof = (ev && ev.tof) || (al && al.tof) || "";
+    r.contexto = (ev && ev.contexto) || "";
+    r.magnitud = (ev ? ev.magnitud : al.magnitud) || "";
+    var modalidad = String((ev ? ev.modalidad : al.modalidad) || "");
+    var cambioTxt = ev ? String(ev.cambio || "") : "";
+    // En una alarma, la nota son sus medidas (el evento lleva «A2 · nota»)
+    var nota = al ? String(al.medidas || "") : String(ev.accion || "");
+    if (ev && al && !nota) nota = String(ev.accion || "").replace(/^A\d+( · )?/, "");
+    // Solo un TOF («TOF 1/4»): el TOF marcado y nada más
+    if (ev && ev.cod === "An" && modalidad === "TOF" && /^TOF /.test(cambioTxt)) {
+      r.tof = cambioTxt.slice(4);
+      return r;
+    }
+    var conocidos = regQuesConocidos(d);
+    var partes = modalidad.split(" · ");
+    var lista = partes[0] ? partes[0].split(" + ") : [];
+    // Técnica: un botón de la lista o, aunque ahora no tenga botón («PEATC D»
+    // con el caso cambiado), algo que se reconoce como técnica
+    var tecnicas = lista.length && lista.every(function (x) {
+      return conocidos.indexOf(x) !== -1 || !!regModalidadDeQue(x) || regTecnicasDeQue(x).length > 0;
+    });
+    var causa = al ? al.causa : "";
+    var farm = ev && ev.farmaco ? REG_FARMACOS.filter(function (f) { return f.v === ev.farmaco; })[0] : null;
+    var esAn = !tecnicas && (farm || (ev && ev.cod === "An") || causa === "anestesica" || modalidad === T("rr_que_anestesia"));
+    var esT = !tecnicas && !esAn && ((ev && ev.cod === "T") || causa === "tecnica" || modalidad === T("rr_que_tecnico"));
+    if (tecnicas) {
+      r.que = lista[0];
+      r.queMas = lista.slice(1);
+      r.queNota = partes.slice(1).join(" · ");
+    } else if (esAn || esT) {
+      r.que = esAn ? REG_QUE_ANESTESIA : REG_QUE_TECNICO;
+      var nombreQue = T(esAn ? "rr_que_anestesia" : "rr_que_tecnico");
+      if (farm) {
+        r.farmaco = farm.v;
+        if (partes[0] === farm.l || partes[0] === farm.l_en || partes[0] === campo(farm, "l")) partes = partes.slice(1);
+        var pc = cambioTxt.split(" · ");
+        if (pc[0] === farm.l || pc[0] === farm.l_en || pc[0] === campo(farm, "l")) cambioTxt = pc.slice(1).join(" · ");
+      }
+      r.queNota = partes.join(" · ") === nombreQue ? "" : partes.join(" · ");
+    } else if (modalidad) {
+      r.que = REG_QUE_OTRO;
+      r.queNota = modalidad;
+    }
+    // Hallazgo: un botón si se reconoce; si no, «Otro» con su texto
+    var c = ev ? regCambioDeTexto(cambioTxt) : REG_CAMBIOS_RAPIDOS.filter(function (x) { return x.id === al.criterio; })[0];
+    var otroTxt = ev ? cambioTxt : String(al.criterio || "");
+    if (c) {
+      r.cambio = c.id;
+      r.nota = nota;
+    } else if (otroTxt) {
+      r.cambio = REG_CAMBIO_OTRO;
+      r.nota = ev && nota ? otroTxt + " · " + nota : otroTxt;
+    } else {
+      r.nota = nota;
+    }
+    return r;
   }
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && regHoja && document.querySelector("#pantalla-registro .rr-hoja")) regCerrarHoja();
@@ -18114,7 +18233,8 @@
   // Lo elegido y aún sin apuntar. No se guarda: se pierde al cambiar de caso.
   // queNota y faseNota son las cajas de Qué y de Fase; nota, la de Qué pasa.
   // queMas: las demás técnicas elegidas a la vez que «que» (ver regElegirQue).
-  function regRapidoVacio() { return { que: "", queMas: [], cambio: "", magnitud: "", nota: "", queNota: "", faseNota: "", contexto: "", tof: "", farmaco: "" }; }
+  // fase: solo al corregir una línea (al apuntar va la fase actual).
+  function regRapidoVacio() { return { que: "", queMas: [], cambio: "", magnitud: "", nota: "", queNota: "", faseNota: "", contexto: "", tof: "", farmaco: "", fase: "" }; }
   var regRapido = regRapidoVacio();
 
   // Magnitud del cambio (30-09-2026, pedido del usuario): % respecto a la
@@ -18260,6 +18380,19 @@
   function regMarcarFase(nombre, detalle) {
     var d = registroDatos();
     detalle = (detalle || "").trim();
+    var edF = regEditandoAp && regEditandoAp.ev;
+    if (edF) {
+      if (!nombre) return;
+      edF.fase = nombre;
+      if (detalle) edF.accion = detalle; else delete edF.accion;
+      registroGuardarYa();
+      avisoGuardado(T("rr_cambios_guardados"));
+      regTerminarEdicion();
+      regHoja = "";
+      renderRegistroContenido();
+      regVerUltimoApuntado(edF.id);
+      return;
+    }
     if (!nombre || (nombre === regFaseActual(d) && !detalle)) return;
     var hora = horaAhora();
     var ev = { id: uuid(), hora: hora, cod: "F", fase: nombre };
@@ -18275,6 +18408,8 @@
 
   function regApuntar(esAlarma) {
     var d = registroDatos();
+    // Corrigiendo una línea: mismos cálculos, sobre lo que ya había
+    var ed = regEditandoAp;
     // Varias técnicas a la vez (bilateral, hemicorporal, brazo-pierna-cara,
     // cruzado...) = UNA sola alarma o evento, «t-MEP MSD + t-MEP MID»: es un
     // único suceso, con una causa, unas medidas y una recuperación
@@ -18291,8 +18426,8 @@
     var otroCambio = regRapido.cambio === REG_CAMBIO_OTRO;
     if (otroCambio && !nota) { avisoGuardado(T("rr_falta_otro"), true); return; }
     var cambio = REG_CAMBIOS_RAPIDOS.filter(function (x) { return x.id === regRapido.cambio; })[0];
-    var hora = horaAhora();
-    var fase = regFaseActual(d);
+    var hora = ed ? ((ed.ev || ed.al).hora || "") : horaAhora();
+    var fase = ed ? regRapido.fase : regFaseActual(d);
     var esAn = q === REG_QUE_ANESTESIA, esT = q === REG_QUE_TECNICO;
     // "base": la técnica del botón, sin detalle, para cerrar su alarma al
     // recuperarse aunque una de las dos líneas lleve detalle y la otra no.
@@ -18339,7 +18474,7 @@
     if (esAlarma) {
       // Las alarmas nacen con filas vacías (min en REG_SECCIONES): se usa la
       // primera libre para que la numeración A1, A2... coincida con la hoja.
-      var al = d.alarmas.filter(filaRegistroVacia)[0];
+      var al = ed ? ed.al : d.alarmas.filter(filaRegistroVacia)[0];
       if (!al) { al = { id: uuid() }; d.alarmas.push(al); }
       var n = "A" + (d.alarmas.indexOf(al) + 1);
       al.hora = hora;
@@ -18348,18 +18483,21 @@
       // la "causa", que ahora se elige de REG_CAUSA_AL.
       al.criterio = otroCambio ? textoCambio : (cambio && !cambio.recup && cambio.id !== "sin_cambios" ? cambio.id : "");
       al.fase = fase;
-      if (magnitud) al.magnitud = magnitud;
-      if (tofVigente) al.tof = tofVigente;
-      if (esAn) al.causa = "anestesica";
-      if (esT) al.causa = "tecnica";
-      al.medidas = nota;
+      if (magnitud) al.magnitud = magnitud; else delete al.magnitud;
+      if (tofVigente) al.tof = tofVigente; else delete al.tof;
+      // Al corregir, la causa ya elegida debajo de la alarma se respeta
+      if (esAn && (!ed || !al.causa)) al.causa = "anestesica";
+      if (esT && (!ed || !al.causa)) al.causa = "tecnica";
+      // Con «Otro» la caja es el hallazgo: al corregir, las medidas escritas
+      // debajo de la alarma se quedan
+      if (!ed || !otroCambio) al.medidas = nota;
       var cRap = registroCaso();
       if (cRap) cRap.alerta = true;
       ev.accion = n + (nota ? " · " + nota : "");
       ev.alarma_id = al.id;
       mensaje = T("rr_alarma_apuntada", { n: n, hora: hora });
-      regAlarmasAbiertas[al.id] = 1;   // recién apuntada: abierta para marcar el aviso
-    } else if (cambio && cambio.recup && modalidad) {
+      if (!ed) regAlarmasAbiertas[al.id] = 1;   // recién apuntada: abierta para marcar el aviso
+    } else if (!ed && cambio && cambio.recup && modalidad) {
       // Recuperación: cierra la última alarma de esa modalidad que siga
       // abierta (o solo parcialmente recuperada).
       var abierta = null;
@@ -18374,6 +18512,26 @@
         abierta.a.h_recup = hora;
         mensaje = T("rr_alarma_recuperada", { n: "A" + (abierta.i + 1), min: minutosEntre(abierta.a.hora, hora) });
       }
+    }
+    if (ed) {
+      // Mismo objeto (lo enlazan la alarma y la recuperación): se vacía y se
+      // rellena, conservando id, hora, alarma y recuperación. Una alarma sin
+      // evento (de la ficha o de antes) se queda sin él.
+      if (ed.ev) {
+        var guardar = { id: ed.ev.id, hora: ed.ev.hora, alarma_id: ed.ev.alarma_id, recupera_de: ed.ev.recupera_de };
+        if (ed.ev.recupera_de) ev.cod = ed.ev.cod;
+        Object.keys(ed.ev).forEach(function (k) { delete ed.ev[k]; });
+        Object.keys(ev).forEach(function (k) { ed.ev[k] = ev[k]; });
+        Object.keys(guardar).forEach(function (k) { if (guardar[k] !== undefined) ed.ev[k] = guardar[k]; });
+      }
+      var idEd = (ed.ev || ed.al).id;
+      registroGuardarYa();
+      avisoGuardado(T("rr_cambios_guardados"));
+      regTerminarEdicion();
+      regHoja = "";
+      renderRegistroContenido();
+      regVerUltimoApuntado(idEd);
+      return;
     }
     d.eventos.push(ev);
     // La caja de Fase no es de este apunte. El TOF se desmarca como lo demás
@@ -18428,7 +18586,7 @@
     hoja.setAttribute("role", "dialog");
     hoja.setAttribute("aria-modal", "true");
     var cabH = regNodo("div", "rr-hoja-cab");
-    var titH = regNodo("span", "rr-hoja-tit", T(regHoja === "fase" ? "rr_hoja_fase" : (regHoja === "alarma" ? "rr_hoja_alarma" : "rr_hoja_evento")));
+    var titH = regNodo("span", "rr-hoja-tit", T((regEditandoAp ? "rr_hoja_ed_" : "rr_hoja_") + regHoja));
     if (regHoja === "alarma") titH.classList.add("rr-hoja-tit-alarma");
     cabH.appendChild(titH);
     var cerrarH = regNodo("button", "rr-hoja-cerrar", "✕");
@@ -18451,7 +18609,9 @@
     var estado = document.createElement("div");
     estado.className = "rr-fase-actual";
     estado.textContent = faseAct ? T("rr_fase_actual", { fase: faseAct }) : T("rr_sin_fase");
-    bFase.appendChild(estado);
+    // Al corregir una fase, la marcada es la de esa línea
+    if (regEditandoAp) faseAct = regRapido.fase;
+    else bFase.appendChild(estado);
     var filaFases = regNodo("div", "rr-chips");
     bFase.appendChild(filaFases);
     var nombres = REG_FASES_RAPIDAS.map(function (f) { return campo(f, "l"); });
@@ -18631,6 +18791,23 @@
     });
     subTof.appendChild(filaTof);
     filaAnest.appendChild(subTof);
+    // Al corregir, una técnica apuntada que hoy no tiene botón (el caso ya
+    // no la tiene, o se apuntó con otro nombre) sale igualmente, marcada,
+    // para poder verla y quitarla.
+    var sinBoton = regQuesElegidos().filter(function (v) {
+      if (regEsQueSuelto(v)) return false;
+      return !Array.prototype.some.call(queGrupos.querySelectorAll(".rr-chip"), function (b) { return b.getAttribute("data-que") === v; });
+    });
+    if (sinBoton.length) {
+      var filaSin = regNodo("div", "rr-chips");
+      sinBoton.forEach(function (v) {
+        var b = regChip(v, true, function () { regElegirQue(queGrupos, v); actualizarCambiosPropios(); });
+        b.setAttribute("data-que", v);
+        regPonerFamilia(b, v);
+        filaSin.appendChild(b);
+      });
+      queGrupos.appendChild(filaSin);
+    }
     queGrupos.appendChild(filaCorta);
     queGrupos.appendChild(filaAnest);
     var cajaFarm = regNodo("div", "rr-farmacos");
@@ -18739,6 +18916,16 @@
       var b = regChip(campo(c, "l"), regRapido.contexto === c.v, function () { regElegirEn(filaCtx, b, "contexto", c.v); });
       filaCtx.appendChild(b);
     });
+    // Al corregir, también la fase en que pasó (al apuntar va la actual)
+    if (regEditandoAp && regHoja !== "fase") {
+      var filaFaseEd = regGrupoRapido(subCtx, T("rr_fase_de_linea"));
+      var nombresEd = nombres.slice();
+      if (regRapido.fase && nombresEd.indexOf(regRapido.fase) === -1) nombresEd.push(regRapido.fase);
+      nombresEd.forEach(function (nombre) {
+        var b = regChip(nombre, regRapido.fase === nombre, function () { regElegirEn(filaFaseEd, b, "fase", nombre); });
+        filaFaseEd.appendChild(b);
+      });
+    }
 
     // Pasos: uno a la vista cada vez, sin volver a pintar (lo elegido sigue)
     var pasos = [
@@ -18749,7 +18936,8 @@
     var pie = regNodo("div", "rr-hoja-pie");
     var bSig = regNodo("button", "rr-hoja-sig", T("rr_siguiente"));
     bSig.type = "button";
-    var bApuntar = regNodo("button", regHoja === "alarma" ? "rr-alarma" : "primario", T(regHoja === "alarma" ? "rr_apuntar_alarma" : "rr_apuntar_evento"));
+    var bApuntar = regNodo("button", regHoja === "alarma" ? "rr-alarma" : "primario",
+      T(regEditandoAp ? "rr_guardar_cambios" : (regHoja === "alarma" ? "rr_apuntar_alarma" : "rr_apuntar_evento")));
     bApuntar.type = "button";
     bApuntar.addEventListener("click", function () { regApuntar(regHoja === "alarma"); });
     var botonesPaso = [];
@@ -18966,15 +19154,13 @@
       if (fase || ctx || tofL) txt.appendChild(regNodo("small", null, " " + [fase ? T("rr_en_fase", { fase: fase }) : "", ctx, tofL].filter(Boolean).join(" · ")));
     }
     // Corregir la línea (29-09-2026, pedido del usuario): solo con ✎ (tocar
-    // el texto ya no la abre), que tiene la zona táctil ampliada; otra vez, o
-    // «Hecho», cierra las casillas.
+    // el texto no la abre), que tiene la zona táctil ampliada. Desde el
+    // 04-10-2026 abre la misma hoja que para apuntarla (regAbrirEdicion()).
     var clave = ev ? ev.id : al.id;
     caja.setAttribute("data-id", clave);
-    var alternarEdicion = function () {
-      regEditando = regEditando === clave ? "" : clave;
-      renderRegistroContenido();
-    };
-    var ed = regNodo("button", "rr-editar-btn" + (regEditando === clave ? " activo" : ""), "✎");
+    var alternarEdicion = function () { regAbrirEdicion(ev, al); };
+    var editandoEsta = regEditandoAp && (regEditandoAp.ev || regEditandoAp.al).id === clave;
+    var ed = regNodo("button", "rr-editar-btn" + (editandoEsta ? " activo" : ""), "✎");
     ed.type = "button";
     ed.title = T("rr_editar");
     ed.setAttribute("aria-label", T("rr_editar"));
@@ -18994,7 +19180,6 @@
     cab.appendChild(q);
     fila.appendChild(cab);
     caja.appendChild(fila);
-    if (regEditando === clave) caja.appendChild(regEditorApuntado(d, ev, al));
     if (al) {
       // Debajo de cada alarma, lo que antes se completaba en G: causa
       // probable (29-09-2026, pedido del usuario), medidas adoptadas y
@@ -19055,56 +19240,6 @@
     if (med.length) partes.push(med.join(", "));
     if (al.recup) partes.push(regTextoLista(REG_RECUP, al.recup).replace(/^[SPN] · /, "") + (al.h_recup ? " " + al.h_recup : ""));
     return partes.join(" · ");
-  }
-
-  // Casillas para corregir una línea de «Apuntado». Una alarma con evento se
-  // corrige en el evento y se copia a su alarma: técnica, fase y criterio (el
-  // id si el cambio es uno de los botones; si no, el texto).
-  var regEditando = "";
-  function regEditorApuntado(d, ev, al) {
-    var box = regNodo("div", "rr-editor");
-    var copiarAAlarma = function () {
-      if (!ev || !al) return;
-      al.modalidad = ev.modalidad || "";
-      al.fase = ev.fase || "";
-      var c = REG_CAMBIOS_RAPIDOS.filter(function (x) {
-        return !x.recup && x.id !== "sin_cambios" && campo(x, "l") === ev.cambio;
-      })[0];
-      al.criterio = c ? c.id : (ev.cambio || "");
-      if (ev.magnitud) al.magnitud = ev.magnitud; else delete al.magnitud;
-    };
-    function casilla(obj, k, etiqueta) {
-      box.appendChild(regNodo("span", "rr-editor-et", etiqueta));
-      box.appendChild(regInputSinTexto(obj, k, "text", etiqueta, copiarAAlarma));
-    }
-    if (ev && ev.cod === "F") {
-      casilla(ev, "fase", T("rr_fase"));
-      casilla(ev, "accion", T("rr_detalle"));
-    } else if (ev) {
-      casilla(ev, "modalidad", T("rr_que"));
-      casilla(ev, "cambio", T("rr_que_pasa"));
-      casilla(ev, "magnitud", T("rr_magnitud") + " (%)");
-      // En una alarma, la nota son sus medidas (debajo)
-      if (!al) casilla(ev, "accion", T("rr_nota_l"));
-      casilla(ev, "fase", T("rr_fase"));
-      box.appendChild(regNodo("span", "rr-editor-et", T("rr_contexto")));
-      box.appendChild(regSelectLista(ev, "contexto", REG_CONTEXTO, T("rr_contexto")));
-    } else {
-      casilla(al, "modalidad", T("rr_que"));
-      box.appendChild(regNodo("span", "rr-editor-et", T("reg_p_criterio")));
-      box.appendChild(regSelectLista(al, "criterio", REG_CRITERIO_AL, T("reg_p_criterio")));
-      casilla(al, "magnitud", T("rr_magnitud") + " (%)");
-      casilla(al, "fase", T("rr_fase"));
-    }
-    var hecho = regNodo("button", "rr-editor-hecho", T("rr_editar_hecho"));
-    hecho.type = "button";
-    hecho.addEventListener("click", function () {
-      regEditando = "";
-      registroGuardarYa();
-      renderRegistroContenido();
-    });
-    box.appendChild(hecho);
-    return box;
   }
 
   /* ---- Hoja completa en pantalla, simplificada (28-09-2026) -----------
@@ -19847,7 +19982,7 @@
   document.getElementById("registro-caso-select").addEventListener("change", function (e) {
     registroVaciarPendiente();
     registroCasoUid = e.target.value || null;
-    regRapido = regRapidoVacio();
+    regRapidoReiniciar();
     renderRegistroContenido();
   });
   document.getElementById("registro-guardar").addEventListener("click", function () {
@@ -20426,7 +20561,7 @@
     dlgCaso.close();
     registroVaciarPendiente();
     registroCasoUid = uid && casos[uid] ? uid : null;
-    regRapido = regRapidoVacio();
+    regRapidoReiniciar();
     abrirRegistro();
     window.scrollTo(0, 0);
   });
@@ -21156,7 +21291,7 @@
       tourCerrarCaso();
       registroVaciarPendiente();
       registroCasoUid = tourCasoDemo();
-      regRapido = regRapidoVacio();
+      regRapidoReiniciar();
       renderRegistro();
       irAPantalla("registro");
       // Desde el 04-10-2026 se apunta con la barra de abajo (diseño B)

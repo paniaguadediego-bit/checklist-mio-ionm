@@ -69,3 +69,8 @@ Instrucciones para cualquier asistente de código que trabaje en este repositori
   médico de otro hospital.
 - Al reemplazar varias líneas con Python, construye el texto a buscar con el
   salto de línea real del archivo (CRLF o LF): si no, no casa.
+- Registro: corregir una línea usa la misma hoja que apuntarla
+  (`regAbrirEdicion()`). Un botón o campo nuevo en la hoja de apuntar
+  (`regApuntar()`) tiene que leerse también en `regRapidoDeApunte()`, o se
+  perderá al corregir. Para comprobarlo: en la demo, ✎ y «Guardar cambios» sin
+  tocar nada en todas las líneas; el cronograma no debe cambiar.
