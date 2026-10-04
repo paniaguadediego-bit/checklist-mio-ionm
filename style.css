@@ -4248,7 +4248,50 @@ textarea { resize: none; overflow-y: hidden; }
 /* Cabecera plegable (30-09-2026, pedido del usuario): más aire arriba y
    abajo, aspecto de título como los apartados (▸ que gira, acento, negrita)
    y el total a la derecha. */
-.rr-crono { margin: 1.4rem 0 0.6rem; }
+.rr-crono { margin: 0.4rem 0 0.6rem; }
+/* ---- Diseño B del Registro (04-10-2026): cronograma en el centro, barra
+   fija abajo y hoja de apuntar que sube desde abajo ---- */
+#pantalla-registro { padding-bottom: 4.6rem; }
+.rr-principal > .rr-fase-actual { margin: 0.2rem 0 0; font-size: 0.85rem; }
+.rr-barra-apuntar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 45; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.45rem; padding: 0.5rem 0.75rem calc(0.5rem + env(safe-area-inset-bottom)); background: var(--bg); border-top: 1px solid var(--border); box-shadow: 0 -6px 10px -6px rgba(0, 0, 0, 0.35); }
+.rr-barra-apuntar button { font: inherit; font-weight: 600; min-height: 44px; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); white-space: nowrap; }
+.rr-barra-apuntar .primario { background: var(--accent); border-color: var(--accent); color: var(--accent-texto); }
+.rr-barra-apuntar .rr-alarma { background: transparent; border: 2px solid var(--peligro); color: var(--peligro); }
+@media (min-width: 760px) { .rr-barra-apuntar { left: 50%; right: auto; width: 720px; transform: translateX(-50%); border: 1px solid var(--border); border-bottom: none; border-radius: 8px 8px 0 0; } }
+.rr-hoja-fondo { position: fixed; inset: 0; z-index: 900; background: rgba(0, 0, 0, 0.5); }
+.rr-hoja { position: fixed; left: 0; right: 0; bottom: 0; z-index: 901; max-width: 720px; margin: 0 auto; max-height: 86vh; max-height: 86dvh; display: flex; flex-direction: column; background: var(--bg); border-top: 3px solid var(--accent); border-radius: 10px 10px 0 0; box-shadow: 0 -10px 24px rgba(0, 0, 0, 0.4); }
+.rr-hoja-cab { display: flex; align-items: center; gap: 0.5rem; padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--border); }
+.rr-hoja-tit { flex: 1 1 auto; font-weight: 700; font-size: 1rem; }
+.rr-hoja-tit-alarma { color: var(--peligro); }
+.rr-hoja-cerrar { font: inherit; font-size: 1.1rem; min-width: 44px; min-height: 40px; border: 1px solid var(--border); border-radius: 6px; background: var(--card-bg); color: var(--text-muted); cursor: pointer; }
+.rr-hoja-cuerpo { flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain; padding: 0.55rem 0.75rem 0.75rem; }
+.rr-hoja .rr-bloque { border: none; padding: 0; margin: 0; background: transparent; box-shadow: none; }
+.rr-hoja .rr-sub-bloque { border: none; padding: 0; margin: 0; background: transparent; }
+.rr-hoja .rr-sub-tit { display: none; }
+.rr-hoja .rr-sub-bloque[hidden] { display: none; }
+.rr-pasos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.35rem; margin-bottom: 0.6rem; }
+.rr-paso { font: inherit; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.35rem; min-height: 40px; padding: 0.2rem 0.3rem; border: 1px solid var(--border); border-radius: 6px; background: var(--card-bg); color: var(--text-muted); cursor: pointer; white-space: nowrap; }
+.rr-paso-n { display: inline-flex; align-items: center; justify-content: center; width: 1.3rem; height: 1.3rem; border-radius: 50%; border: 1px solid currentColor; font-size: 0.72rem; }
+.rr-paso.activo { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+.rr-paso.hecho .rr-paso-n { background: var(--accent); border-color: var(--accent); color: var(--accent-texto); font-size: 0; }
+.rr-paso.hecho .rr-paso-n::before { content: "✓"; font-size: 0.75rem; }
+.rr-hoja-pie { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; padding: 0.5rem 0.75rem calc(0.5rem + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); }
+.rr-hoja-pie button { font: inherit; font-weight: 600; min-height: 46px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
+.rr-hoja-pie .rr-hoja-sig { border: 1px solid var(--border); background: var(--card-bg); color: var(--text); }
+.rr-hoja-pie .rr-hoja-sig[hidden] { display: none; }
+.rr-hoja-pie .rr-hoja-sig[hidden] + button { grid-column: 1 / -1; }
+.rr-hoja-pie .primario { background: var(--accent); border: 1px solid var(--accent); color: var(--accent-texto); }
+/* Cronograma compacto: una línea por evento */
+.rr-principal .rr-lista { gap: 0.25rem; }
+.rr-principal .rr-item { padding: 0.15rem 0.3rem 0.15rem 0.45rem; border-radius: 4px; }
+.rr-principal .rr-linea-cab { align-items: flex-start; gap: 0.35rem; }
+.rr-principal .rr-item .rr-hora { width: 3.7rem; flex: 0 0 auto; padding-top: 0.12rem; }
+.rr-principal .rr-item .rr-hora::-webkit-calendar-picker-indicator { display: none; }
+.rr-principal .rr-item .rr-texto { flex: 1 1 auto; min-width: 0; padding: 0.15rem 0; }
+.rr-principal .rr-linea-fase .rr-texto { color: var(--text-muted); font-weight: 600; }
+.rr-principal .rr-item:has(.rr-linea-fase) { background: transparent; }
+.rr-principal .rr-item.rr-nuevo { animation: rr-nuevo 1.8s ease-out; }
+@keyframes rr-nuevo { 0%, 40% { box-shadow: 0 0 0 2px var(--accent); } 100% { box-shadow: 0 0 0 2px transparent; } }
 /* Con aspecto de botón que se despliega (04-10-2026, pedido del usuario: no
    parecía un desplegable): recuadro, fondo de tarjeta y flecha más grande. */
 .rr-crono-cab { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 0.5rem; padding: 0.55rem 0.65rem; margin-bottom: 0.5rem; border: 1px solid var(--border); border-radius: 5px; background: var(--card-bg); }

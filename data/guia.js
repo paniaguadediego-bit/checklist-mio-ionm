@@ -57,8 +57,8 @@ window.GUIA = {
         "Vincúlalo a un caso y las marcas viajan con él."
       ] },
       { titulo: "Registro intraoperatorio", texto: "Lo que pasa en quirófano, con la hora.", puntos: [
-        "Fase: un toque; lo siguiente la hereda.",
-        "Técnica + hallazgo → Apuntar evento o alarma; varias técnicas a la vez = una sola alarma.",
+        "Barra de abajo: + Fase (un toque; lo siguiente la hereda), + Evento y + Alarma.",
+        "Evento y alarma por pasos: técnica › hallazgo › contexto; varias técnicas a la vez = una sola alarma.",
         "Basales: toca una técnica para apuntar; «= Basal» copia la basal si no hay cambios.",
         "En el cronograma, toca la hora o ✎ para corregir."
       ] }

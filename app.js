@@ -1004,7 +1004,7 @@
     tour_x_caso_docencia: { es: "Rol, supervisor, dificultad y aprendizaje clave de cada caso. Marca los destacados o los que quieres seguir, y encuéntralos después con los filtros: el registro de casos se convierte en un portafolio formativo.",
                            en: "Role, supervisor, difficulty and key learning point of each case. Flag notable cases or ones to follow up, and find them later with the filters: the case log becomes a training portfolio." },
     tour_t_registro:     { es: "Registro intraoperatorio", en: "Intraoperative log" },
-    tour_x_registro:     { es: "En quirófano, arriba de la hoja se apunta con dos toques: la fase una vez, y cada cambio como técnica + hallazgo. La hora se pone sola y la alarma se cierra con su recuperación y «Ahora». Más abajo, el resto de la hoja (anestesia, basales, mapeo, cierre).",
+    tour_x_registro:     { es: "En quirófano, el cronograma ocupa el centro y se apunta con la barra de abajo: + Fase una vez, y + Evento o + Alarma paso a paso (técnica, hallazgo, contexto). La hora se pone sola y la alarma se cierra con su recuperación y «Ahora». Más abajo, basales, mapeo y cierre.",
                            en: "In the OR, at the top of the sheet you log with two taps: the phase once, and each change as what + what happens. The time is set automatically and the alarm is closed with its recovery and “Now”. Further down, the rest of the sheet (anaesthesia, baselines, mapping, closure)." },
     tour_t_salidas:      { es: "Hoja de registro e informe", en: "Record sheet and report" },
     tour_x_salidas:      { es: "En el menú ⋮ de la ficha, Hoja de registro imprime las dos páginas A4 para quirófano, ya rellenas con lo que sabe el caso, e Informe (PDF) hace el informe del caso. El Checklist pre-quirúrgico también se vincula al caso.",
@@ -1350,6 +1350,15 @@
     rr_que_detalle:      { es: "Otro o detalle (opcional)", en: "Other or detail (optional)" },
     rr_falta_otro:       { es: "Con «Otro», escribe en la caja de debajo qué es.", en: "With “Other”, type what it is in the box below." },
     rr_en_hoja:          { es: "Apuntar fase, evento o alarma", en: "Log phase, event or alarm" },
+    rr_btn_fase:         { es: "+ Fase", en: "+ Phase" },
+    rr_btn_evento:       { es: "+ Evento", en: "+ Event" },
+    rr_btn_alarma:       { es: "+ Alarma", en: "+ Alarm" },
+    rr_hoja_fase:        { es: "Marcar fase", en: "Mark phase" },
+    rr_hoja_evento:      { es: "Nuevo evento", en: "New event" },
+    rr_hoja_alarma:      { es: "Nueva alarma", en: "New alarm" },
+    rr_paso_contexto:    { es: "Contexto", en: "Context" },
+    rr_siguiente:        { es: "Siguiente ›", en: "Next ›" },
+    rr_hoja_cerrar:      { es: "Cerrar sin apuntar", en: "Close without logging" },
     rr_al_detalle:       { es: "Causa, medidas y recuperación", en: "Cause, measures and recovery" },
     rr_contexto:         { es: "Contexto quirúrgico (opcional)", en: "Surgical context (optional)" },
     rr_grupo_reflejos:   { es: "Reflejos", en: "Reflexes" },
@@ -17699,17 +17708,17 @@
     // (29-09-2026, pedido del usuario): el panel del antiguo modo rápido, que
     // sustituye en pantalla a F y G y deja de ser una vista aparte. Abierto
     // salvo que se pliegue (se recuerda al revés que las demás secciones).
-    var detR = document.createElement("details");
-    detR.className = "caso-grupo reg-seccion reg-rapido";
-    detR.open = !regAbierta("rapido_plegado");
-    detR.addEventListener("toggle", function () { regRecordarAbierta("rapido_plegado", !detR.open); });
-    var sumR = document.createElement("summary");
-    sumR.appendChild(regNodo("span", "", T("rr_en_hoja")));
-    detR.appendChild(sumR);
-    var cuerpoR = regNodo("div", "caso-grupo-campos");
-    pintarPanelApuntar(cuerpoR);
-    detR.appendChild(cuerpoR);
-    cont.appendChild(detR);
+    // Diseño B (04-10-2026, elegido por el usuario entre tres maquetas: el
+    // Registro no le convencía, largo y con recuadros dentro de recuadros):
+    // el cronograma en el centro, siempre a la vista, y para apuntar una barra
+    // fija abajo (+ Fase · + Evento · + Alarma) que abre una hoja desde abajo
+    // con los mismos botones de antes; evento y alarma, por pasos
+    // (Técnica › Hallazgo › Contexto). Los datos no cambian.
+    var principal = regNodo("div", "rr rr-en-hoja rr-principal");
+    var faseAct = regFaseActual(registroDatos());
+    principal.appendChild(regNodo("div", "rr-fase-actual", faseAct ? T("rr_fase_actual", { fase: faseAct }) : T("rr_sin_fase")));
+    pintarCronograma(principal);
+    cont.appendChild(principal);
     REG_SECCIONES.forEach(function (sec) {
       // En pantalla, algunas secciones van simplificadas o no van (ver
       // REG_PANTALLA); la hoja impresa sigue saliendo entera.
@@ -17762,6 +17771,48 @@
     // anestesia que también son datos de la ficha (espejo); vaciarlos de un
     // toque desde la barra de quirófano era demasiado fácil.
     document.getElementById("registro-vaciar").hidden = !!registroCaso();
+    pintarBarraApuntar(cont);
+    if (regHoja) pintarPanelApuntar(cont);
+  }
+
+  // Hoja de apuntar abierta ("", "fase", "evento" o "alarma") y paso de la de
+  // evento/alarma (0 Técnica, 1 Hallazgo, 2 Contexto). Lo elegido sigue en
+  // regRapido: cerrar sin apuntar no lo borra.
+  var regHoja = "", regPaso = 0;
+  function regAbrirHoja(modo) {
+    regHoja = modo;
+    regPaso = 0;
+    renderRegistroContenido();
+  }
+  function regCerrarHoja() {
+    if (!regHoja) return;
+    regHoja = "";
+    renderRegistroContenido();
+  }
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && regHoja && document.querySelector("#pantalla-registro .rr-hoja")) regCerrarHoja();
+  });
+  // Tras apuntar, lo nuevo a la vista y resaltado un momento (va por hora:
+  // no siempre es lo último de la lista)
+  function regVerUltimoApuntado(id) {
+    var lista = document.querySelectorAll("#pantalla-registro .rr-principal .rr-item");
+    var nodo = null;
+    Array.prototype.forEach.call(lista, function (n) { if (n.getAttribute("data-id") === id) nodo = n; });
+    nodo = nodo || lista[lista.length - 1];
+    if (!nodo) return;
+    if (nodo.scrollIntoView) nodo.scrollIntoView({ block: "center" });
+    nodo.classList.add("rr-nuevo");
+  }
+
+  function pintarBarraApuntar(cont) {
+    var barra = regNodo("div", "rr-barra-apuntar no-print");
+    [["fase", "rr_btn_fase", ""], ["evento", "rr_btn_evento", "primario"], ["alarma", "rr_btn_alarma", "rr-alarma"]].forEach(function (b) {
+      var btn = regNodo("button", b[2], T(b[1]));
+      btn.type = "button";
+      btn.addEventListener("click", function () { regAbrirHoja(b[0]); });
+      barra.appendChild(btn);
+    });
+    cont.appendChild(barra);
   }
 
   /* ---- Modo rápido (27-09-2026) ---------------------------------------
@@ -18058,7 +18109,9 @@
     regRapido.faseNota = "";
     registroGuardarYa();
     avisoGuardado(T("rr_fase_marcada", { fase: nombre, hora: hora }));
+    regHoja = "";
     renderRegistroContenido();
+    regVerUltimoApuntado(ev.id);
   }
 
   function regApuntar(esAlarma) {
@@ -18172,7 +18225,9 @@
     regRapido.faseNota = faseNota;
     registroGuardarYa();
     avisoGuardado(mensaje);
+    regHoja = "";
     renderRegistroContenido();
+    regVerUltimoApuntado(ev.id);
   }
 
   function regQuitarRapido(ev) {
@@ -18202,16 +18257,30 @@
     return caja;
   }
 
-  // Panel «Apuntar fase, evento o alarma», arriba de la Hoja completa, con
-  // los tamaños compactos de la hoja (.rr-en-hoja).
+  // Hoja «Apuntar» que sube desde abajo (diseño B, 04-10-2026): la de Fase
+  // o la de evento/alarma por pasos, con los tamaños compactos de la hoja
+  // (.rr-en-hoja). Antes era un panel siempre abierto arriba del Registro.
   function pintarPanelApuntar(cont) {
     var d = registroDatos();
-    var panel = document.createElement("div");
-    panel.className = "rr rr-en-hoja";
-    var intro = document.createElement("p");
-    intro.className = "reg-ayuda";
-    intro.textContent = T("rr_intro");
-    panel.appendChild(intro);
+    var fondo = regNodo("div", "rr-hoja-fondo no-print");
+    fondo.addEventListener("click", regCerrarHoja);
+    cont.appendChild(fondo);
+    var hoja = regNodo("div", "rr rr-en-hoja rr-hoja no-print");
+    hoja.setAttribute("role", "dialog");
+    hoja.setAttribute("aria-modal", "true");
+    var cabH = regNodo("div", "rr-hoja-cab");
+    var titH = regNodo("span", "rr-hoja-tit", T(regHoja === "fase" ? "rr_hoja_fase" : (regHoja === "alarma" ? "rr_hoja_alarma" : "rr_hoja_evento")));
+    if (regHoja === "alarma") titH.classList.add("rr-hoja-tit-alarma");
+    cabH.appendChild(titH);
+    var cerrarH = regNodo("button", "rr-hoja-cerrar", "✕");
+    cerrarH.type = "button";
+    cerrarH.title = T("rr_hoja_cerrar");
+    cerrarH.setAttribute("aria-label", T("rr_hoja_cerrar"));
+    cerrarH.addEventListener("click", regCerrarHoja);
+    cabH.appendChild(cerrarH);
+    hoja.appendChild(cabH);
+    var panel = regNodo("div", "rr-hoja-cuerpo");
+    hoja.appendChild(panel);
 
     // Fase: las de fábrica más las propias ya usadas en este registro
     var faseAct = regFaseActual(d);
@@ -18219,8 +18288,7 @@
     // marca sola, cuando toque; "qué" + "qué pasa" van juntos y son los que
     // definen cada evento o alarma.
     var bFase = regNodo("div", "rr-bloque");
-    bFase.appendChild(regNodo("div", "rr-bloque-tit", T("rr_fase")));
-    panel.appendChild(bFase);
+    if (regHoja === "fase") panel.appendChild(bFase);
     var estado = document.createElement("div");
     estado.className = "rr-fase-actual";
     estado.textContent = faseAct ? T("rr_fase_actual", { fase: faseAct }) : T("rr_sin_fase");
@@ -18243,8 +18311,9 @@
     bFase.appendChild(regCajaRapida("faseNota", T("rr_fase_detalle")));
 
     var bEvento = regNodo("div", "rr-bloque rr-bloque-evento");
-    bEvento.appendChild(regNodo("div", "rr-bloque-tit", T("rr_evento_alarma")));
-    panel.appendChild(bEvento);
+    // Pasos arriba: tocar uno lo enseña; ✓ si ya tiene algo elegido
+    var navPasos = regNodo("div", "rr-pasos");
+    if (regHoja !== "fase") { panel.appendChild(navPasos); panel.appendChild(bEvento); }
     // QUÉ en filas por tipo (29-09-2026, pedido del usuario): técnicas,
     // factores técnicos, anestesia -con el TOF, que mide la relajación- y
     // Otro. Sigue siendo una sola elección entre todas las filas.
@@ -18495,41 +18564,65 @@
     cambioGrupos.addEventListener("click", actualizarMagnitud);
     subHallazgo.appendChild(regCajaRapida("nota", T("rr_nota")));
 
-    var filaCtx = regGrupoRapido(bEvento, T("rr_contexto"));
+    var subCtx = regNodo("div", "rr-sub-bloque");
+    bEvento.appendChild(subCtx);
+    var filaCtx = regGrupoRapido(subCtx, T("rr_contexto"));
     REG_CONTEXTO.forEach(function (c) {
       var b = regChip(campo(c, "l"), regRapido.contexto === c.v, function () { regElegirEn(filaCtx, b, "contexto", c.v); });
       filaCtx.appendChild(b);
     });
 
-    var botones = document.createElement("div");
-    botones.className = "rr-botones";
-    var bEv = document.createElement("button");
-    bEv.type = "button";
-    bEv.className = "primario";
-    bEv.textContent = T("rr_apuntar_evento");
-    bEv.addEventListener("click", function () { regApuntar(false); });
-    var bAl = document.createElement("button");
-    bAl.type = "button";
-    bAl.className = "rr-alarma";
-    bAl.textContent = T("rr_apuntar_alarma");
-    bAl.addEventListener("click", function () { regApuntar(true); });
-    botones.appendChild(bEv);
-    botones.appendChild(bAl);
-    // Los botones se quedan pegados abajo mientras se ve el recuadro, y «↓»
-    // baja al cronograma (30-09-2026, tras la prueba con tres usuarios:
-    // «Apuntar alarma» quedaba a pantalla y media y el cronograma, más abajo).
-    var bIr = regNodo("button", "rr-ir-crono", "↓");
-    bIr.type = "button";
-    bIr.title = T("rr_ir_crono");
-    bIr.setAttribute("aria-label", T("rr_ir_crono"));
-    bIr.addEventListener("click", function () {
-      var cr = document.querySelector("#pantalla-registro .rr-crono");
-      if (!cr) return;
-      cr.open = true;
-      window.scrollTo(0, cr.getBoundingClientRect().top + window.pageYOffset - altoBarrasFijas() - 8);
+    // Pasos: uno a la vista cada vez, sin volver a pintar (lo elegido sigue)
+    var pasos = [
+      { nodo: subTecnica, t: T("rr_que"), hecho: function () { return regQuesElegidos().length > 0 || !!regRapido.queNota; } },
+      { nodo: subHallazgo, t: T("rr_que_pasa"), hecho: function () { return !!regRapido.cambio || !!regRapido.nota; } },
+      { nodo: subCtx, t: T("rr_paso_contexto"), hecho: function () { return !!regRapido.contexto; } }
+    ];
+    var pie = regNodo("div", "rr-hoja-pie");
+    var bSig = regNodo("button", "rr-hoja-sig", T("rr_siguiente"));
+    bSig.type = "button";
+    var bApuntar = regNodo("button", regHoja === "alarma" ? "rr-alarma" : "primario", T(regHoja === "alarma" ? "rr_apuntar_alarma" : "rr_apuntar_evento"));
+    bApuntar.type = "button";
+    bApuntar.addEventListener("click", function () { regApuntar(regHoja === "alarma"); });
+    var botonesPaso = [];
+    function irAPaso(i) {
+      regPaso = i;
+      pasos.forEach(function (p, k) { p.nodo.hidden = k !== i; });
+      marcarPasos();
+      bSig.hidden = i === pasos.length - 1;
+      panel.scrollTop = 0;
+    }
+    function marcarPasos() {
+      botonesPaso.forEach(function (b, k) {
+        b.classList.toggle("activo", k === regPaso);
+        b.classList.toggle("hecho", pasos[k].hecho());
+      });
+    }
+    pasos.forEach(function (p, k) {
+      var b = regNodo("button", "rr-paso");
+      b.type = "button";
+      b.appendChild(regNodo("span", "rr-paso-n", String(k + 1)));
+      b.appendChild(document.createTextNode(p.t));
+      b.addEventListener("click", function () { irAPaso(k); });
+      botonesPaso.push(b);
+      navPasos.appendChild(b);
     });
-    botones.appendChild(bIr);
-    bEvento.appendChild(botones);
+    bSig.addEventListener("click", function () { irAPaso(Math.min(regPaso + 1, pasos.length - 1)); });
+    // Después de cada toque en un botón o caja, el ✓ de los pasos al día
+    bEvento.addEventListener("click", marcarPasos);
+    bEvento.addEventListener("input", marcarPasos);
+    if (regHoja !== "fase") {
+      pie.appendChild(bSig);
+      pie.appendChild(bApuntar);
+      hoja.appendChild(pie);
+      irAPaso(regPaso);
+    }
+    cont.appendChild(hoja);
+  }
+
+  // «Cronograma de eventos»: el centro del Registro (diseño B, 04-10-2026)
+  function pintarCronograma(panel) {
+    var d = registroDatos();
 
     // Lo apuntado, en orden de hora (lo último, abajo). «Cronograma de
     // eventos» (30-09-2026, pedido del usuario: nombre y aspecto de tarjetas
@@ -18570,7 +18663,6 @@
     visibles.forEach(function (it) { lista.appendChild(regLineaApuntada(d, it)); });
     crono.appendChild(lista);
     panel.appendChild(crono);
-    cont.appendChild(panel);
   }
 
   // Lo que sale en «Apuntado»: los eventos, cada uno con su alarma si la
@@ -18669,9 +18761,11 @@
       renderRegistroContenido();   // se reordena y se ve la hora nueva abajo
     });
     cab.appendChild(h);
-    cab.appendChild(regNodo("span", "rr-etiqueta", tipo.et));
-    cab.appendChild(regNodo("span", "rr-cab-hueco"));
+    // Una línea por evento (diseño B, 04-10-2026): hora · texto · ✎ ✕. El
+    // tipo (fase, evento, alarma…) lo dice la franja de color, y el title.
+    caja.title = tipo.et;
     var txt = regNodo("span", "rr-texto");
+    cab.appendChild(txt);
     if (ev && ev.cod === "F") {
       txt.textContent = [ev.fase, ev.accion].filter(Boolean).join(" · ");
     } else {
@@ -18707,6 +18801,7 @@
     // el texto ya no la abre), que tiene la zona táctil ampliada; otra vez, o
     // «Hecho», cierra las casillas.
     var clave = ev ? ev.id : al.id;
+    caja.setAttribute("data-id", clave);
     var alternarEdicion = function () {
       regEditando = regEditando === clave ? "" : clave;
       renderRegistroContenido();
@@ -18730,7 +18825,6 @@
     });
     cab.appendChild(q);
     fila.appendChild(cab);
-    fila.appendChild(txt);
     caja.appendChild(fila);
     if (regEditando === clave) caja.appendChild(regEditorApuntado(d, ev, al));
     if (al) {
@@ -20896,9 +20990,8 @@
       regRapido = regRapidoVacio();
       renderRegistro();
       irAPantalla("registro");
-      var panelReg = document.querySelector("#registro-contenido .reg-rapido");
-      if (panelReg) panelReg.open = true;
-      listo(panelReg || document.getElementById("registro-contenido"));
+      // Desde el 04-10-2026 se apunta con la barra de abajo (diseño B)
+      listo(document.querySelector("#registro-contenido .rr-barra-apuntar") || document.getElementById("registro-contenido"));
     } else if (id === "exportar") {
       tourCerrarCaso();
       abrirListaCasos();
