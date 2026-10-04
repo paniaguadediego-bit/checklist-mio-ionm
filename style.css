@@ -7,7 +7,10 @@
   --border: #aeb9c5;
   --border-soft: #cfd7df;
   --text: #1a2229;
-  --text-muted: #62717c;
+  /* Gris de los textos secundarios más oscuro (04-10-2026, pedido del
+     usuario: apenas contrastaba). Antes #62717c: 2,5:1 sobre las cabeceras
+     y 4,2:1 sobre las etiquetas; ahora ≥4,5:1 en todas. */
+  --text-muted: #3e4850;
   /* Acento: en claro, azul marino muy oscuro (30-09-2026, pedido del
      usuario: el dorado no ayudaba en claro; se queda para el modo oscuro;
      luego aún más oscuro para más contraste, antes #1b3a5c).
