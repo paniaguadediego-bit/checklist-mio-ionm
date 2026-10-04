@@ -672,24 +672,24 @@
     caso_informes_imagenes_ay: { es: "Fotos o capturas de informes de imagen (RM, TC…) que te resulten interesantes para este caso. Encuadra solo la imagen o el hallazgo — nunca la cabecera con el nombre, NHC o fecha de nacimiento del paciente. Se comprimen solas al añadirlas.",
                            en: "Photos or screenshots of imaging reports (MRI, CT…) worth keeping for this case. Frame only the image or the finding — never the header with the patient's name, ID or date of birth. They're compressed automatically when added." },
     caso_diagnostico:    { es: "Diagnóstico", en: "Diagnosis" },
-    opc_diagnostico_ecc: { es: "ECC — estenosis de canal cervical", en: "ECC — cervical canal stenosis" },
-    opc_diagnostico_ecd: { es: "ECD — estenosis de canal dorsal", en: "ECD — dorsal canal stenosis" },
-    opc_diagnostico_ecl: { es: "ECL — estenosis de canal lumbar", en: "ECL — lumbar canal stenosis" },
+    opc_diagnostico_ecc: { es: "Estenosis de canal cervical (ECC)", en: "Cervical canal stenosis (ECC)" },
+    opc_diagnostico_ecd: { es: "Estenosis de canal dorsal o torácico (ECD)", en: "Thoracic canal stenosis (ECD)" },
+    opc_diagnostico_ecl: { es: "Estenosis de canal lumbar (ECL)", en: "Lumbar canal stenosis (ECL)" },
     opc_diagnostico_escoliosis: { es: "Escoliosis (cualquier nivel y edad)", en: "Scoliosis (any level or age)" },
-    opc_diagnostico_loe_med: { es: "LOE Med — lesión ocupante de espacio medular (médula y meninges)",
-                           en: "SOL — spinal cord (cord and meninges)" },
-    opc_diagnostico_loe_st: { es: "LOE ST — LOE supratentorial (intracraneal)", en: "SOL — supratentorial (intracranial)" },
-    opc_diagnostico_loe_it: { es: "LOE IT — LOE infratentorial (intracraneal)", en: "SOL — infratentorial (intracranial)" },
+    opc_diagnostico_loe_med: { es: "Lesión ocupante de espacio medular, médula y meninges (LOE Med)",
+                           en: "Space-occupying lesion, spinal cord and meninges (SOL)" },
+    opc_diagnostico_loe_st: { es: "Lesión ocupante de espacio supratentorial (LOE ST)", en: "Supratentorial space-occupying lesion (SOL)" },
+    opc_diagnostico_loe_it: { es: "Lesión ocupante de espacio infratentorial (LOE IT)", en: "Infratentorial space-occupying lesion (SOL)" },
     opc_diagnostico_parotida: { es: "Parótida", en: "Parotid" },
     opc_diagnostico_mav: { es: "MAV — malformación arteriovenosa (cualquier lesión vascular)",
                            en: "AVM — arteriovenous malformation (any vascular lesion)" },
     opc_diagnostico_hipofisis: { es: "Hipófisis — endoscopia nasal", en: "Pituitary — transnasal endoscopic" },
     opc_diagnostico_chiari: { es: "Chiari", en: "Chiari" },
-    opc_diagnostico_jannetta: { es: "Jannetta — descompresión del trigémino / espasmo hemifacial",
-                           en: "Jannetta — trigeminal decompression / hemifacial spasm" },
-    opc_diagnostico_fractvert: { es: "FractVert — fractura vertebral", en: "FractVert — vertebral fracture" },
-    opc_diagnostico_loe_vert: { es: "LOE Vert — LOE vertebral (columna, cualquier nivel)",
-                           en: "SOL — vertebral (spine, any level)" },
+    opc_diagnostico_jannetta: { es: "Descompresión microvascular: trigémino o espasmo hemifacial (Jannetta)",
+                           en: "Microvascular decompression: trigeminal or hemifacial spasm (Jannetta)" },
+    opc_diagnostico_fractvert: { es: "Fractura vertebral", en: "Vertebral fracture" },
+    opc_diagnostico_loe_vert: { es: "Lesión ocupante de espacio vertebral, cualquier nivel (LOE Vert)",
+                           en: "Vertebral space-occupying lesion, any level (SOL)" },
     opc_diagnostico_tiroides: { es: "Tiroides / paratiroides", en: "Thyroid / parathyroid" },
     opc_diagnostico_disrafismo: { es: "Médula anclada / disrafismo espinal", en: "Tethered cord / spinal dysraphism" },
     opc_diagnostico_nervio_periferico: { es: "Nervio periférico / plexo", en: "Peripheral nerve / plexus" },
@@ -866,9 +866,9 @@
     opc_sino_si:         { es: "Sí", en: "Yes" },
     opc_sino_no:         { es: "No", en: "No" },
     opc_anestesia_tiva:  { es: "TIVA (propofol + remifentanilo)", en: "TIVA (propofol + remifentanil)" },
-    opc_anestesia_rtiva: { es: "R-TIVA (relajantes toda la cirugía + TIVA)", en: "R-TIVA (relaxants throughout + TIVA)" },
-    opc_anestesia_dxm:   { es: "DXM — dexmedetomidina (paciente despierto)", en: "DXM — dexmedetomidine (awake patient)" },
-    opc_anestesia_alo:   { es: "ALO — anestesia libre de opioides", en: "ALO — opioid-free anaesthesia" },
+    opc_anestesia_rtiva: { es: "TIVA con relajantes toda la cirugía (R-TIVA)", en: "TIVA with relaxants throughout (R-TIVA)" },
+    opc_anestesia_dxm:   { es: "Dexmedetomidina, paciente despierto (DXM)", en: "Dexmedetomidine, awake patient (DXM)" },
+    opc_anestesia_alo:   { es: "Anestesia libre de opioides (ALO)", en: "Opioid-free anaesthesia (ALO)" },
     opc_anestesia_gas:   { es: "Gas (inhalatoria toda la cirugía)", en: "Gas (inhalational throughout)" },
     opc_concordancia_VP: { es: "VP — verdadero positivo", en: "TP — true positive" },
     opc_concordancia_FP: { es: "FP — falso positivo", en: "FP — false positive" },
@@ -1455,7 +1455,7 @@
     hoja_sinmejora_txt:  { es: "↑ TAM · corticoides · wake-up test · valorar suspender (adapt. Acharya 2017)",
                            en: "↑ MAP · corticosteroids · wake-up test · consider aborting (adapted from Acharya 2017)" },
     hoja_recup_txt:      { es: "S sí · P parcial · N no", en: "S yes · P partial · N no" },
-    hoja_resp:           { es: "Resp. NRF·An·Cir", en: "Resp. NRF·An·Surg" },
+    hoja_resp:           { es: "Resp. Neurofis.·An·Cir", en: "Resp. Neurophys.·An·Surg" },
     hoja_resultado:      { es: "Resultado de la señal", en: "Signal outcome" },
     hoja_comunicacion:   { es: "Comunicación final", en: "Final communication" },
     hoja_cirujano:       { es: "Cirujano", en: "Surgeon" },
@@ -9123,7 +9123,7 @@
       if (id === "casos-equipo" && !hayVariosEquipos()) return;
       if (id === "casos-centro" && !hayCentros()) return;
       // En el chip, el diagnóstico solo con su sigla (lo de antes de « — »)
-      if (sel.value) activos.push({ texto: id === "casos-diagnostico" ? sel.options[sel.selectedIndex].textContent.split(" — ")[0] : sel.options[sel.selectedIndex].textContent, quitar: function () { sel.value = ""; } });
+      if (sel.value) activos.push({ texto: id === "casos-diagnostico" ? sel.options[sel.selectedIndex].textContent.split(/ — | \(/)[0] : sel.options[sel.selectedIndex].textContent, quitar: function () { sel.value = ""; } });
     });
     [["casos-desde", "casos_filtro_desde_chip"], ["casos-hasta", "casos_filtro_hasta_chip"]].forEach(function (x) {
       var inp = document.getElementById(x[0]);
@@ -17101,7 +17101,7 @@
         { id: "procedimiento", l: "Procedimiento", l_en: "Procedure", t: "text", ancho: true, caso: "intervencion", der: function (c) { return intervencionDe(c); } },
         { id: "prequx_motor", l: "Pre-qx: Motor", l_en: "Pre-op: Motor", t: "text" },
         { id: "prequx_sensitivo", l: "Pre-qx: Sensitivo", l_en: "Pre-op: Sensory", t: "text" },
-        { id: "prequx_ppcc", l: "Pre-qx: PPCC", l_en: "Pre-op: CN", t: "text" },
+        { id: "prequx_ppcc", l: "Pre-qx: Pares craneales", l_en: "Pre-op: Cranial nerves", t: "text" },
         { id: "prequx_esfinteres", l: "Pre-qx: Esfínteres", l_en: "Pre-op: Sphincters", t: "text" }
       ] },
     { hoja: 1, id: "b", tipo: "modalidades", l: "B · Técnicas", l_en: "B · Techniques" },
@@ -17161,15 +17161,15 @@
         { id: "accion", l: "Acción y resultado", l_en: "Action and result", t: "text", ancho: true }
       ] },
     { hoja: 2, id: "g", tipo: "lista", lista: "alarmas", l: "G · Alarmas", l_en: "G · Alarms", min: 5, prefijo: "A",
-      ayuda: "NRF: repetir · ↑ intensidad · electrodos/impedancias · patrón global vs focal. Anest.: bolo/relajante · profundidad · TAM · Hb/Tª/oxigenación · posición miembros. Cir.: parar/revertir maniobra · liberar tracción/retracción · suero tibio · implante · sangrado. Si no mejora: ↑ TAM · corticoides · wake-up test · valorar suspender (adapt. Acharya 2017).",
-      ayuda_en: "NRF: repeat · ↑ intensity · electrodes/impedances · global vs focal pattern. Anaesth.: bolus/relaxant · depth · MAP · Hb/temp/oxygenation · limb position. Surg.: stop/reverse manoeuvre · release traction/retraction · warm irrigation · implant · bleeding. If no improvement: ↑ MAP · corticosteroids · wake-up test · consider aborting (adapted from Acharya 2017).",
+      ayuda: "Neurofisiología: repetir · ↑ intensidad · electrodos/impedancias · patrón global vs focal. Anest.: bolo/relajante · profundidad · TAM · Hb/Tª/oxigenación · posición miembros. Cir.: parar/revertir maniobra · liberar tracción/retracción · suero tibio · implante · sangrado. Si no mejora: ↑ TAM · corticoides · wake-up test · valorar suspender (adapt. Acharya 2017).",
+      ayuda_en: "Neurophysiology: repeat · ↑ intensity · electrodes/impedances · global vs focal pattern. Anaesth.: bolus/relaxant · depth · MAP · Hb/temp/oxygenation · limb position. Surg.: stop/reverse manoeuvre · release traction/retraction · warm irrigation · implant · bleeding. If no improvement: ↑ MAP · corticosteroids · wake-up test · consider aborting (adapted from Acharya 2017).",
       boton: "+ Alarma", boton_en: "+ Alarm", ahora: false,
       cols: [
         { id: "hora", l: "Hora", l_en: "Time", t: "time" },
         { id: "modalidad", l: "Técnica · lado", l_en: "Technique · side", t: "text" },
         { id: "criterio", l: "Criterio", l_en: "Criterion", t: "text" },
         { id: "causa", l: "Maniobra / causa probable", l_en: "Manoeuvre / probable cause", t: "text", ancho: true },
-        { id: "nrf", l: "NRF", t: "check" },
+        { id: "nrf", l: "Neurofis.", l_en: "Neurophys.", t: "check" },
         { id: "an", l: "An", t: "check" },
         { id: "cir", l: "Cir", t: "check" },
         { id: "medidas", l: "Medidas adoptadas", l_en: "Measures taken", t: "text", ancho: true },
@@ -17177,7 +17177,7 @@
         { id: "h_recup", l: "h recup.", l_en: "Recovery time", t: "time" }
       ] },
     { hoja: 2, id: "h", tipo: "modular", l: "H · Zona modular", l_en: "H · Modular zone",
-      ayuda: "Rotular la primera fila · tornillos (nivel | D | I) · raíces · PPCC · tareas despierto · otros",
+      ayuda: "Rotular la primera fila · tornillos (nivel | D | I) · raíces · pares craneales · tareas despierto · otros",
       ayuda_en: "Label the first row · screws (level | R | L) · roots · CN · awake tasks · other" },
     { hoja: 2, id: "i", tipo: "campos", l: "I · Cierre", l_en: "I · Closure",
       campos: [
@@ -20079,7 +20079,7 @@
     var leyenda = nodoInforme(doc, "div", "hj-leyenda");
     [
       [T("hoja_cod"), T("hoja_cod_txt")],
-      ["NRF", T("hoja_nrf")],
+      ["Neurofis.", T("hoja_nrf")],
       [T("hoja_anest"), T("hoja_anest_txt")],
       ["Cir.", T("hoja_cir")],
       [T("hoja_sinmejora"), T("hoja_sinmejora_txt")],

@@ -1163,7 +1163,7 @@ window.SURGERIES_DATA = {
        existe "Mapeo de raíces y tornillos" y dos técnicas que significan lo
        mismo partirían en dos las estadísticas del histórico. Si de verdad
        son cosas distintas, se separan desde el diálogo Catálogos. */
-    { "id": "mapeo_intramedular_ce", "etiqueta": "Intramedular CE", "grupo": "mapeo", "activa": true },
+    { "id": "mapeo_intramedular_ce", "etiqueta": "Mapeo intramedular", "grupo": "mapeo", "activa": true, "descripcion": "Estimulación directa del cordón espinal" },
     // Retirada de técnicas por el usuario. "Desactivar no borra": si algún
     // caso o montaje ya la tenía marcada, se sigue viendo (tachada).
     { "id": "mapeo_material_qx", "etiqueta": "Material Qx", "grupo": "mapeo", "activa": false },
