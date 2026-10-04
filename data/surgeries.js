@@ -1388,12 +1388,16 @@ window.SURGERIES_DATA = {
    * ------------------------------------------------------------------ */
   "servicios": [
     { "id": "neurocirugia",  "nombre": "Neurocirugía",  "activa": true },
-    { "id": "cot",           "nombre": "COT",           "activa": true },
+    { "id": "cot",           "nombre": "Cirugía Ortopédica y Traumatología (COT)", "activa": true },
     { "id": "orl",           "nombre": "ORL",           "activa": true },
     { "id": "vascular",      "nombre": "Vascular",      "activa": true },
     { "id": "endocrino",     "nombre": "Endocrino",     "activa": true },
     { "id": "maxilofacial",  "nombre": "Maxilofacial",  "activa": true },
-    { "id": "urologia",      "nombre": "Urología",      "activa": true }
+    { "id": "urologia",      "nombre": "Urología",      "activa": true },
+    // 04-10-2026 (pedido del usuario): tiroides y abdomen en muchos hospitales,
+    // y la aorta torácica o toracoabdominal.
+    { "id": "cirugia_general", "nombre": "Cirugía General", "activa": true },
+    { "id": "cirugia_cardiotoracica", "nombre": "Cirugía Cardiaca / Torácica", "activa": true }
   ],
 
   /* ------------------------------------------------------------------ *
