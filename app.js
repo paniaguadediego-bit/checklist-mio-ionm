@@ -17193,8 +17193,8 @@
         { id: "cierre_perla", l: "Perla docente", l_en: "Teaching pearl", t: "area", ancho: true, caso: "aprendizaje_clave" },
         { id: "pend_informe", l: "Pendiente: Informe", l_en: "Pending: Report", t: "check" },
         { id: "pend_explor", l: "Pendiente: Explor. postop", l_en: "Pending: Post-op exam", t: "check" },
-        { id: "pend_bd", l: "Pendiente: Base de datos", l_en: "Pending: Database", t: "check" },
-        { id: "pend_tiempos", l: "Pendiente: Registro tiempos", l_en: "Pending: Time log", t: "check" },
+        // «Base de datos» y «Registro tiempos» quitadas el 04-10-2026 (pedido
+        // del usuario): eran tareas de su servicio. Lo marcado antes sigue en d.v.
         { id: "pend_cadwell", l: "Pendiente: exportar el registro del {equipo}", l_en: "Pending: export the {equipo} log", t: "check" },
         { id: "cierre_firma", l: "Firma", l_en: "Signature", t: "text" }
       ] }
@@ -20157,8 +20157,8 @@
     var pend = nodoInforme(doc, "div", "hj-celda hj-s4");
     pend.appendChild(nodoInforme(doc, "small", null, T("hoja_pendientes")));
     var pendV = nodoInforme(doc, "div", "hj-v hj-lin");
-    [["pend_informe", "Informe"], ["pend_explor", "Explor. postop"], ["pend_bd", T("hoja_bd")],
-     ["pend_tiempos", T("hoja_tiempos")], ["pend_cadwell", T("hoja_cadwell", { equipo: textoEquipoRegistro() })]].forEach(function (x) {
+    [["pend_informe", "Informe"], ["pend_explor", "Explor. postop"],
+     ["pend_cadwell", T("hoja_cadwell", { equipo: textoEquipoRegistro() })]].forEach(function (x) {
       pendV.appendChild(nodoInforme(doc, "span", "hj-it", hojaCasilla(!!d.v[x[0]]) + " " + x[1]));
     });
     pendV.appendChild(nodoInforme(doc, "span", "hj-it", regL(hojaDef("cierre_firma")) + ": " + (d.v.cierre_firma || "____________")));
