@@ -1344,7 +1344,11 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
 .tecmio-tabla-fuentes h5 { margin: 0 0 0.3rem; font-size: 0.78rem; color: var(--text); }
 .tecmio-tabla-fuentes ol { margin: 0; padding-left: 1.3rem; }
 .tecmio-tabla-fuentes li { margin-bottom: 0.15rem; }
-.tecmio-tabla-fuentes li:target { color: var(--accent); font-weight: 600; }
+.tecmio-tabla-fuentes li:target, .tecmio-fuente-sub:target { color: var(--accent); font-weight: 600; }
+/* Obra en negrita y sus capítulos seguidos en la misma línea (04-10-2026) */
+.tecmio-fuente-obra { color: var(--text); font-weight: 600; }
+/* En las tarjetas, superíndices algo mayores para poder tocarlos */
+.tecmio-fuente .tecmio-nota-fuente { font-size: 0.95em; letter-spacing: 0.02em; }
 
 .docente-fuentes {
   font-size: 0.66rem;

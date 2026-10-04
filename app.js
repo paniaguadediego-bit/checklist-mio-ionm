@@ -1212,6 +1212,7 @@
     tecmio_col_registro: { es: "Registro", en: "Recording" },
     tecmio_col_filtros_barrido: { es: "Filtros y barrido", en: "Filters and sweep" },
     tecmio_fuentes_titulo: { es: "Fuentes", en: "Sources" },
+    tecmio_fuente_general: { es: "en general", en: "general" },
     docente_intro:       { es: "Marca en <b>Columna</b> los niveles que abarca la cirugía. En <b>Músculos posibles</b> salen los que dependen de esas raíces: toca uno para pasarlo a <b>Monitorizados</b>, y tócalo allí para quitarlo. Los rangos son los que se enseñan habitualmente: la inervación se solapa y no todas las escuelas dan los mismos límites, así que están para discutirlos.",
                            en: "Tick in <b>Spine</b> the levels the surgery covers. <b>Possible muscles</b> shows the ones depending on those roots: tap one to move it to <b>Monitored</b>, and tap it there to remove it. The ranges are the ones usually taught: innervation overlaps and not every school gives the same limits, so they are there to be discussed." },
     docente_fuentes:      { es: "El detalle al pasar el ratón por un músculo, cuando lo lleva, cita: <b>[TD/L]</b> Toleikis, en Deletis et al., Neurophysiology in Neurosurgery, 2.ª ed., cap. 13, y Leppänen (ASNM) para el músculo y el nivel · <b>[Sch]</b> Schirmer 2011 y <b>[Lon]</b> London 2022 (J Neurosurg Spine) para la frecuencia real de solapamiento entre niveles. Los músculos sin ninguna marca no vienen de esta tabla: son rangos habituales de enseñanza, sin cita concreta detrás.",
@@ -13029,11 +13030,13 @@
       contenedor.appendChild(dl);
     }
 
+    // Fuentes con superíndices enlazados a la lista del pie, como en la
+    // Tabla (04-10-2026, pedido del usuario; antes «Fuente: …» en cursiva).
     if (datos.fuente && datos.fuente.length) {
       var p = document.createElement("p");
       p.className = "tecmio-fuente";
-      p.appendChild(document.createTextNode("Fuente: "));
-      pintarTextoConResaltado(p, datos.fuente.join(", "));
+      p.appendChild(document.createTextNode(T("tecmio_fuentes_titulo") + ": "));
+      p.appendChild(notaFuentesTabla(datos.fuente));
       contenedor.appendChild(p);
     }
   }
@@ -13090,6 +13093,8 @@
     var datos = window.TECNICAS_MIO || { tecnicas: [] };
     var cont = document.getElementById("tecmio-contenido");
     cont.innerHTML = "";
+    tecMioFuentesUsadas = {};
+    tecMioPrefijoNota = "tecmio-notat-";
 
     // Agrupación por familia de técnica (SEP, MEP, Reflejos...), no por
     // región/zona quirúrgica -reorganización del 05-09-2026, ver el
@@ -13136,6 +13141,9 @@
       vacio.textContent = T("tecmio_sin_resultados", { texto: document.getElementById("tecmio-buscar").value || "" });
       cont.appendChild(vacio);
     }
+    // Las mismas fuentes agrupadas que la Tabla, al pie de las tarjetas
+    var bloqueF = bloqueFuentesTecMio();
+    if (bloqueF) cont.appendChild(bloqueF);
   }
 
   // Vista "Tabla" (06-09-2026, pedida junto a los apuntes personales;
@@ -13171,38 +13179,121 @@
     { clave: "filtros", excluir: ["notch"] }, { clave: "barrido" }
   ];
 
-  // Estado de las notas al pie, vigente durante un render de la Tabla: se
-  // reinicia al principio de renderTecnicasMioTabla() y lo consultan
-  // notaFuentesTabla() (que añade/reutiliza una entrada) y el bloque de
-  // fuentes que se pinta al final.
-  var tecMioTablaFuentes = [];
-  var tecMioTablaFuentesIndice = {};
-
-  function indiceFuenteTabla(texto) {
-    if (Object.prototype.hasOwnProperty.call(tecMioTablaFuentesIndice, texto)) {
-      return tecMioTablaFuentesIndice[texto];
-    }
-    tecMioTablaFuentes.push(texto);
-    var n = tecMioTablaFuentes.length;
-    tecMioTablaFuentesIndice[texto] = n;
-    return n;
+  /* Fuentes agrupadas por obra (04-10-2026, pedido del usuario: la lista
+     se alargaba mucho -61 citas, 37 de ellas capítulos del mismo libro-).
+     Cada obra lleva un número (orden alfabético, estable aunque se busque)
+     y, si se cita por capítulos, tabla o apartado, cada uno una letra: «4c»
+     = obra 4, cap. tal. La lista del pie va una línea por obra, con sus
+     capítulos seguidos. Se calcula una vez sobre todas las técnicas y la
+     usan la Tabla y, desde el mismo día, las Tarjetas. */
+  var tecMioFuentesMapa = null;
+  var tecMioFuentesUsadas = {};       // obras citadas en el render en curso
+  var tecMioPrefijoNota = "tecmio-nota-";
+  function partirFuenteTecMio(texto) {
+    var m = /^(.*?)(?:, (?=(?:caps?\.|tabla|apdo\.))| — )(.*)$/.exec(texto);
+    return m ? { base: m[1], detalle: m[2] } : { base: texto, detalle: "" };
+  }
+  // a…z y, pasada la z, aa, ab… (el libro de Deletis pasa de 26 citas)
+  function letraFuenteTecMio(j) {
+    return (j >= 26 ? String.fromCharCode(96 + Math.floor(j / 26)) : "") + String.fromCharCode(97 + j % 26);
+  }
+  function mapaFuentesTecMio() {
+    // Se rehace si cambian los datos (llegan o se recargan del repo privado)
+    if (tecMioFuentesMapa && tecMioFuentesMapa.de === window.TECNICAS_MIO) return tecMioFuentesMapa;
+    var grupos = {}, vistos = {};
+    (function recorrer(o) {
+      if (Array.isArray(o)) { o.forEach(recorrer); return; }
+      if (!o || typeof o !== "object") return;
+      Object.keys(o).forEach(function (k) {
+        if (k === "fuente" && Array.isArray(o[k])) {
+          o[k].forEach(function (texto) {
+            if (vistos[texto]) return;
+            vistos[texto] = 1;
+            var p = partirFuenteTecMio(texto);
+            if (!grupos[p.base]) grupos[p.base] = [];
+            grupos[p.base].push({ texto: texto, detalle: p.detalle });
+          });
+        } else recorrer(o[k]);
+      });
+    })((window.TECNICAS_MIO || {}).tecnicas || []);
+    var orden = Object.keys(grupos).sort(function (a, b) { return a.localeCompare(b, "es"); });
+    var porTexto = {};
+    var lista = orden.map(function (base, i) {
+      var items = grupos[base].sort(function (a, b) {
+        return a.detalle.localeCompare(b.detalle, "es", { numeric: true });
+      });
+      items.forEach(function (it, j) {
+        it.letra = items.length > 1 ? letraFuenteTecMio(j) : "";
+        porTexto[it.texto] = { n: i + 1, letra: it.letra };
+      });
+      return { n: i + 1, base: base, items: items };
+    });
+    tecMioFuentesMapa = { lista: lista, porTexto: porTexto, de: window.TECNICAS_MIO };
+    return tecMioFuentesMapa;
   }
 
   // Superíndice con un enlace por cada cita de la lista, para que "Costa
   // 2015, MacDonald 2019 ISION" salga como dos números independientes -no
   // se puede saber si comprobar solo una de las dos sin poder pulsarlas
-  // por separado-.
+  // por separado-. Con capítulo, «4c».
   function notaFuentesTabla(lista) {
+    var mapa = mapaFuentesTecMio();
     var sup = document.createElement("sup");
     sup.className = "tecmio-nota-fuente";
-    lista.forEach(function (texto, i) {
-      if (i) sup.appendChild(document.createTextNode(","));
+    var hechas = {};
+    lista.forEach(function (texto) {
+      var r = mapa.porTexto[texto];
+      if (!r) return;
+      var et = r.n + r.letra;
+      if (hechas[et]) return;
+      hechas[et] = 1;
+      tecMioFuentesUsadas[r.n] = 1;
+      if (sup.childNodes.length) sup.appendChild(document.createTextNode(","));
       var a = document.createElement("a");
-      a.href = "#tecmio-nota-" + indiceFuenteTabla(texto);
-      a.textContent = String(indiceFuenteTabla(texto));
+      a.href = "#" + tecMioPrefijoNota + et;
+      a.textContent = et;
+      a.title = texto;
       sup.appendChild(a);
     });
     return sup;
+  }
+
+  // Lista del pie: solo las obras citadas en lo que se ve, con su número
+  // de siempre; una línea por obra y sus capítulos («a) cap. 3 · b) …») detrás.
+  function bloqueFuentesTecMio() {
+    var usadas = mapaFuentesTecMio().lista.filter(function (g) { return tecMioFuentesUsadas[g.n]; });
+    if (!usadas.length) return null;
+    var bloque = document.createElement("div");
+    bloque.className = "tecmio-tabla-fuentes";
+    var h5 = document.createElement("h5");
+    h5.textContent = T("tecmio_fuentes_titulo");
+    bloque.appendChild(h5);
+    var ol = document.createElement("ol");
+    usadas.forEach(function (g) {
+      var li = document.createElement("li");
+      li.value = g.n;
+      li.id = tecMioPrefijoNota + g.n;
+      if (g.items.length === 1) {
+        pintarTextoConResaltado(li, g.items[0].texto);
+      } else {
+        var b = document.createElement("span");
+        b.className = "tecmio-fuente-obra";
+        pintarTextoConResaltado(b, g.base);
+        li.appendChild(b);
+        li.appendChild(document.createTextNode(": "));
+        g.items.forEach(function (it, j) {
+          if (j) li.appendChild(document.createTextNode(" · "));
+          var s = document.createElement("span");
+          s.className = "tecmio-fuente-sub";
+          s.id = tecMioPrefijoNota + g.n + it.letra;
+          pintarTextoConResaltado(s, it.letra + ") " + (it.detalle || T("tecmio_fuente_general")));
+          li.appendChild(s);
+        });
+      }
+      ol.appendChild(li);
+    });
+    bloque.appendChild(ol);
+    return bloque;
   }
 
   // Pinta los campos de una sección (sin "fuente" ni las claves excluidas)
@@ -13299,8 +13390,8 @@
     var datos = window.TECNICAS_MIO || { tecnicas: [] };
     var cont = document.getElementById("tecmio-tabla");
     cont.innerHTML = "";
-    tecMioTablaFuentes = [];
-    tecMioTablaFuentesIndice = {};
+    tecMioFuentesUsadas = {};
+    tecMioPrefijoNota = "tecmio-nota-";
 
     var porFamilia = {};
     var familiasEncontradas = [];
@@ -13328,24 +13419,9 @@
     });
 
     // Fuentes al pie, una sola lista para toda la vista Tabla -no una por
-    // familia-: el mismo texto citado por dos técnicas de familias
-    // distintas comparte número (indiceFuenteTabla lo deduplica por texto).
-    if (tecMioTablaFuentes.length) {
-      var bloque = document.createElement("div");
-      bloque.className = "tecmio-tabla-fuentes";
-      var h5 = document.createElement("h5");
-      h5.textContent = T("tecmio_fuentes_titulo");
-      bloque.appendChild(h5);
-      var ol = document.createElement("ol");
-      tecMioTablaFuentes.forEach(function (texto, i) {
-        var li = document.createElement("li");
-        li.id = "tecmio-nota-" + (i + 1);
-        pintarTextoConResaltado(li, texto);
-        ol.appendChild(li);
-      });
-      bloque.appendChild(ol);
-      cont.appendChild(bloque);
-    }
+    // familia-, agrupadas por obra (bloqueFuentesTecMio).
+    var bloque = bloqueFuentesTecMio();
+    if (bloque) cont.appendChild(bloque);
   }
 
   var tecMioVista = "tarjetas";
