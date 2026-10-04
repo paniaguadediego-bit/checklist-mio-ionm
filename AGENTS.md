@@ -58,3 +58,14 @@ Instrucciones para cualquier asistente de código que trabaje en este repositori
   `style.css`, con valor para el claro y para azul/oscuro; qué técnica va en
   qué familia lo decide `familiaTecnica()` en `app.js` (colores elegidos por
   el usuario: no cambiarlos sin que lo pida).
+  PEATC tiene familia propia (amarillo, `aud`). **Técnicas IONM usa su propia
+  paleta `--tm-*`** y no la de familias: no unificarlas sin que lo pida.
+- Reflejos: en `data/surgeries.js`, `"reflejo": "tronco"` o `"medular"`; las
+  listas de técnicas los separan con `apartadosTecnicas()`. Una técnica nueva que
+  sea reflejo lleva uno de los dos valores.
+- Rótulos de listas cerradas: nombre completo delante y sigla entre paréntesis
+  («Estenosis de canal cervical (ECC)»), sin notas internas ni costumbres de un
+  servicio concreto (eso va como «p. ej.»): la herramienta la puede usar un
+  médico de otro hospital.
+- Al reemplazar varias líneas con Python, construye el texto a buscar con el
+  salto de línea real del archivo (CRLF o LF): si no, no casa.

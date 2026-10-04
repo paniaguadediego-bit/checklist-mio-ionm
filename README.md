@@ -33,6 +33,30 @@ con carpetas de colores, negrita/cursiva, fotos dentro de cada caja y
 de material en filas, con una breve descripción de uso de cada uno; tarjeta
 propia en *Después / consulta*).
 
+**Novedades del 4/10/2026 (tarde):**
+- **Registro intraoperatorio, nuevo aspecto**: el **cronograma** ocupa el centro,
+  con una línea por evento (hora, texto, ✎ y ✕; el color de la franja dice si es
+  fase, cambio o alarma), y para apuntar hay una **barra fija abajo**:
+  **+ Fase**, **+ Evento** y **+ Alarma**. Cada una abre una hoja desde abajo; el
+  evento y la alarma van por pasos (**Técnica › Hallazgo › Contexto**), con el
+  botón de apuntar siempre a la vista. Al apuntar, la hoja se cierra y lo nuevo
+  se resalta en el cronograma.
+- **Colores de las técnicas también en el Registro** (botones de técnica,
+  basales y cronograma). **PEATC en amarillo** en toda la app, salvo en Técnicas
+  IONM, que conserva sus colores.
+- **Reflejos de tronco y reflejos medulares** en apartados propios en todas las
+  listas de técnicas; PRM cuenta como reflejo medular.
+- **Letra medio punto más grande** en toda la herramienta.
+- **Gestión de Casos**: filtro por **diagnóstico**. Plantillas con la fecha de
+  su última modificación.
+- **Técnicas IONM**: las fuentes se agrupan por obra (número y letra por
+  capítulo, «5k») y las Tarjetas llevan los mismos superíndices que la Tabla.
+- **Textos para cualquier hospital**: equipo **Genérico** para otras marcas;
+  nombres completos con la sigla entre paréntesis («Estenosis de canal cervical
+  (ECC)», «Dexmedetomidina, paciente despierto (DXM)»); servicios Cirugía
+  General y Cirugía Cardiaca / Torácica; «Sin caso — hoja suelta» en vez de
+  «Modelo 0»; fuera notas a medio hacer y tareas propias de un servicio.
+
 **Novedades del 1 al 4/10/2026:**
 - **Organizador de Montajes en dos pantallas**, como Gestión de Casos: al entrar,
   solo la **lista de plantillas** (botón **Crear plantilla**, filtros, **Ordenar
@@ -896,6 +920,12 @@ buscador:
   que quepa bien con el móvil en horizontal. El buscador de arriba filtra
   igual en las dos vistas, y en Tabla abre solo las familias con resultado.
 
+**Fuentes (04-10-2026):** las dos vistas usan los mismos superíndices y la
+misma lista al pie, **agrupada por obra**: cada obra lleva un número (orden
+alfabético) y, si se cita por capítulos, tablas o apartados, cada uno una letra
+(«5k» = obra 5, cap. tal). Una línea por obra con sus capítulos seguidos; pasada
+la «z», «aa, ab…». Solo salen las obras citadas en lo que se ve.
+
 ## Mis apuntes
 
 Tarjeta nueva del 07-09-2026, **privada**: un único documento continuo para
@@ -985,8 +1015,8 @@ pre-quirúrgico: la **hoja de registro intraoperatorio** de papel de la
 usuaria (dos páginas), en versión digital. La hoja sigue en desarrollo, así
 que esta es una primera versión pensada para irla ajustando.
 
-Mismo patrón que el Checklist: el desplegable de arriba elige **Modelo 0 —
-sin caso** (hoja suelta en este navegador, sin sincronizar) o un **caso**
+Mismo patrón que el Checklist: el desplegable de arriba elige **Sin caso —
+hoja suelta** (antes «Modelo 0»; en este navegador, sin sincronizar) o un **caso**
 (la hoja vive dentro del caso, `registro_intraop`, y se sincroniza con él).
 Hay una sola vista, la **Hoja completa**. Desde el 29-09-2026 ya no existe la
 pestaña «Modo rápido»: su manera de apuntar es la **única** para fases, eventos
@@ -995,9 +1025,12 @@ y alarmas, en el panel de arriba de la hoja.
 ### Apuntar fase, evento o alarma (para quirófano)
 
 Nació el 27-09-2026 como «modo rápido», porque la hoja completa tenía
-demasiados campos y desplegables para usarla con prisa. Desde el 29-09-2026 es
-un panel plegable arriba de la Hoja completa, con los tamaños compactos de la
-hoja, y sustituye en pantalla a F y G. Casi todo se hace con toques:
+demasiados campos y desplegables para usarla con prisa. Desde el 04-10-2026 se
+apunta con la **barra fija de abajo**: **+ Fase** abre las fases y **+ Evento** o
+**+ Alarma** abren una hoja que sube desde abajo, por pasos (**Técnica ›
+Hallazgo › Contexto**, con ✓ en los que ya tienen algo y «Siguiente»); el botón
+de apuntar está siempre al pie, Escape o tocar fuera la cierran sin borrar lo
+elegido. Lo que hay dentro es lo de siempre, casi todo con toques:
 
 - **Fase**: tocas la fase en la que está la cirugía (Basal, Posición,
   Incisión, Exposición, Apertura dural, Descompresión, Resección,

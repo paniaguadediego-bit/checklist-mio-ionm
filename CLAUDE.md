@@ -190,7 +190,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Montajes: modelo, autoría y sincronización | `montajeNuevo()`, `puedoEditar()`, `guardarMontaje()`, `subirMontaje()`, `bajarMontajes()` | ver `grep` |
 | Casos: modelo y ficha | `borrarCaso()`, `guardarCaso()`, `casoVacio()`, `renderFichaCaso()` | [2454](app.js:2454), [2467](app.js:2467), [2498](app.js:2498), [3669](app.js:3669) |
 | Casos: sincronización | `subirCaso()`, `bajarCasos()`, `borrarCasosPendientes()`, `guardarUnCasoLocal()`/`borrarUnCasoLocal()` (un caso por clave desde el 22-09-2026) | ver `grep` |
-| Casos: filtro/orden de Gestión de Casos (panel plegable «Filtros (n)», chips de filtros activos con ✕, Especialidad = `servicio_id`) | `casosFiltradosUids()`, `comparaDificultad()`, `pintarFiltrosActivos()`, `pintarFiltroServicio()`, `CASOS_FILTROS_SELECT` | ver `grep` |
+| Casos: filtro/orden de Gestión de Casos (panel plegable «Filtros (n)», chips de filtros activos con ✕, Especialidad = `servicio_id`, Diagnóstico = `diagnostico` desde el 04-10) | `casosFiltradosUids()`, `comparaDificultad()`, `pintarFiltrosActivos()`, `pintarFiltroServicio()`, `pintarFiltroDiagnostico()`, `CASOS_FILTROS_SELECT` | ver `grep` |
 | Enlace de un Puente a su cork de referencia (22-09-2026; no confundir con la fila de abajo, "Puente" ahí es la metáfora plantilla↔caso, aquí es el ítem de catálogo) | `enlacePuente()`, `fijarEnlacePuente()`, `iniciarEnlacePuente()`, `completarEnlacePuente()` | ver `grep` |
 | Mis apuntes: carpetas con color, orden, editor con negrita/cursiva (24-09-2026) | `grupoCarpetaApunte()`, `crearSeccionApunte()`, `moverCarpetaApunte()`, `moverSeccionApunte()`, `apunteSanear()` | ver `grep` |
 | Mis apuntes: fotos como archivos aparte + sincronización | `subirApunteDocYaHidratado()`, `subirFotosApuntePendientes()`, `descargarFotosApunteFaltantes()`, `borrarFotosApunteRemotas()`, `apunteDocLigero()` | ver `grep` |
@@ -198,6 +198,8 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Registro intraoperatorio: pantalla digital | `REG_SECCIONES`, `regControl()`, `regGet()`, `REG_PANTALLA` (pintado propio por sección), `pintarSeccionCampos()` (A), `pintarSeccionBasales()` (E) | ver `grep` |
 | Lista propia de TODOS los desplegables (el `<select>` cerrado no cambia; un manejador en `document` en captura; `data-nativo` para excluir uno). En táctil se abre al SOLTAR y solo si el dedo no se movió (si no, es scroll) | `selEsPropio()`, `abrirListaSelect()`, `colocarListaSelect()`, `cerrarListaSelect()`, `selMovido()` | ver `grep` |
 | Técnicas IONM desde el repo privado | `bajarTecnicasMio()`, `hayTecnicasMio()`, `pintarTileTecnicasMio()`, `olvidarTecnicasMio()`, `TECMIO_KEY` | ver `grep` |
+| Técnicas IONM: fuentes agrupadas por obra (número + letra), mismos superíndices en Tarjetas y Tabla, lista al pie solo con lo citado | `mapaFuentesTecMio()` (se rehace si cambia `window.TECNICAS_MIO`), `partirFuenteTecMio()`, `letraFuenteTecMio()`, `notaFuentesTabla()`, `bloqueFuentesTecMio()`, `tecMioPrefijoNota` | ver `grep` |
+| Técnicas en apartados: monitorización, reflejos de tronco, reflejos medulares, mapeo (`"reflejo": "tronco"/"medular"` en `data/surgeries.js`) | `tipoReflejo()`, `bloquesTecnicas()`, `apartadosTecnicas()`, `anadirChipsAgrupados()`, `renderTecnicas()` | ver `grep` |
 | Catálogo del Organizador en el móvil (sin scroll propio; al elegir sube a las cajas y al colocar vuelve al material) | `plegarCatalogo()`, `anclaCatalogo`, `catalogoConScrollPropio()`, `altoBarrasFijas()` | ver `grep` |
 | Foco sin teclado en táctil (Etiquetas, Material nuevo) | `enfocarSinTeclado()` | ver `grep` |
 | Bibliografía recomendada (Vancouver con DOI) | `BIBLIOGRAFIA`, `renderBibliografia()` | ver `grep` |
@@ -205,14 +207,15 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Registro ↔ ficha: campos compartidos (`caso: "campo"` en la definición; `soloCaso`; `leerCaso`) — `regGet()` los lee del caso y `regControl()` los escribe en el caso | `regGet()`, `regControl()`, `regNombresTecnicas()` | ver `grep` |
 | Registro: hoja completa simplificada en pantalla (la impresa no cambia) | `REG_PANTALLA` (id de sección → pintado propio; `null` = no se enseña: A, B, C, D, esquema, F, G y H; en pantalla solo E, E2 e I, sin la letra de la hoja), `pintarPantallaMapeo/Cierre()`, `REG_MAPEO_BLOQUES`, `pintarMapeoGrid/Filas/Raices()`, `regFilasTornillos()`, `regInput()`, `regSelectLista()` | ver `grep` |
 | Registro: varias técnicas a la vez = una alarma «A + B»; magnitud %; técnicas con alteración solas; comparativa de basales; borrador del resumen | `regElegirQue()`, `regQuesElegidos()`, `regTecnicasDeQue()`, `REG_CAMBIOS_MAGNITUD`, `regConMagnitud()`, `regComparacionesBasales()`, `borradorResumenCaso()` | ver `grep` |
-| Registro: panel «Apuntar fase, evento o alarma» (antes modo rápido; único sitio donde se apuntan, arriba de la Hoja completa; escribe en `eventos`/`alarmas`, sin datos propios; «Otro» + cajas; QUÉ en filas por tipo -técnicas, factores técnicos, anestesia, Otro-; TOF 0/4…4/4 como contexto (regRapido.tof → ev.tof/al.tof); contexto quirúrgico; «Cronograma de eventos» por hora ascendente: tarjetas con franja de color por gravedad y filtros Todos/Críticos/Cambios/Info, horas editables, ✎ para corregir cada línea y, bajo cada alarma, causa, medidas y recuperación) | `pintarPanelApuntar()`, `regItemsApuntados()`, `regTipoApuntado()` (gravedad y etiqueta), `regFiltroCrono`, `regLineaApuntada()`, `regEditorApuntado()` (`regEditando`, solo con ✎), alarma plegable con `resumenAlarma()` (`regAlarmasAbiertas`), `pintarMedidasRecup()` (también en la ficha), `regApuntar()`, `regMarcarFase()`, `regQuitarRapido()`, `regCajaRapida()`, `REG_TOF`, `REG_CONTEXTO` (ev.contexto, ids), `REG_FASES_RAPIDAS`, `REG_CAMBIOS_RAPIDOS`, `REG_QUE_EXTRA`, `REG_QUE_OTRO`/`REG_CAMBIO_OTRO` | ver `grep` |
+| Registro, diseño B (04-10-2026): barra fija abajo + hoja de apuntar desde abajo, por pasos; Cronograma compacto en el centro | `pintarBarraApuntar()`, `regHoja`, `regPaso`, `regAbrirHoja()`, `regCerrarHoja()`, `pintarCronograma()`, `regVerUltimoApuntado()`, `.rr-barra-apuntar`, `.rr-hoja`, `.rr-pasos`, `.rr-principal`; colores de familia `regFamiliaDeQue()`, `regPonerFamilia()` | ver `grep` |
+| Registro: panel «Apuntar fase, evento o alarma» (antes modo rápido; único sitio donde se apuntan; desde el 04-10 es el contenido de la hoja de abajo; escribe en `eventos`/`alarmas`, sin datos propios; «Otro» + cajas; QUÉ en filas por tipo -técnicas, factores técnicos, anestesia, Otro-; TOF 0/4…4/4 como contexto (regRapido.tof → ev.tof/al.tof); contexto quirúrgico; «Cronograma de eventos» por hora ascendente: tarjetas con franja de color por gravedad y filtros Todos/Críticos/Cambios/Info, horas editables, ✎ para corregir cada línea y, bajo cada alarma, causa, medidas y recuperación) | `pintarPanelApuntar()`, `regItemsApuntados()`, `regTipoApuntado()` (gravedad y etiqueta), `regFiltroCrono`, `regLineaApuntada()`, `regEditorApuntado()` (`regEditando`, solo con ✎), alarma plegable con `resumenAlarma()` (`regAlarmasAbiertas`), `pintarMedidasRecup()` (también en la ficha), `regApuntar()`, `regMarcarFase()`, `regQuitarRapido()`, `regCajaRapida()`, `REG_TOF`, `REG_CONTEXTO` (ev.contexto, ids), `REG_FASES_RAPIDAS`, `REG_CAMBIOS_RAPIDOS`, `REG_QUE_EXTRA`, `REG_QUE_OTRO`/`REG_CAMBIO_OTRO` | ver `grep` |
 | Registro intraoperatorio: hoja imprimible A4 | `construirHojaRegistro()`, `abrirHojaRegistro()`, `ESTILO_HOJA_REGISTRO` | ver `grep` |
 | Material, pantalla propia (todo el catálogo en filas) | `renderDocenteMaterial()`, `descripcionMaterial()` | ver `grep` |
 | Fotos en IndexedDB (todas las fotos) | `guardarFotoIDB()`, `hidratarFotosIDB()`, `quitarDataUrls()` | ver `grep` |
 | Cálculo del resumen (con coste) | `calcularResumen()`, `calcularCoste()` (dato) → `renderResumen()` (pintado) | [4785](app.js:4785), [4868](app.js:4868) |
 | Pantalla Docencia (miotomas, cama de quirófano) | `renderDocente()`, `renderCama()` | ver `grep` |
 | Puente plantilla↔caso (cargar/guardar) | `iniciarCargaPlantilla()`, `aplicarPlantillaSobreDestino()`, `guardarMontajeComoPlantilla()` | ver `grep` |
-| Organizador en dos pantallas (04-10-2026, «como Gestión de Casos»): lista de plantillas sola al entrar (`body.org-lista`, botón «Crear plantilla», filtros) y, al tocar una, su edición (rótulo con «← Plantillas», Guardar plantilla y Más acciones; Cajas, Técnicas, Resumen, Notas y Catálogo). Corregir el montaje de un caso (`editando-caso`) es siempre la edición. Atrás del móvil en la edición → lista | `orgEditor`, `aplicarModoOrganizador()` (en `renderTodo()`; también las migas «Plantillas › nombre» `#org-migas` y Cajas abierta al entrar), colores por familia de técnica (sensitivas ámbar, motoras rojo, EMG verde, reflejos rojo-violeta, EEG/ECoG azulado, mapeo rosa; `FAMILIA_TEC`, `REFLEJOS_TEC`, `familiaTecnica()`, `--fam-*` en style.css; franja izquierda `--franja` con las familias de la plantilla; leyenda; vacías atenuadas con «Vacía»), «Ordenar por» nombre / última modificación (`ordenPlantillas()`, `comparadorPlantillas()`, `PLANTILLAS_ORDEN_KEY`, por dispositivo), `abrirEditorPlantilla()`, `volverAListaPlantillas()`, `#btn-crear-plantilla`, `#barra-plantillas-volver` | ver `grep` |
+| Organizador en dos pantallas (04-10-2026, «como Gestión de Casos»): lista de plantillas sola al entrar (`body.org-lista`, botón «Crear plantilla», filtros) y, al tocar una, su edición (rótulo con «← Plantillas», Guardar plantilla y Más acciones; Cajas, Técnicas, Resumen, Notas y Catálogo). Corregir el montaje de un caso (`editando-caso`) es siempre la edición. Atrás del móvil en la edición → lista | `orgEditor`, `aplicarModoOrganizador()` (en `renderTodo()`; también las migas «Plantillas › nombre» `#org-migas` y Cajas abierta al entrar), colores por familia de técnica (sensitivas ámbar, PEATC amarillo `aud`, motoras rojo, EMG verde, reflejos rojo-violeta —cualquier técnica con `reflejo`—, EEG/ECoG azulado, mapeo rosa; `FAMILIA_TEC`, `REFLEJOS_TEC`, `familiaTecnica()`, `--fam-*` en style.css; franja izquierda `--franja` con las familias de la plantilla; leyenda; vacías atenuadas con «Vacía»), «Ordenar por» nombre / última modificación (`ordenPlantillas()`, `comparadorPlantillas()`, `PLANTILLAS_ORDEN_KEY`, por dispositivo), `abrirEditorPlantilla()`, `volverAListaPlantillas()`, `#btn-crear-plantilla`, `#barra-plantillas-volver` | ver `grep` |
 | Biblioteca de plantillas ("Plantillas de montajes" desde el 06-09-2026, tarjeta ya no diálogo desde la Fase 6; desde el 04-10-2026 `#montajes` es un <div>, la lista de la primera pantalla) | `renderListaMontajesDialog()`, `montajeNuevo()`, `compararMontajesPorNombre()`, `limpiarMontajesHeredados()` | ver `grep` |
 | Pantalla de inicio y router de pantallas (Fase 7) | `irAPantalla()`, `pantallaActiva()` | ver `grep` |
 | Rótulo permanente | `renderBarraCaso()` | ver `grep` |
@@ -220,8 +223,8 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Exportación de eventos y alarmas del Registro a CSV (una fila por evento/alarma) | `eventosACsv()`, `COLUMNAS_CSV_EVENTOS`, `minutosEntre()` | ver `grep` |
 | Informe en PDF (imprimible), uno o varios casos | `abrirInformeCasos()`, `construirInformeCaso()`, `seccionInforme()` y el resto de `seccion*Informe()` | ver `grep` |
 | Guía de uso (botón «Guía» de la barra; contenido corto en `data/guia.js`: `flujo`, `pantallas`, `claves`, `dudas`) | `renderGuia()`, `abrirGuia()` | ver `grep` |
-| Checklist pre-quirúrgico (Modelo 0 suelto o vinculado a un caso) | `CHECKLIST_ITEMS`, `checklistValores()`, `renderChecklist()`, `abrirChecklist()` | ver `grep` |
-| Equipos (Inomed/Cadwell): cajas por equipo, elección, filtros, rótulos | `equipoDe()`, `cajasDe()`, `CAJAS_TODAS`, `equiposConCajas()`, `elegirEquipo()`, `nodoMarcaEquipo()`, `itemEnEquipo()` | ver `grep` |
+| Checklist pre-quirúrgico («Sin caso — hoja suelta», antes «Modelo 0», o vinculado a un caso) | `CHECKLIST_ITEMS`, `checklistValores()`, `renderChecklist()`, `abrirChecklist()` | ver `grep` |
+| Equipos (Inomed/Cadwell/Genérico): cajas por equipo, elección, filtros, rótulos | `equipoDe()`, `cajasDe()`, `CAJAS_TODAS`, `equiposConCajas()`, `elegirEquipo()`, `nodoMarcaEquipo()`, `itemEnEquipo()` | ver `grep` |
 | Cajas con grupos, rejilla, puertos con luz y polos − / + (Cadwell) | `entradasDe()` (`grupos`, `polos`), `renderCajaFisica()` (`rejilla`, `recuadro`), `puertosEncendidos()`, `pintarPuertos()` | ver `grep` |
 | Registro ↔ ficha en espejo (28-09-2026): alarmas con listas cerradas (`REG_CRITERIO_AL`, `REG_CAUSA_AL`, `REG_MEDIDAS_AL`; ids, lo antiguo como opción más), mapeo E2 y eventos «An» pintados también en la ficha sobre la copia de trabajo (`guardar` = `REG_SIN_GUARDAR`); «Tipo de alerta»/«Medida correctora» se derivan al guardar; («Resultado de la señal» ya no está en el Registro desde el 30-09-2026: sigue solo en la ficha); evolución en lista + propuesta de concordancia | `pintarAlarmas()`, `alarmasEnCaso()` (en `guardarCaso()`), `textoAlarma()`, `regSelectLista()`, `regIdLista()`, `pintarEventosAn()`, `propuestaConcordancia()`, `t: "alarmas_reg"/"mapeo_reg"/"eventos_an"` en `campoCaso()` | ver `grep` |
 | Columna vertebral de umbrales por raíz (ficha y E2 del Registro; salto discontinuo) | `pintarColumnaRaices()`, `REG_NIVELES_RAICES` | ver `grep` |
@@ -367,8 +370,49 @@ distinta a la anterior, no importa el formato exacto.
 
 ## Estado del proyecto
 
-> **Resumen a 04-10-2026 (léelo primero; el diario cronológico está en
+> **Resumen a 04-10-2026, noche (léelo primero; el diario cronológico está en
 > el repositorio privado, ver al final de este archivo).**
+> - **Lo último (04-10-2026, tarde y noche):**
+>   - **Registro con diseño B** (elegido por el usuario entre tres maquetas):
+>     Cronograma compacto en el centro (una línea por evento: hora · texto · ✎ ✕;
+>     el tipo, por la franja de color y el `title`; lo recién apuntado se enseña
+>     y se resalta, `regVerUltimoApuntado(id)`, `data-id`), «Fase actual» encima,
+>     y barra fija abajo **+ Fase · + Evento · + Alarma** que abre una hoja desde
+>     abajo (`regHoja`, `regPaso`, `regAbrirHoja()`, `regCerrarHoja()`,
+>     `pintarBarraApuntar()`, `pintarPanelApuntar()` reconvertido,
+>     `pintarCronograma()` aparte). Evento/alarma por pasos Técnica › Hallazgo ›
+>     Contexto con ✓ y «Siguiente»; el botón de apuntar siempre visible; Escape o
+>     el fondo cierran sin borrar lo elegido. Los datos no cambian.
+>   - **Colores de familia en el Registro** (botones de Técnica, nombre, franja y
+>     flecha de cada fila de Basales, técnicas del Cronograma):
+>     `regFamiliaDeQue()`, `regPonerFamilia()`, `--fam` en `.fam-*`. **PEATC con
+>     familia propia AMARILLA** (`aud`, `--fam-aud`) en plantillas, casos y
+>     Registro; **Técnicas IONM conserva su paleta `--tm-*`** (pedido expreso).
+>   - **Reflejos de tronco y medulares**: `"reflejo": "tronco" | "medular"` en
+>     `data/surgeries.js` (PRM pasa a reflejo medular); `tipoReflejo()`,
+>     `apartadosTecnicas()`; títulos en Organizador, ficha (también
+>     monitorización y mapeo, `.chip-grupo-tit`), informe, hoja y Registro.
+>   - **Letra +0,5 pt** en toda la app (`html` 104,76 %, `body` 0.875rem).
+>   - **Gestión de Casos**: filtro **Diagnóstico** (`pintarFiltroDiagnostico()`;
+>     el chip enseña el nombre sin la sigla). Plantillas: siempre «modificada
+>     {fecha}». Cronograma con cabecera de botón y «Mostrar/Ocultar».
+>   - **Técnicas IONM**: fuentes **agrupadas por obra** (número alfabético +
+>     letra por capítulo, «5k»; pasada la z, aa…) y superíndices también en las
+>     Tarjetas (`mapaFuentesTecMio()`, `bloqueFuentesTecMio()`,
+>     `notaFuentesTabla()`, `letraFuenteTecMio()`); familia de mapeo con
+>     etiquetas cortas «Mapeo»/«NAP» en el repo privado.
+>   - **Revisión «para un médico de otro hospital»**: corregidos errores y notas
+>     internas (bloques 1 y 2) y, del bloque 3, equipo **Genérico** activo,
+>     cajas Inomed con «p. ej.», **nombre completo delante y sigla entre
+>     paréntesis** (diagnóstico, anestesia; NRF → Neurofis., PPCC → pares
+>     craneales), fuera «Pendiente: Base de datos / Registro tiempos», servicios
+>     Cirugía General y Cirugía Cardiaca / Torácica y COT con su nombre, y
+>     castellano (reflejo de parpadeo, paciente despierto, «configuración» en el
+>     Simulador). «Modelo 0» ya no sale en pantalla: «Sin caso — hoja suelta».
+>     **Aparcado por el usuario**: el **MAV** (revisarlo más adelante), el punto
+>     7 (nube con GitHub y token, ligado al multicéntrico) y el bloque 4 (Gmail
+>     del pie, notas internas de `parametros-tecnicas.js`, comentarios del
+>     código público).
 > - **Pantallas (Inicio en tres bloques, tarjetas centradas, una línea bajo cada
 >   nombre):** *Antes de quirófano*: Organizador de Montajes, Gestión de Casos.
 >   *Quirófano*: Checklist pre-quirúrgico (4 momentos; «Con el campo abierto»
@@ -490,12 +534,14 @@ distinta a la anterior, no importa el formato exacto.
 > - **Material**: «Estimulación trigeminal» (V1-V3 + N.Maset, id `l_rx_maset`);
 >   fuera la categoría «Reflejos» (eran técnicas). Serrato anterior C5-C7 en
 >   miotomas. 20 categorías en orden lógico; `SERIES_MATERIAL` agrupa L./R.
-> - **Registro en pantalla** (30-09-2026): SOLO el panel «Apuntar fase, evento o
->   alarma» + Basales y comparativa + Mapeo + Cierre, sin la letra de la hoja
+> - **Registro en pantalla** (30-09-2026; **diseño B desde el 04-10**, ver «Lo
+>   último»: el panel ya no está arriba, es la hoja que abre la barra de abajo;
+>   sus botones son los de aquí): Cronograma + Basales y comparativa + Mapeo +
+>   Cierre, sin la letra de la hoja
 >   (A, B y C están en Gestión de Casos; D, esquema, F, G y H tampoco salen; la
 >   hoja impresa sale entera). Cierre sin «Resultado de la señal» ni perla
 >   docente. Selector de caso con los de **hoy** primero («· hoy»). Fases,
->   eventos y alarmas se apuntan SOLO en el panel (`.reg-rapido`). Dentro:
+>   eventos y alarmas se apuntan SOLO en la hoja de apuntar (`regHoja`). Dentro:
 >   - **Fase**: un toque; caja = detalle u «Otra».
 >   - **Evento o alarma** (recuadro resaltado en dorado apagado) con dos
 >     recuadros: **Técnica** (antes «Qué»): t-SEP / t-MEP / c-SEP en tabla por
@@ -521,15 +567,16 @@ distinta a la anterior, no importa el formato exacto.
 >     solo sus eventos (colocación, phase reversal, se mueve, retirada) y con
 >     Anestesia solo ↑/↓ perfusión, bolo, inicio, detención
 >     (`REG_MODS_SIN_GENERAL`) → An «Propofol · Bolo». Luego **contexto
->     quirúrgico** opcional (`ev.contexto`) y Apuntar evento / alarma (botones
->     pegados abajo mientras se ve el recuadro, con «↓» al cronograma). Un evento
+>     quirúrgico** opcional (`ev.contexto`) y Apuntar evento / alarma (al pie de
+>     la hoja; la ayuda larga y el «↓» se quitaron el 04-10). Un evento
 >     puede ser solo contexto y/o TOF (solo TOF → An «TOF 1/4»); la alarma
 >     necesita técnica.
->   - **Cronograma de eventos** (antes «Apuntado»): tarjetas por hora, de lo más
->     antiguo a lo más reciente, con franja de color por gravedad
+>   - **Cronograma de eventos** (antes «Apuntado»): una línea por evento desde
+>     el 04-10, por hora, de lo más antiguo a lo más reciente, con franja de
+>     color por gravedad
 >     (`regTipoApuntado()`: alarma = rojo, cambio sin alarma o factor técnico =
->     naranja, fase o recuperación = verde, resto = azul), etiqueta (FASE, CAMBIO,
->     ALARMA A1…), total a la derecha y filtros Todos / Críticos / Cambios /
+>     naranja, fase o recuperación = verde, resto = azul; la etiqueta FASE /
+>     ALARMA… va solo en el `title`), «n eventos» bajo el título y filtros Todos / Críticos / Cambios /
 >     Info/Normal. Hora editable; ✎ (solo el lápiz) corrige la línea y su
 >     alarma; cada alarma con su detalle **plegado** y resumen.
 >     El cronograma entero es un `<details class="rr-crono">` plegable, con
@@ -540,7 +587,7 @@ distinta a la anterior, no importa el formato exacto.
 > - **Gestión de Casos**: borde izquierdo y bolita del color del estado («A
 >   planificar», Preparado, Cerrado, Cancelado); a la vista solo «▸ Filtros (n)»
 >   y «Ordenar por»; el panel plegable tiene Estado, **Especialidad**,
->   Concordancia, Equipo, (Centro, si hay centros), Desde, Hasta, Destacados y
+>   **Diagnóstico** (04-10), Concordancia, Equipo, (Centro, si hay centros), Desde, Hasta, Destacados y
 >   Seguimiento; los filtros puestos salen como chips con ✕. Los mismos filtros
 >   valen para el informe y los CSV. Desde el 04-10: cada fila lleva sus
 >   **técnicas hechas** con el color de su familia (`nodoEtiquetasTecnicas()`,
@@ -550,10 +597,12 @@ distinta a la anterior, no importa el formato exacto.
 > - **Organizador en dos pantallas** (04-10-2026): lista de plantillas como Gestión de Casos («Crear plantilla», filtros, filas) y, al tocar una, su pantalla de edición con «← Plantillas». **Plantillas de montajes**: una debajo de otra (una columna, 03-10-2026); lista entera sin scroll propio; filas con aspecto
 >   de caso (`nodoFilaPlantilla()`); ★ **favoritas** (se quedan en su sitio desde el 04-10; casilla «Solo
 >   favoritas»; por dispositivo y perfil, no se sincronizan).
-> - **Dos equipos** (Inomed/Cadwell): `equipo_id`; **no confundir con `equipo`**.
+> - **Tres equipos** (Inomed/Cadwell/**Genérico**, este para cualquier otra
+>   marca, activo desde el 04-10): `equipo_id`; **no confundir con `equipo`**.
 > - **Técnicas IONM, privada**: contenido en el repo privado
 >   (`referencia/tecnicas-mio.json`), se baja con el token. **No volver a meterlo
->   aquí.**
+>   aquí.** Fuentes agrupadas por obra y paleta propia `--tm-*` (no la de
+>   familias del resto de la app, por decisión del usuario).
 > - **Modo demo** `?demo`: datos ficticios aislados; precios INVENTADOS
 >   (`PRECIOS_DEMO`, `preciosDemo()`) para enseñar el coste; visita guiada de 12
 >   pasos. Plantillas y casos «Demo · Inomed · …» y «Demo · Cadwell · …» (3 de
@@ -596,7 +645,13 @@ distinta a la anterior, no importa el formato exacto.
 >   protección de datos ni informática; no es aplicación sanitaria: solo recoge
 >   datos); cómo compartir casos dentro del servicio y entre hospitales
 >   (multicéntrico); más equipos (Natus, Nihon Kohden); quién la mantiene.
-> - **Pendiente del usuario (nuevo, 04-10):** probar el Organizador en dos
+> - **Pendiente del usuario (04-10, noche):** recargar la app; probar en el
+>   móvil y en quirófano el **Registro con diseño B** (¿choca la barra de abajo
+>   con los gestos del teléfono?, ¿echa de menos la etiqueta FASE/ALARMA en cada
+>   línea?), la letra más grande, los reflejos por apartados y PEATC en
+>   amarillo; decidir el **MAV**, el punto 7 (nube) y el bloque 4 de la
+>   revisión de textos cuando quiera.
+> - **Pendiente del usuario (04-10, mañana):** probar el Organizador en dos
 >   pantallas (lista ↔ edición, «Plantillas ›», atrás del móvil), los colores por
 >   familia, «Ordenar por», la Papelera y la ficha a pantalla completa en el
 >   móvil y el portátil; marcar en Catálogos > Centros su centro solo cuando
@@ -631,7 +686,9 @@ distinta a la anterior, no importa el formato exacto.
 >   entre dispositivos si el usuario lo pide; aviso en el Resumen si en Inomed
 >   hay un sacacorchos de estimulación en la catodal; antes del congreso,
 >   ocultar o terminar en la demo las pantallas «En construcción»; cronometrar
->   en vivo «caso cerrado en menos de 3 minutos».
+>   en vivo «caso cerrado en menos de 3 minutos»; unificar la paleta de Técnicas
+>   IONM con las familias del resto si el usuario lo pide; cajas reales de otras
+>   marcas (Natus, Nihon Kohden) si alguien pasa cómo son.
 > - **Convenciones que han fallado antes:** subir el `?v=` de `index.html` en cada
 >   cambio de `app.js`/`style.css`/`data/`; `git fetch`+`pull --ff-only` antes de
 >   tocar `checklist-mio-datos` (y otro `fetch` antes del push); con
