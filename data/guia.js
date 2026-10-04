@@ -60,7 +60,7 @@ window.GUIA = {
         "Barra de abajo: + Fase (un toque; lo siguiente la hereda), + Evento y + Alarma.",
         "Evento y alarma por pasos: técnica › hallazgo › contexto; varias técnicas a la vez = una sola alarma.",
         "Basales: toca una técnica para apuntar; «= Basal» copia la basal si no hay cambios.",
-        "En el cronograma, toca la hora para cambiarla; ✎ abre la misma hoja, con los botones marcados, para corregir."
+        "En el cronograma, toca la hora para cambiarla; ✎ abre la misma hoja, con los botones marcados, para corregir (o pasar un evento a alarma y al revés)."
       ] }
     ] },
     { grupo: "Después / consulta", tarjetas: [

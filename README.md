@@ -40,7 +40,9 @@ propia en *Después / consulta*).
   cambia lo que haga falta y **Guardar cambios** corrige la línea en su sitio:
   la hora y el número de la alarma no cambian. En *Contexto* se puede cambiar
   también la fase en que pasó. Lo que estuvieras eligiendo para un apunte nuevo
-  sigue ahí al terminar.
+  sigue ahí al terminar. Arriba de la hoja, **Evento | Alarma** convierte un
+  evento en alarma (toma el siguiente número libre) o una alarma en evento (se
+  quitan su número, causa, medidas marcadas y recuperación; la nota se queda).
 - **Plantillas**: una casilla en cada fila para marcar **varias** y usar *Más
   acciones* con todas a la vez. Se quitó «← Todas las plantillas»: hacía lo
   mismo que *Plantillas* en la ruta del título.
@@ -1130,7 +1132,10 @@ elegido. Lo que hay dentro es lo de siempre, casi todo con toques:
   hallazgo, magnitud, nota, contexto, TOF y, en *Contexto*, la fase en que
   pasó; en una fase, su nombre y el detalle). **Guardar cambios** corrige la
   línea en su sitio (la hora y el número de alarma no cambian); en una alarma,
-  lo corregido pasa también a su fila de alarmas (técnica, fase y criterio). Debajo de cada **alarma**, lo que antes se completaba en
+  lo corregido pasa también a su fila de alarmas (técnica, fase y criterio).
+  Con **Evento | Alarma**, arriba de la hoja, un evento pasa a alarma o una
+  alarma a evento (con confirmación si la alarma tenía causa, medidas marcadas
+  o recuperación, que se pierden). Debajo de cada **alarma**, lo que antes se completaba en
   G, **plegado** con un resumen en una línea («Aviso al cirujano, ↑ TAM ·
   recupera 09:20»; la alarma recién apuntada sale desplegada):
   **causa probable**, **medidas adoptadas** (casillas + caja de texto) y

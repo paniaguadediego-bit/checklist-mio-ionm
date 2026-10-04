@@ -1388,6 +1388,14 @@
     rr_guardar_cambios:  { es: "Guardar cambios", en: "Save changes" },
     rr_cambios_guardados: { es: "Cambios guardados.", en: "Changes saved." },
     rr_fase_de_linea:    { es: "Fase", en: "Phase" },
+    rr_tipo_evento:      { es: "Evento", en: "Event" },
+    rr_tipo_alarma:      { es: "Alarma", en: "Alarm" },
+    rr_pasa_a_alarma:    { es: "Al guardar pasará a ser una alarma, con su número; debajo podrás completar la causa, las medidas y la recuperación.",
+                           en: "When saved it becomes an alarm, with its number; below you can fill in the cause, measures and recovery." },
+    rr_pasa_a_evento:    { es: "Al guardar dejará de ser alarma: se quitan su número, la causa, las medidas marcadas y la recuperación. La nota se queda.",
+                           en: "When saved it stops being an alarm: its number, cause, ticked measures and recovery are removed. The note is kept." },
+    rr_pasa_a_evento_conf: { es: "¿Convertir la alarma {n} en evento?\nSe perderán su causa, las medidas marcadas y la recuperación.",
+                           en: "Turn alarm {n} into an event?\nIts cause, ticked measures and recovery will be lost." },
     rr_detalle:          { es: "Detalle", en: "Detail" },
     rr_nota_l:           { es: "Nota", en: "Note" },
     rr_que:              { es: "Técnica", en: "Technique" },
@@ -18410,6 +18418,12 @@
     var d = registroDatos();
     // Corrigiendo una línea: mismos cálculos, sobre lo que ya había
     var ed = regEditandoAp;
+    // Alarma que pasa a evento: lo que solo tiene la alarma se pierde
+    if (ed && ed.al && !esAlarma) {
+      var aq = ed.al;
+      if ((aq.causa || (aq.medidas_l || []).length || aq.recup) &&
+          !confirm(T("rr_pasa_a_evento_conf", { n: "A" + (d.alarmas.indexOf(aq) + 1) }))) return;
+    }
     // Varias técnicas a la vez (bilateral, hemicorporal, brazo-pierna-cara,
     // cruzado...) = UNA sola alarma o evento, «t-MEP MSD + t-MEP MID»: es un
     // único suceso, con una causa, unas medidas y una recuperación
@@ -18474,7 +18488,8 @@
     if (esAlarma) {
       // Las alarmas nacen con filas vacías (min en REG_SECCIONES): se usa la
       // primera libre para que la numeración A1, A2... coincida con la hoja.
-      var al = ed ? ed.al : d.alarmas.filter(filaRegistroVacia)[0];
+      // Un evento que pasa a alarma toma la primera fila libre, como una nueva
+      var al = ed && ed.al ? ed.al : d.alarmas.filter(filaRegistroVacia)[0];
       if (!al) { al = { id: uuid() }; d.alarmas.push(al); }
       var n = "A" + (d.alarmas.indexOf(al) + 1);
       al.hora = hora;
@@ -18496,7 +18511,7 @@
       ev.accion = n + (nota ? " · " + nota : "");
       ev.alarma_id = al.id;
       mensaje = T("rr_alarma_apuntada", { n: n, hora: hora });
-      if (!ed) regAlarmasAbiertas[al.id] = 1;   // recién apuntada: abierta para marcar el aviso
+      if (!ed || !ed.al) regAlarmasAbiertas[al.id] = 1;   // recién apuntada: abierta para marcar el aviso
     } else if (!ed && cambio && cambio.recup && modalidad) {
       // Recuperación: cierra la última alarma de esa modalidad que siga
       // abierta (o solo parcialmente recuperada).
@@ -18519,12 +18534,24 @@
       // evento (de la ficha o de antes) se queda sin él.
       if (ed.ev) {
         var guardar = { id: ed.ev.id, hora: ed.ev.hora, alarma_id: ed.ev.alarma_id, recupera_de: ed.ev.recupera_de };
+        // Convertida: la alarma la pone (o la quita) lo calculado arriba
+        if (!!ed.al !== esAlarma) delete guardar.alarma_id;
         if (ed.ev.recupera_de) ev.cod = ed.ev.cod;
         Object.keys(ed.ev).forEach(function (k) { delete ed.ev[k]; });
         Object.keys(ev).forEach(function (k) { ed.ev[k] = ev[k]; });
         Object.keys(guardar).forEach(function (k) { if (guardar[k] !== undefined) ed.ev[k] = guardar[k]; });
+      } else if (!esAlarma) {
+        // Alarma sin evento (de la ficha o de antes) que pasa a evento
+        d.eventos.push(ev);
       }
-      var idEd = (ed.ev || ed.al).id;
+      // Alarma que pasa a evento: su fila queda libre, como al quitarla (la
+      // numeración de las demás no cambia)
+      if (ed.al && !esAlarma) {
+        var ia = d.alarmas.indexOf(ed.al);
+        if (ia !== -1) d.alarmas[ia] = { id: ed.al.id };
+        delete regAlarmasAbiertas[ed.al.id];
+      }
+      var idEd = ed.ev ? ed.ev.id : (esAlarma ? ed.al.id : ev.id);
       registroGuardarYa();
       avisoGuardado(T("rr_cambios_guardados"));
       regTerminarEdicion();
@@ -18632,6 +18659,25 @@
     var bEvento = regNodo("div", "rr-bloque rr-bloque-evento");
     // Pasos arriba: tocar uno lo enseña; ✓ si ya tiene algo elegido
     var navPasos = regNodo("div", "rr-pasos");
+    // Al corregir, un evento puede pasar a alarma y al revés (04-10-2026,
+    // pedido del usuario). Lo marcado se queda; se guarda con «Guardar
+    // cambios». Una recuperación es siempre un evento.
+    if (regEditandoAp && regHoja !== "fase" && !(regEditandoAp.ev && regEditandoAp.ev.recupera_de)) {
+      var tipoEd = regNodo("div", "rr-chips rr-tipo-ed");
+      [["evento", "rr_tipo_evento"], ["alarma", "rr_tipo_alarma"]].forEach(function (x) {
+        var bT = regChip(T(x[1]), regHoja === x[0], function () {
+          if (regHoja === x[0]) return;
+          regHoja = x[0];
+          renderRegistroContenido();
+        }, x[0] === "alarma" ? "rr-tipo-alarma" : "");
+        tipoEd.appendChild(bT);
+      });
+      panel.appendChild(tipoEd);
+      var eraAlarma = !!regEditandoAp.al;
+      if (eraAlarma !== (regHoja === "alarma")) {
+        panel.appendChild(regNodo("p", "rr-tipo-aviso", T(eraAlarma ? "rr_pasa_a_evento" : "rr_pasa_a_alarma")));
+      }
+    }
     if (regHoja !== "fase") { panel.appendChild(navPasos); panel.appendChild(bEvento); }
     // QUÉ en filas por tipo (29-09-2026, pedido del usuario): técnicas,
     // factores técnicos, anestesia -con el TOF, que mide la relajación- y

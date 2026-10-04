@@ -4328,6 +4328,10 @@ textarea { resize: none; overflow-y: hidden; }
 .rr-item .rr-linea-alarma .rr-texto { color: var(--text); }
 .rr-item .rr-linea-fase .rr-texto { color: var(--text); }
 .rr-item .rr-al-plegable { margin-left: 0; }
+/* Corregir: Evento | Alarma para convertir una en otra (04-10-2026) */
+.rr-tipo-ed { margin: 0 0 0.4rem; }
+.rr-tipo-ed .rr-chip.rr-tipo-alarma.activo { background: var(--g-critico); border-color: var(--g-critico); color: #fff; }
+.rr-tipo-aviso { margin: 0 0 0.5rem; font-size: 0.75rem; color: var(--text-muted); }
 
 /* Botón de colores junto al ⋮ (30-09-2026): una bolita con el color del
    modo puesto; al tocarlo pasa al siguiente (oscuro → azul → claro). */
