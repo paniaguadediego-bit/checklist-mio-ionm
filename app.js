@@ -214,6 +214,8 @@
     caso_pdf_popup_bloqueado: { es: "El navegador ha bloqueado la pestaña del informe. Permite las ventanas emergentes para esta página e inténtalo de nuevo.",
                            en: "The browser blocked the report tab. Allow pop-ups for this page and try again." },
     caso_pdf_reflejos:   { es: "Reflejos", en: "Reflexes" },
+    grupo_reflejos_tronco: { es: "Reflejos de tronco", en: "Brainstem reflexes" },
+    grupo_reflejos_medulares: { es: "Reflejos medulares", en: "Spinal reflexes" },
     caso_pdf_cajas:      { es: "Cajas y montaje", en: "Boxes and montage" },
     caso_pdf_titulo_varios: { es: "Informe de casos", en: "Case report" },
     btn_duplicar:        { es: "Duplicar", en: "Duplicate" },
@@ -5109,12 +5111,9 @@
     var ids = c.tecnicas_realizadas || [];
     if (!ids.length) return null;
     var tecs = TECNICAS.filter(function (t) { return ids.indexOf(t.id) !== -1; });
-    var bloques = bloquesTecnicas(tecs);
-    var filas = [
-      filaInforme(doc, T("grupo_monitorizacion"), bloques.monitor.map(function (t) { return campo(t, "etiqueta"); }).join(", ")),
-      filaInforme(doc, T("caso_pdf_reflejos"), bloques.reflejos.map(function (t) { return campo(t, "etiqueta"); }).join(", ")),
-      filaInforme(doc, T("grupo_mapeo"), bloques.mapeo.map(function (t) { return campo(t, "etiqueta"); }).join(", "))
-    ];
+    var filas = apartadosTecnicas(tecs).map(function (par) {
+      return filaInforme(doc, T(par[0]), par[1].map(function (t) { return campo(t, "etiqueta"); }).join(", "));
+    });
     return seccionInforme(doc, T("caso_tecnicas_realizadas"), filas);
   }
 
@@ -7571,27 +7570,36 @@
      aunque su "grupo" siga siendo "monitorizacion" -ese campo lo usa
      también la ventana Técnicas, que solo separa monitorización/mapeo y no
      se toca aquí-. */
+  // Reflejos de tronco o medulares (04-10-2026): "reflejo" en el catálogo es
+  // "tronco" o "medular"; un true antiguo cuenta como de tronco.
+  function tipoReflejo(t) {
+    if (!t || !t.reflejo) return "";
+    return t.reflejo === "medular" ? "medular" : "tronco";
+  }
   function bloquesTecnicas(lista) {
     return {
       monitor: lista.filter(function (t) { return t.grupo === "monitorizacion" && !t.reflejo; }),
-      reflejos: lista.filter(function (t) { return t.reflejo; }),
+      tronco: lista.filter(function (t) { return tipoReflejo(t) === "tronco"; }),
+      medular: lista.filter(function (t) { return tipoReflejo(t) === "medular"; }),
       mapeo: lista.filter(function (t) { return t.grupo === "mapeo"; })
     };
+  }
+  // Los cuatro apartados con su título, en orden
+  function apartadosTecnicas(lista) {
+    var b = bloquesTecnicas(lista);
+    return [["grupo_monitorizacion", b.monitor], ["grupo_reflejos_tronco", b.tronco],
+            ["grupo_reflejos_medulares", b.medular], ["grupo_mapeo", b.mapeo]];
   }
 
   // Cuelga los chips de los tres bloques en "contenedor", con una fila de
   // espacio (.chip-espacio) entre los que tengan contenido.
   function anadirChipsAgrupados(contenedor, lista, crearChip) {
-    var bloques = bloquesTecnicas(lista);
-    var primero = true;
-    [bloques.monitor, bloques.reflejos, bloques.mapeo].forEach(function (grupo) {
+    // Cada apartado con su título pequeño (04-10-2026: los reflejos de
+    // tronco y los medulares, separados)
+    apartadosTecnicas(lista).forEach(function (par) {
+      var grupo = par[1];
       if (!grupo.length) return;
-      if (!primero) {
-        var espacio = document.createElement("div");
-        espacio.className = "chip-espacio";
-        contenedor.appendChild(espacio);
-      }
-      primero = false;
+      contenedor.appendChild(regNodo("div", "chip-grupo-tit", T(par[0])));
       grupo.forEach(function (t) { contenedor.appendChild(crearChip(t)); });
     });
   }
@@ -10710,20 +10718,20 @@
     if (!escenarioActual()) return;
     var marcadas = tecnicasDe();
 
-    GRUPOS_TECNICA.forEach(function (grupo) {
-      // Una técnica desactivada no se ofrece para casos nuevos, pero si está
-      // marcada en este escenario sigue viéndose: si no, no habría manera de
-      // desmarcarla y quedaría atrapada.
-      var items = TECNICAS.filter(function (t) {
-        return t.grupo === grupo && (t.activa !== false || marcadas.indexOf(t.id) !== -1);
-      });
+    // Una técnica desactivada no se ofrece para casos nuevos, pero si está
+    // marcada en este escenario sigue viéndose: si no, no habría manera de
+    // desmarcarla y quedaría atrapada. Cuatro apartados desde el 04-10-2026
+    // (los reflejos de tronco y los medulares, aparte).
+    var visibles = TECNICAS.filter(function (t) { return t.activa !== false || marcadas.indexOf(t.id) !== -1; });
+    apartadosTecnicas(visibles).forEach(function (par) {
+      var items = par[1];
       if (!items.length) return;
 
       var bloque = document.createElement("div");
       bloque.className = "tecnicas-grupo";
       var h = document.createElement("div");
       h.className = "grupo-titulo";
-      h.textContent = T("grupo_" + grupo);
+      h.textContent = T(par[0]);
       bloque.appendChild(h);
 
       var fila = document.createElement("div");
@@ -12203,6 +12211,7 @@
   };
   function familiaTecnica(t) {
     if (FAMILIA_TEC[t.id]) return FAMILIA_TEC[t.id];
+    if (t.reflejo) return "ref";
     if (t.grupo === "mapeo") return "map";
     if (REFLEJOS_TEC.indexOf(t.id) !== -1 || /^(rx|hr)_/.test(t.id)) return "ref";
     return "emg";   // EMG libre, LSR, PRM, ARM, PAN, onda F, ENG y el resto
@@ -18429,17 +18438,26 @@
         }
         // Reflejos del caso (29-09-2026, pedido del usuario), con su nombre
         // corto (BR, TVcR...), en su fila debajo de las demás técnicas.
-        var reflejosCaso = TECNICAS.filter(function (t) { return t.reflejo && tecCaso.indexOf(t.id) !== -1; })
-          .map(function (t) { var n = campo(t, "corta") || campo(t, "etiqueta"); return [n, n]; });
+        var reflejosCaso = TECNICAS.filter(function (t) { return t.reflejo && tecCaso.indexOf(t.id) !== -1; });
         if (reflejosCaso.length) {
           // «Blink» (fila extra de QUÉ) es el mismo BR de Reflejos: una sola vez
           if (tecCaso.indexOf("br") !== -1) resto = resto.filter(function (p) { return p[1] !== "Blink"; });
           resto = resto.slice();
-          var filaR = regNodo("div", "rr-chips");
-          reflejosCaso.forEach(function (p) { filaR.appendChild(chipQue(p)); });
+          // De tronco y medulares, cada uno en su fila (04-10-2026)
+          var filasR = [["tronco", "grupo_reflejos_tronco"], ["medular", "grupo_reflejos_medulares"]].map(function (x) {
+            var fila = regNodo("div", "rr-chips");
+            reflejosCaso.filter(function (t) { return tipoReflejo(t) === x[0]; }).forEach(function (t) {
+              var n = campo(t, "corta") || campo(t, "etiqueta");
+              fila.appendChild(chipQue([n, n]));
+            });
+            return { tit: T(x[1]), fila: fila };
+          });
           reflejosPendientes = function () {
-            dest.appendChild(regNodo("div", "rr-subtit", T("rr_grupo_reflejos")));
-            dest.appendChild(filaR);
+            filasR.forEach(function (r) {
+              if (!r.fila.children.length) return;
+              dest.appendChild(regNodo("div", "rr-subtit", r.tit));
+              dest.appendChild(r.fila);
+            });
           };
         }
       }
@@ -19890,7 +19908,8 @@
     var hechasB = c ? (c.tecnicas_realizadas || []) : [];
     var tecsB = TECNICAS.filter(function (t) { return t.activa !== false || hechasB.indexOf(t.id) !== -1; });
     var bloquesB = bloquesTecnicas(tecsB);
-    [["registro_tec_monitor", bloquesB.monitor], ["registro_tec_reflejos", bloquesB.reflejos], ["registro_tec_mapeo", bloquesB.mapeo]]
+    [["registro_tec_monitor", bloquesB.monitor], ["grupo_reflejos_tronco", bloquesB.tronco],
+     ["grupo_reflejos_medulares", bloquesB.medular], ["registro_tec_mapeo", bloquesB.mapeo]]
       .forEach(function (par) {
         if (!par[1].length) return;
         var f = nodoInforme(doc, "div", "hj-mod");

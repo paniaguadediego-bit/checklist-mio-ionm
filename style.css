@@ -695,6 +695,9 @@ details.card:not([open]):not(.caja-card) { padding: 0; }
    en la ficha del caso: flex-basis:100% la fuerza a ocupar toda la fila
    -salto de línea dentro del flex-wrap-, y su altura abre el hueco. */
 .chip-espacio { flex-basis: 100%; height: 0.35rem; }
+/* Título de cada apartado de técnicas en la ficha (04-10-2026) */
+.chip-grupo-tit { flex-basis: 100%; font-size: 0.7rem; font-weight: 600; color: var(--text-muted); margin: 0.35rem 0 0.05rem; }
+.chip-grupo-tit:first-child { margin-top: 0; }
 
 /* -------------------------------- Chips -------------------------------- */
 .chip {
