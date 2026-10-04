@@ -663,8 +663,8 @@ distinta a la anterior, no importa el formato exacto.
 >   datos); cómo compartir casos dentro del servicio y entre hospitales
 >   (multicéntrico); más equipos (Natus, Nihon Kohden); quién la mantiene.
 > - **Pendiente del usuario (04-10, última hora):** probar en el móvil el ✎ del
->   Registro (hoja de corregir), la selección de varias plantillas y el modo
->   claro con el gris nuevo.
+>   Registro (hoja de corregir y el selector Evento | Alarma), los colores del
+>   Mapeo, la selección de varias plantillas y el modo claro con el gris nuevo.
 > - **Pendiente del usuario (04-10, noche):** recargar la app; probar en el
 >   móvil y en quirófano el **Registro con diseño B** (¿choca la barra de abajo
 >   con los gestos del teléfono?, ¿echa de menos la etiqueta FASE/ALARMA en cada
