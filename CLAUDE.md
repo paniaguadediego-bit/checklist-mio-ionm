@@ -696,7 +696,13 @@ distinta a la anterior, no importa el formato exacto.
 > - **Ideas pendientes, no construidas:** convertir la ficha del caso en una
 >   pantalla de verdad (hoy `<dialog>` a pantalla completa: la barra superior
 >   queda tapada); exportación compatible con REDCap (diccionario de datos + CSV)
->   si el estudio multicéntrico se retoma; que la demo enseñe más utilidades;
+>   si el estudio multicéntrico se retoma; **sacar los datos sin vulnerar la
+>   privacidad** (aparcado el 04-10-2026; lo guardado es seudonimizado, no
+>   anónimo): «Exportar para enviar» anonimizado en el dispositivo (edad en
+>   tramos, mes/año, minutos desde el inicio, sin texto libre, imágenes ni número
+>   de caso) + cifrado en el navegador (Web Crypto, AES-GCM con contraseña) para
+>   mandarlo al correo institucional; destino institucional (REDCap, Microsoft
+>   365) cuando decida el DPD; detalle en el diario privado; que la demo enseñe más utilidades;
 >   conversión Inomed ↔ Cadwell; eventos del Registro en el Sheet (las alarmas
 >   ya van por grupos en Correlacion_long); que la concordancia del caso proponga
 >   FN si hay déficit sin alarma relacionada; bloque "Cirugías con IONM"; Teoría
