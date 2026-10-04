@@ -17391,6 +17391,8 @@
       var ed = null;
       function pintarResumen() {
         rot.textContent = rotuloDe(fd);
+        rot.className = "reg-bl-rot";
+        if (!fd.vacia) regPonerFamilia(rot, rotuloDe(fd));
         var partes = [];
         REG_BASALES_COLS.forEach(function (col) {
           if (!regColBasal(col, fd.sin)) return;
@@ -17870,6 +17872,21 @@
     return { emg: ["emg"], peat: ["peatc"], onda_d: ["onda_d"], eeg: ["eeg", "ecog"] }[regModalidadDeQue(q)] || [];
   }
 
+  // Familia (color) de lo elegido en Técnica, de una fila de basales o de
+  // una técnica del cronograma; "" si no es una técnica (04-10-2026).
+  function regFamiliaDeQue(q) {
+    var ids = regTecnicasDeQue(q);
+    for (var i = 0; i < ids.length; i++) {
+      var t = TECNICAS.filter(function (x) { return x.id === ids[i]; })[0];
+      if (t) return familiaTecnica(t);
+    }
+    return "";
+  }
+  function regPonerFamilia(nodo, q) {
+    var f = regFamiliaDeQue(q);
+    if (f) nodo.classList.add("rr-fam", "fam-" + f);
+  }
+
   function regFaseActual(d) {
     for (var i = d.eventos.length - 1; i >= 0; i--) {
       if (d.eventos[i].cod === "F" && d.eventos[i].fase) return d.eventos[i].fase;
@@ -18177,6 +18194,7 @@
           actualizarCambiosPropios();
         }, p[2]);
         b.setAttribute("data-que", p[0]);
+        regPonerFamilia(b, p[0]);
         return b;
       };
       // Técnicas de los cuatro miembros (t-SEP, t-MEP, c-SEP...) en cuadrícula
@@ -18209,6 +18227,7 @@
           // nombre completo («t-MEP MID»), que va también en el title.
           ordenFilas.forEach(function (pref, fila) {
             var rot = regNodo("span", "rr-que-cuadro-rot", pref);
+            regPonerFamilia(rot, pref);
             rot.style.gridRow = String(fila + 1);
             rot.style.gridColumn = "1";
             cuadro.appendChild(rot);
@@ -18226,6 +18245,7 @@
             var fila = ordenFilas.length + k + 1;
             if (k === 0) {
               var rotP = regNodo("span", "rr-que-cuadro-rot", "CoMEP");
+              regPonerFamilia(rotP, "CoMEP");
               rotP.style.gridRow = String(fila);
               rotP.style.gridColumn = "1";
               cuadro.appendChild(rotP);
@@ -18581,6 +18601,20 @@
       // Evento solo de contexto y/o TOF: eso es su texto principal
       if (!partes.filter(Boolean).length) { partes = [ctx, tofL]; ctx = ""; tofL = ""; }
       txt.textContent = partes.filter(Boolean).join(" · ");
+      // Las técnicas («t-MEP MII + t-MEP MID»), cada una con su color
+      var mod = partes[0];
+      if (mod && ev && (ev.cod === "F" || ev.cod === "An" || ev.cod === "T")) mod = "";
+      if (mod && mod === txt.textContent.slice(0, mod.length)) {
+        var resto = txt.textContent.slice(mod.length);
+        txt.textContent = "";
+        mod.split(" + ").forEach(function (m, k) {
+          if (k) txt.appendChild(document.createTextNode(" + "));
+          var sp = regNodo("span", "rr-tec", m);
+          regPonerFamilia(sp, m);
+          txt.appendChild(sp);
+        });
+        if (resto) txt.appendChild(document.createTextNode(resto));
+      }
       if (fase || ctx || tofL) txt.appendChild(regNodo("small", null, " " + [fase ? T("rr_en_fase", { fase: fase }) : "", ctx, tofL].filter(Boolean).join(" · ")));
     }
     // Corregir la línea (29-09-2026, pedido del usuario): solo con ✎ (tocar
