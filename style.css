@@ -123,10 +123,15 @@
 
 * { box-sizing: border-box; }
 
+/* Medio punto más de letra en toda la herramienta (04-10-2026, pedido del
+   usuario: se veía pequeña). Antes body 14px (10,5 pt) con la raíz a 16px;
+   ahora todo ×11/10,5: la raíz al 104,76 % (≈16,76px) y body 0.875rem
+   (≈14,67px = 11 pt). Lo que va en rem o em crece en la misma proporción. */
+html { font-size: 104.76%; }
 body {
   margin: 0;
   font-family: "Inter", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  font-size: 14px;
+  font-size: 0.875rem;
   background: var(--bg);
   color: var(--text);
   line-height: 1.4;
@@ -4240,12 +4245,25 @@ textarea { resize: none; overflow-y: hidden; }
    abajo, aspecto de título como los apartados (▸ que gira, acento, negrita)
    y el total a la derecha. */
 .rr-crono { margin: 1.4rem 0 0.6rem; }
-.rr-crono-cab { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 0.45rem; padding: 0.55rem 0.1rem; margin-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+/* Con aspecto de botón que se despliega (04-10-2026, pedido del usuario: no
+   parecía un desplegable): recuadro, fondo de tarjeta y flecha más grande. */
+.rr-crono-cab { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 0.5rem; padding: 0.55rem 0.65rem; margin-bottom: 0.5rem; border: 1px solid var(--border); border-radius: 5px; background: var(--card-bg); }
+.rr-crono-cab:hover { border-color: var(--accent); }
+.rr-crono[open] > .rr-crono-cab { border-color: var(--accent); }
 .rr-crono-cab::-webkit-details-marker { display: none; }
-.rr-crono-cab::before { content: "▸"; font-size: 0.9rem; color: var(--accent); transition: transform 0.12s; }
+.rr-crono-cab::before { content: "▸"; font-size: 1.15rem; line-height: 1; color: var(--accent); transition: transform 0.12s; }
 .rr-crono[open] > .rr-crono-cab::before { transform: rotate(90deg); }
+/* «Mostrar» / «Ocultar» a la derecha (textos en data-*, los pone app.js) */
+/* Rejilla: flecha | título y, debajo, «n eventos» | Mostrar/Ocultar */
+.rr-crono-cab { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; column-gap: 0.55rem; row-gap: 0.05rem; }
+.rr-crono-cab::before { grid-row: 1 / span 2; }
+.rr-crono-cab > .rr-crono-tit { grid-column: 2; grid-row: 1; }
+.rr-crono-cab > .rr-crono-n { grid-column: 2; grid-row: 2; }
+.rr-crono-cab::after { grid-column: 3; grid-row: 1 / span 2; }
+.rr-crono-cab::after { content: attr(data-mostrar); font-size: 0.72rem; font-weight: 600; color: var(--accent); white-space: nowrap; }
+.rr-crono[open] > .rr-crono-cab::after { content: attr(data-ocultar); }
 .rr-crono:not([open]) > .rr-crono-cab { margin-bottom: 0; }
-.rr-crono-tit { flex: 1 1 auto; font-family: var(--mono); font-size: 0.95rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cab-texto, var(--accent)); }
+.rr-crono-tit { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--mono); font-size: 0.88rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--cab-texto, var(--accent)); }
 .rr-crono-n { font-family: var(--mono); font-size: 0.72rem; color: var(--text-muted); white-space: nowrap; }
 .rr-crono-filtros { margin-bottom: 0.45rem; }
 .rr-lista { gap: 0.4rem; }
@@ -4411,6 +4429,9 @@ body:not(.editando-caso) #barra-caso-prefijo { color: var(--accent); }
 /* Prueba con tres usuarios (30-09-2026) ---------------------------------
    Botones de apuntar pegados abajo mientras se ve el recuadro «Evento o
    alarma», con «↓» para bajar al cronograma. */
+/* Sin partir «Apuntar alarma» con la letra más grande (04-10-2026) */
+#pantalla-registro .rr-en-hoja .rr-botones button { white-space: nowrap; padding-left: 0.3rem; padding-right: 0.3rem; }
+#pantalla-registro .rr-en-hoja .rr-botones .rr-ir-crono { min-width: 2.3rem; }
 #pantalla-registro .rr-en-hoja .rr-botones { position: sticky; bottom: 0; z-index: 3; grid-template-columns: 1fr 1fr auto; padding: 0.4rem 0 0.45rem; margin-bottom: -0.2rem; background: var(--accent-soft); box-shadow: 0 -6px 8px -6px rgba(0, 0, 0, 0.35); }
 .rr-ir-crono { font: inherit; font-weight: 700; min-width: 2.6rem; padding: 0 0.6rem; border: 1px solid var(--border); border-radius: 6px; background: var(--card-bg); color: var(--accent); cursor: pointer; }
 /* Cuánto cambió respecto a la basal (%), solo con umbral, amplitud, latencia y onda D */
@@ -4520,9 +4541,9 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 
 /* Lista de plantillas con color (04-10-2026): familias de técnica. Claro =
    tonos oscuros legibles en blanco; azul y oscuro = tonos vivos. */
-:root { --fam-sens: #a86b00; --fam-mot: #c62828; --fam-emg: #1e8a5a; --fam-ref: #9c1f63; --fam-eeg: #1f6fd1; --fam-map: #d6609a; }
+:root { --fam-aud: #8a7a00; --fam-sens: #a86b00; --fam-mot: #c62828; --fam-emg: #1e8a5a; --fam-ref: #9c1f63; --fam-eeg: #1f6fd1; --fam-map: #d6609a; }
 @media screen {
-  :root:not(.tema-claro) { --fam-sens: #f0b429; --fam-mot: #ef4444; --fam-emg: #4cc38a; --fam-ref: #c8408f; --fam-eeg: #5aa9ff; --fam-map: #f7a6c8; }
+  :root:not(.tema-claro) { --fam-aud: #ffe14d; --fam-sens: #f0b429; --fam-mot: #ef4444; --fam-emg: #4cc38a; --fam-ref: #c8408f; --fam-eeg: #5aa9ff; --fam-map: #f7a6c8; }
 }
 .plantilla-fila { position: relative; border-left-color: transparent; }
 .plantilla-fila.mio { border-left-color: transparent; }
@@ -4532,6 +4553,8 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 .plantilla-fila.vacia:hover { opacity: 1; }
 .plantilla-vacia { margin-left: 0.4rem; padding: 0 0.35rem; font-size: 0.6rem; font-weight: 600; border: 1px dashed var(--text-muted); border-radius: 3px; color: var(--text-muted); vertical-align: middle; }
 .plantilla-fila .montaje-nombre { font-size: 0.88rem; }
+/* PEATC en amarillo en toda la app (04-10-2026, pedido del usuario) */
+.plantilla-tec.fam-aud { color: var(--fam-aud); border-color: color-mix(in srgb, var(--fam-aud) 45%, transparent); background: color-mix(in srgb, var(--fam-aud) 14%, transparent); }
 .plantilla-tec.fam-sens { color: var(--fam-sens); border-color: color-mix(in srgb, var(--fam-sens) 45%, transparent); background: color-mix(in srgb, var(--fam-sens) 14%, transparent); }
 .plantilla-tec.fam-mot { color: var(--fam-mot); border-color: color-mix(in srgb, var(--fam-mot) 45%, transparent); background: color-mix(in srgb, var(--fam-mot) 14%, transparent); }
 .plantilla-tec.fam-emg { color: var(--fam-emg); border-color: color-mix(in srgb, var(--fam-emg) 45%, transparent); background: color-mix(in srgb, var(--fam-emg) 14%, transparent); }
@@ -4540,6 +4563,7 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 .plantilla-tec.fam-map { color: var(--fam-map); border-color: color-mix(in srgb, var(--fam-map) 45%, transparent); background: color-mix(in srgb, var(--fam-map) 14%, transparent); }
 .plantillas-leyenda { margin: 0 0 0.45rem; }
 .plantillas-leyenda .casos-leyenda-it { display: inline-flex; align-items: center; gap: 0.3rem; }
+.casos-leyenda-it.fam-aud::before { background: var(--fam-aud); }
 .casos-leyenda-it.fam-sens::before { background: var(--fam-sens); }
 .casos-leyenda-it.fam-mot::before { background: var(--fam-mot); }
 .casos-leyenda-it.fam-emg::before { background: var(--fam-emg); }
@@ -4549,6 +4573,7 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 /* Registro con los colores de familia (04-10-2026, pedido del usuario):
    botones de Técnica, nombre de cada fila de Basales y técnicas de cada
    tarjeta del Cronograma. La franja de la tarjeta sigue siendo por gravedad. */
+.fam-aud { --fam: var(--fam-aud); }
 .fam-sens { --fam: var(--fam-sens); }
 .fam-mot { --fam: var(--fam-mot); }
 .fam-emg { --fam: var(--fam-emg); }
@@ -4559,6 +4584,9 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 .rr-chip.rr-fam.activo { color: var(--fam); border-color: var(--fam); background: color-mix(in srgb, var(--fam) 20%, transparent); box-shadow: inset 0 0 0 1px var(--fam); }
 .rr-que-cuadro-rot.rr-fam, .reg-bl-rot.rr-fam, .rr-tec.rr-fam { color: var(--fam); }
 .rr-tec.rr-fam { font-weight: 600; }
+/* Cada fila de Basales, con franja y flecha del color de su técnica */
+.reg-bl-fila.rr-fam { border-left: 3px solid var(--fam); }
+.reg-bl-fila.rr-fam > .reg-bl-cab::before { color: var(--fam); }
 /* Migas «Plantillas › nombre» en la cabecera de la edición */
 .org-migas { display: flex; align-items: baseline; gap: 0.4rem; min-width: 0; flex-wrap: wrap; }
 .org-migas[hidden] { display: none; }

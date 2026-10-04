@@ -222,6 +222,7 @@
     btn_borrar:          { es: "Borrar", en: "Delete" },
     plantilla_vacia:     { es: "Vacía", en: "Empty" },
     plantilla_leyenda_sens: { es: "Sensitivas", en: "Sensory" },
+    plantilla_leyenda_aud: { es: "PEATC", en: "BAEP" },
     plantilla_leyenda_mot: { es: "Motoras", en: "Motor" },
     plantilla_leyenda_emg: { es: "EMG", en: "EMG" },
     plantilla_leyenda_ref: { es: "Reflejos", en: "Reflexes" },
@@ -1271,7 +1272,7 @@
                            en: "Only {recuperadas} of {esperadas} inputs could be restored for this case.\n\nIt is an old case, from before the full montage was stored, and some of its inputs no longer exist in the current boxes.\n\nIf you continue and change anything, the case will keep only the {recuperadas} shown. Continue?" },
     montajes_cuenta:     { es: "{n} de {total}", en: "{n} of {total}" },
     montaje_tuyo:        { es: "tuyo", en: "yours" },
-    montaje_modificado:  { es: "modificado {fecha}", en: "modified {fecha}" },
+    montaje_modificado:  { es: "modificada {fecha}", en: "modified {fecha}" },
     montaje_creado:      { es: "creado {fecha}", en: "created {fecha}" },
 
     /* --- Checklist pre-quirúrgico (19/20-09-2026) --- */
@@ -1369,6 +1370,8 @@
     rr_nota:             { es: "Otro o nota (opcional)", en: "Other or note (optional)" },
     rr_magnitud:         { es: "Cuánto respecto a la basal", en: "How much vs baseline" },
     rr_ir_crono:         { es: "Ir al cronograma", en: "Go to the timeline" },
+    rr_crono_mostrar:    { es: "Mostrar", en: "Show" },
+    rr_crono_ocultar:    { es: "Ocultar", en: "Hide" },
     rr_borrador_alarma:  { es: "Alarma", en: "Alarm" },
     registro_comparativa: { es: "Respecto a la basal", en: "Compared with baseline" },
     registro_hoy:        { es: "hoy", en: "today" },
@@ -11813,15 +11816,17 @@
     return !!yo && yo.id === m.autor_id;
   }
 
-  // Cuándo se tocó por última vez una plantilla o, si nunca se editó, cuándo
-  // se creó. Vacío si no trae ninguna de las dos (las muy antiguas).
+  // Última modificación de una plantilla; si nunca se editó, cuenta la de
+  // creación (04-10-2026, pedido del usuario: siempre «modificada …», la
+  // misma fecha que usa «Ordenar por» última modificación). Vacío si no trae
+  // ninguna (las muy antiguas).
   function fechaMontaje(m) {
     var ed = m && m.editado_en && m.editado_en.length ? m.editado_en[m.editado_en.length - 1] : null;
     var iso = ed || (m && m.creado_en);
     if (!iso) return "";
     var d = new Date(iso);
     if (isNaN(d.getTime())) return "";
-    return T(ed ? "montaje_modificado" : "montaje_creado", { fecha: d.toLocaleDateString(localeActual()) });
+    return T("montaje_modificado", { fecha: d.toLocaleDateString(localeActual()) });
   }
 
   function autorDe(m) {
@@ -12177,11 +12182,12 @@
      uno por modo de color). */
   // Colores elegidos por el usuario (04-10-2026): sensitivas ámbar, motoras
   // rojo, EMG verde, reflejos rojo-violeta (intercambiados el mismo día), EEG/ECoG azulado, mapeo rosa.
-  var FAMILIAS_TEC = ["sens", "mot", "emg", "ref", "eeg", "map"];
+  // PEATC aparte, en amarillo (04-10-2026, pedido del usuario: «en toda la app»).
+  var FAMILIAS_TEC = ["sens", "aud", "mot", "emg", "ref", "eeg", "map"];
   // Reflejos aparte de la EMG: los «rx_» de tronco, los H-R y estos
   var REFLEJOS_TEC = ["br", "rbc", "reflejo_h"];
   var FAMILIA_TEC = {
-    t_pess: "sens", c_pess: "sens", peatc: "sens", pev: "sens", c_pev: "sens", erg: "sens", retino: "sens",
+    t_pess: "sens", c_pess: "sens", peatc: "aud", pev: "sens", c_pev: "sens", erg: "sens", retino: "sens",
     t_pem: "mot", c_pem: "mot", pem_corticobulbares: "mot", onda_d: "mot",
     eeg: "eeg", ecog: "eeg"
   };
@@ -17392,7 +17398,9 @@
       function pintarResumen() {
         rot.textContent = rotuloDe(fd);
         rot.className = "reg-bl-rot";
-        if (!fd.vacia) regPonerFamilia(rot, rotuloDe(fd));
+        caja.classList.remove("rr-fam");
+        FAMILIAS_TEC.forEach(function (f) { caja.classList.remove("fam-" + f); });
+        if (!fd.vacia) { regPonerFamilia(rot, rotuloDe(fd)); regPonerFamilia(caja, rotuloDe(fd)); }
         var partes = [];
         REG_BASALES_COLS.forEach(function (col) {
           if (!regColBasal(col, fd.sin)) return;
@@ -18461,6 +18469,8 @@
       try { localStorage.setItem(CRONO_KEY, crono.open ? "0" : "1"); } catch (e) { /* sin persistencia */ }
     });
     var cabL = regNodo("summary", "rr-crono-cab");
+    cabL.setAttribute("data-mostrar", T("rr_crono_mostrar"));
+    cabL.setAttribute("data-ocultar", T("rr_crono_ocultar"));
     cabL.appendChild(regNodo("span", "rr-crono-tit", T("rr_apuntado_lista")));
     cabL.appendChild(regNodo("span", "rr-crono-n", items.length === 1 ? T("rr_n_evento") : T("rr_n_eventos", { n: items.length })));
     crono.appendChild(cabL);
