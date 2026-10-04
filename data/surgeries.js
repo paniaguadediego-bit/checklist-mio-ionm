@@ -419,7 +419,7 @@ window.SURGERIES_DATA = {
   "cajas_material": {
     "caja_estimulo": {
       "nombre": "Caja de estímulo (STIM)",
-      "descripcion": "Estimulación periférica: principalmente mediano y tibial posterior, aunque varía según la cirugía por comodidad (p. ej. a la altura de las piernas, tibial posterior y hueco poplíteo para el reflejo H).",
+      "descripcion": "Estimulación periférica: p. ej. mediano y tibial posterior; según la cirugía, también el hueco poplíteo para el reflejo H.",
       "canales": 4,
       "conector": "par",
       "especiales": [
@@ -429,14 +429,14 @@ window.SURGERIES_DATA = {
     },
     "tes_mep": {
       "nombre": "TES MEP",
-      "descripcion": "Numerada del 5 al 12 (no tiene entradas 1-4). Dos columnas independientes. Anodal (roja): el canal 6 es el conmutador que se subdivide en C1/C2/C3/C4/Cz-1/Cz+6; el resto sirven de referencia (Ref.Raabe, Cz''...). Catodal (negra): estimulación catódica, ahí van el GRID (habitualmente el 8) tras el phase reversal y el estimulador Raabe (habitualmente el 12).",
+      "descripcion": "Numerada del 5 al 12 (no tiene entradas 1-4). Dos columnas independientes. Anodal (roja): el conmutador, que se subdivide en C1/C2/C3/C4/Cz-1/Cz+6 (p. ej. en el 6), y las referencias (Ref.Raabe, Cz''...). Catodal (negra): estimulación catódica, p. ej. el GRID en el 8 tras el phase reversal y el estimulador Raabe en el 12.",
       "canales": 8,
       "numeracion_inicio": 5,
       "conector": "anodal_catodal"
     },
     "registro_cortical": {
       "nombre": "REF-AEP — Registro cortical, Erb, CvAnterior",
-      "descripcion": "16 entradas individuales en dos columnas de 8, más Ref (habitualmente Fz) y GND. Los auditivos se registran con A1 y A2 en dos de las entradas numeradas; el conector amarillo de la caja es solo la conexión de los PEATC, no una entrada asignable.",
+      "descripcion": "16 entradas individuales en dos columnas de 8, más Ref (p. ej. Fz) y GND. Los auditivos se registran con A1 y A2 en dos de las entradas numeradas; el conector amarillo de la caja es solo la conexión de los PEATC, no una entrada asignable.",
       "canales": 16,
       "conector": "individual_2col",
       "especiales": [
@@ -446,7 +446,7 @@ window.SURGERIES_DATA = {
     },
     "registro_muscular_mmss": {
       "nombre": "Registro muscular — etiqueta 1",
-      "descripcion": "Generalmente miembros superiores, aunque puede variar. Numerada 1-8.",
+      "descripcion": "P. ej. miembros superiores. Numerada 1-8.",
       "canales": 8,
       "numeracion_inicio": 1,
       "conector": "par",
@@ -456,7 +456,7 @@ window.SURGERIES_DATA = {
     },
     "registro_muscular_mmii": {
       "nombre": "Registro muscular — etiqueta 2",
-      "descripcion": "Generalmente miembros inferiores, aunque puede variar. Continúa la numeración de la etiqueta 1 (9-16).",
+      "descripcion": "P. ej. miembros inferiores. Continúa la numeración de la etiqueta 1 (9-16).",
       "canales": 8,
       "numeracion_inicio": 9,
       "conector": "par",
@@ -470,7 +470,7 @@ window.SURGERIES_DATA = {
     // diagramas de cableado a la vista de golpe es demasiado.
     "caja_etiqueta_3": {
       "nombre": "Caja etiqueta 3",
-      "descripcion": "No se suele usar, disponible para cirugías más amplias.",
+      "descripcion": "Disponible para cirugías con más canales.",
       "canales": 8,
       "numeracion_inicio": 1,
       "conector": "par",
@@ -481,7 +481,7 @@ window.SURGERIES_DATA = {
     },
     "caja_etiqueta_4": {
       "nombre": "Caja etiqueta 4",
-      "descripcion": "No se suele usar, disponible para cirugías más amplias.",
+      "descripcion": "Disponible para cirugías con más canales.",
       "canales": 8,
       "numeracion_inicio": 9,
       "conector": "par",
@@ -492,7 +492,7 @@ window.SURGERIES_DATA = {
     },
     "caja_etiqueta_5": {
       "nombre": "Caja etiqueta 5",
-      "descripcion": "No se suele usar, disponible para cirugías más amplias.",
+      "descripcion": "Disponible para cirugías con más canales.",
       "canales": 8,
       "numeracion_inicio": 1,
       "conector": "par",
@@ -503,7 +503,7 @@ window.SURGERIES_DATA = {
     },
     "caja_etiqueta_6": {
       "nombre": "Caja etiqueta 6",
-      "descripcion": "No se suele usar, disponible para cirugías más amplias.",
+      "descripcion": "Disponible para cirugías con más canales.",
       "canales": 8,
       "numeracion_inicio": 9,
       "conector": "par",
@@ -628,7 +628,7 @@ window.SURGERIES_DATA = {
           "nombre": "Conmutador",
           "equipos": ["inomed"],
           "etiqueta": "conmutador_sw",
-          "nota": "Ocupa una sola entrada anodal (habitualmente la 6)"
+          "nota": "Ocupa una sola entrada anodal (p. ej. la 6)"
         }
       ]
     },
