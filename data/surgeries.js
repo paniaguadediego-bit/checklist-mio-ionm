@@ -46,35 +46,36 @@ window.SURGERIES_DATA = {
   //   - "activo": false -> configurado pero sin ofrecer (sí se ve en ?demo).
   //   - Un equipo nuevo = una entrada aquí + su bloque "cajas_<id>" con
   //     claves de caja que no se repitan con las de otros equipos.
-  // "generico" es un ejemplo de plantilla para otros servicios: desactivado,
-  // solo aparece en la demo.
+  // "generico": cajas sencillas para cualquier otra marca (Natus, Nihon
+  // Kohden...). Activo desde el 04-10-2026 (pedido del usuario: que un médico
+  // con otro equipo pueda usar la herramienta); antes solo salía en la demo.
   "equipos": {
     "inomed": { "nombre": "Inomed", "corto": "I", "por_defecto": true },
     "cadwell": { "nombre": "Cadwell", "corto": "C" },
-    "generico": { "nombre": "Genérico (ejemplo)", "nombre_en": "Generic (example)", "corto": "G", "activo": false }
+    "generico": { "nombre": "Genérico", "nombre_en": "Generic", "corto": "G" }
   },
   // Cajas del equipo de ejemplo "generico": claves con prefijo "generico_".
   // Punto de partida para describir el equipo de otro servicio.
   "cajas_generico": {
     "generico_estimulo": {
       "nombre": "Estimulador periférico", "nombre_en": "Peripheral stimulator",
-      "descripcion": "Ejemplo: 4 salidas de estímulo en par (mediano, cubital, tibial posterior...).",
-      "descripcion_en": "Example: 4 paired stimulation outputs (median, ulnar, posterior tibial...).",
+      "descripcion": "4 salidas de estímulo en par (mediano, cubital, tibial posterior...).",
+      "descripcion_en": "4 paired stimulation outputs (median, ulnar, posterior tibial...).",
       "canales": 4,
       "conector": "par"
     },
     "generico_tes": {
       "nombre": "Estimulador transcraneal", "nombre_en": "Transcranial stimulator",
-      "descripcion": "Ejemplo: 4 canales con salida anodal (roja) y catodal (negra).",
-      "descripcion_en": "Example: 4 channels with anodal (red) and cathodal (black) outputs.",
+      "descripcion": "4 canales con salida anodal (roja) y catodal (negra).",
+      "descripcion_en": "4 channels with anodal (red) and cathodal (black) outputs.",
       "canales": 4,
       "numeracion_inicio": 1,
       "conector": "anodal_catodal"
     },
     "generico_registro_1": {
       "nombre": "Amplificador de registro 1", "nombre_en": "Recording amplifier 1",
-      "descripcion": "Ejemplo: 8 entradas referenciales, referencia común y tierra (registro cortical y cervical).",
-      "descripcion_en": "Example: 8 referential inputs, common reference and ground (cortical and cervical recording).",
+      "descripcion": "8 entradas referenciales, referencia común y tierra (registro cortical y cervical).",
+      "descripcion_en": "8 referential inputs, common reference and ground (cortical and cervical recording).",
       "canales": 8,
       "conector": "individual_2col",
       "especiales": [
@@ -84,8 +85,8 @@ window.SURGERIES_DATA = {
     },
     "generico_registro_2": {
       "nombre": "Amplificador de registro 2", "nombre_en": "Recording amplifier 2",
-      "descripcion": "Ejemplo: 8 canales diferenciales (activo y referencia juntos) y tierra, para músculos.",
-      "descripcion_en": "Example: 8 differential channels (active and reference together) and ground, for muscles.",
+      "descripcion": "8 canales diferenciales (activo y referencia juntos) y tierra, para músculos.",
+      "descripcion_en": "8 differential channels (active and reference together) and ground, for muscles.",
       "canales": 8,
       "numeracion_inicio": 1,
       "conector": "par",

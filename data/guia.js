@@ -44,7 +44,7 @@ window.GUIA = {
         "El Resumen te da material, coste y avisos."
       ] },
       { titulo: "Gestión de Casos", texto: "Una ficha por cirugía.", puntos: [
-        "Crear caso: eliges el equipo (Inomed o Cadwell).",
+        "Crear caso: eliges el equipo (Inomed, Cadwell o Genérico, para cualquier otra marca).",
         "La ficha se guarda sola; «Cerrar caso» al terminar.",
         "⋮ → Abrir en el Registro, para apuntar en ese caso.",
         "Resumen: «Borrador desde el Registro» lo escribe a partir del cronograma.",
@@ -95,8 +95,8 @@ window.GUIA = {
       respuesta: "Toca la ☆ de una plantilla para marcarla; «Solo favoritas» deja solo esas. Se guardan en cada dispositivo." },
     { pregunta: "¿Puedo usar la plantilla de un compañero?",
       respuesta: "Sí: Más acciones → Duplicar. La copia es tuya y el original no se toca." },
-    { pregunta: "¿Inomed o Cadwell?",
-      respuesta: "Cada plantilla y cada caso son de un equipo; solo cambian las cajas. Solo se cargan plantillas del mismo equipo." },
+    { pregunta: "¿Inomed, Cadwell o Genérico?",
+      respuesta: "Cada plantilla y cada caso son de un equipo; solo cambian las cajas. Solo se cargan plantillas del mismo equipo. Genérico sirve para cualquier otra marca: estimulador periférico, transcraneal y dos amplificadores de registro." },
     { pregunta: "¿Cómo cambio los colores o quito las ayudas?",
       respuesta: "El botón redondo junto al ⋮ pasa por oscuro, azul y claro. «Ocultar ayudas» está en el ⋮." },
     { pregunta: "¿Algún truco para el móvil?",
