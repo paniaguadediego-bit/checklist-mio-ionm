@@ -505,6 +505,7 @@
                            en: "Pick the equipment and the new case form opens. The montage goes in Montage / Material → Edit montage (by hand or loading a template); the rest, whenever you like." },
     casos_filtro_estado: { es: "Estado", en: "Status" },
     casos_filtro_servicio: { es: "Especialidad", en: "Specialty" },
+    casos_filtro_diagnostico: { es: "Diagnóstico", en: "Diagnosis" },
     casos_filtros_btn:   { es: "Filtros", en: "Filters" },
     casos_filtros_quitar: { es: "Quitar filtros", en: "Clear filters" },
     casos_filtro_quitar_uno: { es: "Quitar este filtro", en: "Remove this filter" },
@@ -9011,12 +9012,14 @@
     var soloSeguimiento = document.getElementById("casos-seguimiento").checked;
     var fEquipo = hayVariosEquipos() ? document.getElementById("casos-equipo").value : "";
     var fServicio = document.getElementById("casos-servicio").value;
+    var fDiagnostico = document.getElementById("casos-diagnostico").value;
     var fCentro = hayCentros() ? document.getElementById("casos-centro").value : "";
     return Object.keys(casos).filter(function (uid) {
       var c = casos[uid];
       if (fCentro && (c.centro_id || "") !== fCentro) return false;
       if (fEquipo && equipoDe(c) !== fEquipo) return false;
       if (fServicio && c.servicio_id !== fServicio) return false;
+      if (fDiagnostico && (c.diagnostico || "") !== fDiagnostico) return false;
       if (fEstado && c.estado !== fEstado) return false;
       if (fConcordancia && c.concordancia !== fConcordancia) return false;
       if (fDesde && (c.fecha || "") < fDesde) return false;
@@ -9063,8 +9066,33 @@
     if (sel.value !== valor) sel.value = "";
   }
 
+  // Diagnóstico (04-10-2026): la lista cerrada OPCIONES.diagnostico, en su
+  // orden, más algún valor guardado que ya no esté en ella.
+  function pintarFiltroDiagnostico() {
+    var sel = document.getElementById("casos-diagnostico");
+    var valor = sel.value;
+    sel.textContent = "";
+    var todos = document.createElement("option");
+    todos.value = "";
+    todos.textContent = T("casos_filtro_todos");
+    sel.appendChild(todos);
+    var ids = OPCIONES.diagnostico.slice();
+    Object.keys(casos).forEach(function (uid) {
+      var d = casos[uid].diagnostico;
+      if (d && ids.indexOf(d) < 0) ids.push(d);
+    });
+    ids.forEach(function (id) {
+      var o = document.createElement("option");
+      o.value = id;
+      o.textContent = opcionTexto("diagnostico", id);
+      sel.appendChild(o);
+    });
+    sel.value = valor;
+    if (sel.value !== valor) sel.value = "";
+  }
+
   // «Filtros (n)» y, debajo, un chip con ✕ por cada filtro puesto (30-09-2026).
-  var CASOS_FILTROS_SELECT = ["casos-estado", "casos-servicio", "casos-concordancia", "casos-equipo", "casos-centro"];
+  var CASOS_FILTROS_SELECT = ["casos-estado", "casos-servicio", "casos-diagnostico", "casos-concordancia", "casos-equipo", "casos-centro"];
   function pintarFiltrosActivos() {
     var cont = document.getElementById("casos-filtros-activos");
     cont.textContent = "";
@@ -9073,7 +9101,8 @@
       var sel = document.getElementById(id);
       if (id === "casos-equipo" && !hayVariosEquipos()) return;
       if (id === "casos-centro" && !hayCentros()) return;
-      if (sel.value) activos.push({ texto: sel.options[sel.selectedIndex].textContent, quitar: function () { sel.value = ""; } });
+      // En el chip, el diagnóstico solo con su sigla (lo de antes de « — »)
+      if (sel.value) activos.push({ texto: id === "casos-diagnostico" ? sel.options[sel.selectedIndex].textContent.split(" — ")[0] : sel.options[sel.selectedIndex].textContent, quitar: function () { sel.value = ""; } });
     });
     [["casos-desde", "casos_filtro_desde_chip"], ["casos-hasta", "casos_filtro_hasta_chip"]].forEach(function (x) {
       var inp = document.getElementById(x[0]);
@@ -9184,6 +9213,7 @@
     pintarFiltroEquipo();
     pintarFiltroCentro();
     pintarFiltroServicio();
+    pintarFiltroDiagnostico();
     pintarBotonesQuitarFecha();
     pintarFiltrosActivos();
     var cont = document.getElementById("casos-lista");
@@ -9317,7 +9347,7 @@
   }
 
   document.getElementById("tile-casos").addEventListener("click", abrirListaCasos);
-  ["casos-estado", "casos-servicio", "casos-concordancia", "casos-equipo", "casos-centro", "casos-desde", "casos-hasta", "casos-orden", "casos-destacado", "casos-seguimiento"].forEach(function (id) {
+  ["casos-estado", "casos-servicio", "casos-diagnostico", "casos-concordancia", "casos-equipo", "casos-centro", "casos-desde", "casos-hasta", "casos-orden", "casos-destacado", "casos-seguimiento"].forEach(function (id) {
     document.getElementById(id).addEventListener("change", renderListaCasos);
   });
 
