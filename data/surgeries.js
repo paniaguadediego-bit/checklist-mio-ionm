@@ -400,7 +400,7 @@ window.SURGERIES_DATA = {
     },
     "cadwell_amp32": {
       "nombre": "Amplificador de 32 canales",
-      "descripcion": "Amplificador IOMAX de 32 canales para EEG y PESS corticales directos: entradas 1 a 16 a la izquierda y 17 a 32 a la derecha. El conector de abajo a la izquierda es su salida hacia el módulo principal: se enchufa a la salida 5 del módulo cortical (su luz se enciende en verde cuando esta caja tiene algo colocado). El icono de abajo a la derecha está sin definir.",
+      "descripcion": "Amplificador IOMAX de 32 canales para EEG y PESS corticales directos: entradas 1 a 16 a la izquierda y 17 a 32 a la derecha. El conector de abajo a la izquierda es su salida hacia el módulo principal: se enchufa a la salida 5 del módulo cortical (su luz se enciende en verde cuando esta caja tiene algo colocado).",
       "canales": 32,
       "conector": "individual_2col",
       "rotulo": "{n}",
@@ -422,8 +422,8 @@ window.SURGERIES_DATA = {
       "canales": 4,
       "conector": "par",
       "especiales": [
-        { "clave": "dns", "nombre": "DNS", "conector": "individual", "nota": "Función sin confirmar" },
-        { "clave": "extra_par", "nombre": "Extra", "conector": "par", "nota": "Sin nombre ni numeración en la caja real" }
+        { "clave": "dns", "nombre": "DNS", "conector": "individual" },
+        { "clave": "extra_par", "nombre": "Extra", "conector": "par", "nota": "Par adicional, sin rótulo en la caja" }
       ]
     },
     "tes_mep": {
@@ -866,8 +866,8 @@ window.SURGERIES_DATA = {
         { "par": "X", "id": "r_palad", "nombre": "R.Palad", "etiqueta": "hook_wire", "nota": "Velo del paladar derecho — X par (plexo faríngeo)" },
         { "par": "X", "id": "l_palad_ag", "nombre": "L.Palad", "etiqueta": "aguja_trenzada", "nota": "Velo del paladar izquierdo — X par (plexo faríngeo), con agujas pareadas en vez de hook wire" },
         { "par": "X", "id": "r_palad_ag", "nombre": "R.Palad", "etiqueta": "aguja_trenzada", "nota": "Velo del paladar derecho — X par (plexo faríngeo), con agujas pareadas en vez de hook wire" },
-        { "par": "X", "id": "l_crico", "nombre": "L.Crico", "etiqueta": "hook_wire", "nota": "Cricotiroideo izquierdo — X par; va junto a las cuerdas vocales en el mismo montaje; registro del reflejo trigémino-cervical. Sin confirmar: el crico evaluaría la parte motora y las cuerdas la sensitiva" },
-        { "par": "X", "id": "r_crico", "nombre": "R.Crico", "etiqueta": "hook_wire", "nota": "Cricotiroideo derecho — X par; va junto a las cuerdas vocales en el mismo montaje; registro del reflejo trigémino-cervical. Sin confirmar: el crico evaluaría la parte motora y las cuerdas la sensitiva" },
+        { "par": "X", "id": "l_crico", "nombre": "L.Crico", "etiqueta": "hook_wire", "nota": "Cricotiroideo izquierdo — X par; va junto a las cuerdas vocales en el mismo montaje; registro del reflejo trigémino-cervical" },
+        { "par": "X", "id": "r_crico", "nombre": "R.Crico", "etiqueta": "hook_wire", "nota": "Cricotiroideo derecho — X par; va junto a las cuerdas vocales en el mismo montaje; registro del reflejo trigémino-cervical" },
         { "par": "X", "id": "l_crico_ag", "nombre": "L.Crico", "etiqueta": "aguja_trenzada", "nota": "Cricotiroideo izquierdo — X par, con agujas pareadas en vez de hook wire; registro del reflejo trigémino-cervical" },
         { "par": "X", "id": "r_crico_ag", "nombre": "R.Crico", "etiqueta": "aguja_trenzada", "nota": "Cricotiroideo derecho — X par, con agujas pareadas en vez de hook wire; registro del reflejo trigémino-cervical" },
         { "par": "XI", "id": "l_stcm", "nombre": "L.STCM", "etiqueta": "hook_wire", "nota": "Esternocleidomastoideo izquierdo — XI par; registro del reflejo trigémino-cervical" },
@@ -1102,14 +1102,14 @@ window.SURGERIES_DATA = {
     { "id": "emg", "etiqueta": "Free-EMG", "grupo": "monitorizacion", "activa": true, "descripcion": "Electromiografía" },
     { "id": "eeg", "etiqueta": "EEG", "grupo": "monitorizacion", "activa": true, "descripcion": "Electroencefalografía" },
     { "id": "ecog", "etiqueta": "ECoG", "grupo": "monitorizacion", "activa": true, "descripcion": "Electrocorticografía" },
-    { "id": "pev", "etiqueta": "PEV", "grupo": "monitorizacion", "activa": true, "descripcion": "Potenciales evocados visuales — en estudio" },
+    { "id": "pev", "etiqueta": "PEV", "grupo": "monitorizacion", "activa": true, "descripcion": "Potenciales evocados visuales" },
     { "id": "c_pev", "etiqueta": "c-PEV", "grupo": "monitorizacion", "activa": true, "descripcion": "Potencial evocado visual cortical" },
     { "id": "erg", "etiqueta": "ERG", "grupo": "monitorizacion", "activa": true, "descripcion": "Electrorretinograma" },
     // "Reflejo H" se divide en dos: no es la misma técnica según el músculo
     // de registro. Se desactiva en vez de borrarse -"desactivar no borra"-,
     // así que un caso o montaje antiguo que todavía diga "reflejo_h" lo
     // sigue mostrando (tachado) en vez de perder la marca.
-    { "id": "reflejo_h", "etiqueta": "Reflejo H", "grupo": "monitorizacion", "activa": false, "reflejo": true, "descripcion": "Dividido en H-R Gastrocnemio y H-R Masetero" },
+    { "id": "reflejo_h", "etiqueta": "Reflejo H", "grupo": "monitorizacion", "activa": false, "reflejo": true, "descripcion": "Desactivada: se usa H-R Gastrocnemio o H-R Masetero." },
     { "id": "hr_popliteo", "etiqueta": "H-R Sóleo", "grupo": "monitorizacion", "activa": true, "reflejo": true, "descripcion": "Reflejo H por estímulo en hueco poplíteo" },
     { "id": "hr_masetero", "etiqueta": "H-R Masetero (Jaw Jerk)", "corta": "H-R Masetero", "grupo": "monitorizacion", "activa": true, "reflejo": true, "descripcion": "Reflejo H por estímulo del nervio masetero — mismo circuito que el jaw jerk / reflejo maseterino clásico. No confundir con el reflejo inhibitorio del masetero (silent period), que es otro circuito y no se estudia en IONM." },
     { "id": "hr_cuadriceps", "etiqueta": "H-R Cuádriceps", "grupo": "monitorizacion", "activa": true, "reflejo": true },
@@ -1134,7 +1134,7 @@ window.SURGERIES_DATA = {
     // misma técnica (el H-reflex es el nombre correcto). Se desactiva en
     // vez de borrarse -"desactivar no borra"-; no había ningún caso ni
     // montaje real usando este id (comprobado en el repo de datos).
-    { "id": "rx_mandibular", "etiqueta": "Reflejo mandibular (jaw jerk)", "grupo": "monitorizacion", "activa": false, "reflejo": true, "descripcion": "Unificado con HR Masetero — jaw jerk y H-reflex del masetero son la misma técnica." },
+    { "id": "rx_mandibular", "etiqueta": "Reflejo mandibular (jaw jerk)", "grupo": "monitorizacion", "activa": false, "reflejo": true, "descripcion": "Desactivada: se registra como H-R Masetero, que comparte el arco reflejo del jaw jerk (estímulo eléctrico del nervio o mecánico con martillo)." },
     // No es una técnica que se estudie en IONM: el reflejo inhibitorio del
     // masetero (silent period) es un circuito distinto del H-reflex, no un
     // sinónimo. Se desactiva por la misma razón que rx_mandibular.
@@ -1414,7 +1414,7 @@ window.SURGERIES_DATA = {
       "activa": true,
       "nombre": "Cirugía supratentorial",
       "tecnicas": ["t_pem", "c_pem", "t_pess", "c_pess", "mapeo_cortical", "mapeo_subcortical", "mapeo_lenguaje", "eeg", "ecog", "br"],
-      "nota": "Mapeo motor (cortical y subcortical) o del lenguaje. Los PEV están en estudio."
+      "nota": "Mapeo motor (cortical y subcortical) o del lenguaje."
     },
     {
       "id": "troncoencefalo",

@@ -38,7 +38,7 @@ window.GUIA = {
   pantallas: [
     { grupo: "Antes de quirófano", tarjetas: [
       { titulo: "Organizador de Montajes", texto: "Qué electrodo va en cada canal.", puntos: [
-        "Crear plantilla, o toca una de la lista para abrirla; «← Plantillas» vuelve a la lista.",
+        "Crear plantilla, o toca una de la lista para abrirla; «← Todas las plantillas» vuelve a la lista.",
         "Toca un material y luego la entrada de la caja.",
         "Se guarda solo con cada cambio.",
         "El Resumen te da material, coste y avisos."
@@ -75,7 +75,7 @@ window.GUIA = {
   claves: [
     { icono: "🔒", texto: "Nunca datos del paciente: ni nombre, ni NHC, ni fecha de nacimiento. En las fotos, sin la cabecera del informe." },
     { icono: "⇄", texto: "Mismo dato en dos sitios: lo que escribes en el Registro sale en la ficha del caso, y al revés." },
-    { icono: "☁", texto: "Funciona sin cobertura y se sincroniza sola. Si sale «Conflicto», decides tú: Subir o Bajar." },
+    { icono: "☁", texto: "Funciona sin cobertura y se sincroniza sola. Si este dispositivo y la nube tienen cambios distintos, eliges con cuál quedarte." },
     { icono: "⧉", texto: "Plantilla ≠ caso: cargar una plantilla copia su contenido; cambiarla después no toca los casos." }
   ],
 
@@ -84,7 +84,7 @@ window.GUIA = {
     { pregunta: "¿Qué significan los colores del cronograma?",
       respuesta: "Rojo, alarma. Naranja, un cambio sin alarma o un factor técnico. Verde, fase o recuperación. Azul, lo demás (anestesia, mapeo, contexto)." },
     { pregunta: "¿Qué significan las siglas?",
-      respuesta: "Modelo 0: el Registro o el Checklist sin caso vinculado. PostPos1 y PostPos2: basales tras el primer y el segundo cambio de posición. HFD: descargas de alta frecuencia. CoMEP: MEP corticobulbares. TOF: tren de cuatro. ⇄: el mismo dato en el Registro y en la ficha. En la lista de casos, «3/5» es la dificultad, ★ un caso destacado y 👁 hacer seguimiento." },
+      respuesta: "Sin caso: el Registro o el Checklist como hoja suelta, sin caso vinculado. PostPos1 y PostPos2: basales tras el primer y el segundo cambio de posición. HFD: descargas de alta frecuencia. CoMEP: MEP corticobulbares. TOF: tren de cuatro. ⇄: el mismo dato en el Registro y en la ficha. En la lista de casos, «3/5» es la dificultad, ★ un caso destacado y 👁 hacer seguimiento." },
     { pregunta: "¿Cómo apunto una alarma bilateral, hemicorporal o cruzada?",
       respuesta: "Marca todas las técnicas y lados a la vez (por ejemplo t-MEP MSD + MID + CoMEP VII D) y pulsa Apuntar alarma: es una sola alarma, con una causa, unas medidas y una recuperación. Si lo sabes, pon cuánto cayó o subió en %." },
     { pregunta: "¿Qué es PR en la concordancia?",
@@ -92,7 +92,7 @@ window.GUIA = {
     { pregunta: "¿Por qué hay material «sin precio»?",
       respuesta: "Se lista aparte para que el total no parezca completo sin serlo. Los precios se ponen en Etiquetas; solo cuenta lo fungible." },
     { pregunta: "¿Cómo tengo mis plantillas más a mano?",
-      respuesta: "Toca la ☆ de una plantilla: las favoritas salen primero, y «Solo favoritas» deja solo esas. Se guardan en cada dispositivo." },
+      respuesta: "Toca la ☆ de una plantilla para marcarla; «Solo favoritas» deja solo esas. Se guardan en cada dispositivo." },
     { pregunta: "¿Puedo usar la plantilla de un compañero?",
       respuesta: "Sí: Más acciones → Duplicar. La copia es tuya y el original no se toca." },
     { pregunta: "¿Inomed o Cadwell?",
