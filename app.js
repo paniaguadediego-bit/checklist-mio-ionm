@@ -611,6 +611,8 @@
     reg_grid_b_poner:    { es: "+ GRID B", en: "+ GRID B" },
     reg_grid_b_quitar:   { es: "Quitar GRID B", en: "Remove GRID B" },
     caso_informe_proximamente: { es: "Crear informe: todavía no hace nada, en camino.", en: "Create report: not wired up yet, coming soon." },
+    caso_borrar_cerrado: { es: "🔒 Este caso está cerrado y no se puede borrar, para que no se pierda por error. Si de verdad quieres borrarlo, primero «Reabrir caso».",
+                           en: "🔒 This case is closed and cannot be deleted, so it is not lost by mistake. If you really want to delete it, first «Reopen case»." },
     caso_borrar_conf:    { es: "¿Borrar el caso “{caso}”?\nVa a la papelera de este dispositivo (Gestión de Casos → Papelera) y puedes recuperarlo durante 30 días.",
                            en: "Delete the case “{caso}”?\nIt goes to this device’s bin (Case management → Bin) and you can restore it for 30 days." },
     papelera_btn:        { es: "Papelera ({n})", en: "Bin ({n})" },
@@ -8358,7 +8360,7 @@
         parB.className = "reg-basales";
         pintarBloqueBasales(T("registro_sens_otros"), regFilasBasales(REG_BASALES_SENS, "s_", dB, tecB), "s_", REG_BASALES_LIBRES.sens, parB, dB, sinGuardar);
         pintarBloqueBasales(T("registro_motores"), regFilasBasales(REG_BASALES_MOT, "m_", dB, tecB), "m_", REG_BASALES_LIBRES.mot, parB, dB, sinGuardar);
-        var bGridB = nodoBotonGridB(dB, tecB, pintarB);
+        var bGridB = nodoBotonGridB(dB, tecB, function () { oyentesTecnicasRealizadas.forEach(function (f) { f(); }); });
         if (bGridB) parB.appendChild(bGridB);
         contB.appendChild(parB);
         if (regCasoConGrid(tecB, dB)) {
@@ -9491,6 +9493,8 @@
   document.getElementById("caso-borrar").addEventListener("click", function () {
     cerrarMenuCaso();
     var c = casoAbierto;
+    // Cerrado = no se borra hasta reabrirlo (06-10-2026, pedido del usuario)
+    if (c.estado === "cerrado") { alert(T("caso_borrar_cerrado")); return; }
     var etiqueta = (c.ID_Caso || "") + (c.nombre_caso ? " — " + c.nombre_caso : "");
     if (!confirm(T("caso_borrar_conf", { caso: etiqueta }))) return;
     borrarCaso(c.caso_uid);
@@ -17164,7 +17168,10 @@
     { id: "cmep_a", l: "c-MEP", tec: ["c_pem"], gridAB: "A" }, { id: "cmep_b", l: "c-MEP", tec: ["c_pem"], gridAB: "B" },
     { id: "cmep_msd", l: "c-MEP MSD", tec: ["c_pem"], antigua: true }, { id: "cmep_msi", l: "c-MEP MSI", tec: ["c_pem"], antigua: true },
     { id: "cmep_mid", l: "c-MEP MID", tec: ["c_pem"], antigua: true }, { id: "cmep_mii", l: "c-MEP MII", tec: ["c_pem"], antigua: true },
-    { id: "grid", l: "GRID", tec: REG_TEC_GRID },
+    // GRID: fuera de las basales el 06-10-2026 (pedido del usuario: con la
+    // fila de c-MEP no tiene sentido); solo si ya tiene algo escrito. El
+    // botón «GRID» de Técnica del Registro sigue (regQueRapidos()).
+    { id: "grid", l: "GRID", tec: REG_TEC_GRID, antigua: true },
     // Onda D debajo de GRID (28-09-2026, pedido del usuario), con el nombre
     // que usa en quirófano. Los ids no cambian: lo escrito se conserva. Es
     // respuesta motora, por eso va en la columna de MEP (24-09-2026); la
@@ -17261,15 +17268,15 @@
   var REG_BASALES_COLS = [
     { id: "basal", l: "Basal", l_en: "Baseline", tit: "Basales de apertura, antes de empezar", tit_en: "Opening baselines, before starting" },
     { id: "post", l: "PostPos1", l_en: "PostPos1", tit: "Basales tras el primer cambio de posición", tit_en: "Baselines after the first position change" },
-    { id: "post2", l: "PostPos2", l_en: "PostPos2", soloT: true, tit: "Basales tras el segundo cambio de posición (solo t-SEP y t-MEP)", tit_en: "Baselines after the second position change (t-SEP and t-MEP only)" },
+    { id: "post2", l: "PostPos2", l_en: "PostPos2", soloT: true, tit: "Basales tras el segundo cambio de posición o de GRID (solo t-SEP, t-MEP y c-MEP)", tit_en: "Baselines after the second position or GRID change (t-SEP, t-MEP and c-MEP only)" },
     { id: "final", l: "Cierre", l_en: "Closing", tit: "Basales de cierre", tit_en: "Closing baselines" }
   ];
   // ¿Lleva la fila (id sin prefijo: "sep_msd", "libre1"...) esa columna?
-  // Los c-MEP no tienen post-posición: solo OP BSL y CL BSL (pedido del
-  // usuario, 28-09-2026).
+  // Los c-MEP llevan todas: PostPos1 y PostPos2 sirven de nuevas basales
+  // si se mueve el GRID (06-10-2026, pedido del usuario; antes, del
+  // 28-09-2026, solo OP BSL y CL BSL).
   function regColBasal(col, idFila) {
-    if (/^cmep_/.test(idFila)) return col.id === "basal" || col.id === "final";
-    return !col.soloT || /^(sep|mep)_/.test(idFila);
+    return !col.soloT || /^(sep|mep|cmep)_/.test(idFila);
   }
 
   // Filas visibles de una tabla de basales (ver el comentario de
@@ -18448,8 +18455,9 @@
     var filasMot = regFilasBasales(REG_BASALES_MOT, "m_", d, tec);
     var cmep = filasMot.filter(function (r) { return /^cmep_[ab]$/.test(r.id); });
     if (!cmep.length && !tec) cmep = [{ l: "c-MEP" }];
+    if (tec && tec.some(function (t) { return REG_TEC_GRID.indexOf(t) !== -1; })) cmep = cmep.concat([{ l: "GRID" }]);
     filasMot.forEach(function (r) {
-      if (/^cmep_/.test(r.id)) return;
+      if (/^cmep_/.test(r.id) || r.id === "grid") return;
       motores.push(r);
       if (r.id === "mep_mii") motores = motores.concat(cmep);
     });
@@ -19572,7 +19580,10 @@
     cab.appendChild(regNodo("span", null, T("reg_p_motor")));
     cab.appendChild(regNodo("span", null, T("reg_p_musculos")));
     tabla.appendChild(cab);
-    [1, 2].forEach(function (n) {
+    // La fila B solo con dos GRID (06-10-2026, pedido del usuario: siempre
+    // a la vista era redundante); «+ GRID B» debajo, también sin caso.
+    var dosGrid = regCasoConGridB(d);
+    (dosGrid ? [1, 2] : [1]).forEach(function (n) {
       var f = regNodo("div", "reg-basal-fila");
       f.appendChild(regNodo("span", "reg-basal-rotulo", n === 1 ? "A" : "B"));
       f.appendChild(regInputSinTexto(d.v, "grid" + n + "_motor", "text", T("reg_p_motor"), null, guardar));
@@ -19580,6 +19591,18 @@
       tabla.appendChild(f);
     });
     cont.appendChild(tabla);
+    var c = registroCaso();
+    var bGridB = nodoBotonGridB(d, guardar === REG_SIN_GUARDAR ? ["c_pem"] : (c ? (c.tecnicas_realizadas || []) : ["c_pem"]), function () {
+      if (guardar === REG_SIN_GUARDAR) {
+        // En la ficha: se repinta lo que depende de las técnicas (este
+        // Mapeo, las basales con sus filas A y B, las alarmas)
+        oyentesTecnicasRealizadas.forEach(function (f) { f(); });
+      } else {
+        registroGuardarYa();
+        renderRegistroContenido();
+      }
+    });
+    if (bGridB) cont.appendChild(bGridB);
   }
 
   // Filas de d.mapeo de un tipo (C, S o N). Siempre 3 en blanco al final,
@@ -20493,7 +20516,7 @@
     // músculos registrados, electrodo/s sensitivo/s). Salen en blanco para
     // escribir a mano, o con lo tecleado en la pantalla (grid1_*, grid2_*).
     var lineas = nodoInforme(doc, "div", "hj-lineas");
-    [1, 2].forEach(function (n) {
+    (regCasoConGridB(d) ? [1, 2] : [1]).forEach(function (n) {
       var col = nodoInforme(doc, "div", "hj-gridcol");
       var lineasGrid = [["motor", T("hoja_grid_motor")], ["musculos", T("hoja_musculos")], ["sens", T("hoja_sensitivos")]];
       // Inversión de fase: solo si el caso hace phase-reversal o ya está escrita.
