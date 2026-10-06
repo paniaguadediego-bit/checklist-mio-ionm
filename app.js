@@ -17268,15 +17268,15 @@
   var REG_BASALES_COLS = [
     { id: "basal", l: "Basal", l_en: "Baseline", tit: "Basales de apertura, antes de empezar", tit_en: "Opening baselines, before starting" },
     { id: "post", l: "PostPos1", l_en: "PostPos1", tit: "Basales tras el primer cambio de posición", tit_en: "Baselines after the first position change" },
-    { id: "post2", l: "PostPos2", l_en: "PostPos2", soloT: true, tit: "Basales tras el segundo cambio de posición o de GRID (solo t-SEP, t-MEP y c-MEP)", tit_en: "Baselines after the second position or GRID change (t-SEP, t-MEP and c-MEP only)" },
+    { id: "post2", l: "PostPos2", l_en: "PostPos2", soloT: true, tit: "Basales tras el segundo cambio de posición o de GRID (solo t-SEP, t-MEP, c-SEP y c-MEP)", tit_en: "Baselines after the second position or GRID change (t-SEP, t-MEP, c-SEP and c-MEP only)" },
     { id: "final", l: "Cierre", l_en: "Closing", tit: "Basales de cierre", tit_en: "Closing baselines" }
   ];
   // ¿Lleva la fila (id sin prefijo: "sep_msd", "libre1"...) esa columna?
-  // Los c-MEP llevan todas: PostPos1 y PostPos2 sirven de nuevas basales
-  // si se mueve el GRID (06-10-2026, pedido del usuario; antes, del
-  // 28-09-2026, solo OP BSL y CL BSL).
+  // Los c-MEP y los c-SEP llevan todas: PostPos1 y PostPos2 sirven de
+  // nuevas basales si se mueve el GRID (06-10-2026, pedido del usuario;
+  // antes, del 28-09-2026, c-MEP solo OP BSL y CL BSL).
   function regColBasal(col, idFila) {
-    return !col.soloT || /^(sep|mep|cmep)_/.test(idFila);
+    return !col.soloT || /^(sep|mep|cmep|csep)_/.test(idFila);
   }
 
   // Filas visibles de una tabla de basales (ver el comentario de
