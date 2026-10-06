@@ -606,6 +606,10 @@
     import_conf_completa: { es: "Es una copia completa: trae {casos} casos y {montajes} plantillas. De esos, solo se añaden los que no estén en este dispositivo.", en: "It is a full backup: it has {casos} cases and {montajes} templates. Only those not already on this device are added." },
     import_completa_apuntes: { es: "También se han recuperado los apuntes (aquí no había ninguno).", en: "Notes were restored too (there were none here)." },
     caso_reabrir:        { es: "Reabrir caso", en: "Reopen case" },
+    caso_candado_aviso:  { es: "🔒 Caso cerrado: solo lectura. Para cambiar algo, «Reabrir caso».", en: "🔒 Closed case: read only. To change anything, «Reopen case»." },
+    reg_candado_aviso:   { es: "🔒 Caso cerrado: el Registro es de solo lectura. Para cambiar algo, reábrelo en su ficha (Gestión de Casos).", en: "🔒 Closed case: the record is read only. To change anything, reopen it from its form (Case management)." },
+    reg_grid_b_poner:    { es: "+ GRID B", en: "+ GRID B" },
+    reg_grid_b_quitar:   { es: "Quitar GRID B", en: "Remove GRID B" },
     caso_informe_proximamente: { es: "Crear informe: todavía no hace nada, en camino.", en: "Create report: not wired up yet, coming soon." },
     caso_borrar_conf:    { es: "¿Borrar el caso “{caso}”?\nVa a la papelera de este dispositivo (Gestión de Casos → Papelera) y puedes recuperarlo durante 30 días.",
                            en: "Delete the case “{caso}”?\nIt goes to this device’s bin (Case management → Bin) and you can restore it for 30 days." },
@@ -634,8 +638,8 @@
 
     /* Etiquetas de los campos del caso */
     caso_fecha:          { es: "Fecha de la cirugía", en: "Date of surgery" },
-    caso_fecha_ay:       { es: "La que cuenta para las estadísticas. Se puede cambiar siempre, también en un caso ya cerrado.",
-                           en: "The one that counts for statistics. Always editable, even on a closed case." },
+    caso_fecha_ay:       { es: "La que cuenta para las estadísticas. En un caso cerrado, reábrelo para cambiarla.",
+                           en: "The one that counts for statistics. On a closed case, reopen it to change it." },
     caso_nombre_caso:    { es: "Nombre del caso", en: "Case name" },
     caso_nombre_caso_ay: { es: "Para reconocerlo tú de un vistazo en la lista — nunca el nombre del paciente.",
                            en: "So you can recognise it at a glance in the list — never the patient's name." },
@@ -1358,6 +1362,8 @@
     rr_sin_fase:         { es: "Sin fase marcada", en: "No phase marked" },
     rr_fase_otra:        { es: "Otra", en: "Other" },
     rr_fase_detalle:     { es: "Otra fase o detalle (opcional)", en: "Other phase or detail (optional)" },
+    rr_fase_hora:        { es: "Hora (en blanco, la de ahora)", en: "Time (blank = now)" },
+    rr_fase_hora_ed:     { es: "Hora", en: "Time" },
     rr_otro:             { es: "Otro", en: "Other" },
     rr_que_detalle:      { es: "Otro o detalle (opcional)", en: "Other or detail (optional)" },
     rr_falta_otro:       { es: "Con «Otro», escribe en la caja de debajo qué es.", en: "With “Other”, type what it is in the box below." },
@@ -8352,6 +8358,8 @@
         parB.className = "reg-basales";
         pintarBloqueBasales(T("registro_sens_otros"), regFilasBasales(REG_BASALES_SENS, "s_", dB, tecB), "s_", REG_BASALES_LIBRES.sens, parB, dB, sinGuardar);
         pintarBloqueBasales(T("registro_motores"), regFilasBasales(REG_BASALES_MOT, "m_", dB, tecB), "m_", REG_BASALES_LIBRES.mot, parB, dB, sinGuardar);
+        var bGridB = nodoBotonGridB(dB, tecB, pintarB);
+        if (bGridB) parB.appendChild(bGridB);
         contB.appendChild(parB);
         if (regCasoConGrid(tecB, dB)) {
           var gridB = document.createElement("div");
@@ -8839,6 +8847,11 @@
     document.getElementById("caso-error").hidden = true;
     pintarBotonCerrarCaso();
     if (camposCaso.estado) camposCaso.estado.addEventListener("change", pintarBotonCerrarCaso);
+    // Candado: un caso cerrado se lee pero no se cambia hasta «Reabrir caso»
+    var cerradoF = c.estado === "cerrado" && !casoEsNuevo;
+    candado(document.querySelector("#dlg-caso .caso-scroll"), cerradoF);
+    document.getElementById("caso-candado").hidden = !cerradoF;
+    document.getElementById("caso-guardar").hidden = cerradoF;
     fichaOrigen = casos[c.caso_uid] || null;
     fichaFirma = firmaFicha();
   }
@@ -9502,6 +9515,46 @@
      Estado y Guardar). Guarda la ficha con el estado cambiado -la lógica de
      guardarFicha(true)- y vuelve a la lista. Sobre un caso cerrado es
      «Reabrir caso»: lo pasa a Preparado y se queda en la ficha. */
+  /* Candado de los casos cerrados (06-10-2026, pedido del usuario: que no se
+     cambien por error). La ficha y el Registro de un caso cerrado se abren y
+     se leen, pero sus casillas, listas y botones quedan desactivados hasta
+     «Reabrir caso». Lo que se pinta después (al abrir una fila de basales, al
+     repintar una tabla) lo desactiva el observador. Se libran los títulos
+     plegables, abrir una fila de basales y los filtros del Cronograma, que
+     solo enseñan. "data-candado" marca lo desactivado aquí, para no activar
+     al quitarlo lo que ya venía desactivado por otra razón. */
+  var CANDADO_LIBRES = "summary, .reg-bl-cab, .rr-crono-filtros";
+  function candado(raiz, poner) {
+    if (!raiz) return;
+    if (!raiz.candadoListo) {
+      raiz.candadoListo = true;
+      if (window.MutationObserver) {
+        new MutationObserver(function () { if (raiz.candadoPuesto) candadoAplicar(raiz); })
+          .observe(raiz, { childList: true, subtree: true });
+      }
+      // Hay controles que no son casillas ni botones (los chips de técnicas
+      // de la ficha son <span>): con candado, ningún toque llega a ellos.
+      raiz.addEventListener("click", function (e) {
+        if (!raiz.candadoPuesto || e.target.closest(CANDADO_LIBRES + ", a, img")) return;
+        e.preventDefault();
+        e.stopPropagation();
+      }, true);
+    }
+    raiz.candadoPuesto = !!poner;
+    raiz.classList.toggle("candado", !!poner);
+    if (poner) { candadoAplicar(raiz); return; }
+    Array.prototype.forEach.call(raiz.querySelectorAll("[data-candado]"), function (el) {
+      el.disabled = false;
+      el.removeAttribute("data-candado");
+    });
+  }
+  function candadoAplicar(raiz) {
+    Array.prototype.forEach.call(raiz.querySelectorAll("input, select, textarea, button"), function (el) {
+      if (el.disabled || el.closest(CANDADO_LIBRES)) return;
+      el.disabled = true;
+      el.setAttribute("data-candado", "1");
+    });
+  }
   function pintarBotonCerrarCaso() {
     var b = document.getElementById("caso-cerrar");
     var ctl = camposCaso.estado;
@@ -17094,8 +17147,12 @@
   var REG_BASALES_SENS = [
     { id: "sep_msd", l: "t-SEP MSD" }, { id: "sep_msi", l: "t-SEP MSI" },
     { id: "sep_mid", l: "t-SEP MID" }, { id: "sep_mii", l: "t-SEP MII" },
-    { id: "csep_msd", l: "c-SEP MSD", tec: ["c_pess"] }, { id: "csep_msi", l: "c-SEP MSI", tec: ["c_pess"] },
-    { id: "csep_mid", l: "c-SEP MID", tec: ["c_pess"] }, { id: "csep_mii", l: "c-SEP MII", tec: ["c_pess"] },
+    // c-SEP y c-MEP: una sola fila, o dos -A y B- si el caso lleva dos GRID
+    // («+ GRID B»; 06-10-2026, pedido del usuario). Las de antes, una por
+    // miembro, solo salen si ya tienen algo escrito ("antigua").
+    { id: "csep_a", l: "c-SEP", tec: ["c_pess"], gridAB: "A" }, { id: "csep_b", l: "c-SEP", tec: ["c_pess"], gridAB: "B" },
+    { id: "csep_msd", l: "c-SEP MSD", tec: ["c_pess"], antigua: true }, { id: "csep_msi", l: "c-SEP MSI", tec: ["c_pess"], antigua: true },
+    { id: "csep_mid", l: "c-SEP MID", tec: ["c_pess"], antigua: true }, { id: "csep_mii", l: "c-SEP MII", tec: ["c_pess"], antigua: true },
     { id: "peat_d", l: "PEAT D", tec: ["peatc"], defecto: true }, { id: "peat_i", l: "PEAT I", tec: ["peatc"], defecto: true }
   ];
   // Las filas libres van SIN rótulo: se escribe a mano lo que toque
@@ -17104,8 +17161,9 @@
   var REG_BASALES_MOT = [
     { id: "mep_msd", l: "t-MEP MSD" }, { id: "mep_msi", l: "t-MEP MSI" },
     { id: "mep_mid", l: "t-MEP MID" }, { id: "mep_mii", l: "t-MEP MII" },
-    { id: "cmep_msd", l: "c-MEP MSD", tec: ["c_pem"] }, { id: "cmep_msi", l: "c-MEP MSI", tec: ["c_pem"] },
-    { id: "cmep_mid", l: "c-MEP MID", tec: ["c_pem"] }, { id: "cmep_mii", l: "c-MEP MII", tec: ["c_pem"] },
+    { id: "cmep_a", l: "c-MEP", tec: ["c_pem"], gridAB: "A" }, { id: "cmep_b", l: "c-MEP", tec: ["c_pem"], gridAB: "B" },
+    { id: "cmep_msd", l: "c-MEP MSD", tec: ["c_pem"], antigua: true }, { id: "cmep_msi", l: "c-MEP MSI", tec: ["c_pem"], antigua: true },
+    { id: "cmep_mid", l: "c-MEP MID", tec: ["c_pem"], antigua: true }, { id: "cmep_mii", l: "c-MEP MII", tec: ["c_pem"], antigua: true },
     { id: "grid", l: "GRID", tec: REG_TEC_GRID },
     // Onda D debajo de GRID (28-09-2026, pedido del usuario), con el nombre
     // que usa en quirófano. Los ids no cambian: lo escrito se conserva. Es
@@ -17217,13 +17275,45 @@
   // Filas visibles de una tabla de basales (ver el comentario de
   // REG_BASALES_SENS). "tecnicas" es la lista del caso, o null en Modelo 0.
   function regFilasBasales(filas, prefijo, d, tecnicas) {
+    var dosGrid = regCasoConGridB(d);
     return filas.filter(function (r) {
       if (!r.tec) return true;
       var escrita = REG_BASALES_COLS.some(function (col) { return regBasalEscrita(d.v, prefijo + r.id, col.id); });
       if (escrita) return true;
+      if (r.antigua || (r.gridAB === "B" && !dosGrid)) return false;
       if (!tecnicas) return !!r.defecto;
       return r.tec.some(function (t) { return tecnicas.indexOf(t) !== -1; });
+    }).map(function (r) {
+      // Con dos GRID, «c-MEP A» y «c-MEP B»; con uno, «c-MEP» a secas
+      if (!r.gridAB || !dosGrid) return r;
+      var copia = {};
+      for (var k in r) copia[k] = r[k];
+      copia.l = r.l + " " + r.gridAB;
+      return copia;
     });
+  }
+  // Dos GRID en el caso: lo pide el botón «+ GRID B» (d.v.grid_b) o ya hay
+  // algo escrito del GRID B (filas B de basales o el GRID B del Mapeo).
+  function regGridBEscrito(d) {
+    return ["grid2_motor", "grid2_musculos", "grid2_sens", "grid2_inversion"].some(function (k) { return !!d.v[k]; }) ||
+      [["s_", "csep_b"], ["m_", "cmep_b"]].some(function (p) {
+        return REG_BASALES_COLS.some(function (col) { return regBasalEscrita(d.v, p[0] + p[1], col.id); });
+      });
+  }
+  function regCasoConGridB(d) { return !!d.v.grid_b || regGridBEscrito(d); }
+  // Botón «+ GRID B» / «Quitar GRID B» bajo las basales, si el caso hace
+  // c-MEP o c-SEP. No sale si el GRID B ya tiene algo escrito (no se puede
+  // quitar sin borrarlo). "alCambiar" guarda y repinta.
+  function nodoBotonGridB(d, tecnicas, alCambiar) {
+    if (!tecnicas || !tecnicas.some(function (t) { return t === "c_pem" || t === "c_pess"; })) return null;
+    if (regGridBEscrito(d)) return null;
+    var b = regNodo("button", "reg-p-nuevo reg-grid-b", T(d.v.grid_b ? "reg_grid_b_quitar" : "reg_grid_b_poner"));
+    b.type = "button";
+    b.addEventListener("click", function () {
+      if (d.v.grid_b) delete d.v.grid_b; else d.v.grid_b = "1";
+      alCambiar();
+    });
+    return b;
   }
   function regCasoConGrid(tecnicas, d) {
     return (tecnicas || []).some(function (t) { return REG_TEC_GRID.indexOf(t) !== -1; }) ||
@@ -17288,12 +17378,15 @@
       ayuda: "Tipo: G grid/strip · C cortical · S subcortical (Raabe) · IV suelo IV v. · PC par craneal · R raíz",
       ayuda_en: "Type: G grid/strip · C cortical · S subcortical (Raabe) · IV 4th ventricle floor · PC cranial nerve · R root",
       boton: "+ Fila de mapeo", boton_en: "+ Mapping row", ahora: true,
+      // Rótulos A y B (06-10-2026, pedido del usuario: las mantas son GRID A y
+      // GRID B); los ids siguen siendo grid1_ y grid2_.
       antes: [1, 2].reduce(function (lista, n) {
+        var ab = n === 1 ? "A" : "B";
         return lista.concat([
-          { id: "grid" + n + "_motor", l: "GRID " + n + " · Electrodo motor", l_en: "GRID " + n + " · Motor electrode", t: "text" },
-          { id: "grid" + n + "_musculos", l: "GRID " + n + " · Músculos registrados", l_en: "GRID " + n + " · Muscles recorded", t: "text" },
-          { id: "grid" + n + "_sens", l: "GRID " + n + " · Electrodo/s sensitivo/s", l_en: "GRID " + n + " · Sensory electrode(s)", t: "text" },
-          { id: "grid" + n + "_inversion", l: "GRID " + n + " · Inversión de fase (contacto)", l_en: "GRID " + n + " · Phase reversal (contact)", t: "text" }
+          { id: "grid" + n + "_motor", l: "GRID " + ab + " · Electrodo motor", l_en: "GRID " + ab + " · Motor electrode", t: "text" },
+          { id: "grid" + n + "_musculos", l: "GRID " + ab + " · Músculos registrados", l_en: "GRID " + ab + " · Muscles recorded", t: "text" },
+          { id: "grid" + n + "_sens", l: "GRID " + ab + " · Electrodo/s sensitivo/s", l_en: "GRID " + ab + " · Sensory electrode(s)", t: "text" },
+          { id: "grid" + n + "_inversion", l: "GRID " + ab + " · Inversión de fase (contacto)", l_en: "GRID " + ab + " · Phase reversal (contact)", t: "text" }
         ]);
       }, []),
       cols: [
@@ -17836,6 +17929,8 @@
     par.className = "reg-basales";
     pintarBloqueBasales(T("registro_sens_otros"), regFilasBasales(REG_BASALES_SENS, "s_", d, tecRB), "s_", REG_BASALES_LIBRES.sens, par, d);
     pintarBloqueBasales(T("registro_motores"), regFilasBasales(REG_BASALES_MOT, "m_", d, tecRB), "m_", REG_BASALES_LIBRES.mot, par, d);
+    var bGridB = nodoBotonGridB(d, tecRB, function () { registroGuardarYa(); renderRegistroContenido(); });
+    if (bGridB) par.appendChild(bGridB);
     // La estimulación de tornillos pasó a E2 · Mapeo (28-09-2026), donde
     // solo sale si el caso tiene marcada esa técnica.
     cont.appendChild(par);
@@ -17940,8 +18035,18 @@
     // anestesia que también son datos de la ficha (espejo); vaciarlos de un
     // toque desde la barra de quirófano era demasiado fácil.
     document.getElementById("registro-vaciar").hidden = !!registroCaso();
-    pintarBarraApuntar(cont);
-    if (regHoja) pintarPanelApuntar(cont);
+    // Candado: con el caso cerrado, ni barra de apuntar ni hoja abierta
+    var cR = registroCaso();
+    var cerradoR = !!(cR && cR.estado === "cerrado");
+    if (cerradoR) {
+      regTerminarEdicion();
+      regHoja = "";
+      cont.insertBefore(regNodo("p", "aviso-ficticio aviso-candado", T("reg_candado_aviso")), cont.firstChild);
+    } else {
+      pintarBarraApuntar(cont);
+      if (regHoja) pintarPanelApuntar(cont);
+    }
+    candado(cont, cerradoR);
   }
 
   // Hoja de apuntar abierta ("", "fase", "evento" o "alarma") y paso de la de
@@ -17950,6 +18055,7 @@
   var regHoja = "", regPaso = 0;
   function regAbrirHoja(modo) {
     regTerminarEdicion();
+    regRapido.faseHora = "";
     regHoja = modo;
     regPaso = 0;
     renderRegistroContenido();
@@ -18011,6 +18117,7 @@
     if (ev && ev.cod === "F") {
       r.fase = ev.fase || "";
       r.faseNota = ev.accion || "";
+      r.faseHora = ev.hora || "";
       return r;
     }
     var d = registroDatos();
@@ -18239,7 +18346,7 @@
   // queNota y faseNota son las cajas de Qué y de Fase; nota, la de Qué pasa.
   // queMas: las demás técnicas elegidas a la vez que «que» (ver regElegirQue).
   // fase: solo al corregir una línea (al apuntar va la fase actual).
-  function regRapidoVacio() { return { que: "", queMas: [], cambio: "", magnitud: "", nota: "", queNota: "", faseNota: "", contexto: "", tof: "", farmaco: "", fase: "" }; }
+  function regRapidoVacio() { return { que: "", queMas: [], cambio: "", magnitud: "", nota: "", queNota: "", faseNota: "", contexto: "", tof: "", farmaco: "", fase: "", faseHora: "" }; }
   var regRapido = regRapidoVacio();
 
   // Magnitud del cambio (30-09-2026, pedido del usuario): % respecto a la
@@ -18281,7 +18388,7 @@
   function regTecnicasDeQue(q) {
     q = String(q || "");
     if (!q || regEsQueSuelto(q)) return [];
-    var s = /^CoMEP/.test(q) ? "CoMEP" : q.replace(/ (MSD|MSI|MID|MII|D|I)$/, "");
+    var s = /^CoMEP/.test(q) ? "CoMEP" : q.replace(/^(c-SEP|c-MEP) [AB]$/, "$1").replace(/ (MSD|MSI|MID|MII|D|I)$/, "");
     if (s === "Blink") s = "BR";
     var ids = TECNICAS.filter(function (t) {
       return [t.etiqueta, t.corta, campo(t, "etiqueta"), campo(t, "corta")].indexOf(s) !== -1;
@@ -18335,11 +18442,16 @@
     });
     // c-MEP como una sola entrada, detrás de t-MEP MII (28-09-2026, pedido
     // del usuario), en vez de las cuatro filas por miembro de las basales.
+    // Desde el 06-10-2026 las basales también llevan un solo c-MEP (o «c-MEP
+    // A» y «c-MEP B» con dos GRID): son esas filas.
     var motores = [];
-    regFilasBasales(REG_BASALES_MOT, "m_", d, tec).forEach(function (r) {
+    var filasMot = regFilasBasales(REG_BASALES_MOT, "m_", d, tec);
+    var cmep = filasMot.filter(function (r) { return /^cmep_[ab]$/.test(r.id); });
+    if (!cmep.length && !tec) cmep = [{ l: "c-MEP" }];
+    filasMot.forEach(function (r) {
       if (/^cmep_/.test(r.id)) return;
       motores.push(r);
-      if (r.id === "mep_mii" && (!tec || tec.indexOf("c_pem") !== -1)) motores.push({ l: "c-MEP" });
+      if (r.id === "mep_mii") motores = motores.concat(cmep);
     });
     return regFilasBasales(REG_BASALES_SENS, "s_", d, tec)
       .concat(motores)
@@ -18389,6 +18501,7 @@
     if (edF) {
       if (!nombre) return;
       edF.fase = nombre;
+      if (regRapido.faseHora) edF.hora = regRapido.faseHora;
       if (detalle) edF.accion = detalle; else delete edF.accion;
       registroGuardarYa();
       avisoGuardado(T("rr_cambios_guardados"));
@@ -18398,12 +18511,13 @@
       regVerUltimoApuntado(edF.id);
       return;
     }
-    if (!nombre || (nombre === regFaseActual(d) && !detalle)) return;
-    var hora = horaAhora();
+    if (!nombre || (nombre === regFaseActual(d) && !detalle && !regRapido.faseHora)) return;
+    var hora = regRapido.faseHora || horaAhora();
     var ev = { id: uuid(), hora: hora, cod: "F", fase: nombre };
     if (detalle) ev.accion = detalle;
     d.eventos.push(ev);
     regRapido.faseNota = "";
+    regRapido.faseHora = "";
     registroGuardarYa();
     avisoGuardado(T("rr_fase_marcada", { fase: nombre, hora: hora }));
     regHoja = "";
@@ -18640,6 +18754,18 @@
     // Al corregir una fase, la marcada es la de esa línea
     if (regEditandoAp) faseAct = regRapido.fase;
     else bFase.appendChild(estado);
+    // Hora de la fase (06-10-2026, pedido del usuario): por si se marca
+    // tarde. En blanco, la de ahora; al corregir, la de la línea. Va antes
+    // de los botones porque tocar uno ya apunta la fase.
+    var filaHora = regNodo("label", "rr-fase-hora");
+    filaHora.appendChild(regNodo("span", null, T(regEditandoAp ? "rr_fase_hora_ed" : "rr_fase_hora")));
+    var inpHora = document.createElement("input");
+    inpHora.type = "time";
+    inpHora.className = "rr-hora";
+    inpHora.value = regRapido.faseHora || "";
+    inpHora.addEventListener("input", function () { regRapido.faseHora = inpHora.value; });
+    filaHora.appendChild(inpHora);
+    bFase.appendChild(filaHora);
     var filaFases = regNodo("div", "rr-chips");
     bFase.appendChild(filaFases);
     var nombres = REG_FASES_RAPIDAS.map(function (f) { return campo(f, "l"); });
@@ -19448,7 +19574,7 @@
     tabla.appendChild(cab);
     [1, 2].forEach(function (n) {
       var f = regNodo("div", "reg-basal-fila");
-      f.appendChild(regNodo("span", "reg-basal-rotulo", String(n)));
+      f.appendChild(regNodo("span", "reg-basal-rotulo", n === 1 ? "A" : "B"));
       f.appendChild(regInputSinTexto(d.v, "grid" + n + "_motor", "text", T("reg_p_motor"), null, guardar));
       f.appendChild(regInputSinTexto(d.v, "grid" + n + "_musculos", "text", T("reg_p_musculos"), null, guardar));
       tabla.appendChild(f);
@@ -20376,7 +20502,7 @@
       }
       lineasGrid.forEach(function (f, i) {
         var l = nodoInforme(doc, "div", "hj-linea");
-        l.appendChild(nodoInforme(doc, "b", "hj-linea-t", i === 0 ? "GRID " + n : ""));
+        l.appendChild(nodoInforme(doc, "b", "hj-linea-t", i === 0 ? "GRID " + (n === 1 ? "A" : "B") : ""));
         l.appendChild(nodoInforme(doc, "span", "hj-linea-e", f[1] + ":"));
         l.appendChild(nodoInforme(doc, "span", "hj-linea-v", d.v["grid" + n + "_" + f[0]] || ""));
         col.appendChild(l);
