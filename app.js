@@ -608,6 +608,7 @@
     caso_reabrir:        { es: "Reabrir caso", en: "Reopen case" },
     caso_candado_aviso:  { es: "🔒 Caso cerrado: solo lectura. Para cambiar algo, «Reabrir caso».", en: "🔒 Closed case: read only. To change anything, «Reopen case»." },
     reg_candado_aviso:   { es: "🔒 Caso cerrado: el Registro es de solo lectura. Para cambiar algo, reábrelo en su ficha (Gestión de Casos).", en: "🔒 Closed case: the record is read only. To change anything, reopen it from its form (Case management)." },
+    montaje_candado_aviso: { es: "🔒 Caso cerrado: el montaje es de solo lectura. Para cambiar algo, reábrelo en su ficha (Gestión de Casos).", en: "🔒 Closed case: the montage is read only. To change anything, reopen it from its form (Case management)." },
     checklist_candado_aviso: { es: "🔒 Caso cerrado: el Checklist es de solo lectura. Para cambiar algo, reábrelo en su ficha (Gestión de Casos).", en: "🔒 Closed case: the checklist is read only. To change anything, reopen it from its form (Case management)." },
     reg_grid_b_poner:    { es: "+ GRID B", en: "+ GRID B" },
     reg_grid_b_quitar:   { es: "Quitar GRID B", en: "Remove GRID B" },
@@ -1028,6 +1029,9 @@
                               en: "It is the same table as in the Intraoperative record: whatever you write here appears there and on the printed sheet, and vice versa. The c-SEP, c-MEP, GRID, corticobulbar, D wave, BAEP and H-R rows appear depending on the techniques ticked." },
     caso_basales_grid_estimulo: { es: "GRID: electrodo de estímulo", en: "GRID: stimulating electrode" },
     caso_basales_grid_inversion: { es: "GRID: contacto con inversión de fase", en: "GRID: phase reversal contact" },
+    // Con dos GRID, «GRID A: …» / «GRID B: …» (auditoría 09-10-2026, C15)
+    caso_basales_gridab_estimulo: { es: "GRID {g}: electrodo de estímulo", en: "GRID {g}: stimulating electrode" },
+    caso_basales_gridab_inversion: { es: "GRID {g}: contacto con inversión de fase", en: "GRID {g}: phase reversal contact" },
     hoja_inversion:      { es: "Inversión de fase", en: "Phase reversal" },
     polo_menos:          { es: "− cátodo (negro)", en: "− cathode (black)" },
     polo_mas:            { es: "+ ánodo (rojo)", en: "+ anode (red)" },
@@ -3516,6 +3520,7 @@
   document.addEventListener("dragstart", function (e) {
     var chip = e.target.closest && e.target.closest(".chip");
     if (!chip) return;
+    if (montajeCasoCerrado()) { e.preventDefault(); return; }   // candado: solo lectura
     arrastrando = {
       itemId: chip.dataset.itemId,
       origenCaja: chip.dataset.origenCaja || null,
@@ -5300,8 +5305,12 @@
     var d = c.registro_intraop && c.registro_intraop.v ? c.registro_intraop : null;
     if (!d) return null;
     var filas = [];
+    // Con dos GRID, «c-MEP A/B» y «c-SEP A/B», y lo del GRID B, mismo
+    // criterio que el Registro (regFilasBasales()) y la hoja impresa
+    // (auditoría 09-10-2026, C15).
+    var dosGrid = regCasoConGridB(d);
     [["s_", REG_BASALES_SENS, REG_BASALES_LIBRES.sens], ["m_", REG_BASALES_MOT, REG_BASALES_LIBRES.mot]].forEach(function (t) {
-      var defs = t[1].map(function (r) { return { id: r.id, rotulo: campo(r, "l") }; });
+      var defs = t[1].map(function (r) { return { id: r.id, rotulo: campo(r, "l") + (r.gridAB && dosGrid ? " " + r.gridAB : "") }; });
       for (var i = 1; i <= t[2]; i++) defs.push({ id: "libre" + i, rotulo: d.v["e_" + t[0] + "libre" + i + "_l"] || T("registro_otro") });
       defs.forEach(function (r) {
         var vals = REG_BASALES_COLS.map(function (col) { return regColBasal(col, r.id) ? regBasalTexto(d.v, t[0] + r.id, col.id) : ""; });
@@ -5309,8 +5318,12 @@
       });
     });
     var extras = [];
-    if (d.v.grid1_motor) extras.push(T("caso_basales_grid_estimulo") + ": " + d.v.grid1_motor);
-    if (d.v.grid1_inversion) extras.push(T("caso_basales_grid_inversion") + ": " + d.v.grid1_inversion);
+    (dosGrid ? [1, 2] : [1]).forEach(function (n) {
+      var g = { g: n === 1 ? "A" : "B" };
+      var vm = d.v["grid" + n + "_motor"], vi = d.v["grid" + n + "_inversion"];
+      if (vm) extras.push((dosGrid ? T("caso_basales_gridab_estimulo", g) : T("caso_basales_grid_estimulo")) + ": " + vm);
+      if (vi) extras.push((dosGrid ? T("caso_basales_gridab_inversion", g) : T("caso_basales_grid_inversion")) + ": " + vi);
+    });
     if (!filas.length && !extras.length) return null;
     var sec = nodoInforme(doc, "section", "informe-seccion");
     sec.appendChild(nodoInforme(doc, "h3", null, T("caso_basales_registro")));
@@ -8372,11 +8385,17 @@
         if (regCasoConGrid(tecB, dB)) {
           var gridB = document.createElement("div");
           gridB.className = "caso-basales-grid";
-          [["grid1_motor", "caso_basales_grid_estimulo"], ["grid1_inversion", "caso_basales_grid_inversion"]].forEach(function (g) {
+          // Con dos GRID, también los del GRID B y rótulos A/B (C15)
+          var dosGridB = regCasoConGridB(dB);
+          var camposGrid = dosGridB
+            ? [["grid1_motor", "caso_basales_gridab_estimulo", "A"], ["grid1_inversion", "caso_basales_gridab_inversion", "A"],
+               ["grid2_motor", "caso_basales_gridab_estimulo", "B"], ["grid2_inversion", "caso_basales_gridab_inversion", "B"]]
+            : [["grid1_motor", "caso_basales_grid_estimulo"], ["grid1_inversion", "caso_basales_grid_inversion"]];
+          camposGrid.forEach(function (g) {
             var campoG = document.createElement("label");
             campoG.className = "caso-basales-grid-campo";
             var tG = document.createElement("span");
-            tG.textContent = T(g[1]);
+            tG.textContent = g[2] ? T(g[1], { g: g[2] }) : T(g[1]);
             campoG.appendChild(tG);
             var inpG = document.createElement("input");
             inpG.type = "text";
@@ -8660,6 +8679,9 @@
           var btnCorregir = document.createElement("button");
           btnCorregir.type = "button";
           btnCorregir.textContent = T("caso_editar_montaje");
+          // Con candado sigue activo: abre el montaje en solo lectura, para
+          // consultarlo canal a canal (ver candadoMontajeCaso()).
+          btnCorregir.className = "candado-libre";
           // Se guarda antes lo que haya escrito en la ficha: si no, salir a
           // las cajas le perdería lo tecleado y no habría por qué asociar
           // una cosa con la otra.
@@ -9558,7 +9580,9 @@
      plegables, abrir una fila de basales y los filtros del Cronograma, que
      solo enseñan. "data-candado" marca lo desactivado aquí, para no activar
      al quitarlo lo que ya venía desactivado por otra razón. */
-  var CANDADO_LIBRES = "summary, .reg-bl-cab, .rr-crono-filtros";
+  // .candado-libre: controles que solo enseñan y siguen activos con candado
+  // («Editar montaje» de la ficha, que abre el montaje en solo lectura).
+  var CANDADO_LIBRES = "summary, .reg-bl-cab, .rr-crono-filtros, .candado-libre";
   function candado(raiz, poner) {
     if (!raiz) return;
     if (!raiz.candadoListo) {
@@ -12643,7 +12667,7 @@
       nombre.textContent = caso ? ((caso.ID_Caso || "") + (caso.nombre_caso ? " — " + caso.nombre_caso : "")) : "";
       if (caso) anadirRotuloEquipo(nombre, caso);
       if (MODO_DEMO) nombre.appendChild(nodoFicticio());
-      ay.textContent = T("barra_caso_ay");
+      ay.textContent = T(montajeCasoCerrado() ? "montaje_candado_aviso" : "barra_caso_ay");
       acciones.hidden = false;
     } else {
       // Pedido el 06-09-2026: ya no vive fuera de las 6 pantallas, y no se
@@ -12661,6 +12685,30 @@
     }
     document.body.classList.toggle("barra-caso-oculta", barra.hidden);
     renderNotasMontaje();
+    candadoMontajeCaso();
+  }
+
+  /* Montaje de un caso cerrado (auditoría 09-10-2026): «Editar montaje» lo
+     abre igual, pero en solo lectura. Mismo candado que la ficha y el
+     Registro sobre el catálogo, las cajas, las técnicas y las notas; sin
+     «Cargar montaje…» ni «Guardar como plantilla…»; el arrastre se corta en
+     dragstart. «Volver al caso» sigue activo. guardarMontajeEnCaso() no
+     escribe en un cerrado, por si algo se escapara. */
+  function montajeCasoCerrado() {
+    var c = montajeCaso && casos[casoEditandoUid];
+    return !!(c && c.estado === "cerrado");
+  }
+  function candadoMontajeCaso() {
+    var cerr = montajeCasoCerrado();
+    ["catalogo-contenido", "cajas-contenido", "tecnicas-contenido", "montaje-notas"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el && (cerr || el.candadoPuesto)) candado(el, cerr);
+    });
+    ["barra-caso-cargar-plantilla", "barra-caso-guardar-plantilla"].forEach(function (id) {
+      var b = document.getElementById(id);
+      b.disabled = cerr;
+      if (cerr) b.title = T("montaje_candado_aviso"); else b.removeAttribute("title");
+    });
   }
 
   /* Notas del montaje, en el Organizador: las de la plantilla activa o, si se
@@ -17374,7 +17422,7 @@
   }
   function regCasoConGrid(tecnicas, d) {
     return (tecnicas || []).some(function (t) { return REG_TEC_GRID.indexOf(t) !== -1; }) ||
-      !!(d.v.grid1_motor || d.v.grid1_inversion || d.v.grid2_inversion);
+      !!(d.v.grid1_motor || d.v.grid1_inversion || d.v.grid2_motor || d.v.grid2_inversion);
   }
 
   var REG_HITOS = [
@@ -18109,6 +18157,9 @@
     // Candado: con el caso cerrado, ni barra de apuntar ni hoja abierta
     var cR = registroCaso();
     var cerradoR = !!(cR && cR.estado === "cerrado");
+    // Sin «Guardar» con candado, como en la ficha (#caso-guardar); el aviso
+    // de su manejador queda como red (auditoría 09-10-2026).
+    document.getElementById("registro-guardar").hidden = cerradoR;
     if (cerradoR) {
       regTerminarEdicion();
       regHoja = "";
@@ -20594,8 +20645,9 @@
     motVis = motVis.filter(function (x) { return !ES_CORTICAL.test(x.r.id); });
     var maxFilasBasales = 0;
     function tablaBasales(tituloTabla, visibles, prefijoLibres, libres, rotuloLibre) {
-      // PostPos2 solo si la tabla tiene alguna fila t-SEP/t-MEP (la de
-      // corticales no la lleva); en las demás filas, la celda sale tachada.
+      // PostPos2 solo si la tabla tiene alguna fila que la lleve (t-SEP,
+      // t-MEP, c-SEP o c-MEP, regColBasal()); en las demás filas, la celda
+      // sale tachada.
       var colsT = REG_BASALES_COLS.filter(function (col) {
         return !col.soloT || visibles.some(function (x) { return regColBasal(col, x.r.id); });
       });
@@ -20619,7 +20671,23 @@
     par.appendChild(tablaBasales(T("registro_motores") + " (" + regUnidadesBasal("m_") + ")", motVis, "m_", REG_BASALES_LIBRES.mot, ""));
     if (cortVis.length) {
       par.classList.add("hj-par4");
-      par.appendChild(tablaBasales(T("registro_corticales"), cortVis, "", 0, ""));
+      // Esta tabla junta sensitivos (µV / ms) y motores (mV / mA/V): la
+      // unidad va en una leyenda corta debajo, agrupada por unidad («c-SEP:
+      // µV / ms · c-MEP, CoMEP: mV / mA/V»), y no en cada fila, que no cabe
+      // en la columna estrecha (auditoría 09-10-2026, C20).
+      var cortCelda = nodoInforme(doc, "div", "hj-cort");
+      cortCelda.appendChild(tablaBasales(T("registro_corticales"), cortVis, "", 0, ""));
+      var cortUnid = [], cortPorU = {};
+      cortVis.forEach(function (x) {
+        var u = regUnidadesBasal(x.prefijo + x.r.id);
+        var nombre = String(regL(x.r)).split(" ")[0];
+        if (!cortPorU[u]) { cortPorU[u] = []; cortUnid.push(u); }
+        if (cortPorU[u].indexOf(nombre) === -1) cortPorU[u].push(nombre);
+      });
+      cortCelda.appendChild(nodoInforme(doc, "div", "hj-cort-unid", cortUnid.map(function (u) {
+        return cortPorU[u].join(", ") + ": " + u;
+      }).join(" · ")));
+      par.appendChild(cortCelda);
     }
     var filasTor = regFilasTornillos(d, c).map(function (celdas) { return { celdas: celdas }; });
     par.appendChild(hojaTabla(doc, REG_TORNILLOS.cols.map(function (col) { return { l: regL(col), cls: "hj-c" }; }),
@@ -20843,6 +20911,7 @@
     ".hj-tabla td.hj-c,.hj-tabla th.hj-c{text-align:center;font-size:6.6pt}" +
     ".hj-hitos td{height:8mm;text-align:center;font-weight:700}" +
     ".hj-par{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2.5mm}.hj-par4{grid-template-columns:1fr 1fr 1fr 0.62fr;gap:1.8mm}" +
+    ".hj-cort-unid{font-size:5.6pt;line-height:1.25;margin-top:0.4mm}" +
     ".hj-tt{background:#d9d9d9;font-size:6.4pt;text-align:left;padding:0.3mm 1mm}.hj-tornillos td{text-align:center}" +
     ".hj-basales td{height:4.4mm;font-size:6.2pt}.hj-basales-larga td{height:3.7mm}.hj-basales td.hj-rot,.hj-basales th.hj-rot{font-weight:700;text-align:left;white-space:nowrap;font-size:6.2pt}" +
     ".hj-raabe{border:0.25mm solid #000;border-top:none;padding:0.5mm 1.2mm;display:flex;flex-wrap:wrap;gap:0 4mm;align-items:baseline}" +
