@@ -363,8 +363,8 @@ porque el código que los escucha no ha llegado. Pasó al publicar la fase 2.
 
 Por eso `index.html` carga sus archivos con `?v=AAAAMMDD`. **Cada vez que
 cambie `app.js`, `style.css` o algo de `data/`, hay que subir ese número** en
-las cuatro etiquetas (`style.css`, `data/surgeries.js`, `data/i18n-en.js`,
-`app.js`). Es lo único manual del despliegue; el resto lo hace `git push`.
+las seis etiquetas (`style.css`, `data/surgeries.js`, `data/i18n-en.js`,
+`data/parametros-tecnicas.js`, `data/guia.js`, `app.js`). Es lo único manual del despliegue; el resto lo hace `git push`.
 Si hay más de un despliegue el mismo día, se añade una letra al final
 (`20260813`, `20260813b`, `20260813c`...) — solo tiene que ser una URL
 distinta a la anterior, no importa el formato exacto.
@@ -688,9 +688,8 @@ distinta a la anterior, no importa el formato exacto.
 >   protección de datos ni informática; no es aplicación sanitaria: solo recoge
 >   datos); cómo compartir casos dentro del servicio y entre hospitales
 >   (multicéntrico); más equipos (Natus, Nihon Kohden); quién la mantiene.
-> - **Pendiente del usuario (06-10):** recargar la app; probar en el móvil y en
->   quirófano el candado (ficha, Registro y Borrar bloqueado), la hora en la
->   hoja de fase, «+ GRID B» en Basales y en Mapeo, y c-MEP y c-SEP con PostPos2.
+> - **Probado por el usuario (09-10):** el candado, la hora en la hoja de fase,
+>   «+ GRID B» en el Mapeo y PostPos2 en c-MEP y c-SEP funcionan.
 > - **Pendiente del usuario (04-10, última hora):** probar en el móvil el ✎ del
 >   Registro (hoja de corregir y el selector Evento | Alarma), los colores del
 >   Mapeo, la selección de varias plantillas y el modo claro con el gris nuevo.

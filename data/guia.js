@@ -8,10 +8,10 @@
  *
  * Rehecha el 30-09-2026 (pedido del usuario: «la cantidad de texto es
  * inmensa, nadie se va a leer eso nunca»). Ahora es visual y corta: el flujo
- * de un día en cinco pasos, una tarjeta por pantalla con dos o tres puntos,
+ * de un día en cinco pasos, una tarjeta por pantalla con pocos puntos,
  * lo que conviene saber y unas dudas rápidas de una o dos frases. La
  * referencia larga sigue siendo README.md. Regla al tocarla: frases cortas,
- * como mucho tres puntos por tarjeta; si algo necesita un párrafo, va al
+ * pocos puntos por tarjeta, de una línea cada uno; si algo necesita un párrafo, va al
  * README, no aquí.
  *
  * Todo es texto plano (se pinta con textContent). No se sincroniza, no se
@@ -59,7 +59,7 @@ window.GUIA = {
       { titulo: "Registro intraoperatorio", texto: "Lo que pasa en quirófano, con la hora.", puntos: [
         "Barra de abajo: + Fase (un toque; lo siguiente la hereda; la hora en blanco es la de ahora), + Evento y + Alarma.",
         "Evento y alarma por pasos: técnica › hallazgo › contexto; varias técnicas a la vez = una sola alarma.",
-        "Basales: toca una técnica para apuntar; «= Basal» copia la basal si no hay cambios. Con dos mantas, «+ GRID B» (en Basales o Mapeo).",
+        "Basales: toca una técnica para apuntar; «= Basal» copia la basal si no hay cambios. Con dos GRID, «+ GRID B» (en Basales o Mapeo).",
         "En el cronograma, toca la hora para cambiarla; ✎ abre la misma hoja, con los botones marcados, para corregir (o pasar un evento a alarma y al revés)."
       ] }
     ] },
@@ -84,7 +84,7 @@ window.GUIA = {
     { pregunta: "¿Qué significan los colores del cronograma?",
       respuesta: "Rojo, alarma. Naranja, un cambio sin alarma o un factor técnico. Verde, fase o recuperación. Azul, lo demás (anestesia, mapeo, contexto)." },
     { pregunta: "¿Qué significan las siglas?",
-      respuesta: "Sin caso: el Registro o el Checklist como hoja suelta, sin caso vinculado. PostPos1 y PostPos2: basales tras el primer y el segundo cambio de posición. HFD: descargas de alta frecuencia. CoMEP: MEP corticobulbares. TOF: tren de cuatro. ⇄: el mismo dato en el Registro y en la ficha. En la lista de casos, «3/5» es la dificultad, ★ un caso destacado y 👁 hacer seguimiento." },
+      respuesta: "Sin caso: el Registro o el Checklist como hoja suelta, sin caso vinculado. PostPos1 y PostPos2: basales tras el primer y el segundo cambio de posición o de GRID. HFD: descargas de alta frecuencia. CoMEP: MEP corticobulbares. TOF: tren de cuatro. ⇄: el mismo dato en el Registro y en la ficha. En la lista de casos, «3/5» es la dificultad, ★ un caso destacado y 👁 hacer seguimiento." },
     { pregunta: "¿Cómo apunto una alarma bilateral, hemicorporal o cruzada?",
       respuesta: "Marca todas las técnicas y lados a la vez (por ejemplo t-MEP MSD + MID + CoMEP VII D) y pulsa Apuntar alarma: es una sola alarma, con una causa, unas medidas y una recuperación. Si lo sabes, pon cuánto cayó o subió en %." },
     { pregunta: "¿Cómo corrijo un caso cerrado?",
