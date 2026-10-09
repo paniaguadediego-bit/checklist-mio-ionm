@@ -4063,9 +4063,11 @@ body.sin-ayudas .coste-nota { display: none !important; }
    el fondo oscuro (contraste 1,08:1; auditoría, F8). */
 @media screen {
   :root:not(.tema-claro) .caso-fila.estado-pendiente_planificar { --est: #7d8ba0; }
-  :root:not(.tema-claro) .casos-leyenda-it.estado-pendiente_planificar::before { background: #7d8ba0; }
+  :root:not(.tema-claro) .casos-leyenda-it.estado-pendiente_planificar::before,
+  :root:not(.tema-claro) .sel-caso-punto.estado-pendiente_planificar { background: #7d8ba0; }
   :root.tema-oscuro .caso-fila.estado-pendiente_planificar { --est: #8a8374; }
-  :root.tema-oscuro .casos-leyenda-it.estado-pendiente_planificar::before { background: #8a8374; }
+  :root.tema-oscuro .casos-leyenda-it.estado-pendiente_planificar::before,
+  :root.tema-oscuro .sel-caso-punto.estado-pendiente_planificar { background: #8a8374; }
 }
 
 /* «Ahora» junto a su casilla de hora: del mismo alto que ella (≈30 px) en
