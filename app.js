@@ -608,6 +608,7 @@
     caso_reabrir:        { es: "Reabrir caso", en: "Reopen case" },
     caso_candado_aviso:  { es: "🔒 Caso cerrado: solo lectura. Para cambiar algo, «Reabrir caso».", en: "🔒 Closed case: read only. To change anything, «Reopen case»." },
     reg_candado_aviso:   { es: "🔒 Caso cerrado: el Registro es de solo lectura. Para cambiar algo, reábrelo en su ficha (Gestión de Casos).", en: "🔒 Closed case: the record is read only. To change anything, reopen it from its form (Case management)." },
+    checklist_candado_aviso: { es: "🔒 Caso cerrado: el Checklist es de solo lectura. Para cambiar algo, reábrelo en su ficha (Gestión de Casos).", en: "🔒 Closed case: the checklist is read only. To change anything, reopen it from its form (Case management)." },
     reg_grid_b_poner:    { es: "+ GRID B", en: "+ GRID B" },
     reg_grid_b_quitar:   { es: "Quitar GRID B", en: "Remove GRID B" },
     caso_informe_proximamente: { es: "Crear informe: todavía no hace nada, en camino.", en: "Create report: not wired up yet, coming soon." },
@@ -2709,6 +2710,7 @@
   function guardarMontajeEnCaso() {
     var caso = casos[casoEditandoUid];
     if (!caso || !montajeCaso) return;
+    if (caso.estado === "cerrado") return;   // candado (auditoría 09-10-2026, C13)
     caso.tecnicas_realizadas = (montajeCaso.tecnicas || []).slice();
     volcarMontajeEnCaso(caso, montajeCaso);
     guardarCaso(caso);
@@ -8361,8 +8363,9 @@
         var tecB = camposCaso.tecnicas_realizadas || casoAbierto.tecnicas_realizadas || [];
         var parB = document.createElement("div");
         parB.className = "reg-basales";
-        pintarBloqueBasales(T("registro_sens_otros"), regFilasBasales(REG_BASALES_SENS, "s_", dB, tecB), "s_", REG_BASALES_LIBRES.sens, parB, dB, sinGuardar);
-        pintarBloqueBasales(T("registro_motores"), regFilasBasales(REG_BASALES_MOT, "m_", dB, tecB), "m_", REG_BASALES_LIBRES.mot, parB, dB, sinGuardar);
+        var sinOtroB = !casoEsNuevo && casoAbierto.estado === "cerrado";   // candado: sin «+ Otro» (F17)
+        pintarBloqueBasales(T("registro_sens_otros"), regFilasBasales(REG_BASALES_SENS, "s_", dB, tecB), "s_", REG_BASALES_LIBRES.sens, parB, dB, sinGuardar, sinOtroB);
+        pintarBloqueBasales(T("registro_motores"), regFilasBasales(REG_BASALES_MOT, "m_", dB, tecB), "m_", REG_BASALES_LIBRES.mot, parB, dB, sinGuardar, sinOtroB);
         var bGridB = nodoBotonGridB(dB, tecB, function () { oyentesTecnicasRealizadas.forEach(function (f) { f(); }); });
         if (bGridB) parB.appendChild(bGridB);
         contB.appendChild(parB);
@@ -8661,7 +8664,7 @@
           // las cajas le perdería lo tecleado y no habría por qué asociar
           // una cosa con la otra.
           btnCorregir.addEventListener("click", function () {
-            if (!guardarFicha(false)) return;
+            if (!guardarFichaSiCambio()) return;
             var uid = casoAbierto && casoAbierto.caso_uid;
             if (!uid || !casos[uid]) return;
             dlgCaso.close();
@@ -8857,6 +8860,11 @@
     candado(document.querySelector("#dlg-caso .caso-scroll"), cerradoF);
     document.getElementById("caso-candado").hidden = !cerradoF;
     document.getElementById("caso-guardar").hidden = cerradoF;
+    // «Borrar caso» se ve desactivado y con el motivo, en vez de parecer
+    // activo y avisar al pulsarlo (auditoría 09-10-2026, F17).
+    var bBorrar = document.getElementById("caso-borrar");
+    bBorrar.disabled = cerradoF;
+    if (cerradoF) bBorrar.title = T("caso_borrar_cerrado"); else bBorrar.removeAttribute("title");
     fichaOrigen = casos[c.caso_uid] || null;
     fichaFirma = firmaFicha();
   }
@@ -8898,6 +8906,9 @@
 
   function guardarFicha(cerrar) {
     if (fichaAutoTimer) { clearTimeout(fichaAutoTimer); fichaAutoTimer = null; }
+    // Candado (auditoría 09-10-2026, C13): un caso cerrado no se guarda por
+    // ninguna vía; solo «Reabrir caso» (cerrar = true) cambia su estado.
+    if (!cerrar && fichaCerrada()) return true;
     var c = leerFichaCaso();
     if (!c.fecha) {
       var err = document.getElementById("caso-error");
@@ -8936,6 +8947,22 @@
   function firmaFicha() {
     try { return JSON.stringify(leerFichaCaso()); } catch (e) { return ""; }
   }
+  /* ¿La ficha abierta es la de un caso cerrado? Se mira el caso tal como se
+     pintó (fichaOrigen), que es lo que decidió el candado de la pantalla. */
+  function fichaCerrada() {
+    return !!(!casoEsNuevo && fichaOrigen && fichaOrigen.estado === "cerrado");
+  }
+  /* Botones que salen de la ficha (Abrir en el Registro, Editar montaje):
+     antes guardaban siempre, y así sellaban `editado_en` y subían el caso
+     aunque no hubiera cambios o estuviera cerrado (auditoría 09-10-2026,
+     C13). Ahora, mismo criterio que autoguardarFicha()/salirDeFicha(): solo
+     se guarda si la ficha cambió de verdad, y nunca un caso cerrado. */
+  function guardarFichaSiCambio() {
+    if (fichaAutoTimer) { clearTimeout(fichaAutoTimer); fichaAutoTimer = null; }
+    if (fichaCerrada()) return true;
+    if (!casoEsNuevo && firmaFicha() === fichaFirma) return true;
+    return guardarFicha(false);
+  }
   /* Autoguardado de la ficha (auditoría 28-09-2026, F1): igual que el
      Registro, la ficha se guarda sola ~1,5 s después de cada cambio. Se
      guarda una COPIA de la copia de trabajo: los controles (y las tablas
@@ -8951,6 +8978,7 @@
   function autoguardarFicha() {
     if (fichaAutoTimer) { clearTimeout(fichaAutoTimer); fichaAutoTimer = null; }
     if (!casoAbierto || !dlgCaso.open) return false;
+    if (fichaCerrada()) return true;   // candado (C13): nada que guardar
     var firma = firmaFicha();
     if (firma === fichaFirma) return true;
     var c = casoAbierto;
@@ -16505,7 +16533,13 @@
     return checklistModeloCero.valores;
   }
 
+  // ¿El Checklist está vinculado a un caso cerrado? Entonces es de solo
+  // lectura, como su ficha y su Registro (auditoría 09-10-2026, C13).
+  function checklistCerrado() {
+    return !!(checklistCasoUid && casos[checklistCasoUid] && casos[checklistCasoUid].estado === "cerrado");
+  }
   function checklistMarcar(itemId, marcado) {
+    if (checklistCerrado()) return;   // candado (auditoría 09-10-2026, C13)
     var valores = checklistValores();
     if (marcado) valores[itemId] = true; else delete valores[itemId];
     if (checklistCasoUid && casos[checklistCasoUid]) guardarCaso(casos[checklistCasoUid]);
@@ -16903,6 +16937,13 @@
     var cont = document.getElementById("checklist-contenido");
     cont.innerHTML = "";
     var valores = checklistValores();
+    var cerradoCk = checklistCerrado();
+    if (cerradoCk) {
+      var avisoCk = document.createElement("p");
+      avisoCk.className = "aviso-ficticio aviso-candado";
+      avisoCk.textContent = T("checklist_candado_aviso");
+      cont.appendChild(avisoCk);
+    }
     CHECKLIST_GRUPOS.forEach(function (g) {
       var det = document.createElement("details");
       det.className = "caso-grupo";
@@ -16918,6 +16959,7 @@
         var inp = document.createElement("input");
         inp.type = "checkbox";
         inp.checked = !!valores[it.id];
+        if (cerradoCk) { inp.disabled = true; lab.title = T("checklist_candado_aviso"); }
         inp.addEventListener("change", function () { checklistMarcar(it.id, inp.checked); });
         var span = document.createElement("span");
         span.textContent = T("checklist_" + it.id);
@@ -16953,6 +16995,7 @@
   // texto-, pero este botón da la confirmación visible de que no se ha
   // perdido nada, mismo motivo que "Guardar montaje" en el Organizador.
   document.getElementById("checklist-guardar").addEventListener("click", function () {
+    if (checklistCerrado()) { avisoGuardado(T("checklist_candado_aviso"), true); return; }
     avisoGuardado(T("checklist_guardado"));
   });
   document.getElementById("checklist-vaciar").addEventListener("click", function () {
@@ -17534,6 +17577,9 @@
   function registroGuardarYa() {
     if (registroTimer) { clearTimeout(registroTimer); registroTimer = null; }
     var c = registroCaso();
+    // Candado (auditoría 09-10-2026, C13): un caso cerrado no se guarda, ni
+    // con «Guardar» ni con «Imprimir» ni al salir.
+    if (c && c.estado === "cerrado") return;
     if (c) guardarCaso(c, false, true); else registroGuardarModeloCero();
   }
   function registroGuardar() {
@@ -17714,7 +17760,9 @@
   // abre debajo con casillas grandes por fase y, en PostPos y Cierre, «= Basal»
   // copia los valores de la basal. Los datos, en las mismas claves de siempre.
   var regBasalAbiertas = {};   // filas abiertas mientras dura la sesión
-  function pintarBloqueBasales(titulo, filas, prefijo, libres, cont, d, guardar) {
+  // sinVacia: caso cerrado (candado), solo las filas libres ya usadas, sin
+  // la vacía «+ Otro» para añadir (auditoría 09-10-2026, F17).
+  function pintarBloqueBasales(titulo, filas, prefijo, libres, cont, d, guardar, sinVacia) {
     guardar = guardar || { cambiar: registroGuardar, salir: registroGuardarYa };
     var medidas = regMedidasBasal(prefijo);
     var bloque = regNodo("div", "reg-bl");
@@ -17728,7 +17776,7 @@
     for (var i = 1; i <= libres; i++) {
       var idL = prefijo + "libre" + i;
       var usada = !!d.v["e_" + idL + "_l"] || REG_BASALES_COLS.some(function (col) { return regBasalEscrita(d.v, idL, col.id); });
-      if (!usada && hayVacia) continue;
+      if (!usada && (hayVacia || sinVacia)) continue;
       if (!usada) hayVacia = true;
       defs.push({ id: idL, sin: "libre" + i, rot: "", libre: true, vacia: !usada });
     }
@@ -17949,8 +17997,9 @@
     var tecRB = cRB ? (cRB.tecnicas_realizadas || []) : null;
     var par = document.createElement("div");
     par.className = "reg-basales";
-    pintarBloqueBasales(T("registro_sens_otros"), regFilasBasales(REG_BASALES_SENS, "s_", d, tecRB), "s_", REG_BASALES_LIBRES.sens, par, d);
-    pintarBloqueBasales(T("registro_motores"), regFilasBasales(REG_BASALES_MOT, "m_", d, tecRB), "m_", REG_BASALES_LIBRES.mot, par, d);
+    var sinOtroRB = !!(cRB && cRB.estado === "cerrado");   // candado: sin «+ Otro» (F17)
+    pintarBloqueBasales(T("registro_sens_otros"), regFilasBasales(REG_BASALES_SENS, "s_", d, tecRB), "s_", REG_BASALES_LIBRES.sens, par, d, null, sinOtroRB);
+    pintarBloqueBasales(T("registro_motores"), regFilasBasales(REG_BASALES_MOT, "m_", d, tecRB), "m_", REG_BASALES_LIBRES.mot, par, d, null, sinOtroRB);
     var bGridB = nodoBotonGridB(d, tecRB, function () { registroGuardarYa(); renderRegistroContenido(); });
     if (bGridB) par.appendChild(bGridB);
     // La estimulación de tornillos pasó a E2 · Mapeo (28-09-2026), donde
@@ -20267,6 +20316,8 @@
     renderRegistroContenido();
   });
   document.getElementById("registro-guardar").addEventListener("click", function () {
+    var cG = registroCaso();
+    if (cG && cG.estado === "cerrado") { avisoGuardado(T("reg_candado_aviso"), true); return; }
     registroGuardarYa();
     avisoGuardado(T("registro_guardado"));
   });
@@ -20836,7 +20887,7 @@
   // De la ficha al Registro de ese mismo caso (30-09-2026, tras la prueba con
   // tres usuarios: había que salir al inicio y buscar el caso en la lista).
   document.getElementById("caso-ir-registro").addEventListener("click", function () {
-    if (!guardarFicha(false)) return;
+    if (!guardarFichaSiCambio()) return;
     var uid = casoAbierto && casoAbierto.caso_uid;
     if (fichaAutoTimer) { clearTimeout(fichaAutoTimer); fichaAutoTimer = null; }
     dlgCaso.close();
