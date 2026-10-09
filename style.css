@@ -4591,7 +4591,7 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 
 /* Lista de plantillas con color (04-10-2026): familias de técnica. Claro =
    tonos oscuros legibles en blanco; azul y oscuro = tonos vivos. */
-:root { --fam-aud: #8a7a00; --fam-sens: #a86b00; --fam-mot: #c62828; --fam-emg: #1e8a5a; --fam-ref: #9c1f63; --fam-eeg: #1f6fd1; --fam-map: #d6609a; }
+:root { --fam-aud: #5f5400; --fam-sens: #754b00; --fam-mot: #a02020; --fam-emg: #15603f; --fam-ref: #9a1f62; --fam-eeg: #17549e; --fam-map: #97275e; }
 @media screen {
   :root:not(.tema-claro) { --fam-aud: #ffe14d; --fam-sens: #f0b429; --fam-mot: #ef4444; --fam-emg: #4cc38a; --fam-ref: #c8408f; --fam-eeg: #5aa9ff; --fam-map: #f7a6c8; }
 }
