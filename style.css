@@ -4684,7 +4684,7 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 #registro-contenido > .aviso-candado { margin: 0 0 0.6rem; }
 .candado :disabled { opacity: 1; cursor: default; }
 .candado input:disabled, .candado select:disabled, .candado textarea:disabled { color: var(--text); -webkit-text-fill-color: var(--text); }
-.candado .rr-editar-btn, .candado .reg-fila-quitar { display: none; }
+.candado .rr-editar-btn, .candado .reg-fila-quitar, .candado .chip-quitar, .candado .slot .chip-quitar { display: none; }
 
 /* Hora de la fase en la hoja de apuntar (06-10-2026) */
 .rr-fase-hora { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 0.45rem; font-size: 0.8rem; color: var(--text-muted); }

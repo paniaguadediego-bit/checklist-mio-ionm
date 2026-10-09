@@ -12713,7 +12713,7 @@
   /* Montaje de un caso cerrado (auditoría 09-10-2026): «Editar montaje» lo
      abre igual, pero en solo lectura. Mismo candado que la ficha y el
      Registro sobre el catálogo, las cajas, las técnicas y las notas; sin
-     «Cargar montaje…» ni «Guardar como plantilla…»; el arrastre se corta en
+     «Cargar montaje…» (sí «Guardar como plantilla…», que no toca el caso); el arrastre se corta en
      dragstart. «Volver al caso» sigue activo. guardarMontajeEnCaso() no
      escribe en un cerrado, por si algo se escapara. */
   function montajeCasoCerrado() {
@@ -12726,7 +12726,7 @@
       var el = document.getElementById(id);
       if (el && (cerr || el.candadoPuesto)) candado(el, cerr);
     });
-    ["barra-caso-cargar-plantilla", "barra-caso-guardar-plantilla"].forEach(function (id) {
+    ["barra-caso-cargar-plantilla"].forEach(function (id) {
       var b = document.getElementById(id);
       b.disabled = cerr;
       if (cerr) b.title = T("montaje_candado_aviso"); else b.removeAttribute("title");
