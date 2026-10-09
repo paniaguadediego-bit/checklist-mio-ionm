@@ -624,6 +624,7 @@
     papelera_info:       { es: "Cirugía {fecha} · borrado el {borrado} · quedan {dias} días", en: "Surgery {fecha} · deleted on {borrado} · {dias} days left" },
     papelera_recuperar:  { es: "Recuperar", en: "Restore" },
     papelera_recuperado: { es: "Caso recuperado.", en: "Case restored." },
+    papelera_ya_en_lista: { es: "Este caso ya está en la lista (volvió desde otro dispositivo). Se quita de la papelera sin cambiarlo.", en: "This case is already in the list (it came back from another device). It is removed from the bin without changing it." },
     papelera_borrar:     { es: "Borrar para siempre", en: "Delete forever" },
     papelera_borrar_conf: { es: "¿Borrar para siempre el caso {caso}?\nYa no se podrá recuperar desde la app.", en: "Delete case {caso} forever?\nIt can no longer be restored from the app." },
     papelera_vaciar:     { es: "Vaciar papelera", en: "Empty bin" },
@@ -4592,9 +4593,20 @@
     if (e && e.caso && !casos[uid]) borrarUnCasoLocal(uid, e.caso);
     if (!sinGuardar) guardarPapelera();
   }
+  // Devuelve "ya_estaba" si el caso había vuelto a la lista mientras tanto
+  // (lo bajó la sincronización desde otro dispositivo, o entró con
+  // «Importar copia»): ese es el vivo y la copia de la papelera es más
+  // vieja, así que no se pisa. Solo se quita la entrada, sin tocar sus fotos
+  // de IndexedDB (son las mismas claves que usa el caso vivo) ni nada de la
+  // sincronización.
   function recuperarDePapelera(uid) {
     var e = papeleraCasos[uid];
     if (!e || !e.caso) return;
+    if (casos[uid]) {
+      delete papeleraCasos[uid];
+      guardarPapelera();
+      return "ya_estaba";
+    }
     var caso = e.caso;
     delete papeleraCasos[uid];
     guardarPapelera();
@@ -6108,6 +6120,16 @@
     if (!syncActivo()) return Promise.resolve();
     return borradosPendientes().reduce(function (cadena, uid) {
       return cadena.then(function () {
+        // El caso ha vuelto a estar vivo en este dispositivo (p. ej. con
+        // «Importar copia», que lo marca para subir): borrarlo en GitHub
+        // se llevaría el vivo, y el siguiente «bajar» lo quitaría también
+        // de aquí. Se cancela el borrado, como hace Recuperar.
+        if (casos[uid]) {
+          if (!casosSha[uid]) casosSha[uid] = casosBorrados[uid];
+          delete casosBorrados[uid];
+          guardarCasos();
+          return;
+        }
         return eliminarCasoRemoto_(uid, casosBorrados[uid]).then(function () {
           delete casosBorrados[uid];
           guardarCasos();
@@ -9285,8 +9307,8 @@
       var rec = regNodo("button", "primario", T("papelera_recuperar"));
       rec.type = "button";
       rec.addEventListener("click", function () {
-        recuperarDePapelera(uid);
-        avisoGuardado(T("papelera_recuperado"));
+        if (recuperarDePapelera(uid) === "ya_estaba") alert(T("papelera_ya_en_lista"));
+        else avisoGuardado(T("papelera_recuperado"));
         renderPapelera();
         renderListaCasos();
       });
