@@ -4336,6 +4336,9 @@ textarea { resize: none; overflow-y: hidden; }
 .rr-tipo-ed { margin: 0 0 0.4rem; }
 .rr-tipo-ed .rr-chip.rr-tipo-alarma.activo { background: var(--g-critico); border-color: var(--g-critico); color: #fff; }
 .rr-tipo-aviso { margin: 0 0 0.5rem; font-size: 0.75rem; color: var(--text-muted); }
+/* Elecciones de antes en la misma hoja (auditoría 09-10-2026, F10) */
+.rr-de-antes { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin: 0 0 0.5rem; padding: 0.3rem 0.5rem; border: 1px solid var(--border-soft); border-radius: 4px; font-size: 0.75rem; color: var(--text-muted); }
+#pantalla-registro .rr-de-antes-btn { min-height: 32px; padding: 0.15rem 0.6rem; font-size: 0.75rem; white-space: nowrap; }
 
 /* Botón de colores junto al ⋮ (30-09-2026): una bolita con el color del
    modo puesto; al tocarlo pasa al siguiente (oscuro → azul → claro). */

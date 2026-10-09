@@ -1379,6 +1379,9 @@
     rr_paso_contexto:    { es: "Contexto", en: "Context" },
     rr_siguiente:        { es: "Siguiente ›", en: "Next ›" },
     rr_hoja_cerrar:      { es: "Cerrar sin apuntar", en: "Close without logging" },
+    rr_de_antes:         { es: "Tienes elecciones de antes", en: "You have earlier choices" },
+    rr_de_antes_nuevo:   { es: "Empezar de nuevo", en: "Start over" },
+    rr_comp_vs:          { es: "vs {ref}", en: "vs {ref}" },
     rr_al_detalle:       { es: "Causa, medidas y recuperación", en: "Cause, measures and recovery" },
     rr_contexto:         { es: "Contexto quirúrgico (opcional)", en: "Surgical context (optional)" },
     rr_grupo_reflejos:   { es: "Reflejos", en: "Reflexes" },
@@ -1416,7 +1419,7 @@
     rr_crono_mostrar:    { es: "Mostrar", en: "Show" },
     rr_crono_ocultar:    { es: "Ocultar", en: "Hide" },
     rr_borrador_alarma:  { es: "Alarma", en: "Alarm" },
-    registro_comparativa: { es: "Respecto a la basal", en: "Compared with baseline" },
+    registro_comparativa: { es: "Comparativa de basales", en: "Baseline comparison" },
     registro_hoy:        { es: "hoy", en: "today" },
     registro_basal_igual: { es: "Igual que la basal: copia sus valores aquí", en: "Same as baseline: copies its values here" },
     registro_basal_sin_basal: { es: "Esta técnica aún no tiene basal que copiar.", en: "This technique has no baseline to copy yet." },
@@ -17149,8 +17152,8 @@
   // conservan aunque cambie el rótulo.
   var REG_TEC_GRID = ["c_pem", "c_pess", "mapeo_cortical", "phase_reversal", "ecog"];
   var REG_BASALES_SENS = [
-    { id: "sep_msd", l: "t-SEP MSD" }, { id: "sep_msi", l: "t-SEP MSI" },
-    { id: "sep_mid", l: "t-SEP MID" }, { id: "sep_mii", l: "t-SEP MII" },
+    { id: "sep_msd", l: "t-SEP MSD", tec: ["t_pess"], defecto: true }, { id: "sep_msi", l: "t-SEP MSI", tec: ["t_pess"], defecto: true },
+    { id: "sep_mid", l: "t-SEP MID", tec: ["t_pess"], defecto: true }, { id: "sep_mii", l: "t-SEP MII", tec: ["t_pess"], defecto: true },
     // c-SEP y c-MEP: una sola fila, o dos -A y B- si el caso lleva dos GRID
     // («+ GRID B»; 06-10-2026, pedido del usuario). Las de antes, una por
     // miembro, solo salen si ya tienen algo escrito ("antigua").
@@ -17163,8 +17166,8 @@
   // (esfínter, VII, IX-X, XII, otros...) -pedido del usuario-.
   // REG_BASALES_LIBRES = cuántas filas libres lleva cada tabla.
   var REG_BASALES_MOT = [
-    { id: "mep_msd", l: "t-MEP MSD" }, { id: "mep_msi", l: "t-MEP MSI" },
-    { id: "mep_mid", l: "t-MEP MID" }, { id: "mep_mii", l: "t-MEP MII" },
+    { id: "mep_msd", l: "t-MEP MSD", tec: ["t_pem"], defecto: true }, { id: "mep_msi", l: "t-MEP MSI", tec: ["t_pem"], defecto: true },
+    { id: "mep_mid", l: "t-MEP MID", tec: ["t_pem"], defecto: true }, { id: "mep_mii", l: "t-MEP MII", tec: ["t_pem"], defecto: true },
     { id: "cmep_a", l: "c-MEP", tec: ["c_pem"], gridAB: "A" }, { id: "cmep_b", l: "c-MEP", tec: ["c_pem"], gridAB: "B" },
     { id: "cmep_msd", l: "c-MEP MSD", tec: ["c_pem"], antigua: true }, { id: "cmep_msi", l: "c-MEP MSI", tec: ["c_pem"], antigua: true },
     { id: "cmep_mid", l: "c-MEP MID", tec: ["c_pem"], antigua: true }, { id: "cmep_mii", l: "c-MEP MII", tec: ["c_pem"], antigua: true },
@@ -17856,27 +17859,35 @@
   }
   // [{t: "t-SEP MSD · Cierre −58 %", fuerte}] de las filas {id, rot} dadas
   // Por medida: amplitud y latencia (o umbral) de la última fase escrita
-  // frente a la Basal. Se resalta una caída de amplitud ≥50 %, una latencia
+  // frente a su referencia (ver abajo). Se resalta una caída de amplitud ≥50 %, una latencia
   // ≥10 % más larga o un umbral ≥50 % más alto (criterios clásicos).
   // Una fila: {fase, trozos: ["amplitud −10 %", "latencia +1 %"], fuerte}, o null
   // «corto»: amp / lat / umb, para la línea de la lista
+  // Referencia (auditoría 09-10-2026, C16, decisión del usuario): la última
+  // columna escrita ANTES de la fase comparada -PostPos2 si tiene valor; si
+  // no, PostPos1; si no, Basal-, porque PostPos es la nueva basal tras
+  // cambiar de posición o mover el GRID. Si no es la Basal, se dice «vs …».
   function regComparacionFila(v, idFila, corto) {
     var trozos = [], fuerte = false, fase = null;
+    var sinPrefijo = idFila.replace(/^[sm]_/, "");
+    var cols = REG_BASALES_COLS.filter(function (col) { return regColBasal(col, sinPrefijo); });
     regMedidasBasal(idFila).forEach(function (m) {
-      var b = regNumeroBasal(regBasalValor(v, idFila, "basal", m.id));
-      if (!b) return;
-      var ult = null;
-      REG_BASALES_COLS.forEach(function (col) {
-        if (col.id === "basal") return;
+      var escritas = [];
+      cols.forEach(function (col) {
         var n = regNumeroBasal(regBasalValor(v, idFila, col.id, m.id));
-        if (n !== null) ult = { col: col, v: n };
+        if (n !== null) escritas.push({ col: col, v: n });
       });
-      if (!ult) return;
+      if (escritas.length < 2) return;
+      var ult = escritas[escritas.length - 1];
+      var ref = escritas[escritas.length - 2];
+      var b = ref.v;
+      if (!b) return;
       var pct = Math.round((ult.v - b) / b * 100);
       if ((m.id === "amp" && pct <= -50) || (m.id === "lat" && pct >= 10) || (m.id === "umb" && pct >= 50)) fuerte = true;
       fase = fase || ult.col;
       // Si esta medida se escribió en otra fase que la primera, se dice
-      trozos.push((corto ? m.c : campo(m, "l").toLowerCase()) + (ult.col !== fase ? " (" + regL(ult.col) + ")" : "") + " " + (pct > 0 ? "+" : (pct < 0 ? "\u2212" : "")) + Math.abs(pct) + " %");
+      trozos.push((corto ? m.c : campo(m, "l").toLowerCase()) + (ult.col !== fase ? " (" + regL(ult.col) + ")" : "") + " " + (pct > 0 ? "+" : (pct < 0 ? "\u2212" : "")) + Math.abs(pct) + " %" +
+        (ref.col.id !== "basal" ? " " + T("rr_comp_vs", { ref: regL(ref.col) }) : ""));
     });
     return trozos.length ? { fase: fase, trozos: trozos, fuerte: fuerte } : null;
   }
@@ -18059,10 +18070,32 @@
   // Hoja de apuntar abierta ("", "fase", "evento" o "alarma") y paso de la de
   // evento/alarma (0 Técnica, 1 Hallazgo, 2 Contexto). Lo elegido sigue en
   // regRapido: cerrar sin apuntar no lo borra.
-  var regHoja = "", regPaso = 0;
+  // regRapidoTipo: tipo de la última hoja abierta para apuntar (no al
+  // corregir). Auditoría 09-10-2026, F10: lo elegido en una hoja cerrada sin
+  // apuntar solo vuelve si se abre otra vez el MISMO tipo (con la franja
+  // «Empezar de nuevo»); con otro tipo, la hoja empieza en blanco. La caja de
+  // Fase se hereda, como al apuntar.
+  var regHoja = "", regPaso = 0, regRapidoTipo = "", regRapidoDeAntes = false;
+  // ¿Hay algo elegido y sin apuntar en la hoja de ese tipo?
+  function regRapidoPendiente(tipo) {
+    var r = regRapido;
+    if (tipo === "fase") return !!r.faseNota.trim();
+    return !!(r.que || (r.queMas || []).length || r.cambio || r.magnitud || r.nota.trim() ||
+      r.queNota.trim() || r.contexto || r.tof || r.farmaco);
+  }
+  // Vacía lo elegido para un apunte nuevo; la caja de Fase se queda salvo
+  // que se pida («Empezar de nuevo» en la hoja de Fase).
+  function regRapidoEnBlanco(tambienFase) {
+    var faseNota = regRapido.faseNota;
+    regRapido = regRapidoVacio();
+    if (!tambienFase) regRapido.faseNota = faseNota;
+  }
   function regAbrirHoja(modo) {
     regTerminarEdicion();
     regRapido.faseHora = "";
+    if (regRapidoTipo && regRapidoTipo !== modo) regRapidoEnBlanco(false);
+    regRapidoTipo = modo;
+    regRapidoDeAntes = regRapidoPendiente(modo);
     regHoja = modo;
     regPaso = 0;
     renderRegistroContenido();
@@ -18101,6 +18134,7 @@
     regEditandoAp = null;
     regRapidoAparte = null;
     regRapido = regRapidoVacio();
+    regRapidoTipo = "";
   }
   // Lo que pueden ser los botones de Técnica, aunque ahora no se vean
   // (pares de CoMEP y reflejos solo salen si el caso tiene la técnica)
@@ -18395,6 +18429,11 @@
   function regTecnicasDeQue(q) {
     q = String(q || "");
     if (!q || regEsQueSuelto(q)) return [];
+    // «GRID» es c-MEP si el caso la tiene (auditoría 09-10-2026, C19)
+    if (/^GRID/.test(q)) {
+      var cG = registroCaso();
+      return cG && (cG.tecnicas_realizadas || []).indexOf("c_pem") !== -1 ? ["c_pem"] : [];
+    }
     var s = /^CoMEP/.test(q) ? "CoMEP" : q.replace(/^(c-SEP|c-MEP) [AB]$/, "$1").replace(/ (MSD|MSI|MID|MII|D|I)$/, "");
     if (s === "Blink") s = "BR";
     var ids = TECNICAS.filter(function (t) {
@@ -18408,7 +18447,8 @@
   // Familia (color) de lo elegido en Técnica, de una fila de basales o de
   // una técnica del cronograma; "" si no es una técnica (04-10-2026).
   function regFamiliaDeQue(q) {
-    var ids = regTecnicasDeQue(q);
+    // «GRID», siempre con el color de c-MEP (motoras), tenga o no el caso c-MEP
+    var ids = /^GRID/.test(String(q || "")) ? ["c_pem"] : regTecnicasDeQue(q);
     for (var i = 0; i < ids.length; i++) {
       var t = TECNICAS.filter(function (x) { return x.id === ids[i]; })[0];
       if (t) return familiaTecnica(t);
@@ -18420,11 +18460,18 @@
     if (f) nodo.classList.add("rr-fam", "fam-" + f);
   }
 
+  // La fase de hora mayor, no la última apuntada (auditoría 09-10-2026, C14:
+  // una fase marcada tarde con su hora no pasa a ser la actual). Mismo orden
+  // que regItemsApuntados(): sin hora, al final; a igual hora, la apuntada
+  // después.
   function regFaseActual(d) {
-    for (var i = d.eventos.length - 1; i >= 0; i--) {
-      if (d.eventos[i].cod === "F" && d.eventos[i].fase) return d.eventos[i].fase;
-    }
-    return "";
+    var mejor = null, hMejor = "";
+    d.eventos.forEach(function (e) {
+      if (e.cod !== "F" || !e.fase) return;
+      var h = e.hora || "";
+      if (!mejor || !h || (hMejor && h >= hMejor)) { mejor = e; hMejor = h; }
+    });
+    return mejor ? mejor.fase : "";
   }
 
   // Modalidades sin fila de basales que también cambian en quirófano. Salen
@@ -18456,11 +18503,16 @@
     var cmep = filasMot.filter(function (r) { return /^cmep_[ab]$/.test(r.id); });
     if (!cmep.length && !tec) cmep = [{ l: "c-MEP" }];
     if (tec && tec.some(function (t) { return REG_TEC_GRID.indexOf(t) !== -1; })) cmep = cmep.concat([{ l: "GRID" }]);
+    // Sin t-MEP en el caso (auditoría 09-10-2026, C19) no hay «t-MEP MII»:
+    // c-MEP va entonces delante de la primera fila que no sea de t-MEP.
+    var cmepPuesto = false;
     filasMot.forEach(function (r) {
       if (/^cmep_/.test(r.id) || r.id === "grid") return;
+      if (!cmepPuesto && !/^mep_/.test(r.id)) { motores = motores.concat(cmep); cmepPuesto = true; }
       motores.push(r);
-      if (r.id === "mep_mii") motores = motores.concat(cmep);
+      if (r.id === "mep_mii") { motores = motores.concat(cmep); cmepPuesto = true; }
     });
+    if (!cmepPuesto) motores = motores.concat(cmep);
     return regFilasBasales(REG_BASALES_SENS, "s_", d, tec)
       .concat(motores)
       .concat(extra)
@@ -18669,6 +18721,12 @@
         var ia = d.alarmas.indexOf(ed.al);
         if (ia !== -1) d.alarmas[ia] = { id: ed.al.id };
         delete regAlarmasAbiertas[ed.al.id];
+        // Sus recuperaciones dejan de serlo (auditoría 09-10-2026, C18): si
+        // no, quitarlas después devolvería la recuperación a una alarma que ya
+        // no existe y el Cronograma diría «recupera» de nada.
+        d.eventos.forEach(function (e) {
+          if (e.recupera_de && e.recupera_de.id === ed.al.id) delete e.recupera_de;
+        });
         // Sin ninguna alarma ya, el caso deja de estar «con alerta» (04-10-2026,
         // pedido del usuario; solo al convertir, no al tocarla a mano)
         var cSinAl = registroCaso();
@@ -18748,6 +18806,21 @@
     hoja.appendChild(cabH);
     var panel = regNodo("div", "rr-hoja-cuerpo");
     hoja.appendChild(panel);
+    // Lo elegido en esta misma hoja antes de cerrarla sin apuntar (F10)
+    if (regRapidoDeAntes && !regEditandoAp) {
+      var franja = regNodo("div", "rr-de-antes");
+      franja.appendChild(regNodo("span", null, T("rr_de_antes")));
+      var bNuevo = regNodo("button", "rr-de-antes-btn", T("rr_de_antes_nuevo"));
+      bNuevo.type = "button";
+      bNuevo.addEventListener("click", function () {
+        regRapidoEnBlanco(regHoja === "fase");
+        regRapidoDeAntes = false;
+        regPaso = 0;
+        renderRegistroContenido();
+      });
+      franja.appendChild(bNuevo);
+      panel.appendChild(franja);
+    }
 
     // Fase: las de fábrica más las propias ya usadas en este registro
     var faseAct = regFaseActual(d);
