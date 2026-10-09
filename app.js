@@ -17284,7 +17284,10 @@
 
   // Filas visibles de una tabla de basales (ver el comentario de
   // REG_BASALES_SENS). "tecnicas" es la lista del caso, o null en Modelo 0.
-  function regFilasBasales(filas, prefijo, d, tecnicas) {
+  // "impresa": en la hoja impresa las filas por defecto (t-SEP, t-MEP) salen
+  // siempre, para apuntar a mano aunque el caso aún no tenga esas técnicas;
+  // en pantalla, solo si el caso las hace (pedido del usuario, 09-10-2026).
+  function regFilasBasales(filas, prefijo, d, tecnicas, impresa) {
     var dosGrid = regCasoConGridB(d);
     return filas.filter(function (r) {
       if (!r.tec) return true;
@@ -17292,6 +17295,7 @@
       if (escrita) return true;
       if (r.antigua || (r.gridAB === "B" && !dosGrid)) return false;
       if (!tecnicas) return !!r.defecto;
+      if (impresa && /^(sep|mep)_/.test(r.id)) return true;
       return r.tec.some(function (t) { return tecnicas.indexOf(t) !== -1; });
     }).map(function (r) {
       // Con dos GRID, «c-MEP A» y «c-MEP B»; con uno, «c-MEP» a secas
@@ -20526,7 +20530,7 @@
     var tecHoja = c ? (c.tecnicas_realizadas || []) : null;
     // Filas visibles según el caso, cada una con su prefijo de clave.
     function conPrefijo(filas, prefijo) {
-      return regFilasBasales(filas, prefijo, d, tecHoja).map(function (r) { return { r: r, prefijo: prefijo }; });
+      return regFilasBasales(filas, prefijo, d, tecHoja, true).map(function (r) { return { r: r, prefijo: prefijo }; });
     }
     // c-SEP, c-MEP, GRID y corticobulbares van en una cuarta tabla propia
     // (pedido del usuario, 25-09-2026), para que la de motores no se alargue;
