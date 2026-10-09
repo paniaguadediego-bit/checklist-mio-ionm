@@ -1206,7 +1206,7 @@ incidencias técnicas y perla docente (= *Aprendizaje clave* y *Caso
 destacado*) son el mismo dato en los dos sitios: se escriban donde se
 escriban, se ven en el otro y en la hoja impresa. El diagnóstico se enseña de
 lectura (lista cerrada de la ficha). Con un caso vinculado no hay botón
-**Vaciar** (solo en el Modelo 0), porque borraría también esos datos de la
+**Vaciar** (solo sin caso, en la «hoja suelta»), porque borraría también esos datos de la
 ficha.
 
 Las secciones de la hoja impresa, completas (las que no se ven en pantalla
@@ -1258,7 +1258,7 @@ cap.19/41.
 
 El desplegable de arriba elige **dónde se guardan las marcas**:
 
-- **Modelo 0 — sin caso**: una checklist de trabajo suelta, en este
+- **Sin caso — hoja suelta** (antes «Modelo 0»): una checklist de trabajo suelta, en este
   navegador, sin sincronizar —mismo criterio que el Simulador o Docencia—.
   Sirve para repasar sin más, sin dejar ningún registro.
 - **Vinculada a un caso** (eligiéndolo en el propio desplegable): las
@@ -1925,10 +1925,11 @@ git commit -m "Describe brevemente el cambio"
 git push
 ```
 
-## Equipos (Inomed y Cadwell)
+## Equipos (Inomed, Cadwell y Genérico)
 
-Cada plantilla y cada caso son de un **equipo**: Inomed (I) o Cadwell (C) en
-este servicio (ver «Adaptarlo a otro servicio» para otros equipos). El
+Cada plantilla y cada caso son de un **equipo**: Inomed (I), Cadwell (C) o
+Genérico (G, para cualquier otra marca) (ver «Adaptarlo a otro servicio» para
+otros equipos). El
 material, el catálogo, los precios y todo el cálculo son los mismos; lo único
 que cambia son las **cajas** donde se coloca.
 
@@ -1955,8 +1956,10 @@ que cambia son las **cajas** donde se coloca.
   Un canal diferencial lleva activo y referencia juntos: ocupa una entrada.
 - `"por_defecto": true` en `equipos` marca el equipo que se propone para lo
   **nuevo** (hoy Inomed). Lo que no trae equipo se sigue leyendo como Inomed.
-- El equipo **Genérico (ejemplo)** está desactivado (`"activo": false`): solo se
-  ve en `?demo`, como punto de partida para describir el equipo de otro servicio.
+- El equipo **Genérico** está activo desde el 04-10-2026 (antes solo se veía en
+  `?demo`): estimulador periférico, transcraneal y dos amplificadores de
+  registro, para cualquier otra marca. Sirve también de punto de partida para
+  describir el equipo de otro servicio.
 
 ## Adaptarlo a otro servicio
 

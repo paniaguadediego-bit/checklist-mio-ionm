@@ -260,11 +260,12 @@ function comoNumero01_(bool) { return bool ? 1 : 0; }
 // Navegación: "si" -> 1, "no" -> 0, sin registrar -> celda vacía. Un true
 // antiguo (cuando era una casilla) cuenta como "si"; un false antiguo no
 // distingue "no" de "no anotado", así que queda vacío.
-// Equipo de cajas del caso (25-09-2026): "inomed"/"cadwell"; sin el campo,
-// Inomed (todo lo anterior a ese día). Sustituye al texto libre "equipo",
-// retirado de la ficha: la columna conserva su nombre.
+// Equipo de cajas del caso (25-09-2026): "inomed"/"cadwell"/"generico"; sin
+// el campo, Inomed (todo lo anterior a ese día). Sustituye al texto libre
+// "equipo", retirado de la ficha: la columna conserva su nombre. Mismos
+// rótulos que "equipos" en data/surgeries.js.
 function nombreEquipo_(id) {
-  var nombres = { inomed: "Inomed", cadwell: "Cadwell" };
+  var nombres = { inomed: "Inomed", cadwell: "Cadwell", generico: "Genérico" };
   return nombres[id || "inomed"] || id;
 }
 

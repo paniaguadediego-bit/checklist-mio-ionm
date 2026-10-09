@@ -31,8 +31,8 @@ herramienta está en [README.md](README.md); aquí está lo que hay que saber pa
 
 Prepara, registra y documenta monitorizaciones neurofisiológicas
 intraoperatorias. Eliges las técnicas, montas el catálogo de electrodos sobre
-las cajas del equipo -**Inomed** o **Cadwell** (Cascade IOMAX), cada plantilla
-y cada caso es de uno de los dos- y la app calcula el material a preparar, la
+las cajas del equipo -**Inomed**, **Cadwell** (Cascade IOMAX) o **Genérico**
+(cualquier otra marca); cada plantilla y cada caso es de uno de ellos- y la app calcula el material a preparar, la
 distribución en cajas con su ocupación, el montaje canal por canal y los
 avisos. Además lleva la ficha de cada caso real, el checklist, la hoja de
 registro intraoperatorio imprimible, consulta y docencia, y apuntes personales.

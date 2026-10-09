@@ -213,7 +213,6 @@
     caso_pdf_sin_datos:  { es: "Todavía no hay ningún caso que exportar.", en: "There are no cases to export yet." },
     caso_pdf_popup_bloqueado: { es: "El navegador ha bloqueado la pestaña del informe. Permite las ventanas emergentes para esta página e inténtalo de nuevo.",
                            en: "The browser blocked the report tab. Allow pop-ups for this page and try again." },
-    caso_pdf_reflejos:   { es: "Reflejos", en: "Reflexes" },
     grupo_reflejos_tronco: { es: "Reflejos de tronco", en: "Brainstem reflexes" },
     grupo_reflejos_medulares: { es: "Reflejos medulares", en: "Spinal reflexes" },
     caso_pdf_cajas:      { es: "Cajas y montaje", en: "Boxes and montage" },
@@ -1026,8 +1025,8 @@
     caso_basales_registro: { es: "Basales (Basal, Post posicionar y Cierre)", en: "Baselines (Baseline, Post-positioning and Closing)" },
     registro_basales_leyenda: { es: "Sensitivos: amplitud (µV) / latencia (ms). Motores: amplitud (mV; onda D en µV) / umbral (mA o V).",
                            en: "Sensory: amplitude (µV) / latency (ms). Motor: amplitude (mV; D-wave in µV) / threshold (mA or V)." },
-    caso_basales_registro_ay: { es: "Es la misma tabla que la del Registro intraoperatorio: lo que escribas aquí sale allí y en la hoja impresa, y al revés. Las filas de c-SEP, c-MEP, GRID, corticobulbares, Onda D, PEATC y H-R aparecen según las técnicas marcadas.",
-                              en: "It is the same table as in the Intraoperative record: whatever you write here appears there and on the printed sheet, and vice versa. The c-SEP, c-MEP, GRID, corticobulbar, D wave, BAEP and H-R rows appear depending on the techniques ticked." },
+    caso_basales_registro_ay: { es: "Es la misma tabla que la del Registro intraoperatorio: lo que escribas aquí sale allí y en la hoja impresa, y al revés. Las filas de t-SEP, t-MEP, c-SEP, c-MEP, GRID, corticobulbares, Onda D, PEATC y H-R aparecen según las técnicas marcadas.",
+                              en: "It is the same table as in the Intraoperative record: whatever you write here appears there and on the printed sheet, and vice versa. The t-SEP, t-MEP, c-SEP, c-MEP, GRID, corticobulbar, D wave, BAEP and H-R rows appear depending on the techniques ticked." },
     caso_basales_grid_estimulo: { es: "GRID: electrodo de estímulo", en: "GRID: stimulating electrode" },
     caso_basales_grid_inversion: { es: "GRID: contacto con inversión de fase", en: "GRID: phase reversal contact" },
     // Con dos GRID, «GRID A: …» / «GRID B: …» (auditoría 09-10-2026, C15)
@@ -1298,7 +1297,6 @@
     montajes_cuenta:     { es: "{n} de {total}", en: "{n} of {total}" },
     montaje_tuyo:        { es: "tuyo", en: "yours" },
     montaje_modificado:  { es: "modificada {fecha}", en: "modified {fecha}" },
-    montaje_creado:      { es: "creado {fecha}", en: "created {fecha}" },
 
     /* --- Checklist pre-quirúrgico (19/20-09-2026) --- */
     checklist_intro:     { es: "Repaso en 4 momentos antes de empezar. Fuentes: Møller, cap. 18; MacDonald 2013 (ASNM); Deletis et al., 2.ª ed., caps. 19 y 41.",
@@ -1361,10 +1359,7 @@
     registro_fila_quitar_conf: { es: "¿Quitar esta fila? Tiene datos escritos.", en: "Remove this row? It has data." },
     registro_guardar:    { es: "Guardar", en: "Save" },
     registro_guardado:   { es: "Registro guardado.", en: "Record saved." },
-    rr_intro:            { es: "Marca la fase una vez y lo que apuntes después la hereda. Un cambio de señal es técnica + hallazgo + Apuntar. Puedes marcar varias técnicas a la vez (bilateral, hemicorporal, cruzado…): van juntas en una sola alarma. Debajo de cada alarma, la causa, las medidas y la recuperación.",
-                           en: "Mark the phase once and whatever you log afterwards inherits it. A signal change is technique + finding + Log. You can pick several techniques at once (bilateral, hemibody, crossed…): they go together as one alarm. Under each alarm, the cause, the measures and the recovery." },
     rr_fase:             { es: "Fase", en: "Phase" },
-    rr_evento_alarma:    { es: "Evento o alarma", en: "Event or alarm" },
     rr_hora_editar:      { es: "Cambiar la hora", en: "Change the time" },
     rr_fase_actual:      { es: "Fase actual: {fase}", en: "Current phase: {fase}" },
     rr_sin_fase:         { es: "Sin fase marcada", en: "No phase marked" },
@@ -1375,7 +1370,6 @@
     rr_otro:             { es: "Otro", en: "Other" },
     rr_que_detalle:      { es: "Otro o detalle (opcional)", en: "Other or detail (optional)" },
     rr_falta_otro:       { es: "Con «Otro», escribe en la caja de debajo qué es.", en: "With “Other”, type what it is in the box below." },
-    rr_en_hoja:          { es: "Apuntar fase, evento o alarma", en: "Log phase, event or alarm" },
     rr_btn_fase:         { es: "+ Fase", en: "+ Phase" },
     rr_btn_evento:       { es: "+ Evento", en: "+ Event" },
     rr_btn_alarma:       { es: "+ Alarma", en: "+ Alarm" },
@@ -1390,7 +1384,6 @@
     rr_comp_vs:          { es: "vs {ref}", en: "vs {ref}" },
     rr_al_detalle:       { es: "Causa, medidas y recuperación", en: "Cause, measures and recovery" },
     rr_contexto:         { es: "Contexto quirúrgico (opcional)", en: "Surgical context (optional)" },
-    rr_grupo_reflejos:   { es: "Reflejos", en: "Reflexes" },
     rr_cambios_propios:  { es: "Propias de {tec}", en: "Specific to {tec}" },
     rr_cambios_grid:     { es: "Eventos del GRID", en: "GRID events" },
     rr_cambios_anestesia: { es: "Con el fármaco", en: "With the drug" },
@@ -1413,15 +1406,12 @@
                            en: "When saved it stops being an alarm: its number, cause, ticked measures and recovery are removed. The note is kept." },
     rr_pasa_a_evento_conf: { es: "¿Convertir la alarma {n} en evento?\nSe perderán su causa, las medidas marcadas y la recuperación.",
                            en: "Turn alarm {n} into an event?\nIts cause, ticked measures and recovery will be lost." },
-    rr_detalle:          { es: "Detalle", en: "Detail" },
-    rr_nota_l:           { es: "Nota", en: "Note" },
     rr_que:              { es: "Técnica", en: "Technique" },
     rr_que_pasa:         { es: "Hallazgo", en: "Finding" },
     rr_que_anestesia:    { es: "Anestesia", en: "Anaesthesia" },
     rr_que_tecnico:      { es: "Técnico", en: "Technical" },
     rr_nota:             { es: "Otro o nota (opcional)", en: "Other or note (optional)" },
     rr_magnitud:         { es: "Cuánto respecto a la basal", en: "How much vs baseline" },
-    rr_ir_crono:         { es: "Ir al cronograma", en: "Go to the timeline" },
     rr_crono_mostrar:    { es: "Mostrar", en: "Show" },
     rr_crono_ocultar:    { es: "Ocultar", en: "Hide" },
     rr_borrador_alarma:  { es: "Alarma", en: "Alarm" },
@@ -1474,7 +1464,6 @@
     hoja_musculos:       { es: "Músculos registrados", en: "Muscles recorded" },
     hoja_sensitivos:     { es: "Electrodo/s sensitivo/s", en: "Sensory electrode(s)" },
     registro_tec_monitor:  { es: "Monitorización", en: "Monitoring" },
-    registro_tec_reflejos: { es: "Reflejos", en: "Reflexes" },
     registro_tec_mapeo:    { es: "Mapeo", en: "Mapping" },
     hoja_otra_sonda:     { es: "Otra sonda", en: "Other probe" },
     hoja_intensidad:     { es: "Intensidad", en: "Intensity" },
@@ -1502,8 +1491,8 @@
     hoja_anestesia:      { es: "Anestesia", en: "Anaesthesia" },
     hoja_caso_sesion:    { es: "Caso para sesión", en: "Case for session" },
     hoja_pendientes:     { es: "Pendientes", en: "Pending" },
-    hoja_bd:             { es: "Base de datos", en: "Database" },
-    hoja_tiempos:        { es: "Registro tiempos", en: "Time log" },
+    hoja_informe:        { es: "Informe", en: "Report" },
+    hoja_explor:         { es: "Explor. postop", en: "Post-op exam" },
     hoja_cadwell:        { es: "Exportar el registro del {equipo}", en: "Export the {equipo} log" },
     registro_equipo_neutro: { es: "equipo", en: "equipment" },
     hoja_datos_caso:     { es: "Datos del caso (parámetros y notas)", en: "Case data (parameters and notes)" },
@@ -1559,9 +1548,6 @@
                            en: "Final baseline before incision" },
     checklist_confirmar_decusacion: { es: "Decusación confirmada si SEP/MEP lateralizados",
                            en: "Decussation confirmed if SEP/MEP are lateralised" },
-
-    /* --- Fase 4.1: biblioteca de montajes --- */
-    dlg_montajes_titulo: { es: "Plantillas de montajes", en: "Setup templates" },
 
     /* --- Fase 1: cargar una plantilla sobre un caso --- */
     dlg_elegir_plantilla_titulo: { es: "Elegir plantilla", en: "Choose template" },
@@ -17394,7 +17380,7 @@
   // Rótulos cortos y una segunda post-posición (28-09-2026, pedido del
   // usuario): a veces hay que repetir basales por cambios de posición antes
   // de empezar o a mitad de cirugía. PostPos2 ("soloT") solo existe en las
-  // filas t-SEP y t-MEP (regColBasal()). Los ids no cambian: lo escrito en
+  // filas t-SEP, t-MEP, c-SEP y c-MEP (regColBasal()). Los ids no cambian: lo escrito en
   // Apertura/Post-posición/Cierre sigue en Basal/PostPos1/Cierre (antes
   // rotuladas OP BSL y CL BSL; cambiado el 30-09-2026, pedido del usuario).
   var REG_BASALES_COLS = [
@@ -19148,6 +19134,12 @@
         if (reflejosCaso.length) {
           // «Blink» (fila extra de QUÉ) es el mismo BR de Reflejos: una sola vez
           if (tecCaso.indexOf("br") !== -1) resto = resto.filter(function (p) { return p[1] !== "Blink"; });
+          // Igual con «RBC» (fila extra de QUÉ): es el mismo RBC de Reflejos
+          // medulares, con el mismo rótulo en cada idioma
+          if (tecCaso.indexOf("rbc") !== -1) {
+            var rbcExtra = REG_QUE_EXTRA.filter(function (x) { return x.tec && x.tec.indexOf("rbc") !== -1; })[0];
+            if (rbcExtra) resto = resto.filter(function (p) { return p[1] !== campo(rbcExtra, "l"); });
+          }
           resto = resto.slice();
           // De tronco y medulares, cada uno en su fila (04-10-2026)
           var filasR = [["tronco", "grupo_reflejos_tronco"], ["medular", "grupo_reflejos_medulares"]].map(function (x) {
@@ -20880,7 +20872,7 @@
     var pend = nodoInforme(doc, "div", "hj-celda hj-s4");
     pend.appendChild(nodoInforme(doc, "small", null, T("hoja_pendientes")));
     var pendV = nodoInforme(doc, "div", "hj-v hj-lin");
-    [["pend_informe", "Informe"], ["pend_explor", "Explor. postop"],
+    [["pend_informe", T("hoja_informe")], ["pend_explor", T("hoja_explor")],
      ["pend_cadwell", T("hoja_cadwell", { equipo: textoEquipoRegistro() })]].forEach(function (x) {
       pendV.appendChild(nodoInforme(doc, "span", "hj-it", hojaCasilla(!!d.v[x[0]]) + " " + x[1]));
     });

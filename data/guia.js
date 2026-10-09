@@ -30,7 +30,7 @@ window.GUIA = {
     { titulo: "Prepara", texto: "Una plantilla en el Organizador: técnicas y material en cada caja." },
     { titulo: "Crea el caso", texto: "Gestión de Casos → Crear caso, y carga la plantilla." },
     { titulo: "Comprueba", texto: "Checklist pre-quirúrgico, vinculado al caso." },
-    { titulo: "Apunta", texto: "Registro: fases, eventos y alarmas con un toque." },
+    { titulo: "Apunta", texto: "Registro: fases con dos toques; eventos y alarmas, con tres a cinco." },
     { titulo: "Cierra", texto: "Resultado, evolución y concordancia en la ficha." }
   ],
 
@@ -64,10 +64,12 @@ window.GUIA = {
       ] }
     ] },
     { grupo: "Después / consulta", tarjetas: [
+      { titulo: "Biblioteca de montajes", texto: "En construcción: montajes de ejemplo por especialidad y equipo. Mientras, los casos de la demo, aparte de tus datos." },
       { titulo: "Material", texto: "Todo el catálogo, con buscador." },
       { titulo: "Miotomas", texto: "Qué músculos cubren los niveles de la cirugía." },
       { titulo: "Simulador", texto: "Una pantalla de monitorización para ensayar alarmas." },
-      { titulo: "Mis apuntes", texto: "Tus notas y fotos en carpetas; se exportan a Word." }
+      { titulo: "Mis apuntes", texto: "Tus notas y fotos en carpetas; se exportan a Word." },
+      { titulo: "Bibliografía recomendada", texto: "Libros, guías y artículos en los que se basa, en estilo Vancouver; el DOI abre el artículo." }
     ] }
   ],
 
