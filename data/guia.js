@@ -45,7 +45,7 @@ window.GUIA = {
       ] },
       { titulo: "Gestión de Casos", texto: "Una ficha por cirugía.", puntos: [
         "Crear caso: eliges el equipo (Inomed, Cadwell o Genérico, para cualquier otra marca).",
-        "La ficha se guarda sola; «Cerrar caso» al terminar.",
+        "La ficha se guarda sola; «Cerrar caso» al terminar: queda con candado 🔒 (solo lectura y sin borrar) hasta «Reabrir caso».",
         "⋮ → Abrir en el Registro, para apuntar en ese caso.",
         "Resumen: «Borrador desde el Registro» lo escribe a partir del cronograma.",
         "Informe en PDF y CSV de los casos filtrados.",
@@ -57,9 +57,9 @@ window.GUIA = {
         "Vincúlalo a un caso y las marcas viajan con él."
       ] },
       { titulo: "Registro intraoperatorio", texto: "Lo que pasa en quirófano, con la hora.", puntos: [
-        "Barra de abajo: + Fase (un toque; lo siguiente la hereda), + Evento y + Alarma.",
+        "Barra de abajo: + Fase (un toque; lo siguiente la hereda; la hora en blanco es la de ahora), + Evento y + Alarma.",
         "Evento y alarma por pasos: técnica › hallazgo › contexto; varias técnicas a la vez = una sola alarma.",
-        "Basales: toca una técnica para apuntar; «= Basal» copia la basal si no hay cambios.",
+        "Basales: toca una técnica para apuntar; «= Basal» copia la basal si no hay cambios. Con dos mantas, «+ GRID B» (en Basales o Mapeo).",
         "En el cronograma, toca la hora para cambiarla; ✎ abre la misma hoja, con los botones marcados, para corregir (o pasar un evento a alarma y al revés)."
       ] }
     ] },
@@ -87,6 +87,8 @@ window.GUIA = {
       respuesta: "Sin caso: el Registro o el Checklist como hoja suelta, sin caso vinculado. PostPos1 y PostPos2: basales tras el primer y el segundo cambio de posición. HFD: descargas de alta frecuencia. CoMEP: MEP corticobulbares. TOF: tren de cuatro. ⇄: el mismo dato en el Registro y en la ficha. En la lista de casos, «3/5» es la dificultad, ★ un caso destacado y 👁 hacer seguimiento." },
     { pregunta: "¿Cómo apunto una alarma bilateral, hemicorporal o cruzada?",
       respuesta: "Marca todas las técnicas y lados a la vez (por ejemplo t-MEP MSD + MID + CoMEP VII D) y pulsa Apuntar alarma: es una sola alarma, con una causa, unas medidas y una recuperación. Si lo sabes, pon cuánto cayó o subió en %." },
+    { pregunta: "¿Cómo corrijo un caso cerrado?",
+      respuesta: "Un caso cerrado tiene candado 🔒: ficha y Registro son de solo lectura y no se puede borrar. Pulsa «Reabrir caso», corrige y vuelve a cerrarlo." },
     { pregunta: "¿Qué es PR en la concordancia?",
       respuesta: "Positivo reversible: hubo un cambio significativo, se recuperó tras actuar y no quedó déficit nuevo." },
     { pregunta: "¿Por qué hay material «sin precio»?",

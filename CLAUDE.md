@@ -229,6 +229,9 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Registro ↔ ficha en espejo (28-09-2026): alarmas con listas cerradas (`REG_CRITERIO_AL`, `REG_CAUSA_AL`, `REG_MEDIDAS_AL`; ids, lo antiguo como opción más), mapeo E2 y eventos «An» pintados también en la ficha sobre la copia de trabajo (`guardar` = `REG_SIN_GUARDAR`); «Tipo de alerta»/«Medida correctora» se derivan al guardar; («Resultado de la señal» ya no está en el Registro desde el 30-09-2026: sigue solo en la ficha); evolución en lista + propuesta de concordancia | `pintarAlarmas()`, `alarmasEnCaso()` (en `guardarCaso()`), `textoAlarma()`, `regSelectLista()`, `regIdLista()`, `pintarEventosAn()`, `propuestaConcordancia()`, `t: "alarmas_reg"/"mapeo_reg"/"eventos_an"` en `campoCaso()` | ver `grep` |
 | Columna vertebral de umbrales por raíz (ficha y E2 del Registro; salto discontinuo) | `pintarColumnaRaices()`, `REG_NIVELES_RAICES` | ver `grep` |
 | Columnas de basales Basal/PostPos1/PostPos2/Cierre | `REG_BASALES_COLS`, `regColBasal()` | ver `grep` |
+| Candado de los casos cerrados (06-10-2026): ficha y Registro de solo lectura hasta «Reabrir caso»; aviso 🔒 `#caso-candado`; MutationObserver para lo que se pinta después y click en captura para los chips `<span>`; un caso cerrado no se borra (`caso_borrar_cerrado`) | `candado()`, `candadoAplicar()`, `CANDADO_LIBRES` | ver `grep` |
+| GRID B y basales A/B (06-10-2026): filas `cmep_a`/`cmep_b`, `csep_a`/`csep_b` (`gridAB`); filas antiguas con `antigua: true`; Mapeo GRID A/B con ids `grid1_*`/`grid2_*` | `regCasoConGridB()`, `regGridBEscrito()`, `nodoBotonGridB()` (`d.v.grid_b`), `regFilasBasales()` | ver `grep` |
+| Hora en la hoja de fase (06-10-2026; en blanco = ahora) | `regRapido.faseHora`, `regMarcarFase()`, `regRapidoDeApunte()` | ver `grep` |
 | Eventos An (tabla de la ficha; C · Anestesia ya no sale en la pantalla del Registro) | `pintarEventosAn()` | ver `grep` |
 | Correlación de cada alarma con la evolución (ficha, Resultado): grupos automáticos por técnica + criterio; `correlato_alarmas` = {clave de grupo: {evol, momento}} con ids (`OPCIONES.correlato_evol/_momento`); concordancia por grupo | `gruposAlarmas()`, `filaCorrelato()`, `concordanciaGrupo()`, `filasCorrelato()` (→ `correlato_filas`), `textoCorrelato()`, `concordanciaDeGrupos()`, `seccionCorrelatoInforme()`, `repintarCorrelato`, `repintarPropuestaCaso`, `t: "correlato_alarmas"` en `campoCaso()` | ver `grep` |
 | Recuadros de texto que crecen solos (sin tirador): input + MutationObserver (childList y open/class/hidden) | `ajustarAltoTexto()`, `ajustarTodosLosTextos()`; `textarea { resize: none }` | ver `grep` |
@@ -370,8 +373,31 @@ distinta a la anterior, no importa el formato exacto.
 
 ## Estado del proyecto
 
-> **Resumen a 04-10-2026, noche (léelo primero; el diario cronológico está en
+> **Resumen a 06-10-2026 (léelo primero; el diario cronológico está en
 > el repositorio privado, ver al final de este archivo).**
+> - **Lo último (06-10-2026, `?v=20261006c`):**
+>   - **Candado en los casos cerrados**: ficha y Registro de solo lectura hasta
+>     «Reabrir caso» (`candado()`, `candadoAplicar()`; se libran
+>     `CANDADO_LIBRES`: títulos plegables, abrir una fila de basales, filtros
+>     del Cronograma). Aviso 🔒 arriba (`#caso-candado`); sin «Guardar» en la
+>     ficha; en el Registro sin barra de apuntar, ✎ ni ✕. Un MutationObserver
+>     desactiva lo que se pinta después y un click en captura para los chips
+>     `<span>`. **Un caso cerrado no se borra**: ⋮ → Borrar da un aviso
+>     (`caso_borrar_cerrado`). La ayuda de «Fecha de la cirugía» ya no dice que
+>     se pueda cambiar en un caso cerrado.
+>   - **Hora en la hoja de fase** (`regRapido.faseHora`, `regMarcarFase()`): en
+>     blanco = hora actual; al corregir con ✎ sale la de la línea
+>     (`regRapidoDeApunte()`).
+>   - **Basales**: una fila c-MEP (`cmep_a`) y una c-SEP (`csep_a`); con dos GRID
+>     pasan a «c-MEP A/B» y «c-SEP A/B» (`cmep_b`, `csep_b`). Dos GRID =
+>     `d.v.grid_b` (botón «+ GRID B» / «Quitar GRID B», `nodoBotonGridB()`) o
+>     algo escrito del GRID B (`regGridBEscrito()`); lo junta
+>     `regCasoConGridB()`. Las filas antiguas por miembro y la fila «GRID»
+>     llevan `antigua: true` y solo salen si tienen datos. c-MEP y c-SEP con las
+>     cuatro columnas Basal/PostPos1/PostPos2/Cierre (`regColBasal()`).
+>   - **Mapeo**: rótulos GRID A / GRID B en vez de 1 / 2 (los ids `grid1_*` /
+>     `grid2_*` no cambian); la fila B en pantalla y la columna B en la hoja
+>     impresa solo con dos GRID; «+ GRID B» también bajo el Mapeo.
 > - **Lo último de todo (04-10-2026, última hora):**
 >   - **Corregir en el Registro con los mismos botones**: ✎ abre la hoja de
 >     apuntar («Corregir evento / alarma / fase», «Guardar cambios») con lo
@@ -527,8 +553,8 @@ distinta a la anterior, no importa el formato exacto.
 >   montaje del caso, Organizador de Montajes); «Técnica · lado» (no
 >   «Modalidad»); «Informe (PDF)» / «Informe de casos (PDF)».
 > - **Basales**: columnas **Basal · PostPos1 · PostPos2 · Cierre** (antes OP BSL
->   y CL BSL; ids `basal`, `post`, `post2`, `final`); PostPos2 solo t-SEP/t-MEP,
->   c-MEP solo Basal y Cierre (`regColBasal()`). Desde el 30-09, **dos medidas
+>   y CL BSL; ids `basal`, `post`, `post2`, `final`); PostPos2 solo t-SEP, t-MEP,
+>   c-SEP y c-MEP (`regColBasal()`); estas cuatro llevan las cuatro columnas. Desde el 30-09, **dos medidas
 >   por fase** con la unidad en el encabezado, según las guías (ASNM 2013, ISIN
 >   2019): sensitivos Amp (µV) + Lat (ms), motores Amp (mV desde el 30-09; onda D en µV, `REG_BASALES_UNIDAD_FILA`) + Umbral (mA/V);
 >   claves `e_<fila>_<fase>_amp/_lat/_umb` (`REG_BASALES_MEDIDAS`,
@@ -662,6 +688,9 @@ distinta a la anterior, no importa el formato exacto.
 >   protección de datos ni informática; no es aplicación sanitaria: solo recoge
 >   datos); cómo compartir casos dentro del servicio y entre hospitales
 >   (multicéntrico); más equipos (Natus, Nihon Kohden); quién la mantiene.
+> - **Pendiente del usuario (06-10):** recargar la app; probar en el móvil y en
+>   quirófano el candado (ficha, Registro y Borrar bloqueado), la hora en la
+>   hoja de fase, «+ GRID B» en Basales y en Mapeo, y c-MEP y c-SEP con PostPos2.
 > - **Pendiente del usuario (04-10, última hora):** probar en el móvil el ✎ del
 >   Registro (hoja de corregir y el selector Evento | Alarma), los colores del
 >   Mapeo, la selección de varias plantillas y el modo claro con el gris nuevo.

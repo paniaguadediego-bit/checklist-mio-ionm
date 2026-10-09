@@ -74,3 +74,10 @@ Instrucciones para cualquier asistente de código que trabaje en este repositori
   (`regApuntar()`) tiene que leerse también en `regRapidoDeApunte()`, o se
   perderá al corregir. Para comprobarlo: en la demo, ✎ y «Guardar cambios» sin
   tocar nada en todas las líneas; el cronograma no debe cambiar.
+- Casos cerrados con candado (06-10-2026): `candado()` desactiva en la ficha y
+  el Registro todo `input`/`select`/`textarea`/`button` (también lo que se
+  pinta después) salvo `CANDADO_LIBRES`. Un control nuevo que solo enseña y
+  debe funcionar en un caso cerrado va en `CANDADO_LIBRES`; uno que no sea
+  esos elementos (un `<span>` clicable) ya lo frena el click en captura.
+- GRID A / GRID B: los rótulos dicen A y B, pero los ids siguen siendo
+  `grid1_*` y `grid2_*` (no cambiarlos). Dos GRID = `regCasoConGridB()`.

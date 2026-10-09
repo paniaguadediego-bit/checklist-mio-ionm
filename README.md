@@ -33,6 +33,23 @@ con carpetas de colores, negrita/cursiva, fotos dentro de cada caja y
 de material en filas, con una breve descripción de uso de cada uno; tarjeta
 propia en *Después / consulta*).
 
+**Novedades del 6/10/2026:**
+- **Casos cerrados con candado**: la ficha y el Registro de un caso cerrado son
+  de solo lectura (aviso 🔒 arriba) hasta que pulses **Reabrir caso**; en la
+  ficha no sale **Guardar** y en el Registro no salen la barra de apuntar, ✎ ni
+  ✕. Se pueden seguir abriendo los apartados plegables, las filas de basales y
+  los filtros del cronograma. Un caso cerrado **no se puede borrar**: primero
+  hay que reabrirlo.
+- **Hora en la hoja de fase**: al apuntar una fase se puede escribir la hora
+  (en blanco, la de ese momento); al corregirla con ✎ sale la hora de la línea.
+- **Basales**: una sola fila de c-MEP y otra de c-SEP, con las cuatro columnas
+  (Basal, PostPos1, PostPos2 y Cierre). Si se usan dos mantas, **+ GRID B**
+  (debajo de las basales y del Mapeo) las parte en «c-MEP A / B» y
+  «c-SEP A / B»; **Quitar GRID B** lo deshace mientras el GRID B esté vacío.
+- **Mapeo**: las mantas se llaman **GRID A** y **GRID B** (antes 1 y 2); la
+  fila del GRID B en pantalla y su columna en la hoja impresa solo salen con dos
+  GRID.
+
 **Novedades del 4/10/2026 (noche):**
 - **Corregir en el Registro con los mismos botones**: el **✎** de cada línea del
   cronograma abre la misma hoja que para apuntarla (*Corregir evento*, *Corregir
@@ -868,20 +885,25 @@ casos cancelados hay en total.
   entrar al Organizador ni montar nada—. Rellena lo que sepas y pon el
   **Estado** en *Cerrado* con **Cerrar caso** (un caso no nace cerrado
   solo).
-- **La fecha se puede cambiar siempre**, también en un caso ya cerrado hace
-  meses. Es la fecha de la cirugía y es la que cuenta para las estadísticas.
+- **La fecha se puede cambiar siempre** mientras el caso esté abierto (en uno
+  cerrado, primero **Reabrir caso**). Es la fecha de la cirugía y es la que
+  cuenta para las estadísticas.
 - La herramienta guarda por su cuenta *cuándo se creó el archivo* y *cuándo lo
   has tocado después*, sin que puedas editarlos. Así un caso de hace un mes
   registrado hoy no se confunde con uno de hoy.
-- Cualquier caso cerrado se sigue pudiendo abrir y corregir, sin límite de
-  tiempo.
+- Cualquier caso cerrado se sigue pudiendo abrir y consultar, sin límite de
+  tiempo. Desde el 06-10-2026 está **con candado** (aviso 🔒): la ficha y el
+  Registro son de solo lectura hasta que pulses **Reabrir caso**; después se
+  corrige y se vuelve a cerrar.
 - **Borrar caso**, en el menú **⋮** de la barra de la ficha, quita un caso de
   en medio para siempre — un caso de prueba, uno duplicado, uno que no
   debiste registrar. Pide confirmación porque no se puede deshacer desde la
   propia herramienta. (El repositorio de datos sí guarda historial de git,
   así que en el peor de los casos sigue siendo recuperable a mano, igual que
   con el resto de tus datos — ver *Red de seguridad* en `CLAUDE.md`.) El
-  botón solo aparece en un caso que ya guardaste al menos una vez.
+  botón solo aparece en un caso que ya guardaste al menos una vez. **Un caso
+  cerrado no se borra** (avisa y no hace nada): para borrarlo, primero
+  **Reabrir caso**.
 
 ### Qué NO se guarda
 
@@ -1055,7 +1077,9 @@ elegido. Lo que hay dentro es lo de siempre, casi todo con toques:
 - **Fase**: tocas la fase en la que está la cirugía (Basal, Posición,
   Incisión, Exposición, Apertura dural, Descompresión, Resección,
   Instrumentación, Hemostasia, Cierre, o **Otra**). Se apunta con la hora
-  y todo lo que apuntes después la hereda hasta que marques otra. La caja de
+  (la casilla **Hora** de la hoja; en blanco, la de ese momento; al corregir
+  con ✎ sale la de la línea) y todo lo que apuntes después la hereda hasta que
+  marques otra. La caja de
   debajo es un detalle opcional de la fase (va en «Acción y resultado» de su
   fila de F) o, con **Otra**, el nombre de la fase.
 - **TOF** (opcional, en la fila de **Anestesia**): **0/4 · 1/4 · 2/4 · 3/4 ·
@@ -1163,7 +1187,8 @@ borra ningún dato.
 - **Basales y comparativa**: columnas Basal · PostPos1 · PostPos2 · Cierre.
 - **Mapeo**: un bloque por cada técnica de mapeo marcada en la ficha
   (sin caso vinculado, todos): *c-MEP por GRID* (electrodo motor · músculos
-  registrados), *mapeo cortical* y *subcortical* (hora · punto · umbral ·
+  registrados; **GRID A** y, solo con dos mantas —botón **+ GRID B** debajo—,
+  **GRID B**), *mapeo cortical* y *subcortical* (hora · punto · umbral ·
   músculo), *nervio periférico* (nervio/punto · intensidad · músculo) y
   *estimulación de raíces y tornillos* (izq. · nivel · der., el mismo dato que
   «Umbrales EMG por raíz» de la ficha). Si el caso no tiene ninguna, lo dice.
@@ -1966,9 +1991,10 @@ está la misma tabla que en el **Registro intraoperatorio**: lo que escribas en 
 sitio sale en el otro y en la hoja impresa. Columnas: **Basal** (apertura; antes «OP BSL»),
 **PostPos1** y **PostPos2** (hasta dos basales tras cambios de posición, antes
 de empezar o a mitad de cirugía) y **Cierre** (antes «CL BSL»). PostPos2 solo existe en
-las filas de t-SEP y t-MEP, y los c-MEP solo llevan Basal y Cierre. Filas de t-SEP y t-MEP de cada extremidad y, según las
-técnicas del caso, c-SEP, c-MEP, GRID (con el electrodo de estímulo y el contacto
-de la inversión de fase), corticobulbares, Onda D proximal y distal (Prox. y
+las filas de t-SEP, t-MEP, c-SEP y c-MEP. Filas de t-SEP y t-MEP de cada extremidad y, según las
+técnicas del caso, una de c-SEP y una de c-MEP (con dos mantas, botón **+ GRID B**
+debajo de la tabla, pasan a «c-SEP A / B» y «c-MEP A / B»; las filas antiguas
+por miembro y la de GRID solo salen en los casos que ya las tenían escritas), corticobulbares, Onda D proximal y distal (Prox. y
 Dist. D-Wave), PEATC y H-R. Más filas libres para lo que haga falta. (Umbral MEP
 y TOF se quitaron el 28-09-2026; el TOF sigue como botón del panel de apuntar.)
 
