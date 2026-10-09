@@ -247,7 +247,7 @@ body {
   border: none;
   background: transparent;
   color: var(--panel-texto);
-  border-radius: 4px;
+  border-radius: var(--r);
   cursor: pointer;
   white-space: nowrap;
 }
@@ -833,7 +833,7 @@ details.card:not([open]):not(.caja-card) { padding: 0; }
   background: rgba(255,255,255,0.16);
   color: #fff;
   border: 1px solid rgba(255,255,255,0.4);
-  border-radius: 4px;
+  border-radius: var(--r);
   padding: 0.1rem 0.5rem;
   cursor: pointer;
 }
@@ -1375,7 +1375,7 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
 /* Apartados de Miotomas con el aspecto de la ficha (30-09-2026) */
 .docente-grupo .caso-grupo-campos { padding-bottom: 0.6rem; }
 .docente-grupo .chip-fila { gap: 0.3rem; }
-#docente-limpiar-niveles { display: block; margin-top: 0.5rem; font: inherit; font-size: 0.78rem; padding: 0.3rem 0.7rem; border: 1px solid var(--border); border-radius: 4px; background: var(--card-bg); color: var(--text); cursor: pointer; }
+#docente-limpiar-niveles { display: block; margin-top: 0.5rem; font: inherit; font-size: 0.78rem; padding: 0.3rem 0.7rem; border: 1px solid var(--border); border-radius: var(--r); background: var(--card-bg); color: var(--text); cursor: pointer; }
 
 .miotoma {
   display: flex;
@@ -1590,7 +1590,7 @@ body:not(.editando-caso):not(.barra-caso-oculta) { --barra-caso-h: 54px; }
   border: 1px solid var(--accent);
   background: var(--accent-soft);
   color: var(--accent);
-  border-radius: 4px;
+  border-radius: var(--r);
   cursor: pointer;
   padding: 0.08rem 0.4rem;
   margin-left: auto;
@@ -1610,7 +1610,7 @@ body:not(.editando-caso):not(.barra-caso-oculta) { --barra-caso-h: 54px; }
   border: 1px solid var(--border);
   background: var(--card-bg);
   color: var(--text);
-  border-radius: 4px;
+  border-radius: var(--r);
   cursor: pointer;
   padding: 0.22rem 0.4rem;
   margin-left: auto;
@@ -1669,7 +1669,7 @@ body:not(.editando-caso):not(.barra-caso-oculta) { --barra-caso-h: 54px; }
   font-size: 0.85rem;
   border: 1px solid var(--border);
   background: var(--card-bg);
-  border-radius: 4px;
+  border-radius: var(--r);
   cursor: pointer;
   padding: 0 0.45rem;
 }
@@ -1684,7 +1684,7 @@ body:not(.editando-caso):not(.barra-caso-oculta) { --barra-caso-h: 54px; }
   font-size: 0.8rem;
   padding: 0.25rem 0.3rem;
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: var(--r);
   background: var(--campo-bg);
   color: var(--text);
 }
@@ -1722,7 +1722,7 @@ dialog h3 {
   font-weight: 600;
   background: var(--accent-soft);
   padding: 0.3rem 0.65rem;
-  border-radius: 999px;
+  border-radius: var(--r);
   display: inline-block;
 }
 
@@ -1752,7 +1752,7 @@ dialog h3 {
   font-size: 0.84rem;
   padding: 0.3rem 0.4rem;
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: var(--r);
   background: var(--campo-bg);
   color: var(--text);
   width: 100%;
@@ -1846,7 +1846,7 @@ dialog h3 {
   border: 1px solid var(--border);
   background: var(--card-bg);
   color: var(--text);
-  border-radius: 5px;
+  border-radius: var(--r);
   cursor: pointer;
   text-align: left;
 }
@@ -1889,7 +1889,7 @@ dialog h3 {
   font-size: 0.8rem;
   padding: 0.3rem 0.35rem;
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: var(--r);
   background: var(--campo-bg);
   color: var(--text);
 }
@@ -1941,7 +1941,7 @@ dialog h3 {
 .sel-caso-boton {
   padding: 0.4rem 0.6rem;
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: var(--r);
   background: var(--campo-bg);
 }
 .sel-caso-boton::after { content: "▾"; margin-left: auto; color: var(--text-muted); }
@@ -1982,7 +1982,7 @@ dialog h3 {
   font-size: 0.8rem;
   padding: 0.3rem 0.35rem;
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: var(--r);
   background: var(--campo-bg);
   color: var(--text);
   width: 100%;
@@ -2127,7 +2127,7 @@ dialog h3 {
   line-height: 1;
   padding: 0.3rem 0.4rem;
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: var(--r);
   background: var(--card-bg);
   color: var(--text-muted);
   cursor: pointer;
@@ -2141,7 +2141,7 @@ dialog h3 {
   min-width: 2rem;
   padding: 0.2rem 0.5rem;
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: var(--r);
   background: var(--card-bg);
   color: var(--text);
   cursor: pointer;
@@ -2201,7 +2201,7 @@ dialog h3 {
   line-height: 1;
   padding: 0.25rem 0.4rem;
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: var(--r);
   background: var(--card-bg);
   color: var(--text-muted);
   cursor: pointer;
@@ -2222,7 +2222,7 @@ dialog h3 {
   padding: 0.15rem 0.3rem;
   margin-bottom: 0.35rem;
   border: 1px solid var(--border-soft);
-  border-radius: 4px;
+  border-radius: var(--r);
   background: var(--tag-bg);
   color: var(--text-muted);
 }
@@ -2626,7 +2626,7 @@ dialog h3 {
   border: 1px solid var(--border);
   background: var(--card-bg);
   color: var(--text);
-  border-radius: 4px;
+  border-radius: var(--r);
   cursor: pointer;
 }
 .dlg-botones button:hover { background: var(--accent-soft); }
@@ -3336,7 +3336,7 @@ dialog h3 {
   flex: 0 0 auto;
   font-size: 0.72rem;
   padding: 0 0.5rem;
-  border-radius: 4px;
+  border-radius: var(--r);
 }
 .reg-basales { display: grid; grid-template-columns: 1fr; gap: 0.8rem; }
 @media (min-width: 900px) { .reg-basales { grid-template-columns: 1fr 1fr 1fr; } }
@@ -3357,7 +3357,7 @@ dialog h3 {
   font-size: 0.8rem;
   padding: 0.25rem 0.35rem;
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: var(--r);
   background: var(--campo-bg);
   color: var(--text);
   min-width: 0;
@@ -3395,7 +3395,7 @@ dialog h3 {
   color: var(--text);
   /* Rectangulares y algo más pequeños (28-09-2026, pedido del usuario),
      como el resto de botones de la herramienta. */
-  border-radius: 4px;
+  border-radius: var(--r);
   padding: 0.28rem 0.6rem;
 }
 .rr-chip.activo { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
@@ -3412,8 +3412,8 @@ dialog h3 {
 }
 .rr-botones { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.6rem; }
 .rr-botones button { font: inherit; font-weight: 600; padding: 0.7rem 0.5rem; }
-.rr-botones .primario { background: var(--accent); border: 1px solid var(--accent); color: var(--accent-texto); border-radius: 6px; cursor: pointer; }
-.rr-alarma { background: transparent; border: 2px solid var(--peligro); color: var(--peligro); border-radius: 6px; cursor: pointer; }
+.rr-botones .primario { background: var(--accent); border: 1px solid var(--accent); color: var(--accent-texto); border-radius: var(--r); cursor: pointer; }
+.rr-alarma { background: transparent; border: 2px solid var(--peligro); color: var(--peligro); border-radius: var(--r); cursor: pointer; }
 .rr-lista { display: flex; flex-direction: column; }
 .rr-linea { display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0; border-top: 1px solid var(--border-soft); font-size: 0.85rem; }
 .rr-linea > b { flex: 0 0 auto; font-variant-numeric: tabular-nums; }
@@ -3428,7 +3428,7 @@ dialog h3 {
   background: transparent;
   border: 1px solid transparent;
   border-bottom: 1px dashed var(--border);
-  border-radius: 4px;
+  border-radius: var(--r);
   padding: 0.05rem 0.2rem;
   cursor: pointer;
 }
@@ -3489,7 +3489,7 @@ dialog h3 {
   font-size: 0.8rem;
   padding: 0.3rem 0.7rem;
   border: 1px dashed var(--accent);
-  border-radius: 6px;
+  border-radius: var(--r);
   background: none;
   color: var(--accent);
   cursor: pointer;
@@ -3579,7 +3579,7 @@ body.modo-demo #btn-sync { border-color: var(--aviso-border); color: var(--aviso
 
 /* Filtros de fecha de Gestión de Casos con su botón para quitarla. */
 .casos-filtros .fecha-filtro { display: flex; flex-direction: row; align-items: center; gap: 0.25rem; }
-.btn-quitar-fecha { font: inherit; font-size: 0.8rem; line-height: 1; padding: 0.3rem 0.45rem; border: 1px solid var(--border); border-radius: 4px; background: var(--card-bg); color: var(--text-muted); cursor: pointer; }
+.btn-quitar-fecha { font: inherit; font-size: 0.8rem; line-height: 1; padding: 0.3rem 0.45rem; border: 1px solid var(--border); border-radius: var(--r); background: var(--card-bg); color: var(--text-muted); cursor: pointer; }
 .btn-quitar-fecha[hidden] { display: none; }
 
 /* Con una ventana abierta (la ficha de un caso, elegir material...) la página
@@ -3901,7 +3901,7 @@ button, input, select, textarea { font-family: inherit; }
   border: 1px solid var(--border);
   background: var(--card-bg);
   color: var(--text);
-  border-radius: 4px;
+  border-radius: var(--r);
   cursor: pointer;
 }
 .reg-p-nuevo:hover { background: var(--accent-soft); }
@@ -3917,7 +3917,7 @@ button, input, select, textarea { font-family: inherit; }
   font-size: 0.8rem;
   padding: 0.25rem 0.35rem;
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: var(--r);
   background: var(--campo-bg);
   color: var(--text);
   min-width: 0;
@@ -3952,7 +3952,7 @@ button, input, select, textarea { font-family: inherit; }
 .reg-basal.reg-p-mapfilas.con-hora .reg-basal-fila { grid-template-columns: 5rem minmax(0, 1fr) 4rem minmax(0, 1fr) 1.8rem; }
 .reg-p-mapfilas input[type="time"] {
   font: inherit; font-size: 0.8rem; padding: 0.25rem 0.35rem; border: 1px solid var(--border);
-  border-radius: 4px; background: var(--campo-bg); color: var(--text); min-width: 0; width: 100%; box-sizing: border-box;
+  border-radius: var(--r); background: var(--campo-bg); color: var(--text); min-width: 0; width: 100%; box-sizing: border-box;
 }
 @media (max-width: 520px) {
   .reg-basal.reg-p-mapfilas.con-hora .reg-basal-fila { grid-template-columns: 4.6rem minmax(0, 1fr) 3.4rem minmax(0, 1fr) 1.6rem; }
@@ -3979,7 +3979,7 @@ button, input, select, textarea { font-family: inherit; }
 .caso-espejo .reg-p-map-bloque:first-child { margin-top: 0.1rem; }
 .caso-propuesta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; margin-top: 0.3rem; font-size: 0.8rem; color: var(--accent); }
 .caso-propuesta[hidden] { display: none; }
-.caso-propuesta-aplicar { font: inherit; font-size: 0.78rem; padding: 0.15rem 0.6rem; border: 1px solid var(--accent); border-radius: 4px; background: transparent; color: var(--accent); cursor: pointer; }
+.caso-propuesta-aplicar { font: inherit; font-size: 0.78rem; padding: 0.15rem 0.6rem; border: 1px solid var(--accent); border-radius: var(--r); background: transparent; color: var(--accent); cursor: pointer; }
 
 /* "Ocultar ayudas" del menú ⋮ (28-09-2026): fuera las leyendas de ayuda
    -bajo los campos de la ficha, introducciones de diálogos y pantallas, notas
@@ -4253,7 +4253,7 @@ textarea { resize: none; overflow-y: hidden; }
 #pantalla-registro { padding-bottom: 4.6rem; }
 .rr-principal > .rr-fase-actual { margin: 0.2rem 0 0; font-size: 0.85rem; }
 .rr-barra-apuntar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 45; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.45rem; padding: 0.5rem 0.75rem calc(0.5rem + env(safe-area-inset-bottom)); background: var(--bg); border-top: 1px solid var(--border); box-shadow: 0 -6px 10px -6px rgba(0, 0, 0, 0.35); }
-.rr-barra-apuntar button { font: inherit; font-weight: 600; min-height: 44px; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); white-space: nowrap; }
+.rr-barra-apuntar button { font: inherit; font-weight: 600; min-height: 44px; border-radius: var(--r); cursor: pointer; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); white-space: nowrap; }
 .rr-barra-apuntar .primario { background: var(--accent); border-color: var(--accent); color: var(--accent-texto); }
 .rr-barra-apuntar .rr-alarma { background: transparent; border: 2px solid var(--peligro); color: var(--peligro); }
 @media (min-width: 760px) { .rr-barra-apuntar { left: 50%; right: auto; width: 720px; transform: translateX(-50%); border: 1px solid var(--border); border-bottom: none; border-radius: 8px 8px 0 0; } }
@@ -4262,20 +4262,20 @@ textarea { resize: none; overflow-y: hidden; }
 .rr-hoja-cab { display: flex; align-items: center; gap: 0.5rem; padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--border); }
 .rr-hoja-tit { flex: 1 1 auto; font-weight: 700; font-size: 1rem; }
 .rr-hoja-tit-alarma { color: var(--peligro); }
-.rr-hoja-cerrar { font: inherit; font-size: 1.1rem; min-width: 44px; min-height: 40px; border: 1px solid var(--border); border-radius: 6px; background: var(--card-bg); color: var(--text-muted); cursor: pointer; }
+.rr-hoja-cerrar { font: inherit; font-size: 1.1rem; min-width: 44px; min-height: 40px; border: 1px solid var(--border); border-radius: var(--r); background: var(--card-bg); color: var(--text-muted); cursor: pointer; }
 .rr-hoja-cuerpo { flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain; padding: 0.55rem 0.75rem 0.75rem; }
 .rr-hoja .rr-bloque { border: none; padding: 0; margin: 0; background: transparent; box-shadow: none; }
 .rr-hoja .rr-sub-bloque { border: none; padding: 0; margin: 0; background: transparent; }
 .rr-hoja .rr-sub-tit { display: none; }
 .rr-hoja .rr-sub-bloque[hidden] { display: none; }
 .rr-pasos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.35rem; margin-bottom: 0.6rem; }
-.rr-paso { font: inherit; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.35rem; min-height: 40px; padding: 0.2rem 0.3rem; border: 1px solid var(--border); border-radius: 6px; background: var(--card-bg); color: var(--text-muted); cursor: pointer; white-space: nowrap; }
+.rr-paso { font: inherit; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.35rem; min-height: 40px; padding: 0.2rem 0.3rem; border: 1px solid var(--border); border-radius: var(--r); background: var(--card-bg); color: var(--text-muted); cursor: pointer; white-space: nowrap; }
 .rr-paso-n { display: inline-flex; align-items: center; justify-content: center; width: 1.3rem; height: 1.3rem; border-radius: 50%; border: 1px solid currentColor; font-size: 0.72rem; }
 .rr-paso.activo { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
 .rr-paso.hecho .rr-paso-n { background: var(--accent); border-color: var(--accent); color: var(--accent-texto); font-size: 0; }
 .rr-paso.hecho .rr-paso-n::before { content: "✓"; font-size: 0.75rem; }
 .rr-hoja-pie { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; padding: 0.5rem 0.75rem calc(0.5rem + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); }
-.rr-hoja-pie button { font: inherit; font-weight: 600; min-height: 46px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
+.rr-hoja-pie button { font: inherit; font-weight: 600; min-height: 46px; border-radius: var(--r); cursor: pointer; white-space: nowrap; }
 .rr-hoja-pie .rr-hoja-sig { border: 1px solid var(--border); background: var(--card-bg); color: var(--text); }
 .rr-hoja-pie .rr-hoja-sig[hidden] { display: none; }
 .rr-hoja-pie .rr-hoja-sig[hidden] + button { grid-column: 1 / -1; }
@@ -4309,7 +4309,10 @@ textarea { resize: none; overflow-y: hidden; }
 .rr-crono-cab::after { content: attr(data-mostrar); font-size: 0.72rem; font-weight: 600; color: var(--accent); white-space: nowrap; }
 .rr-crono[open] > .rr-crono-cab::after { content: attr(data-ocultar); }
 .rr-crono:not([open]) > .rr-crono-cab { margin-bottom: 0; }
-.rr-crono-tit { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--mono); font-size: 0.88rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--cab-texto, var(--accent)); }
+.rr-crono-tit { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Misma letra en todos los títulos de apartado del Registro (Basales,
+   Mapeo, Cierre…), no solo en el Cronograma (auditoría 09-10-2026, E7). */
+.rr-crono-tit, #pantalla-registro .reg-seccion > summary > span:first-child { font-family: var(--mono); font-size: 0.88rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--cab-texto, var(--accent)); }
 .rr-crono-n { font-family: var(--mono); font-size: 0.72rem; color: var(--text-muted); white-space: nowrap; }
 .rr-crono-filtros { margin-bottom: 0.45rem; }
 .rr-lista { gap: 0.4rem; }
@@ -4357,14 +4360,14 @@ textarea { resize: none; overflow-y: hidden; }
    y «Ordenar por»; el panel se despliega debajo con el aspecto de un apartado
    de la ficha; los filtros puestos, como chips con ✕. */
 .casos-filtros-barra { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; }
-.casos-filtros-btn { font: inherit; font-size: 0.82rem; font-weight: 600; padding: 0.35rem 0.75rem; border: 1px solid var(--border); border-radius: 4px; background: var(--card-bg); color: var(--text); cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
+.casos-filtros-btn { font: inherit; font-size: 0.82rem; font-weight: 600; padding: 0.35rem 0.75rem; border: 1px solid var(--border); border-radius: var(--r); background: var(--card-bg); color: var(--text); cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; }
 .casos-filtros-btn::before { content: "▸"; color: var(--accent); transition: transform 0.12s; }
 .casos-filtros-btn.abierto::before { transform: rotate(90deg); }
 .casos-filtros-btn.abierto { border-color: var(--accent); }
 .casos-filtros-n { display: inline-flex; align-items: center; justify-content: center; min-width: 1.2rem; height: 1.2rem; padding: 0 0.3rem; border-radius: 999px; background: var(--accent); color: var(--accent-texto); font-size: 0.7rem; }
 .casos-filtros-n[hidden] { display: none; }
 .casos-orden-rot { font-size: 0.72rem; color: var(--text-muted); white-space: nowrap; }
-.casos-filtros-barra select { font: inherit; font-size: 0.8rem; padding: 0.3rem 0.35rem; border: 1px solid var(--border); border-radius: 4px; background: var(--campo-bg); color: var(--text); max-width: 9.5rem; min-width: 0; }
+.casos-filtros-barra select { font: inherit; font-size: 0.8rem; padding: 0.3rem 0.35rem; border: 1px solid var(--border); border-radius: var(--r); background: var(--campo-bg); color: var(--text); max-width: 9.5rem; min-width: 0; }
 .casos-filtros-panel { border: 1px solid var(--border); border-radius: 6px; background: var(--cab-bg); padding: 0.6rem 0.7rem; }
 .casos-filtros-panel[hidden] { display: none; }
 .casos-filtros-panel .casos-filtros-fila + .casos-filtros-fila { margin-top: 0.2rem; }
@@ -4375,11 +4378,11 @@ textarea { resize: none; overflow-y: hidden; }
 .casos-filtros-panel .fecha-filtro { min-width: 0; }
 .casos-filtros-panel span[hidden] { display: none; }
 .casos-filtros-panel .casos-filtros-fila + .casos-filtros-fila { align-items: center; margin-top: 0.5rem; }
-.casos-filtros-quitar { font: inherit; font-size: 0.78rem; padding: 0.3rem 0.6rem; border: 1px solid var(--border); border-radius: 4px; background: var(--card-bg); color: var(--text); cursor: pointer; }
+.casos-filtros-quitar { font: inherit; font-size: 0.78rem; padding: 0.3rem 0.6rem; border: 1px solid var(--border); border-radius: var(--r); background: var(--card-bg); color: var(--text); cursor: pointer; }
 .casos-filtros-quitar[hidden] { display: none; }
 .casos-filtros-activos { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.45rem; }
 .casos-filtros-activos[hidden] { display: none; }
-.casos-filtro-chip { font: inherit; font-size: 0.76rem; padding: 0.2rem 0.5rem; border: 1px solid var(--accent); border-radius: 4px; background: var(--accent-soft); color: var(--accent); cursor: pointer; }
+.casos-filtro-chip { font: inherit; font-size: 0.76rem; padding: 0.2rem 0.5rem; border: 1px solid var(--accent); border-radius: var(--r); background: var(--accent-soft); color: var(--accent); cursor: pointer; }
 .casos-filtros-pie { margin-bottom: 0.4rem; }
 
 /* «En construcción» en las tarjetas del inicio y en Casos modelo
@@ -4388,7 +4391,7 @@ textarea { resize: none; overflow-y: hidden; }
 .obras-aviso { margin: 0 0 0.4rem; }
 .cmod-fila { margin-bottom: 0.3rem; }
 .cmod-mientras { margin-top: 1rem; }
-.cmod-demo { display: inline-block; font-size: 0.85rem; font-weight: 600; padding: 0.45rem 0.9rem; border: 1px solid var(--accent); border-radius: 4px; color: var(--accent); background: var(--accent-soft); text-decoration: none; }
+.cmod-demo { display: inline-block; font-size: 0.85rem; font-weight: 600; padding: 0.45rem 0.9rem; border: 1px solid var(--accent); border-radius: var(--r); color: var(--accent); background: var(--accent-soft); text-decoration: none; }
 .pestanas[hidden] { display: none; }
 
 /* Texto de las cabeceras (30-09-2026): ver --cab-texto. */
@@ -4486,14 +4489,14 @@ body:not(.editando-caso) #barra-caso-prefijo { color: var(--accent); }
 #pantalla-registro .rr-en-hoja .rr-botones button { white-space: nowrap; padding-left: 0.3rem; padding-right: 0.3rem; }
 #pantalla-registro .rr-en-hoja .rr-botones .rr-ir-crono { min-width: 2.3rem; }
 #pantalla-registro .rr-en-hoja .rr-botones { position: sticky; bottom: 0; z-index: 3; grid-template-columns: 1fr 1fr auto; padding: 0.4rem 0 0.45rem; margin-bottom: -0.2rem; background: var(--accent-soft); box-shadow: 0 -6px 8px -6px rgba(0, 0, 0, 0.35); }
-.rr-ir-crono { font: inherit; font-weight: 700; min-width: 2.6rem; padding: 0 0.6rem; border: 1px solid var(--border); border-radius: 6px; background: var(--card-bg); color: var(--accent); cursor: pointer; }
+.rr-ir-crono { font: inherit; font-weight: 700; min-width: 2.6rem; padding: 0 0.6rem; border: 1px solid var(--border); border-radius: var(--r); background: var(--card-bg); color: var(--accent); cursor: pointer; }
 /* Cuánto cambió respecto a la basal (%), solo con umbral, amplitud, latencia y onda D */
 .rr-magnitud { display: flex; align-items: center; gap: 0.35rem; margin: 0.3rem 0 0.1rem; font-size: 0.78rem; color: var(--text-muted); }
 .rr-magnitud[hidden] { display: none; }
-.rr-magnitud input { width: 4.2rem; font: inherit; font-size: 0.85rem; padding: 0.2rem 0.35rem; border: 1px solid var(--border); border-radius: 4px; background: var(--campo-bg); color: var(--text); text-align: right; }
-.reg-p-magnitud { width: 3.6rem; font: inherit; font-size: 0.8rem; padding: 0.2rem 0.3rem; border: 1px solid var(--border); border-radius: 4px; background: var(--campo-bg); color: var(--text); text-align: right; }
+.rr-magnitud input { width: 4.2rem; font: inherit; font-size: 0.85rem; padding: 0.2rem 0.35rem; border: 1px solid var(--border); border-radius: var(--r); background: var(--campo-bg); color: var(--text); text-align: right; }
+.reg-p-magnitud { width: 3.6rem; font: inherit; font-size: 0.8rem; padding: 0.2rem 0.3rem; border: 1px solid var(--border); border-radius: var(--r); background: var(--campo-bg); color: var(--text); text-align: right; }
 /* Borrador del resumen desde el Registro */
-.caso-borrador-resumen { margin-top: 0.35rem; font: inherit; font-size: 0.78rem; padding: 0.35rem 0.7rem; border: 1px solid var(--accent); border-radius: 4px; background: var(--accent-soft); color: var(--accent); cursor: pointer; }
+.caso-borrador-resumen { margin-top: 0.35rem; font: inherit; font-size: 0.78rem; padding: 0.35rem 0.7rem; border: 1px solid var(--accent); border-radius: var(--r); background: var(--accent-soft); color: var(--accent); cursor: pointer; }
 /* Ficha: campos cortos en una misma línea (30-09-2026, pedido del usuario) */
 .campos-fila { display: grid; gap: 0 0.5rem; align-items: start; }
 .campos-fila > .campo { min-width: 0; }
@@ -4540,13 +4543,13 @@ body:not(.editando-caso) #barra-caso-prefijo { color: var(--accent); }
 .reg-bl-fase { font-size: 0.74rem; font-weight: 600; }
 #pantalla-registro .reg-bl-ed input, #dlg-caso .reg-bl-ed input, .reg-bl-ed input {
   font: inherit; font-size: 0.9rem; height: 2rem; min-height: 0; padding: 0.2rem 0.35rem;
-  border: 1px solid var(--border); border-radius: 4px; background: var(--campo-bg); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--r); background: var(--campo-bg); color: var(--text);
   text-align: center; min-width: 0; width: 100%; box-sizing: border-box;
 }
 #pantalla-registro .reg-bl-ed .reg-bl-nombre, #dlg-caso .reg-bl-ed .reg-bl-nombre, .reg-bl-ed .reg-bl-nombre { text-align: left; margin-top: 0.3rem; font-size: 0.8rem; }
 #pantalla-registro .reg-bl-igual, #dlg-caso .reg-bl-igual, .reg-bl-igual {
   font: inherit; font-size: 0.72rem; min-height: 0; height: 2rem; padding: 0 0.5rem;
-  border: 1px solid var(--border); border-radius: 4px; background: var(--card-bg); color: var(--accent);
+  border: 1px solid var(--border); border-radius: var(--r); background: var(--card-bg); color: var(--accent);
   cursor: pointer; white-space: nowrap;
 }
 
@@ -4568,7 +4571,7 @@ body:not(.editando-caso) #barra-caso-prefijo { color: var(--accent); }
 .papelera-txt { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
 .papelera-id { font-weight: 600; font-size: 0.82rem; overflow-wrap: anywhere; }
 .papelera-txt small { font-size: 0.7rem; color: var(--text-muted); }
-.papelera-fila button { font: inherit; font-size: 0.74rem; padding: 0.25rem 0.55rem; border: 1px solid var(--border); border-radius: 4px; background: var(--card-bg); color: var(--text); cursor: pointer; white-space: nowrap; }
+.papelera-fila button { font: inherit; font-size: 0.74rem; padding: 0.25rem 0.55rem; border: 1px solid var(--border); border-radius: var(--r); background: var(--card-bg); color: var(--text); cursor: pointer; white-space: nowrap; }
 .papelera-fila button.primario { background: var(--accent); color: var(--accent-texto); border-color: var(--accent); }
 .papelera-fila button.peligro { color: var(--peligro); }
 #btn-papelera-casos[hidden], #papelera-vaciar[hidden] { display: none; }
@@ -4689,3 +4692,34 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 /* Hora de la fase en la hoja de apuntar (06-10-2026) */
 .rr-fase-hora { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 0.45rem; font-size: 0.8rem; color: var(--text-muted); }
 .rr-fase-hora .rr-hora { width: 6.2rem; border-color: var(--border); background: var(--campo-bg); }
+
+/* ---- Auditoría 09-10-2026, tanda 5 ---- */
+/* F11: a menos de 400 px el perfil se recorta con puntos suspensivos para
+   que el ⋮ no baje a otra fila; el ⋮ toca en 44 px sin cambiar de tamaño. */
+@media (max-width: 399px) {
+  .barra-fila-top { flex-wrap: nowrap; }
+  .barra-sup #perfil-usuario { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+}
+#btn-menu { position: relative; }
+#btn-menu::after { content: ""; position: absolute; left: 50%; top: 50%; width: 44px; height: 44px; transform: translate(-50%, -50%); }
+/* F12: la barra «n seleccionadas» se queda pegada arriba al bajar por la
+   lista; al aparecer o irse, renderLotePlantillas() compensa el desplazamiento
+   para que la lista no salte. */
+.montajes-lote { position: sticky; top: var(--header-h); z-index: 6; }
+/* F13: el «Cerrar» de la Guía, pegado al pie del diálogo mientras se lee. */
+#dlg-guia .dlg-botones { position: sticky; bottom: -1rem; z-index: 2; margin: 0.6rem -1.1rem -1rem; padding: 0.5rem 1.1rem; background: var(--card-bg); border-top: 1px solid var(--border); }
+/* F18: zonas táctiles más grandes sin cambiar el tamaño visible (como
+   .chip-quitar::after). */
+.rr-fase-hora { position: relative; z-index: 0; }
+.rr-fase-hora::after { content: ""; position: absolute; z-index: -1; top: -12px; bottom: -8px; left: 0; right: 0; }
+#btn-etiquetas, #btn-nuevo-material { position: relative; }
+#btn-etiquetas::after, #btn-nuevo-material::after { content: ""; position: absolute; top: -12px; bottom: -12px; left: -2px; right: -2px; }
+.chip-foto { position: relative; }
+.chip-foto::after { content: ""; position: absolute; top: -8px; bottom: -8px; left: 0; right: 0; }
+#apunte-guardar { position: relative; }
+#apunte-guardar::after { content: ""; position: absolute; top: -11px; bottom: -11px; left: -4px; right: -4px; }
+/* E5: «+ GRID B» al ancho de su texto también en Basales, como en Mapeo. */
+.reg-basales > .reg-grid-b { justify-self: start; }
+/* E8: botones de exportar de Gestión de Casos con la misma altura. */
+.casos-exportar { align-items: stretch; }
+.casos-exportar button { min-height: 2.25rem; }

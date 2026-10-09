@@ -12220,6 +12220,8 @@
 
   function renderListaMontajesDialog() {
     var cont = document.getElementById("dlg-montajes-lista");
+    // Dónde estaba la lista antes de repintar (F12, ver renderLotePlantillas)
+    var topListaAntes = cont.offsetParent ? cont.getBoundingClientRect().top : null;
     cont.innerHTML = "";
     var busq = (document.getElementById("montajes-buscar").value || "").toLowerCase();
     var yo = usuarioActual();
@@ -12241,7 +12243,7 @@
     // suben arriba: se quedan en su sitio y se filtran con «Solo favoritas».
     uids.sort(comparadorPlantillas(ordenPlantillas()));
     plantillasVisibles = uids;
-    renderLotePlantillas();
+    renderLotePlantillas(topListaAntes);
 
     document.getElementById("montajes-cuenta").textContent =
       T("montajes_cuenta", { n: uids.length, total: Object.keys(montajes).length });
@@ -12251,6 +12253,7 @@
       vacio.className = "empty-hint";
       vacio.textContent = T(soloFav && !favoritasPlantillas().length ? "plantilla_sin_fav" : "plantilla_vacio");
       cont.appendChild(vacio);
+      compensarSaltoLote();
       return;
     }
 
@@ -12276,6 +12279,7 @@
       });
       cont.appendChild(fila);
     });
+    compensarSaltoLote();
   }
 
   /* Organizador en dos pantallas (04-10-2026): la lista de plantillas, sola,
@@ -12518,13 +12522,25 @@
   function uidsSeleccionados() {
     return plantillasVisibles.filter(function (uid) { return plantillasSel[uid]; });
   }
-  function renderLotePlantillas() {
+  var loteTopPendiente = null;
+  function compensarSaltoLote() {
+    if (loteTopPendiente === null) return;
+    var salto = document.getElementById("dlg-montajes-lista").getBoundingClientRect().top - loteTopPendiente;
+    loteTopPendiente = null;
+    if (salto) window.scrollBy(0, salto);
+  }
+  function renderLotePlantillas(topListaAntes) {
     // Lo que ya no está (borrado, o fuera de los filtros) deja de contar
     Object.keys(plantillasSel).forEach(function (uid) {
       if (plantillasVisibles.indexOf(uid) === -1) delete plantillasSel[uid];
     });
     var n = uidsSeleccionados().length;
-    document.getElementById("montajes-lote").hidden = !n;
+    // Que la lista no salte al aparecer o irse la barra (auditoría 09-10-2026,
+    // F12): ya repintada, compensarSaltoLote() lo corrige con el scroll.
+    var lote = document.getElementById("montajes-lote");
+    var cambiaLote = lote.hidden !== !n;
+    lote.hidden = !n;
+    if (cambiaLote && topListaAntes !== null && topListaAntes !== undefined) loteTopPendiente = topListaAntes;
     if (!n) cerrarMenuLote();
     document.getElementById("montajes-lote-cuenta").textContent =
       n === 1 ? T("plantillas_sel_una") : T("plantillas_sel", { n: n });
