@@ -3344,8 +3344,7 @@ dialog h3 {
 }
 .reg-basal-cab { font-size: 0.68rem; font-weight: 600; color: var(--text-muted); }
 .reg-basal-rotulo { font-size: 0.78rem; font-weight: 600; }
-.reg-basal-fila input, .reg-fila input[type="text"], .reg-fila input[type="number"],
-.reg-fila input[type="time"], .reg-fila select, .reg-fila textarea {
+.reg-basal-fila input {
   font: inherit;
   font-size: 0.8rem;
   padding: 0.25rem 0.35rem;
@@ -3357,14 +3356,7 @@ dialog h3 {
   width: 100%;
   box-sizing: border-box;
 }
-.reg-fila {
-  border: 1px solid var(--border-soft);
-  border-radius: 6px;
-  padding: 0.4rem 0.5rem 0.1rem;
-  margin-bottom: 0.5rem;
-}
 .reg-fila-quitar { border: none; background: transparent; color: var(--peligro); cursor: pointer; font-size: 0.9rem; }
-.reg-fila .campo { margin-bottom: 0.35rem; }
 
 /* Registro, panel para apuntar fases, eventos y alarmas (antes «modo
    rápido», 27-09-2026): sin desplegables. Desde el 29-09-2026 es el único y
@@ -3426,7 +3418,6 @@ dialog h3 {
   #pantalla-registro .rr-chip { min-height: 40px; }
   .rr-linea .reg-fila-quitar { min-width: 44px; }
 }
-.reg-fila .campo label { font-size: 0.68rem; }
 
 /* ---- Docencia > Material (24-09-2026): una fila por material ------------ */
 .mat-fila {
