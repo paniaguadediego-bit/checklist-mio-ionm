@@ -33,6 +33,30 @@ con carpetas de colores, negrita/cursiva, fotos dentro de cada caja y
 de material en filas, con una breve descripción de uso de cada uno; tarjeta
 propia en *Después / consulta*).
 
+**Novedades del 9 y 10/10/2026:**
+- **GRID en el Mapeo**: en **Basales** el GRID solo lleva los umbrales (filas
+  c-MEP y c-SEP, A y B con dos mantas). El **Mapeo** recoge, por cada GRID (A, y
+  B con dos), el electrodo motor, los músculos registrados, el electrodo o
+  electrodos sensitivos y la inversión de fase. Ese bloque sale con cualquier
+  técnica de GRID (c-MEP, c-SEP, mapeo cortical, phase reversal o ECoG). El
+  **informe** tiene una sección **Mapeo** tras Basales. **+ GRID B** sale bajo
+  el Mapeo con cualquier técnica de GRID y bajo Basales solo con c-MEP o c-SEP
+  (que es cuando añade filas).
+- **Candado completo**: un caso cerrado no se guarda por ninguna vía (ficha,
+  Registro, montaje ni Checklist). **Editar montaje** lo abre en solo lectura
+  (se puede **Guardar como plantilla…**); **Borrar caso** sale desactivado.
+  Abrir el caso en el Registro o su montaje ya no lo guarda si no cambiaste
+  nada.
+- **Registro**: la hoja de apuntar recuerda lo elegido si vuelves al mismo tipo
+  (con otro tipo empieza en blanco); el % de las basales compara con la última
+  PostPos escrita y lo dice («vs PostPos1»); t-SEP y t-MEP salen solo si el
+  caso los hace (en la hoja impresa, siempre, para apuntar a mano).
+- **Papelera**: **Recuperar** no pisa un caso que ya volvió.
+- **Móvil y aspecto**: cabecera en una fila en pantallas estrechas, barra de
+  «n seleccionadas» fija sin que la lista salte, pie de la Guía fijo, zonas de
+  toque más grandes; modo claro con los colores de familia más oscuros; esquinas
+  de botones, tarjetas y paneles iguales (5 px), salvo el Simulador.
+
 **Novedades del 6/10/2026:**
 - **Casos cerrados con candado**: la ficha y el Registro de un caso cerrado son
   de solo lectura (aviso 🔒 arriba) hasta que pulses **Reabrir caso**; en la
@@ -894,7 +918,9 @@ casos cancelados hay en total.
 - Cualquier caso cerrado se sigue pudiendo abrir y consultar, sin límite de
   tiempo. Desde el 06-10-2026 está **con candado** (aviso 🔒): la ficha y el
   Registro son de solo lectura hasta que pulses **Reabrir caso**; después se
-  corrige y se vuelve a cerrar.
+  corrige y se vuelve a cerrar. Desde el 09-10 no se guarda por ninguna vía
+  (tampoco el montaje ni el Checklist): **Editar montaje** lo abre en solo
+  lectura, aunque deja **Guardar como plantilla…**.
 - **Borrar caso**, en el menú **⋮** de la barra de la ficha, quita un caso de
   en medio para siempre — un caso de prueba, uno duplicado, uno que no
   debiste registrar. Pide confirmación porque no se puede deshacer desde la
@@ -1186,9 +1212,10 @@ borra ningún dato.
 
 - **Basales y comparativa**: columnas Basal · PostPos1 · PostPos2 · Cierre.
 - **Mapeo**: un bloque por cada técnica de mapeo marcada en la ficha
-  (sin caso vinculado, todos): *c-MEP por GRID* (electrodo motor · músculos
-  registrados; **GRID A** y, solo con dos mantas —botón **+ GRID B** debajo—,
-  **GRID B**), *mapeo cortical* y *subcortical* (hora · punto · umbral ·
+  (sin caso vinculado, todos): *GRID*, con cualquier técnica de GRID (electrodo
+  motor · músculos registrados · electrodo/s sensitivo/s · inversión de fase;
+  **GRID A** y, solo con dos mantas —botón **+ GRID B** debajo—, **GRID B**;
+  los umbrales van en Basales), *mapeo cortical* y *subcortical* (hora · punto · umbral ·
   músculo), *nervio periférico* (nervio/punto · intensidad · músculo) y
   *estimulación de raíces y tornillos* (izq. · nivel · der., el mismo dato que
   «Umbrales EMG por raíz» de la ficha). Si el caso no tiene ninguna, lo dice.
@@ -1272,7 +1299,7 @@ el 27-09-2026: no se usaba.
 **Guardar** da una confirmación visible de que no se ha perdido nada,
 aunque todo ya se autoguarda solo en cuanto lo tocas —igual que "Guardar
 montaje" en el Organizador—. **Vaciar** desmarca todo lo que tengas abierto
-en ese momento (Modelo 0 o el caso elegido), pidiendo confirmación antes. Nada de esto tiene columna propia en el
+en ese momento (la hoja suelta sin caso o el caso elegido), pidiendo confirmación antes. Nada de esto tiene columna propia en el
 Google Sheet ni en el CSV —es una ayuda de preparación, no un dato clínico
 de la monitorización en sí—.
 
@@ -1941,7 +1968,7 @@ que cambia son las **cajas** donde se coloca.
 - **Cargar plantilla…** sobre un caso solo ofrece plantillas de su mismo equipo.
 - **Plantillas de montaje** tiene un filtro **Equipo** (empieza en el último que
   usaste y recuerda lo que elijas; «Todos» las enseña todas).
-- El rótulo del Organizador, la lista de casos (marca I/C y filtro) y el
+- El rótulo del Organizador, la lista de casos (marca del equipo y filtro) y el
   informe indican el equipo. La columna `equipo` del CSV y del Sheet pasa a ser
   este equipo (el antiguo campo de texto libre «Equipo» se retiró).
 - El **conmutador** solo existe en Inomed: en Cadwell la polaridad de la
@@ -1996,7 +2023,9 @@ sitio sale en el otro y en la hoja impresa. Columnas: **Basal** (apertura; antes
 de empezar o a mitad de cirugía) y **Cierre** (antes «CL BSL»). PostPos2 solo existe en
 las filas de t-SEP, t-MEP, c-SEP y c-MEP. Filas de t-SEP y t-MEP de cada extremidad y, según las
 técnicas del caso, una de c-SEP y una de c-MEP (con dos mantas, botón **+ GRID B**
-debajo de la tabla, pasan a «c-SEP A / B» y «c-MEP A / B»; las filas antiguas
+debajo de la tabla, pasan a «c-SEP A / B» y «c-MEP A / B»; del GRID aquí solo
+van los umbrales: electrodos, músculos e inversión de fase se apuntan en el
+**Mapeo**; las filas antiguas
 por miembro y la de GRID solo salen en los casos que ya las tenían escritas), corticobulbares, Onda D proximal y distal (Prox. y
 Dist. D-Wave), PEATC y H-R. Más filas libres para lo que haga falta. (Umbral MEP
 y TOF se quitaron el 28-09-2026; el TOF sigue como botón del panel de apuntar.)
@@ -2038,7 +2067,7 @@ real, se abre con `?demo` al final de la dirección:
 - Entra con **«Usuario demo»** ya elegido; Teoría básica (en construcción)
   no se enseña, y **Técnicas IONM** tampoco (son apuntes
   personales del autor); el Simulador abre con un ejemplo cargado;
-  aparece el equipo de ejemplo **Genérico**.
+  y salen los tres equipos (Inomed, Cadwell y **Genérico**).
 - **Sin red**: además de no sincronizar, en `?demo` cualquier petición a otro
   sitio se corta. En Inicio lo dice el aviso de privacidad, junto al de
   autoría.

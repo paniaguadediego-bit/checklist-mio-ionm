@@ -207,7 +207,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Registro ↔ ficha: campos compartidos (`caso: "campo"` en la definición; `soloCaso`; `leerCaso`) — `regGet()` los lee del caso y `regControl()` los escribe en el caso | `regGet()`, `regControl()`, `regNombresTecnicas()` | ver `grep` |
 | Registro: hoja completa simplificada en pantalla (la impresa no cambia); bloques de Mapeo con el color de su técnica (GRID = c-MEP, el resto = mapeo; `nodoBloqueMapeo()`, también en la ficha) | `REG_PANTALLA` (id de sección → pintado propio; `null` = no se enseña: A, B, C, D, esquema, F, G y H; en pantalla solo E, E2 e I, sin la letra de la hoja), `pintarPantallaMapeo/Cierre()`, `REG_MAPEO_BLOQUES`, `pintarMapeoGrid/Filas/Raices()`, `regFilasTornillos()`, `regInput()`, `regSelectLista()` | ver `grep` |
 | Registro: varias técnicas a la vez = una alarma «A + B»; magnitud %; técnicas con alteración solas; comparativa de basales; borrador del resumen | `regElegirQue()`, `regQuesElegidos()`, `regTecnicasDeQue()`, `REG_CAMBIOS_MAGNITUD`, `regConMagnitud()`, `regComparacionesBasales()`, `borradorResumenCaso()` | ver `grep` |
-| Registro, diseño B (04-10-2026): barra fija abajo + hoja de apuntar desde abajo, por pasos; Cronograma compacto en el centro | `pintarBarraApuntar()`, `regHoja`, `regPaso`, `regAbrirHoja()`, `regCerrarHoja()`, `pintarCronograma()`, `regVerUltimoApuntado()`, `.rr-barra-apuntar`, `.rr-hoja`, `.rr-pasos`, `.rr-principal`; colores de familia `regFamiliaDeQue()`, `regPonerFamilia()` | ver `grep` |
+| Registro, diseño B (04-10-2026): barra fija abajo + hoja de apuntar desde abajo, por pasos; Cronograma compacto en el centro | `pintarBarraApuntar()`, `regHoja`, `regPaso`, `regAbrirHoja()`, `regCerrarHoja()`, `pintarCronograma()`, `regVerUltimoApuntado()`, `.rr-barra-apuntar`, `.rr-hoja`, `.rr-pasos`, `.rr-principal`; colores de familia `regFamiliaDeQue()`, `regPonerFamilia()`; la hoja recuerda su tipo (09-10): con otro tipo empieza en blanco, con el mismo conserva lo elegido (`regRapidoTipo`, `regRapidoEnBlanco()`, `regRapidoDeAntes`); fase actual = la de hora mayor (`regFaseActual()`) | ver `grep` |
 | Registro: panel «Apuntar fase, evento o alarma» (antes modo rápido; único sitio donde se apuntan; desde el 04-10 es el contenido de la hoja de abajo; escribe en `eventos`/`alarmas`, sin datos propios; «Otro» + cajas; QUÉ en filas por tipo -técnicas, factores técnicos, anestesia, Otro-; TOF 0/4…4/4 como contexto (regRapido.tof → ev.tof/al.tof); contexto quirúrgico; «Cronograma de eventos» por hora ascendente: tarjetas con franja de color por gravedad y filtros Todos/Críticos/Cambios/Info, horas editables, ✎ para corregir cada línea —desde el 04-10 abre la MISMA hoja que para apuntarla, con los botones marcados, y «Guardar cambios» la corrige en su sitio (id, hora y número de alarma no cambian)— y, bajo cada alarma, causa, medidas y recuperación) | `pintarPanelApuntar()`, `regItemsApuntados()`, `regTipoApuntado()` (gravedad y etiqueta), `regFiltroCrono`, `regLineaApuntada()`, corregir: `regAbrirEdicion()`, `regEditandoAp` ({ev, al}), `regRapidoDeApunte()` (lo contrario de `regApuntar()`: de lo guardado a los botones; un campo nuevo de la hoja se lee también aquí), `regTerminarEdicion()` (devuelve lo que hubiera a medio elegir, `regRapidoAparte`), `regRapidoReiniciar()` (al cambiar de caso), `regQuesConocidos()`, `regCambioDeTexto()`; al corregir, selector **Evento | Alarma** para convertir una en otra (`.rr-tipo-ed`; evento → alarma toma la primera fila libre; alarma → evento deja su fila vacía, pide confirmar si tenía causa, medidas marcadas o recuperación, y si ya no queda ninguna alarma quita la marca «alerta» del caso; las recuperaciones no se convierten), alarma plegable con `resumenAlarma()` (`regAlarmasAbiertas`), `pintarMedidasRecup()` (también en la ficha), `regApuntar()`, `regMarcarFase()`, `regQuitarRapido()`, `regCajaRapida()`, `REG_TOF`, `REG_CONTEXTO` (ev.contexto, ids), `REG_FASES_RAPIDAS`, `REG_CAMBIOS_RAPIDOS`, `REG_QUE_EXTRA`, `REG_QUE_OTRO`/`REG_CAMBIO_OTRO` | ver `grep` |
 | Registro intraoperatorio: hoja imprimible A4 | `construirHojaRegistro()`, `abrirHojaRegistro()`, `ESTILO_HOJA_REGISTRO` | ver `grep` |
 | Material, pantalla propia (todo el catálogo en filas) | `renderDocenteMaterial()`, `descripcionMaterial()` | ver `grep` |
@@ -215,7 +215,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Cálculo del resumen (con coste) | `calcularResumen()`, `calcularCoste()` (dato) → `renderResumen()` (pintado) | [4785](app.js:4785), [4868](app.js:4868) |
 | Pantalla Docencia (miotomas, cama de quirófano) | `renderDocente()`, `renderCama()` | ver `grep` |
 | Puente plantilla↔caso (cargar/guardar) | `iniciarCargaPlantilla()`, `aplicarPlantillaSobreDestino()`, `guardarMontajeComoPlantilla()` | ver `grep` |
-| Organizador en dos pantallas (04-10-2026, «como Gestión de Casos»): lista de plantillas sola al entrar (`body.org-lista`, botón «Crear plantilla», filtros) y, al tocar una, su edición (ruta «Plantillas › nombre» arriba para volver; rótulo con Guardar plantilla y Más acciones; Cajas, Técnicas, Resumen, Notas y Catálogo). Corregir el montaje de un caso (`editando-caso`) es siempre la edición. Atrás del móvil en la edición → lista | `orgEditor`, `aplicarModoOrganizador()` (en `renderTodo()`; también las migas «Plantillas › nombre» `#org-migas` y Cajas abierta al entrar), colores por familia de técnica (sensitivas ámbar, PEATC amarillo `aud`, motoras rojo, EMG verde, reflejos rojo-violeta —cualquier técnica con `reflejo`—, EEG/ECoG azulado, mapeo rosa; `FAMILIA_TEC`, `REFLEJOS_TEC`, `familiaTecnica()`, `--fam-*` en style.css; franja izquierda `--franja` con las familias de la plantilla; leyenda; vacías atenuadas con «Vacía»), «Ordenar por» nombre / última modificación (`ordenPlantillas()`, `comparadorPlantillas()`, `PLANTILLAS_ORDEN_KEY`, por dispositivo), `abrirEditorPlantilla()`, `volverAListaPlantillas()`, `#btn-crear-plantilla`; selección de varias con «Más acciones» encima de la lista (`plantillasSel`, `renderLotePlantillas()`, `#montajes-lote`, `vaciarMontaje()`, `quitarMontaje()`) | ver `grep` |
+| Organizador en dos pantallas (04-10-2026, «como Gestión de Casos»): lista de plantillas sola al entrar (`body.org-lista`, botón «Crear plantilla», filtros) y, al tocar una, su edición (ruta «Plantillas › nombre» arriba para volver; rótulo con Guardar plantilla y Más acciones; Cajas, Técnicas, Resumen, Notas y Catálogo). Corregir el montaje de un caso (`editando-caso`) es siempre la edición. Atrás del móvil en la edición → lista | `orgEditor`, `aplicarModoOrganizador()` (en `renderTodo()`; también las migas «Plantillas › nombre» `#org-migas` y Cajas abierta al entrar), colores por familia de técnica (sensitivas ámbar, PEATC amarillo `aud`, motoras rojo, EMG verde, reflejos rojo-violeta —cualquier técnica con `reflejo`—, EEG/ECoG azulado, mapeo rosa; `FAMILIA_TEC`, `REFLEJOS_TEC`, `familiaTecnica()`, `--fam-*` en style.css; franja izquierda `--franja` con las familias de la plantilla; leyenda; vacías atenuadas con «Vacía»), «Ordenar por» nombre / última modificación (`ordenPlantillas()`, `comparadorPlantillas()`, `PLANTILLAS_ORDEN_KEY`, por dispositivo), `abrirEditorPlantilla()`, `volverAListaPlantillas()`, `#btn-crear-plantilla`; selección de varias con «Más acciones» encima de la lista (`plantillasSel`, `renderLotePlantillas()`, `#montajes-lote`, `vaciarMontaje()`, `quitarMontaje()`; barra «n seleccionadas» fija y `compensarSaltoLote()` para que la lista no salte al aparecer o irse) | ver `grep` |
 | Biblioteca de plantillas ("Plantillas de montajes" desde el 06-09-2026, tarjeta ya no diálogo desde la Fase 6; desde el 04-10-2026 `#montajes` es un <div>, la lista de la primera pantalla) | `renderListaMontajesDialog()`, `montajeNuevo()`, `compararMontajesPorNombre()`, `limpiarMontajesHeredados()` | ver `grep` |
 | Pantalla de inicio y router de pantallas (Fase 7) | `irAPantalla()`, `pantallaActiva()` | ver `grep` |
 | Rótulo permanente | `renderBarraCaso()` | ver `grep` |
@@ -229,8 +229,8 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Registro ↔ ficha en espejo (28-09-2026): alarmas con listas cerradas (`REG_CRITERIO_AL`, `REG_CAUSA_AL`, `REG_MEDIDAS_AL`; ids, lo antiguo como opción más), mapeo E2 y eventos «An» pintados también en la ficha sobre la copia de trabajo (`guardar` = `REG_SIN_GUARDAR`); «Tipo de alerta»/«Medida correctora» se derivan al guardar; («Resultado de la señal» ya no está en el Registro desde el 30-09-2026: sigue solo en la ficha); evolución en lista + propuesta de concordancia | `pintarAlarmas()`, `alarmasEnCaso()` (en `guardarCaso()`), `textoAlarma()`, `regSelectLista()`, `regIdLista()`, `pintarEventosAn()`, `propuestaConcordancia()`, `t: "alarmas_reg"/"mapeo_reg"/"eventos_an"` en `campoCaso()` | ver `grep` |
 | Columna vertebral de umbrales por raíz (ficha y E2 del Registro; salto discontinuo) | `pintarColumnaRaices()`, `REG_NIVELES_RAICES` | ver `grep` |
 | Columnas de basales Basal/PostPos1/PostPos2/Cierre | `REG_BASALES_COLS`, `regColBasal()` | ver `grep` |
-| Candado de los casos cerrados (06-10-2026): ficha y Registro de solo lectura hasta «Reabrir caso»; aviso 🔒 `#caso-candado`; MutationObserver para lo que se pinta después y click en captura para los chips `<span>`; un caso cerrado no se borra (`caso_borrar_cerrado`) | `candado()`, `candadoAplicar()`, `CANDADO_LIBRES` | ver `grep` |
-| GRID B y basales A/B (06-10-2026): filas `cmep_a`/`cmep_b`, `csep_a`/`csep_b` (`gridAB`); filas antiguas con `antigua: true`; Mapeo GRID A/B con ids `grid1_*`/`grid2_*` | `regCasoConGridB()`, `regGridBEscrito()`, `nodoBotonGridB()` (`d.v.grid_b`), `regFilasBasales()` | ver `grep` |
+| Candado de los casos cerrados (06-10-2026): ficha y Registro de solo lectura hasta «Reabrir caso»; aviso 🔒 `#caso-candado`; MutationObserver para lo que se pinta después y click en captura para los chips `<span>`; un caso cerrado no se borra (`caso_borrar_cerrado`). Desde el 09-10, ninguna vía guarda un caso cerrado (ficha, Registro, montaje, Checklist) y su montaje se abre en solo lectura («Guardar como plantilla…» sí) | `candado()`, `candadoAplicar()`, `CANDADO_LIBRES`, `fichaCerrada()`, `guardarFichaSiCambio()` (sin cambios no guarda ni sube), `montajeCasoCerrado()`, `candadoMontajeCaso()`, `checklistCerrado()` | ver `grep` |
+| GRID B y basales A/B (06-10-2026): filas `cmep_a`/`cmep_b`, `csep_a`/`csep_b` (`gridAB`); filas antiguas con `antigua: true`; Mapeo GRID A/B con ids `grid1_*`/`grid2_*`. Desde el 10-10, Basales solo lleva los umbrales; electrodo motor, músculos, electrodo/s sensitivo/s e inversión de fase de cada GRID van en el Mapeo, que sale con cualquier técnica de GRID; el informe tiene sección «Mapeo» tras Basales | `regCasoConGrid()` (c-MEP, c-SEP, mapeo cortical, phase reversal, ECoG o algo escrito del GRID), `regCasoConGridB()`, `regGridBEscrito()`, `nodoBotonGridB(d, tecnicas, alCambiar, enBasales)` (`d.v.grid_b`; en Basales solo con c-MEP/c-SEP), `regFilasBasales()`, `pintarMapeoGrid()`, `regCamposGrid(n)`, `regMapeoBloqueVisible()`, `seccionMapeoInforme()` | ver `grep` |
 | Hora en la hoja de fase (06-10-2026; en blanco = ahora) | `regRapido.faseHora`, `regMarcarFase()`, `regRapidoDeApunte()` | ver `grep` |
 | Eventos An (tabla de la ficha; C · Anestesia ya no sale en la pantalla del Registro) | `pintarEventosAn()` | ver `grep` |
 | Correlación de cada alarma con la evolución (ficha, Resultado): grupos automáticos por técnica + criterio; `correlato_alarmas` = {clave de grupo: {evol, momento}} con ids (`OPCIONES.correlato_evol/_momento`); concordancia por grupo | `gruposAlarmas()`, `filaCorrelato()`, `concordanciaGrupo()`, `filasCorrelato()` (→ `correlato_filas`), `textoCorrelato()`, `concordanciaDeGrupos()`, `seccionCorrelatoInforme()`, `repintarCorrelato`, `repintarPropuestaCaso`, `t: "correlato_alarmas"` en `campoCaso()` | ver `grep` |
@@ -373,9 +373,43 @@ distinta a la anterior, no importa el formato exacto.
 
 ## Estado del proyecto
 
-> **Resumen a 06-10-2026 (léelo primero; el diario cronológico está en
+> **Resumen a 10-10-2026 (léelo primero; el diario cronológico está en
 > el repositorio privado, ver al final de este archivo).**
-> - **Lo último (06-10-2026, `?v=20261006c`):**
+> - **Lo último (09-10 y 10-10-2026, `?v=20261010d`):**
+>   - **Auditoría del 09-10 cerrada** en seis tandas (detalle en el diario y en
+>     `AUDITORIA.md` del repo privado):
+>     - **Candado completo**: un caso cerrado no se guarda por ninguna vía
+>       (ficha, Registro, montaje, Checklist); «Abrir en el Registro» y «Editar
+>       montaje» no guardan si no hubo cambios (`guardarFichaSiCambio()`).
+>       «Editar montaje» de un caso cerrado abre el montaje en **solo lectura**
+>       («Guardar como plantilla…» sí; sin ✕ en los chips); sin «Guardar» en el
+>       Registro, sin «+ Otro» en Basales; «Borrar caso» desactivado.
+>     - **Registro**: la hoja de apuntar recuerda su tipo (con otro tipo empieza
+>       en blanco); fase actual = la de hora mayor; el % de basales compara con
+>       la última PostPos escrita («vs PostPos1»); t-SEP y t-MEP solo si el caso
+>       los hace (en la hoja impresa, siempre, para apuntar a mano); al
+>       convertir una alarma en evento, sus recuperaciones se sueltan.
+>     - **Papelera**: Recuperar no pisa un caso que ya volvió, e «Importar
+>       copia» no deja borrar en GitHub un caso vivo.
+>     - **Móvil y aspecto**: cabecera de una fila a <400 px, barra «n
+>       seleccionadas» fija sin salto (`compensarSaltoLote()`), pie de la Guía
+>       fijo, zonas táctiles de 44 px; modo claro con colores de familia más
+>       oscuros (≈6:1); radios de botones, controles, tarjetas y paneles a
+>       `var(--r)` (5 px), salvo Simulador, círculos, píldoras, chips pequeños
+>       y formas especiales.
+>     - **Limpieza**: CSS muerto y claves de `T()` sin uso fuera; `Codigo.gs`
+>       conoce el equipo «Genérico».
+>   - **GRID (10-10)**: en **Basales** el GRID es solo para umbrales (filas
+>     c-MEP/c-SEP A y B). En el **Mapeo**, por GRID (A, y B con dos): electrodo
+>     motor, músculos, electrodo/s sensitivo/s e inversión de fase (`gridN_*`,
+>     `regCamposGrid(n)`); el bloque sale con cualquier técnica de GRID
+>     (`regCasoConGrid()`, `regMapeoBloqueVisible()`). Informe con sección
+>     **«Mapeo»** tras Basales (`seccionMapeoInforme()`). «+ GRID B»
+>     (`nodoBotonGridB(d, tecnicas, alCambiar, enBasales)`): en el Mapeo con
+>     cualquier técnica de GRID; en Basales solo con c-MEP o c-SEP. Fuera el
+>     bloque `.caso-basales-grid` de la ficha y las claves
+>     `caso_basales_grid*`, `reg_p_motor` y `reg_p_musculos`.
+> - **06-10-2026 (`?v=20261006c`):**
 >   - **Candado en los casos cerrados**: ficha y Registro de solo lectura hasta
 >     «Reabrir caso» (`candado()`, `candadoAplicar()`; se libran
 >     `CANDADO_LIBRES`: títulos plegables, abrir una fila de basales, filtros
@@ -398,7 +432,7 @@ distinta a la anterior, no importa el formato exacto.
 >   - **Mapeo**: rótulos GRID A / GRID B en vez de 1 / 2 (los ids `grid1_*` /
 >     `grid2_*` no cambian); la fila B en pantalla y la columna B en la hoja
 >     impresa solo con dos GRID; «+ GRID B» también bajo el Mapeo.
-> - **Lo último de todo (04-10-2026, última hora):**
+> - **04-10-2026, última hora:**
 >   - **Corregir en el Registro con los mismos botones**: ✎ abre la hoja de
 >     apuntar («Corregir evento / alarma / fase», «Guardar cambios») con lo
 >     guardado ya marcado (`regRapidoDeApunte()`), y la línea se corrige en su
@@ -415,7 +449,7 @@ distinta a la anterior, no importa el formato exacto.
 >   - **Modo claro**: `--text-muted` de #62717c a #3e4850 (el usuario: «el gris
 >     de las letras apenas contrasta»); contraste mínimo 4,69:1. La paleta no
 >     cambió (se le enseñaron tres y dijo que el problema era el gris).
-> - **Lo último (04-10-2026, tarde y noche):**
+> - **04-10-2026, tarde y noche:**
 >   - **Registro con diseño B** (elegido por el usuario entre tres maquetas):
 >     Cronograma compacto en el centro (una línea por evento: hora · texto · ✎ ✕;
 >     el tipo, por la franja de color y el `title`; lo recién apuntado se enseña
@@ -492,12 +526,12 @@ distinta a la anterior, no importa el formato exacto.
 >   de la ficha), **resultado esperable** (lista) e incidencias técnicas (la perla
 >   docente, desde el 30-09, solo en la ficha y en la hoja impresa). La ficha
 >   trabaja sobre la copia de trabajo (`guardar` = `REG_SIN_GUARDAR`) y guarda con
->   «Guardar»; el Registro guarda solo (`REG_GUARDAR`). Sin caso (Modelo 0) no hay
->   espejo.
+>   «Guardar»; el Registro guarda solo (`REG_GUARDAR`). Sin caso («Sin caso — hoja suelta») no
+>   hay espejo.
 > - **Retoques del 29-09 (tarde)**: desplegables que ya no se abren al hacer
 >   scroll sobre ellos; recuadros de texto que crecen solos; sin texto dentro de
 >   las casillas del Mapeo; raíces y tornillos con la columna vertebral también
->   en Modelo 0 (`d.raices`; la tabla `e_t_*` solo si ya tenía datos);
+>   sin caso (`d.raices`; la tabla `e_t_*` solo si ya tenía datos);
 >   **CoMEP** (antes «MEP córtico-bulbares»/«CoBu»; solo rótulos, ids iguales);
 >   reflejos con nombre corto y ayuda al mantener pulsado; ficha con la barra en
 >   una fila (Informe y Hoja de registro en el ⋮, «Volver») y fondo algo más
@@ -547,7 +581,8 @@ distinta a la anterior, no importa el formato exacto.
 >   no cuenta (`alarmaEscrita()`) y lo derivado se deshace al quitarlas; el
 >   Registro y el autoguardado sellan `editado_en` como mucho cada 30 min; las
 >   fotos no se reescriben en IndexedDB (`fotosYaEnIDB`). «Vaciar» del Registro y
->   del Checklist, solo en Modelo 0. «Pasar al caso» retirado.
+>   del Checklist, solo sin caso («Sin caso — hoja
+>   suelta», `checklist_modelo_cero`). «Pasar al caso» retirado.
 > - **Nombres:** «Plantilla» = lo guardado en la biblioteca (Guardar/Cargar
 >   plantilla, + Plantilla en blanco); «Montaje» = cómo quedan las cajas (Editar
 >   montaje del caso, Organizador de Montajes); «Técnica · lado» (no
@@ -577,8 +612,8 @@ distinta a la anterior, no importa el formato exacto.
 > - **Material**: «Estimulación trigeminal» (V1-V3 + N.Maset, id `l_rx_maset`);
 >   fuera la categoría «Reflejos» (eran técnicas). Serrato anterior C5-C7 en
 >   miotomas. 20 categorías en orden lógico; `SERIES_MATERIAL` agrupa L./R.
-> - **Registro en pantalla** (30-09-2026; **diseño B desde el 04-10**, ver «Lo
->   último»: el panel ya no está arriba, es la hoja que abre la barra de abajo;
+> - **Registro en pantalla** (30-09-2026; **diseño B desde el 04-10**, ver «04-10-2026,
+>   tarde y noche»: el panel ya no está arriba, es la hoja que abre la barra de abajo;
 >   sus botones son los de aquí): Cronograma + Basales y comparativa + Mapeo +
 >   Cierre, sin la letra de la hoja
 >   (A, B y C están en Gestión de Casos; D, esquema, F, G y H tampoco salen; la
@@ -690,6 +725,10 @@ distinta a la anterior, no importa el formato exacto.
 >   (multicéntrico); más equipos (Natus, Nihon Kohden); quién la mantiene.
 > - **Probado por el usuario (09-10):** el candado, la hora en la hoja de fase,
 >   «+ GRID B» en el Mapeo y PostPos2 en c-MEP y c-SEP funcionan.
+> - **Pendiente del usuario (10-10):** recargar la app; probar en el móvil el
+>   GRID en el Mapeo (electrodos, músculos e inversión, A y B) y la sección
+>   «Mapeo» del informe; repegar `Codigo.gs` entero en el Sheet (equipo
+>   «Genérico»).
 > - **Pendiente del usuario (04-10, última hora):** probar en el móvil el ✎ del
 >   Registro (hoja de corregir y el selector Evento | Alarma), los colores del
 >   Mapeo, la selección de varias plantillas y el modo claro con el gris nuevo.
