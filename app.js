@@ -8371,7 +8371,7 @@
         var sinOtroB = !casoEsNuevo && casoAbierto.estado === "cerrado";   // candado: sin «+ Otro» (F17)
         pintarBloqueBasales(T("registro_sens_otros"), regFilasBasales(REG_BASALES_SENS, "s_", dB, tecB), "s_", REG_BASALES_LIBRES.sens, parB, dB, sinGuardar, sinOtroB);
         pintarBloqueBasales(T("registro_motores"), regFilasBasales(REG_BASALES_MOT, "m_", dB, tecB), "m_", REG_BASALES_LIBRES.mot, parB, dB, sinGuardar, sinOtroB);
-        var bGridB = nodoBotonGridB(dB, tecB, function () { oyentesTecnicasRealizadas.forEach(function (f) { f(); }); });
+        var bGridB = nodoBotonGridB(dB, tecB, function () { oyentesTecnicasRealizadas.forEach(function (f) { f(); }); }, true);
         if (bGridB) parB.appendChild(bGridB);
         contB.appendChild(parB);
       };
@@ -17390,12 +17390,16 @@
       });
   }
   function regCasoConGridB(d) { return !!d.v.grid_b || regGridBEscrito(d); }
-  // Botón «+ GRID B» / «Quitar GRID B» bajo las basales y el Mapeo, con la
-  // misma condición que el bloque GRID del Mapeo (regCasoConGrid(): cualquier
-  // técnica de GRID, 10-10-2026). No sale si el GRID B ya tiene algo escrito
-  // (no se puede quitar sin borrarlo). "alCambiar" guarda y repinta.
-  function nodoBotonGridB(d, tecnicas, alCambiar) {
-    if (!tecnicas || !regCasoConGrid(tecnicas, d)) return null;
+  // Botón «+ GRID B» / «Quitar GRID B» bajo el Mapeo y las basales. En el
+  // Mapeo, con la misma condición que su bloque GRID (regCasoConGrid():
+  // cualquier técnica de GRID); en Basales ("enBasales"), solo con c-MEP o
+  // c-SEP, que es cuando añade las filas A/B (10-10-2026). No sale si el
+  // GRID B ya tiene algo escrito (no se puede quitar sin borrarlo).
+  // "alCambiar" guarda y repinta.
+  function nodoBotonGridB(d, tecnicas, alCambiar, enBasales) {
+    if (!tecnicas) return null;
+    if (enBasales ? !tecnicas.some(function (t) { return t === "c_pem" || t === "c_pess"; })
+                  : !regCasoConGrid(tecnicas, d)) return null;
     if (regGridBEscrito(d)) return null;
     var b = regNodo("button", "reg-p-nuevo reg-grid-b", T(d.v.grid_b ? "reg_grid_b_quitar" : "reg_grid_b_poner"));
     b.type = "button";
@@ -18033,7 +18037,7 @@
     var sinOtroRB = !!(cRB && cRB.estado === "cerrado");   // candado: sin «+ Otro» (F17)
     pintarBloqueBasales(T("registro_sens_otros"), regFilasBasales(REG_BASALES_SENS, "s_", d, tecRB), "s_", REG_BASALES_LIBRES.sens, par, d, null, sinOtroRB);
     pintarBloqueBasales(T("registro_motores"), regFilasBasales(REG_BASALES_MOT, "m_", d, tecRB), "m_", REG_BASALES_LIBRES.mot, par, d, null, sinOtroRB);
-    var bGridB = nodoBotonGridB(d, tecRB, function () { registroGuardarYa(); renderRegistroContenido(); });
+    var bGridB = nodoBotonGridB(d, tecRB, function () { registroGuardarYa(); renderRegistroContenido(); }, true);
     if (bGridB) par.appendChild(bGridB);
     // La estimulación de tornillos pasó a E2 · Mapeo (28-09-2026), donde
     // solo sale si el caso tiene marcada esa técnica.

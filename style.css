@@ -1147,7 +1147,7 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
 .guia-flujo-txt span { color: var(--text-muted); font-size: 0.8rem; }
 .guia-tarjetas { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 0.5rem; }
 .guia-tarjeta {
-  border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 6px;
+  border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: var(--r);
   background: var(--card-bg); padding: 0.55rem 0.7rem;
 }
 .guia-tarjeta h4 { margin: 0 0 0.15rem; font-size: 0.9rem; }
@@ -1161,7 +1161,7 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
   display: inline-flex; align-items: center; justify-content: center;
   background: var(--tag-bg); font-size: 0.9rem;
 }
-.guia-duda { border: 1px solid var(--border-soft); border-radius: 6px; background: var(--card-bg); }
+.guia-duda { border: 1px solid var(--border-soft); border-radius: var(--r); background: var(--card-bg); }
 .guia-duda > summary { cursor: pointer; padding: 0.45rem 0.65rem; font-size: 0.84rem; font-weight: 600; }
 .guia-duda > p { margin: 0; padding: 0 0.65rem 0.55rem; font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; }
 
@@ -1647,7 +1647,7 @@ body:not(.editando-caso):not(.barra-caso-oculta) { --barra-caso-h: 54px; }
   font-size: 0.6rem;
   color: var(--text-muted);
   background: rgba(0, 0, 0, 0.07);
-  border-radius: 6px;
+  border-radius: var(--r);
   padding: 0 0.25rem;
   margin-left: 0.15rem;
 }
@@ -1685,7 +1685,7 @@ body:not(.editando-caso):not(.barra-caso-oculta) { --barra-caso-h: 54px; }
 
 .campo-estilo {
   border: 1px solid var(--border-soft);
-  border-radius: 5px;
+  border-radius: var(--r);
   padding: 0.5rem 0.6rem 0.2rem;
   margin: 0 0 0.7rem;
 }
@@ -1697,7 +1697,7 @@ body:not(.editando-caso):not(.barra-caso-oculta) { --barra-caso-h: 54px; }
 
 dialog {
   border: 1px solid var(--border);
-  border-radius: 7px;
+  border-radius: var(--r);
   padding: 1rem 1.1rem;
   max-width: 420px;
   width: calc(100% - 1.5rem);
@@ -1948,7 +1948,7 @@ dialog h3 {
   overflow-y: auto;
   background: var(--card-bg);
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--r);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
   padding: 0.2rem 0;
 }
@@ -2001,7 +2001,7 @@ dialog h3 {
   padding: 0.5rem 0.6rem;
   border: 1px solid var(--border-soft);
   border-left: 3px solid var(--text-muted);
-  border-radius: 5px;
+  border-radius: var(--r);
   background: var(--card-bg);
   color: var(--text);
   cursor: pointer;
@@ -2100,7 +2100,7 @@ dialog h3 {
   line-height: 1.55;
   padding: 0.5rem 0.6rem;
   border: 1px solid var(--border-soft);
-  border-radius: 6px;
+  border-radius: var(--r);
   background: var(--campo-bg);
   color: var(--text);
   overflow: auto;
@@ -2432,7 +2432,7 @@ dialog h3 {
 .umbral-raices-nivel {
   position: relative; z-index: 1; min-width: 2.6rem; padding: 0.18rem 0.3rem; text-align: center;
   font-weight: 700; font-size: 0.8rem; color: var(--accent);
-  background: var(--card-bg); border: 1.5px solid var(--accent); border-radius: 6px;
+  background: var(--card-bg); border: 1.5px solid var(--accent); border-radius: var(--r);
 }
 .umbral-raices-rama { height: 2px; background: var(--accent); opacity: 0.55; }
 .umbral-raices-rama.izq { margin-left: 0.15rem; }
@@ -2533,7 +2533,7 @@ dialog h3 {
   max-height: 34vh;
   overflow-y: auto;
   border: 1px solid var(--border-soft);
-  border-radius: 5px;
+  border-radius: var(--r);
 }
 .cat-fila {
   display: flex;
@@ -3384,7 +3384,7 @@ dialog h3 {
   margin-top: 0.7rem;
   padding: 0.45rem 0.6rem;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--r);
   background: var(--campo-bg);
   color: var(--text);
 }
@@ -3899,7 +3899,7 @@ button, input, select, textarea { font-family: inherit; }
 }
 .reg-p-extra { grid-column: 1 / -1; font-size: 0.72rem; color: var(--text-muted); margin: -0.1rem 0 0.2rem; }
 .reg-p-alarmas { display: flex; flex-direction: column; gap: 0.5rem; }
-.reg-p-alarma { border: 1px solid var(--border-soft); border-left: 3px solid var(--peligro); border-radius: 6px; padding: 0.4rem 0.5rem; display: flex; flex-direction: column; gap: 0.3rem; }
+.reg-p-alarma { border: 1px solid var(--border-soft); border-left: 3px solid var(--peligro); border-radius: var(--r); padding: 0.4rem 0.5rem; display: flex; flex-direction: column; gap: 0.3rem; }
 .reg-p-al-l1 { display: grid; grid-template-columns: 2rem 5.4rem minmax(0, 1fr) 1.8rem; gap: 0.3rem; align-items: center; }
 .reg-p-al-l2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 0.3rem; }
 .reg-p-al-l3 { display: grid; grid-template-columns: minmax(0, 1fr) 9rem 9.5rem; gap: 0.3rem; align-items: start; }
@@ -3929,7 +3929,7 @@ button, input, select, textarea { font-family: inherit; }
 }
 
 /* Modo rápido: la fase en un bloque y "qué + qué pasa" en otro (28-09-2026) */
-.rr-bloque { border: 1px solid var(--border); border-radius: 6px; padding: 0.5rem 0.6rem 0.6rem; margin: 0.6rem 0; background: var(--card-bg); }
+.rr-bloque { border: 1px solid var(--border); border-radius: var(--r); padding: 0.5rem 0.6rem 0.6rem; margin: 0.6rem 0; background: var(--card-bg); }
 .rr-bloque-evento { border-left: 3px solid var(--accent); }
 .rr-bloque .rr-titulo:first-of-type { margin-top: 0.2rem; }
 
@@ -4089,7 +4089,7 @@ body.sin-ayudas .coste-nota { display: none !important; }
    una fila compacta por grupo -rótulo arriba; evolución, momento y
    concordancia debajo-. */
 .caso-correlato { display: flex; flex-direction: column; gap: 0.35rem; }
-.caso-correlato-fila { border: 1px solid var(--border-soft); border-left: 3px solid var(--peligro); border-radius: 6px; padding: 0.3rem 0.45rem; }
+.caso-correlato-fila { border: 1px solid var(--border-soft); border-left: 3px solid var(--peligro); border-radius: var(--r); padding: 0.3rem 0.45rem; }
 .caso-correlato-tit { font-size: 0.8rem; margin-bottom: 0.25rem; }
 .caso-correlato-tit b { color: var(--peligro); }
 .caso-correlato-ctr { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) 2.6rem; gap: 0.3rem; align-items: center; }
@@ -4168,7 +4168,7 @@ textarea { resize: none; overflow-y: hidden; }
 /* «Técnica» y «Hallazgo» en recuadros propios dentro de «Evento o alarma»
    (29-09-2026, pedido del usuario): se ve la separación entre los dos. */
 .rr-sub-bloque {
-  border: 1px solid var(--acento-apagado); border-radius: 6px;
+  border: 1px solid var(--acento-apagado); border-radius: var(--r);
   background: var(--card-bg); padding: 0.4rem 0.5rem 0.5rem; margin: 0.4rem 0 0.5rem;
 }
 .rr-sub-tit { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.25rem; }
@@ -4235,7 +4235,7 @@ textarea { resize: none; overflow-y: hidden; }
 @keyframes rr-nuevo { 0%, 40% { box-shadow: 0 0 0 2px var(--accent); } 100% { box-shadow: 0 0 0 2px transparent; } }
 /* Con aspecto de botón que se despliega (04-10-2026, pedido del usuario: no
    parecía un desplegable): recuadro, fondo de tarjeta y flecha más grande. */
-.rr-crono-cab { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 0.5rem; padding: 0.55rem 0.65rem; margin-bottom: 0.5rem; border: 1px solid var(--border); border-radius: 5px; background: var(--card-bg); }
+.rr-crono-cab { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 0.5rem; padding: 0.55rem 0.65rem; margin-bottom: 0.5rem; border: 1px solid var(--border); border-radius: var(--r); background: var(--card-bg); }
 .rr-crono-cab:hover { border-color: var(--accent); }
 .rr-crono[open] > .rr-crono-cab { border-color: var(--accent); }
 .rr-crono-cab::-webkit-details-marker { display: none; }
@@ -4258,7 +4258,7 @@ textarea { resize: none; overflow-y: hidden; }
 .rr-crono-n { font-family: var(--mono); font-size: 0.72rem; color: var(--text-muted); white-space: nowrap; }
 .rr-crono-filtros { margin-bottom: 0.45rem; }
 .rr-lista { gap: 0.4rem; }
-.rr-item { --g: var(--g-info); background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--g); border-radius: 6px; padding: 0.3rem 0.4rem 0.4rem 0.55rem; }
+.rr-item { --g: var(--g-info); background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--g); border-radius: var(--r); padding: 0.3rem 0.4rem 0.4rem 0.55rem; }
 .rr-g-critico { --g: var(--g-critico); }
 .rr-item .rr-al-plegable > summary { color: var(--text-muted); }
 .rr-item .rr-al-sum-tit { color: var(--text-muted); font-weight: 500; }
@@ -4307,7 +4307,7 @@ textarea { resize: none; overflow-y: hidden; }
 .casos-filtros-n[hidden] { display: none; }
 .casos-orden-rot { font-size: 0.72rem; color: var(--text-muted); white-space: nowrap; }
 .casos-filtros-barra select { font: inherit; font-size: 0.8rem; padding: 0.3rem 0.35rem; border: 1px solid var(--border); border-radius: var(--r); background: var(--campo-bg); color: var(--text); max-width: 9.5rem; min-width: 0; }
-.casos-filtros-panel { border: 1px solid var(--border); border-radius: 6px; background: var(--cab-bg); padding: 0.6rem 0.7rem; }
+.casos-filtros-panel { border: 1px solid var(--border); border-radius: var(--r); background: var(--cab-bg); padding: 0.6rem 0.7rem; }
 .casos-filtros-panel[hidden] { display: none; }
 .casos-filtros-panel .casos-filtros-fila + .casos-filtros-fila { margin-top: 0.2rem; }
 /* Primera fila en rejilla de dos columnas iguales: Estado · Especialidad,
@@ -4366,7 +4366,7 @@ textarea { resize: none; overflow-y: hidden; }
 
 /* Plantillas con el aspecto de las filas de Gestión de Casos (30-09-2026). */
 #dlg-montajes-lista, #plantilla-elegir-lista { gap: 0.45rem; }
-.plantilla-fila { align-items: stretch; gap: 0.2rem; padding: 0.5rem 0.6rem; border: 1px solid var(--border-soft); border-left: 5px solid var(--text-muted); border-radius: 5px; }
+.plantilla-fila { align-items: stretch; gap: 0.2rem; padding: 0.5rem 0.6rem; border: 1px solid var(--border-soft); border-left: 5px solid var(--text-muted); border-radius: var(--r); }
 .plantilla-fila.mio { border-left: 5px solid var(--accent); }
 .plantilla-fila:hover { border-color: var(--accent); }
 .plantilla-fila.activo { border-color: var(--accent); background: var(--accent-soft); }
@@ -4449,7 +4449,7 @@ body:not(.editando-caso) #barra-caso-prefijo { color: var(--accent); }
 .reg-bl { margin-bottom: 0.4rem; min-width: 0; }
 .reg-bl-tit { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; font-size: 0.7rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.25rem; }
 .reg-bl-unid { font-weight: 500; font-size: 0.64rem; }
-.reg-bl-fila { border: 1px solid var(--border-soft); border-radius: 5px; margin-bottom: 0.2rem; background: var(--card-bg); }
+.reg-bl-fila { border: 1px solid var(--border-soft); border-radius: var(--r); margin-bottom: 0.2rem; background: var(--card-bg); }
 .reg-bl-fila.abierta { border-color: var(--accent); }
 #pantalla-registro .reg-bl-cab, #dlg-caso .reg-bl-cab, .reg-bl-cab {
   display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 0.45rem; width: 100%; min-height: 0;
@@ -4486,19 +4486,19 @@ body:not(.editando-caso) #barra-caso-prefijo { color: var(--accent); }
 
 /* Estudio multicéntrico, bloque 1 (03-10-2026) */
 /* Catálogos > Centros: de qué centro es este dispositivo */
-.cat-centro-disp { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.5rem; margin-bottom: 0.6rem; padding: 0.45rem 0.55rem; border: 1px solid var(--border-soft); border-radius: 5px; }
+.cat-centro-disp { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.5rem; margin-bottom: 0.6rem; padding: 0.45rem 0.55rem; border: 1px solid var(--border-soft); border-radius: var(--r); }
 .cat-centro-disp label { font-size: 0.78rem; font-weight: 600; }
 .cat-centro-disp small { flex: 1 0 100%; font-size: 0.7rem; color: var(--text-muted); }
 /* Diálogo de la nube: estado en una línea y aviso de choque */
 .sync-linea { margin: 0 0 0.5rem; font-size: 0.78rem; color: var(--text); }
-.sync-choque { margin: 0 0 0.5rem; padding: 0.45rem 0.55rem; font-size: 0.78rem; border: 1px solid var(--aviso-border); border-radius: 5px; background: var(--aviso-bg, transparent); color: var(--text); }
+.sync-choque { margin: 0 0 0.5rem; padding: 0.45rem 0.55rem; font-size: 0.78rem; border: 1px solid var(--aviso-border); border-radius: var(--r); background: var(--aviso-bg, transparent); color: var(--text); }
 .sync-linea[hidden], .sync-choque[hidden] { display: none; }
 .dlg-botones button.sync-avanzado { border: none; background: none; color: var(--text-muted); text-decoration: underline; padding: 0 0.3rem; }
 
 /* Papelera de casos (04-10-2026) */
 #dlg-papelera { max-width: 560px; }
 .papelera-lista { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.6rem; }
-.papelera-fila { display: flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.5rem; border: 1px solid var(--border-soft); border-radius: 5px; }
+.papelera-fila { display: flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.5rem; border: 1px solid var(--border-soft); border-radius: var(--r); }
 .papelera-txt { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
 .papelera-id { font-weight: 600; font-size: 0.82rem; overflow-wrap: anywhere; }
 .papelera-txt small { font-size: 0.7rem; color: var(--text-muted); }
@@ -4532,7 +4532,7 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 .plantilla-fila { position: relative; border-left-color: transparent; }
 .plantilla-fila.mio { border-left-color: transparent; }
 /* La franja: los colores de las familias que lleva; sin técnicas, gris */
-.plantilla-fila::before { content: ""; position: absolute; left: -5px; top: -1px; bottom: -1px; width: 5px; border-radius: 5px 0 0 5px; background: var(--franja, var(--border)); }
+.plantilla-fila::before { content: ""; position: absolute; left: -5px; top: -1px; bottom: -1px; width: 5px; border-radius: var(--r) 0 0 var(--r); background: var(--franja, var(--border)); }
 .plantilla-fila.vacia { opacity: 0.6; }
 .plantilla-fila.vacia:hover { opacity: 1; }
 .plantilla-vacia { margin-left: 0.4rem; padding: 0 0.35rem; font-size: 0.6rem; font-weight: 600; border: 1px dashed var(--text-muted); border-radius: 3px; color: var(--text-muted); vertical-align: middle; }
