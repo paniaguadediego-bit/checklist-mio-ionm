@@ -145,7 +145,7 @@ vez en cuando mantiene la copia al día.
 ### Si el navegador borró los datos del sitio
 
 No hace falta hacer nada especial: al abrir la web con la sincronización
-configurada, `bajarAuto()` ([app.js:1695](app.js:1695)) se trae la última versión
+configurada, `bajarAuto()` ([app.js:4058](app.js:4058)) se trae la última versión
 del repositorio. Si además hubieras perdido el token, se vuelve a generar en
 GitHub y se pega en el diálogo ☁.
 
@@ -168,27 +168,27 @@ que se separaron). Para esos, la copia de verdad es el repositorio de datos: cl�
 
 ## Mapa del código
 
-Todo el JavaScript vive en un único IIFE en `app.js` (~14 500 líneas a 26-09-2026). No hay
+Todo el JavaScript vive en un único IIFE en `app.js` (~21 950 líneas a 10-10-2026). No hay
 módulos. Las funciones son declaraciones, así que el orden de definición no
 importa. **Los números de línea de esta tabla se desactualizan con cada
 cambio grande** — si no cuadran con lo que hay, es más fiable un
 `grep -n "function nombreDeLaFuncion"` que fiarse del número a ciegas.
-(Los de abajo están comprobados el 21-08-2026.)
+(Los de abajo están comprobados el 10-10-2026.)
 
 | Zona | Función clave | Línea |
 |---|---|---|
-| Idioma | `volcarTraducciones()`, `campo()` | [599](app.js:599), [681](app.js:681) |
-| Etiquetas (tipos físicos) | `reconstruirEtiquetas()` | [751](app.js:751) |
-| Catálogo de material | `reconstruirCatalogo()` | [840](app.js:840) |
+| Idioma | `volcarTraducciones()`, `campo()` | [1627](app.js:1627), [1709](app.js:1709) |
+| Etiquetas (tipos físicos) | `reconstruirEtiquetas()` | [2079](app.js:2079) |
+| Catálogo de material | `reconstruirCatalogo()` | [2168](app.js:2168) |
 | Catálogos editables (técnicas/servicios/intervenciones/perfiles/escenarios/usuarios/centros) | `fusionarCatalogo()`, `reconstruirCatalogos()` | ver `grep` |
 | Centros (estudio multicéntrico, 03-10-2026): catálogo `centros` {id, nombre, codigo}, vacío de fábrica; centro del dispositivo en `mio_ionm_centro_id` (no se sincroniza); `centro_id` en el caso (el texto `centro` se deriva al guardar); número «H1-2026-003»; filtro «Centro»; usuarios con `centro_id` | `CENTROS_BASE`, `centroIdDispositivo()`, `selectorCentroDispositivo()`, `siguienteIdCaso(fecha, centroId)`, `RE_ID_CASO`, `ajustarCentroCaso()`, `pintarFiltroCentro()`, `opcionesCentros()`, `listaCatalogoCaso()` | ver `grep` |
 | Diálogo de la nube en lenguaje llano (Subir/Bajar escondidos si no hay choque) | `pintarDlgSync()`, `syncAvanzado` | ver `grep` |
-| Carga y guardado del estado | `cargarEstado()`, `guardarEstado()` | [1159](app.js:1159), [1281](app.js:1281) |
-| Entradas de una caja | `entradasDe()` | [1510](app.js:1510) |
+| Carga y guardado del estado | `cargarEstado()`, `guardarEstado()` | [2469](app.js:2469), [2632](app.js:2632) |
+| Entradas de una caja | `entradasDe()` | [2894](app.js:2894) |
 | Selección y colocación (pulsar y colocar); chip con el nombre en `.chip-nombre` (se parte en entradas estrechas) | `seleccionar()`, `colocar()`, `crearChip()` | ver `grep` |
-| Sincronización de `estado.json` | `estadoActual()`, `aplicarEstado()`, `programarSubida()`, `subirAuto()`, `bajarAuto()` | [2057](app.js:2057)–[2224](app.js:2224) |
+| Sincronización de `estado.json` | `estadoActual()`, `aplicarEstado()`, `programarSubida()`, `subirAuto()`, `bajarAuto()` | [3887](app.js:3887)–[4058](app.js:4058) |
 | Montajes: modelo, autoría y sincronización | `montajeNuevo()`, `puedoEditar()`, `guardarMontaje()`, `subirMontaje()`, `bajarMontajes()` | ver `grep` |
-| Casos: modelo y ficha | `borrarCaso()`, `guardarCaso()`, `casoVacio()`, `renderFichaCaso()` | [2454](app.js:2454), [2467](app.js:2467), [2498](app.js:2498), [3669](app.js:3669) |
+| Casos: modelo y ficha | `borrarCaso()`, `guardarCaso()`, `casoVacio()`, `renderFichaCaso()` | [4501](app.js:4501), [4602](app.js:4602), [4700](app.js:4700), [8530](app.js:8530) |
 | Casos: sincronización | `subirCaso()`, `bajarCasos()`, `borrarCasosPendientes()`, `guardarUnCasoLocal()`/`borrarUnCasoLocal()` (un caso por clave desde el 22-09-2026) | ver `grep` |
 | Casos: filtro/orden de Gestión de Casos (panel plegable «Filtros (n)», chips de filtros activos con ✕, Especialidad = `servicio_id`, Diagnóstico = `diagnostico` desde el 04-10) | `casosFiltradosUids()`, `comparaDificultad()`, `pintarFiltrosActivos()`, `pintarFiltroServicio()`, `pintarFiltroDiagnostico()`, `CASOS_FILTROS_SELECT` | ver `grep` |
 | Enlace de un Puente a su cork de referencia (22-09-2026; no confundir con la fila de abajo, "Puente" ahí es la metáfora plantilla↔caso, aquí es el ítem de catálogo) | `enlacePuente()`, `fijarEnlacePuente()`, `iniciarEnlacePuente()`, `completarEnlacePuente()` | ver `grep` |
@@ -212,7 +212,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Registro intraoperatorio: hoja imprimible A4 | `construirHojaRegistro()`, `abrirHojaRegistro()`, `ESTILO_HOJA_REGISTRO` | ver `grep` |
 | Material, pantalla propia (todo el catálogo en filas) | `renderDocenteMaterial()`, `descripcionMaterial()` | ver `grep` |
 | Fotos en IndexedDB (todas las fotos) | `guardarFotoIDB()`, `hidratarFotosIDB()`, `quitarDataUrls()` | ver `grep` |
-| Cálculo del resumen (con coste) | `calcularResumen()`, `calcularCoste()` (dato) → `renderResumen()` (pintado) | [4785](app.js:4785), [4868](app.js:4868) |
+| Cálculo del resumen (con coste) | `calcularResumen()`, `calcularCoste()` (dato) → `renderResumen()` (pintado) | [11543](app.js:11543), [11525](app.js:11525) |
 | Pantalla Docencia (miotomas, cama de quirófano) | `renderDocente()`, `renderCama()` | ver `grep` |
 | Puente plantilla↔caso (cargar/guardar) | `iniciarCargaPlantilla()`, `aplicarPlantillaSobreDestino()`, `guardarMontajeComoPlantilla()` | ver `grep` |
 | Organizador en dos pantallas (04-10-2026, «como Gestión de Casos»): lista de plantillas sola al entrar (`body.org-lista`, botón «Crear plantilla», filtros) y, al tocar una, su edición (ruta «Plantillas › nombre» arriba para volver; rótulo con Guardar plantilla y Más acciones; Cajas, Técnicas, Resumen, Notas y Catálogo). Corregir el montaje de un caso (`editando-caso`) es siempre la edición. Atrás del móvil en la edición → lista | `orgEditor`, `aplicarModoOrganizador()` (en `renderTodo()`; también las migas «Plantillas › nombre» `#org-migas` y Cajas abierta al entrar), colores por familia de técnica (sensitivas ámbar, PEATC amarillo `aud`, motoras rojo, EMG verde, reflejos rojo-violeta —cualquier técnica con `reflejo`—, EEG/ECoG azulado, mapeo rosa; `FAMILIA_TEC`, `REFLEJOS_TEC`, `familiaTecnica()`, `--fam-*` en style.css; franja izquierda `--franja` con las familias de la plantilla; leyenda; vacías atenuadas con «Vacía»), «Ordenar por» nombre / última modificación (`ordenPlantillas()`, `comparadorPlantillas()`, `PLANTILLAS_ORDEN_KEY`, por dispositivo), `abrirEditorPlantilla()`, `volverAListaPlantillas()`, `#btn-crear-plantilla`; selección de varias con «Más acciones» encima de la lista (`plantillasSel`, `renderLotePlantillas()`, `#montajes-lote`, `vaciarMontaje()`, `quitarMontaje()`; barra «n seleccionadas» fija y `compensarSaltoLote()` para que la lista no salte al aparecer o irse) | ver `grep` |

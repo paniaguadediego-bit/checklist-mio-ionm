@@ -1250,6 +1250,10 @@
     caso_cargar_plantilla: { es: "Cargar plantilla…", en: "Load template…" },
     caso_montaje_origen: { es: "Plantilla de origen: {nombre}", en: "Source template: {nombre}" },
     caso_montaje_origen_no_disponible: { es: "plantilla no disponible", en: "template not available" },
+    caso_nuevo_plantilla_titulo: { es: "¿Cargar una plantilla?", en: "Load a template?" },
+    caso_nuevo_plantilla_intro: { es: "Hay plantillas de {equipo}. Puedes empezar el montaje desde una o dejar el caso vacío y cargarla después.", en: "There are {equipo} templates. You can start the montage from one, or leave the case empty and load it later." },
+    caso_nuevo_plantilla_elegir: { es: "Elegir plantilla…", en: "Choose template…" },
+    caso_nuevo_plantilla_ahora_no: { es: "Ahora no", en: "Not now" },
     caso_guardar_plantilla: { es: "Guardar este montaje como plantilla…", en: "Save this montage as a template…" },
     plantilla_guardar_prompt: { es: "Nombre de la plantilla nueva:\n\nPara reconocerla luego en la lista — nunca un dato del paciente.",
                            en: "Name of the new template:\n\nSo you can recognise it later in the list — never patient data." },
@@ -9444,8 +9448,71 @@
       c.equipo_id = eq;
       guardarCaso(c, true);
       abrirCaso(c.caso_uid);
+      ofrecerPlantillaCasoNuevo(c.caso_uid, eq);
     });
   });
+
+  /* Auditoría 09-10-2026, F14: crear un caso con montaje costaba unos 9
+     toques (ficha › Editar montaje › Cargar montaje… › plantilla › Aplicar ›
+     volver). Ahora, nada más elegir el equipo, si hay alguna plantilla de ESE
+     equipo se pregunta «¿Cargar una plantilla?». «Elegir plantilla…» abre el
+     mismo selector y la misma confirmación de siempre en la vía de la ficha
+     (iniciarCargaPlantilla(false) → confirmarCargaPlantilla()), así que el
+     caso queda igual que cargándola a mano después; «Ahora no» deja la ficha
+     vacía, como antes. Sin plantillas de ese equipo no se pregunta nada. */
+  var dlgPlantillaCasoNuevo = null;
+  function ofrecerPlantillaCasoNuevo(uid, eq) {
+    var hay = Object.keys(montajes).some(function (k) { return equipoDe(montajes[k]) === eq; });
+    if (!hay) return;
+    // Misma espera que abrirCaso(): la pregunta sale con la ficha ya abierta
+    // (iniciarCargaPlantilla(false) lee de ella). Si en medio se abrió otro
+    // caso o ya está cerrado (candado), no se ofrece.
+    (casosHidratados[uid] || Promise.resolve()).then(function () {
+      if (!dlgCaso.open || !casoAbierto || casoAbierto.caso_uid !== uid) return;
+      if (casoAbierto.estado === "cerrado") return;
+      if (!dlgPlantillaCasoNuevo) {
+        var d = document.createElement("dialog");
+        d.className = "no-print";
+        var h = document.createElement("h3");
+        h.id = "caso-nuevo-plantilla-titulo";
+        d.appendChild(h);
+        var p = document.createElement("p");
+        p.className = "dlg-intro";
+        p.id = "caso-nuevo-plantilla-intro";
+        d.appendChild(p);
+        var botones = document.createElement("div");
+        botones.className = "dlg-botones";
+        var bNo = document.createElement("button");
+        bNo.type = "button";
+        bNo.id = "caso-nuevo-plantilla-no";
+        bNo.addEventListener("click", function () { d.close(); });
+        botones.appendChild(bNo);
+        var hueco = document.createElement("span");
+        hueco.className = "barra-flex";
+        botones.appendChild(hueco);
+        var bSi = document.createElement("button");
+        bSi.type = "button";
+        bSi.id = "caso-nuevo-plantilla-elegir";
+        bSi.className = "primario";
+        bSi.addEventListener("click", function () {
+          d.close();
+          iniciarCargaPlantilla(false);
+        });
+        botones.appendChild(bSi);
+        d.appendChild(botones);
+        document.body.appendChild(d);
+        dlgPlantillaCasoNuevo = d;
+      }
+      // Textos en cada apertura: así siguen el idioma elegido en ese momento
+      document.getElementById("caso-nuevo-plantilla-titulo").textContent = T("caso_nuevo_plantilla_titulo");
+      document.getElementById("caso-nuevo-plantilla-intro").textContent = T("caso_nuevo_plantilla_intro", { equipo: nombreEquipo(eq) });
+      document.getElementById("caso-nuevo-plantilla-no").textContent = T("caso_nuevo_plantilla_ahora_no");
+      var bElegir = document.getElementById("caso-nuevo-plantilla-elegir");
+      bElegir.textContent = T("caso_nuevo_plantilla_elegir");
+      dlgPlantillaCasoNuevo.showModal();
+      bElegir.focus();
+    });
+  }
 
   /* Con qué equipo se monta (25-09-2026). Con un solo equipo configurado
      no pregunta nada. Propone el último que se usó en este dispositivo. */

@@ -65,6 +65,7 @@ window.GUIA = {
     ] },
     { grupo: "Después / consulta", tarjetas: [
       { titulo: "Biblioteca de montajes", texto: "En construcción: montajes de ejemplo por especialidad y equipo. Mientras, los casos de la demo, aparte de tus datos." },
+      { titulo: "Técnicas IONM", texto: "Parámetros y fuentes de cada técnica, en tarjetas y en tabla. Solo con tu acceso privado: no sale en la demo." },
       { titulo: "Material", texto: "Todo el catálogo, con buscador." },
       { titulo: "Miotomas", texto: "Qué músculos cubren los niveles de la cirugía." },
       { titulo: "Simulador", texto: "Una pantalla de monitorización para ensayar alarmas." },

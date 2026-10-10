@@ -1007,7 +1007,7 @@ body.hay-seleccion .slot:hover { border-style: solid; background: rgba(90,200,15
   width: 2.4rem;
   margin: 0 auto 0.3rem;
   background: var(--barra-control);
-  border-radius: 0 0 5px 5px;
+  border-radius: 0 0 var(--r) var(--r);
   text-align: center;
   font-size: 0.6rem;
   padding: 0.05rem 0;
@@ -4198,9 +4198,9 @@ textarea { resize: none; overflow-y: hidden; }
 .rr-barra-apuntar button { font: inherit; font-weight: 600; min-height: 44px; border-radius: var(--r); cursor: pointer; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); white-space: nowrap; }
 .rr-barra-apuntar .primario { background: var(--accent); border-color: var(--accent); color: var(--accent-texto); }
 .rr-barra-apuntar .rr-alarma { background: transparent; border: 2px solid var(--peligro); color: var(--peligro); }
-@media (min-width: 760px) { .rr-barra-apuntar { left: 50%; right: auto; width: 720px; transform: translateX(-50%); border: 1px solid var(--border); border-bottom: none; border-radius: 8px 8px 0 0; } }
+@media (min-width: 760px) { .rr-barra-apuntar { left: 50%; right: auto; width: 720px; transform: translateX(-50%); border: 1px solid var(--border); border-bottom: none; border-radius: var(--r) var(--r) 0 0; } }
 .rr-hoja-fondo { position: fixed; inset: 0; z-index: 900; background: rgba(0, 0, 0, 0.5); }
-.rr-hoja { position: fixed; left: 0; right: 0; bottom: 0; z-index: 901; max-width: 720px; margin: 0 auto; max-height: 86vh; max-height: 86dvh; display: flex; flex-direction: column; background: var(--bg); border-top: 3px solid var(--accent); border-radius: 10px 10px 0 0; box-shadow: 0 -10px 24px rgba(0, 0, 0, 0.4); }
+.rr-hoja { position: fixed; left: 0; right: 0; bottom: 0; z-index: 901; max-width: 720px; margin: 0 auto; max-height: 86vh; max-height: 86dvh; display: flex; flex-direction: column; background: var(--bg); border-top: 3px solid var(--accent); border-radius: var(--r) var(--r) 0 0; box-shadow: 0 -10px 24px rgba(0, 0, 0, 0.4); }
 .rr-hoja-cab { display: flex; align-items: center; gap: 0.5rem; padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--border); }
 .rr-hoja-tit { flex: 1 1 auto; font-weight: 700; font-size: 1rem; }
 .rr-hoja-tit-alarma { color: var(--peligro); }
@@ -4280,7 +4280,8 @@ textarea { resize: none; overflow-y: hidden; }
 .rr-tipo-aviso { margin: 0 0 0.5rem; font-size: 0.75rem; color: var(--text-muted); }
 /* Elecciones de antes en la misma hoja (auditoría 09-10-2026, F10) */
 .rr-de-antes { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin: 0 0 0.5rem; padding: 0.3rem 0.5rem; border: 1px solid var(--border-soft); border-radius: 4px; font-size: 0.75rem; color: var(--text-muted); }
-#pantalla-registro .rr-de-antes-btn { min-height: 32px; padding: 0.15rem 0.6rem; font-size: 0.75rem; white-space: nowrap; }
+/* Más discreto que un botón relleno (F10, 10-10-2026): solo borde, texto tenue */
+#pantalla-registro .rr-de-antes-btn { min-height: 32px; padding: 0.15rem 0.6rem; font-size: 0.75rem; white-space: nowrap; background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
 
 /* Botón de colores junto al ⋮ (30-09-2026): una bolita con el color del
    modo puesto; al tocarlo pasa al siguiente (oscuro → azul → claro). */

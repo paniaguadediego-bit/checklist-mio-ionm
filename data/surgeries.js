@@ -1111,7 +1111,7 @@ window.SURGERIES_DATA = {
     // de registro. Se desactiva en vez de borrarse -"desactivar no borra"-,
     // así que un caso o montaje antiguo que todavía diga "reflejo_h" lo
     // sigue mostrando (tachado) en vez de perder la marca.
-    { "id": "reflejo_h", "etiqueta": "Reflejo H", "grupo": "monitorizacion", "activa": false, "reflejo": "medular", "descripcion": "Desactivada: se usa H-R Sóleo o H-R Masetero." },
+    { "id": "reflejo_h", "etiqueta": "Reflejo H", "grupo": "monitorizacion", "activa": false, "reflejo": "medular", "descripcion": "Desactivada: se usa H-R Sóleo, H-R Cuádriceps o H-R Masetero." },
     { "id": "hr_popliteo", "etiqueta": "H-R Sóleo", "grupo": "monitorizacion", "activa": true, "reflejo": "medular", "descripcion": "Reflejo H por estímulo en hueco poplíteo" },
     { "id": "hr_masetero", "etiqueta": "H-R Masetero (Jaw Jerk)", "corta": "H-R Masetero", "grupo": "monitorizacion", "activa": true, "reflejo": "tronco", "descripcion": "Reflejo H por estímulo del nervio masetero — mismo circuito que el jaw jerk / reflejo maseterino clásico. No confundir con el reflejo inhibitorio del masetero (silent period), que es otro circuito y no se estudia en IONM." },
     { "id": "hr_cuadriceps", "etiqueta": "H-R Cuádriceps", "grupo": "monitorizacion", "activa": true, "reflejo": "medular" },
