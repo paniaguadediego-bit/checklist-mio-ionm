@@ -1016,13 +1016,8 @@
     caso_basales_registro: { es: "Basales (Basal, Post posicionar y Cierre)", en: "Baselines (Baseline, Post-positioning and Closing)" },
     registro_basales_leyenda: { es: "Sensitivos: amplitud (µV) / latencia (ms). Motores: amplitud (mV; onda D en µV) / umbral (mA o V).",
                            en: "Sensory: amplitude (µV) / latency (ms). Motor: amplitude (mV; D-wave in µV) / threshold (mA or V)." },
-    caso_basales_registro_ay: { es: "Es la misma tabla que la del Registro intraoperatorio: lo que escribas aquí sale allí y en la hoja impresa, y al revés. Las filas de t-SEP, t-MEP, c-SEP, c-MEP, GRID, corticobulbares, Onda D, PEATC y H-R aparecen según las técnicas marcadas.",
-                              en: "It is the same table as in the Intraoperative record: whatever you write here appears there and on the printed sheet, and vice versa. The t-SEP, t-MEP, c-SEP, c-MEP, GRID, corticobulbar, D wave, BAEP and H-R rows appear depending on the techniques ticked." },
-    caso_basales_grid_estimulo: { es: "GRID: electrodo de estímulo", en: "GRID: stimulating electrode" },
-    caso_basales_grid_inversion: { es: "GRID: contacto con inversión de fase", en: "GRID: phase reversal contact" },
-    // Con dos GRID, «GRID A: …» / «GRID B: …» (auditoría 09-10-2026, C15)
-    caso_basales_gridab_estimulo: { es: "GRID {g}: electrodo de estímulo", en: "GRID {g}: stimulating electrode" },
-    caso_basales_gridab_inversion: { es: "GRID {g}: contacto con inversión de fase", en: "GRID {g}: phase reversal contact" },
+    caso_basales_registro_ay: { es: "Es la misma tabla que la del Registro intraoperatorio: lo que escribas aquí sale allí y en la hoja impresa, y al revés. Las filas de t-SEP, t-MEP, c-SEP, c-MEP (A y B con dos GRID), corticobulbares, Onda D, PEATC y H-R aparecen según las técnicas marcadas; el electrodo, los músculos y la inversión de fase del GRID van en Mapeo.",
+                              en: "It is the same table as in the Intraoperative record: whatever you write here appears there and on the printed sheet, and vice versa. The t-SEP, t-MEP, c-SEP, c-MEP (A and B with two GRIDs), corticobulbar, D wave, BAEP and H-R rows appear depending on the techniques ticked; the GRID electrodes, muscles and phase reversal go in Mapping." },
     hoja_inversion:      { es: "Inversión de fase", en: "Phase reversal" },
     polo_menos:          { es: "− cátodo (negro)", en: "− cathode (black)" },
     polo_mas:            { es: "+ ánodo (rojo)", en: "+ anode (red)" },
@@ -1309,8 +1304,6 @@
     registro_corticales: { es: "Corticales / pares", en: "Cortical / cranial" },
     registro_fila_quitar: { es: "Quitar esta fila", en: "Remove this row" },
     reg_p_sin_caso:      { es: "Vincula un caso arriba para ver aquí lo que ya tiene.", en: "Link a case above to see what it already has here." },
-    reg_p_motor:         { es: "Electrodo motor", en: "Motor electrode" },
-    reg_p_musculos:      { es: "Músculos registrados", en: "Muscles recorded" },
     reg_p_hora:          { es: "Hora", en: "Time" },
     reg_p_que:           { es: "Qué ha pasado", en: "What happened" },
     reg_p_alarma_nueva:  { es: "+ Alarma (hora actual)", en: "+ Alarm (current time)" },
@@ -5302,31 +5295,33 @@
         if (vals.some(Boolean)) filas.push([r.rotulo].concat(vals));
       });
     });
-    var extras = [];
-    (dosGrid ? [1, 2] : [1]).forEach(function (n) {
-      var g = { g: n === 1 ? "A" : "B" };
-      var vm = d.v["grid" + n + "_motor"], vi = d.v["grid" + n + "_inversion"];
-      if (vm) extras.push((dosGrid ? T("caso_basales_gridab_estimulo", g) : T("caso_basales_grid_estimulo")) + ": " + vm);
-      if (vi) extras.push((dosGrid ? T("caso_basales_gridab_inversion", g) : T("caso_basales_grid_inversion")) + ": " + vi);
-    });
-    if (!filas.length && !extras.length) return null;
+    if (!filas.length) return null;
     var sec = nodoInforme(doc, "section", "informe-seccion");
     sec.appendChild(nodoInforme(doc, "h3", null, T("caso_basales_registro")));
-    if (filas.length) sec.appendChild(nodoInforme(doc, "p", "informe-nota", T("registro_basales_leyenda")));
-    if (filas.length) {
-      var tabla = nodoInforme(doc, "table", "informe-tabla-basales");
-      var cab = nodoInforme(doc, "tr");
-      [""].concat(REG_BASALES_COLS.map(function (col) { return campo(col, "l"); })).forEach(function (t) { cab.appendChild(nodoInforme(doc, "th", null, t)); });
-      tabla.appendChild(cab);
-      filas.forEach(function (f) {
-        var tr = nodoInforme(doc, "tr");
-        f.forEach(function (v, i) { tr.appendChild(nodoInforme(doc, i ? "td" : "th", null, v)); });
-        tabla.appendChild(tr);
-      });
-      sec.appendChild(tabla);
-    }
-    extras.forEach(function (t) { sec.appendChild(nodoInforme(doc, "p", "informe-nota", t)); });
+    sec.appendChild(nodoInforme(doc, "p", "informe-nota", T("registro_basales_leyenda")));
+    var tabla = nodoInforme(doc, "table", "informe-tabla-basales");
+    var cab = nodoInforme(doc, "tr");
+    [""].concat(REG_BASALES_COLS.map(function (col) { return campo(col, "l"); })).forEach(function (t) { cab.appendChild(nodoInforme(doc, "th", null, t)); });
+    tabla.appendChild(cab);
+    filas.forEach(function (f) {
+      var tr = nodoInforme(doc, "tr");
+      f.forEach(function (v, i) { tr.appendChild(nodoInforme(doc, i ? "td" : "th", null, v)); });
+      tabla.appendChild(tr);
+    });
+    sec.appendChild(tabla);
     return sec;
+  }
+
+  // Mapeo (10-10-2026): los campos del GRID que tengan valor, con los
+  // rótulos de E2 (GRID A · Electrodo motor…); el GRID B solo con dos GRID.
+  function seccionMapeoInforme(doc, c) {
+    var d = c.registro_intraop && c.registro_intraop.v ? c.registro_intraop : null;
+    if (!d) return null;
+    var filas = [];
+    (regCasoConGridB(d) ? [1, 2] : [1]).forEach(function (n) {
+      regCamposGrid(n).forEach(function (f) { filas.push(filaInforme(doc, campo(f, "l"), d.v[f.id])); });
+    });
+    return seccionInforme(doc, T("caso_mapeo_registro"), filas);
   }
 
   // Alarmas del Registro (espejo en la ficha, 28-09-2026): una línea por
@@ -5548,6 +5543,8 @@
       if (g === "desarrollo") {
         var sb = seccionBasalesInforme(doc, c);
         if (sb) art.appendChild(sb);
+        var sm = seccionMapeoInforme(doc, c);
+        if (sm) art.appendChild(sm);
         var sr = seccionUmbralRaicesInforme(doc, c);
         if (sr) art.appendChild(sr);
         var sa = seccionAlarmasInforme(doc, c);
@@ -8377,30 +8374,6 @@
         var bGridB = nodoBotonGridB(dB, tecB, function () { oyentesTecnicasRealizadas.forEach(function (f) { f(); }); });
         if (bGridB) parB.appendChild(bGridB);
         contB.appendChild(parB);
-        if (regCasoConGrid(tecB, dB)) {
-          var gridB = document.createElement("div");
-          gridB.className = "caso-basales-grid";
-          // Con dos GRID, también los del GRID B y rótulos A/B (C15)
-          var dosGridB = regCasoConGridB(dB);
-          var camposGrid = dosGridB
-            ? [["grid1_motor", "caso_basales_gridab_estimulo", "A"], ["grid1_inversion", "caso_basales_gridab_inversion", "A"],
-               ["grid2_motor", "caso_basales_gridab_estimulo", "B"], ["grid2_inversion", "caso_basales_gridab_inversion", "B"]]
-            : [["grid1_motor", "caso_basales_grid_estimulo"], ["grid1_inversion", "caso_basales_grid_inversion"]];
-          camposGrid.forEach(function (g) {
-            var campoG = document.createElement("label");
-            campoG.className = "caso-basales-grid-campo";
-            var tG = document.createElement("span");
-            tG.textContent = g[2] ? T(g[1], { g: g[2] }) : T(g[1]);
-            campoG.appendChild(tG);
-            var inpG = document.createElement("input");
-            inpG.type = "text";
-            inpG.value = dB.v[g[0]] || "";
-            inpG.addEventListener("input", function () { dB.v[g[0]] = inpG.value; });
-            campoG.appendChild(inpG);
-            gridB.appendChild(campoG);
-          });
-          contB.appendChild(gridB);
-        }
       };
       pintarB();
       oyentesTecnicasRealizadas.push(pintarB);
@@ -8428,7 +8401,7 @@
           } });
         } else if (def.t === "mapeo_reg") {
           var bloquesR = REG_MAPEO_BLOQUES.filter(function (b) {
-            return b.tec !== "mapeo_raices_tornillos" && tecR().indexOf(b.tec) !== -1;
+            return b.tec !== "mapeo_raices_tornillos" && regMapeoBloqueVisible(b, tecR(), dR);
           });
           if (!bloquesR.length) { contR.appendChild(regNodo("p", "caso-ro", T("reg_p_mapeo_ninguna"))); return; }
           bloquesR.forEach(function (b) { b.pintar(nodoBloqueMapeo(contR, b), dR, REG_SIN_GUARDAR); });
@@ -19734,12 +19707,17 @@
          de la ficha (umbral_raices_niveles), el mismo dato; sin caso, la
          tabla suelta de la hoja (e_t_*). */
   var REG_MAPEO_BLOQUES = [
-    { tec: "c_pem", t: "reg_p_map_grid", pintar: pintarMapeoGrid },
+    { tec: "c_pem", t: "reg_p_map_grid", pintar: pintarMapeoGrid, conGrid: true },
     { tec: "mapeo_cortical", t: "reg_p_map_cortical", pintar: function (cont, d, g) { pintarMapeoFilas(cont, d, "C", true, g); } },
     { tec: "mapeo_subcortical", t: "reg_p_map_subcortical", pintar: function (cont, d, g) { pintarMapeoFilas(cont, d, "S", true, g); } },
     { tec: "mapeo_nervio_periferico", t: "reg_p_map_nervio", pintar: function (cont, d, g) { pintarMapeoFilas(cont, d, "N", false, g); } },
     { tec: "mapeo_raices_tornillos", t: "reg_p_map_raices", pintar: pintarMapeoRaices }
   ];
+  // El bloque GRID sale con la misma condición que regCasoConGrid() (todas
+  // las técnicas de GRID o algo ya escrito), no solo con c-MEP (10-10-2026).
+  function regMapeoBloqueVisible(b, tec, d) {
+    return b.conGrid ? regCasoConGrid(tec, d) : tec.indexOf(b.tec) !== -1;
+  }
   var REG_NIVELES_RAICES = ["C1", "C2", "C3", "C4", "C5", "C6", "C7",
     "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12",
     "L1", "L2", "L3", "L4", "L5", "S1", "S2"];
@@ -19749,7 +19727,7 @@
     var c = registroCaso();
     var tec = c ? (c.tecnicas_realizadas || []) : null;
     cont.appendChild(regNodo("p", "reg-ayuda", T("reg_p_mapeo_nota")));
-    var bloques = REG_MAPEO_BLOQUES.filter(function (b) { return !tec || tec.indexOf(b.tec) !== -1; });
+    var bloques = REG_MAPEO_BLOQUES.filter(function (b) { return !tec || regMapeoBloqueVisible(b, tec, d); });
     if (!bloques.length) { cont.appendChild(regNodo("p", "reg-ayuda reg-estado", T("reg_p_mapeo_ninguna"))); return; }
     bloques.forEach(function (b) { b.pintar(nodoBloqueMapeo(cont, b), d); });
   }
@@ -19765,26 +19743,28 @@
     return caja;
   }
 
-  // Electrodo motor y músculos registrados: los mismos gridN_motor /
-  // gridN_musculos que imprime la hoja.
+  // Campos del GRID en Mapeo (10-10-2026, pedido del usuario: «todo a
+  // Mapeo»): electrodo motor, músculos, electrodo/s sensitivo/s e inversión
+  // de fase, con los rótulos de los «antes:» de E2, los mismos gridN_* que
+  // imprime la hoja. Los umbrales siguen en Basales (c-MEP / c-SEP A y B).
+  function regCamposGrid(n) {
+    var e2 = REG_SECCIONES.filter(function (s) { return s.id === "e2"; })[0];
+    return e2.antes.filter(function (f) { return f.id.indexOf("grid" + n + "_") === 0; });
+  }
   function pintarMapeoGrid(cont, d, guardar) {
-    var tabla = regNodo("div", "reg-basal reg-p-mapeo");
-    var cab = regNodo("div", "reg-basal-fila reg-basal-cab");
-    cab.appendChild(regNodo("span", null, ""));
-    cab.appendChild(regNodo("span", null, T("reg_p_motor")));
-    cab.appendChild(regNodo("span", null, T("reg_p_musculos")));
-    tabla.appendChild(cab);
-    // La fila B solo con dos GRID (06-10-2026, pedido del usuario: siempre
+    // El GRID B solo con dos GRID (06-10-2026, pedido del usuario: siempre
     // a la vista era redundante); «+ GRID B» debajo, también sin caso.
     var dosGrid = regCasoConGridB(d);
     (dosGrid ? [1, 2] : [1]).forEach(function (n) {
-      var f = regNodo("div", "reg-basal-fila");
-      f.appendChild(regNodo("span", "reg-basal-rotulo", n === 1 ? "A" : "B"));
-      f.appendChild(regInputSinTexto(d.v, "grid" + n + "_motor", "text", T("reg_p_motor"), null, guardar));
-      f.appendChild(regInputSinTexto(d.v, "grid" + n + "_musculos", "text", T("reg_p_musculos"), null, guardar));
-      tabla.appendChild(f);
+      var caja = regNodo("div", "reg-p-grid");
+      regCamposGrid(n).forEach(function (f) {
+        var et = regNodo("label", "reg-p-grid-campo");
+        et.appendChild(regNodo("span", null, campo(f, "l")));
+        et.appendChild(regInputSinTexto(d.v, f.id, "text", campo(f, "l"), null, guardar));
+        caja.appendChild(et);
+      });
+      cont.appendChild(caja);
     });
-    cont.appendChild(tabla);
     var c = registroCaso();
     var bGridB = nodoBotonGridB(d, guardar === REG_SIN_GUARDAR ? ["c_pem"] : (c ? (c.tecnicas_realizadas || []) : ["c_pem"]), function () {
       if (guardar === REG_SIN_GUARDAR) {

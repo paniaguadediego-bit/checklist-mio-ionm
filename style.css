@@ -3344,7 +3344,7 @@ dialog h3 {
 }
 .reg-basal-cab { font-size: 0.68rem; font-weight: 600; color: var(--text-muted); }
 .reg-basal-rotulo { font-size: 0.78rem; font-weight: 600; }
-.reg-basal-fila input {
+.reg-basal-fila input, .reg-p-grid-campo input {
   font: inherit;
   font-size: 0.8rem;
   padding: 0.25rem 0.35rem;
@@ -3540,9 +3540,6 @@ body.modo-demo #btn-sync { border-color: var(--aviso-border); color: var(--aviso
    de la media query de la pantalla Registro dejaban celdas de 20 px en una
    tablet apaisada (demo-congreso B5.F2). */
 .caso-basales .reg-basales { grid-template-columns: 1fr; }
-.caso-basales-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin-top: 0.5rem; }
-.caso-basales-grid-campo { display: flex; flex-direction: column; gap: 0.15rem; font-size: 0.8rem; }
-@media (max-width: 620px) { .caso-basales-grid { grid-template-columns: 1fr; } }
 
 /* Basales: solo se escriben números, así que letra y casillas más pequeñas
    (pedido del usuario, 25-09-2026), en la ficha y en el Registro. */
@@ -3883,7 +3880,10 @@ button, input, select, textarea { font-family: inherit; }
 .reg-p-ev + .reg-p-nuevo { margin: 0.4rem 0 0; }
 .reg-p-chip { font-size: 0.78rem; padding: 0.15rem 0.5rem; border: 1px solid var(--border); border-radius: var(--r); background: var(--campo-bg); }
 .reg-p-dato { margin: 0.15rem 0; font-size: 0.85rem; }
-.reg-basal.reg-p-mapeo .reg-basal-fila { grid-template-columns: 1.4rem minmax(0, 1fr) minmax(0, 1.4fr); }
+/* Campos del GRID en Mapeo (10-10-2026): rótulo encima, dos por fila */
+.reg-p-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0.4rem; margin-bottom: 0.4rem; }
+.reg-p-grid-campo { display: flex; flex-direction: column; gap: 0.15rem; font-size: 0.72rem; color: var(--text-muted); }
+@media (max-width: 620px) { .reg-p-grid { grid-template-columns: minmax(0, 1fr); } }
 .reg-basal.reg-p-ev .reg-basal-fila { grid-template-columns: 5.4rem 6.6rem minmax(0, 1fr) 1.8rem; align-items: center; }
 .reg-p-ev select, .reg-p-alarma select, .reg-p-ev input[type="time"], .reg-p-alarma input {
   font: inherit;
