@@ -502,8 +502,8 @@
 
     /* --- Casos --- */
     casos_nuevo_cero:    { es: "Crear caso", en: "Create case" },
-    casos_nuevo_cero_ay: { es: "Eliges el equipo y se abre la ficha del caso nuevo. El montaje, en Montaje / Material → Editar montaje (a mano o cargando una plantilla); el resto, cuando quieras.",
-                           en: "Pick the equipment and the new case form opens. The montage goes in Montage / Material → Edit montage (by hand or loading a template); the rest, whenever you like." },
+    casos_nuevo_cero_ay: { es: "Eliges el equipo y se abre la ficha del caso nuevo. Si hay plantillas de ese equipo, te ofrece cargar una; si no, el montaje se hace en Montaje / Material → Editar montaje. El resto, cuando quieras.",
+                           en: "Pick the equipment and the new case form opens. If there are templates for that equipment, it offers to load one; otherwise, build the montage in Montage / Material → Edit montage. The rest, whenever you like." },
     casos_filtro_estado: { es: "Estado", en: "Status" },
     casos_filtro_servicio: { es: "Especialidad", en: "Specialty" },
     casos_filtro_diagnostico: { es: "Diagnóstico", en: "Diagnosis" },
@@ -635,8 +635,8 @@
                            en: "No montage saved (case recorded by hand)." },
     caso_material_real_ay: { es: "Viene relleno con lo previsto. Cambia solo lo que gastaste de más o de menos.",
                              en: "Pre-filled with what was planned. Change only what you used more or less of." },
-    caso_editado_veces:  { es: "Editado {n} vez/veces tras el cierre · última: {fecha}",
-                           en: "Edited {n} time(s) after closing · last: {fecha}" },
+    caso_editado_veces:  { es: "Editado {n} vez/veces · última: {fecha}",
+                           en: "Edited {n} time(s) · last: {fecha}" },
     caso_creado_en:      { es: "Archivo creado {fecha}", en: "File created {fecha}" },
 
     /* Etiquetas de los campos del caso */
