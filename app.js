@@ -17282,8 +17282,10 @@
     { id: "mont_incidencias", l: "Incidencias colocación", l_en: "Placement issues", t: "text" }
   ];
 
-  // Filas de "Basales y comparativa": id de fila, rótulo. Tres columnas por
-  // fila -basal, post-posición y final-, guardadas como e_<fila>_<col>.
+  // Filas de "Basales y comparativa": id de fila, rótulo. Hasta cuatro
+  // columnas por fila -Basal, PostPos1, PostPos2 y Cierre, ver
+  // REG_BASALES_COLS y regColBasal()-, guardadas como e_<fila>_<col>_<medida>
+  // (REG_BASALES_MEDIDAS; la casilla antigua e_<fila>_<col> se sigue leyendo).
   //
   // Desde el 25-09-2026 la misma tabla sale también en la ficha del caso
   // (Desarrollo intraoperatorio, "Basales"): es un único dato, se escriba donde
