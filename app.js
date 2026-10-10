@@ -1322,7 +1322,7 @@
     reg_p_alarma_nueva_ficha: { es: "+ Alarma", en: "+ Alarm" },
     reg_p_sin_an:        { es: "Sin eventos de anestesia.", en: "No anaesthesia events." },
     reg_p_quitar_evento: { es: "¿Quitar este evento?", en: "Remove this event?" },
-    reg_p_mapeo_nota:    { es: "Cada bloque de mapeo aparece solo si su técnica está marcada en la ficha del caso: c-MEP por GRID, mapeo cortical, mapeo subcortical, mapeo de nervio periférico y estimulación de raíces y tornillos.", en: "Each mapping block only appears if its technique is ticked in the case form: c-MEP by GRID, cortical mapping, subcortical mapping, peripheral nerve mapping and root and screw stimulation." },
+    reg_p_mapeo_nota:    { es: "Cada bloque de mapeo aparece solo si su técnica está marcada en la ficha del caso: c-MEP por GRID, mapeo cortical, mapeo subcortical, mapeo de nervio periférico y estimulación de raíces y tornillos. El de GRID sale con cualquier técnica que use GRID.", en: "Each mapping block only appears if its technique is ticked in the case form: c-MEP by GRID, cortical mapping, subcortical mapping, peripheral nerve mapping and root and screw stimulation. The GRID one appears with any technique that uses a GRID." },
     reg_p_mapeo_ninguna: { es: "El caso no tiene ninguna técnica de mapeo marcada.", en: "The case has no mapping technique ticked." },
     reg_p_map_grid:      { es: "c-MEP por GRID", en: "c-MEP by GRID" },
     reg_p_map_cortical:  { es: "Mapeo cortical", en: "Cortical mapping" },
@@ -17390,11 +17390,12 @@
       });
   }
   function regCasoConGridB(d) { return !!d.v.grid_b || regGridBEscrito(d); }
-  // Botón «+ GRID B» / «Quitar GRID B» bajo las basales, si el caso hace
-  // c-MEP o c-SEP. No sale si el GRID B ya tiene algo escrito (no se puede
-  // quitar sin borrarlo). "alCambiar" guarda y repinta.
+  // Botón «+ GRID B» / «Quitar GRID B» bajo las basales y el Mapeo, con la
+  // misma condición que el bloque GRID del Mapeo (regCasoConGrid(): cualquier
+  // técnica de GRID, 10-10-2026). No sale si el GRID B ya tiene algo escrito
+  // (no se puede quitar sin borrarlo). "alCambiar" guarda y repinta.
   function nodoBotonGridB(d, tecnicas, alCambiar) {
-    if (!tecnicas || !tecnicas.some(function (t) { return t === "c_pem" || t === "c_pess"; })) return null;
+    if (!tecnicas || !regCasoConGrid(tecnicas, d)) return null;
     if (regGridBEscrito(d)) return null;
     var b = regNodo("button", "reg-p-nuevo reg-grid-b", T(d.v.grid_b ? "reg_grid_b_quitar" : "reg_grid_b_poner"));
     b.type = "button";
@@ -19766,7 +19767,12 @@
       cont.appendChild(caja);
     });
     var c = registroCaso();
-    var bGridB = nodoBotonGridB(d, guardar === REG_SIN_GUARDAR ? ["c_pem"] : (c ? (c.tecnicas_realizadas || []) : ["c_pem"]), function () {
+    // En la ficha, las técnicas de la copia de trabajo (como sus basales);
+    // en el Registro, las del caso; sin caso, siempre disponible.
+    var tecG = guardar === REG_SIN_GUARDAR
+      ? (camposCaso.tecnicas_realizadas || (casoAbierto && casoAbierto.tecnicas_realizadas) || [])
+      : (c ? (c.tecnicas_realizadas || []) : ["c_pem"]);
+    var bGridB = nodoBotonGridB(d, tecG, function () {
       if (guardar === REG_SIN_GUARDAR) {
         // En la ficha: se repinta lo que depende de las técnicas (este
         // Mapeo, las basales con sus filas A y B, las alarmas)
