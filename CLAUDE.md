@@ -159,10 +159,11 @@ una copia local y compárala con la del repositorio.
 ### Antes de cualquier cambio grande en el código
 
 Exporta una copia desde la herramienta (**Exportar copia**) y guárdala fuera del
-proyecto. **Ojo:** esa copia es `estadoActual()` -catálogos, etiquetas y material
-propio-, **no incluye casos, montajes ni apuntes** (van en archivos aparte desde
-que se separaron). Para esos, la copia de verdad es el repositorio de datos: clónalo
-(ver «Copia fría completa» más arriba) antes de un cambio grande.
+proyecto. Desde el 29-09-2026 esa copia es **completa**: `estadoActual()`
+-catálogos, etiquetas y material propio- más `completa: {casos, montajes,
+apuntes}`. Al importarla, casos y plantillas solo se añaden si no existen
+(`importarCopiaCompleta()`). Aun así, la copia con historial es el repositorio
+de datos: clónalo (ver «Copia fría completa» más arriba) antes de un cambio grande.
 
 ---
 
