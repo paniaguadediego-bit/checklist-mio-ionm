@@ -3,7 +3,7 @@
 Herramienta interna, sin backend ni build step, para montar el material de
 cada cirugía monitorizada y saber exactamente qué hace falta.
 
-**Pantalla de inicio (06-09-2026; al día a 30-09-2026, 11 tarjetas en tres bloques):** el logo
+**Pantalla de inicio (06-09-2026; al día a 11-10-2026, 11 tarjetas en tres bloques):** el logo
 de la cabecera lleva siempre a una pantalla con tarjetas agrupadas por el
 momento de la cirugía — *Antes de quirófano*: **Organizador de Montajes** y
 **Gestión de Casos**; *Quirófano*: **Checklist pre-quirúrgico** y
@@ -144,6 +144,8 @@ propia en *Después / consulta*).
 - **La nube en lenguaje llano**: «Guardar en la nube» y «Traer de la nube»; si
   dos dispositivos chocan, «Quedarme con lo de este dispositivo» o «Quedarme con
   lo de la nube».
+
+*Histórico: algunas de estas novedades cambiaron después; manda lo descrito en cada apartado del manual.*
 
 **Novedades del 30/09/2026, tras una prueba con tres tipos de usuario:**
 - **Registro**: varias técnicas y lados a la vez (bilateral, hemicorporal,
@@ -286,17 +288,17 @@ Montajes**—, ajustas las entradas de las cajas pulsando o arrastrando
 material, y el **Resumen** te dice qué tienes que preparar, qué cuesta y si
 te sobran o faltan entradas y cajas. Cuando la cirugía es real, pulsas
 **Crear caso** en **Gestión de Casos**: el caso se guarda al instante y se
-abre su **ficha**. Desde el sub-apartado *Cajas y entradas*, dentro de
-*Montaje / Técnicas* (10-09-2026: el apartado se reparte en tres —*Cajas y
-entradas*, *Material* y *Técnicas*, ver más abajo—), con **Editar montaje**
+abre su **ficha**; tras elegir el equipo, si hay plantillas de ese equipo
+pregunta «¿Cargar una plantilla?» (*Elegir plantilla…* / *Ahora no*). Desde el
+apartado *Montaje / Material*, con **Editar montaje**
 vas al Organizador a construir su propio montaje —a mano, o cargando una
 plantilla encima sin tocar la plantilla original—. Un rótulo
 permanente, justo debajo de "Plantillas de montaje" (dentro del propio
 Organizador, no en las otras pantallas), dice qué plantilla tienes cargada
 o qué caso estás corrigiendo, y solo aparece cuando hay algo que mostrar.
-**Docencia** trae miotomas y colocación de cajas según la posición del
-paciente, sin relación con la preparación del material, y una **Guía de
-uso** (menú **⋮**) resume lo esencial para empezar sin tener que leer este
+**Miotomas** trae ejercicios de miotomas (la cama de quirófano está oculta),
+sin relación con la preparación del material, y una **Guía de
+uso** (botón **Guía** de la barra superior) resume lo esencial para empezar sin tener que leer este
 archivo.
 
 ## Cómo abrir la herramienta
@@ -318,13 +320,13 @@ conexión a internet (no hace ninguna petición de red).
 - `data/surgeries.js` — los datos de fábrica: `cajas_material`, `etiquetas`,
   `catalogo_material`, `tecnicas`, `servicios`, `intervenciones`,
   `perfiles_procedimiento`, `escenarios_tipo` (los tipos de cirugía, inerte)
-  y `miotomas` (para la pantalla Docencia). `escenarios` (montajes de fábrica)
+  y `miotomas` (para la pantalla Miotomas). `escenarios` (montajes de fábrica)
   está vacío a propósito desde el 03-09-2026 — ver *Añadir un montaje de
   fábrica a mano en el JSON* más abajo. Casi todo esto ya se edita desde la
   propia web; este archivo es lo que viene de serie
 - `data/i18n-en.js` — la traducción al inglés de todo lo anterior
 - `data/guia.js` — el texto de la Guía de uso dentro de la propia
-  herramienta (menú **⋮** de la barra superior); solo en castellano por ahora
+  herramienta (botón **Guía** de la barra superior); solo en castellano por ahora
 - La tabla de referencia de la pantalla **Técnicas IONM** (parámetros por
   técnica, con sus fuentes) **no está en este repositorio** desde el
   27-09-2026: son apuntes personales del autor y viven en el repositorio
@@ -387,8 +389,8 @@ como Gestión de Casos, en **dos pantallas**:
    **Guardar plantilla** y **Más acciones** (Duplicar, Renombrar, Vaciar, Borrar);
    debajo **Cajas** (ya abierta), **Técnicas**, **Resumen** y **Notas**, con el
    **Catálogo** al lado (en el móvil, encima). Se vuelve a la lista con
-   **Plantillas** en el título («Plantillas › nombre»), con **← Todas las
-   plantillas** en el rótulo o con el atrás del móvil.
+   **Plantillas** en la ruta del título («Plantillas › nombre») o con el atrás
+   del móvil.
 
 Es un banco único: el mismo tanto si editas una plantilla suelta como si
 corriges el material de un caso concreto (desde la ficha, *Montaje / Material →
@@ -456,8 +458,8 @@ veces como haga falta (el catálogo no se "gasta"):
 
 - **Pulsar y colocar** (recomendado, sin arrastrar): pulsa el ítem del
   catálogo — se queda resaltado y aparece una barra abajo — y luego pulsa la
-  entrada donde va. Sigue seleccionado, así que puedes colocarlo en varias
-  entradas seguidas. `Esc` o el botón *Cancelar* lo suelta. También al
+  entrada donde va. Al colocarlo, la selección se suelta; para ponerlo en otra
+  entrada, vuelve a pulsarlo en el catálogo. `Esc` o el botón *Cancelar* lo suelta. También al
   revés: pulsa una entrada vacía y elige el material desde ahí, con el mismo
   catálogo filtrado a lo que ocupa entrada.
 - **Arrastrar y soltar**: arrastra el ítem hasta la entrada. Si te acercas
@@ -531,7 +533,9 @@ archivo* más abajo).
 
 ### 2. Cajas
 
-`cajas_material` describe las cajas reales del INOMED. Cada caja se dibuja
+`cajas_material` describe las cajas reales del INOMED (las de Cadwell y
+Genérico van en sus propias listas del mismo archivo, `cajas_cadwell` y
+`cajas_generico`). Cada caja se dibuja
 con sus entradas y conectores. Para quitar material de una entrada: pulsa la
 ✕ del chip, arrástralo de vuelta al panel del catálogo, o pulsa la entrada
 y elige "Dejar la entrada vacía". Para moverlo: arrástralo a otra entrada,
@@ -595,7 +599,7 @@ de alta, la app se ve como siempre.
 
 El botón **Catálogos**, dentro del menú **⋮** de la barra superior
 (09-09-2026: antes iba suelto en la barra, junto al selector de perfil),
-abre una ventana con cinco pestañas. En todas funciona igual: **▲▼** para
+abre una ventana con seis pestañas. En todas funciona igual: **▲▼** para
 reordenar, el nombre para editarlo, y **☑** para activar o desactivar.
 Arriba del todo, dentro de ese mismo diálogo, están **Importar copia,
 Exportar copia, Imprimir y Restablecer** (ver *Dónde se guarda todo* más
@@ -621,6 +625,9 @@ abajo).
   montajes* arriba). Vacío de fábrica a propósito: los nombres de personas reales no
   se escriben en el repositorio público del código, se crean desde la app y
   viven en el repositorio privado de datos.
+- **Centros** — catálogo de centros para el estudio multicéntrico: nombre y
+  código, que va delante del número de caso. Vacío de fábrica: sin centros,
+  todo se ve como antes.
 
 > El catálogo de **tipos de cirugía** (antes una pestaña más, "Escenarios",
 > y la primera ventana de la página) se retiró: duplicaba casi literalmente
@@ -671,9 +678,11 @@ el único sitio desde donde se abre, no hay otro acceso repetido en la
 herramienta—.
 
 **Al preparar**, pulsa **Crear caso** (06-09-2026, antes "Caso nuevo desde
-cero"). El caso se guarda al instante, vacío, y se abre su **ficha**. Para
+cero"). Tras elegir el equipo, el caso se guarda al instante, vacío, y se abre
+su **ficha**; si hay plantillas de ese equipo, pregunta «¿Cargar una
+plantilla?» (*Elegir plantilla…* / *Ahora no*). Para
 construir su montaje, ve al apartado *Montaje / Material* y pulsa **Editar
-material y montaje**: eso te lleva al **Organizador de Montajes** con las
+montaje**: eso te lleva al **Organizador de Montajes** con las
 cajas de ese caso, donde lo montas a mano —marcando técnicas y colocando
 material como siempre— o cargas una plantilla encima con **Cargar plantilla…**
 (mantiene la plantilla original intacta, es una copia). El montaje de un caso
@@ -696,11 +705,13 @@ paciente— lleva un 👁; si además tiene puesta la **dificultad** aparece
 justo al lado como "N/5" — las tres cosas para verlas de un vistazo sin
 abrir cada caso ni mirar la hoja de cálculo.
 
-Encima del listado, los filtros **Estado / Desde / Hasta / Ordenar por**
-—fecha (recientes o antiguos primero) o dificultad (mayor o menor
-primero)— y, debajo, **Destacados / Seguimiento** (dos casillas, marca la
-que te interese para ver solo esos casos). Los mismos filtros deciden qué
-casos entran al exportar (ver *Informe de casos (PDF)* más abajo): filtra primero,
+Encima del listado se ven **▸ Filtros (n)** y **Ordenar por** —fecha
+(recientes o antiguos primero) o dificultad (mayor o menor primero)—. El panel
+plegable tiene Estado, Especialidad, Diagnóstico, Concordancia, Equipo, Centro
+(solo si hay centros dados de alta), Desde, Hasta, Destacados y Seguimiento
+(estas dos, casillas: marca la que te interese para ver solo esos casos). Los
+filtros puestos salen como chips con ✕ para quitarlos. Los mismos filtros
+deciden qué casos entran al exportar (ver *Informe de casos (PDF)* más abajo): filtra primero,
 luego exporta lo que se ve.
 
 **Al cerrar**, abre el caso desde la lista. La ficha son **9 apartados
@@ -801,8 +812,8 @@ del caso que tienes abierto, p. ej. *CASO 2026-004, Meningioma APC*.
    causa probable, medidas en casillas, nota breve y recuperación S/P/N; con
    ellas se escriben solos «Tipo de alerta» y «Medida correctora» para el CSV y
    el Sheet); **resultado de la señal** (sin cambios / cambios transitorios
-   recuperados / cambios persistentes, el mismo dato que el Resultado del
-   Cierre del Registro); resultado esperable (lista: similar al previo, empeoramiento, mejoría o indeterminado; es el mismo dato que el Cierre del Registro);
+   recuperados / cambios persistentes; solo está en la ficha, no en el Cierre
+   del Registro); resultado esperable (lista: similar al previo, empeoramiento, mejoría o indeterminado; es el mismo dato que el Cierre del Registro);
    técnicas con alteración (un chip-fila con solo las técnicas ya marcadas
    como realizadas —se actualiza solo si las tocas en el punto 5—);
    incidencias técnicas.
@@ -836,18 +847,18 @@ pulsa **Cerrar caso** en la barra de abajo (guarda la ficha con el estado
 **Reabrir caso**. También se puede cambiar el campo **Estado** a mano. La barra
 de acciones fija de abajo del diálogo, siempre visible aunque hayas bajado
 en el scroll de los apartados, va en una sola fila (29-09-2026): el menú **⋮**
-(con **Informe (PDF)** -un PDF imprimible de ese caso, ver más abajo-, **Hoja
+(con **Abrir en el Registro**, **Informe (PDF)** -un PDF imprimible de ese caso, ver más abajo-, **Imprimir hoja
 de registro** y **Borrar caso**), **Cerrar caso**, **Volver** y **Guardar** —
 *Volver* no guarda ni cambia el estado, pero si hay cambios sin guardar
 pregunta antes. En modo oscuro la ficha tiene un fondo algo más claro y una
 línea dorada arriba, para que se note que estás dentro de un caso.
 
-**Editar montaje de un caso ya guardado**: el botón vive en el sub-apartado
-"Cajas y entradas", dentro del apartado 5 (Montaje / Material) — abre las
+**Editar montaje de un caso ya guardado**: el botón **Editar montaje**
+vive en el apartado 5 (Montaje / Material) — abre las
 cajas de ese caso concreto
 para cambiar dónde va cada cosa, un cambio de última hora o un error al
 preparar. Se guarda en el caso, no toca el montaje del que salió. Mientras
-tanto, el rótulo permanente de arriba pasa a dorado sólido y recuerda en qué
+tanto, el rótulo permanente de arriba cambia de color y recuerda en qué
 caso estás, con tres botones a mano sin tener que volver a la ficha:
 **Cargar plantilla…**, **Guardar este montaje como plantilla…** y **Volver al
 caso**. Esos dos primeros (cargar / guardar plantilla) **solo** están aquí,
@@ -856,13 +867,14 @@ edita el montaje.
 
 **Cargar un montaje sobre un caso ya creado**: solo se puede hacer desde
 ahí —la barra fija de "Corrigiendo el material del caso", botón **Cargar
-montaje…**—, nunca desde la ficha: así siempre sabes que lo que vas a
+plantilla…**—, nunca desde la ficha: así siempre sabes que lo que vas a
 sustituir se puede editar de verdad. Elige un montaje y siempre te pregunta
 antes de tocar nada —también con el caso vacío—, diciendo en números qué va
 a pasar. Puedes **Reemplazar todo** o **Añadir solo lo que falta** (no toca
 ninguna entrada que ya tuviera material). Es una copia: editar el montaje
-después no cambia nada de lo ya aplicado. Si el caso está cerrado o
-cancelado, pide una confirmación aparte antes de seguir.
+después no cambia nada de lo ya aplicado. Si el caso está cancelado, pide una
+confirmación aparte antes de seguir; uno cerrado abre el montaje en solo
+lectura (no deja cargar plantilla, pero sí **Guardar como plantilla…**).
 
 **Guardar el montaje de un caso como plantilla**: desde la misma barra fija
 de corrección (botón **Guardar este montaje como plantilla…**), crea siempre
@@ -921,12 +933,12 @@ casos cancelados hay en total.
   corrige y se vuelve a cerrar. Desde el 09-10 no se guarda por ninguna vía
   (tampoco el montaje ni el Checklist): **Editar montaje** lo abre en solo
   lectura, aunque deja **Guardar como plantilla…**.
-- **Borrar caso**, en el menú **⋮** de la barra de la ficha, quita un caso de
-  en medio para siempre — un caso de prueba, uno duplicado, uno que no
-  debiste registrar. Pide confirmación porque no se puede deshacer desde la
-  propia herramienta. (El repositorio de datos sí guarda historial de git,
-  así que en el peor de los casos sigue siendo recuperable a mano, igual que
-  con el resto de tus datos — ver *Red de seguridad* en `CLAUDE.md`.) El
+- **Borrar caso**, en el menú **⋮** de la barra de la ficha, manda un caso de
+  en medio a la **Papelera** de este dispositivo — un caso de prueba, uno
+  duplicado, uno que no debiste registrar. Pide confirmación, y en la
+  Papelera se puede recuperar durante 30 días. (El repositorio de datos
+  además guarda historial de git, igual que con el resto de tus datos — ver
+  *Red de seguridad* en `CLAUDE.md`.) El
   botón solo aparece en un caso que ya guardaste al menos una vez. **Un caso
   cerrado no se borra** (avisa y no hace nada): para borrarlo, primero
   **Reabrir caso**.
@@ -960,7 +972,7 @@ Pantalla propia de Inicio (24-09-2026; antes era una pestaña de Docencia): todo
   sus ítems, más «×2» si cada colocación gasta dos unidades y «reutilizable»
   si no se gasta (desde el 27-09-2026 eso ya no se repite en cada fila). Junto
   al nombre de cada músculo, sus **raíces** («C5–C6», las mismas del miotoma de
-  Docencia) o su **par craneal** («VII par», campo `par` del catálogo), cuando
+  Miotomas) o su **par craneal** («VII par», campo `par` del catálogo), cuando
   la herramienta tiene el dato; el buscador también las encuentra («C8»). La
   descripción de cada ítem es su *nota* del catálogo y lo propio del ítem
   (comparte paquete, no ocupa entrada, solo en un equipo); no se inventa
@@ -1088,7 +1100,8 @@ hoja suelta** (antes «Modelo 0»; en este navegador, sin sincronizar) o un **ca
 (la hoja vive dentro del caso, `registro_intraop`, y se sincroniza con él).
 Hay una sola vista, la **Hoja completa**. Desde el 29-09-2026 ya no existe la
 pestaña «Modo rápido»: su manera de apuntar es la **única** para fases, eventos
-y alarmas, en el panel de arriba de la hoja.
+y alarmas, en la barra fija de abajo (**+ Fase · + Evento · + Alarma**), que
+abre la hoja de apuntar.
 
 ### Apuntar fase, evento o alarma (para quirófano)
 
@@ -1151,10 +1164,12 @@ elegido. Lo que hay dentro es lo de siempre, casi todo con toques:
 - **Apuntar evento** vale también solo con un contexto quirúrgico y/o un TOF
   («Disección · TOF 3/4», o solo «TOF 1/4», que queda como evento de
   anestesia); una alarma necesita su «Técnica».
-- **Basales**: cada fase (Basal, PostPos1, PostPos2, Cierre) tiene dos
-  casillas con la unidad en el encabezado: **sensitivos** amplitud (µV) y
-  latencia (ms); **motores** amplitud (µV) y umbral (mA o V); sin respuesta,
-  amplitud 0. Debajo, «Respecto a la basal» con el cambio en % de cada medida.
+- **Basales**: en pantalla es una lista por técnica: una línea con los valores
+  y el % respecto a la basal. Al tocarla se abren casillas grandes por fase
+  (Basal, PostPos1, PostPos2, Cierre), con dos casillas y la unidad en el
+  encabezado: **sensitivos** amplitud (µV) y latencia (ms); **motores**
+  amplitud (**mV**; la onda D, en **µV**) y umbral (mA o V); sin respuesta,
+  amplitud 0. **= Basal** copia la basal cuando no hay cambios.
 - **Varias técnicas a la vez**: se pueden marcar varias técnicas y lados
   (bilateral, hemicorporal, brazo-pierna-cara, cruzado…) y se apuntan juntas
   como **una sola** alarma o evento («t-MEP MSD + t-MEP MID»), con una causa,
@@ -1167,18 +1182,17 @@ elegido. Lo que hay dentro es lo de siempre, casi todo con toques:
 - Al apuntar un cambio o una alarma, su técnica se marca sola en **Técnicas con
   alteración** del caso.
 - Dos botones: **Apuntar evento** o **Apuntar
-  alarma**, pegados abajo mientras se ve el recuadro, con **↓** para bajar al
-  cronograma. La alarma ocupa además la primera fila libre de alarmas (A1,
+  alarma**, siempre al pie de la hoja. La alarma ocupa además la primera fila libre de alarmas (A1,
   A2...) con técnica, criterio y fase. Para cerrarla, en su detalle del
   cronograma: **Recuperación** (recupera / en parte / no recupera) y su hora,
   con **Ahora**.
 - Debajo, el **Cronograma de eventos** (antes «Apuntado»): todo lo apuntado,
   ordenado por hora (de lo más antiguo a lo más reciente, lo último abajo),
   también las alarmas escritas desde la ficha, con el total a la derecha. Cada
-  línea es una tarjeta con una franja de color: **rojo** alarma, **naranja** un
+  línea es un evento, con una franja de color que indica el tipo: **rojo** alarma, **naranja** un
   cambio sin alarma o un factor técnico, **verde** fase o recuperación y
-  **azul** lo demás (anestesia, mapeo, contexto), con su etiqueta (FASE,
-  CAMBIO, ALARMA A1…). Filtros **Todos / Críticos / Cambios / Info/Normal**. La **hora** de cada
+  **azul** lo demás (anestesia, mapeo, contexto); la etiqueta (FASE,
+  CAMBIO, ALARMA A1…) sale al pasar por encima. Filtros **Todos / Críticos / Cambios / Info/Normal**. La **hora** de cada
   línea se corrige tocándola (en una alarma o una recuperación cambia también
   la de la alarma). Con **✎** (solo con él; tiene la zona de toque ampliada) se abre la
   **misma hoja que para apuntarla**, con sus botones marcados (técnica,
@@ -1203,7 +1217,7 @@ ficha del caso (⇄) y en **Exportar eventos y alarmas (CSV)**.
 
 ### Hoja completa
 
-**En pantalla solo lo de quirófano** (30-09-2026): el panel de apuntar,
+**En pantalla solo lo de quirófano** (30-09-2026): la hoja de apuntar (barra de abajo),
 **Basales y comparativa**, **Mapeo** y **Cierre**, sin la letra de la hoja
 (E, E2, I). La identificación, las técnicas y la anestesia (A, B, C) están en
 Gestión de Casos; hitos, esquema, fases y alarmas (F y G, que se apuntan en el
@@ -1221,7 +1235,8 @@ borra ningún dato.
   «Umbrales EMG por raíz» de la ficha). Si el caso no tiene ninguna, lo dice.
 - **Cierre**: técnicas con alteración (los mismos chips marcables que en la
   ficha, con las técnicas del caso; sin caso o sin técnicas, el aviso de la
-  ficha), resultado esperable (lista), incidencias técnicas y perla docente.
+  ficha), resultado esperable (lista) e incidencias técnicas. La perla docente
+  va en la ficha y en la hoja impresa.
   «Resultado de la señal» ya no está (con varias técnicas alteradas no tenía
   sentido uno solo; sigue en la ficha).
 
@@ -1231,7 +1246,9 @@ procedimiento, anestesia y eventos de anestesia, basales, mapeo, alarmas,
 técnicas con alteración, resultado esperable,
 incidencias técnicas y perla docente (= *Aprendizaje clave* y *Caso
 destacado*) son el mismo dato en los dos sitios: se escriban donde se
-escriban, se ven en el otro y en la hoja impresa. El diagnóstico se enseña de
+escriban, se ven en el otro y en la hoja impresa. La perla docente se guarda
+en el caso y sale en la hoja impresa, pero no se ve en la pantalla del
+Registro. El diagnóstico se enseña de
 lectura (lista cerrada de la ficha). Con un caso vinculado no hay botón
 **Vaciar** (solo sin caso, en la «hoja suelta»), porque borraría también esos datos de la
 ficha.
@@ -1254,7 +1271,7 @@ anestesia y las técnicas del caso, que salen ya marcadas en B. Mientras no
 toques un campo propio de la hoja muestra el valor del caso; en cuanto lo
 tocas, manda el tuyo.
 
-**Imprimir hoja** (y **Hoja de registro** en la ficha de un caso) es el uso
+**Imprimir hoja** (y **Imprimir hoja de registro** en la ficha de un caso) es el uso
 principal: genera **2 páginas A4** para llevar en papel a quirófano,
 prerrellenadas con lo que ya está en Gestión de Casos y con filas en blanco
 para escribir a mano. Hoja 1: identificación, **técnicas** del catálogo en
@@ -1286,7 +1303,7 @@ cap.19/41.
 El desplegable de arriba elige **dónde se guardan las marcas**:
 
 - **Sin caso — hoja suelta** (antes «Modelo 0»): una checklist de trabajo suelta, en este
-  navegador, sin sincronizar —mismo criterio que el Simulador o Docencia—.
+  navegador, sin sincronizar —mismo criterio que el Simulador o Miotomas—.
   Sirve para repasar sin más, sin dejar ningún registro.
 - **Vinculada a un caso** (eligiéndolo en el propio desplegable): las
   marcas se guardan dentro de ese caso (`checklist_prequirurgico`) y viajan
@@ -1298,8 +1315,9 @@ el 27-09-2026: no se usaba.
 
 **Guardar** da una confirmación visible de que no se ha perdido nada,
 aunque todo ya se autoguarda solo en cuanto lo tocas —igual que "Guardar
-montaje" en el Organizador—. **Vaciar** desmarca todo lo que tengas abierto
-en ese momento (la hoja suelta sin caso o el caso elegido), pidiendo confirmación antes. Nada de esto tiene columna propia en el
+montaje" en el Organizador—. **Vaciar** solo aparece en la hoja suelta (sin
+caso) y desmarca todo, con confirmación. En un caso cerrado el checklist es de
+solo lectura (no guarda marcas) hasta que reabras el caso. Nada de esto tiene columna propia en el
 Google Sheet ni en el CSV —es una ayuda de preparación, no un dato clínico
 de la monitorización en sí—.
 
@@ -1422,7 +1440,7 @@ pantalla real con AEP, SEP, MEP de miembros, blink, corticobulbares a la
 derecha y el resto minimizado. **▶** genera barridas nuevas cada segundo,
 **❚❚** pausa y **■** vuelve a la primera. Los trazos son de ejemplo (no hay
 señal real). Se guarda en **este dispositivo** (no se sincroniza), como
-Docencia. No toca montajes, casos ni catálogos.
+Miotomas. No toca montajes, casos ni catálogos.
 
 Pendiente: un bloque nuevo **Cirugías con IONM** (qué hace cada cirugía, sus
 pasos, técnicas, momentos críticos y criterios de alarma), aún sin construir.
@@ -1433,8 +1451,8 @@ pasos, técnicas, momentos críticos y criterios de alarma), aún sin construir.
 La interfaz es táctil. Lo cómodo en el móvil es **pulsar y colocar**:
 tocas el material, el catálogo se pliega solo para dejar ver las cajas, y
 tocas la entrada de destino. En cuanto lo colocas, se suelta la selección y
-el catálogo se despliega solo otra vez, listo para el siguiente ítem —un
-material colocado no puede estar a la vez en otra entrada. Arrastrar no
+el catálogo se despliega solo otra vez, listo para el siguiente ítem.
+Arrastrar no
 funciona bien en pantallas táctiles, así que ese es el flujo recomendado.
 
 **Sin pellizco de zoom** (22-09-2026), a propósito: es una herramienta, no
@@ -1536,8 +1554,8 @@ puedes revocarlo desde GitHub.
 **Informe de casos (PDF)**, dentro de la pantalla **Gestión de Casos** (barra de
 acciones fija), abre un **informe en PDF** —imprimible desde el propio
 diálogo "Guardar como PDF" del navegador, sin depender de ninguna librería—
-con los casos que cumplan los filtros activos en ese momento (ver más abajo:
-Estado/Desde/Hasta/Destacados/Seguimiento). Si no tienes ningún filtro
+con los casos que cumplan los filtros activos en ese momento (los del panel
+Filtros). Si no tienes ningún filtro
 puesto, salen todos. **Informe (PDF)**, dentro de la ficha de un caso
 concreto, genera el mismo tipo de informe pero solo de ese caso. Es una
 función del 05-09-2026, primera versión pendiente de irse afinando con el
@@ -1557,7 +1575,7 @@ El tercer botón, **Exportar eventos y alarmas (CSV)**, descarga los eventos
 esos mismos casos filtrados, en un CSV aparte y con **una fila por evento o
 alarma** (`tipo_fila` = `evento` o `alarma`). Cada fila lleva `caso_uid` e
 `ID_Caso` para cruzarla con el CSV de casos, y además servicio, diagnóstico,
-intervención, resultado del cierre del Registro y concordancia, para poder
+intervención, resultado de la señal (ficha) y concordancia, para poder
 analizarlo sin cruzar nada. En las alarmas se calcula
 `min_hasta_recuperacion` (hora de recuperación − hora de la alarma). Las
 filas vacías del Registro no salen. Los códigos van tal cual: F/E/A/M/An/T
@@ -1793,10 +1811,10 @@ No hay nada que instalar ni ningún token nuevo — es la misma cuenta de
 Google, y Looker vuelve a leer el Sheet cada vez que abres el informe (o
 cuando pulsas el botón de actualizar).
 
-### 0. Conectar las tres hojas
+### 0. Conectar las cuatro hojas
 
 Cada tabla del Sheet (`Casos`, `Tecnicas_long`, `Material_long`, `Correlacion_long`) se conecta
-como una **fuente de datos separada**, aunque las tres vivan en el mismo
+como una **fuente de datos separada**, aunque las cuatro vivan en el mismo
 documento — es así como funciona el conector de Hojas de cálculo de Looker
 Studio.
 
@@ -1810,9 +1828,9 @@ Studio.
    bien la primera vez, y todos los gráficos por mes dependen de que este
    campo sea de tipo fecha de verdad.
 5. **Crear informe** (o, si ya tienes uno, añade esta fuente a él).
-6. Repite los pasos 2-4 dos veces más, una para la pestaña **`Tecnicas_long`**
-   y otra para **`Material_long`**. Al final tendrás tres fuentes de datos
-   en el mismo informe.
+6. Repite los pasos 2-4 tres veces más, una para la pestaña **`Tecnicas_long`**,
+   otra para **`Material_long`** y otra para **`Correlacion_long`**. Al final
+   tendrás cuatro fuentes de datos en el mismo informe.
 
 ### 1. Total de casos, casos por mes, casos por servicio
 
@@ -1960,7 +1978,7 @@ otros equipos). El
 material, el catálogo, los precios y todo el cálculo son los mismos; lo único
 que cambia son las **cajas** donde se coloca.
 
-- Al pulsar **Crear caso** o **Plantilla en blanco** se elige el equipo (propone
+- Al pulsar **Crear caso** o **Crear plantilla** se elige el equipo (propone
   el último usado en ese dispositivo). Lo anterior a este cambio es Inomed.
 - En la ficha, **Equipo** (Identificación) solo se puede cambiar mientras el
   montaje esté vacío. La conversión de un montaje de un equipo a otro llegará
@@ -2007,8 +2025,8 @@ este orden:
    reglas alimentan la «Revisión del montaje» del Resumen.
 4. **Servicios, intervenciones, perfiles y usuarios**: desde **Catálogos**, en
    la propia app. Vienen vacíos o genéricos de fábrica.
-5. **Centro**: texto libre en la ficha del caso; cada dispositivo recuerda el
-   último usado.
+5. **Centro**: texto libre en la ficha del caso, o el catálogo **Centros** si
+   das de alta alguno; cada dispositivo recuerda el último usado.
 6. **Opcional**: sincronización con un repositorio privado de datos y el
    Google Sheet (ver «Sincronización automática con GitHub» y «El dashboard»).
 
@@ -2028,7 +2046,7 @@ van los umbrales: electrodos, músculos e inversión de fase se apuntan en el
 **Mapeo**; las filas antiguas
 por miembro y la de GRID solo salen en los casos que ya las tenían escritas), corticobulbares, Onda D proximal y distal (Prox. y
 Dist. D-Wave), PEATC y H-R. Más filas libres para lo que haga falta. (Umbral MEP
-y TOF se quitaron el 28-09-2026; el TOF sigue como botón del panel de apuntar.)
+y TOF se quitaron el 28-09-2026; el TOF sigue como botón de la hoja de apuntar (barra de abajo).)
 
 Unidades (en la cabecera de cada tabla): sensitivos, amplitud en **µV** y
 latencia en ms; motores, amplitud en **mV** (la onda D, en **µV**) y umbral en
@@ -2041,8 +2059,8 @@ real, se abre con `?demo` al final de la dirección:
 
 <https://paniaguadediego-bit.github.io/checklist-mio-ionm/?demo>
 
-- Arranca con **casos, plantillas y apuntes ficticios** (cinco casos en
-  estados distintos, cuatro plantillas de montaje, apuntes de ejemplo).
+- Arranca con **casos, plantillas y apuntes ficticios** (ocho casos en
+  estados distintos, siete plantillas de montaje, de Inomed y de Cadwell, y apuntes de ejemplo).
 - Todo se guarda **aparte** de los datos normales de ese navegador: se
   puede usar en tu propio móvil sin ver ni pisar tus casos.
 - **No se sincroniza nunca** con GitHub: el botón de la nube dice «Modo demo ·
@@ -2060,7 +2078,7 @@ real, se abre con `?demo` al final de la dirección:
   para usar la demo. Recorre la plantilla, las Técnicas y el Resumen del
   Organizador; el caso estrella (ependimoma D8-D9, con todo relleno) apartado
   por apartado -montaje y técnicas, desarrollo intraoperatorio, resultado y
-  concordancia, docencia-; el panel de apuntar del Registro; la hoja de registro y
+  concordancia, docencia-; la hoja de apuntar del Registro (barra de abajo); la hoja de registro y
   el informe; y la exportación desde Gestión de Casos. La tarjeta se puede
   **minimizar**, y mientras está abajo la página reserva su altura para que
   no tape el final.
