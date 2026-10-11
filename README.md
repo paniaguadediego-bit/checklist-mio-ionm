@@ -422,13 +422,15 @@ cargado en ese momento. **Guardar plantilla** pregunta cada vez si quieres
 sobrescribir el activo o guardarlo como uno nuevo — una confirmación
 explícita, aparte del guardado automático de siempre en cada colocación.
 Cada montaje muestra su **autor**: los tuyos llevan una marca lateral para
-reconocerlos entre los de un compañero, y **solo el autor puede renombrar,
-vaciar o borrar el suyo** (tampoco puede sobrescribirlo con *Guardar
-montaje* si no es suyo) — cualquiera puede *duplicarlo* (es la forma de
-partir del molde de otro para hacerte el tuyo; la copia nace a tu nombre).
-**Esto no es seguridad de verdad**: cambiar de perfil (ver abajo) salta el
-candado sin más, porque la herramienta no tiene backend que pueda
-impedirlo. Es solo para no pisarse el trabajo entre compañeros sin querer.
+reconocerlos entre los de un compañero. Desde el 11-10-2026 **las plantillas
+son de todo el grupo**: cualquiera puede editar, renombrar, vaciar, borrar o
+sobrescribir cualquier plantilla del repositorio, sea de quien sea. El autor
+queda solo como información. *Duplicar* sigue sirviendo para partir de una
+plantilla sin tocar el original (la copia nace a tu nombre).
+
+**Cambiar autor…** (en *Más acciones ▾* de la lista, con **una** plantilla
+marcada, como *Renombrar*) deja elegir el autor entre los usuarios activos o
+**Sin autor**. Se guarda y se sincroniza como cualquier otro cambio.
 
 > No vienen montajes de fábrica desde el 03-09-2026 (decisión del usuario):
 > la biblioteca empieza vacía y se llena con lo que tú y tus compañeros
@@ -1550,6 +1552,26 @@ una vez conectado quedan en *Opciones avanzadas*.
 El token se guarda solo en ese navegador. **Desconectar** lo borra del
 dispositivo (no toca ni tus montajes ni lo guardado en GitHub), y siempre
 puedes revocarlo desde GitHub.
+
+#### Repositorio personal (opcional)
+
+Cuando el repositorio de datos es el de todo el grupo de un hospital, lo que
+es solo tuyo puede ir aparte. En el diálogo ☁, dentro de *Opciones avanzadas*,
+**Repositorio personal (opcional)**: tus apuntes y Técnicas IONM van aquí y
+solo los ves tú. Pones `usuario/repositorio` y un token (puede ser el mismo;
+vacío = el de arriba) y **Guardar repositorio personal**.
+
+- Con él, **Mis apuntes** (el documento y sus fotos, carpeta `apuntes/`) se
+  leen y se escriben **solo** en el repositorio personal, nunca en el del
+  grupo, y **Técnicas IONM** (`referencia/tecnicas-mio.json`) se lee de él.
+  Casos, plantillas y lo demás siguen yendo al repositorio de arriba.
+- Si el repositorio personal está vacío, la primera vez se suben allí los
+  apuntes que hay en el dispositivo (las fotos que no estén en el dispositivo
+  no se pueden copiar desde el navegador). Si ya tiene apuntes, se traen.
+- Sin repositorio personal todo va al repositorio de arriba, como siempre.
+- Es de cada dispositivo: no se sincroniza ni entra en *Exportar copia*. Su
+  botón **Desconectar** lo quita (no borra nada); el **Desconectar** de la
+  nube lo quita también. En la demo no existe.
 
 **Informe de casos (PDF)**, dentro de la pantalla **Gestión de Casos** (barra de
 acciones fija), abre un **informe en PDF** —imprimible desde el propio

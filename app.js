@@ -219,6 +219,9 @@
     caso_pdf_titulo_varios: { es: "Informe de casos", en: "Case report" },
     btn_duplicar:        { es: "Duplicar", en: "Duplicate" },
     btn_renombrar:       { es: "Renombrar", en: "Rename" },
+    btn_cambiar_autor:   { es: "Cambiar autor…", en: "Change author…" },
+    cambiar_autor_intro: { es: "Autor de «{nombre}». Ahora: {autor}.", en: "Author of “{nombre}”. Now: {autor}." },
+    cambiar_autor_ninguno: { es: "Sin autor", en: "No author" },
     btn_vaciar:          { es: "Vaciar", en: "Empty" },
     btn_borrar:          { es: "Borrar", en: "Delete" },
     plantilla_vacia:     { es: "Vacía", en: "Empty" },
@@ -294,6 +297,17 @@
     sync_quedar_dispositivo: { es: "Quedarme con lo de este dispositivo", en: "Keep this device’s version" },
     sync_quedar_nube:    { es: "Quedarme con lo de la nube", en: "Keep the cloud version" },
     sync_avanzado:       { es: "Opciones avanzadas", en: "Advanced options" },
+    sync_personal_tit:   { es: "Repositorio personal (opcional)", en: "Personal repository (optional)" },
+    sync_personal_intro: { es: "Tus apuntes y Técnicas IONM van aquí y solo los ves tú. Sin él, van al repositorio de arriba.",
+                           en: "Your notes and IONM Techniques go here and only you can see them. Without it, they go to the repository above." },
+    sync_personal_token_ayuda: { es: "Puede ser el mismo token. Vacío = el de arriba. Se guarda solo en este navegador.",
+                           en: "It can be the same token. Empty = the one above. It is stored only in this browser." },
+    sync_personal_guardar: { es: "Guardar repositorio personal", en: "Save personal repository" },
+    sync_personal_ok:    { es: "Apuntes y Técnicas IONM van a {repo}.", en: "Notes and IONM Techniques go to {repo}." },
+    sync_personal_olvidar_conf: { es: "¿Desconectar el repositorio personal?\nNo se borra nada. A partir de ahora tus apuntes irán al repositorio de arriba.",
+                           en: "Disconnect the personal repository?\nNothing is deleted. From now on your notes will go to the repository above." },
+    sync_personal_sin:   { es: "Sin repositorio personal: apuntes y Técnicas IONM van al repositorio de arriba.",
+                           en: "No personal repository: notes and IONM Techniques go to the repository above." },
     sync_fecha_desc:     { es: "fecha desconocida", en: "unknown date" },
     err_token:           { es: "Token no válido o caducado.", en: "Invalid or expired token." },
     err_permiso:         { es: "El token no tiene permiso de escritura sobre ese repositorio.",
@@ -905,8 +919,8 @@
     cat_sin_centro:      { es: "— sin centro —", en: "— no hospital —" },
     cat_centro_dispositivo: { es: "Este dispositivo es de", en: "This device belongs to" },
     cat_centro_dispositivo_ay: { es: "Los casos nuevos salen con este centro y en «quién eres» se ven sus usuarios. Es de este dispositivo: no se sincroniza.", en: "New cases get this hospital and “who are you” shows its users. It belongs to this device: it is not synced." },
-    cat_intro_usuarios:  { es: "Quién usa la herramienta. Sirve para <b>firmar las plantillas</b>: cada una lleva el nombre de quien la creó, y solo su autor puede editarla o borrarla. No es una contraseña ni protege nada — cualquiera puede cambiar de perfil desde la barra de arriba. Estos nombres se guardan con tus datos privados, nunca en el código de la herramienta.",
-                           en: "Who uses the tool. It is used to <b>sign montages</b>: each one carries the name of whoever created it, and only its author can edit or delete it. It is not a password and protects nothing — anyone can switch profile from the top bar. These names are kept with your private data, never in the tool's code." },
+    cat_intro_usuarios:  { es: "Quién usa la herramienta. Sirve para <b>firmar las plantillas</b>: cada una lleva el nombre de quien la creó, como información: cualquiera del grupo puede editarla o borrarla, y «Cambiar autor…» corrige el autor. No es una contraseña ni protege nada. Estos nombres se guardan con tus datos privados, nunca en el código de la herramienta.",
+                           en: "Who uses the tool. It is used to <b>sign montages</b>: each one carries the name of whoever created it, for information: anyone in the group can edit or delete it, and “Change author…” fixes the author. It is not a password and protects nothing. These names are kept with your private data, never in the tool's code." },
     perfil_usuario_aria: { es: "Quién eres", en: "Who you are" },
     perfil_usuario_sin:  { es: "— quién eres —", en: "— who are you —" },
     perfil_usuario_nuevo: { es: "+ Añadir usuario…", en: "+ Add user…" },
@@ -914,8 +928,6 @@
                            en: "What is your name? It will appear as the author of the montages you create." },
     montaje_sin_autor:   { es: "de fábrica", en: "factory" },
     montaje_autor_ido:   { es: "otro usuario", en: "another user" },
-    montaje_no_es_tuyo:  { es: "Esta plantilla es de {autor}, así que no puedes cambiarla.\n\nUsa «Duplicar» para hacerte una copia tuya y trabajar sobre ella.",
-                           en: "This template belongs to {autor}, so you cannot change it.\n\nUse “Duplicate” to make your own copy and work on that." },
     montaje_de:          { es: "{nombre} · {autor}", en: "{nombre} · {autor}" },
     caso_sin_id:         { es: "Caso sin número", en: "Case with no number" },
     btn_menu_tit:        { es: "Idioma y guía de uso", en: "Language and user guide" },
@@ -1274,8 +1286,6 @@
                            en: "Empty these {n} templates?\n{nombres}\n\nAll placed material is removed, but the templates are kept." },
     esc_borrar_lote_conf: { es: "¿Borrar estas {n} plantillas?\n{nombres}\n\nEsta acción no se puede deshacer.",
                            en: "Delete these {n} templates?\n{nombres}\n\nThis cannot be undone." },
-    lote_ajenas:         { es: "{n} de las seleccionadas no son tuyas y se han dejado como estaban. Usa «Duplicar» para hacerte una copia.",
-                           en: "{n} of the selected ones are not yours and were left untouched. Use “Duplicate” to make your own copy." },
     plantilla_sin_fav:   { es: "Todavía no tienes plantillas favoritas: toca la ☆ de una plantilla para marcarla.", en: "You have no favourite templates yet: tap a template's ☆ to mark it." },
     barra_plantilla_texto: { es: "Plantilla seleccionada", en: "Selected template" },
     caso_reconstruccion_parcial: { es: "De este caso solo se han podido recolocar {recuperadas} de {esperadas} entradas.\n\nEs un caso antiguo, de antes de que se guardara el montaje completo, y alguna de sus entradas ya no existe en las cajas de ahora.\n\nSi sigues y cambias algo, el caso se quedará con las {recuperadas} que se ven. ¿Continuar?",
@@ -3808,6 +3818,37 @@
     try { localStorage.setItem(SYNC_KEY, JSON.stringify(sync)); } catch (e) { /* sin persistencia */ }
   }
 
+  /* Repositorio personal opcional (11-10-2026, varios hospitales): el
+     repositorio principal es el del grupo del hospital (casos, plantillas,
+     estado.json), compartido por todos sus médicos. Mis apuntes (apuntes/) y
+     Técnicas IONM (referencia/) son de una sola persona: si este dispositivo
+     tiene un repositorio personal, esas rutas van SOLO allí. Sin él, todo va
+     al principal, como siempre. El token vacío = el mismo del principal. Es
+     de este dispositivo: clave propia, no se sincroniza ni entra en
+     «Exportar copia», y en la demo no existe (syncActivo() ya es false). */
+  var SYNC_PERSONAL_KEY = "mio_ionm_sync_personal_v1";
+  var syncPersonal = { repo: "", token: "" };
+  (function cargarSyncPersonal() {
+    if (MODO_DEMO) return;
+    try {
+      var g = JSON.parse(localStorage.getItem(SYNC_PERSONAL_KEY) || "null");
+      if (g && g.repo) syncPersonal = { repo: g.repo, token: g.token || "" };
+    } catch (e) { /* configuración ausente o ilegible */ }
+  })();
+  function personalActivo() {
+    return !MODO_DEMO && !!syncPersonal.repo;
+  }
+  // A qué repositorio (y con qué token) va cada ruta del repositorio de datos
+  function destinoRuta(ruta) {
+    if (personalActivo() && /^(apuntes|referencia)\//.test(ruta)) {
+      return { repo: syncPersonal.repo, token: syncPersonal.token || sync.token };
+    }
+    return { repo: sync.repo, token: sync.token };
+  }
+  function urlRuta(ruta) {
+    return "https://api.github.com/repos/" + destinoRuta(ruta).repo + "/contents/" + ruta;
+  }
+
   function pintarEstadoSync() {
     if (typeof pintarEstadoApunteGuardado === "function") pintarEstadoApunteGuardado();
     if (typeof pintarDlgSync === "function") pintarDlgSync();
@@ -3868,9 +3909,10 @@
     return "https://api.github.com/repos/" + sync.repo + "/contents/" + RUTA_REMOTA;
   }
 
-  function cabeceras() {
+  // Con ruta, el token de su repositorio (destinoRuta); sin ella, el principal
+  function cabeceras(ruta) {
     return {
-      "Authorization": "Bearer " + sync.token,
+      "Authorization": "Bearer " + (ruta ? destinoRuta(ruta).token : sync.token),
       "Accept": "application/vnd.github+json",
       "X-GitHub-Api-Version": "2022-11-28"
     };
@@ -4186,16 +4228,59 @@
     bSubir.textContent = T(conflicto ? "sync_quedar_dispositivo" : "btn_subir");
     bBajar.textContent = T(conflicto ? "sync_quedar_nube" : "btn_bajar");
     document.getElementById("sync-olvidar").hidden = !conectado;
+    // Repositorio personal: en la parte avanzada (sin conexión todo está a
+    // la vista, como Subir/Bajar); nunca durante un choque
+    document.getElementById("sync-personal").hidden = MODO_DEMO || conflicto || (conectado && !syncAvanzado);
+    var estP = document.getElementById("sync-personal-estado");
+    estP.hidden = false;
+    estP.textContent = personalActivo() ? T("sync_personal_ok", { repo: syncPersonal.repo }) : T("sync_personal_sin");
+    document.getElementById("sync-personal-olvidar").hidden = !personalActivo();
   }
   document.getElementById("sync-avanzado").addEventListener("click", function () {
     syncAvanzado = true;
     pintarDlgSync();
   });
 
+  // Tras conectar, cambiar o quitar el repositorio personal, se vuelven a
+  // leer apuntes y Técnicas IONM de su nuevo sitio (apunteDocSha distinto =
+  // se baja; 404 en un personal vacío = lo estrena este dispositivo)
+  function releerRutasPersonales() {
+    if (!syncActivo()) return;
+    bajarApunteDoc();
+    bajarTecnicasMio();
+  }
+  document.getElementById("sync-personal-guardar").addEventListener("click", function () {
+    var repo = document.getElementById("sync-personal-repo").value.trim().replace(/^https?:\/\/github\.com\//, "").replace(/\.git$/, "").replace(/\/$/, "");
+    var token = document.getElementById("sync-personal-token").value.trim();
+    if (!/^[^/\s]+\/[^/\s]+$/.test(repo)) {
+      mensajeSync(T("sync_formato_repo"), true);
+      return;
+    }
+    syncPersonal = { repo: repo, token: token };
+    try { localStorage.setItem(SYNC_PERSONAL_KEY, JSON.stringify(syncPersonal)); } catch (e) { /* sin persistencia */ }
+    mensajeSync(null);
+    pintarDlgSync();
+    releerRutasPersonales();
+  });
+  function olvidarSyncPersonal() {
+    syncPersonal = { repo: "", token: "" };
+    try { localStorage.removeItem(SYNC_PERSONAL_KEY); } catch (e) { /* nada que borrar */ }
+    document.getElementById("sync-personal-repo").value = "";
+    document.getElementById("sync-personal-token").value = "";
+  }
+  document.getElementById("sync-personal-olvidar").addEventListener("click", function () {
+    if (!confirm(T("sync_personal_olvidar_conf"))) return;
+    olvidarSyncPersonal();
+    pintarDlgSync();
+    releerRutasPersonales();
+  });
+
   document.getElementById("btn-sync").addEventListener("click", function () {
     if (MODO_DEMO) { alert(T("demo_sin_sync")); return; }
     document.getElementById("sync-repo").value = sync.repo || "";
     document.getElementById("sync-token").value = sync.token || "";
+    document.getElementById("sync-personal-repo").value = syncPersonal.repo || "";
+    document.getElementById("sync-personal-token").value = syncPersonal.token || "";
     mensajeSync(null);
     syncAvanzado = false;
     dlgSync.showModal();
@@ -4243,7 +4328,9 @@
     try { localStorage.removeItem(SYNC_KEY); } catch (e) { /* nada que borrar */ }
     // Técnicas IONM solo se enseña a quien tiene el token: al desconectar
     // (p. ej. en un ordenador del hospital) no se queda la copia en este navegador.
+    // Por lo mismo se olvida también el repositorio personal y su token.
     olvidarTecnicasMio();
+    olvidarSyncPersonal();
     document.getElementById("sync-repo").value = "";
     document.getElementById("sync-token").value = "";
     pintarEstadoSync();
@@ -5790,7 +5877,7 @@
 
   // Lista de montajes elegibles como plantilla: se ofrecen también los de
   // otros -aplicar es una copia, no toca su archivo, así que puedoEditar()
-  // no interviene aquí, a diferencia del diálogo Montajes.
+  // no interviene aquí.
   function renderListaPlantillas() {
     var cont = document.getElementById("plantilla-elegir-lista");
     cont.innerHTML = "";
@@ -6373,8 +6460,9 @@
 
   function rutaApunteDoc() { return "apuntes/documento.json"; }
 
+  // Apuntes y sus fotos: al repositorio personal si lo hay (destinoRuta)
   function urlApunteDoc() {
-    return "https://api.github.com/repos/" + sync.repo + "/contents/" + rutaApunteDoc();
+    return urlRuta(rutaApunteDoc());
   }
 
   function subirApunteDoc(reintento) {
@@ -6387,8 +6475,9 @@
     });
   }
 
+  function rutaFotoApunte(id) { return "apuntes/fotos/" + id + ".jpg"; }
   function urlFotoApunte(id) {
-    return "https://api.github.com/repos/" + sync.repo + "/contents/apuntes/fotos/" + id + ".jpg";
+    return urlRuta(rutaFotoApunte(id));
   }
 
   // Sube el archivo de una foto. El id no se repite y el contenido de una foto
@@ -6398,7 +6487,7 @@
     var partes = String(foto.datos || "").split(",");
     return fetch(urlFotoApunte(foto.id), {
       method: "PUT",
-      headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()),
+      headers: Object.assign({ "Content-Type": "application/json" }, cabeceras(rutaFotoApunte(foto.id))),
       body: JSON.stringify({ message: "Foto de apuntes", content: partes[1] || "" })
     }).then(function (resp) {
       if (resp.ok || resp.status === 409 || resp.status === 422) { foto.remota = true; return; }
@@ -6420,7 +6509,7 @@
     var ids = apunteFotosBorrar.slice();
     return ids.reduce(function (cadena, id) {
       return cadena.then(function () {
-        return fetch(urlFotoApunte(id), { headers: cabeceras(), cache: "no-store" })
+        return fetch(urlFotoApunte(id), { headers: cabeceras(rutaFotoApunte(id)), cache: "no-store" })
           .then(function (r) {
             if (r.status === 404) return null;
             if (!r.ok) throw new Error(errorLegible(r));
@@ -6430,7 +6519,7 @@
             if (!json) return;
             return fetch(urlFotoApunte(id), {
               method: "DELETE",
-              headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()),
+              headers: Object.assign({ "Content-Type": "application/json" }, cabeceras(rutaFotoApunte(id))),
               body: JSON.stringify({ message: "Borrar foto de apuntes", sha: json.sha })
             }).then(function (r) { if (!r.ok && r.status !== 404) throw new Error(errorLegible(r)); });
           })
@@ -6450,11 +6539,11 @@
       if (apunteDocSha) cuerpo.sha = apunteDocSha;
       return fetch(urlApunteDoc(), {
         method: "PUT",
-        headers: Object.assign({ "Content-Type": "application/json" }, cabeceras()),
+        headers: Object.assign({ "Content-Type": "application/json" }, cabeceras(rutaApunteDoc())),
         body: JSON.stringify(cuerpo)
       }).then(function (resp) {
         if ((resp.status === 409 || resp.status === 422) && !reintento) {
-          return fetch(urlApunteDoc(), { headers: cabeceras(), cache: "no-store" })
+          return fetch(urlApunteDoc(), { headers: cabeceras(rutaApunteDoc()), cache: "no-store" })
             .then(function (r) { return r.ok ? r.json() : null; })
             .then(function (json) {
               apunteDocSha = json ? json.sha : null;
@@ -6484,7 +6573,7 @@
     var faltan = todasFotosApunte().filter(function (f) { return f.remota && !f.datos; });
     return faltan.reduce(function (cadena, f) {
       return cadena.then(function () {
-        return fetch(urlFotoApunte(f.id), { headers: cabeceras(), cache: "no-store" })
+        return fetch(urlFotoApunte(f.id), { headers: cabeceras(rutaFotoApunte(f.id)), cache: "no-store" })
           .then(function (r) { return r.ok ? r.json() : null; })
           .then(function (json) {
             if (!json || !json.content) return;
@@ -6504,13 +6593,33 @@
     });
   }
 
+  // Repositorio personal vacío: el documento y las fotos que estén en este
+  // dispositivo se marcan para subir allí (las fotos que solo estaban en la
+  // nube anterior y no aquí no se pueden copiar desde el navegador).
+  function estrenarApuntesEnPersonal() {
+    return apunteFotosHidratadas.then(function () {
+      apunteDocSha = null;
+      todasFotosApunte().forEach(function (f) { if (f.datos) f.remota = false; });
+      apunteDocSinSubir = true;
+      guardarApunteDocLocal();
+      programarEnvio();
+    });
+  }
+
   function bajarApunteDoc() {
     if (!syncActivo() || navigator.onLine === false) return Promise.resolve();
     // Con cambios locales sin subir, no se pisan: igual que casos/montajes.
     if (apunteDocSinSubir) return Promise.resolve();
-    return fetch(urlApunteDoc(), { headers: cabeceras(), cache: "no-store" })
+    return fetch(urlApunteDoc(), { headers: cabeceras(rutaApunteDoc()), cache: "no-store" })
       .then(function (resp) {
-        if (resp.status === 404) return null;   // todavía no hay apuntes
+        if (resp.status === 404) {
+          // todavía no hay apuntes; si es un repositorio personal recién
+          // conectado y vacío, lo estrena lo que hay en este dispositivo
+          if (personalActivo() && (apunteDoc.secciones || []).length) {
+            return estrenarApuntesEnPersonal().then(function () { return null; });
+          }
+          return null;
+        }
         if (!resp.ok) throw new Error(errorLegible(resp));
         return resp.json();
       })
@@ -10925,13 +11034,12 @@
    * Perfil de usuario
    *
    * Quién está usando la herramienta. Sirve para firmar los montajes: cada
-   * uno lleva su autor y solo él puede editarlo o borrarlo desde la interfaz.
+   * uno lleva su autor. Desde el 11-10-2026 es solo información: cualquiera
+   * del grupo puede editar o borrar cualquier montaje (ver puedoEditar()).
    *
    * NO es seguridad y no lo pretende: cualquiera puede elegir otro perfil
-   * aquí mismo, y el token de GitHub es el mismo para todos, así que a nivel
-   * de repositorio cualquiera puede escribir cualquier cosa. Sin backend
-   * -regla 4 de CLAUDE.md- no hay forma de autenticar a nadie. Es atribución
-   * y un candado blando entre compañeros, y así se explica en la interfaz.
+   * aquí mismo. Sin backend -regla 4 de CLAUDE.md- no hay forma de
+   * autenticar a nadie. Es atribución, y así se explica en la interfaz.
    *
    * El perfil elegido vive en localStorage, no en estado.json: es de este
    * dispositivo, no del equipo. Si viajara en la sincronización, abrir la app
@@ -11990,15 +12098,14 @@
     };
   }
 
-  /* Quién puede editar o borrar un montaje. Sin autor -los de fábrica- lo
-     puede tocar cualquiera. Con autor, solo él. NO es seguridad: cambiando de
-     perfil arriba se pasa el candado. Es para no pisarse entre compañeros sin
-     querer, no para impedir nada. */
+  /* Quién puede editar o borrar un montaje: cualquiera del grupo (11-10-2026).
+     El repositorio de datos es el del grupo de un hospital y las plantillas
+     son de todos; antes solo podía su autor. El autor se sigue guardando y
+     enseñando, pero solo como información («Cambiar autor…» lo corrige). Se
+     deja la función como único punto por si un día vuelve a hacer falta
+     restringirlo. No tiene que ver con el candado de los casos cerrados. */
   function puedoEditar(m) {
-    if (!m) return false;
-    if (!m.autor_id) return true;
-    var yo = usuarioActual();
-    return !!yo && yo.id === m.autor_id;
+    return !!m;
   }
 
   // Última modificación de una plantilla; si nunca se editó, cuenta la de
@@ -12076,14 +12183,6 @@
   }
 
 
-  // Avisa y corta si el montaje activo no es tuyo. El aviso explica de quién
-  // es, en vez de dejar un botón que no responde y no dice por qué.
-  function exigeSerAutor(m) {
-    if (puedoEditar(m)) return true;
-    alert(T("montaje_no_es_tuyo", { autor: autorDe(m) }));
-    return false;
-  }
-
   // Si el diálogo Montajes está abierto, cualquier acción de aquí abajo
   // tiene que refrescar también su lista -si no, se queda mostrando un
   // nombre viejo, o un montaje ya borrado, hasta que se cierre y se
@@ -12113,8 +12212,7 @@
     return true;
   }
 
-  // Duplicar sí funciona sobre el montaje de otro: es la forma de partir del
-  // suyo para hacerte el tuyo. La copia nace a tu nombre, no al suyo.
+  // Duplicar: la copia nace a tu nombre, no al del autor del original.
   // Menú "Más acciones" de Plantillas de montajes (28-09-2026): se cierra al
   // elegir una acción o al pulsar fuera.
   function cerrarMenuMontajes() {
@@ -12140,7 +12238,7 @@
 
   document.getElementById("btn-renombrar").addEventListener("click", function () {
     var esc = escenarioActual();
-    if (!esc || !exigeSerAutor(esc)) return;
+    if (!esc) return;
     var nombre = prompt(T("esc_renombrar"), campo(esc, "nombre"));
     if (!nombre) return;
     esc.nombre = nombre;
@@ -12151,7 +12249,7 @@
 
   document.getElementById("btn-vaciar").addEventListener("click", function () {
     var esc = escenarioActual();
-    if (!esc || !exigeSerAutor(esc)) return;
+    if (!esc) return;
     if (!confirm(T("esc_vaciar_conf", { nombre: campo(esc, "nombre") }))) return;
     vaciarMontaje(esc);
     renderTodo();
@@ -12167,7 +12265,7 @@
 
   document.getElementById("btn-borrar").addEventListener("click", function () {
     var esc = escenarioActual();
-    if (!esc || !exigeSerAutor(esc)) return;
+    if (!esc) return;
     if (!confirm(T("esc_borrar_conf", { nombre: campo(esc, "nombre") }))) return;
     quitarMontaje(activo);
     guardarMontajes();
@@ -12196,8 +12294,7 @@
     if (!esc) return;
     document.getElementById("guardar-montaje-nombre").textContent =
       T("guardar_montaje_intro", { nombre: campo(esc, "nombre") });
-    // Sobrescribir solo tiene sentido si el montaje activo es tuyo -si es de
-    // otro autor, exigeSerAutor() lo bloquearía igualmente al pulsar-.
+    // Sobrescribir: desde el 11-10-2026 cualquiera del grupo puede (puedoEditar()).
     document.getElementById("guardar-montaje-sobrescribir").hidden = !puedoEditar(esc);
     dlgGuardarMontaje.showModal();
   });
@@ -12207,7 +12304,7 @@
   document.getElementById("guardar-montaje-sobrescribir").addEventListener("click", function () {
     var esc = escenarioActual();
     dlgGuardarMontaje.close();
-    if (!esc || !exigeSerAutor(esc)) return;
+    if (!esc) return;
     guardarMontaje(esc);
     avisoGuardado(T("montaje_guardado"));
     sincronizarDlgMontajesSiAbierto();
@@ -12398,7 +12495,9 @@
   function nodoFilaPlantilla(m, uid, entradas, yo, estrellaEditable) {
     var fila = document.createElement("button");
     fila.type = "button";
-    fila.className = "montaje-fila plantilla-fila" + (puedoEditar(m) ? " mio" : "");
+    // Marca lateral = tuya (antes = «la puedes editar»; desde el 11-10-2026
+    // las puede editar cualquiera, así que marca la autoría)
+    fila.className = "montaje-fila plantilla-fila" + (yo && m.autor_id === yo.id ? " mio" : "");
     var cab = document.createElement("span");
     cab.className = "plantilla-cab";
     // ★ favorita: se toca en la lista de Plantillas de montajes (sin cargar
@@ -12528,8 +12627,8 @@
   /* Varias plantillas a la vez (04-10-2026, pedido del usuario): la casilla
      de cada fila las marca y la barra de encima de la lista ofrece el mismo
      «Más acciones» que dentro de una. Solo cuentan las que se ven con los
-     filtros puestos. Renombrar, solo con una. Vaciar y Borrar se saltan las
-     que no son tuyas, y lo dicen. */
+     filtros puestos. Renombrar y Cambiar autor, solo con una. Desde el
+     11-10-2026 Vaciar y Borrar actúan sobre todas, sean de quien sean. */
   var plantillasSel = {};
   var plantillasVisibles = [];
   function uidsSeleccionados() {
@@ -12558,6 +12657,7 @@
     document.getElementById("montajes-lote-cuenta").textContent =
       n === 1 ? T("plantillas_sel_una") : T("plantillas_sel", { n: n });
     document.getElementById("lote-renombrar").hidden = n !== 1;
+    document.getElementById("lote-autor").hidden = n !== 1;
     document.getElementById("lote-todas").hidden = n === plantillasVisibles.length;
   }
   function cerrarMenuLote() {
@@ -12585,12 +12685,6 @@
   // Lista de nombres para las confirmaciones
   function nombresLote(uids) {
     return uids.map(function (uid) { return "· " + (campo(montajes[uid], "nombre") || uid); }).join("\n");
-  }
-  // Se queda con las tuyas y avisa si alguna de otro autor se queda fuera
-  function propiasDelLote(uids) {
-    var propias = uids.filter(function (uid) { return puedoEditar(montajes[uid]); });
-    if (propias.length < uids.length) alert(T("lote_ajenas", { n: uids.length - propias.length }));
-    return propias;
   }
   document.getElementById("lote-duplicar").addEventListener("click", function () {
     var uids = uidsSeleccionados();
@@ -12621,7 +12715,7 @@
     var uids = uidsSeleccionados();
     if (uids.length !== 1) return;
     var esc = montajes[uids[0]];
-    if (!exigeSerAutor(esc)) return;
+    if (!esc) return;
     var nombre = prompt(T("esc_renombrar"), campo(esc, "nombre"));
     if (!nombre) return;
     esc.nombre = nombre;
@@ -12629,8 +12723,49 @@
     guardarMontaje(esc);
     renderTodo();
   });
+
+  /* «Cambiar autor…» (11-10-2026): las plantillas son del grupo y el autor
+     ya solo informa, así que se puede corregir. Se ofrecen los usuarios
+     activos y «Sin autor»; tocar uno guarda por la vía normal
+     (guardarMontaje() sella editado_en y lo deja para subir). */
+  var dlgCambiarAutor = document.getElementById("dlg-cambiar-autor");
+  function opcionAutor(esc, id, texto) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.textContent = texto;
+    if ((esc.autor_id || "") === id) {
+      b.className = "actual";
+      b.setAttribute("aria-current", "true");
+    }
+    b.addEventListener("click", function () {
+      dlgCambiarAutor.close();
+      if ((esc.autor_id || "") === id) return;
+      esc.autor_id = id;   // "" = sin autor, como montajeNuevo() sin perfil
+      guardarMontaje(esc);
+      renderTodo();
+    });
+    return b;
+  }
+  document.getElementById("lote-autor").addEventListener("click", function () {
+    var uids = uidsSeleccionados();
+    if (uids.length !== 1) return;
+    var esc = montajes[uids[0]];
+    if (!esc) return;
+    document.getElementById("cambiar-autor-intro").textContent =
+      T("cambiar_autor_intro", { nombre: campo(esc, "nombre"), autor: autorDe(esc) });
+    var lista = document.getElementById("cambiar-autor-lista");
+    lista.textContent = "";
+    activos(USUARIOS).forEach(function (u) {
+      lista.appendChild(opcionAutor(esc, u.id, campo(u, "nombre")));
+    });
+    lista.appendChild(opcionAutor(esc, "", T("cambiar_autor_ninguno")));
+    dlgCambiarAutor.showModal();
+  });
+  document.getElementById("cambiar-autor-cancelar").addEventListener("click", function () {
+    dlgCambiarAutor.close();
+  });
   document.getElementById("lote-vaciar").addEventListener("click", function () {
-    var uids = propiasDelLote(uidsSeleccionados());
+    var uids = uidsSeleccionados();
     if (!uids.length) return;
     var ok = uids.length === 1
       ? confirm(T("esc_vaciar_conf", { nombre: campo(montajes[uids[0]], "nombre") }))
@@ -12640,7 +12775,7 @@
     renderTodo();
   });
   document.getElementById("lote-borrar").addEventListener("click", function () {
-    var uids = propiasDelLote(uidsSeleccionados());
+    var uids = uidsSeleccionados();
     if (!uids.length) return;
     var ok = uids.length === 1
       ? confirm(T("esc_borrar_conf", { nombre: campo(montajes[uids[0]], "nombre") }))
@@ -13072,8 +13207,9 @@
 
   function bajarTecnicasMio() {
     if (MODO_DEMO || !syncActivo() || navigator.onLine === false) return Promise.resolve();
-    var url = "https://api.github.com/repos/" + sync.repo + "/contents/referencia/tecnicas-mio.json";
-    return fetch(url, { headers: cabeceras(), cache: "no-store" })
+    // Del repositorio personal si lo hay (destinoRuta)
+    var ruta = "referencia/tecnicas-mio.json";
+    return fetch(urlRuta(ruta), { headers: cabeceras(ruta), cache: "no-store" })
       .then(function (resp) {
         // Si se quitó del repositorio, se quita también de aquí
         if (resp.status === 404) {

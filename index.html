@@ -24,7 +24,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20261011">
+<link rel="stylesheet" href="style.css?v=20261011b">
 </head>
 <body>
 
@@ -224,6 +224,7 @@
             <div class="montajes-mas-lista" id="lote-mas-lista" hidden>
               <button type="button" id="lote-duplicar" data-i18n="btn_duplicar"></button>
               <button type="button" id="lote-renombrar" data-i18n="btn_renombrar"></button>
+              <button type="button" id="lote-autor" data-i18n="btn_cambiar_autor"></button>
               <button type="button" id="lote-vaciar" data-i18n="btn_vaciar"></button>
               <button type="button" id="lote-borrar" class="peligro" data-i18n="btn_borrar"></button>
             </div>
@@ -379,6 +380,28 @@
     <button type="button" id="sync-cerrar" data-i18n="cerrar"></button>
     <button type="button" id="sync-bajar" data-i18n="btn_bajar"></button>
     <button type="button" id="sync-subir" class="primario" data-i18n="btn_subir"></button>
+  </div>
+
+  <!-- Repositorio personal opcional (11-10-2026): apuntes y Técnicas IONM.
+       Solo en la parte avanzada; ver destinoRuta() en app.js. -->
+  <div class="sync-personal" id="sync-personal" hidden>
+    <p class="sync-personal-tit" data-i18n="sync_personal_tit"></p>
+    <small class="sync-personal-intro" data-i18n="sync_personal_intro"></small>
+    <div class="campo">
+      <label for="sync-personal-repo" data-i18n="campo_repo"></label>
+      <input id="sync-personal-repo" placeholder="usuario/mis-apuntes" autocomplete="off">
+    </div>
+    <div class="campo">
+      <label for="sync-personal-token" data-i18n="campo_token"></label>
+      <input id="sync-personal-token" type="password" placeholder="github_pat_…" autocomplete="off">
+      <small data-i18n="sync_personal_token_ayuda"></small>
+    </div>
+    <p class="dlg-ok" id="sync-personal-estado" hidden></p>
+    <div class="dlg-botones">
+      <button type="button" id="sync-personal-olvidar" class="peligro" data-i18n="btn_desconectar"></button>
+      <span class="barra-flex"></span>
+      <button type="button" id="sync-personal-guardar" data-i18n="sync_personal_guardar"></button>
+    </div>
   </div>
 </dialog>
 
@@ -548,6 +571,18 @@
     <span class="barra-flex"></span>
     <button type="button" id="guardar-montaje-nuevo" data-i18n="guardar_montaje_nuevo"></button>
     <button type="button" id="guardar-montaje-sobrescribir" class="primario" data-i18n="guardar_montaje_sobrescribir"></button>
+  </div>
+</dialog>
+
+<!-- «Cambiar autor…» de Plantillas (11-10-2026): una opción por usuario
+     activo y «Sin autor»; tocar una la guarda. -->
+<dialog id="dlg-cambiar-autor" class="no-print">
+  <h3 data-i18n="btn_cambiar_autor"></h3>
+  <p class="dlg-intro" id="cambiar-autor-intro"></p>
+  <div class="autor-opciones" id="cambiar-autor-lista"></div>
+  <div class="dlg-botones">
+    <span class="barra-flex"></span>
+    <button type="button" id="cambiar-autor-cancelar" data-i18n="cancelar"></button>
   </div>
 </dialog>
 
@@ -1248,10 +1283,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20261011"></script>
-<script src="data/i18n-en.js?v=20261011"></script>
-<script src="data/guia.js?v=20261011"></script>
-<script src="data/parametros-tecnicas.js?v=20261011"></script>
-<script src="app.js?v=20261011"></script>
+<script src="data/surgeries.js?v=20261011b"></script>
+<script src="data/i18n-en.js?v=20261011b"></script>
+<script src="data/guia.js?v=20261011b"></script>
+<script src="data/parametros-tecnicas.js?v=20261011b"></script>
+<script src="app.js?v=20261011b"></script>
 </body>
 </html>

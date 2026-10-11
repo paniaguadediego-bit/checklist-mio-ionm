@@ -99,7 +99,7 @@ window.GUIA = {
     { pregunta: "¿Cómo tengo mis plantillas más a mano?",
       respuesta: "Toca la ☆ de una plantilla para marcarla; «Solo favoritas» deja solo esas. Se guardan en cada dispositivo." },
     { pregunta: "¿Puedo usar la plantilla de un compañero?",
-      respuesta: "Sí: Más acciones → Duplicar. La copia es tuya y el original no se toca." },
+      respuesta: "Sí: las plantillas son de todo el grupo y cualquiera puede editarlas. Si prefieres no tocar la suya, Más acciones → Duplicar." },
     { pregunta: "¿Inomed, Cadwell o Genérico?",
       respuesta: "Cada plantilla y cada caso son de un equipo; solo cambian las cajas. Solo se cargan plantillas del mismo equipo. Genérico sirve para cualquier otra marca: estimulador periférico, transcraneal y dos amplificadores de registro." },
     { pregunta: "¿Cómo cambio los colores o quito las ayudas?",

@@ -4655,3 +4655,26 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 /* E8: botones de exportar de Gestión de Casos con la misma altura. */
 .casos-exportar { align-items: stretch; }
 .casos-exportar button { min-height: 2.25rem; }
+
+/* «Cambiar autor…» de Plantillas (11-10-2026): una opción por fila */
+.autor-opciones { display: flex; flex-direction: column; gap: 0.3rem; max-height: 50vh; overflow-y: auto; margin: 0.4rem 0; }
+.autor-opciones button {
+  font: inherit;
+  font-size: 0.85rem;
+  text-align: left;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  border-radius: var(--r);
+  cursor: pointer;
+}
+.autor-opciones button:hover { background: var(--accent-soft); }
+.autor-opciones button.actual { border-color: var(--accent); font-weight: 600; }
+.autor-opciones button.actual::after { content: " ✓"; color: var(--accent); }
+
+/* Repositorio personal opcional del diálogo ☁ (11-10-2026) */
+.sync-personal { margin-top: 0.7rem; padding-top: 0.6rem; border-top: 1px solid var(--border); }
+.sync-personal[hidden] { display: none; }
+.sync-personal-tit { margin: 0 0 0.2rem; font-size: 0.85rem; font-weight: 600; }
+.sync-personal-intro { display: block; margin-bottom: 0.4rem; color: var(--text-muted); }

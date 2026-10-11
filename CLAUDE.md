@@ -188,7 +188,9 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Entradas de una caja | `entradasDe()` | [2894](app.js:2894) |
 | Selección y colocación (pulsar y colocar); chip con el nombre en `.chip-nombre` (se parte en entradas estrechas) | `seleccionar()`, `colocar()`, `crearChip()` | ver `grep` |
 | Sincronización de `estado.json` | `estadoActual()`, `aplicarEstado()`, `programarSubida()`, `subirAuto()`, `bajarAuto()` | [3887](app.js:3887)–[4058](app.js:4058) |
-| Montajes: modelo, autoría y sincronización | `montajeNuevo()`, `puedoEditar()`, `guardarMontaje()`, `subirMontaje()`, `bajarMontajes()` | ver `grep` |
+| Montajes: modelo, autoría y sincronización. Desde el 11-10-2026 `puedoEditar()` deja editar y borrar cualquier plantilla a cualquier perfil (el repo es el del grupo; el autor solo informa; la marca lateral `.mio` = tuya) | `montajeNuevo()`, `puedoEditar()`, `guardarMontaje()`, `subirMontaje()`, `bajarMontajes()` | ver `grep` |
+| «Cambiar autor…» en Más acciones de la lista de Plantillas (solo con una marcada): usuarios activos + «Sin autor» (`autor_id` = ""), guarda con `guardarMontaje()` (sella `editado_en`) | `#lote-autor`, `#dlg-cambiar-autor`, `opcionAutor()`, `.autor-opciones` | ver `grep` |
+| Repositorio personal opcional (11-10-2026): `apuntes/` y `referencia/` van SOLO a él si está configurado; el resto, al principal. Por dispositivo (`mio_ionm_sync_personal_v1`, no se sincroniza ni se exporta; token vacío = el principal); en la parte avanzada del diálogo ☁; «Desconectar» de la nube lo olvida también; repo personal vacío → lo estrena este dispositivo | `SYNC_PERSONAL_KEY`, `syncPersonal`, `personalActivo()`, `destinoRuta(ruta)`, `urlRuta(ruta)`, `cabeceras(ruta)`, `estrenarApuntesEnPersonal()`, `releerRutasPersonales()`, `olvidarSyncPersonal()`, `#sync-personal` | ver `grep` |
 | Casos: modelo y ficha | `borrarCaso()`, `guardarCaso()`, `casoVacio()`, `renderFichaCaso()` | [4501](app.js:4501), [4602](app.js:4602), [4700](app.js:4700), [8530](app.js:8530) |
 | Casos: sincronización | `subirCaso()`, `bajarCasos()`, `borrarCasosPendientes()`, `guardarUnCasoLocal()`/`borrarUnCasoLocal()` (un caso por clave desde el 22-09-2026) | ver `grep` |
 | Casos: filtro/orden de Gestión de Casos (panel plegable «Filtros (n)», chips de filtros activos con ✕, Especialidad = `servicio_id`, Diagnóstico = `diagnostico` desde el 04-10) | `casosFiltradosUids()`, `comparaDificultad()`, `pintarFiltrosActivos()`, `pintarFiltroServicio()`, `pintarFiltroDiagnostico()`, `CASOS_FILTROS_SELECT` | ver `grep` |
@@ -312,7 +314,7 @@ crean desde la app (selector "quién eres" en la barra superior) y quedan en
 `catalogos.usuarios` dentro de `estado.json`, que va al repo privado. El
 perfil *elegido* (no la lista de usuarios) vive aparte, en
 `localStorage["mio_ionm_perfil_v1"]`, y no se sincroniza: es de este
-dispositivo, no del equipo. Sirve para firmar montajes (`autor_id`), pero
+dispositivo, no del equipo. Sirve para firmar montajes (`autor_id`, solo informativo desde el 11-10-2026), pero
 **no es seguridad** — cualquiera puede cambiar de perfil sin más, y sin
 backend no hay forma de impedirlo.
 
