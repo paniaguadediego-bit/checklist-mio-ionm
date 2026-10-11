@@ -1477,20 +1477,20 @@ si no, el navegador del móvil y el del ordenador son almacenes distintos.
 
 Para pasar tu trabajo de uno a otro a mano:
 
-1. **Exportar copia** descarga un `.json` con tu material propio, tus
-   etiquetas y los catálogos editables (técnicas, servicios, intervenciones,
-   perfiles, usuarios). **No incluye tus montajes ni tus
-   casos** — desde que pasaron a un archivo por montaje/caso, este volcado
-   dejó de cubrirlos; para esos dos, la sincronización con GitHub es la
-   única copia de verdad. Pendiente de decidir si merece la pena ampliarlo.
+1. **Exportar copia** descarga un `.json` con todo: tu material propio, tus
+   etiquetas, los catálogos editables (técnicas, servicios, intervenciones,
+   perfiles, usuarios, centros) y, desde el 29-09-2026, también tus
+   **casos, tus plantillas y Mis apuntes**.
 2. Pasa ese archivo al otro dispositivo (correo, nube, cable…).
-3. **Importar copia** allí. Avisa de cuántos elementos trae, y sustituye lo
-   que hubiera en ese navegador.
+3. **Importar copia** allí. Avisa de cuántos elementos trae. El material,
+   las etiquetas y los catálogos **sustituyen** lo que hubiera en ese
+   navegador; los casos y las plantillas **solo se añaden** si no estaban
+   ya (nunca pisa uno que exista), y Mis apuntes solo entran si allí no
+   había ninguno.
 
-Ese mismo archivo sirve de copia de seguridad de lo que cubre: si el
-navegador borra los datos del sitio, ese material y esas etiquetas se
-recuperan importándolo — los montajes y los casos, solo si estaban
-sincronizados con GitHub.
+Ese mismo archivo sirve de copia de seguridad completa: si el navegador
+borra los datos del sitio, o sin sincronización con GitHub, todo se
+recupera importándolo.
 
 ### Sincronización automática con GitHub
 
