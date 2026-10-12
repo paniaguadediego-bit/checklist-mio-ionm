@@ -12579,16 +12579,6 @@
       " · " + T("plantilla_entradas", { n: entradas });
     fila.appendChild(sub);
     var tecs = TECNICAS.filter(function (t) { return (m.tecnicas || []).indexOf(t.id) !== -1; });
-    // Franja izquierda: un tramo por cada familia presente, en orden fijo
-    var fams = FAMILIAS_TEC.filter(function (f) {
-      return tecs.some(function (t) { return familiaTecnica(t) === f; });
-    });
-    if (fams.length) {
-      var paso = 100 / fams.length;
-      fila.style.setProperty("--franja", "linear-gradient(to bottom, " + fams.map(function (f, i) {
-        return "var(--fam-" + f + ") " + (i * paso) + "% " + ((i + 1) * paso) + "%";
-      }).join(", ") + ")");
-    }
     if (tecs.length) fila.appendChild(nodoEtiquetasTecnicas(tecs));
     return fila;
   }

@@ -4530,10 +4530,9 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 @media screen {
   :root:not(.tema-claro) { --fam-aud: #ffe14d; --fam-sens: #f0b429; --fam-mot: #ef4444; --fam-emg: #4cc38a; --fam-ref: #c8408f; --fam-eeg: #5aa9ff; --fam-map: #f7a6c8; }
 }
-.plantilla-fila { position: relative; border-left-color: transparent; }
-.plantilla-fila.mio { border-left-color: transparent; }
-/* La franja: los colores de las familias que lleva; sin técnicas, gris */
-.plantilla-fila::before { content: ""; position: absolute; left: -5px; top: -1px; bottom: -1px; width: 5px; border-radius: var(--r) 0 0 var(--r); background: var(--franja, var(--border)); }
+/* Sin franja de color a la izquierda (12-10-2026, pedido del usuario): el color queda solo en las etiquetas de técnica */
+.plantilla-fila { position: relative; border-left: 1px solid var(--border-soft); }
+.plantilla-fila.mio { border-left: 1px solid var(--border-soft); }
 .plantilla-fila.vacia { opacity: 0.6; }
 .plantilla-fila.vacia:hover { opacity: 1; }
 .plantilla-vacia { margin-left: 0.4rem; padding: 0 0.35rem; font-size: 0.6rem; font-weight: 600; border: 1px dashed var(--text-muted); border-radius: 3px; color: var(--text-muted); vertical-align: middle; }
