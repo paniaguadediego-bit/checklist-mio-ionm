@@ -7,7 +7,7 @@ cada cirugía monitorizada y saber exactamente qué hace falta.
 de la cabecera lleva siempre a una pantalla con tarjetas agrupadas por el
 momento de la cirugía — *Antes de quirófano*: **Organizador de Montajes** y
 **Gestión de Casos**; *Quirófano*: **Checklist pre-quirúrgico** y
-**Registro intraoperatorio**; *Después / consulta*: **Biblioteca de montajes**
+**Registro intraoperatorio**; *Después / consulta*: **Biblioteca de casos compartidos**
 (en construcción), **Técnicas IONM** (solo con la sincronización configurada),
 **Material** (en construcción), **Miotomas**, **Simulador** (en construcción),
 **Mis apuntes** y **Bibliografía recomendada**—, cada una con una línea que

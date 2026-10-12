@@ -191,6 +191,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Montajes: modelo, autoría y sincronización. Desde el 11-10-2026 `puedoEditar()` deja editar y borrar cualquier plantilla a cualquier perfil (el repo es el del grupo; el autor solo informa; la marca lateral `.mio` = tuya) | `montajeNuevo()`, `puedoEditar()`, `guardarMontaje()`, `subirMontaje()`, `bajarMontajes()` | ver `grep` |
 | «Cambiar autor…» en Más acciones de la lista de Plantillas (solo con una marcada): usuarios activos + «Sin autor» (`autor_id` = ""), guarda con `guardarMontaje()` (sella `editado_en`) | `#lote-autor`, `#dlg-cambiar-autor`, `opcionAutor()`, `.autor-opciones` | ver `grep` |
 | Repositorio personal opcional (11-10-2026): `apuntes/` y `referencia/` van SOLO a él si está configurado; el resto, al principal. Por dispositivo (`mio_ionm_sync_personal_v1`, no se sincroniza ni se exporta; token vacío = el principal); en la parte avanzada del diálogo ☁; «Desconectar» de la nube lo olvida también; repo personal vacío → lo estrena este dispositivo | `SYNC_PERSONAL_KEY`, `syncPersonal`, `personalActivo()`, `destinoRuta(ruta)`, `urlRuta(ruta)`, `cabeceras(ruta)`, `estrenarApuntesEnPersonal()`, `releerRutasPersonales()`, `olvidarSyncPersonal()`, `#sync-personal` | ver `grep` |
+| Mis apuntes solo con repositorio personal (12-10-2026): la tarjeta `#tile-apuntes` y la pantalla se ven con `personalActivo()` o en `?demo`; sin repo personal quedan ocultas (`hidden`), sin borrar nada. **EXCEPCIÓN de transición**: si el dispositivo ya tiene apuntes con contenido (`apunteDoc.secciones.length`) se siguen viendo (el autor aún no tiene repo personal); quitarla cuando todos tengan el suyo. `irAPantalla("apuntes")` y `abrirApunteDoc()` no abren la pantalla si no es visible | `apuntesVisibles()`, `pintarTileApuntes()` (al arrancar y en `releerRutasPersonales()`) | ver `grep` |
 | Casos: modelo y ficha | `borrarCaso()`, `guardarCaso()`, `casoVacio()`, `renderFichaCaso()` | [4501](app.js:4501), [4602](app.js:4602), [4700](app.js:4700), [8530](app.js:8530) |
 | Casos: sincronización | `subirCaso()`, `bajarCasos()`, `borrarCasosPendientes()`, `guardarUnCasoLocal()`/`borrarUnCasoLocal()` (un caso por clave desde el 22-09-2026) | ver `grep` |
 | Casos: filtro/orden de Gestión de Casos (panel plegable «Filtros (n)», chips de filtros activos con ✕, Especialidad = `servicio_id`, Diagnóstico = `diagnostico` desde el 04-10) | `casosFiltradosUids()`, `comparaDificultad()`, `pintarFiltrosActivos()`, `pintarFiltroServicio()`, `pintarFiltroDiagnostico()`, `CASOS_FILTROS_SELECT` | ver `grep` |
@@ -245,7 +246,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Alto real de la barra superior en `--header-h` (lo usan los sticky de debajo) | IIFE junto a `aplicarTema()` con `ResizeObserver` | ver `grep` |
 | Plantillas: fila con aspecto de caso (fecha, marca del equipo, técnicas, «+n» con globo) y favoritas por dispositivo y perfil | `nodoFilaPlantilla()`, `PLANTILLA_MAX_TECS`, `favoritasPlantillas()`, `esFavorita()`, `alternarFavorita()`, `FAV_PLANTILLAS_KEY` (orden solo por nombre: las favoritas no suben arriba desde el 04-10-2026) | ver `grep` |
 | Demo: etiqueta «Ficticio» y aviso en la ficha | `nodoFicticio()`, `#caso-aviso-demo` | ver `grep` |
-| Biblioteca de montajes (en construcción; ids «casos-modelo») | `renderCasosModelo()`, `CMOD_TECNICAS`, `#pantalla-casos-modelo` | ver `grep` |
+| Biblioteca de casos compartidos (antes «Biblioteca de montajes»; en construcción; ids internos «casos-modelo») | `renderCasosModelo()`, `CMOD_TECNICAS`, `#pantalla-casos-modelo` | ver `grep` |
 | Precios inventados de la demo | `PRECIOS_DEMO`, `preciosDemo()` | ver `grep` |
 | Ficha a pantalla completa (04-10-2026): sigue siendo `<dialog id="dlg-caso">` (showModal), pero `#dlg-caso[open]` ocupa 100vw×100dvh sin margen ni bordes y el contenido se centra hasta 1400 px (padding de `.caso-cab`, `.caso-scroll`, `.caso-acciones`); la barra superior de la app queda tapada mientras está abierta | reglas al final de style.css | — |
 | Ficha: autoguardado, salir y cerrar caso | `autoguardarFicha()`, `salirDeFicha()`, `firmaFicha()`, `fichaOrigen`, `casoCambiadoFuera()`, `pintarBotonCerrarCaso()`; aviso de lo que falta al cerrar; campos cortos en una fila (`fila` en `CAMPOS_CASO` → `.campos-fila`); ⋮ Abrir en el Registro (`#caso-ir-registro`); `borradorResumenCaso()` | ver `grep` |
@@ -497,7 +498,7 @@ distinta a la anterior, no importa el formato exacto.
 >   nombre):** *Antes de quirófano*: Organizador de Montajes, Gestión de Casos.
 >   *Quirófano*: Checklist pre-quirúrgico (4 momentos; «Con el campo abierto»
 >   quitado), Registro intraoperatorio. *Después / consulta*: **Biblioteca de
->   montajes** (en construcción; ids `casos-modelo`), Técnicas IONM (solo con
+>   casos compartidos** (antes «Biblioteca de montajes»; en construcción; ids `casos-modelo`), Técnicas IONM (solo con
 >   token), Material (en construcción), **Miotomas** (antes «Docencia»; id
 >   `docente`; Cama y Teoría ocultas con `hidden`), Simulador (en construcción),
 >   Mis apuntes, Bibliografía recomendada. Al final del inicio, logo grande,
@@ -777,8 +778,8 @@ distinta a la anterior, no importa el formato exacto.
 >   ya van por grupos en Correlacion_long); que la concordancia del caso proponga
 >   FN si hay déficit sin alarma relacionada; bloque "Cirugías con IONM"; Teoría
 >   básica; convertir en listas más textos libres de la ficha si el usuario lo
->   pide; **contenido de la Biblioteca de montajes** (montajes de ejemplo por
->   especialidad y equipo, copiables como plantilla); favoritas sincronizadas
+>   pide; **contenido de la Biblioteca de casos compartidos** (casos interesantes
+>   que un hospital comparte con los demás); favoritas sincronizadas
 >   entre dispositivos si el usuario lo pide; aviso en el Resumen si en Inomed
 >   hay un sacacorchos de estimulación en la catodal; antes del congreso,
 >   ocultar o terminar en la demo las pantallas «En construcción»; cronometrar

@@ -302,6 +302,7 @@
                            en: "Your notes and IONM Techniques go here and only you can see them. Without it, they go to the repository above." },
     sync_personal_token_ayuda: { es: "Puede ser el mismo token. Vacío = el de arriba. Se guarda solo en este navegador.",
                            en: "It can be the same token. Empty = the one above. It is stored only in this browser." },
+    sync_personal_apuntes: { es: "Mis apuntes aparece en el Inicio al conectarlo.", en: "My notes appears on the Home screen once it is connected." },
     sync_personal_guardar: { es: "Guardar repositorio personal", en: "Save personal repository" },
     sync_personal_ok:    { es: "Apuntes y Técnicas IONM van a {repo}.", en: "Notes and IONM Techniques go to {repo}." },
     sync_personal_olvidar_conf: { es: "¿Desconectar el repositorio personal?\nNo se borra nada. A partir de ahora tus apuntes irán al repositorio de arriba.",
@@ -1061,8 +1062,8 @@
     demo_centro:         { es: "Hospital de demostración", en: "Demo hospital" },
     tile_simulador:      { es: "Simulador", en: "Simulator" },
     tile_bibliografia:   { es: "Bibliografía recomendada", en: "Recommended reading" },
-    tile_casos_modelo:   { es: "Biblioteca de montajes", en: "Setup library" },
-    tile_casos_modelo_sub: { es: "Montajes de ejemplo por especialidad y equipo", en: "Example setups by specialty and equipment" },
+    tile_casos_modelo:   { es: "Biblioteca de casos compartidos", en: "Shared case library" },
+    tile_casos_modelo_sub: { es: "Casos interesantes que un hospital comparte con los demás", en: "Interesting cases that one hospital shares with the others" },
     tile_en_obras:       { es: "En construcción", en: "Under construction" },
     demo_ficticio:       { es: "Ficticio", en: "Fictitious" },
     demo_ficticio_ay:    { es: "Ejemplo inventado para probar la herramienta: el montaje, los parámetros y los datos no son de referencia ni reflejan la práctica real.",
@@ -1776,6 +1777,8 @@
     // Registro intraoperatorio guarda con retardo mientras se escribe: al
     // cambiar de pantalla se vuelca lo pendiente.
     if (typeof registroVaciarPendiente === "function") registroVaciarPendiente();
+    // Mis apuntes solo se abre si se ve su tarjeta (apuntesVisibles()), llegue por donde llegue
+    if (nombre === "apuntes" && !apuntesVisibles()) nombre = "inicio";
     PANTALLAS.forEach(function (p) {
       var el = document.getElementById("pantalla-" + p);
       if (el) el.classList.toggle("activa", p === nombre);
@@ -1997,7 +2000,7 @@
     });
   }
 
-  // Biblioteca de montajes (antes «Casos modelo», 30-09-2026): en construcción. Enseña qué habrá, con los
+  // Biblioteca de casos compartidos (antes «Biblioteca de montajes» y «Casos modelo»; ids internos sin cambiar): en construcción. Enseña qué habrá, con los
   // nombres del catálogo (especialidades, técnicas y equipos de verdad).
   var CMOD_TECNICAS = ["c_pem", "phase_reversal", "mapeo_subcortical", "mapeo_raices_tornillos", "onda_d",
     "pem_corticobulbares", "peatc", "lsr", "rbc", "mapeo_nervio_periferico", "eeg"];
@@ -4245,6 +4248,7 @@
   // leer apuntes y Técnicas IONM de su nuevo sitio (apunteDocSha distinto =
   // se baja; 404 en un personal vacío = lo estrena este dispositivo)
   function releerRutasPersonales() {
+    pintarTileApuntes();
     if (!syncActivo()) return;
     bajarApunteDoc();
     bajarTecnicasMio();
@@ -10300,7 +10304,21 @@
     renderApunteMeta();
   }
 
+  // Mis apuntes (12-10-2026): solo con repositorio personal (los apuntes no
+  // deben acabar en el repositorio compartido del grupo) o en la demo (aislada).
+  // EXCEPCIÓN de transición: si este dispositivo YA tiene apuntes con contenido,
+  // se siguen viendo (no se borran ni se tocan nunca; sin repo personal ni
+  // apuntes, simplemente no hay tarjeta). Quitar la excepción cuando todos
+  // los usuarios tengan repositorio personal.
+  function apuntesVisibles() {
+    return MODO_DEMO || personalActivo() || !!(apunteDoc && (apunteDoc.secciones || []).length);
+  }
+  function pintarTileApuntes() {
+    document.getElementById("tile-apuntes").hidden = !apuntesVisibles();
+  }
+
   function abrirApunteDoc() {
+    if (!apuntesVisibles()) return;
     renderApunteDoc();
     irAPantalla("apuntes");
   }
@@ -13956,6 +13974,7 @@
 
   document.getElementById("tile-tecnicas-mio").addEventListener("click", abrirTecnicasMio);
   pintarTileTecnicasMio();
+  pintarTileApuntes();
   document.getElementById("tecmio-buscar").addEventListener("input", renderTecnicasMio);
   document.getElementById("guia-cerrar").addEventListener("click", function () { dlgGuia.close(); });
 
