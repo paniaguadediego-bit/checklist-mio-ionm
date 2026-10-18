@@ -4683,3 +4683,9 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 .esp-fila .esp-nombre { flex: 1; overflow-wrap: anywhere; }
 .esp-fila.activo .esp-nombre { font-weight: 600; }
 .esp-etq { color: var(--text-muted); font-size: 0.78rem; }
+
+/* Espacio en solo lectura (tanda 3): aviso bajo la cabecera, casilla en el selector de espacios */
+#espacio-solo-lectura { margin: 0; border-radius: 0; text-align: center; }
+.esp-sl { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.8rem; margin-left: 0.5rem; white-space: nowrap; }
+.solo-lectura #btn-papelera-casos { display: none; }
+.solo-lectura button:disabled { opacity: 0.45; cursor: not-allowed; }

@@ -96,6 +96,43 @@
   ];
   var ESPACIO = resolverEspacio(window);   // {id, nombre, prefijo, solo_lectura}
 
+  /* Espacio en SOLO LECTURA (18-10-2026, tanda 3). Se corta en origen, no
+   * solo en la interfaz:
+   * - el almacén envuelto ignora setItem/removeItem de todo lo que no sea
+   *   global (CLAVES_GLOBALES) ni la configuración de la conexión;
+   * - fetch rechaza todo lo que no sea GET/HEAD hacia fuera de la página;
+   * - guardarFotoIDB()/borrarFotoIDB() de los casos no escriben.
+   * Lo único que escribe es la BAJADA desde el repositorio (traer lo último
+   * es lectura): se envuelve con permitirBajada(), que levanta el bloqueo
+   * mientras dura esa promesa. Las bajadas no marcan nada como pendiente de
+   * subir (subidaActiva() es siempre false aquí). */
+  var escrituraBajada = 0;
+  function escrituraBloqueada() { return !!ESPACIO.solo_lectura && escrituraBajada === 0; }
+  function permitirBajada(fn) {
+    if (!ESPACIO.solo_lectura) return fn();
+    escrituraBajada++;
+    var r;
+    try { r = fn(); } catch (e) { escrituraBajada--; throw e; }
+    if (r && typeof r.then === "function") {
+      return r.then(function (v) { escrituraBajada--; return v; }, function (e2) { escrituraBajada--; throw e2; });
+    }
+    escrituraBajada--;
+    return r;
+  }
+  if (ESPACIO.solo_lectura && window.fetch) {
+    var fetchLecturaReal = window.fetch.bind(window);
+    window.fetch = function (recurso, opciones) {
+      var metodo = String((opciones && opciones.method) || (recurso && typeof recurso === "object" && recurso.method) || "GET").toUpperCase();
+      var destino;
+      try { destino = new URL(typeof recurso === "string" ? recurso : recurso.url, location.href); } catch (e) { destino = null; }
+      var propio = !!destino && destino.origin === location.origin;
+      if (metodo !== "GET" && metodo !== "HEAD" && !propio) {
+        return Promise.reject(new Error("Solo lectura: no se envía nada"));
+      }
+      return fetchLecturaReal(recurso, opciones);
+    };
+  }
+
   // Cuántos espacios hay y cuál está activo lo dice el índice del
   // localStorage REAL (nunca el envuelto: el índice es global).
   function resolverEspacio(ventana) {
@@ -120,7 +157,14 @@
     if (Object.prototype.toString.call(lista) !== "[object Array]") return archivo;
     var puntero = "archivo";
     try { puntero = real.getItem(ESPACIO_PUNTERO_KEY) || "archivo"; } catch (e5) { puntero = "archivo"; }
-    if (puntero === "archivo") return archivo;
+    if (puntero === "archivo") {
+      // «archivo» (prefijo vacío) también puede marcarse solo lectura: la
+      // marca la pone el usuario en el índice, nunca se pone sola.
+      for (var k = 0; k < lista.length; k++) {
+        if (lista[k] && lista[k].id === "archivo" && lista[k].solo_lectura) archivo.solo_lectura = true;
+      }
+      return archivo;
+    }
     for (var i = 0; i < lista.length; i++) {
       var e = lista[i];
       // El prefijo se recalcula en vez de fiarse del índice: una entrada mal
@@ -152,7 +196,7 @@
     // Resto: el prefijo del espacio activo; con prefijo vacío ("archivo") hay
     // que ocultar las claves de los OTROS espacios y de la demo, que si no
     // aparecerían en los recorridos por key(i) (p. ej. cargarCasos()).
-    return almacenEspacio(real, ESPACIO.prefijo, CLAVES_GLOBALES, [ESPACIO_PREFIJO_BASE, DEMO_PREFIJO]);
+    return almacenEspacio(real, ESPACIO.prefijo, CLAVES_GLOBALES, [ESPACIO_PREFIJO_BASE, DEMO_PREFIJO], escrituraBloqueada);
   })();
 
   /* Almacén con prefijo. Lo que se guarda y se lee de más abajo no sabe nada
@@ -162,10 +206,15 @@
    *   prefijo); las globales no se enumeran;
    * - prefijo vacío: se ven las claves "de siempre" y las globales, pero no
    *   las que empiezan por alguno de `ajenos` (otros espacios, demo). */
-  function almacenEspacio(real, prefijo, globales, ajenos) {
+  function almacenEspacio(real, prefijo, globales, ajenos, bloqueado) {
     function esGlobal(k) {
       for (var i = 0; i < globales.length; i++) if (globales[i] === k) return true;
       return false;
+    }
+    // Solo lectura: nada del espacio se escribe ni se borra, salvo la
+    // configuración de la conexión (no contiene datos de casos ni montajes).
+    function sinEscribir(k) {
+      return !!bloqueado && bloqueado() && !esGlobal(k) && k !== "mio_ionm_sync_v1";
     }
     function real_(k) { return esGlobal(k) ? k : prefijo + k; }
     function claves() {
@@ -185,8 +234,8 @@
     }
     return {
       getItem: function (k) { return real.getItem(real_(k)); },
-      setItem: function (k, v) { real.setItem(real_(k), String(v)); },
-      removeItem: function (k) { real.removeItem(real_(k)); },
+      setItem: function (k, v) { if (sinEscribir(k)) return; real.setItem(real_(k), String(v)); },
+      removeItem: function (k) { if (sinEscribir(k)) return; real.removeItem(real_(k)); },
       key: function (i) { var c = claves(); return i < c.length ? c[i] : null; },
       get length() { return claves().length; },
       // Solo la usa "Restablecer demo": borra las claves del prefijo. Con
@@ -424,6 +473,15 @@
     esp_intro:           { es: "Cada espacio tiene sus propios casos y plantillas en este dispositivo y su propio repositorio de datos. Nada se mezcla entre espacios.",
                            en: "Each workspace has its own cases and templates on this device and its own data repository. Nothing is shared between workspaces." },
     esp_activo:          { es: "Activo", en: "Active" },
+    esp_sl_marcar:       { es: "Solo lectura", en: "Read only" },
+    esp_sl_marcar_tit:   { es: "Con la casilla marcada, este espacio no se puede modificar, subir ni borrar. Se ve, se imprime y se exporta.", en: "When ticked, this workspace cannot be changed, uploaded or deleted. You can view, print and export it." },
+    esp_sl_poner_conf:   { es: "¿Poner «{nombre}» en SOLO LECTURA?\n\nNada de este espacio se podrá modificar, crear, borrar ni subir. Se podrá ver, imprimir y exportar. Para volver a editar, se desmarca aquí mismo.\n\nLa página se recargará.", en: "Put «{nombre}» in READ-ONLY mode?\n\nNothing in this workspace can be changed, created, deleted or uploaded. You can still view, print and export. To edit again, untick it here.\n\nThe page will reload." },
+    esp_sl_poner_pend:   { es: "Atención: hay cambios sin subir. Mientras esté en solo lectura NO se subirán; quedarán en este dispositivo hasta que quites el solo lectura.\n\n", en: "Warning: some changes have not been uploaded. While read-only they will NOT be uploaded; they stay on this device until you remove read-only.\n\n" },
+    esp_sl_quitar_conf:  { es: "¿Quitar el SOLO LECTURA de «{nombre}»?\n\nVolverá a poder modificarse, borrarse y subirse a su repositorio.\n\nLa página se recargará.", en: "Remove READ-ONLY from «{nombre}»?\n\nIt will be possible again to change, delete and upload it to its repository.\n\nThe page will reload." },
+    esp_sl_banner:       { es: "🔒 Espacio en solo lectura: se puede ver, imprimir y exportar, pero nada se modifica ni se sube. Se desactiva en ☁ > Espacios de trabajo.", en: "🔒 Read-only workspace: you can view, print and export, but nothing is changed or uploaded. Turn it off in ☁ > Workspaces." },
+    esp_sl_aviso:        { es: "🔒 Espacio en solo lectura: aquí no se puede modificar nada. Se desactiva en ☁ > Espacios de trabajo.", en: "🔒 Read-only workspace: nothing can be changed here. Turn it off in ☁ > Workspaces." },
+    esp_sl_corto:        { es: "Espacio en solo lectura", en: "Read-only workspace" },
+    esp_sl_estado:       { es: "🔒 Solo lectura", en: "🔒 Read only" },
     esp_cambiar:         { es: "Cambiar a este", en: "Switch to this" },
     esp_nuevo_nombre:    { es: "Nombre del nuevo espacio", en: "New workspace name" },
     esp_crear:           { es: "Crear espacio", en: "Create workspace" },
@@ -1983,7 +2041,7 @@
   }
 
   function hayPendienteSinSincronizar() {
-    return syncActivo() && (sync.pendiente || casosPendientes().length || borradosPendientes().length ||
+    return subidaActiva() && (sync.pendiente || casosPendientes().length || borradosPendientes().length ||
       montajesPendientes().length || montajesBorradosPend().length || apunteDocPendiente() || simPresetsPendientes());
   }
 
@@ -2189,7 +2247,7 @@
       pintarEstadoSync();
       // En la demo, sin texto (30-09-2026, pedido del usuario): la cabecera ya
       // dice «Modo demo · sin nube» y el aviso la hacía más alta.
-      avisoGuardado(MODO_DEMO ? "" : T(syncActivo() ? "guardado_nube" : "guardado_local"));
+      avisoGuardado(MODO_DEMO ? "" : T(ESPACIO.solo_lectura ? "esp_sl_corto" : (syncActivo() ? "guardado_nube" : "guardado_local")));
     }
   }
 
@@ -2558,8 +2616,8 @@
     return JSON.parse(JSON.stringify(obj));
   }
 
-  function montajesPendientes() { return Object.keys(montajesSinSubir); }
-  function montajesBorradosPend() { return Object.keys(montajesBorrados); }
+  function montajesPendientes() { return ESPACIO.solo_lectura ? [] : Object.keys(montajesSinSubir); }
+  function montajesBorradosPend() { return ESPACIO.solo_lectura ? [] : Object.keys(montajesBorrados); }
 
   /* Un preset de fábrica se convierte en montaje con un uid derivado de su
      clave, no aleatorio. Es lo que evita que dos dispositivos que arrancan
@@ -2605,6 +2663,7 @@
   /* Guarda un montaje y lo deja listo para subir. Igual que los casos: en
      quirófano se queda esperando y se manda al salir del modo. */
   function guardarMontaje(m, esNuevo) {
+    if (escrituraBloqueada()) return;   // solo lectura
     if (!esNuevo) m.editado_en = (m.editado_en || []).concat(new Date().toISOString());
     montajes[m.montaje_uid] = m;
     if (!MODO_DEMO) montajesSinSubir[m.montaje_uid] = true;   // en la demo no hay nada que subir
@@ -2733,6 +2792,7 @@
      sincronización los borre también en el repositorio. Sin efecto (no hace
      nada) en cuanto no quede ninguno. */
   function limpiarMontajesHeredados() {
+    if (ESPACIO.solo_lectura) return;   // marcaría borrados para subir
     var borrado = false;
     Object.keys(montajes).forEach(function (uid) {
       if (!montajes[uid].de_fabrica && uid.indexOf("mig_") !== 0) return;
@@ -2777,6 +2837,7 @@
   }
 
   function guardarEstado() {
+    if (escrituraBloqueada()) return;   // solo lectura
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         // Los montajes ya no van aquí, pero el bloque de la versión anterior
@@ -2832,7 +2893,7 @@
   function guardarMontajeEnCaso() {
     var caso = casos[casoEditandoUid];
     if (!caso || !montajeCaso) return;
-    if (caso.estado === "cerrado") return;   // candado (auditoría 09-10-2026, C13)
+    if (casoBloqueado(caso)) return;   // candado (auditoría 09-10-2026, C13) y solo lectura
     caso.tecnicas_realizadas = (montajeCaso.tecnicas || []).slice();
     volcarMontajeEnCaso(caso, montajeCaso);
     guardarCaso(caso);
@@ -3564,6 +3625,7 @@
   // (se reemplaza con otro id), así que basta con no repetirla.
   var fotosYaEnIDB = {};
   function guardarFotoIDB(clave, dataUrl) {
+    if (escrituraBloqueada() && String(clave).indexOf("apunte:") !== 0) return Promise.resolve();   // solo lectura
     if (fotosYaEnIDB[clave] === String(dataUrl).length) return Promise.resolve();
     return abrirFotosDB(clave).then(function (db) {
       return new Promise(function (resolve, reject) {
@@ -3587,6 +3649,7 @@
   }
 
   function borrarFotoIDB(clave) {
+    if (escrituraBloqueada() && String(clave).indexOf("apunte:") !== 0) return Promise.resolve();   // solo lectura
     delete fotosYaEnIDB[clave];
     return abrirFotosDB(clave).then(function (db) {
       return new Promise(function (resolve, reject) {
@@ -3951,6 +4014,10 @@
   function syncActivo() {
     return !MODO_DEMO && !!(sync.repo && sync.token);
   }
+  // Subir al repositorio: nunca en un espacio de solo lectura (bajar sí).
+  function subidaActiva() {
+    return syncActivo() && !ESPACIO.solo_lectura;
+  }
 
   function cargarSync() {
     try {
@@ -4027,7 +4094,7 @@
   }
   // Pendiente de subir DE ESTE ESPACIO (los apuntes son globales, no cuentan)
   function hayPendienteEspacio() {
-    return syncActivo() && !!(subiendo || sync.pendiente || casosPendientes().length || borradosPendientes().length ||
+    return subidaActiva() && !!(subiendo || sync.pendiente || casosPendientes().length || borradosPendientes().length ||
       montajesPendientes().length || montajesBorradosPend().length || simPresetsPendientes());
   }
 
@@ -4084,6 +4151,23 @@
         etq.className = "esp-etq";
         etq.textContent = T("esp_activo");
         fila.appendChild(etq);
+        if (lista) {
+          // Solo lectura de ESTE espacio (tanda 3). Marcar o desmarcar pide
+          // confirmar y recarga, como cambiar de espacio.
+          var lSl = document.createElement("label");
+          lSl.className = "esp-sl";
+          lSl.title = T("esp_sl_marcar_tit");
+          var cSl = document.createElement("input");
+          cSl.type = "checkbox";
+          cSl.id = "esp-solo-lectura";
+          cSl.checked = !!ESPACIO.solo_lectura;
+          cSl.addEventListener("change", function () {
+            if (!cambiarSoloLectura(cSl.checked)) cSl.checked = !cSl.checked;
+          });
+          lSl.appendChild(cSl);
+          lSl.appendChild(document.createTextNode(" " + T("esp_sl_marcar")));
+          fila.appendChild(lSl);
+        }
       } else {
         var b = document.createElement("button");
         b.type = "button";
@@ -4111,6 +4195,65 @@
     }
     espacioCambiando = true;
     location.reload();
+  }
+
+  // Marca o quita el solo lectura del espacio ACTIVO en el índice (global, así
+  // que se puede escribir también estando en solo lectura) y recarga. Devuelve
+  // false si se cancela o no se pudo guardar.
+  function cambiarSoloLectura(marcar) {
+    var lista = leerIndiceEspacios();
+    if (!lista) { mensajeSync(T("esp_indice_ilegible"), true); return false; }
+    var msg = T(marcar ? "esp_sl_poner_conf" : "esp_sl_quitar_conf", { nombre: ESPACIO.nombre });
+    if (marcar && hayPendienteEspacio()) msg = T("esp_sl_poner_pend") + msg;
+    if (!confirm(msg)) return false;
+    var entrada = null;
+    for (var i = 0; i < lista.length; i++) if (lista[i] && lista[i].id === ESPACIO.id) entrada = lista[i];
+    if (!entrada) {
+      entrada = { id: ESPACIO.id, nombre: ESPACIO.nombre, prefijo: ESPACIO.prefijo, solo_lectura: false };
+      lista.push(entrada);
+    }
+    entrada.solo_lectura = !!marcar;
+    if (!guardarIndiceEspacios(lista)) { mensajeSync(T("esp_no_guardado"), true); return false; }
+    espacioCambiando = true;
+    location.reload();
+    return true;
+  }
+
+  /* Aspecto de un espacio en solo lectura (el corte de verdad está en el
+     almacén, en fetch y en los guardados: ver escrituraBloqueada()). Aviso
+     único debajo de la cabecera y los botones que escriben desactivados con
+     el motivo. Los controles de las fichas, el Registro, el Checklist y el
+     Organizador los cierra candado() con casoBloqueado()/montajeCasoCerrado(). */
+  var SOLO_LECTURA_IDS = [
+    "btn-crear-plantilla", "lote-duplicar", "lote-renombrar", "lote-autor", "lote-vaciar", "lote-borrar",
+    "btn-guardar-montaje", "btn-duplicar", "btn-renombrar", "btn-vaciar", "btn-borrar",
+    "btn-etiquetas", "btn-nuevo-material", "barra-caso-guardar-plantilla",
+    "guardar-montaje-nuevo", "guardar-montaje-sobrescribir",
+    "mat-guardar", "mat-borrar", "mat-nueva-etiqueta", "et-guardar", "et-borrar", "et-nueva",
+    "btn-importar", "btn-restablecer", "cat-nueva", "cat-borrar", "cat-guardar",
+    "casos-nuevo-cero", "papelera-vaciar", "checklist-vaciar", "registro-vaciar", "sync-subir"
+  ];
+  function aplicarSoloLectura() {
+    if (!ESPACIO.solo_lectura) return;
+    document.body.classList.add("solo-lectura");
+    var cab = document.querySelector("header.barra-sup");
+    if (cab && !document.getElementById("espacio-solo-lectura")) {
+      var ban = document.createElement("p");
+      ban.id = "espacio-solo-lectura";
+      ban.className = "aviso-ficticio aviso-candado no-print";
+      ban.setAttribute("role", "status");
+      ban.setAttribute("data-i18n", "esp_sl_banner");
+      ban.textContent = T("esp_sl_banner");
+      cab.parentNode.insertBefore(ban, cab.nextSibling);
+    }
+    SOLO_LECTURA_IDS.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.disabled = true;
+      el.setAttribute("data-i18n-title", "esp_sl_corto");
+      el.title = T("esp_sl_corto");
+    });
+    candado(document.getElementById("cat-form"), true);
   }
 
   function crearEspacio() {
@@ -4173,6 +4316,8 @@
     if (!syncActivo()) {
       el.textContent = T(MODO_DEMO ? "demo_estado_sync" : "sync_sin_conectar");
       estado = "off";
+    } else if (ESPACIO.solo_lectura && !subiendo) {
+      el.textContent = T("esp_sl_estado");
     } else if (conflicto) {
       el.textContent = T("sync_conflicto");
       estado = "error";
@@ -4329,7 +4474,7 @@
   }
 
   function subir(forzar) {
-    if (!syncActivo()) return;
+    if (!subidaActiva()) return;
     mensajeSync(T("sync_subiendo"));
     leerRemoto()
       .then(function (remoto) {
@@ -4356,7 +4501,7 @@
    * dispositivo se marca conflicto y se deja en manos del usuario.
    * ------------------------------------------------------------------ */
   function programarSubida() {
-    if (!syncActivo()) return;
+    if (!subidaActiva()) return;
     sync.pendiente = true;
     guardarSync();
     programarEnvio();
@@ -4366,7 +4511,7 @@
      los casos, que son archivos aparte y no tienen por qué obligar a
      reescribir el estado entero. */
   function programarEnvio() {
-    if (!syncActivo()) return;
+    if (!subidaActiva()) return;
     pintarEstadoSync();
     if (temporizador) clearTimeout(temporizador);
     temporizador = setTimeout(function () {
@@ -4376,7 +4521,7 @@
   }
 
   function subirAuto() {
-    if (!syncActivo() || subiendo) return;
+    if (!subidaActiva() || subiendo) return;
     if (!sync.pendiente && !casosPendientes().length && !borradosPendientes().length &&
         !montajesPendientes().length && !montajesBorradosPend().length &&
         !apunteDocPendiente() && !simPresetsPendientes()) return;
@@ -4423,7 +4568,7 @@
         if (!remoto.existe || remoto.sha === sync.sha) return;
         var copia = remoto.contenido;
         if (!copia || copia.formato !== "mio-ionm") return;
-        aplicarEstado(copia);
+        permitirBajada(function () { aplicarEstado(copia); });
         sync.sha = remoto.sha;
         sync.fecha = new Date().toISOString();
         // aplicarEstado guarda, y guardar deja pendiente: no lo está
@@ -4478,7 +4623,7 @@
 
   // Cerrar la pestaña con algo sin subir: avisa antes de perderlo de vista
   window.addEventListener("beforeunload", function (e) {
-    if (!espacioCambiando && syncActivo() && (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length || apunteDocPendiente() || simPresetsPendientes())) {
+    if (!espacioCambiando && subidaActiva() && (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length || apunteDocPendiente() || simPresetsPendientes())) {
       e.preventDefault();
       e.returnValue = "";
     }
@@ -4500,7 +4645,7 @@
           escenarios: Object.keys(copia.escenarios || {}).length,
           materiales: (copia.catalogo_usuario || []).length
         }))) { mensajeSync(T("sync_cancelado_baj")); return; }
-        aplicarEstado(copia);
+        permitirBajada(function () { aplicarEstado(copia); });
         sync.sha = remoto.sha;
         sync.fecha = new Date().toISOString();
         // Lo local queda sustituido: ya no hay nada pendiente ni en conflicto
@@ -4710,11 +4855,11 @@
   var casosBorrados = {};
 
   function casosPendientes() {
-    return Object.keys(casosSinSubir);
+    return ESPACIO.solo_lectura ? [] : Object.keys(casosSinSubir);
   }
 
   function borradosPendientes() {
-    return Object.keys(casosBorrados);
+    return ESPACIO.solo_lectura ? [] : Object.keys(casosBorrados);
   }
 
   function uuid() {
@@ -4917,6 +5062,7 @@
   // que no reaparezca solo si otro dispositivo sincroniza antes de que el
   // borrado llegue al repositorio.
   function borrarCaso(uid) {
+    if (escrituraBloqueada()) return;   // solo lectura
     var caso = casos[uid];
     meterEnPapelera(uid, caso);
     delete casos[uid];
@@ -4947,7 +5093,7 @@
     catch (e) { papeleraCasos = {}; }
     // Lo que lleve más de 30 días, fuera (con sus fotos)
     var limite = Date.now() - PAPELERA_DIAS * 86400000;
-    var caducados = Object.keys(papeleraCasos).filter(function (uid) {
+    var caducados = ESPACIO.solo_lectura ? [] : Object.keys(papeleraCasos).filter(function (uid) {
       return Date.parse(papeleraCasos[uid].borrado_en || "") < limite;
     });
     caducados.forEach(function (uid) { vaciarDePapelera(uid, true); });
@@ -4976,6 +5122,7 @@
   // tanto el caso ha vuelto a la lista (lo bajó otro dispositivo), sus fotos
   // son las suyas: entonces solo se quita la entrada.
   function vaciarDePapelera(uid, sinGuardar) {
+    if (escrituraBloqueada()) return;   // solo lectura
     var e = papeleraCasos[uid];
     delete papeleraCasos[uid];
     if (e && e.caso && !casos[uid]) borrarUnCasoLocal(uid, e.caso);
@@ -4988,6 +5135,7 @@
   // de IndexedDB (son las mismas claves que usa el caso vivo) ni nada de la
   // sincronización.
   function recuperarDePapelera(uid) {
+    if (escrituraBloqueada()) return;   // solo lectura
     var e = papeleraCasos[uid];
     if (!e || !e.caso) return;
     if (casos[uid]) {
@@ -5018,6 +5166,7 @@
   // cambio; sellar "editado_en" cada vez dejaba cientos de marcas por
   // cirugía. Desde el Registro se sella como mucho una vez cada 30 minutos.
   function guardarCaso(caso, esNuevo, desdeRegistro) {
+    if (escrituraBloqueada()) return;   // solo lectura: ni sello editado_en ni nada
     if (!esNuevo) {
       var marcas = caso.editado_en || [];
       var ultima = marcas.length ? Date.parse(marcas[marcas.length - 1]) : 0;
@@ -6480,7 +6629,7 @@
   // De uno en uno, para no lanzar veinte peticiones a la vez si vuelve la red
   // con varios casos acumulados.
   function subirCasosPendientes() {
-    if (!syncActivo()) return Promise.resolve();
+    if (!subidaActiva()) return Promise.resolve();
     return casosPendientes().reduce(function (cadena, uid) {
       return cadena.then(function () { return subirCaso(uid); });
     }, Promise.resolve());
@@ -6509,7 +6658,7 @@
   }
 
   function borrarCasosPendientes() {
-    if (!syncActivo()) return Promise.resolve();
+    if (!subidaActiva()) return Promise.resolve();
     return borradosPendientes().reduce(function (cadena, uid) {
       return cadena.then(function () {
         // El caso ha vuelto a estar vivo en este dispositivo (p. ej. con
@@ -6540,7 +6689,8 @@
      dispositivo, o a mano en GitHub, fuera de la app-. Sin esto, ese caso
      se quedaría fantasma en este navegador para siempre: "bajar" solo
      añadía o actualizaba, nunca quitaba lo que había dejado de existir. */
-  function bajarCasos() {
+  function bajarCasos() { return permitirBajada(bajarCasosInterno); }
+  function bajarCasosInterno() {
     if (!syncActivo() || navigator.onLine === false) return Promise.resolve();
     var url = "https://api.github.com/repos/" + sync.repo + "/contents/casos";
     return fetch(url, { headers: cabeceras(), cache: "no-store" })
@@ -6560,7 +6710,9 @@
         // momento se supo que existía en GitHub-. Uno recién creado en este
         // dispositivo y aún sin subir no tiene sha, así que nunca se toca
         // aquí por error.
-        var yaNoExisten = Object.keys(casos).filter(function (uid) {
+        // Solo lectura: nunca se retira nada local (un listado remoto vacío o
+        // incompleto no debe vaciar el archivo).
+        var yaNoExisten = ESPACIO.solo_lectura ? [] : Object.keys(casos).filter(function (uid) {
           return casosSha[uid] && !presentes[uid] && !casosSinSubir[uid] && !casosBorrados[uid];
         });
         yaNoExisten.forEach(function (uid) {
@@ -6639,7 +6791,7 @@
   function apuntesSinRepoPersonal() {
     return !MODO_DEMO && ESPACIO.id !== "archivo" && !personalActivo();
   }
-  function apunteDocPendiente() { return apunteDocSinSubir && !apuntesSinRepoPersonal(); }
+  function apunteDocPendiente() { return apunteDocSinSubir && !apuntesSinRepoPersonal() && !ESPACIO.solo_lectura; }
 
   // Migra la forma antigua (un solo "texto" de cuando el documento era un
   // único textarea, 07-09-2026 tarde) a la de varias secciones con título
@@ -6805,7 +6957,7 @@
   }
 
   function subirApunteDoc(reintento) {
-    if (!apunteDocSinSubir || apuntesSinRepoPersonal()) return Promise.resolve();
+    if (!apunteDocSinSubir || apuntesSinRepoPersonal() || ESPACIO.solo_lectura) return Promise.resolve();
     // Igual que subirCaso(): si las fotos todavía se están recuperando de
     // IndexedDB, se espera antes de subir -si no, se subiría un documento
     // con las fotos a medias-.
@@ -7023,7 +7175,7 @@
   }
 
   function subirMontajesPendientes() {
-    if (!syncActivo()) return Promise.resolve();
+    if (!subidaActiva()) return Promise.resolve();
     return montajesPendientes().reduce(function (cadena, uid) {
       return cadena.then(function () { return subirMontaje(uid); });
     }, Promise.resolve());
@@ -7049,7 +7201,7 @@
   }
 
   function borrarMontajesPendientes() {
-    if (!syncActivo()) return Promise.resolve();
+    if (!subidaActiva()) return Promise.resolve();
     return montajesBorradosPend().reduce(function (cadena, uid) {
       return cadena.then(function () {
         return eliminarMontajeRemoto_(uid, montajesBorrados[uid]).then(function () {
@@ -7066,6 +7218,7 @@
      repositorio sin arriesgarse a pisar lo que otro haya editado. */
   function marcarMontajesNuevos(presentes) {
     var marcados = 0;
+    if (ESPACIO.solo_lectura) return marcados;   // nada se marca para subir
     Object.keys(montajes).forEach(function (uid) {
       if (montajesSha[uid] || presentes[uid] || montajesBorrados[uid]) return;
       if (montajesSinSubir[uid]) return;
@@ -7075,7 +7228,8 @@
     return marcados;
   }
 
-  function bajarMontajes() {
+  function bajarMontajes() { return permitirBajada(bajarMontajesInterno); }
+  function bajarMontajesInterno() {
     if (!syncActivo() || navigator.onLine === false) return Promise.resolve();
     var url = "https://api.github.com/repos/" + sync.repo + "/contents/montajes";
     return fetch(url, { headers: cabeceras(), cache: "no-store" })
@@ -7094,7 +7248,7 @@
         // Lo que dejó de existir allí se retira también aquí, igual que con
         // los casos: solo si tenía sha, o sea si alguna vez se supo que
         // estaba en GitHub.
-        var yaNoExisten = Object.keys(montajes).filter(function (uid) {
+        var yaNoExisten = ESPACIO.solo_lectura ? [] : Object.keys(montajes).filter(function (uid) {
           return montajesSha[uid] && !presentes[uid] &&
                  !montajesSinSubir[uid] && !montajesBorrados[uid];
         });
@@ -8820,7 +8974,7 @@
         var tecB = camposCaso.tecnicas_realizadas || casoAbierto.tecnicas_realizadas || [];
         var parB = document.createElement("div");
         parB.className = "reg-basales";
-        var sinOtroB = !casoEsNuevo && casoAbierto.estado === "cerrado";   // candado: sin «+ Otro» (F17)
+        var sinOtroB = casoBloqueado(casoEsNuevo ? null : casoAbierto);   // candado: sin «+ Otro» (F17)
         pintarBloqueBasales(T("registro_sens_otros"), regFilasBasales(REG_BASALES_SENS, "s_", dB, tecB), "s_", REG_BASALES_LIBRES.sens, parB, dB, sinGuardar, sinOtroB);
         pintarBloqueBasales(T("registro_motores"), regFilasBasales(REG_BASALES_MOT, "m_", dB, tecB), "m_", REG_BASALES_LIBRES.mot, parB, dB, sinGuardar, sinOtroB);
         var bGridB = nodoBotonGridB(dB, tecB, function () { oyentesTecnicasRealizadas.forEach(function (f) { f(); }); }, true);
@@ -9298,15 +9452,18 @@
     pintarBotonCerrarCaso();
     if (camposCaso.estado) camposCaso.estado.addEventListener("change", pintarBotonCerrarCaso);
     // Candado: un caso cerrado se lee pero no se cambia hasta «Reabrir caso»
-    var cerradoF = c.estado === "cerrado" && !casoEsNuevo;
+    var cerradoF = ESPACIO.solo_lectura || (c.estado === "cerrado" && !casoEsNuevo);
     candado(document.querySelector("#dlg-caso .caso-scroll"), cerradoF);
-    document.getElementById("caso-candado").hidden = !cerradoF;
+    var pCand = document.getElementById("caso-candado");
+    pCand.setAttribute("data-i18n", claveCandado("caso_candado_aviso"));
+    pCand.textContent = T(claveCandado("caso_candado_aviso"));
+    pCand.hidden = !cerradoF;
     document.getElementById("caso-guardar").hidden = cerradoF;
     // «Borrar caso» se ve desactivado y con el motivo, en vez de parecer
     // activo y avisar al pulsarlo (auditoría 09-10-2026, F17).
     var bBorrar = document.getElementById("caso-borrar");
     bBorrar.disabled = cerradoF;
-    if (cerradoF) bBorrar.title = T("caso_borrar_cerrado"); else bBorrar.removeAttribute("title");
+    if (cerradoF) bBorrar.title = T(ESPACIO.solo_lectura ? "esp_sl_corto" : "caso_borrar_cerrado"); else bBorrar.removeAttribute("title");
     fichaOrigen = casos[c.caso_uid] || null;
     fichaFirma = firmaFicha();
   }
@@ -9350,7 +9507,7 @@
     if (fichaAutoTimer) { clearTimeout(fichaAutoTimer); fichaAutoTimer = null; }
     // Candado (auditoría 09-10-2026, C13): un caso cerrado no se guarda por
     // ninguna vía; solo «Reabrir caso» (cerrar = true) cambia su estado.
-    if (!cerrar && fichaCerrada()) return true;
+    if ((!cerrar && fichaCerrada()) || ESPACIO.solo_lectura) return true;
     var c = leerFichaCaso();
     if (!c.fecha) {
       var err = document.getElementById("caso-error");
@@ -9392,7 +9549,16 @@
   /* ¿La ficha abierta es la de un caso cerrado? Se mira el caso tal como se
      pintó (fichaOrigen), que es lo que decidió el candado de la pantalla. */
   function fichaCerrada() {
-    return !!(!casoEsNuevo && fichaOrigen && fichaOrigen.estado === "cerrado");
+    return !!ESPACIO.solo_lectura || !!(!casoEsNuevo && fichaOrigen && fichaOrigen.estado === "cerrado");
+  }
+  /* Tanda 3 (solo lectura): un caso está bloqueado si está cerrado O si todo
+     el espacio es de solo lectura (con c vacío cuenta solo el espacio). Es el
+     único criterio de «no se toca»; los avisos usan claveCandado(). */
+  function casoBloqueado(c) {
+    return !!ESPACIO.solo_lectura || !!(c && c.estado === "cerrado");
+  }
+  function claveCandado(clave) {
+    return ESPACIO.solo_lectura ? "esp_sl_aviso" : clave;
   }
   /* Botones que salen de la ficha (Abrir en el Registro, Editar montaje):
      antes guardaban siempre, y así sellaban `editado_en` y subían el caso
@@ -9917,7 +10083,7 @@
     // caso o ya está cerrado (candado), no se ofrece.
     (casosHidratados[uid] || Promise.resolve()).then(function () {
       if (!dlgCaso.open || !casoAbierto || casoAbierto.caso_uid !== uid) return;
-      if (casoAbierto.estado === "cerrado") return;
+      if (casoBloqueado(casoAbierto)) return;
       if (!dlgPlantillaCasoNuevo) {
         var d = document.createElement("dialog");
         d.className = "no-print";
@@ -10101,7 +10267,7 @@
     var b = document.getElementById("caso-cerrar");
     var ctl = camposCaso.estado;
     var estado = ctl ? ctl.value : (casoAbierto && casoAbierto.estado);
-    b.hidden = estado === "cancelado";
+    b.hidden = estado === "cancelado" || !!ESPACIO.solo_lectura;   // solo lectura: ni cerrar ni reabrir
     b.textContent = T(estado === "cerrado" ? "caso_reabrir" : "caso_cerrar");
   }
   document.getElementById("caso-cerrar").addEventListener("click", function () {
@@ -12816,6 +12982,7 @@
   }
   function esFavorita(uid) { return favoritasPlantillas().indexOf(uid) !== -1; }
   function alternarFavorita(uid) {
+    if (ESPACIO.solo_lectura) { avisoGuardado(T("esp_sl_aviso"), true); return; }   // la lista es de este espacio
     var todas = favoritasTodas(), k = claveFavoritas();
     var lista = (todas[k] || []).slice();
     var i = lista.indexOf(uid);
@@ -13197,7 +13364,7 @@
       nombre.textContent = caso ? ((caso.ID_Caso || "") + (caso.nombre_caso ? " — " + caso.nombre_caso : "")) : "";
       if (caso) anadirRotuloEquipo(nombre, caso);
       if (MODO_DEMO) nombre.appendChild(nodoFicticio());
-      ay.textContent = T(montajeCasoCerrado() ? "montaje_candado_aviso" : "barra_caso_ay");
+      ay.textContent = T(montajeCasoCerrado() ? claveCandado("montaje_candado_aviso") : "barra_caso_ay");
       acciones.hidden = false;
     } else {
       // Pedido el 06-09-2026: ya no vive fuera de las 6 pantallas, y no se
@@ -13225,6 +13392,7 @@
      dragstart. «Volver al caso» sigue activo. guardarMontajeEnCaso() no
      escribe en un cerrado, por si algo se escapara. */
   function montajeCasoCerrado() {
+    if (ESPACIO.solo_lectura) return true;   // también las plantillas: nada se edita
     var c = montajeCaso && casos[casoEditandoUid];
     return !!(c && c.estado === "cerrado");
   }
@@ -13237,7 +13405,7 @@
     ["barra-caso-cargar-plantilla"].forEach(function (id) {
       var b = document.getElementById(id);
       b.disabled = cerr;
-      if (cerr) b.title = T("montaje_candado_aviso"); else b.removeAttribute("title");
+      if (cerr) b.title = T(claveCandado("montaje_candado_aviso")); else b.removeAttribute("title");
     });
   }
 
@@ -13301,6 +13469,7 @@
   });
 
   document.getElementById("fichero-importar").addEventListener("change", function (e) {
+    if (ESPACIO.solo_lectura) { e.target.value = ""; avisoGuardado(T("esp_sl_aviso"), true); return; }
     var fichero = e.target.files && e.target.files[0];
     if (!fichero) return;
     var lector = new FileReader();
@@ -13347,6 +13516,7 @@
   // como cualquier cambio (y si en GitHub ya existía, se fusiona, ver
   // fusionarCaso()).
   function importarCopiaCompleta(completa) {
+    if (ESPACIO.solo_lectura) return;
     var nCasos = 0, nMontajes = 0, conApuntes = false;
     Object.keys(completa.casos || {}).forEach(function (uid) {
       var c = completa.casos[uid];
@@ -13557,7 +13727,8 @@
     document.getElementById("tile-tecnicas-mio").hidden = !hayTecnicasMio();
   }
 
-  function bajarTecnicasMio() {
+  function bajarTecnicasMio() { return permitirBajada(bajarTecnicasMioInterno); }
+  function bajarTecnicasMioInterno() {
     if (MODO_DEMO || !syncActivo() || navigator.onLine === false) return Promise.resolve();
     // Del repositorio personal si lo hay (destinoRuta)
     var ruta = "referencia/tecnicas-mio.json";
@@ -15734,7 +15905,7 @@
   function simPresetsPendientes() {
     // Puede llamarse al arrancar, antes de que este bloque se haya ejecutado
     // (pintarEstadoSync): entonces aún no hay nada que mirar.
-    if (!SIM_PRESETS_KEY) return false;
+    if (!SIM_PRESETS_KEY || ESPACIO.solo_lectura) return false;
     simCargarPresets();
     return Object.keys(simPresetsSinSubir).length > 0 || Object.keys(simPresetsBorrados).length > 0;
   }
@@ -15769,7 +15940,7 @@
     });
   }
   function subirSimPresetsPendientes() {
-    if (!syncActivo()) return Promise.resolve();
+    if (!subidaActiva()) return Promise.resolve();
     simCargarPresets();
     return Object.keys(simPresetsSinSubir).reduce(function (cadena, id) {
       return cadena.then(function () { return subirSimPreset(id); });
@@ -15791,7 +15962,7 @@
     });
   }
   function borrarSimPresetsPendientes() {
-    if (!syncActivo()) return Promise.resolve();
+    if (!subidaActiva()) return Promise.resolve();
     simCargarPresets();
     return Object.keys(simPresetsBorrados).reduce(function (cadena, id) {
       return cadena.then(function () {
@@ -15804,7 +15975,8 @@
   }
   // Baja solo lo que ha cambiado (sha distinto) y retira lo que ya no está
   // allí; nunca pisa un preset pendiente de subir ni resucita uno borrado.
-  function bajarSimPresets() {
+  function bajarSimPresets() { return permitirBajada(bajarSimPresetsInterno); }
+  function bajarSimPresetsInterno() {
     if (!syncActivo() || navigator.onLine === false) return Promise.resolve();
     simCargarPresets();
     var url = "https://api.github.com/repos/" + sync.repo + "/contents/simulador";
@@ -17124,7 +17296,7 @@
   // ¿El Checklist está vinculado a un caso cerrado? Entonces es de solo
   // lectura, como su ficha y su Registro (auditoría 09-10-2026, C13).
   function checklistCerrado() {
-    return !!(checklistCasoUid && casos[checklistCasoUid] && casos[checklistCasoUid].estado === "cerrado");
+    return !!ESPACIO.solo_lectura || !!(checklistCasoUid && casos[checklistCasoUid] && casos[checklistCasoUid].estado === "cerrado");
   }
   function checklistMarcar(itemId, marcado) {
     if (checklistCerrado()) return;   // candado (auditoría 09-10-2026, C13)
@@ -17529,7 +17701,7 @@
     if (cerradoCk) {
       var avisoCk = document.createElement("p");
       avisoCk.className = "aviso-ficticio aviso-candado";
-      avisoCk.textContent = T("checklist_candado_aviso");
+      avisoCk.textContent = T(claveCandado("checklist_candado_aviso"));
       cont.appendChild(avisoCk);
     }
     CHECKLIST_GRUPOS.forEach(function (g) {
@@ -17547,7 +17719,7 @@
         var inp = document.createElement("input");
         inp.type = "checkbox";
         inp.checked = !!valores[it.id];
-        if (cerradoCk) { inp.disabled = true; lab.title = T("checklist_candado_aviso"); }
+        if (cerradoCk) { inp.disabled = true; lab.title = T(claveCandado("checklist_candado_aviso")); }
         inp.addEventListener("change", function () { checklistMarcar(it.id, inp.checked); });
         var span = document.createElement("span");
         span.textContent = T("checklist_" + it.id);
@@ -17583,7 +17755,7 @@
   // texto-, pero este botón da la confirmación visible de que no se ha
   // perdido nada, mismo motivo que "Guardar montaje" en el Organizador.
   document.getElementById("checklist-guardar").addEventListener("click", function () {
-    if (checklistCerrado()) { avisoGuardado(T("checklist_candado_aviso"), true); return; }
+    if (checklistCerrado()) { avisoGuardado(T(claveCandado("checklist_candado_aviso")), true); return; }
     avisoGuardado(T("checklist_guardado"));
   });
   document.getElementById("checklist-vaciar").addEventListener("click", function () {
@@ -18174,7 +18346,7 @@
     var c = registroCaso();
     // Candado (auditoría 09-10-2026, C13): un caso cerrado no se guarda, ni
     // con «Guardar» ni con «Imprimir» ni al salir.
-    if (c && c.estado === "cerrado") return;
+    if (casoBloqueado(c)) return;
     if (c) guardarCaso(c, false, true); else registroGuardarModeloCero();
   }
   function registroGuardar() {
@@ -18592,7 +18764,7 @@
     var tecRB = cRB ? (cRB.tecnicas_realizadas || []) : null;
     var par = document.createElement("div");
     par.className = "reg-basales";
-    var sinOtroRB = !!(cRB && cRB.estado === "cerrado");   // candado: sin «+ Otro» (F17)
+    var sinOtroRB = casoBloqueado(cRB);   // candado: sin «+ Otro» (F17)
     pintarBloqueBasales(T("registro_sens_otros"), regFilasBasales(REG_BASALES_SENS, "s_", d, tecRB), "s_", REG_BASALES_LIBRES.sens, par, d, null, sinOtroRB);
     pintarBloqueBasales(T("registro_motores"), regFilasBasales(REG_BASALES_MOT, "m_", d, tecRB), "m_", REG_BASALES_LIBRES.mot, par, d, null, sinOtroRB);
     var bGridB = nodoBotonGridB(d, tecRB, function () { registroGuardarYa(); renderRegistroContenido(); }, true);
@@ -18703,14 +18875,14 @@
     document.getElementById("registro-vaciar").hidden = !!registroCaso();
     // Candado: con el caso cerrado, ni barra de apuntar ni hoja abierta
     var cR = registroCaso();
-    var cerradoR = !!(cR && cR.estado === "cerrado");
+    var cerradoR = casoBloqueado(cR);
     // Sin «Guardar» con candado, como en la ficha (#caso-guardar); el aviso
     // de su manejador queda como red (auditoría 09-10-2026).
     document.getElementById("registro-guardar").hidden = cerradoR;
     if (cerradoR) {
       regTerminarEdicion();
       regHoja = "";
-      cont.insertBefore(regNodo("p", "aviso-ficticio aviso-candado", T("reg_candado_aviso")), cont.firstChild);
+      cont.insertBefore(regNodo("p", "aviso-ficticio aviso-candado", T(claveCandado("reg_candado_aviso"))), cont.firstChild);
     } else {
       pintarBarraApuntar(cont);
       if (regHoja) pintarPanelApuntar(cont);
@@ -20933,7 +21105,7 @@
   });
   document.getElementById("registro-guardar").addEventListener("click", function () {
     var cG = registroCaso();
-    if (cG && cG.estado === "cerrado") { avisoGuardado(T("reg_candado_aviso"), true); return; }
+    if (casoBloqueado(cG)) { avisoGuardado(T(claveCandado("reg_candado_aviso")), true); return; }
     registroGuardarYa();
     avisoGuardado(T("registro_guardado"));
   });
@@ -22432,6 +22604,7 @@
   pintarEstadoSync();
   renderPerfilUsuario();
   renderTodo();
+  aplicarSoloLectura();
   // Arranca plegado, igual que Técnicas/Cajas/Resumen -pedido del usuario,
   // para que las cuatro ocupen lo mismo al cargar la página-. Solo en móvil:
   // en escritorio el catálogo es la barra lateral fija pensada para verse
@@ -22439,7 +22612,7 @@
   // "Pantalla ancha" en style.css); plegarla también ahí obligaría a
   // desplegarla a mano antes de poder colocar nada.
   if (window.matchMedia("(max-width: 900px)").matches) plegarCatalogo(true);
-  avisoGuardado(MODO_DEMO ? "" : T(syncActivo() ? "guardado_nube" : "guardado_local"));
+  avisoGuardado(MODO_DEMO ? "" : T(ESPACIO.solo_lectura ? "esp_sl_corto" : (syncActivo() ? "guardado_nube" : "guardado_local")));
   // Traer lo último de GitHub al abrir, sin preguntar si no hay nada local
   // sin subir. Si lo hay, sube en vez de bajar.
   bajarAuto();

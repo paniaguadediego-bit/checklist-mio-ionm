@@ -3,8 +3,8 @@
 ## 1. Estado
 
 - Proyecto: MIO-Check (repo público `checklist-mio-ionm` y repo privado de datos `../checklist-mio-datos`).
-- Fase: **piloto multihospital, tandas 1 y 2 de 9 cerradas** (almacén local por espacio y selector de espacios). Nada a medias. Todo subido en los dos repos.
-- Versión actual: `?v=20261018c` (seis etiquetas de `index.html`).
+- Fase: **piloto multihospital, tandas 1, 2 y 3 de 9 cerradas** (almacén por espacio, selector, equipo por defecto por espacio y solo lectura). Nada a medias. Todo subido en los dos repos.
+- Versión actual: `?v=20261018d` (seis etiquetas de `index.html`).
 - Plan completo de las 9 tandas, con líneas de código y riesgos: `../checklist-mio-datos/docs/AUDITORIA-ESPACIOS-SEUDONIMIZACION-2026-10-18.md`. Contexto del piloto, grupos y usuarios: memoria `project_piloto_hospitales` y diario privado.
 
 ## 2. Hecho en esta sesión (11 a 18-10-2026)
@@ -22,6 +22,8 @@
 **Tanda 2 hecha (18-10)**: selector en el diálogo ☁ (`cambiarEspacio()`, `crearEspacio()`), repo inmutable (`repo_origen`, `leerCamposSync()`), `espacio_id` en `estado.json` y en la copia, «Importar copia» pide confirmar si no coincide (confirmación, no bloqueo: decisión del usuario), Mis apuntes globales (solo suben al repo personal; la copia exportada los lleva solo en «archivo»), repo corregible mientras el espacio esté vacío.
 
 **Pendiente de la tanda 2 (sin tocar)**: `bajar()` no compara `espacio_id` remoto con el activo; el texto `sync_personal_sin` ya no es cierto fuera de «archivo»; Técnicas IONM y Simulador siguen prefijados por espacio; `pintarTileApuntes()` en carga en frío no muestra la tarjeta por la excepción de transición. NO verificado: subida/bajada reales a GitHub, importar copia con casos reales, «Restablecer demo», escritorio e inglés.
+
+**Tanda 3 hecha (18-10)**: casilla «Solo lectura» por espacio en el diálogo ☁ (`cambiarSoloLectura()`), `casoBloqueado()`, escritura cortada en origen, `fetch` solo GET, banner 🔒. Pendiente del USUARIO: marcar «archivo» como solo lectura antes del simulacro (los 29 casos reales, cancelados incluidos, quedan protegidos; no se tocó el estado de los 4 cancelados). Decisiones tomadas por el subagente a validar: en solo lectura las bajadas no retiran en local lo que falte en remoto; las preferencias con clave prefijada (perfil, orden, último equipo) no persisten; Mis apuntes se editan pero no suben. NO verificado: GitHub real, datos reales, inglés, escritorio, arrastrar chips, «Cambiar autor» (inalcanzable en solo lectura), texto «Sin conectar» en la cabecera.
 
 **Siguiente**: el usuario quiere, al acabar las peticiones actuales, un **simulacro de uso** con tres perfiles: él mismo, un médico del HUNSC y un médico de Pamplona. Equipo por defecto: **HUNSC = Cadwell, Pamplona = Inomed** (HECHO el 18-10: `equipo_defecto` por espacio, selector en el diálogo ☁; hay que marcar Cadwell en el espacio del HUNSC e Inomed en el de Pamplona). Después, tanda 3 (solo lectura) según la auditoría. Las dos ideas de la sección 4 siguen sin respuesta.
 
