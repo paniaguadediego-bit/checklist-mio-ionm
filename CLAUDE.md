@@ -257,6 +257,7 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Alarmas: qué cuenta como escrita y derivación al caso | `alarmaEscrita()`, `alarmasEnCaso()`, `concordanciaDudosa()`, `motivoConcordancia()` | ver `grep` |
 | Basales compartidas ficha ↔ Registro | `REG_BASALES_SENS/MOT`, `regFilasBasales()`, `pintarBloqueBasales()`, `seccionBasalesInforme()`, `t: "basales_reg"` en `campoCaso()`; en pantalla, lista por técnica (una línea con valores y %, casillas grandes al tocarla, «= Basal»): `regComparacionFila()`, `regBasalAbiertas`; dos medidas por fase: `REG_BASALES_MEDIDAS`, `regBasalValor()`, `regBasalMigrar()`, `regBasalTexto()` | ver `grep` |
 | Modo demostración (?demo) | `MODO_DEMO`, `almacenDemo()`, `sembrarDemo()`, `restablecerDemo()`, `prepararDemo()`; bloqueo de `fetch` a otros orígenes al principio del archivo; registros de ejemplo con `registroDemo(v, lineas)` | ver `grep` |
+| Espacios de trabajo / almacén (18-10-2026, tanda 1, sin interfaz): un espacio = un repo de GitHub con sus datos locales separados. El `localStorage` envuelto lo fija `almacenEspacio(real, prefijo, globales, ajenos)` con el prefijo calculado UNA vez al arrancar desde el puntero `mio_ionm_espacio_activo` + el índice `mio_ionm_espacios_v1`; «archivo» = prefijo vacío (los datos de siempre, sin mover nada), el resto `mio_ionm_esp_<id>__`; IndexedDB `mio_ionm_fotos` (archivo) o `mio_ionm_fotos__<id>`; `key()`/`length` solo ven el espacio activo. Solo la lista blanca `CLAVES_GLOBALES` no se prefija | `resolverEspacio()`, `espacioActivo()`, `ESPACIO`, `CLAVES_GLOBALES`, `almacenEspacio()`, `FOTOS_DB_NOMBRE` | ver `grep` |
 | Visita guiada opcional (antes "Empieza aquí"; solo ?demo) | `TOUR_PASOS`, `TOUR_GRUPO_CASO`, `tourIr()`, `tourPreparar()`, `tourPintarTextos()`, `tourReservarSitio()`, `tourTerminar()` | ver `grep` |
 | Revisión del montaje (avisos del Resumen, no se guardan) | `revisarMontaje()`, `matTecGrupos()`; datos en `material_tecnicas` de `data/surgeries.js` | ver `grep` |
 | Equipo de lo nuevo / rótulo del equipo | `equipoNuevo()` (`"por_defecto"` en `equipos`), `anadirRotuloEquipo()` (`.barra-caso-equipo`) | ver `grep` |
@@ -356,6 +357,12 @@ archivos separados, con nombre derivado de un identificador único.
   Lo que escribe el usuario no se traduce nunca.
 - **El DOM se construye con `createElement` y `textContent`**, no con `innerHTML`
   concatenando datos. Hay nombres con acentos y comillas.
+- **Claves nuevas de `localStorage`: toda clave nueva se prefija por defecto**
+  (el almacén envuelto lo hace solo según el espacio activo; no hay que hacer
+  nada). Si de verdad es una preferencia del dispositivo que debe compartirse
+  entre espacios, se añade a la lista blanca `CLAVES_GLOBALES`. Nunca se usa
+  `window.localStorage` directo: cruzaría datos entre hospitales. Igual con
+  IndexedDB: el nombre de la base lleva el id del espacio.
 - Comprobar sintaxis antes de dar nada por bueno: `node --check app.js`.
 
 ## Al desplegar: subir el `?v=` de index.html

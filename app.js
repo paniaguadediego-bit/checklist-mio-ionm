@@ -67,28 +67,131 @@
       return fetchReal(recurso, opciones);
     };
   }
+  /* Espacios de trabajo (18-10-2026, tanda 1: solo el almacén, sin interfaz).
+   * Un espacio = un repositorio de GitHub con SUS datos locales totalmente
+   * separados. RIESGO que esto evita: que casos o plantillas de un hospital
+   * acaben, por una clave olvidada, en el repositorio o en la vista de otro.
+   * Por eso la regla es "todo se prefija por defecto": solo las claves de la
+   * lista blanca CLAVES_GLOBALES (preferencias del dispositivo) se comparten
+   * entre espacios. Una clave nueva que alguien olvide declarar queda
+   * AISLADA (falla hacia el lado seguro), nunca compartida.
+   * El espacio "archivo" tiene prefijo VACÍO: son los datos que ya había
+   * (mio_ionm_*), que así ni se copian ni se mueven. Los demás espacios usan
+   * ESPACIO_PREFIJO_BASE + id + "__".
+   * El prefijo se calcula UNA vez al arrancar (cambiar de espacio = cambiar
+   * el puntero y recargar la página) y queda fijado en la clausura: una
+   * petición en vuelo no puede escribir en otro espacio aunque el puntero
+   * cambie mientras tanto. */
+  var ESPACIO_INDICE_KEY = "mio_ionm_espacios_v1";   // [{id, nombre, prefijo, solo_lectura}]
+  var ESPACIO_PUNTERO_KEY = "mio_ionm_espacio_activo";
+  var ESPACIO_PREFIJO_BASE = "mio_ionm_esp_";
+  var CLAVES_GLOBALES = [
+    ESPACIO_INDICE_KEY, ESPACIO_PUNTERO_KEY,
+    "mio_ionm_idioma", "mio_ionm_tema_v2", "mio_ionm_tema_claro_v1",
+    "mio_ionm_sin_ayudas_v1", "mio_ionm_crono_plegado",
+    "mio_ionm_sync_personal_v1"
+  ];
+  var ESPACIO = resolverEspacio(window);   // {id, nombre, prefijo, solo_lectura}
+
+  // Cuántos espacios hay y cuál está activo lo dice el índice del
+  // localStorage REAL (nunca el envuelto: el índice es global).
+  function resolverEspacio(ventana) {
+    var archivo = { id: "archivo", nombre: "Archivo", prefijo: "", solo_lectura: false };
+    if (MODO_DEMO) return archivo;   // la demo manda sobre todo y no toca el índice
+    var real = null;
+    try { real = ventana.localStorage; } catch (e) { real = null; }
+    if (!real) return archivo;
+    var crudo = null, lista = null;
+    try { crudo = real.getItem(ESPACIO_INDICE_KEY); } catch (e2) { crudo = null; }
+    if (crudo === null) {
+      // Primer arranque con esta versión: solo "archivo". No se copia nada.
+      try {
+        real.setItem(ESPACIO_INDICE_KEY, JSON.stringify([archivo]));
+        real.setItem(ESPACIO_PUNTERO_KEY, "archivo");
+      } catch (e3) { /* sin persistencia: se sigue con "archivo" en memoria */ }
+      return archivo;
+    }
+    // Índice ilegible: NO se sobrescribe (podría haber más espacios dentro);
+    // se trabaja en "archivo", que es lo seguro, y se deja la clave como está.
+    try { lista = JSON.parse(crudo); } catch (e4) { lista = null; }
+    if (Object.prototype.toString.call(lista) !== "[object Array]") return archivo;
+    var puntero = "archivo";
+    try { puntero = real.getItem(ESPACIO_PUNTERO_KEY) || "archivo"; } catch (e5) { puntero = "archivo"; }
+    if (puntero === "archivo") return archivo;
+    for (var i = 0; i < lista.length; i++) {
+      var e = lista[i];
+      // El prefijo se recalcula en vez de fiarse del índice: una entrada mal
+      // escrita (p. ej. prefijo "mio_ionm_") mezclaría datos con "archivo".
+      if (e && e.id === puntero && /^[A-Za-z0-9-]+$/.test(puntero)) {
+        return {
+          id: puntero,
+          nombre: String(e.nombre || puntero),
+          prefijo: ESPACIO_PREFIJO_BASE + puntero + "__",
+          solo_lectura: !!e.solo_lectura
+        };
+      }
+    }
+    return archivo;   // puntero a un espacio que no existe
+  }
+
+  // Espacio con el que arrancó esta carga de la página (copia, para que
+  // nadie pueda modificar el prefijo fijado). Lo usarán las tandas 2-4.
+  function espacioActivo() {
+    return { id: ESPACIO.id, nombre: ESPACIO.nombre, prefijo: ESPACIO.prefijo, solo_lectura: ESPACIO.solo_lectura };
+  }
+
   var localStorage = (function () {
     var real = null;
     try { real = window.localStorage; } catch (e) { real = null; }
-    return (MODO_DEMO && real) ? almacenDemo(real) : real;
+    if (!real) return real;
+    // Demo: todo con su prefijo, nada global (como antes de los espacios).
+    if (MODO_DEMO) return almacenEspacio(real, DEMO_PREFIJO, [], []);
+    // Resto: el prefijo del espacio activo; con prefijo vacío ("archivo") hay
+    // que ocultar las claves de los OTROS espacios y de la demo, que si no
+    // aparecerían en los recorridos por key(i) (p. ej. cargarCasos()).
+    return almacenEspacio(real, ESPACIO.prefijo, CLAVES_GLOBALES, [ESPACIO_PREFIJO_BASE, DEMO_PREFIJO]);
   })();
 
-  function almacenDemo(real) {
+  /* Almacén con prefijo. Lo que se guarda y se lee de más abajo no sabe nada
+   * del espacio ni de la demo. key()/length se filtran AQUÍ, una vez, para no
+   * tener que acordarse en cada recorrido del código:
+   * - prefijo no vacío: solo se ven las claves de ese espacio (sin el
+   *   prefijo); las globales no se enumeran;
+   * - prefijo vacío: se ven las claves "de siempre" y las globales, pero no
+   *   las que empiezan por alguno de `ajenos` (otros espacios, demo). */
+  function almacenEspacio(real, prefijo, globales, ajenos) {
+    function esGlobal(k) {
+      for (var i = 0; i < globales.length; i++) if (globales[i] === k) return true;
+      return false;
+    }
+    function real_(k) { return esGlobal(k) ? k : prefijo + k; }
     function claves() {
       var out = [];
       for (var i = 0; i < real.length; i++) {
         var k = real.key(i);
-        if (k && k.indexOf(DEMO_PREFIJO) === 0) out.push(k.slice(DEMO_PREFIJO.length));
+        if (!k) continue;
+        if (prefijo) {
+          if (k.indexOf(prefijo) === 0) out.push(k.slice(prefijo.length));
+        } else {
+          var ajeno = false;
+          for (var j = 0; j < ajenos.length; j++) if (k.indexOf(ajenos[j]) === 0) { ajeno = true; break; }
+          if (!ajeno) out.push(k);
+        }
       }
       return out;
     }
     return {
-      getItem: function (k) { return real.getItem(DEMO_PREFIJO + k); },
-      setItem: function (k, v) { real.setItem(DEMO_PREFIJO + k, String(v)); },
-      removeItem: function (k) { real.removeItem(DEMO_PREFIJO + k); },
+      getItem: function (k) { return real.getItem(real_(k)); },
+      setItem: function (k, v) { real.setItem(real_(k), String(v)); },
+      removeItem: function (k) { real.removeItem(real_(k)); },
       key: function (i) { var c = claves(); return i < c.length ? c[i] : null; },
       get length() { return claves().length; },
-      borrarTodo: function () { claves().forEach(function (k) { real.removeItem(DEMO_PREFIJO + k); }); }
+      // Solo la usa "Restablecer demo": borra las claves del prefijo. Con
+      // prefijo vacío NO borra nada (borraría el archivo real).
+      borrarTodo: function () {
+        if (!prefijo) return;
+        claves().forEach(function (k) { real.removeItem(prefijo + k); });
+      }
     };
   }
 
@@ -3399,7 +3502,11 @@
    * son lo único que necesita el dataUrl, y ninguna de las dos pasa en
    * el primer instante-.
    * ---------------------------------------------------------------- */
-  var FOTOS_DB_NOMBRE = MODO_DEMO ? "mio_ionm_fotos_demo" : "mio_ionm_fotos";
+  // Una base por espacio, por la misma razón que el prefijo del localStorage:
+  // las fotos de un hospital no pueden verse desde otro. "archivo" conserva
+  // el nombre de siempre, así que sus fotos no se tocan.
+  var FOTOS_DB_NOMBRE = MODO_DEMO ? "mio_ionm_fotos_demo"
+    : (ESPACIO.id === "archivo" ? "mio_ionm_fotos" : "mio_ionm_fotos__" + ESPACIO.id);
   var FOTOS_DB_ALMACEN = "fotos";
   var fotosDBPromesa = null;
 
@@ -6299,6 +6406,9 @@
    * sueltos (dos personas editando a la vez). Mismo mecanismo de subida
    * automática que el resto (programarEnvio()).
    * ---------------------------------------------------------------- */
+  // TODO tanda 2: apuntes = ámbito personal global (decisión: solo personales,
+  // nunca dentro de un espacio de hospital). De momento va prefijado como el
+  // resto; en "archivo" (prefijo vacío) no cambia nada.
   var APUNTE_DOC_KEY = "mio_ionm_apunte_doc_v1";
   var apunteDoc = { secciones: [], carpetas: [], fotos: [], editado_en: null };
   var apunteDocSha = null;
