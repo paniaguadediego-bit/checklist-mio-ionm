@@ -4,7 +4,7 @@
  *
  * Qué hace: lee los catálogos y los casos del repositorio privado de datos,
  * y RECONSTRUYE ENTERAS las hojas Casos, Tecnicas_long, Material_long,
- * Listas y Meta. Nunca actualiza fila a fila.
+ * Correlacion_long, Listas y Meta. Nunca actualiza fila a fila.
  *
  * De ahí salen gratis tres cosas:
  *   - Una técnica nueva crea su columna TEC_<etiqueta> sola, con su hermana
@@ -14,15 +14,62 @@
  *     columnas se generan resolviendo el id contra el catálogo actual.
  *   - El Sheet es desechable: si algo se rompe, se borra y se reconstruye.
  *
- * Instalación: ver el mensaje que acompaña a este archivo. Resumen: pega
- * esto en Extensiones → Apps Script del Google Sheet, rellena las tres
- * Script Properties (GITHUB_TOKEN, REPO_DATOS, REPO_CODIGO) y ejecuta
- * crearDisparadorDiario() una vez.
+ * ---------------------------------------------------------------------
+ * CAMBIOS DE LA VERSIÓN SEUDÓNIMA (18-10-2026, esquema 2)
+ * ---------------------------------------------------------------------
+ * Por qué: desde el esquema 2 la app ya no sube al repositorio el nombre del
+ * caso, el supervisor, el texto del centro, el personal de quirófano, la
+ * firma, las imágenes ni la fecha/hora reales: sube el mes, la edad en
+ * tramos de 5 y el tiempo en minutos desde la incisión. Este Sheet tiene que
+ * ser homogéneo y NO enseñar más de lo que enseña un caso nuevo, aunque el
+ * repositorio todavía tenga casos antiguos (esquema 1, congelados, con fecha
+ * y edad exactas y horas HH:MM). Por eso este script lee los DOS esquemas y
+ * lo reduce todo al volcarlo:
+ *   - Fecha de todas las hojas = mes y año (se escribe como fecha del día 1
+ *     con formato aaaa-mm, para que Looker la siga tratando como fecha).
+ *   - edad = tramo ("45-49", "90+"); el esquema 1 se convierte aquí.
+ *   - Horas = minutos desde la incisión (min_inicio, min_fin; en
+ *     Correlacion_long, Min_inicio y Min_fin). Un caso antiguo (HH:MM) solo
+ *     se puede convertir si tiene marcado el hito "Incisión"; si no, la celda
+ *     queda vacía, igual que en el CSV de la app.
+ *   - Fuera: nombre_caso, supervisor, texto del centro (ahora centro_id y
+ *     centro_codigo), guardado_en y ultima_edicion reales (ahora
+ *     guardado_mes y ultima_edicion_mes, solo el mes) y la hora de la última
+ *     sincronización (ahora solo el mes de la reconstrucción).
+ *   - Nuevo: rev (contador de guardados), centro_id/centro_codigo, y en Meta
+ *     el espacio (espacio_id del estado.json), el recuento por esquema y un
+ *     AVISO si un caso de esquema 2 trae algún dato exacto (no se vuelca).
+ *   - CONGELADO = 1 (más abajo) para un hospital archivado: no reconstruye ni
+ *     reprograma nada y el Sheet se queda tal cual.
+ *   - Se quita el valor por defecto de REPO_CODIGO: el destino va SOLO en las
+ *     Script Properties.
+ *   Se conserva todo lo demás: evolucion_postop, Magnitud_pct, equipo
+ *   Inomed/Cadwell/Genérico, Tecnicas_long, Material_long, Correlacion_long,
+ *   Listas y Meta. La lógica de la correlación de alarmas NO se repite aquí:
+ *   la deja ya calculada la app en correlato_filas.
+ *   Ojo: cambian los nombres de algunas columnas (nombre_caso, supervisor,
+ *   centro, hora_inicio, hora_fin, ultima_edicion, guardado_en,
+ *   Hora_inicio, Hora_fin). Si un informe de Looker las usaba, hay que
+ *   reconectarlo con las nuevas.
+ *
+ * CÓMO PEGARLO: en el Sheet, Extensiones → Apps Script; borrar TODO el
+ * contenido del editor, pegar este archivo entero, guardar, ejecutar
+ * crearDisparadorDiario() una vez (▶) y luego menú "MIO-Check →
+ * Reconstruir ahora". Las tres Script Properties (GITHUB_TOKEN, REPO_DATOS,
+ * REPO_CODIGO) deben estar rellenas.
  */
 
 /* ------------------------------------------------------------------ *
  * Configuración
  * ------------------------------------------------------------------ */
+
+// 1 = hospital archivado: no reconstruye ni reprograma nada (el Sheet queda
+// como está) y crearDisparadorDiario() solo quita el disparador que hubiera.
+// Para congelar un Sheet: poner 1, guardar y ejecutar crearDisparadorDiario().
+var CONGELADO = 0;
+
+// Versión del modelo de columnas de este Sheet (aparece en Meta).
+var ESQUEMA_SHEET = 2;
 
 // Nombre de las hojas que este script posee por completo. Cualquier otra
 // hoja del documento (por ejemplo, las que construyas tú en Looker) no se
@@ -40,10 +87,11 @@ function obtenerConfig_() {
   var p = PropertiesService.getScriptProperties();
   var token = p.getProperty("GITHUB_TOKEN");
   var repoDatos = p.getProperty("REPO_DATOS");
-  var repoCodigo = p.getProperty("REPO_CODIGO") || "paniaguadediego-bit/checklist-mio-ionm";
+  var repoCodigo = p.getProperty("REPO_CODIGO");
   var ramaCodigo = p.getProperty("REPO_CODIGO_RAMA") || "main";
   if (!token) throw new Error("Falta la Script Property GITHUB_TOKEN. Ve a Configuración del proyecto → Script Properties.");
   if (!repoDatos) throw new Error("Falta la Script Property REPO_DATOS (formato usuario/repositorio).");
+  if (!repoCodigo) throw new Error("Falta la Script Property REPO_CODIGO (formato usuario/repositorio del código público).");
   return { token: token, repoDatos: repoDatos, repoCodigo: repoCodigo, ramaCodigo: ramaCodigo };
 }
 
@@ -169,10 +217,14 @@ function construirCatalogos_(baseData, catalogosGuardados) {
   var t = fusionarCatalogo_(baseData.tecnicas || [], catalogosGuardados.tecnicas);
   var s = fusionarCatalogo_(baseData.servicios || [], catalogosGuardados.servicios);
   var i = fusionarCatalogo_(baseData.intervenciones || [], catalogosGuardados.intervenciones);
+  // Centros (estudio multicéntrico): vacío de fábrica, solo los propios del
+  // estado.json. Del catálogo solo se vuelcan id y código, nunca el nombre.
+  var ce = fusionarCatalogo_(baseData.centros || [], catalogosGuardados.centros);
   return {
     tecnicas: t.lista, TECS: t.indice,
     servicios: s.lista, SERV: s.indice,
-    intervenciones: i.lista, INTERV: i.indice
+    intervenciones: i.lista, INTERV: i.indice,
+    centros: ce.lista, CENTS: ce.indice
   };
 }
 
@@ -220,6 +272,107 @@ function descargarCasos_(repo, token) {
 }
 
 /* ------------------------------------------------------------------ *
+ * Seudonimización al volcar: mes, tramo de edad y minutos desde la
+ * incisión. Son funciones puras (sin APIs de Google). Hacen lo mismo que
+ * mesDe(), tramoEdad() y tMinRelCaso() de app.js, que es lo que usa el CSV
+ * de la app; si cambia una, hay que revisar la otra. Se aplican SIEMPRE, a
+ * los dos esquemas: así un caso antiguo no enseña más que uno nuevo, y si
+ * un caso nuevo trajera por error un dato exacto, tampoco llega a las hojas.
+ * ------------------------------------------------------------------ */
+
+// 1 = antiguo (congelado: fecha y edad exactas, horas HH:MM); 2 = seudónimo.
+function esquemaDe_(c) {
+  return c && typeof c.version_esquema === "number" ? c.version_esquema : 1;
+}
+
+// "2026-10-05" o "2026-10-05T10:22:00Z" -> "2026-10"; vacío si no es una fecha.
+function mesDe_(v) {
+  var m = /^(\d{4})-(\d{2})/.exec(String(v == null ? "" : v));
+  return m ? m[1] + "-" + m[2] : "";
+}
+
+// El mes como fecha (día 1, a mediodía UTC para que el redondeo de zona
+// horaria de Sheets/Looker nunca la haga caer en otro mes). Se escribe con
+// formato aaaa-mm, así que en pantalla solo se ve el mes.
+function aMes_(v) {
+  var mes = mesDe_(v);
+  if (!mes) return "";
+  var p = mes.split("-");
+  return new Date(Date.UTC(+p[0], +p[1] - 1, 1, 12, 0, 0));
+}
+
+function esTramoEdad_(e) {
+  return typeof e === "string" && /^\s*\d+\s*[-+]\s*\d*\s*$/.test(e);
+}
+
+// Edad exacta -> tramo de 5 ("40-44"); desde 90, "90+"; un tramo ya hecho
+// se deja como está; lo que no se entiende queda vacío (nunca se copia).
+function tramoEdad_(e) {
+  if (esTramoEdad_(e)) return e.replace(/\s+/g, "");
+  if (e === "" || e == null) return "";
+  var n = Number(e);
+  if (!isFinite(n) || n < 0) return "";
+  if (n >= 90) return "90+";
+  var lo = Math.floor(n / 5) * 5;
+  return lo + "-" + (lo + 4);
+}
+
+function esNumero_(v) { return typeof v === "number" && isFinite(v); }
+
+// "HH:MM" -> minutos del día; null si no es una hora.
+function minutosDelDia_(v) {
+  var m = /^(\d{1,2}):(\d{2})/.exec(typeof v === "string" ? v : "");
+  return m ? (+m[1]) * 60 + (+m[2]) : null;
+}
+
+// Minutos desde la incisión de un valor de tiempo: un número ya es eso (esquema
+// 2); un "HH:MM" antiguo se convierte con la hora de la incisión del propio
+// caso (hito h_incision del Registro) y, sin ella, queda vacío. 0 es un valor
+// válido, por eso se comprueba el tipo y no si es "verdadero".
+function minRelValor_(c, raw) {
+  if (esNumero_(raw)) return raw;
+  var m = minutosDelDia_(raw);
+  if (m === null) return "";
+  var v = c && c.registro_intraop && c.registro_intraop.v ? c.registro_intraop.v : null;
+  // Solo una incisión en HH:MM sirve de referencia: si ya es un número, es el 0.
+  var r = v && !esNumero_(v.h_incision_min) ? minutosDelDia_(v.h_incision) : null;
+  if (r === null) return "";
+  var x = m - r;
+  while (x < -360) x += 1440;
+  while (x >= 1080) x -= 1440;
+  return x;
+}
+
+// Campo de tiempo de un objeto: el hermano numérico "<campo>_min" si existe;
+// si no, el HH:MM antiguo.
+function minRelCampo_(c, obj, campo) {
+  if (!obj) return "";
+  var n = obj[campo + "_min"];
+  return minRelValor_(c, esNumero_(n) ? n : (obj[campo] || ""));
+}
+
+// Campos de un caso de esquema 2 que traen algún dato exacto (no debería
+// pasar). Solo sirve para avisar en Meta: nada de esto se vuelca a las hojas.
+function camposExactosEsquema2_(c) {
+  var malos = [];
+  if (esquemaDe_(c) < 2) return malos;
+  ["nombre_caso", "supervisor", "centro"].forEach(function (k) { if (c[k]) malos.push(k); });
+  if (c.fecha && /^\d{4}-\d{2}-\d{2}/.test(String(c.fecha))) malos.push("fecha");
+  if (c.edad !== "" && c.edad != null && !esTramoEdad_(c.edad)) malos.push("edad");
+  if (typeof c.hora_inicio === "string" && c.hora_inicio) malos.push("hora_inicio");
+  if (typeof c.hora_fin === "string" && c.hora_fin) malos.push("hora_fin");
+  if (c.guardado_en && String(c.guardado_en).length > 7) malos.push("guardado_en");
+  if ((c.editado_en || []).some(function (m) { return String(m).length > 7; })) malos.push("editado_en");
+  var v = c.registro_intraop && c.registro_intraop.v;
+  if (v) {
+    ["quirofano", "cirujano", "anestesista", "neurofisiologo", "cierre_firma"].forEach(function (k) {
+      if (v[k]) malos.push("registro." + k);
+    });
+  }
+  return malos;
+}
+
+/* ------------------------------------------------------------------ *
  * Construcción de las filas de cada hoja
  * ------------------------------------------------------------------ */
 
@@ -246,15 +399,6 @@ function columnasTecnicas_(cat) {
   });
 }
 
-function aFecha_(iso) {
-  if (!iso) return "";
-  // Se construye a mediodía UTC para que el redondeo de zona horaria de
-  // Sheets/Looker nunca la haga caer en el día anterior o siguiente.
-  var partes = iso.split("-");
-  if (partes.length !== 3) return iso;
-  return new Date(Date.UTC(+partes[0], +partes[1] - 1, +partes[2], 12, 0, 0));
-}
-
 function comoNumero01_(bool) { return bool ? 1 : 0; }
 
 // Navegación: "si" -> 1, "no" -> 0, sin registrar -> celda vacía. Un true
@@ -275,6 +419,15 @@ function comoSiNo01_(v) {
   return "";
 }
 
+// Código del centro: el del catálogo; si no, el prefijo del ID_Caso
+// ("H1-2026-003" -> "H1"). Nunca el nombre del centro.
+function codigoCentroDe_(c, cat) {
+  var ent = c.centro_id ? cat.CENTS[c.centro_id] : null;
+  if (ent && ent.codigo) return ent.codigo;
+  var m = /^([A-Z0-9]{1,6})-\d{4}-\d+$/.exec(c.ID_Caso || "");
+  return m ? m[1] : "";
+}
+
 // String(unaFecha) da "Thu Jun 01 2026 12:00:00 GMT+..." -no ordena
 // cronológicamente-, así que las columnas de fecha se comparan por su
 // valor numérico y el resto por texto.
@@ -285,7 +438,7 @@ function compararColumna_(a, b) {
 
 function construirFilasCasos_(casos, cat, columnasTec) {
   var cabecera = [
-    "caso_uid", "ID_Caso", "nombre_caso", "estado", "motivo_cancelacion", "Fecha", "centro", "hora_inicio", "hora_fin",
+    "caso_uid", "ID_Caso", "estado", "motivo_cancelacion", "Fecha", "centro_id", "centro_codigo", "min_inicio", "min_fin",
     "perfil",
     "edad", "sexo", "antecedentes_relevantes",
     "intervencion", "servicio", "diagnostico",
@@ -299,8 +452,8 @@ function construirFilasCasos_(casos, cat, columnasTec) {
     "medida_correctora", "recuperacion_senal", "resultado_esperable",
     "deficit_postoperatorio", "evolucion_postop", "concordancia",
     "incidencias_tecnicas", "equipo",
-    "rol", "supervisor", "dificultad_1a5", "aprendizaje_clave", "caso_destacado", "hacer_seguimiento",
-    "notas", "version_esquema", "n_ediciones", "ultima_edicion", "guardado_en"
+    "rol", "dificultad_1a5", "aprendizaje_clave", "caso_destacado", "hacer_seguimiento",
+    "notas", "version_esquema", "rev", "n_ediciones", "ultima_edicion_mes", "guardado_mes"
   ].concat(columnasTec.reduce(function (acc, c) {
     return acc.concat([c.columna, c.columnaAlteracion]);
   }, []));
@@ -335,11 +488,13 @@ function construirFilasCasos_(casos, cat, columnasTec) {
         ? tipoAlerta + "\n\nCriterio de alarma: " + c.criterio_alarma
         : c.criterio_alarma;
     }
+    var editado = c.editado_en || [];
 
     var base = [
-      c.caso_uid, c.ID_Caso, c.nombre_caso, c.estado, c.motivo_cancelacion, aFecha_(c.fecha), c.centro, c.hora_inicio, c.hora_fin,
+      c.caso_uid, c.ID_Caso, c.estado, c.motivo_cancelacion, aMes_(c.fecha), c.centro_id || "", codigoCentroDe_(c, cat),
+      minRelCampo_(c, c, "hora_inicio"), minRelCampo_(c, c, "hora_fin"),
       c.perfil,
-      c.edad, c.sexo, c.antecedentes_relevantes,
+      tramoEdad_(c.edad), c.sexo, c.antecedentes_relevantes,
       intervTexto, serv ? serv.nombre : "",
       c.diagnostico, c.posicion, c.posicion_detalle, comoSiNo01_(c.navegacion), c.anatomia_patologica, c.otros_datos_quirurgicos,
       c.notas_montaje_tecnicas, comoNumero01_(c.hubo_cambios_plan), c.cambios_respecto_al_plan, c.umbral_tornillos_pediculares,
@@ -351,11 +506,11 @@ function construirFilasCasos_(casos, cat, columnasTec) {
       c.medida_correctora, c.recuperacion_senal, c.resultado_esperable,
       c.deficit_postoperatorio, c.evolucion_postop, c.concordancia,
       c.incidencias_tecnicas, nombreEquipo_(c.equipo_id),
-      c.rol, c.supervisor, c.dificultad_1a5, c.aprendizaje_clave, comoNumero01_(c.caso_destacado),
+      c.rol, c.dificultad_1a5, c.aprendizaje_clave, comoNumero01_(c.caso_destacado),
       comoNumero01_(c.hacer_seguimiento),
-      c.notas, c.version_esquema, (c.editado_en || []).length,
-      (c.editado_en || []).length ? c.editado_en[c.editado_en.length - 1] : "",
-      c.guardado_en
+      c.notas, esquemaDe_(c), c.rev || 0, editado.length,
+      editado.length ? aMes_(editado[editado.length - 1]) : "",
+      aMes_(c.guardado_en)
     ];
     var tec = columnasTec.reduce(function (acc, col) {
       return acc.concat([marcadas[col.id] ? 1 : 0, marcadasAlteracion[col.id] ? 1 : 0]);
@@ -373,7 +528,11 @@ function construirFilasCasos_(casos, cat, columnasTec) {
     return compararColumna_(a[iFecha], b[iFecha]) || compararColumna_(a[iIdCaso], b[iIdCaso]);
   });
 
-  return { cabecera: cabecera, filas: filas };
+  return {
+    cabecera: cabecera, filas: filas,
+    columnasMes: ["Fecha", "ultima_edicion_mes", "guardado_mes"],
+    columnasTexto: ["edad"]   // "10-14" no debe leerse como una fecha
+  };
 }
 
 function construirTecnicasLong_(casos, cat) {
@@ -393,14 +552,14 @@ function construirTecnicasLong_(casos, cat) {
     (c.tecnicas_realizadas || []).forEach(function (id) {
       var nombre = nombreTecnica_(cat, id);
       if (!nombre) { idsDesconocidos[id] = (idsDesconocidos[id] || 0) + 1; return; }
-      filas.push([c.ID_Caso, aFecha_(c.fecha), serv ? serv.nombre : "", nombre]);
+      filas.push([c.ID_Caso, aMes_(c.fecha), serv ? serv.nombre : "", nombre]);
     });
   });
   // Igual que en Casos: se busca la columna por nombre, no por índice fijo.
   filas.sort(function (a, b) {
     return compararColumna_(a[iFecha], b[iFecha]) || compararColumna_(a[iIdCaso], b[iIdCaso]) || compararColumna_(a[iTec], b[iTec]);
   });
-  return { cabecera: cabecera, filas: filas, idsDesconocidos: idsDesconocidos };
+  return { cabecera: cabecera, filas: filas, idsDesconocidos: idsDesconocidos, columnasMes: ["Fecha"], columnasTexto: [] };
 }
 
 // Correlación de cada alarma con la evolución postquirúrgica (29-09-2026):
@@ -408,25 +567,27 @@ function construirTecnicasLong_(casos, cat) {
 // cada grupo ya calculado en c.correlato_filas al guardar el caso, así que
 // aquí solo se copia: la lógica (agrupar, concordancia) vive en un solo sitio.
 // Listas en id, como en Casos. Los casos cancelados no cuentan.
+// El inicio y el fin del grupo llegan en minutos desde la incisión (esquema 2)
+// o como HH:MM (esquema 1): se pasan a minutos, ver minRelValor_().
 function construirCorrelacionLong_(casos, cat) {
   // Magnitud_pct (30-09-2026): el mayor cambio del grupo respecto a la basal,
   // en %, ya calculado en la app (correlato_filas); vacío si no se apuntó.
   var cabecera = ["ID_Caso", "Fecha", "servicio", "Alarmas", "N_alarmas", "Tecnica", "Criterio", "Magnitud_pct",
-    "Hora_inicio", "Hora_fin", "Recuperacion", "Evolucion", "Valorado", "Concordancia_grupo", "Concordancia_caso"];
+    "Min_inicio", "Min_fin", "Recuperacion", "Evolucion", "Valorado", "Concordancia_grupo", "Concordancia_caso"];
   var iFecha = cabecera.indexOf("Fecha"), iIdCaso = cabecera.indexOf("ID_Caso"), iAl = cabecera.indexOf("Alarmas");
   var filas = [];
   casos.filter(function (c) { return c.estado !== "cancelado"; }).forEach(function (c) {
     var serv = cat.SERV[c.servicio_id];
     (c.correlato_filas || []).forEach(function (f) {
-      filas.push([c.ID_Caso, aFecha_(c.fecha), serv ? serv.nombre : "", f.alarmas, f.n_alarmas, f.tecnica, f.criterio,
+      filas.push([c.ID_Caso, aMes_(c.fecha), serv ? serv.nombre : "", f.alarmas, f.n_alarmas, f.tecnica, f.criterio,
         f.magnitud_pct === "" || f.magnitud_pct == null ? "" : Number(f.magnitud_pct),
-        f.hora_inicio, f.hora_fin, f.recuperacion, f.evolucion, f.valorado, f.concordancia, c.concordancia || ""]);
+        minRelValor_(c, f.hora_inicio), minRelValor_(c, f.hora_fin), f.recuperacion, f.evolucion, f.valorado, f.concordancia, c.concordancia || ""]);
     });
   });
   filas.sort(function (a, b) {
     return compararColumna_(a[iFecha], b[iFecha]) || compararColumna_(a[iIdCaso], b[iIdCaso]) || compararColumna_(a[iAl], b[iAl]);
   });
-  return { cabecera: cabecera, filas: filas };
+  return { cabecera: cabecera, filas: filas, columnasMes: ["Fecha"], columnasTexto: [] };
 }
 
 // Hoja añadida sobre la especificación mínima: sin ella, "material consumido
@@ -447,7 +608,7 @@ function construirMaterialLong_(casos) {
     Object.keys(c.material_real || {}).forEach(function (t) { tipos[t] = true; });
     Object.keys(tipos).forEach(function (tipo) {
       filas.push([
-        c.ID_Caso, aFecha_(c.fecha), tipo,
+        c.ID_Caso, aMes_(c.fecha), tipo,
         (c.material_previsto || {})[tipo] || 0,
         (c.material_real || {})[tipo] || 0
       ]);
@@ -456,7 +617,7 @@ function construirMaterialLong_(casos) {
   filas.sort(function (a, b) {
     return compararColumna_(a[iFecha], b[iFecha]) || compararColumna_(a[iIdCaso], b[iIdCaso]) || compararColumna_(a[iTipo], b[iTipo]);
   });
-  return { cabecera: cabecera, filas: filas };
+  return { cabecera: cabecera, filas: filas, columnasMes: ["Fecha"], columnasTexto: [] };
 }
 
 function construirListas_(cat) {
@@ -471,8 +632,15 @@ function construirListas_(cat) {
         return [i.id, i.nombre, i.codigo || "", serv ? serv.nombre : "", comoNumero01_(i.activa !== false)];
       }) }
   ];
-  // Tres bloques uno al lado del otro, con una columna en blanco de por
-  // medio, para que quepan en una sola hoja fácil de mirar de un vistazo.
+  // Centros: solo id y código (el nombre del centro no se vuelca). Último
+  // bloque, para no mover los de antes; solo si hay centros dados de alta.
+  if (cat.centros && cat.centros.length) {
+    bloques.push({ titulo: "Centros", cabecera: ["id", "codigo", "activa"],
+      filas: cat.centros.map(function (e) { return [e.id, e.codigo || "", comoNumero01_(e.activa !== false)]; }) });
+  }
+  // Tres bloques (cuatro con centros) uno al lado del otro, con una columna
+  // en blanco de por medio, para que quepan en una sola hoja fácil de mirar
+  // de un vistazo.
   var anchoMax = Math.max.apply(null, bloques.map(function (b) { return b.filas.length; })) + 1;
   var filas = [];
   for (var f = 0; f < anchoMax; f++) {
@@ -499,7 +667,10 @@ function construirListas_(cat) {
   return { filas: filas, bloques: bloquesInfo };
 }
 
-function construirMeta_(casos, malformados, tecnicasDesconocidas) {
+// Meta: clave/valor. Nada de la hora real: la reconstrucción solo lleva su
+// mes. "estado" es el estado.json del repositorio (espacio_id, si lo trae).
+function construirMeta_(casos, malformados, tecnicasDesconocidas, estado, ahora) {
+  estado = estado || {};
   var porIdCaso = {};
   casos.forEach(function (c) { (porIdCaso[c.ID_Caso] = porIdCaso[c.ID_Caso] || []).push(c.caso_uid); });
   var duplicados = Object.keys(porIdCaso).filter(function (id) { return porIdCaso[id].length > 1; }).sort();
@@ -509,26 +680,42 @@ function construirMeta_(casos, malformados, tecnicasDesconocidas) {
 
   var cancelados = casos.filter(function (c) { return c.estado === "cancelado"; });
 
-  var versiones = {};
-  casos.forEach(function (c) { versiones[c.version_esquema] = true; });
+  var porEsquema = {};
+  casos.forEach(function (c) {
+    var v = esquemaDe_(c);
+    porEsquema[v] = (porEsquema[v] || 0) + 1;
+  });
+  var textoEsquemas = Object.keys(porEsquema).sort().map(function (v) { return v + " (" + porEsquema[v] + ")"; }).join(", ");
+
+  // Casos de esquema 2 con algún dato exacto: no se vuelca, pero se avisa.
+  var conExactos = [];
+  casos.forEach(function (c) {
+    var malos = camposExactosEsquema2_(c);
+    if (malos.length) conExactos.push({ id: c.ID_Caso, campos: malos });
+  });
 
   var filas = [
-    ["Última sincronización", new Date()],
+    ["Reconstruido (mes)", aMes_((ahora || new Date()).toISOString())],
+    ["Espacio (espacio_id)", estado.espacio_id || "(no consta)"],
+    ["Versión de esquema del Sheet (version_esquema)", ESQUEMA_SHEET],
     ["Número de casos", casos.length],
     ["Casos cancelados", cancelados.length],
     ["Casos preparados sin cerrar", sinCerrar.length],
-    ["Versiones de esquema en uso", Object.keys(versiones).sort().join(", ")],
+    ["Versiones de esquema en uso", textoEsquemas],
     ["", ""],
     ["Avisos", ""]
   ];
-  if (!duplicados.length && !sinCerrar.length && !malformados.length && !Object.keys(tecnicasDesconocidas).length) {
+  if (!duplicados.length && !sinCerrar.length && !malformados.length && !Object.keys(tecnicasDesconocidas).length && !conExactos.length) {
     filas.push(["(ninguno)", ""]);
   }
   duplicados.forEach(function (id) {
     filas.push(["Correlativo duplicado", id + " — " + porIdCaso[id].join(", ")]);
   });
   sinCerrar.forEach(function (c) {
-    filas.push(["Preparado sin cerrar", c.ID_Caso + " (" + c.fecha + ")"]);
+    filas.push(["Preparado sin cerrar", c.ID_Caso + " (" + (mesDe_(c.fecha) || "sin fecha") + ")"]);
+  });
+  conExactos.forEach(function (x) {
+    filas.push(["Esquema 2 con datos exactos (no se vuelcan)", x.id + " — " + x.campos.join(", ")]);
   });
   Object.keys(tecnicasDesconocidas).sort().forEach(function (id) {
     filas.push(["Técnica sin catálogo", id + " — usada en " + tecnicasDesconocidas[id] + " caso(s)"]);
@@ -557,18 +744,31 @@ var TEMA_FRANJAS = SpreadsheetApp.BandingTheme.TEAL;
 var COLOR_CABECERA_FONDO = "#14705a";
 var COLOR_CABECERA_TEXTO = "#ffffff";
 var GRIS_SEPARADOR = "#f1f3f4";
+var FORMATO_MES = "yyyy-mm";
 
 function quitarFormatoAnterior_(hoja) {
   hoja.getBandings().forEach(function (b) { b.remove(); });
 }
 
-function escribirHoja_(ss, nombre, filas) {
+// columnasTexto: nombres de columna que se escriben como texto plano (si no,
+// Sheets convertiría un tramo como "10-14" en una fecha). columnasMes:
+// columnas de fecha que se enseñan como aaaa-mm. Ambas por NOMBRE.
+function escribirHoja_(ss, nombre, filas, columnasTexto, columnasMes) {
   var hoja = ss.getSheetByName(nombre) || ss.insertSheet(nombre);
   quitarFormatoAnterior_(hoja);
   hoja.clearContents();
   hoja.clearFormats();
   if (filas.length && filas[0].length) {
-    hoja.getRange(1, 1, filas.length, filas[0].length).setValues(filas);
+    var cab = filas[0];
+    (columnasTexto || []).forEach(function (n) {
+      var i = cab.indexOf(n);
+      if (i !== -1) hoja.getRange(1, i + 1, filas.length, 1).setNumberFormat("@");
+    });
+    hoja.getRange(1, 1, filas.length, cab.length).setValues(filas);
+    (columnasMes || []).forEach(function (n) {
+      var i = cab.indexOf(n);
+      if (i !== -1 && filas.length > 1) hoja.getRange(2, i + 1, filas.length - 1, 1).setNumberFormat(FORMATO_MES);
+    });
     hoja.setFrozenRows(1);
   } else {
     hoja.setFrozenRows(0);
@@ -586,9 +786,10 @@ function formatearTabla_(hoja, numFilas, numCols) {
   hoja.autoResizeColumns(1, numCols);
 }
 
-// Listas tiene tres bloques uno al lado del otro: el franjeado se aplica a
-// cada bloque por separado, para que no salte por encima de la columna en
-// blanco que los separa ni se alargue sobre las filas vacías de relleno.
+// Listas tiene tres bloques uno al lado del otro (cuatro con centros): el
+// franjeado se aplica a cada bloque por separado, para que no salte por
+// encima de la columna en blanco que los separa ni se alargue sobre las
+// filas vacías de relleno.
 function formatearListas_(hoja, bloquesInfo) {
   bloquesInfo.forEach(function (b) {
     if (!b.filas) return;
@@ -604,10 +805,12 @@ function formatearListas_(hoja, bloquesInfo) {
 
 // Meta es clave/valor, no una tabla: la columna de etiquetas va en negrita,
 // y la fila "Avisos" lleva un fondo suave para separar el resumen de arriba
-// de la lista de avisos de abajo.
+// de la lista de avisos de abajo. La fecha de reconstrucción (primera fila)
+// se enseña como aaaa-mm.
 function formatearMeta_(hoja, filasMeta) {
   if (!filasMeta.length) return;
   hoja.getRange(1, 1, filasMeta.length, 1).setFontWeight("bold");
+  hoja.getRange(1, 2).setNumberFormat(FORMATO_MES);
   for (var i = 0; i < filasMeta.length; i++) {
     if (filasMeta[i][0] === "Avisos") {
       hoja.getRange(i + 1, 1, 1, 2).setBackground(GRIS_SEPARADOR);
@@ -617,11 +820,25 @@ function formatearMeta_(hoja, filasMeta) {
   hoja.autoResizeColumns(1, 2);
 }
 
+// Escribe una tabla construida por construir*_ (cabecera + filas + qué
+// columnas son mes o texto) y le da formato.
+function volcarTabla_(ss, nombre, t) {
+  var h = escribirHoja_(ss, nombre, [t.cabecera].concat(t.filas), t.columnasTexto, t.columnasMes);
+  formatearTabla_(h, t.filas.length + 1, t.cabecera.length);
+  return h;
+}
+
 /* ------------------------------------------------------------------ *
  * Orquestación
  * ------------------------------------------------------------------ */
 
 function reconstruirTodo() {
+  // Hospital archivado: no se lee GitHub ni se toca ninguna hoja.
+  if (CONGELADO) {
+    Logger.log("MIO-Check: CONGELADO = 1, no se reconstruye nada.");
+    try { SpreadsheetApp.getActiveSpreadsheet().toast("Sheet congelado (CONGELADO = 1): no se reconstruye.", "MIO-Check"); } catch (e) { /* sin interfaz (disparador) */ }
+    return { congelado: true, casos: 0, malformados: 0 };
+  }
   var cfg = obtenerConfig_();
 
   // --- Fase 1: reunir todo en memoria. Si algo falla aquí, no se ha
@@ -642,29 +859,22 @@ function reconstruirTodo() {
   var hojaMatLong = construirMaterialLong_(descarga.casos);
   var hojaCorrLong = construirCorrelacionLong_(descarga.casos, cat);
   var hojaListas = construirListas_(cat);
-  var filasMeta = construirMeta_(descarga.casos, descarga.malformados, hojaTecLong.idsDesconocidos);
+  var filasMeta = construirMeta_(descarga.casos, descarga.malformados, hojaTecLong.idsDesconocidos, estado, new Date());
 
   // --- Fase 2: todo ha ido bien. Ahora sí se reescriben las hojas. ---
   var ss = SpreadsheetApp.getActiveSpreadsheet();
 
-  var hCasos = escribirHoja_(ss, HOJAS.CASOS, [hojaCasos.cabecera].concat(hojaCasos.filas));
-  formatearTabla_(hCasos, hojaCasos.filas.length + 1, hojaCasos.cabecera.length);
-
-  var hTecLong = escribirHoja_(ss, HOJAS.TECNICAS_LONG, [hojaTecLong.cabecera].concat(hojaTecLong.filas));
-  formatearTabla_(hTecLong, hojaTecLong.filas.length + 1, hojaTecLong.cabecera.length);
-
-  var hMatLong = escribirHoja_(ss, HOJAS.MATERIAL_LONG, [hojaMatLong.cabecera].concat(hojaMatLong.filas));
-  formatearTabla_(hMatLong, hojaMatLong.filas.length + 1, hojaMatLong.cabecera.length);
-
-  var hCorrLong = escribirHoja_(ss, HOJAS.CORRELACION_LONG, [hojaCorrLong.cabecera].concat(hojaCorrLong.filas));
-  formatearTabla_(hCorrLong, hojaCorrLong.filas.length + 1, hojaCorrLong.cabecera.length);
+  volcarTabla_(ss, HOJAS.CASOS, hojaCasos);
+  volcarTabla_(ss, HOJAS.TECNICAS_LONG, hojaTecLong);
+  volcarTabla_(ss, HOJAS.MATERIAL_LONG, hojaMatLong);
+  volcarTabla_(ss, HOJAS.CORRELACION_LONG, hojaCorrLong);
 
   var hListas = escribirHoja_(ss, HOJAS.LISTAS, hojaListas.filas);
   formatearListas_(hListas, hojaListas.bloques);
 
   // Meta se escribe la última: si algo de lo anterior fallara a mitad de
-  // esta segunda fase, "Última sincronización" no queda mintiendo sobre
-  // un Sheet a medio escribir.
+  // esta segunda fase, "Reconstruido" no queda mintiendo sobre un Sheet a
+  // medio escribir.
   var hMeta = escribirHoja_(ss, HOJAS.META, filasMeta);
   formatearMeta_(hMeta, filasMeta);
 
@@ -677,11 +887,16 @@ function reconstruirTodo() {
 
 // Ejecutar una sola vez a mano, desde el editor (▶), para instalar el
 // disparador diario. Volver a ejecutarla no duplica el disparador: primero
-// quita los que ya hubiera de esta misma función.
+// quita los que ya hubiera de esta misma función. Con CONGELADO = 1 solo
+// los quita y no crea ninguno.
 function crearDisparadorDiario() {
   ScriptApp.getProjectTriggers().forEach(function (t) {
     if (t.getHandlerFunction() === "reconstruirTodo") ScriptApp.deleteTrigger(t);
   });
+  if (CONGELADO) {
+    Logger.log("MIO-Check: CONGELADO = 1, no se programa ninguna reconstrucción.");
+    return;
+  }
   ScriptApp.newTrigger("reconstruirTodo").timeBased().everyDays(1).atHour(4).create();
 }
 

@@ -4701,3 +4701,10 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 .esp-sl { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.8rem; margin-left: 0.5rem; white-space: nowrap; }
 .solo-lectura #btn-papelera-casos { display: none; }
 .solo-lectura button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* Leyenda fija junto a los textos libres (seudonimización, 18-10-2026): qué no escribir.
+   Discreta, como las ayudas; no se imprime. */
+.leyenda-texto-libre { margin: 0 0 0.5rem; font-size: 0.72rem; color: var(--text-muted); line-height: 1.35; font-style: italic; }
+.rr-hoja .leyenda-texto-libre { margin: 0.25rem 0.75rem 0; }
+@media print { .leyenda-texto-libre { display: none; } }
+.nota-plantillas { margin: 0.25rem 0 0.5rem; font-size: 0.72rem; color: var(--text-muted); line-height: 1.35; }

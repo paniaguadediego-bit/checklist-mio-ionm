@@ -471,6 +471,14 @@
                            en: "No personal repository: notes and IONM Techniques go to the repository above." },
     sync_personal_sin_esp: { es: "Sin repositorio personal: Técnicas IONM va al repositorio de arriba; en este espacio, Mis apuntes no suben ni bajan (solo quedan en este dispositivo).",
                            en: "No personal repository: IONM Techniques go to the repository above; in this workspace, My notes are neither uploaded nor downloaded (they stay on this device only)." },
+    sync_guarda_origen:  { es: "Este espacio quedó ligado a otro repositorio ({repo}). No se sube ni se baja nada con el repositorio actual: restituye el anterior o crea un espacio nuevo.",
+                           en: "This workspace is tied to another repository ({repo}). Nothing is uploaded or downloaded with the current repository: restore the previous one or create a new workspace." },
+    sync_guarda_otro:    { es: "Este repositorio pertenece a otro espacio de trabajo («{remoto}»), no al activo («{activo}»). No se sube ni se baja nada: cambia de espacio o revisa el repositorio.",
+                           en: "This repository belongs to another workspace (“{remoto}”), not the active one (“{activo}”). Nothing is uploaded or downloaded: switch workspace or check the repository." },
+    sync_guarda_antiguo: { es: "Este repositorio no indica a qué espacio pertenece y el espacio activo («{activo}») no está ligado a él. No se sube ni se baja nada: revisa el repositorio.",
+                           en: "This repository does not say which workspace it belongs to and the active workspace (“{activo}”) is not tied to it. Nothing is uploaded or downloaded: check the repository." },
+    sync_guarda_lectura: { es: "No se ha podido comprobar a qué espacio pertenece el repositorio (conexión o permisos). Por seguridad no se sube ni se baja nada; se reintentará en unos segundos.",
+                           en: "Could not check which workspace the repository belongs to (connection or permissions). For safety nothing is uploaded or downloaded; it will be retried in a few seconds." },
     esp_rotulo_tit:      { es: "Espacio de trabajo activo: {nombre}", en: "Active workspace: {nombre}" },
     sync_otro_espacio:   { es: "Este repositorio pertenece a otro espacio de trabajo («{remoto}»), no al activo («{activo}»). No se ha traído nada: cambia de espacio o revisa el repositorio.", en: "This repository belongs to another workspace (“{remoto}”), not the active one (“{activo}”). Nothing was brought in: switch workspace or check the repository." },    esp_resumen:         { es: "Espacio de trabajo: {nombre}", en: "Workspace: {nombre}" },
     esp_intro:           { es: "Cada espacio tiene sus propios casos y plantillas en este dispositivo y su propio repositorio de datos. Nada se mezcla entre espacios.",
@@ -854,11 +862,26 @@
 
     /* Etiquetas de los campos del caso */
     caso_fecha:          { es: "Fecha de la cirugía", en: "Date of surgery" },
-    caso_fecha_ay:       { es: "La que cuenta para las estadísticas. En un caso cerrado, reábrelo para cambiarla.",
-                           en: "The one that counts for statistics. On a closed case, reopen it to change it." },
+    caso_fecha_ay:       { es: "La que cuenta para las estadísticas. En un caso cerrado, reábrelo para cambiarla. Al subir a la nube solo viaja el mes y el año; la fecha exacta se queda en este dispositivo.",
+                           en: "The one that counts for statistics. On a closed case, reopen it to change it. Only the month and year are uploaded; the exact date stays on this device." },
     caso_nombre_caso:    { es: "Nombre del caso", en: "Case name" },
-    caso_nombre_caso_ay: { es: "Para reconocerlo tú de un vistazo en la lista — nunca el nombre del paciente.",
-                           en: "So you can recognise it at a glance in the list — never the patient's name." },
+    caso_nombre_caso_ay: { es: "Para reconocerlo tú de un vistazo en la lista — nunca el nombre del paciente. No se sube a la nube: se queda en este dispositivo.",
+                           en: "So you can recognise it at a glance in the list — never the patient's name. It is not uploaded: it stays on this device." },
+    caso_edad_ay:        { es: "Escribe la edad exacta. Al subir a la nube solo viaja el tramo de 5 años (p. ej. 40-44).",
+                           en: "Enter the exact age. Only the 5-year band (e.g. 40-44) is uploaded." },
+    ex_no_disp:          { es: "(no disponible en este dispositivo)", en: "(not available on this device)" },
+    txt_leyenda_libre:   { es: "No escribir nombres, iniciales, fechas ni números de historia.",
+                           en: "Do not write names, initials, dates or medical record numbers." },
+    txt_aviso:           { es: "Posible dato que identifica, en el texto libre: {lista}. Se ha guardado igualmente; revisa el texto y quita lo que identifique.",
+                           en: "Possible identifying data in free text: {lista}. It was saved anyway; check the text and remove anything identifying." },
+    txt_tipo_fecha:      { es: "fecha", en: "date" },
+    txt_tipo_hora:       { es: "hora", en: "time of day" },
+    txt_tipo_numero:     { es: "número largo", en: "long number" },
+    txt_tipo_email:      { es: "correo", en: "email" },
+    txt_tipo_telefono:   { es: "teléfono", en: "phone" },
+    txt_tipo_dni:        { es: "DNI/NIE", en: "ID number" },
+    plantilla_aviso_nombre: { es: "No escribas datos de pacientes en el nombre de una plantilla: el nombre se sube al repositorio.",
+                           en: "Do not write patient data in a template name: the name is uploaded to the repository." },
     caso_edad:           { es: "Edad", en: "Age" },
     caso_sexo:           { es: "Sexo", en: "Sex" },
     caso_servicio_id:    { es: "Servicio", en: "Specialty" },
@@ -886,8 +909,8 @@
     caso_antecedentes_relevantes_ay: { es: "Historia clínica relevante, exploración física u otro dato del paciente que quieras dejar anotado. Sin nombre, NHC ni fecha de nacimiento.",
                            en: "Relevant clinical history, physical exam findings, or anything else about the patient worth noting. No name, record number or date of birth." },
     caso_informes_imagenes: { es: "Pruebas de imagen", en: "Imaging tests" },
-    caso_informes_imagenes_ay: { es: "Fotos o capturas de informes de imagen (RM, TC…) que te resulten interesantes para este caso. Encuadra solo la imagen o el hallazgo — nunca la cabecera con el nombre, NHC o fecha de nacimiento del paciente. Se comprimen solas al añadirlas.",
-                           en: "Photos or screenshots of imaging reports (MRI, CT…) worth keeping for this case. Frame only the image or the finding — never the header with the patient's name, ID or date of birth. They're compressed automatically when added." },
+    caso_informes_imagenes_ay: { es: "Fotos o capturas de informes de imagen (RM, TC…) que te resulten interesantes para este caso. Encuadra solo la imagen o el hallazgo — nunca la cabecera con el nombre, NHC o fecha de nacimiento del paciente. Se comprimen solas al añadirlas. Se quedan solo en este dispositivo: no se suben a la nube.",
+                           en: "Photos or screenshots of imaging reports (MRI, CT…) worth keeping for this case. Frame only the image or the finding — never the header with the patient's name, ID or date of birth. They're compressed automatically when added. They stay on this device only: they are not uploaded." },
     caso_diagnostico:    { es: "Diagnóstico", en: "Diagnosis" },
     opc_diagnostico_ecc: { es: "Estenosis de canal cervical (ECC)", en: "Cervical canal stenosis (ECC)" },
     opc_diagnostico_ecd: { es: "Estenosis de canal dorsal o torácico (ECD)", en: "Thoracic canal stenosis (ECD)" },
@@ -963,8 +986,8 @@
     tecpar_otro_anadir:  { es: "＋", en: "＋" },
     tecpar_quitar_tit:   { es: "Quitar", en: "Remove" },
     caso_imagenes_montaje: { es: "Imágenes del montaje, material y técnicas del caso", en: "Images of the case's montage, material and techniques" },
-    caso_imagenes_montaje_ay: { es: "Capturas o fotos de cómo quedó el montaje en el software del equipo (la pantalla del equipo, por ejemplo), para consultarlas si en el futuro te toca un caso parecido. Se comprimen solas al añadirlas.",
-                                 en: "Screenshots or photos of how the montage ended up on the equipment's software (e.g. the equipment screen), to look up if a similar case comes up in the future. They get compressed automatically when added." },
+    caso_imagenes_montaje_ay: { es: "Capturas o fotos de cómo quedó el montaje en el software del equipo (la pantalla del equipo, por ejemplo), para consultarlas si en el futuro te toca un caso parecido. Se comprimen solas al añadirlas. Se quedan solo en este dispositivo: no se suben a la nube.",
+                                 en: "Screenshots or photos of how the montage ended up on the equipment's software (e.g. the equipment screen), to look up if a similar case comes up in the future. They get compressed automatically when added. They stay on this device only: they are not uploaded." },
     caso_imagen_anadir:  { es: "＋ Añadir imagen", en: "＋ Add image" },
     foto_camara_tit:     { es: "Tomar foto con la cámara", en: "Take a photo with the camera" },
     caso_imagen_quitar_tit: { es: "Quitar esta imagen", en: "Remove this image" },
@@ -2671,6 +2694,8 @@
   function guardarMontaje(m, esNuevo) {
     if (escrituraBloqueada()) return;   // solo lectura
     if (!esNuevo) m.editado_en = (m.editado_en || []).concat(new Date().toISOString());
+    // Contador de guardados: al subir, los sellos pasan a mes y `rev` conserva el orden
+    m.rev = (m.rev || 0) + 1;
     montajes[m.montaje_uid] = m;
     if (!MODO_DEMO) montajesSinSubir[m.montaje_uid] = true;   // en la demo no hay nada que subir
     guardarMontajes();
@@ -4011,6 +4036,11 @@
   // navegador para no bajar encima de ellos al abrir en otro sitio.
   var sync = { repo: "", token: "", sha: null, fecha: null, pendiente: false };
 
+  // Guarda de repositorio (ver repoCompatible()): último veredicto, por
+  // espacio + repo + origen. "temporal" = no se pudo leer (red/401): se
+  // reintenta pasado un momento, pero mientras tanto NO se toca nada.
+  var repoGuarda = { clave: "", veredicto: null, hasta: 0, promesa: null, avisada: "" };
+
   var RETARDO_SUBIDA = 4000;   // margen para no subir en cada tecleo
   var temporizador = null;
   var subiendo = false;
@@ -4089,8 +4119,8 @@
       }
     }
   }
-  // Un espacio que ya tenía repositorio (p. ej. "archivo", anterior a los
-  // espacios) lo conserva como origen al arrancar.
+  // Lo llama repoCompatible() cuando el repositorio ha pasado la comprobación
+  // (así un espacio solo queda ligado a un repositorio que es suyo).
   function fijarRepoOrigenSiFalta() {
     if (MODO_DEMO || !sync.repo || repoOrigenEspacio()) return;
     fijarRepoOrigenEspacio(sync.repo);
@@ -4410,6 +4440,25 @@
     return T("err_generico", { codigo: resp.status });
   }
 
+  /* estado.json lleva `fecha` (mes y año) y `rev` (contador de subidas) en vez
+     de la hora real de cada subida; el aviso «hay algo más nuevo» enseña el
+     mes. Los `actualizado_en` de los catálogos pasan a mes por lo mismo. */
+  var ESTADO_REV_KEY = "mio_ionm_estado_rev_v1";
+  function estadoRev() {
+    var n = 0;
+    try { n = parseInt(localStorage.getItem(ESTADO_REV_KEY) || "0", 10) || 0; } catch (e) { n = 0; }
+    return n;
+  }
+  function estadoRevSubir() {
+    try { localStorage.setItem(ESTADO_REV_KEY, String(estadoRev() + 1)); } catch (e) { /* sin persistencia */ }
+  }
+  function catalogosSeudonimos() {
+    var out = {};
+    Object.keys(catalogos).forEach(function (n) {
+      out[n] = Object.assign({}, catalogos[n], { actualizado_en: catalogos[n].actualizado_en ? mesDe(catalogos[n].actualizado_en) : null });
+    });
+    return out;
+  }
   function estadoActual() {
     return {
       formato: "mio-ionm",
@@ -4418,12 +4467,13 @@
       // versión 2, sin tocarlo, como copia de seguridad de la conversión.
       version: 3,
       espacio_id: ESPACIO.id,
-      fecha: new Date().toISOString(),
+      fecha: mesActual(),
+      rev: estadoRev(),
       escenarios: legadoEscenarios || {},
       catalogo_usuario: catalogoUsuario,
       etiquetas_usuario: etiquetasUsuario,
       etiquetas_borradas: etiquetasBorradas,
-      catalogos: catalogos,
+      catalogos: catalogosSeudonimos(),
       borrados: borrados,
       activo: legadoActivo
     };
@@ -4471,9 +4521,105 @@
       });
   }
 
+  /* GUARDA DE REPOSITORIO (18-10-2026, fase 1 de la seudonimización).
+   * Riesgo que cierra: conectar en ☁ un repositorio que pertenece a OTRO
+   * espacio subía allí estado.json, casos y plantillas locales, y las
+   * bajadas traían datos de él. Se evalúa antes de CUALQUIER petición a
+   * api.github.com/repos/<repo del espacio>/contents/ (estado.json, casos/,
+   * montajes/, simulador/, referencia/ y apuntes/ cuando no hay repositorio
+   * personal): lo hace un envoltorio de fetch, así ninguna ruta, presente o
+   * futura, se la salta. Reglas:
+   *  1. si el espacio tiene repo_origen y el repo configurado difiere: bloquea;
+   *  2. estado.json remoto con otro espacio_id: bloquea subida y bajada;
+   *  3. repositorio vacío (sin estado.json): compatible;
+   *  4. estado.json sin espacio_id (repo antiguo): compatible solo en
+   *     «archivo» o si el repo es el repo_origen;
+   *  5. no se puede leer (red/401/formato): NO se toca nada (falla cerrado).
+   * Se cachea por espacio+repo+origen; un fallo de lectura solo unos segundos. */
+  var GUARDA_REINTENTO_MS = 15000;
+  function claveGuarda() {
+    return ESPACIO.id + "|" + String(sync.repo || "").toLowerCase() + "|" + repoOrigenEspacio().toLowerCase();
+  }
+  function veredictoGuarda(ok, mensaje, temporal) {
+    return { ok: ok, mensaje: mensaje || "", temporal: !!temporal };
+  }
+  function recordarVeredicto(clave, v) {
+    repoGuarda.clave = clave;
+    repoGuarda.veredicto = v;
+    repoGuarda.hasta = v.temporal ? Date.now() + GUARDA_REINTENTO_MS : 0;
+    repoGuarda.promesa = null;
+    if (!v.ok && repoGuarda.avisada !== clave + "|" + v.mensaje) {
+      repoGuarda.avisada = clave + "|" + v.mensaje;
+      ultimoFallo = v.mensaje;
+      pintarEstadoSync();
+      mensajeSync(v.mensaje, true);
+    }
+    return v;
+  }
+  function repoCompatible() {
+    if (MODO_DEMO || !sync.repo) return Promise.resolve(veredictoGuarda(true));
+    var clave = claveGuarda();
+    if (repoGuarda.clave === clave) {
+      if (repoGuarda.promesa) return repoGuarda.promesa;
+      var v0 = repoGuarda.veredicto;
+      if (v0 && (!v0.temporal || Date.now() < repoGuarda.hasta)) return Promise.resolve(v0);
+    }
+    var origen = repoOrigenEspacio();
+    if (origen && origen.toLowerCase() !== String(sync.repo).toLowerCase()) {
+      return Promise.resolve(recordarVeredicto(clave, veredictoGuarda(false, T("sync_guarda_origen", { repo: origen }))));
+    }
+    var p = fetchGuardado(urlContenido() + "?ref=HEAD", { headers: cabeceras(), cache: "no-store" })
+      .then(function (resp) {
+        if (resp.status === 404 || resp.status === 409) return { vacio: true };   // repositorio sin estado.json
+        if (!resp.ok) throw new Error("lectura");
+        return resp.json().then(function (json) {
+          var c = JSON.parse(deBase64(json.content));
+          if (!c || typeof c !== "object") throw new Error("lectura");
+          return { vacio: false, contenido: c };
+        });
+      })
+      .then(function (r) {
+        var v;
+        if (r.vacio) {
+          v = veredictoGuarda(true);
+        } else if (r.contenido.espacio_id) {
+          v = r.contenido.espacio_id === ESPACIO.id ? veredictoGuarda(true)
+            : veredictoGuarda(false, T("sync_guarda_otro", { remoto: nombreEspacioPorId(r.contenido.espacio_id), activo: ESPACIO.nombre }));
+        } else if (ESPACIO.id === "archivo" || (origen && origen.toLowerCase() === String(sync.repo).toLowerCase())) {
+          v = veredictoGuarda(true);
+        } else {
+          v = veredictoGuarda(false, T("sync_guarda_antiguo", { activo: ESPACIO.nombre }));
+        }
+        if (v.ok) fijarRepoOrigenSiFalta();
+        // El origen recién fijado cambia la clave: se recalcula para no repetir la lectura
+        return recordarVeredicto(v.ok ? claveGuarda() : clave, v);
+      }, function () {
+        return recordarVeredicto(clave, veredictoGuarda(false, T("sync_guarda_lectura"), true));
+      });
+    repoGuarda.clave = clave;
+    repoGuarda.promesa = p;
+    return p;
+  }
+  // fetch tal como estaba antes del envoltorio (el envoltorio lo usa para
+  // leer estado.json sin pasar por la propia guarda)
+  var fetchGuardado = window.fetch.bind(window);
+  function esUrlDelRepoDeEspacio(recurso) {
+    if (MODO_DEMO || !sync.repo) return false;
+    var url = typeof recurso === "string" ? recurso : (recurso && recurso.url) || "";
+    return url.toLowerCase().indexOf("https://api.github.com/repos/" + String(sync.repo).toLowerCase() + "/contents/") === 0;
+  }
+  window.fetch = function (recurso, opciones) {
+    if (!esUrlDelRepoDeEspacio(recurso)) return fetchGuardado(recurso, opciones);
+    return repoCompatible().then(function (v) {
+      if (!v.ok) throw new Error(v.mensaje);
+      return fetchGuardado(recurso, opciones);
+    });
+  };
+
   // Escribe el estado en el repositorio. shaRemoto identifica la versión
   // sobre la que escribimos (GitHub la exige para no pisar a ciegas).
   function enviarEstado(shaRemoto) {
+    estadoRevSubir();   // antes de armar el cuerpo: lleva el número de esta subida
     var cuerpo = {
       message: "Actualizar escenarios MIO-Check",
       content: aBase64(JSON.stringify(estadoActual(), null, 2))
@@ -4505,7 +4651,7 @@
         // Si en el repositorio hay algo más nuevo que lo que bajamos, avisamos
         if (remoto.existe && sync.sha && remoto.sha !== sync.sha && !forzar) {
           var f = remoto.contenido && remoto.contenido.fecha
-            ? new Date(remoto.contenido.fecha).toLocaleString(localeActual())
+            ? fechaHoraTxt(remoto.contenido.fecha)
             : T("sync_fecha_desc");
           if (!confirm(T("sync_pisar", { fecha: f }))) {
             mensajeSync(T("sync_cancelado_sub"), true);
@@ -4676,7 +4822,7 @@
         if (!copia || copia.formato !== "mio-ionm") throw new Error(T("sync_mal_formato"));
         if (otroEspacioRemoto(copia)) return;
         if (!confirm(T("sync_traer", {
-          fecha: new Date(copia.fecha).toLocaleString(localeActual()),
+          fecha: fechaHoraTxt(copia.fecha),
           escenarios: Object.keys(copia.escenarios || {}).length,
           materiales: (copia.catalogo_usuario || []).length
         }))) { mensajeSync(T("sync_cancelado_baj")); return; }
@@ -4724,6 +4870,10 @@
     bSubir.textContent = T(conflicto ? "sync_quedar_dispositivo" : "btn_subir");
     bBajar.textContent = T(conflicto ? "sync_quedar_nube" : "btn_bajar");
     document.getElementById("sync-olvidar").hidden = !conectado;
+    // Repositorio de otro espacio / no verificable: aviso claro en el diálogo
+    if (conectado && repoGuarda.veredicto && !repoGuarda.veredicto.ok && repoGuarda.clave === claveGuarda()) {
+      mensajeSync(repoGuarda.veredicto.mensaje, true);
+    }
     // Repositorio personal: en la parte avanzada (sin conexión todo está a
     // la vista, como Subir/Bajar); nunca durante un choque
     document.getElementById("sync-personal").hidden = MODO_DEMO || conflicto || (conectado && !syncAvanzado);
@@ -4813,7 +4963,10 @@
     sync.token = token;
     ultimoFallo = null;
     guardarSync();
-    fijarRepoOrigenEspacio(repo);
+    // El origen NO se fija aquí: lo fija repoCompatible() cuando ha
+    // comprobado que el repositorio es de este espacio (fijarlo al conectar
+    // hacía que cualquier repositorio antiguo pareciera «el de origen»).
+    repoGuarda.clave = "";   // acción explícita del usuario: se vuelve a comprobar
     pintarEstadoSync();
     return true;
   }
@@ -4878,8 +5031,359 @@
   // pequeño falle por culpa de que OTRO caso, con muchas fotos, ya casi llene
   // la cuota: cada guardado ahora solo escribe el caso que cambió.
   var CASO_PREFIJO = "mio_ionm_caso_";
-  var VERSION_ESQUEMA = 1;
   var CENTRO_KEY = "mio_ionm_centro";
+
+  /* ===== SEUDONIMIZACIÓN (18-10-2026, fase 2) =====================================
+   * Decisiones aprobadas por el autor (no reabrir): la fecha solo viaja como mes y
+   * año; el minuto 0 es la incisión (fase 1); la edad, por tramos de 5; sin nombre
+   * del caso ni nombres del personal en lo que se sube; las imágenes se quedan solo
+   * en este dispositivo; los textos libres llevan aviso (no bloquea); se
+   * seudonimiza AL GUARDAR; `ID_Caso` no cambia.
+   *
+   * VERSION_ESQUEMA 2 = caso seudónimo. Lo que se escribe en localStorage
+   * ("mio_ionm_caso_<uid>"), en casos/<uid>.json y en «Exportar copia» es SIEMPRE
+   * el caso seudónimo (seudonimizarCaso()). Lo exacto no se pierde: queda en una
+   * tabla LOCAL aparte (EXACTOS_KEY, un objeto por uid) y se vuelve a unir al caso
+   * al cargarlo (reunirExactos()), así que en el dispositivo del autor la ficha, el
+   * Registro, el informe y la hoja impresa siguen enseñando lo exacto. Otro
+   * dispositivo solo recibe lo seudónimo: ve mes/año, tramo de edad y
+   * «(no disponible en este dispositivo)» donde falte algo. La tabla NUNCA va en
+   * estado.json, casos/, montajes/, «Exportar copia» ni en ningún commit.
+   *
+   * Convivencia con lo antiguo: un caso sin `version_esquema` o con 1 está
+   * CONGELADO. Se lee igual, no se migra ni se reescribe solo, y si se edita se
+   * guarda y se sube como siempre (tal cual, con su fecha y sus fotos): convertirlo
+   * a medias mezclaría HH:MM con minutos y borraría fotos del archivo antiguo. Solo
+   * los casos nuevos nacen con esquema 2. `Codigo.gs` (fase 3) tiene que leer los dos. */
+  var VERSION_ESQUEMA = 2;
+  var EXACTOS_KEY = "mio_ionm_exactos_v1";
+  // Textos de identificación que no suben: se guardan solo en la tabla local
+  var PSEUDO_TEXTOS_CASO = ["nombre_caso", "supervisor", "centro"];
+  // Lo mismo dentro de registro_intraop.v (hoja A y firma del cierre)
+  var PSEUDO_TEXTOS_REG = ["quirofano", "cirujano", "anestesista", "neurofisiologo", "cierre_firma"];
+
+  var exactosMem = null;
+  var exactosJson = {};
+  function exactosTabla() {
+    if (exactosMem) return exactosMem;
+    var t = null;
+    try { t = JSON.parse(localStorage.getItem(EXACTOS_KEY) || "null"); } catch (e) { t = null; }
+    exactosMem = t && typeof t === "object" ? t : {};
+    return exactosMem;
+  }
+  function exactosEscribir() {
+    try { localStorage.setItem(EXACTOS_KEY, JSON.stringify(exactosMem || {})); }
+    catch (e) { avisoGuardado(T("guardado_error", { error: e.message }), true); }
+  }
+  function exactosDe(uid) { return exactosTabla()[uid] || null; }
+  function exactosFijar(uid, ex) {
+    var tabla = exactosTabla();
+    var js = JSON.stringify(ex);
+    // El Registro guarda cada ~1,2 s: no se reescribe la tabla si no cambió nada
+    if (exactosJson[uid] === js && tabla[uid]) return;
+    tabla[uid] = ex;
+    exactosJson[uid] = js;
+    exactosEscribir();
+  }
+  function exactosBorrar(uid) {
+    var tabla = exactosTabla();
+    if (!tabla[uid]) return;
+    delete tabla[uid];
+    delete exactosJson[uid];
+    exactosEscribir();
+  }
+
+  function esquemaDe(c) { return c && typeof c.version_esquema === "number" ? c.version_esquema : 1; }
+  // "2026-10-05" o "2026-10-05T10:22:00Z" -> "2026-10"; vacío si no es una fecha
+  function mesDe(v) {
+    var m = /^(\d{4})-(\d{2})/.exec(String(v == null ? "" : v));
+    return m ? m[1] + "-" + m[2] : "";
+  }
+  function esSoloMes(v) { return /^\d{4}-\d{2}$/.test(String(v == null ? "" : v)); }
+  function mesActual() { return hoyISO().slice(0, 7); }
+  function esTramoEdad(e) { return typeof e === "string" && /^\s*\d+\s*[-+]\s*\d*\s*$/.test(e); }
+  // Edad exacta -> tramo de 5 ("40-44"); desde 90, "90+" (una edad muy alta
+  // identifica más); un tramo ya hecho se deja como está
+  function tramoEdad(e) {
+    if (esTramoEdad(e)) return e.replace(/\s+/g, "");
+    if (e === "" || e == null) return "";
+    var n = Number(e);
+    if (!isFinite(n) || n < 0) return "";
+    if (n >= 90) return "90+";
+    var lo = Math.floor(n / 5) * 5;
+    return lo + "-" + (lo + 4);
+  }
+  // Mes y año, o fecha y hora locales, para enseñar un sello (real o ya reducido a mes)
+  function fechaHoraTxt(v) {
+    if (!v) return "";
+    if (esSoloMes(v)) {
+      var p = String(v).split("-");
+      return new Date(+p[0], +p[1] - 1, 1).toLocaleDateString(localeActual(), { month: "long", year: "numeric" });
+    }
+    var d = new Date(v);
+    return isNaN(d.getTime()) ? String(v) : d.toLocaleString(localeActual());
+  }
+  // Un caso que llegó de otro dispositivo (solo el mes) y del que aquí no hay datos exactos
+  function faltanExactos(c) {
+    if (!c || esquemaDe(c) < 2) return false;
+    var ex = exactosDe(c.caso_uid);
+    return esSoloMes(c.fecha) && !(ex && ex.fecha_exacta);
+  }
+  // Filtros Desde/Hasta con una fecha exacta o, en un caso ajeno, solo el mes
+  function fechaEnRango(f, desde, hasta) {
+    f = f || "";
+    if (esSoloMes(f)) {
+      if (desde && f < desde.slice(0, 7)) return false;
+      if (hasta && f > hasta.slice(0, 7)) return false;
+      return true;
+    }
+    if (desde && f < desde) return false;
+    if (hasta && f > hasta) return false;
+    return true;
+  }
+
+  // Lo exacto de un caso, para la tabla local
+  function extraerExactos(caso) {
+    var ex = {};
+    var prev = exactosDe(caso.caso_uid) || {};
+    if (caso.fecha && !esSoloMes(caso.fecha)) ex.fecha_exacta = caso.fecha;
+    else if (prev.fecha_exacta && mesDe(prev.fecha_exacta) === mesDe(caso.fecha)) ex.fecha_exacta = prev.fecha_exacta;
+    if (caso.edad !== "" && caso.edad != null && !esTramoEdad(caso.edad)) ex.edad = caso.edad;
+    PSEUDO_TEXTOS_CASO.forEach(function (k) { if (caso[k]) ex[k] = caso[k]; });
+    var v = caso.registro_intraop && caso.registro_intraop.v;
+    if (v) {
+      var ev = {};
+      PSEUDO_TEXTOS_REG.forEach(function (k) { if (v[k]) ev[k] = v[k]; });
+      if (v.fecha && !esSoloMes(v.fecha)) ev.fecha = v.fecha;
+      if (Object.keys(ev).length) ex.v = ev;
+    }
+    var marcas = caso.editado_en || [];
+    if (marcas.some(function (m) { return String(m).length > 7; })) ex.editado_en = marcas.slice();
+    if (caso.guardado_en && String(caso.guardado_en).length > 7) ex.guardado_en = caso.guardado_en;
+    // La lista de fotos (id, nombre, fecha; el contenido va a IndexedDB) tampoco sube
+    var img = {};
+    CAMPOS_IMG_CASO.forEach(function (k) {
+      if (caso[k] && caso[k].length) img[k] = quitarDataUrls(caso[k], "dataUrl");
+    });
+    if (caso.checklist_prequirurgico && (caso.checklist_prequirurgico.imagenes || []).length) {
+      img.checklist = quitarDataUrls(caso.checklist_prequirurgico.imagenes, "dataUrl");
+    }
+    if (caso.registro_intraop && (caso.registro_intraop.imagenes || []).length) {
+      img.registro = quitarDataUrls(caso.registro_intraop.imagenes, "dataUrl");
+    }
+    if (Object.keys(img).length) ex.img = img;
+    return ex;
+  }
+
+  // Vuelve a poner en el caso lo exacto de la tabla local (si la hay) sin pisar
+  // nada que ya tenga: se llama al cargar un caso, al bajarlo de la nube y al
+  // recuperarlo de la papelera. Es idempotente.
+  function reunirExactos(caso) {
+    if (!caso || esquemaDe(caso) < 2) return caso;
+    var ex = exactosDe(caso.caso_uid);
+    if (!ex) return caso;
+    // Lo exacto solo vale mientras coincida con lo seudónimo: si otro
+    // dispositivo cambió el mes o el tramo, manda lo nuevo
+    if (ex.fecha_exacta && mesDe(ex.fecha_exacta) === mesDe(caso.fecha)) caso.fecha = ex.fecha_exacta;
+    if (ex.edad !== undefined && tramoEdad(ex.edad) === tramoEdad(caso.edad)) caso.edad = ex.edad;
+    PSEUDO_TEXTOS_CASO.forEach(function (k) { if (!caso[k] && ex[k]) caso[k] = ex[k]; });
+    if (ex.v) {
+      var r = caso.registro_intraop || (caso.registro_intraop = {});
+      var v = r.v || (r.v = {});
+      PSEUDO_TEXTOS_REG.forEach(function (k) { if (!v[k] && ex.v[k]) v[k] = ex.v[k]; });
+      if (ex.v.fecha && mesDe(ex.v.fecha) === mesDe(v.fecha)) v.fecha = ex.v.fecha;
+    }
+    if (ex.guardado_en && mesDe(ex.guardado_en) === mesDe(caso.guardado_en)) caso.guardado_en = ex.guardado_en;
+    if (ex.editado_en && caso.editado_en) {
+      // Alineadas por el final: la última marca real con la última marca de mes
+      for (var k = 1; k <= Math.min(ex.editado_en.length, caso.editado_en.length); k++) {
+        var real = ex.editado_en[ex.editado_en.length - k], i = caso.editado_en.length - k;
+        if (mesDe(real) === mesDe(caso.editado_en[i])) caso.editado_en[i] = real;
+      }
+    }
+    if (ex.img) {
+      CAMPOS_IMG_CASO.forEach(function (k) {
+        if (ex.img[k] && !(caso[k] && caso[k].length)) caso[k] = clonar(ex.img[k]);
+      });
+      if (ex.img.checklist && !(caso.checklist_prequirurgico && (caso.checklist_prequirurgico.imagenes || []).length)) {
+        caso.checklist_prequirurgico = caso.checklist_prequirurgico || {};
+        caso.checklist_prequirurgico.imagenes = clonar(ex.img.checklist);
+      }
+      if (ex.img.registro && !(caso.registro_intraop && (caso.registro_intraop.imagenes || []).length)) {
+        caso.registro_intraop = caso.registro_intraop || {};
+        caso.registro_intraop.imagenes = clonar(ex.img.registro);
+      }
+    }
+    return caso;
+  }
+
+  // El caso tal como puede salir de este dispositivo (nube, copia, localStorage).
+  // Copia nueva: no toca el caso de trabajo. Un caso antiguo (esquema 1) se
+  // devuelve igual, ver el comentario de arriba.
+  function seudonimizarCaso(caso) {
+    if (!caso || esquemaDe(caso) < 2) return caso;
+    var base = Object.assign({}, caso);
+    // Imágenes: solo locales (IndexedDB); ni los datos ni su lista salen
+    CAMPOS_IMG_CASO.forEach(function (k) { base[k] = []; });
+    if (base.checklist_prequirurgico) {
+      base.checklist_prequirurgico = Object.assign({}, base.checklist_prequirurgico);
+      delete base.checklist_prequirurgico.imagenes;
+    }
+    if (base.registro_intraop) {
+      base.registro_intraop = Object.assign({}, base.registro_intraop);
+      delete base.registro_intraop.imagenes;
+    }
+    var p = clonar(base);
+    p.fecha = mesDe(caso.fecha);
+    p.edad = tramoEdad(caso.edad);
+    PSEUDO_TEXTOS_CASO.forEach(function (k) { p[k] = ""; });
+    var v = p.registro_intraop && p.registro_intraop.v;
+    if (v) {
+      PSEUDO_TEXTOS_REG.forEach(function (k) { delete v[k]; });
+      if (v.fecha) v.fecha = mesDe(v.fecha);
+    }
+    // Sellos de hora real -> mes + contador `rev` (sube en cada guardado); la
+    // hora real queda en la tabla local
+    p.guardado_en = mesDe(caso.guardado_en);
+    p.editado_en = (caso.editado_en || []).map(mesDe);
+    p.rev = caso.rev || 0;
+    return p;
+  }
+
+  // Plantillas: el nombre sí sube (es del hospital); los sellos, como en los casos
+  function seudonimizarMontaje(m) {
+    var p = clonar(m);
+    p.creado_en = mesDe(m.creado_en);
+    p.editado_en = (m.editado_en || []).map(mesDe);
+    p.rev = m.rev || 0;
+    return p;
+  }
+  // Clave para ordenar por «última modificación»: mes, luego contador, luego sello completo
+  function claveModificacionMontaje(m) {
+    var ed = m && m.editado_en && m.editado_en.length ? m.editado_en[m.editado_en.length - 1] : "";
+    var s = ed || (m && m.creado_en) || "";
+    if (!s) return "";
+    var rev = String(m.rev || 0);
+    while (rev.length < 9) rev = "0" + rev;
+    return mesDe(s) + "|" + rev + "|" + s;
+  }
+
+  /* ----- Detector de datos que identifican en los textos libres -----
+   * NO bloquea nunca: avisa al guardar y al cerrar, diciendo en qué campo. Los
+   * nombres propios no se pueden detectar de forma fiable (por eso la leyenda
+   * fija junto a los textos). Cuidado con los falsos positivos: valores
+   * clínicos como «4/5», «TOF 4/4», «L4-L5», «10-12 mA», «3.5 ms» NO deben
+   * avisar; por eso una fecha de dos números solo cuenta con día mayor de 12 o
+   * con una palabra de fecha delante. */
+  var MESES_TXT = "enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|setiembre|octubre|noviembre|diciembre|january|february|march|april|may|june|july|august|september|october|november|december";
+  var RE_IDENT = {
+    fecha: [
+      /(^|[^\w])(0?[1-9]|[12]\d|3[01])[\/.\-](0?[1-9]|1[0-2])[\/.\-](\d{4}|\d{2})(?![\w])/,
+      new RegExp("(^|[^\\w])\\d{1,2}(º|st|nd|rd|th)?\\s+((de|of)\\s+)?(" + MESES_TXT + ")(?![a-z])", "i"),
+      new RegExp("(^|[^a-z])(" + MESES_TXT + ")\\s+\\d{1,2}(?![\\d:])", "i")
+    ],
+    hora: [/(^|[^\d:.])([01]?\d|2[0-3]):[0-5]\d(?![\d:])/],
+    numero: [
+      /(^|[^\d])\d{6,}(?!\d)/,
+      /\b(nhc|n\.?\s?h\.?\s?c\.?|historia(\s+cl[ií]nica)?)\s*[:#nº.\-]*\s*\d{3,}/i
+    ],
+    email: [/[\w.+\-]+@[\w\-]+(\.[\w\-]+)+/],
+    telefono: [/(^|[^\d])(\+\d{1,3}[ .\-]?)?[6-9]\d{2}([ .\-]?\d{2,3}){2}(?!\d)/],
+    dni: [/(^|[^\w])(\d{8}[ \-]?[A-Za-z]|[XYZxyz][ \-]?\d{7}[ \-]?[A-Za-z])(?![\w])/]
+  };
+  // «12/3», «15-03»: solo si el día es mayor de 12 o hay una palabra de fecha delante
+  var RE_FECHA_CORTA = /(^|[^\w.\/\-])(\d{1,2})[\/\-](\d{1,2})(?![\w\/\-])/g;
+  var RE_PALABRA_FECHA = /(\b(el|del|día|dia|fecha|desde|hasta|operad[oa]|ingres[oa]|alta|cita|on|date)\s+)$/i;
+  var RE_UNIDAD_DETRAS = /^\s*(%|ma\b|ms\b|µ|uv\b|mv\b|cm\b|mm\b|min\b|hz\b|khz\b|v\b|s\b)/i;
+  function fechaCortaIdentifica(texto) {
+    var re = new RegExp(RE_FECHA_CORTA.source, "g"), m;
+    while ((m = re.exec(texto))) {
+      var dia = +m[2], mes = +m[3];
+      if (dia < 1 || dia > 31 || mes < 1 || mes > 12) continue;
+      var fin = m.index + m[0].length;
+      if (RE_UNIDAD_DETRAS.test(texto.slice(fin))) continue;
+      var antes = texto.slice(0, m.index + m[1].length);
+      if (dia > 12 || RE_PALABRA_FECHA.test(antes)) return true;
+    }
+    return false;
+  }
+  // Tipos de dato que parecen identificar en un texto: ["fecha", "telefono"...]
+  function tiposIdentificables(texto) {
+    var t = String(texto == null ? "" : texto);
+    if (!t) return [];
+    var out = [];
+    Object.keys(RE_IDENT).forEach(function (tipo) {
+      if (RE_IDENT[tipo].some(function (re) { return re.test(t); })) out.push(tipo);
+    });
+    if (out.indexOf("fecha") === -1 && fechaCortaIdentifica(t)) out.push("fecha");
+    return out;
+  }
+  // Los textos libres del caso que viajarían, con su nombre legible: [{ campo, texto }]
+  function textosLibresDeCaso(c) {
+    var lista = [];
+    function meter(campo, texto) { if (typeof texto === "string" && texto) lista.push({ campo: campo, texto: texto }); }
+    CAMPOS_CASO.forEach(function (def) {
+      if (def.t !== "text" && def.t !== "area") return;
+      if (PSEUDO_TEXTOS_CASO.indexOf(def.c) !== -1) return;   // no suben
+      meter(T("caso_" + def.c), c[def.c]);
+    });
+    var d = c.registro_intraop;
+    if (!d) return lista;
+    REG_SECCIONES.forEach(function (sec) {
+      if (sec.tipo === "lista") {
+        (d[sec.lista] || []).forEach(function (fila, i) {
+          (sec.cols || []).forEach(function (col) {
+            if (col.t === "text") meter(regL(sec).split(" · ")[0] + " · " + regL(col) + " (" + (i + 1) + ")", fila[col.id]);
+          });
+        });
+      }
+      (sec.campos || []).concat(sec.antes || []).forEach(function (def) {
+        if ((def.t === "text" || def.t === "area") && PSEUDO_TEXTOS_REG.indexOf(def.id) === -1 && d.v) {
+          meter(regL(def), d.v[def.id]);
+        }
+      });
+    });
+    var secMod = REG_SECCIONES.filter(function (s) { return s.tipo === "modular"; })[0];
+    (d.modular || []).forEach(function (fila, i) {
+      (fila || []).forEach(function (celda) { meter(regL(secMod || {}) + " (" + (i + 1) + ")", typeof celda === "string" ? celda : ""); });
+    });
+    return lista;
+  }
+  // [{ campo, tipos: [...] }] solo con lo que parece identificar
+  function hallazgosIdentificables(c) {
+    var out = [], vistos = {};
+    textosLibresDeCaso(c).forEach(function (t) {
+      var tipos = tiposIdentificables(t.texto);
+      if (!tipos.length || vistos[t.campo]) return;
+      vistos[t.campo] = true;
+      out.push({ campo: t.campo, tipos: tipos });
+    });
+    return out;
+  }
+  function textoHallazgos(h) {
+    return h.map(function (x) {
+      return x.campo + " (" + x.tipos.map(function (t) { return T("txt_tipo_" + t); }).join(", ") + ")";
+    }).join("; ");
+  }
+  // Aviso no bloqueante. Al guardar con el botón o al cerrar (`fuerte`) siempre;
+  // en el autoguardado y en el Registro solo si lo detectado cambió (si no, el
+  // aviso saldría cada pocos segundos)
+  var identAvisado = {};
+  function avisarIdentificables(caso, fuerte) {
+    var h = hallazgosIdentificables(caso);
+    var firma = textoHallazgos(h);
+    if (!h.length) { delete identAvisado[caso.caso_uid]; return h; }
+    if (fuerte) {
+      identAvisado[caso.caso_uid] = firma;
+      avisoGuardado(T("txt_aviso", { lista: firma }), true);
+    } else if (identAvisado[caso.caso_uid] !== firma) {
+      identAvisado[caso.caso_uid] = firma;
+      // Con un instante de retraso: quien guarda suele poner enseguida su propio
+      // «guardado» en la misma franja y taparía el aviso
+      setTimeout(function () { avisoGuardado(T("txt_aviso", { lista: firma }), true); }, 60);
+    }
+    return h;
+  }
 
   var casos = {};        // caso_uid -> caso
   var casosSha = {};     // caso_uid -> sha del archivo en GitHub
@@ -4969,7 +5473,9 @@
             var crudo = localStorage.getItem(clave);
             var c = JSON.parse(crudo);
             if (c && c.caso_uid) {
-              casos[c.caso_uid] = c;
+              // Esquema 2: la clave guarda el caso seudónimo; lo exacto vuelve de
+              // la tabla local (en un caso antiguo no hace nada)
+              casos[c.caso_uid] = reunirExactos(c);
               // Un caso guardado antes del 23-09-2026 aún lleva las fotos
               // incrustadas: ya está completo, no hay que hidratarlo, y se
               // reescribe ahora mismo ligero -las fotos pasan a
@@ -5044,6 +5550,13 @@
         ligero.registro_intraop = Object.assign({}, caso.registro_intraop, {
           imagenes: quitarDataUrls(caso.registro_intraop.imagenes, "dataUrl")
         });
+      }
+      // Esquema 2: lo exacto a la tabla local y, a la clave del caso, solo lo
+      // seudónimo (las fotos, ya en IndexedDB arriba, tampoco quedan en el caso).
+      // Primero la tabla: si fallara, el caso seudónimo no se queda sin su origen.
+      if (esquemaDe(caso) >= 2) {
+        exactosFijar(uid, extraerExactos(caso));
+        ligero = seudonimizarCaso(caso);
       }
       localStorage.setItem(CASO_PREFIJO + uid, JSON.stringify(ligero));
     } catch (e) {
@@ -5160,7 +5673,7 @@
     if (escrituraBloqueada()) return;   // solo lectura
     var e = papeleraCasos[uid];
     delete papeleraCasos[uid];
-    if (e && e.caso && !casos[uid]) borrarUnCasoLocal(uid, e.caso);
+    if (e && e.caso && !casos[uid]) { borrarUnCasoLocal(uid, e.caso); exactosBorrar(uid); }
     if (!sinGuardar) guardarPapelera();
   }
   // Devuelve "ya_estaba" si el caso había vuelto a la lista mientras tanto
@@ -5178,13 +5691,15 @@
       guardarPapelera();
       return "ya_estaba";
     }
-    var caso = e.caso;
+    var caso = reunirExactos(e.caso);
     delete papeleraCasos[uid];
     guardarPapelera();
     casos[uid] = caso;
     // Borrado aún sin llegar a GitHub: se cancela y se sube encima
     if (casosBorrados[uid]) { casosSha[uid] = casosBorrados[uid]; delete casosBorrados[uid]; }
-    try { localStorage.setItem(CASO_PREFIJO + uid, JSON.stringify(caso)); } catch (e2) { /* sin cuota */ }
+    // Por el camino de siempre (no un setItem a mano): en un caso de esquema 2
+    // lo exacto tiene que ir a la tabla local y no a la clave del caso
+    guardarUnCasoLocal(uid);
     // Se marca para subir cuando las fotos estén otra vez en memoria:
     // subirCaso() espera a casosHidratados[uid] antes de mandar nada.
     casosHidratados[uid] = hidratarCasoIDB(uid);
@@ -5211,6 +5726,9 @@
       }
     }
     alarmasEnCaso(caso);
+    // Contador de guardados: lo que sustituye a la hora real donde hay que
+    // comparar versiones en lo que se sube (esquema 2; el antiguo no lo lleva)
+    if (esquemaDe(caso) >= 2) caso.rev = (caso.rev || 0) + 1;
     casos[caso.caso_uid] = caso;
     if (!MODO_DEMO) casosSinSubir[caso.caso_uid] = true;   // en la demo no hay nada que subir
     guardarUnCasoLocal(caso.caso_uid);
@@ -5292,6 +5810,13 @@
     return div;
   }
 
+  // El texto del centro NO sube (esquema 2): se deriva del catálogo por centro_id.
+  // Un caso antiguo, o sin centro del catálogo, conserva el texto que tuviera.
+  function centroTextoDe(c) {
+    if (c && c.centro_id && CENTS[c.centro_id]) return campo(CENTS[c.centro_id], "nombre");
+    return (c && c.centro) || "";
+  }
+
   function centroPorDefecto() {
     try { return localStorage.getItem(CENTRO_KEY) || ""; } catch (e) { return ""; }
   }
@@ -5354,7 +5879,8 @@
       // ver "Registro intraoperatorio" al final de este archivo.
       registro_intraop: {},
       version_esquema: VERSION_ESQUEMA,
-      guardado_en: new Date().toISOString(),
+      rev: 0,
+      guardado_en: new Date().toISOString(),   // hora real: solo local; al subir pasa a mes
       editado_en: []
     };
   }
@@ -5452,8 +5978,12 @@
   /* ---------------------------------------------------------------- *
    * Exportación manual de Casos a CSV. Pedida por el usuario para tener
    * los datos a mano sin depender del disparador diario de Apps Script:
-   * mismas 54 columnas base que construirFilasCasos_() genera en la hoja
-   * "Casos" de Codigo.gs -sin las columnas TEC_<etiqueta> por técnica, que
+   * mismas columnas base que construirFilasCasos_() genera en la hoja
+   * "Casos" de Codigo.gs (modelo seudónimo, 18-10-2026: fecha como mes, edad
+   * en tramo, centro por id/código, sellos en mes, sin nombre del caso ni
+   * supervisor; el CSV sale de la copia de trabajo, que en el dispositivo del
+   * autor lleva lo exacto, así que se reduce aquí al exportar)
+   * -sin las columnas TEC_<etiqueta> por técnica, que
    * se consultan mejor caso a caso en la ficha-, con los mismos campos
    * resueltos (intervencionDe, resumenMonitorizacionDe, tipoAlertaDe) que
    * ya usa la ficha, para que un caso antiguo se lea igual aquí que en
@@ -5461,7 +5991,7 @@
    * hay que revisarla a la vez -son la misma tabla, en dos sitios-.
    * ---------------------------------------------------------------- */
   var COLUMNAS_CSV_CASOS = [
-    "caso_uid", "ID_Caso", "nombre_caso", "estado", "motivo_cancelacion", "fecha", "centro", "hora_inicio", "hora_fin",
+    "caso_uid", "ID_Caso", "estado", "motivo_cancelacion", "fecha", "centro_id", "centro_codigo", "min_inicio", "min_fin",
     "perfil",
     "edad", "sexo", "antecedentes_relevantes",
     "intervencion", "servicio", "diagnostico",
@@ -5475,13 +6005,22 @@
     "medida_correctora", "recuperacion_senal", "resultado_esperable",
     "deficit_postoperatorio", "evolucion_postop", "concordancia",
     "incidencias_tecnicas", "equipo",
-    "rol", "supervisor", "dificultad_1a5", "aprendizaje_clave", "caso_destacado", "hacer_seguimiento",
-    "notas", "version_esquema", "n_ediciones", "ultima_edicion", "guardado_en"
+    "rol", "dificultad_1a5", "aprendizaje_clave", "caso_destacado", "hacer_seguimiento",
+    "notas", "version_esquema", "rev", "n_ediciones", "ultima_edicion_mes", "guardado_mes"
   ];
 
   function valorCsvDeCaso(c, columna) {
     switch (columna) {
-      case "fecha": return c.fecha || "";
+      case "fecha": return mesDe(c.fecha);
+      case "edad": return tramoEdad(c.edad);
+      case "centro_id": return c.centro_id || "";
+      case "centro_codigo":
+        var mc = RE_ID_CASO.exec(c.ID_Caso || "");
+        return codigoCentro(c.centro_id) || (mc && mc[1]) || "";
+      case "rev": return c.rev || 0;
+      case "version_esquema": return esquemaDe(c);
+      case "min_inicio": return tMinRelCaso(c, c, "hora_inicio");
+      case "min_fin": return tMinRelCaso(c, c, "hora_fin");
       case "intervencion": return intervencionDe(c);
       case "servicio": return SERV[c.servicio_id] ? campo(SERV[c.servicio_id], "nombre") : "";
       case "resumen_monitorizacion": return resumenMonitorizacionDe(c);
@@ -5500,7 +6039,8 @@
       // (Inomed/Cadwell); el campo de texto libre del mismo nombre se retiró.
       case "equipo": return nombreEquipo(equipoDe(c));
       case "n_ediciones": return (c.editado_en || []).length;
-      case "ultima_edicion": return (c.editado_en || []).length ? c.editado_en[c.editado_en.length - 1] : "";
+      case "ultima_edicion_mes": return (c.editado_en || []).length ? mesDe(c.editado_en[c.editado_en.length - 1]) : "";
+      case "guardado_mes": return mesDe(c.guardado_en);
       default: return c[columna] != null ? c[columna] : "";
     }
   }
@@ -5560,9 +6100,9 @@
      códigos (F/E/A..., S/P/N) salen tal cual, que son ids estables. */
   var COLUMNAS_CSV_EVENTOS = [
     "caso_uid", "ID_Caso", "fecha", "servicio", "diagnostico", "intervencion",
-    "tipo_fila", "n", "hora", "codigo", "fase_maniobra", "contexto", "tof", "modalidad_lado", "cambio",
+    "tipo_fila", "n", "min", "codigo", "fase_maniobra", "contexto", "tof", "modalidad_lado", "cambio",
     "criterio", "causa_probable", "aviso_cirujano", "aviso_anestesia", "nrf", "an", "cir",
-    "accion_medidas", "recuperacion", "hora_recuperacion", "min_hasta_recuperacion",
+    "accion_medidas", "recuperacion", "min_recuperacion", "min_hasta_recuperacion",
     "resultado_mio", "concordancia",
     // Correlación de la alarma con la evolución, por grupo (29-09-2026)
     "grupo_alarmas", "evolucion_alarma", "valorado", "concordancia_alarma",
@@ -5573,7 +6113,7 @@
   // Una fila del Registro sin nada escrito -las alarmas nacen con 5 filas
   // vacías, ver "min" en REG_SECCIONES- no es un evento.
   function filaRegistroVacia(f) {
-    return !Object.keys(f || {}).some(function (k) { return k !== "id" && f[k]; });
+    return !Object.keys(f || {}).some(function (k) { return k !== "id" && (f[k] || tvEsNum(f[k])); });
   }
 
   // ¿Tiene la alarma algo escrito de verdad? (auditoría 28-09-2026, C5) Ni
@@ -5585,8 +6125,26 @@
     return Object.keys(a || {}).some(function (k) {
       if (k === "id" || k === "manual") return false;
       var v = a[k];
-      return Array.isArray(v) ? v.length > 0 : !!v;
+      return Array.isArray(v) ? v.length > 0 : (!!v || tvEsNum(v));
     });
+  }
+
+  // Minutos desde la incisión para el CSV: lo nuevo ya viene en minutos; un
+  // caso antiguo (HH:MM) se convierte con su hora de incisión, y sin ella queda en blanco.
+  function tMinRelCaso(c, obj, f) {
+    var raw = tRaw(obj, f);
+    if (tvEsNum(raw)) return raw;
+    var m = tvMin(raw);
+    if (m === null) return "";
+    var v = c && c.registro_intraop && c.registro_intraop.v ? c.registro_intraop.v : null;
+    // Solo una incisión en HH:MM sirve de referencia: si ya es un número es el 0 por definición
+    var ri = v ? tRaw(v, "h_incision") : null;
+    var r = ri !== null && !tvEsNum(ri) ? tvMin(ri) : null;
+    if (r === null) return "";
+    var x = m - r;
+    while (x < -360) x += 1440;
+    while (x >= 1080) x -= 1440;
+    return x;
   }
 
   // Minutos entre dos "HH:MM"; si la recuperación cae pasada la medianoche,
@@ -5607,7 +6165,7 @@
     uids.forEach(function (uid) {
       var c = casos[uid], r = c.registro_intraop || {};
       var comunes = {
-        caso_uid: c.caso_uid || uid, ID_Caso: c.ID_Caso || "", fecha: c.fecha || "",
+        caso_uid: c.caso_uid || uid, ID_Caso: c.ID_Caso || "", fecha: mesDe(c.fecha),
         servicio: valorCsvDeCaso(c, "servicio"),
         diagnostico: c.diagnostico ? opcionTexto("diagnostico", c.diagnostico) : "",
         intervencion: intervencionDe(c),
@@ -5626,7 +6184,7 @@
         });
       }
       sacar("evento", r.eventos, "", function (f) {
-        return { hora: f.hora, codigo: f.cod, fase_maniobra: f.fase, contexto: regTextoLista(REG_CONTEXTO, f.contexto),
+        return { min: tMinRelCaso(c, f, "hora"), codigo: f.cod, fase_maniobra: f.fase, contexto: regTextoLista(REG_CONTEXTO, f.contexto),
                  tof: f.tof ? "TOF " + f.tof : "", modalidad_lado: f.modalidad,
                  cambio: f.cambio, aviso_cirujano: !!f.av_cir, aviso_anestesia: !!f.av_an,
                  accion_medidas: f.accion, magnitud_pct: f.magnitud || "" };
@@ -5646,11 +6204,11 @@
         } : {};
         var med = (f.medidas_l || []).map(function (v) { return regTextoLista(REG_MEDIDAS_AL, v); });
         if (f.medidas) med.push(f.medidas);
-        return { hora: f.hora, fase_maniobra: f.fase || "", tof: f.tof ? "TOF " + f.tof : "", modalidad_lado: f.modalidad,
+        return { min: tMinRelCaso(c, f, "hora"), fase_maniobra: f.fase || "", tof: f.tof ? "TOF " + f.tof : "", modalidad_lado: f.modalidad,
                  criterio: regTextoLista(REG_CRITERIO_AL, f.criterio),
                  causa_probable: regTextoLista(REG_CAUSA_AL, f.causa), nrf: !!f.nrf, an: !!f.an, cir: !!f.cir,
-                 accion_medidas: med.join(", "), recuperacion: f.recup, hora_recuperacion: f.h_recup,
-                 min_hasta_recuperacion: minutosEntre(f.hora, f.h_recup),
+                 accion_medidas: med.join(", "), recuperacion: f.recup, min_recuperacion: tMinRelCaso(c, f, "h_recup"),
+                 min_hasta_recuperacion: tvDur(tRaw(f, "hora"), tRaw(f, "h_recup")),
                  grupo_alarmas: corr.grupo_alarmas, evolucion_alarma: corr.evolucion_alarma,
                  valorado: corr.valorado, concordancia_alarma: corr.concordancia_alarma,
                  magnitud_pct: f.magnitud || "" };
@@ -5939,7 +6497,7 @@
     ((d && d.alarmas) || []).forEach(function (a, i) {
       if (!alarmaEscrita(a)) return;
       var m = textoMedidasAlarma(a, i);
-      filas.push(filaInforme(doc, "A" + (i + 1), textoAlarma(a, i).replace(/^A\d+: /, "") +
+      filas.push(filaInforme(doc, "A" + (i + 1), textoAlarma(a, i, c).replace(/^A\d+: /, "") +
         (m ? "\n" + T("reg_p_medidas") + ": " + m.replace(/^A\d+: /, "") : ""), true));
     });
     return filas.length ? seccionInforme(doc, T("caso_alarmas_registro"), filas) : null;
@@ -5948,7 +6506,7 @@
   // Correlación de cada alarma con la evolución (29-09-2026): una línea por
   // grupo; sin alarmas, nada.
   function seccionCorrelatoInforme(doc, c) {
-    var filas = filasCorrelato(c).map(function (f) { return filaInforme(doc, f.alarmas, textoCorrelato(f), true); });
+    var filas = filasCorrelato(c).map(function (f) { return filaInforme(doc, f.alarmas, textoCorrelato(f, c), true); });
     return filas.length ? seccionInforme(doc, T("caso_correlato_alarmas"), filas) : null;
   }
 
@@ -6602,9 +7160,18 @@
       return l;
     }
     var res = fusionar(local, remoto);
-    var marcas = {};
-    (local.editado_en || []).concat(remoto.editado_en || []).forEach(function (m) { marcas[m] = true; });
-    res.editado_en = Object.keys(marcas).sort();
+    // Lo remoto solo trae meses (esquema 2): no se pueden unir como sellos
+    // (se perdería la cuenta). Se conservan los locales, que pueden ser reales,
+    // y se añaden los meses que sobren del remoto; `rev` toma el mayor.
+    var le = local.editado_en || [], re = remoto.editado_en || [];
+    if (esquemaDe(local) >= 2) {
+      res.editado_en = le.concat(re.slice(le.length));
+      res.rev = Math.max(local.rev || 0, remoto.rev || 0);
+    } else {
+      var marcas = {};
+      le.concat(re).forEach(function (m) { marcas[m] = true; });
+      res.editado_en = Object.keys(marcas).sort();
+    }
     return res;
   }
 
@@ -6623,9 +7190,11 @@
   function subirCasoYaHidratado(uid, reintento) {
     var caso = casos[uid];
     if (!caso) { delete casosSinSubir[uid]; return Promise.resolve(); }
+    // Mensaje con el uid (un UUID no dice nada): ni el ID_Caso ni nada del caso
+    // en el historial de commits. Se sube la versión seudónima, nunca la exacta.
     var cuerpo = {
-      message: "Caso " + (caso.ID_Caso || uid),
-      content: aBase64(JSON.stringify(caso, null, 2))
+      message: "Caso " + uid,
+      content: aBase64(JSON.stringify(seudonimizarCaso(caso), null, 2))
     };
     if (casosSha[uid]) cuerpo.sha = casosSha[uid];
     return fetch(urlCaso(uid), {
@@ -6756,6 +7325,7 @@
           delete casos[uid];
           delete casosSha[uid];
           borrarUnCasoLocal(uid, caso);
+          exactosBorrar(uid);
         });
 
         var quedan = (listado || []).filter(function (f) {
@@ -6787,9 +7357,16 @@
                 if (!json || !json.content) return;
                 var caso = JSON.parse(deBase64(json.content));
                 if (!caso || !caso.caso_uid) return;
+                // Llega el caso seudónimo; si este dispositivo tiene lo exacto de
+                // ese caso, se vuelve a unir (y sus fotos locales se recuperan de
+                // IndexedDB). Las imágenes nunca vienen de la nube.
+                reunirExactos(caso);
                 casos[caso.caso_uid] = caso;
                 casosSha[caso.caso_uid] = json.sha;
                 guardarUnCasoLocal(caso.caso_uid);
+                if (esquemaDe(caso) >= 2 && exactosDe(caso.caso_uid) && exactosDe(caso.caso_uid).img) {
+                  casosHidratados[caso.caso_uid] = hidratarCasoIDB(caso.caso_uid);
+                }
               });
           });
         }, Promise.resolve()).then(function () {
@@ -7184,8 +7761,8 @@
     var m = montajes[uid];
     if (!m) { delete montajesSinSubir[uid]; return Promise.resolve(); }
     var cuerpo = {
-      message: "Montaje " + (campo(m, "nombre") || uid),
-      content: aBase64(JSON.stringify(m, null, 2))
+      message: "Montaje " + uid,
+      content: aBase64(JSON.stringify(seudonimizarMontaje(m), null, 2))
     };
     if (montajesSha[uid]) cuerpo.sha = montajesSha[uid];
     return fetch(urlMontaje(uid), {
@@ -8123,12 +8700,18 @@
   // Una fila por grupo con todo ya resuelto: para el Sheet, el informe y el
   // CSV. Listas en id (como el resto del Sheet); criterio en id si es de la
   // lista y, si no, el texto.
+  // Horas (minutos o HH:MM antiguo) de las alarmas de un grupo, de menor a mayor
+  function tHorasGrupo(g) {
+    return g.alarmas.filter(function (x) { return tHay(x.a, "hora"); })
+      .map(function (x) { return tRaw(x.a, "hora"); })
+      .sort(function (p, q) { return tvMin(p) - tvMin(q); });
+  }
   function filasCorrelato(c) {
     var d = c.registro_intraop;
     if (!d || !d.alarmas) return [];
     return gruposAlarmas(d).map(function (g) {
       var e = correlatoDe(c, g);
-      var horas = g.alarmas.map(function (x) { return x.a.hora; }).filter(Boolean).sort();
+      var horas = tHorasGrupo(g);
       var recs = [];
       g.alarmas.forEach(function (x) { if (x.a.recup && recs.indexOf(x.a.recup) === -1) recs.push(x.a.recup); });
       // El mayor cambio del grupo, en % (30-09-2026): lo lee el Sheet
@@ -8137,7 +8720,7 @@
         magnitud_pct: mags.length ? String(Math.max.apply(null, mags)) : "",
         alarmas: g.alarmas.map(function (x) { return "A" + x.n; }).join(", "),
         n_alarmas: g.alarmas.length, tecnica: g.tec, criterio: g.crit,
-        hora_inicio: horas[0] || "", hora_fin: horas[horas.length - 1] || "",
+        hora_inicio: horas.length ? horas[0] : "", hora_fin: horas.length ? horas[horas.length - 1] : "",
         recuperacion: recs.join("/"), evolucion: e.evol || "", valorado: e.momento || "",
         concordancia: concordanciaGrupo(g, e.evol)
       };
@@ -8145,8 +8728,8 @@
   }
 
   // «t-MEP MSD · deltoides · Pérdida · 08:59–09:35 → Sin déficit relacionado (72 h) · PR»
-  function textoCorrelato(f) {
-    var rango = f.hora_inicio + (f.hora_fin && f.hora_fin !== f.hora_inicio ? "–" + f.hora_fin : "");
+  function textoCorrelato(f, c) {
+    var rango = tvTxt(f.hora_inicio, c || null) + (tvHay(f.hora_fin) && f.hora_fin !== f.hora_inicio ? "–" + tvTxt(f.hora_fin, c || null) : "");
     var t = [f.tecnica, regTextoLista(REG_CRITERIO_AL, f.criterio), rango].filter(Boolean).join(" · ");
     if (f.evolucion) t += " → " + opcionTexto("correlato_evol", f.evolucion) + (f.valorado ? " (" + opcionTexto("correlato_momento", f.valorado) + ")" : "");
     if (f.concordancia) t += " · " + f.concordancia;
@@ -8166,8 +8749,8 @@
 
   function filaCorrelato(g) {
     var fila = regNodo("div", "caso-correlato-fila");
-    var horas = g.alarmas.map(function (x) { return x.a.hora; }).filter(Boolean).sort();
-    var rango = horas.length ? horas[0] + (horas[horas.length - 1] !== horas[0] ? "–" + horas[horas.length - 1] : "") : "";
+    var horas = tHorasGrupo(g);
+    var rango = horas.length ? tvTxt(horas[0], casoAbierto) + (horas[horas.length - 1] !== horas[0] ? "–" + tvTxt(horas[horas.length - 1], casoAbierto) : "") : "";
     var tit = regNodo("div", "caso-correlato-tit");
     tit.appendChild(regNodo("b", null, g.alarmas.map(function (x) { return "A" + x.n; }).join(", ")));
     tit.appendChild(document.createTextNode(" · " + [g.tec, regTextoLista(REG_CRITERIO_AL, g.crit), rango].filter(Boolean).join(" · ")));
@@ -9089,6 +9672,16 @@
       return div;   // no se edita: no entra en camposCaso
     }
 
+    if (def.t === "time") {
+      // Hora de inicio/fin de la ficha: en minutos desde la incisión (hora real si hay t0 local)
+      var cFt = casoAbierto;
+      control = tInputGS(function () { return tRaw(cFt, def.c); }, function (v) { tFijar(cFt, def.c, v); }, cFt);
+      control.id = "caso-f-" + def.c;
+      div.appendChild(control);
+      camposCaso[def.c] = control;
+      return div;
+    }
+
     if (def.t === "sel" || def.t === "cat") {
       control = document.createElement("select");
       var vacia = document.createElement("option");
@@ -9134,7 +9727,15 @@
       control = document.createElement("input");
       control.type = def.t === "num" ? "number" : (def.t === "date" ? "date" : (def.t === "time" ? "time" : "text"));
       if (def.t === "num") control.min = "0";
+      // Un caso que llegó de otro dispositivo trae solo el mes y el tramo de
+      // edad: se enseñan tal cual (un <input date/number> los dejaría en blanco
+      // y, al guardar, se perderían)
+      if (def.c === "fecha" && esSoloMes(valor)) control.type = "month";
+      if (def.c === "edad" && esTramoEdad(valor)) control.type = "text";
+      // La explicación va en el título (una fila de campos cortos no tiene sitio para un párrafo)
+      if (def.c === "edad") control.title = T("caso_edad_ay");
       control.value = valor == null ? "" : valor;
+      if (PSEUDO_TEXTOS_CASO.indexOf(def.c) !== -1 && !valor && faltanExactos(casoAbierto)) control.placeholder = T("ex_no_disp");
     }
 
     control.id = "caso-f-" + def.c;
@@ -9464,14 +10065,26 @@
     }
 
     // Pie: cuándo se creó el archivo y cuántas veces se ha tocado después
+    // Leyenda fija junto a los textos libres de cada apartado (no sale en los
+    // que no tienen ninguno). Aviso de qué NO escribir; el detector avisa al guardar.
+    ["traza", "paciente", "cirugia", "anestesia", "montaje", "tecnicas", "desarrollo", "resultado", "formacion"].forEach(function (g) {
+      var cont = document.getElementById("caso-c-" + g);
+      if (!cont) return;
+      var previa = cont.querySelector(".leyenda-texto-libre");
+      if (previa) previa.parentNode.removeChild(previa);
+      var libres = cont.querySelectorAll("textarea, input[type=text]");
+      if (!libres.length) return;
+      var ley = regNodo("p", "leyenda-texto-libre", T("txt_leyenda_libre"));
+      cont.insertBefore(ley, cont.firstChild);
+    });
     var pie = document.getElementById("caso-meta");
     var partes = [T("caso_creado_en", {
-      fecha: new Date(c.guardado_en).toLocaleString(localeActual())
+      fecha: fechaHoraTxt(c.guardado_en)
     })];
     if ((c.editado_en || []).length) {
       partes.push(T("caso_editado_veces", {
         n: c.editado_en.length,
-        fecha: new Date(c.editado_en[c.editado_en.length - 1]).toLocaleString(localeActual())
+        fecha: fechaHoraTxt(c.editado_en[c.editado_en.length - 1])
       }));
     }
     pie.textContent = partes.join(" · ");
@@ -9509,6 +10122,7 @@
     CAMPOS_CASO.forEach(function (def) {
       var control = camposCaso[def.c];
       if (control === undefined) return;
+      if (def.t === "time") return;   // ya escrito en casoAbierto (en minutos)
       if (def.t === "tecnicas" || def.t === "tecnicas_alt" || def.t === "imagenes_montaje") { c[def.c] = control.slice(); return; }
       if (def.t === "material") { c[def.c] = Object.assign({}, control); return; }
       if (def.t === "tecnicas_parametros") { c[def.c] = Object.assign({}, control); return; }
@@ -9516,6 +10130,12 @@
       if (def.t === "check") { c[def.c] = control.checked; return; }
       // Los numéricos se guardan como número, no como texto: en el Sheet hay
       // que poder sumarlos y sacar medias sin convertir nada.
+      if (def.c === "edad" && control.type === "text") {
+        // tramo de otro dispositivo: se conserva; si escribe un número, vale como edad exacta
+        var vt = control.value.trim();
+        c[def.c] = /^\d+$/.test(vt) ? Number(vt) : vt;
+        return;
+      }
       if (def.t === "num" || def.c === "dificultad_1a5") {
         c[def.c] = control.value === "" ? "" : Number(control.value);
         return;
@@ -9569,6 +10189,18 @@
     // renderFichaCaso() al repintar; si no se repinta, la ficha se cierra.
     fichaFirma = "";
     avisoGuardado(T("caso_guardado"));
+    // Al guardar con el botón o al cerrar el caso, el aviso sale siempre y
+    // enseña en qué campo (no impide guardar: ya está guardado)
+    var hall = avisarIdentificables(c, true);
+    var errId = document.getElementById("caso-error");
+    if (hall.length) {
+      errId.textContent = T("txt_aviso", { lista: textoHallazgos(hall) });
+      errId.hidden = false;
+      errId.setAttribute("data-ident", "1");
+    } else if (errId.getAttribute("data-ident")) {
+      errId.hidden = true;
+      errId.removeAttribute("data-ident");
+    }
     return true;
   }
 
@@ -9636,6 +10268,7 @@
     document.getElementById("caso-borrar").hidden = false;
     document.getElementById("caso-mas").hidden = false;
     avisoGuardado(T("caso_autoguardado"));
+    avisarIdentificables(c, false);
     return true;
   }
   function programarAutoguardadoFicha() {
@@ -9753,8 +10386,7 @@
       if (fDiagnostico && (c.diagnostico || "") !== fDiagnostico) return false;
       if (fEstado && c.estado !== fEstado) return false;
       if (fConcordancia && c.concordancia !== fConcordancia) return false;
-      if (fDesde && (c.fecha || "") < fDesde) return false;
-      if (fHasta && (c.fecha || "") > fHasta) return false;
+      if (!fechaEnRango(c.fecha, fDesde, fHasta)) return false;
       if (soloDestacados && !c.caso_destacado) return false;
       if (soloSeguimiento && !c.hacer_seguimiento) return false;
       return true;
@@ -12687,7 +13319,8 @@
     if (!iso) return "";
     var d = new Date(iso);
     if (isNaN(d.getTime())) return "";
-    return T("montaje_modificado", { fecha: d.toLocaleDateString(localeActual()) });
+    // Una plantilla que llegó de la nube solo trae el mes (ver seudonimizarMontaje())
+    return T("montaje_modificado", { fecha: esSoloMes(iso) ? fechaHoraTxt(iso) : d.toLocaleDateString(localeActual()) });
   }
 
   function autorDe(m) {
@@ -12717,8 +13350,7 @@
   }
   // Sin ninguna modificación, cuenta la fecha de creación
   function fechaModificacionMontaje(m) {
-    var ed = m && m.editado_en && m.editado_en.length ? m.editado_en[m.editado_en.length - 1] : "";
-    return ed || (m && m.creado_en) || "";
+    return claveModificacionMontaje(m);   // mes + contador + sello: ver seudonimizarMontaje()
   }
   function comparadorPlantillas(orden) {
     if (orden !== "modificado") return compararMontajesPorNombre;
@@ -12726,7 +13358,8 @@
       var fa = fechaModificacionMontaje(montajes[a]), fb = fechaModificacionMontaje(montajes[b]);
       // Sin fecha, siempre al final
       if (!fa !== !fb) return fa ? -1 : 1;
-      return fb.localeCompare(fa) || compararMontajesPorNombre(a, b);
+      // Comparación directa (no localeCompare, que ignora los "|" de la clave)
+      return (fb < fa ? -1 : (fb > fa ? 1 : 0)) || compararMontajesPorNombre(a, b);
     };
   }
   document.getElementById("montajes-orden").addEventListener("change", function () {
@@ -13501,7 +14134,13 @@
     // apuntes, que viven en archivos aparte y antes no salían. Así, sin
     // token o con GitHub caído, hay una copia local de todo.
     // Los apuntes son personales y globales: solo salen en la copia de "archivo".
-    copia.completa = { casos: casos, montajes: montajes, apuntes: ESPACIO.id === "archivo" ? apunteDoc : null };
+    // Casos y plantillas SEUDÓNIMOS (los mismos que se suben): sin fechas
+    // exactas, edad exacta, nombres, personal, horas reales ni imágenes. La
+    // tabla de datos exactos (EXACTOS_KEY) no va nunca en la copia.
+    var casosCopia = {}, montajesCopia = {};
+    Object.keys(casos).forEach(function (uid) { casosCopia[uid] = seudonimizarCaso(casos[uid]); });
+    Object.keys(montajes).forEach(function (uid) { montajesCopia[uid] = seudonimizarMontaje(montajes[uid]); });
+    copia.completa = { casos: casosCopia, montajes: montajesCopia, apuntes: ESPACIO.id === "archivo" ? apunteDoc : null };
     var blob = new Blob([JSON.stringify(copia, null, 2)], { type: "application/json" });
     var url = URL.createObjectURL(blob);
     var a = document.createElement("a");
@@ -17866,6 +18505,224 @@
   var registroIdSeq = 0;
   var registroAbiertas = null;
 
+  /* ===== Tiempo en MINUTOS desde la incisión (fase 1 de la seudonimización) =====
+   * Lo que se guarda en el caso y se sube lleva SOLO minutos (minuto 0 = la
+   * incisión; negativos = antes): hermanos numéricos "<campo>_min" (hora_min,
+   * h_recup_min, h_incision_min, hora_inicio_min...). La hora real de la
+   * incisión (t0) vive SOLO en este dispositivo (T0_KEY, por espacio, mapa por
+   * uid de caso); nunca va a estado.json, casos/, Exportar copia ni subidas.
+   * Con t0 el médico sigue viendo y escribiendo la hora real (HH:MM): se
+   * convierte a minutos al guardar. Sin t0, el campo funciona en minutos.
+   * Casos antiguos (HH:MM en "hora", "h_recup"...): se leen sin migrar
+   * (tMin convierte) y un Registro que ya tiene algún HH:MM sigue escribiendo
+   * HH:MM (tLegado), para no mezclar en un mismo caso hora del día con minutos
+   * desde la incisión. OJO: 0 es un valor válido y falsy: usar tvHay/tHay.
+   * Decisión de producto (la más simple): t0 se fija al marcar «Incisión» en
+   * Hitos (hora real). Si se apunta algo con «Ahora» antes, t0 es provisional
+   * (el primer «Ahora») y al marcar la incisión se reajustan los minutos. */
+  var T0_KEY = "mio_ionm_t0_v1";
+  var t0Cache = null;
+  function t0Leer() {
+    if (t0Cache) return t0Cache;
+    var g = null;
+    try { g = JSON.parse(localStorage.getItem(T0_KEY) || "null"); } catch (e) { g = null; }
+    t0Cache = g && typeof g === "object" ? g : {};
+    return t0Cache;
+  }
+  function t0Guardar() {
+    try { localStorage.setItem(T0_KEY, JSON.stringify(t0Cache || {})); } catch (e) { /* sin persistencia */ }
+  }
+  function t0Uid(c) { return c && c.caso_uid ? c.caso_uid : "modelo0"; }
+  function t0De(c) {
+    var e = t0Leer()[t0Uid(c)];
+    return e && typeof e.ms === "number" ? e : null;
+  }
+  function t0Fijar(c, ms, prov) {
+    t0Leer()[t0Uid(c)] = { ms: ms, prov: !!prov };
+    t0Guardar();
+  }
+  function t0Quitar(uid) {
+    var m = t0Leer();
+    if (m[uid]) { delete m[uid]; t0Guardar(); }
+  }
+  // Caso de la hoja en curso (impresión) o el de la pantalla
+  function tCasoCtx() {
+    if (regCasoRotulos !== undefined) return regCasoRotulos;
+    if (casoAbierto && pantallaActiva("casos")) return casoAbierto;   // ficha abierta
+    return registroCaso();
+  }
+
+  function tvEsNum(v) { return typeof v === "number" && isFinite(v); }
+  function tvHay(v) { return tvEsNum(v) || (typeof v === "string" && v !== ""); }
+  // Minutos de un valor: número tal cual; "HH:MM" antiguo = minutos del día
+  function tvMin(v) {
+    if (tvEsNum(v)) return v;
+    var m = /^(\d{1,2}):(\d{2})/.exec(v || "");
+    return m ? (+m[1]) * 60 + (+m[2]) : null;
+  }
+  function tRaw(obj, f) {
+    if (!obj) return "";
+    var n = obj[f + "_min"];
+    return tvEsNum(n) ? n : (obj[f] || "");
+  }
+  function tMin(obj, f) { return tvMin(tRaw(obj, f)); }
+  function tHay(obj, f) { return tvHay(tRaw(obj, f)); }
+  // v: número (minutos) | "HH:MM" (caso antiguo) | "" (vacío)
+  function tFijar(obj, f, v) {
+    if (tvEsNum(v)) { obj[f + "_min"] = v; delete obj[f]; }
+    else { delete obj[f + "_min"]; if (v) obj[f] = v; else delete obj[f]; }
+  }
+  function tCopiar(origen, destino, f) { tFijar(destino, f, tRaw(origen, f)); }
+  // Duración entre dos valores; el HH:MM antiguo, si cae pasada la medianoche, suma un día
+  function tvDur(v1, v2) {
+    var a = tvMin(v1), b = tvMin(v2);
+    if (a === null || b === null) return "";
+    var d = b - a;
+    if (d < 0) { if (tvEsNum(v1) || tvEsNum(v2)) return ""; d += 1440; }
+    return d;
+  }
+  function tFmtMin(n) { return (n < 0 ? "−" : "") + Math.abs(n) + " min"; }
+  function tHoraReal(ms) {
+    var d = new Date(ms);
+    return dosDigitos(d.getHours()) + ":" + dosDigitos(d.getMinutes());
+  }
+  // Para pantalla: hora real si hay t0 local; si no, minutos
+  function tvTxt(v, c) {
+    if (tvEsNum(v)) {
+      var e = t0De(c === undefined ? tCasoCtx() : c);
+      return e ? tHoraReal(e.ms + v * 60000) : tFmtMin(v);
+    }
+    return v || "";
+  }
+  // Para texto que se GUARDA (tipo de alerta, borrador del resumen): nunca hora real
+  function tvTxtRel(v) { return tvEsNum(v) ? tFmtMin(v) : (v || ""); }
+  function tTxt(obj, f, c) { return tvTxt(tRaw(obj, f), c); }
+
+  // Campos de tiempo de un Registro: fn(obj, campo). Sirve para detectar el
+  // modo antiguo y para reajustar los minutos.
+  function tRecorrer(d, fn) {
+    (d.eventos || []).forEach(function (e) {
+      fn(e, "hora");
+      if (e.recupera_de) fn(e.recupera_de, "h_recup");
+    });
+    (d.alarmas || []).forEach(function (a) { fn(a, "hora"); fn(a, "h_recup"); });
+    (d.mapeo || []).forEach(function (m) { fn(m, "hora"); });
+    var v = d.v || {};
+    REG_HITOS.forEach(function (h) { fn(v, h.id); });
+    ["an_relajante_h", "an_tof_h", "cierre_com_h", "hora_inicio_mio"].forEach(function (k) { fn(v, k); });
+  }
+  // ¿Este caso (o el Modelo 0) tiene algún HH:MM antiguo? Entonces sigue en HH:MM.
+  function tLegado(c) {
+    var d = c ? c.registro_intraop : registroModeloCero;
+    function ant(o, f) { return o && typeof o[f] === "string" && o[f] !== "" && !tvEsNum(o[f + "_min"]); }
+    if (c && (ant(c, "hora_inicio") || ant(c, "hora_fin"))) return true;
+    if (!d) return false;
+    var hay = false;
+    tRecorrer(d, function (o, f) { if (ant(o, f)) hay = true; });
+    return hay;
+  }
+  // Ajusta todos los minutos del caso (al fijar la incisión con t0 provisional)
+  function tDesplazar(c, delta) {
+    function mover(o, f) { if (o && tvEsNum(o[f + "_min"])) o[f + "_min"] -= delta; }
+    var d = c ? c.registro_intraop : registroModeloCero;
+    if (d) tRecorrer(d, mover);
+    if (c) { mover(c, "hora_inicio"); mover(c, "hora_fin"); }
+  }
+  function tAhoraMs() { return Math.floor(Date.now() / 60000) * 60000; }
+  // «Ahora» para el modo activo: HH:MM en un caso antiguo; si no, minutos
+  // desde t0 (que, si no existe, queda provisional en este mismo instante).
+  function tAhoraVal(c) {
+    if (c === undefined) c = tCasoCtx();
+    if (tLegado(c)) return horaAhora();
+    var e = t0De(c);
+    if (!e) { t0Fijar(c, tAhoraMs(), true); e = t0De(c); }
+    return Math.round((Date.now() - e.ms) / 60000);
+  }
+  function tMinDeReloj(hhmm, e) {
+    var m = /^(\d{1,2}):(\d{2})/.exec(hhmm || "");
+    if (!m) return "";
+    var base = new Date(e.ms);
+    base.setHours(+m[1], +m[2], 0, 0);
+    var min = Math.round((base.getTime() - e.ms) / 60000);
+    while (min < -360) min += 1440;
+    while (min >= 1080) min -= 1440;
+    return min;
+  }
+
+  /* Casilla de tiempo sobre un valor: get() -> valor, set(v). Con caso en
+     modo antiguo, <input time> con HH:MM; con t0, <input time> con la hora
+     real (se guarda en minutos); sin t0, número en minutos. */
+  function tInputGS(get, set, c, placeholder) {
+    var legado = tLegado(c);
+    var inp = document.createElement("input");
+    function ajustar() {
+      var e = legado ? null : t0De(c);
+      var v = get();
+      if (legado || e) {
+        inp.type = "time";
+        inp.removeAttribute("step");
+        inp.value = legado ? (v || "") : (tvEsNum(v) ? tHoraReal(e.ms + v * 60000) : "");
+      } else {
+        inp.type = "number";
+        inp.step = "1";
+        inp.value = tvEsNum(v) ? String(v) : "";
+      }
+    }
+    ajustar();
+    inp.placeholder = (legado || t0De(c)) ? "" : "min";
+    if (placeholder) inp.setAttribute("aria-label", placeholder);
+    inp.addEventListener("input", function () {
+      var e = legado ? null : t0De(c);
+      if (legado) set(inp.value);
+      else if (e) set(inp.value === "" ? "" : tMinDeReloj(inp.value, e));
+      else set(inp.value === "" || isNaN(Number(inp.value)) ? "" : Math.round(Number(inp.value)));
+    });
+    inp._tRefrescar = ajustar;
+    return inp;
+  }
+  function tInputObj(obj, f, c, placeholder, alCambiar, guardar) {
+    guardar = guardar || REG_GUARDAR;
+    var inp = tInputGS(function () { return tRaw(obj, f); }, function (v) {
+      tFijar(obj, f, v);
+      guardar.cambiar();
+      if (alCambiar) alCambiar();
+    }, c, placeholder);
+    inp.addEventListener("change", function () { guardar.salir(); });
+    return inp;
+  }
+
+  // Incisión: fija t0 (hora real, solo local) y guarda el minuto 0. Si ya había
+  // un t0 (provisional por un «Ahora» anterior, o una incisión corregida), los
+  // minutos ya apuntados se reajustan para que el 0 sea esta incisión.
+  function tFijarIncision(c, ms, obj, f) {
+    var e = t0De(c);
+    if (e) {
+      var delta = Math.round((ms - e.ms) / 60000);
+      if (delta) tDesplazar(c, delta);
+    }
+    t0Fijar(c, ms, false);
+    tFijar(obj, f, 0);
+  }
+  // Al marcar la fase «Incisión» en el Registro (lo que hay en pantalla: el
+  // cronograma de hitos solo sale en la hoja impresa) esa fase es el minuto 0.
+  function regFijarIncisionDeFase(d, ev) {
+    var c = registroCaso();
+    var h = tRaw(ev, "hora");
+    if (tLegado(c) || !tvEsNum(h)) return;
+    var e = t0De(c);
+    if (!e) return;
+    tFijarIncision(c, e.ms + h * 60000, d.v, "h_incision");
+  }
+
+  // Hora real (HH:MM) de hoy -> ms (minuto redondeado)
+  function tMsDeReloj(hhmm) {
+    var m = /^(\d{1,2}):(\d{2})/.exec(hhmm || "");
+    if (!m) return null;
+    var d = new Date();
+    d.setHours(+m[1], +m[2], 0, 0);
+    return d.getTime();
+  }
+
   function horaAhora() {
     var d = new Date();
     return dosDigitos(d.getHours()) + ":" + dosDigitos(d.getMinutes());
@@ -18408,7 +19265,10 @@
     // Candado (auditoría 09-10-2026, C13): un caso cerrado no se guarda, ni
     // con «Guardar» ni con «Imprimir» ni al salir.
     if (casoBloqueado(c)) return;
-    if (c) guardarCaso(c, false, true); else registroGuardarModeloCero();
+    if (c) {
+      guardarCaso(c, false, true);
+      avisarIdentificables(c, false);   // no bloquea; solo si lo detectado cambió
+    } else registroGuardarModeloCero();
   }
   function registroGuardar() {
     if (registroTimer) clearTimeout(registroTimer);
@@ -18433,6 +19293,11 @@
      "leerCaso": valor calculado desde el caso (modalidades afectadas =
      técnicas alteradas). Sin caso vinculado (Modelo 0), todo como antes. */
   function regGet(almacen, def, casoExplicito) {
+    if (def.t === "time") {
+      var cT = casoExplicito !== undefined ? casoExplicito : registroCaso();
+      if (cT && def.caso && tHay(cT, def.caso)) return tRaw(cT, def.caso);
+      return tRaw(almacen, def.id);
+    }
     var v = almacen[def.id];
     var cc = casoExplicito !== undefined ? casoExplicito : registroCaso();
     if (cc && def.caso) {
@@ -18469,6 +19334,18 @@
     var val = regGet(almacen, def);
     var casoVinc = registroCaso();
     var compartido = !!(def.caso && casoVinc && almacen === registroDatos().v);
+    var esIncision = false;
+    function fijarT(v) {
+      if (compartido) {
+        tFijar(casoVinc, def.caso, v);
+        delete almacen[def.id];
+        delete almacen[def.id + "_min"];
+      } else {
+        tFijar(almacen, def.id, v);
+      }
+      registroGuardar();
+      if (alTocar) alTocar();
+    }
     function fijar(v) {
       if (compartido) {
         casoVinc[def.caso] = v;
@@ -18539,11 +19416,35 @@
       ctl.value = val || "";
       ctl.addEventListener("input", function () { fijar(ctl.value); });
       ctl.addEventListener("change", registroGuardarYa);
+    } else if (def.t === "time") {
+      var cTm = casoVinc || null;
+      esIncision = def.id === "h_incision" && !tLegado(cTm);
+      if (esIncision) {
+        // La incisión es la hora real que fija t0 (solo local); se guarda el minuto 0
+        var eInc = t0De(cTm);
+        ctl = document.createElement("input");
+        ctl.type = "time";
+        ctl.value = eInc ? tHoraReal(eInc.ms) : "";
+        ctl.addEventListener("change", function () {
+          var ms = tMsDeReloj(ctl.value);
+          if (ms === null) { tFijar(almacen, def.id, ""); }
+          else tFijarIncision(cTm, ms, almacen, def.id);
+          registroGuardarYa();
+          renderRegistroContenido();
+        });
+      } else {
+        ctl = tInputGS(function () { return regGet(almacen, def); }, function (v) { fijarT(v); }, cTm, regL(def));
+        ctl.addEventListener("change", registroGuardarYa);
+      }
     } else {
       ctl = document.createElement("input");
       ctl.type = def.t === "time" ? "time" : def.t === "date" ? "date" : def.t === "num" ? "number" : "text";
       if (def.t === "num") { ctl.step = "any"; ctl.inputMode = "decimal"; }
+      // Caso de otro dispositivo: solo el mes (un <input date> lo dejaría en blanco)
+      if (def.t === "date" && esSoloMes(val)) ctl.type = "month";
       ctl.value = val === undefined || val === null ? "" : val;
+      // Personal que no sube: aquí no se conoce (ver seudonimizarCaso())
+      if (PSEUDO_TEXTOS_REG.indexOf(def.id) !== -1 && !val && faltanExactos(casoVinc)) ctl.placeholder = T("ex_no_disp");
       ctl.addEventListener("input", function () { fijar(ctl.value); });
       ctl.addEventListener("change", registroGuardarYa);
     }
@@ -18559,9 +19460,16 @@
       ahora.textContent = T("registro_ahora");
       ahora.title = T("registro_ahora_tit");
       ahora.addEventListener("click", function () {
-        ctl.value = horaAhora();
-        fijar(ctl.value);
+        if (esIncision) {
+          tFijarIncision(casoVinc || null, tAhoraMs(), almacen, def.id);
+          registroGuardarYa();
+          renderRegistroContenido();
+          return;
+        }
+        fijarT(tAhoraVal(casoVinc || null));
+        if (ctl._tRefrescar) ctl._tRefrescar();
         registroGuardarYa();
+        if (alTocar) alTocar();
       });
       fila.appendChild(ahora);
       div.appendChild(fila);
@@ -18792,7 +19700,7 @@
     var d = { v: r.v || {}, eventos: r.eventos || [], alarmas: r.alarmas || [] };
     var lineas = regItemsApuntados(d).map(function (it) {
       var ev = it.ev, al = it.al;
-      var hora = (ev ? ev.hora : al.hora) || "";
+      var hora = tvTxtRel(tRaw(ev || al, "hora"));
       var texto;
       if (ev && ev.cod === "F") {
         texto = T("rr_fase") + ": " + [ev.fase, ev.accion].filter(Boolean).join(" · ");
@@ -18838,7 +19746,7 @@
   // Fila con algo escrito: para la cuenta del encabezado y para no pedir
   // confirmación al quitar una fila vacía.
   function regFilaConContenido(fila, cols) {
-    return cols.some(function (col) { return col.t === "check" ? !!fila[col.id] : !!fila[col.id]; });
+    return cols.some(function (col) { return col.t === "time" ? tHay(fila, col.id) : !!fila[col.id]; });
   }
 
   // Cuánto lleva escrito una sección, para el número del encabezado.
@@ -18880,6 +19788,7 @@
     var principal = regNodo("div", "rr rr-en-hoja rr-principal");
     var faseAct = regFaseActual(registroDatos());
     principal.appendChild(regNodo("div", "rr-fase-actual", faseAct ? T("rr_fase_actual", { fase: faseAct }) : T("rr_sin_fase")));
+    principal.appendChild(regNodo("p", "leyenda-texto-libre", T("txt_leyenda_libre")));
     pintarCronograma(principal);
     cont.appendChild(principal);
     REG_SECCIONES.forEach(function (sec) {
@@ -19042,7 +19951,7 @@
     if (ev && ev.cod === "F") {
       r.fase = ev.fase || "";
       r.faseNota = ev.accion || "";
-      r.faseHora = ev.hora || "";
+      r.faseHora = tRaw(ev, "hora");
       return r;
     }
     var d = registroDatos();
@@ -19349,11 +20258,11 @@
   // que regItemsApuntados(): sin hora, al final; a igual hora, la apuntada
   // después.
   function regFaseActual(d) {
-    var mejor = null, hMejor = "";
+    var mejor = null, hMejor = null;
     d.eventos.forEach(function (e) {
       if (e.cod !== "F" || !e.fase) return;
-      var h = e.hora || "";
-      if (!mejor || !h || (hMejor && h >= hMejor)) { mejor = e; hMejor = h; }
+      var h = tMin(e, "hora");   // null = sin hora (0 es una hora válida)
+      if (!mejor || h === null || (hMejor !== null && h >= hMejor)) { mejor = e; hMejor = h; }
     });
     return mejor ? mejor.fase : "";
   }
@@ -19445,7 +20354,7 @@
     if (edF) {
       if (!nombre) return;
       edF.fase = nombre;
-      if (regRapido.faseHora) edF.hora = regRapido.faseHora;
+      if (tvHay(regRapido.faseHora)) tFijar(edF, "hora", regRapido.faseHora);
       if (detalle) edF.accion = detalle; else delete edF.accion;
       registroGuardarYa();
       avisoGuardado(T("rr_cambios_guardados"));
@@ -19455,15 +20364,17 @@
       regVerUltimoApuntado(edF.id);
       return;
     }
-    if (!nombre || (nombre === regFaseActual(d) && !detalle && !regRapido.faseHora)) return;
-    var hora = regRapido.faseHora || horaAhora();
-    var ev = { id: uuid(), hora: hora, cod: "F", fase: nombre };
+    if (!nombre || (nombre === regFaseActual(d) && !detalle && !tvHay(regRapido.faseHora))) return;
+    var hora = tvHay(regRapido.faseHora) ? regRapido.faseHora : tAhoraVal();
+    var ev = { id: uuid(), cod: "F", fase: nombre };
+    tFijar(ev, "hora", hora);
     if (detalle) ev.accion = detalle;
     d.eventos.push(ev);
+    if (nombre === REG_FASES_RAPIDAS[2].l || nombre === REG_FASES_RAPIDAS[2].l_en) regFijarIncisionDeFase(d, ev);
     regRapido.faseNota = "";
     regRapido.faseHora = "";
     registroGuardarYa();
-    avisoGuardado(T("rr_fase_marcada", { fase: nombre, hora: hora }));
+    avisoGuardado(T("rr_fase_marcada", { fase: nombre, hora: tTxt(ev, "hora") }));
     regHoja = "";
     renderRegistroContenido();
     regVerUltimoApuntado(ev.id);
@@ -19495,7 +20406,7 @@
     var otroCambio = regRapido.cambio === REG_CAMBIO_OTRO;
     if (otroCambio && !nota) { avisoGuardado(T("rr_falta_otro"), true); return; }
     var cambio = REG_CAMBIOS_RAPIDOS.filter(function (x) { return x.id === regRapido.cambio; })[0];
-    var hora = ed ? ((ed.ev || ed.al).hora || "") : horaAhora();
+    var hora = ed ? tRaw(ed.ev || ed.al, "hora") : tAhoraVal();
     var fase = ed ? regRapido.fase : regFaseActual(d);
     var esAn = q === REG_QUE_ANESTESIA, esT = q === REG_QUE_TECNICO;
     // "base": la técnica del botón, sin detalle, para cerrar su alarma al
@@ -19512,8 +20423,9 @@
       modalidad = [campo(farm, "l"), queNota].filter(Boolean).join(" · ");
       textoCambio = [campo(farm, "l"), textoCambio].filter(Boolean).join(" · ");
     }
-    var ev = { id: uuid(), hora: hora, cod: esAlarma ? "A" : (esAn ? "An" : (esT ? "T" : "E")),
+    var ev = { id: uuid(), cod: esAlarma ? "A" : (esAn ? "An" : (esT ? "T" : "E")),
                fase: fase, modalidad: modalidad, cambio: textoCambio, accion: nota };
+    tFijar(ev, "hora", hora);
     if (farm) ev.farmaco = farm.v;
     // Solo un TOF: evento de anestesia «TOF 1/4», como los de antes (sale
     // también en los eventos de anestesia de la ficha).
@@ -19539,7 +20451,7 @@
     // relajado cuando cayó?»). Tocarlo ya no apunta nada por sí solo.
     var tofVigente = regRapido.tof;
     if (tofVigente) ev.tof = tofVigente;
-    var mensaje = T("rr_apuntado", { hora: hora });
+    var mensaje = T("rr_apuntado", { hora: tvTxt(hora) });
     if (esAlarma) {
       // Las alarmas nacen con filas vacías (min en REG_SECCIONES): se usa la
       // primera libre para que la numeración A1, A2... coincida con la hoja.
@@ -19547,7 +20459,7 @@
       var al = ed && ed.al ? ed.al : d.alarmas.filter(filaRegistroVacia)[0];
       if (!al) { al = { id: uuid() }; d.alarmas.push(al); }
       var n = "A" + (d.alarmas.indexOf(al) + 1);
-      al.hora = hora;
+      tFijar(al, "hora", hora);
       al.modalidad = modalidad || T(esAn ? "rr_que_anestesia" : "rr_que_tecnico");
       // Ids de las listas cerradas (28-09-2026); la fase va aparte: ya no es
       // la "causa", que ahora se elige de REG_CAUSA_AL.
@@ -19565,7 +20477,7 @@
       if (cRap) cRap.alerta = true;
       ev.accion = n + (nota ? " · " + nota : "");
       ev.alarma_id = al.id;
-      mensaje = T("rr_alarma_apuntada", { n: n, hora: hora });
+      mensaje = T("rr_alarma_apuntada", { n: n, hora: tvTxt(hora) });
       if (!ed || !ed.al) regAlarmasAbiertas[al.id] = 1;   // recién apuntada: abierta para marcar el aviso
     } else if (!ed && cambio && cambio.recup && modalidad) {
       // Recuperación: cierra la última alarma de esa modalidad que siga
@@ -19574,13 +20486,14 @@
       d.alarmas.forEach(function (a, i) {
         var m = String(a.modalidad || "");
         var misma = m === modalidad || (base && (m === base || m.indexOf(base + " · ") === 0));
-        if (misma && a.hora && a.recup !== "S") abierta = { a: a, i: i };
+        if (misma && tHay(a, "hora") && a.recup !== "S") abierta = { a: a, i: i };
       });
       if (abierta) {
-        ev.recupera_de = { id: abierta.a.id, recup: abierta.a.recup || "", h_recup: abierta.a.h_recup || "" };
+        ev.recupera_de = { id: abierta.a.id, recup: abierta.a.recup || "" };
+        tCopiar(abierta.a, ev.recupera_de, "h_recup");
         abierta.a.recup = cambio.recup;
-        abierta.a.h_recup = hora;
-        mensaje = T("rr_alarma_recuperada", { n: "A" + (abierta.i + 1), min: minutosEntre(abierta.a.hora, hora) });
+        tFijar(abierta.a, "h_recup", hora);
+        mensaje = T("rr_alarma_recuperada", { n: "A" + (abierta.i + 1), min: tvDur(tRaw(abierta.a, "hora"), hora) });
       }
     }
     if (ed) {
@@ -19588,7 +20501,7 @@
       // rellena, conservando id, hora, alarma y recuperación. Una alarma sin
       // evento (de la ficha o de antes) se queda sin él.
       if (ed.ev) {
-        var guardar = { id: ed.ev.id, hora: ed.ev.hora, alarma_id: ed.ev.alarma_id, recupera_de: ed.ev.recupera_de };
+        var guardar = { id: ed.ev.id, hora: ed.ev.hora, hora_min: ed.ev.hora_min, alarma_id: ed.ev.alarma_id, recupera_de: ed.ev.recupera_de };
         // Convertida: la alarma la pone (o la quita) lo calculado arriba
         if (!!ed.al !== esAlarma) delete guardar.alarma_id;
         if (ed.ev.recupera_de) ev.cod = ed.ev.cod;
@@ -19648,7 +20561,7 @@
       if (ev.alarma_id && a.id === ev.alarma_id) d.alarmas[j] = { id: a.id };
       if (ev.recupera_de && a.id === ev.recupera_de.id) {
         a.recup = ev.recupera_de.recup;
-        a.h_recup = ev.recupera_de.h_recup;
+        tCopiar(ev.recupera_de, a, "h_recup");
       }
     });
     registroGuardarYa();
@@ -19688,6 +20601,8 @@
     cerrarH.addEventListener("click", regCerrarHoja);
     cabH.appendChild(cerrarH);
     hoja.appendChild(cabH);
+    // Leyenda fija junto a las cajas de texto libre (qué no escribir)
+    hoja.appendChild(regNodo("p", "leyenda-texto-libre", T("txt_leyenda_libre")));
     var panel = regNodo("div", "rr-hoja-cuerpo");
     hoja.appendChild(panel);
     // Lo elegido en esta misma hoja antes de cerrarla sin apuntar (F10)
@@ -19724,11 +20639,8 @@
     // de los botones porque tocar uno ya apunta la fase.
     var filaHora = regNodo("label", "rr-fase-hora");
     filaHora.appendChild(regNodo("span", null, T(regEditandoAp ? "rr_fase_hora_ed" : "rr_fase_hora")));
-    var inpHora = document.createElement("input");
-    inpHora.type = "time";
+    var inpHora = tInputGS(function () { return regRapido.faseHora; }, function (v) { regRapido.faseHora = v; }, tCasoCtx(), T("rr_fase_hora"));
     inpHora.className = "rr-hora";
-    inpHora.value = regRapido.faseHora || "";
-    inpHora.addEventListener("input", function () { regRapido.faseHora = inpHora.value; });
     filaHora.appendChild(inpHora);
     bFase.appendChild(filaHora);
     var filaFases = regNodo("div", "rr-chips");
@@ -20186,9 +21098,9 @@
     // la alarma de su misma hora, en vez de salir dos veces; y se enlaza,
     // para que corregir la hora o quitar la línea alcance también a la alarma.
     items.forEach(function (it) {
-      if (it.al || it.ev.cod !== "A" || !it.ev.hora) return;
+      if (it.al || it.ev.cod !== "A" || !tHay(it.ev, "hora")) return;
       d.alarmas.forEach(function (a, i) {
-        if (!it.al && !conEvento[a.id] && !filaRegistroVacia(a) && a.hora === it.ev.hora) {
+        if (!it.al && !conEvento[a.id] && !filaRegistroVacia(a) && tHay(a, "hora") && tMin(a, "hora") === tMin(it.ev, "hora")) {
           it.al = a; it.n = i + 1; conEvento[a.id] = 1;
           it.ev.alarma_id = a.id;
         }
@@ -20198,12 +21110,12 @@
       if (filaRegistroVacia(a) || conEvento[a.id]) return;
       items.push({ al: a, n: i + 1, orden: d.eventos.length + i });
     });
-    function hora(it) { return (it.ev ? it.ev.hora : it.al.hora) || ""; }
+    function hora(it) { return tMin(it.ev || it.al, "hora"); }   // null = sin hora
     return items.sort(function (x, y) {
       var hx = hora(x), hy = hora(y);
       if (hx !== hy) {
-        if (!hx) return 1;
-        if (!hy) return -1;
+        if (hx === null) return 1;
+        if (hy === null) return -1;
         return hx < hy ? -1 : 1;
       }
       return x.orden - y.orden;
@@ -20241,21 +21153,20 @@
     // La hora se puede corregir aquí mismo (28-09-2026, pedido del
     // usuario: por si no se apuntó en el momento). Si la línea es una
     // alarma o una recuperación, cambia también la hora de la alarma.
-    var h = document.createElement("input");
-    h.type = "time";
+    var nuevaHora;
+    var h = tInputGS(function () { return tRaw(ev || al, "hora"); }, function (v) { nuevaHora = v; }, tCasoCtx(), T("rr_hora_editar"));
     h.className = "rr-hora";
-    h.value = (ev ? ev.hora : al.hora) || "";
     h.title = T("rr_hora_editar");
-    h.setAttribute("aria-label", T("rr_hora_editar"));
     h.addEventListener("change", function () {
+      if (nuevaHora === undefined) return;
       if (ev) {
-        ev.hora = h.value;
+        tFijar(ev, "hora", nuevaHora);
         d.alarmas.forEach(function (a) {
-          if (ev.alarma_id && a.id === ev.alarma_id) a.hora = h.value;
-          if (ev.recupera_de && a.id === ev.recupera_de.id) a.h_recup = h.value;
+          if (ev.alarma_id && a.id === ev.alarma_id) tFijar(a, "hora", nuevaHora);
+          if (ev.recupera_de && a.id === ev.recupera_de.id) tFijar(a, "h_recup", nuevaHora);
         });
       } else {
-        al.hora = h.value;
+        tFijar(al, "hora", nuevaHora);
       }
       registroGuardarYa();
       renderRegistroContenido();   // se reordena y se ve la hora nueva abajo
@@ -20361,7 +21272,7 @@
       pintarMedidasRecup(det, al, REG_GUARDAR, alCambiarAl, function () {
         // La hora de recuperación mueve también la línea «Recupera» que la puso
         for (var k = d.eventos.length - 1; k >= 0; k--) {
-          if (d.eventos[k].recupera_de && d.eventos[k].recupera_de.id === al.id) { d.eventos[k].hora = al.h_recup || ""; break; }
+          if (d.eventos[k].recupera_de && d.eventos[k].recupera_de.id === al.id) { tFijar(d.eventos[k], "hora", tRaw(al, "h_recup")); break; }
         }
         registroGuardarYa();
         renderRegistroContenido();
@@ -20382,7 +21293,7 @@
       .map(function (m) { return regOpcionLabel(m); });
     if (al.medidas) med.push(al.medidas);
     if (med.length) partes.push(med.join(", "));
-    if (al.recup) partes.push(regTextoLista(REG_RECUP, al.recup).replace(/^[SPN] · /, "") + (al.h_recup ? " " + al.h_recup : ""));
+    if (al.recup) partes.push(regTextoLista(REG_RECUP, al.recup).replace(/^[SPN] · /, "") + (tHay(al, "h_recup") ? " " + tTxt(al, "h_recup") : ""));
     return partes.join(" · ");
   }
 
@@ -20434,6 +21345,7 @@
 
   function regInput(obj, clave, tipo, placeholder, alCambiar, guardar) {
     guardar = guardar || REG_GUARDAR;
+    if (tipo === "time") return tInputObj(obj, clave, tCasoCtx(), placeholder, alCambiar, guardar);
     var inp = document.createElement("input");
     inp.type = tipo || "text";
     inp.value = obj[clave] || "";
@@ -20448,7 +21360,7 @@
   // aria-label para el lector de pantalla.
   function regInputSinTexto(obj, clave, tipo, etiqueta, alCambiar, guardar) {
     var inp = regInput(obj, clave, tipo, etiqueta, alCambiar, guardar);
-    inp.placeholder = "";
+    if (tipo !== "time") inp.placeholder = "";
     return inp;
   }
 
@@ -20608,7 +21520,7 @@
         var inpHora = null;
         function tocar() {
           if (d.mapeo.indexOf(m) === -1) {
-            if (horaSola && !m.hora) { m.hora = horaAhora(); if (inpHora) inpHora.value = m.hora; }
+            if (horaSola && !tHay(m, "hora")) { tFijar(m, "hora", tAhoraVal()); if (inpHora && inpHora._tRefrescar) inpHora._tRefrescar(); }
             d.mapeo.push(m);
             guardar.cambiar();
           }
@@ -20640,7 +21552,7 @@
     }
     btn.addEventListener("click", function () {
       var m = { id: uuid(), tipo: tipo };
-      if (horaSola) m.hora = horaAhora();
+      if (horaSola) tFijar(m, "hora", tAhoraVal());
       d.mapeo.push(m);
       guardar.salir();
       pintar();
@@ -20685,7 +21597,9 @@
       });
     }
     btn.addEventListener("click", function () {
-      d.eventos.push({ id: uuid(), cod: "An", hora: conHora ? horaAhora() : "", cambio: "" });
+      var evA = { id: uuid(), cod: "An", cambio: "" };
+      if (conHora) tFijar(evA, "hora", tAhoraVal());
+      d.eventos.push(evA);
       guardar.salir();
       pintar();
     });
@@ -20920,7 +21834,7 @@
       if (!al) { al = { id: uuid() }; d.alarmas.push(al); }
       // En la ficha (después de la cirugía) sin hora: "manual" la marca como
       // escrita para que no se tome por una fila vacía.
-      if (conHora) al.hora = horaAhora(); else al.manual = true;
+      if (conHora) tFijar(al, "hora", tAhoraVal()); else al.manual = true;
       guardar.salir();
       pintar(al.id);
       alCambiar();
@@ -20965,7 +21879,7 @@
     celda(T("reg_p_recup"), selRecup);
     var duracion = regNodo("span", "reg-p-al-dur");
     var pintarDur = function () {
-      var m = minutosEntre(al.hora, al.h_recup);
+      var m = tvDur(tRaw(al, "hora"), tRaw(al, "h_recup"));
       duracion.textContent = m === "" ? "" : T("reg_p_al_duracion", { min: m });
     };
     var hRecup = regInput(al, "h_recup", "time", T("reg_p_h_recup"), function () { alCambiar(); pintarDur(); }, guardar);
@@ -20977,8 +21891,8 @@
       ahora.type = "button";
       ahora.title = T("reg_p_recupero_ahora");
       ahora.addEventListener("click", function () {
-        al.h_recup = horaAhora();
-        hRecup.value = al.h_recup;
+        tFijar(al, "h_recup", tAhoraVal());
+        if (hRecup._tRefrescar) hRecup._tRefrescar();
         if (!al.recup) { al.recup = "S"; selRecup.value = "S"; }
         guardar.salir();
         alCambiar();
@@ -20993,10 +21907,12 @@
   }
 
   // Texto de una alarma para el caso (Tipo de alerta / CSV / Sheet / informe).
-  function textoAlarma(a, i) {
-    var partes = [a.hora, a.modalidad, regConMagnitud(regTextoLista(REG_CRITERIO_AL, a.criterio), a),
+  function textoAlarma(a, i, c) {
+    // Texto que se guarda (tipo de alerta): minutos, nunca la hora real; en el informe (con caso), la hora real si hay t0 local
+    var tx = c === undefined ? tvTxtRel : function (v) { return tvTxt(v, c); };
+    var partes = [tx(tRaw(a, "hora")), a.modalidad, regConMagnitud(regTextoLista(REG_CRITERIO_AL, a.criterio), a),
       regTextoLista(REG_CAUSA_AL, a.causa), a.tof ? "TOF " + a.tof : ""].filter(Boolean);
-    if (a.recup) partes.push(T("reg_p_recup") + " " + regTextoLista(REG_RECUP, a.recup) + (a.h_recup ? " (" + a.h_recup + ")" : ""));
+    if (a.recup) partes.push(T("reg_p_recup") + " " + regTextoLista(REG_RECUP, a.recup) + (tHay(a, "h_recup") ? " (" + tx(tRaw(a, "h_recup")) + ")" : ""));
     return "A" + (i + 1) + ": " + partes.join(" · ");
   }
   function textoMedidasAlarma(a, i) {
@@ -21240,10 +22156,13 @@
   function hojaValor(d, c, id) {
     var def = hojaDef(id);
     var v = regGet(d.v, def, c);
+    if (def.t === "time") return tvTxt(v, c || null);
     if (def.t === "sel") {
       var o = (def.o || []).filter(function (x) { return x.v === v; })[0];
       return o ? regOpcionLabel(o) : "";
     }
+    // En la hoja impresa de otro dispositivo, el personal no se conoce
+    if (!v && PSEUDO_TEXTOS_REG.indexOf(id) !== -1 && faltanExactos(c)) return T("ex_no_disp");
     return v === false ? "" : v;
   }
 
@@ -21530,7 +22449,7 @@
     var mapDef = REG_SECCIONES[5].cols;
     var filasMapeo = d.mapeo.filter(function (f) { return regFilaConContenido(f, mapDef); }).map(function (f) {
       var tipo = REG_TIPO_MAPEO.filter(function (o) { return o.v === f.tipo; })[0];
-      return { celdas: [f.hora, tipo ? tipo.v : "", f.punto, f.tecnica, f.umbral, f.respuesta, f.accion] };
+      return { celdas: [tvTxt(tRaw(f, "hora"), c || null), tipo ? tipo.v : "", f.punto, f.tecnica, f.umbral, f.respuesta, f.accion] };
     });
     // Con muchas filas de basales (c-MEP, corticobulbares...) una fila menos
     // de mapeo en blanco, para que la hoja 1 siga cabiendo en un A4.
@@ -21578,19 +22497,19 @@
     var evDef = REG_SECCIONES.filter(function (s) { return s.id === "f"; })[0].cols;
     var alDef = REG_SECCIONES.filter(function (s) { return s.id === "g"; })[0].cols;
     var filasEv = d.eventos.filter(function (f) { return regFilaConContenido(f, evDef); }).map(function (f) {
-      return { hora: f.hora || "", celdas: [f.hora, f.cod, [f.fase, regTextoLista(REG_CONTEXTO, f.contexto)].filter(Boolean).join(" · "), f.modalidad, regConMagnitud(f.cambio, f),
+      return { tm: tMin(f, "hora"), celdas: [tvTxt(tRaw(f, "hora"), c || null), f.cod, [f.fase, regTextoLista(REG_CONTEXTO, f.contexto)].filter(Boolean).join(" · "), f.modalidad, regConMagnitud(f.cambio, f),
         hojaCasilla(!!f.av_cir), hojaCasilla(!!f.av_an), "", f.accion, ""] };
     });
     // Listas cerradas (28-09-2026): se imprimen los rótulos, no los ids.
     var filasAl = d.alarmas.filter(alarmaEscrita).map(function (f) {
       var med = (f.medidas_l || []).map(function (v) { return regTextoLista(REG_MEDIDAS_AL, v); });
       if (f.medidas) med.push(f.medidas);
-      return { hora: f.hora || "", celdas: [f.hora, "A", [f.fase, regTextoLista(REG_CAUSA_AL, f.causa)].filter(Boolean).join(" · "),
+      return { tm: tMin(f, "hora"), celdas: [tvTxt(tRaw(f, "hora"), c || null), "A", [f.fase, regTextoLista(REG_CAUSA_AL, f.causa)].filter(Boolean).join(" · "),
         f.modalidad, regConMagnitud(regTextoLista(REG_CRITERIO_AL, f.criterio), f),
         "", "", (f.nrf ? "N" : "") + (f.an ? " A" : "") + (f.cir ? " C" : ""), med.join(", "), f.recup || ""], cls: "hj-alarma" };
     });
     var todas = filasEv.concat(filasAl);
-    todas.sort(function (a, b) { return a.hora && b.hora ? a.hora.localeCompare(b.hora) : 0; });
+    todas.sort(function (a, b) { return a.tm !== null && b.tm !== null ? a.tm - b.tm : 0; });
     var nBlancas = Math.max(20 - todas.length, 6);
     // Las filas en blanco llevan las casillas ya dibujadas: se rellenan a mano.
     for (var i = 0; i < nBlancas; i++) {
@@ -21616,7 +22535,7 @@
     com.appendChild(nodoInforme(doc, "small", null, T("hoja_comunicacion")));
     var comV = nodoInforme(doc, "div", "hj-v hj-lin");
     comV.appendChild(nodoInforme(doc, "span", "hj-it", hojaCasilla(!!d.v.cierre_com_cir) + " " + T("hoja_cirujano")));
-    comV.appendChild(nodoInforme(doc, "span", "hj-it", hojaCasilla(!!d.v.cierre_com_an) + " " + T("hoja_anestesia") + "  h: " + (d.v.cierre_com_h || "_____")));
+    comV.appendChild(nodoInforme(doc, "span", "hj-it", hojaCasilla(!!d.v.cierre_com_an) + " " + T("hoja_anestesia") + "  h: " + (tHay(d.v, "cierre_com_h") ? tvTxt(tRaw(d.v, "cierre_com_h"), c || null) : "_____")));
     // Resultado esperable (⇄ ficha): casillas como el Resultado; si el caso
     // trae el texto libre de antes, se imprime ese texto.
     var esp = resultadoEsperableId(regGet(d.v, hojaDef("cierre_esperable"), c));
@@ -22333,7 +23252,46 @@
     };
     guardarApunteDoc();
 
+    // Tiempos de los casos de la demo: minutos desde la incisión (como en un
+    // caso real); la hora real de la incisión queda solo en este navegador.
+    Object.keys(casos).forEach(function (uid) {
+      if (demoATiempoMin(casos[uid])) guardarCaso(casos[uid], true);
+    });
+
     localStorage.setItem(DEMO_SEMBRADO_KEY, new Date().toISOString());
+  }
+
+  // La demo siembra HH:MM literales: se convierten a minutos desde su incisión
+  // y se fija t0 (hoy a esa hora) para que en pantalla se vea la hora real.
+  function demoATiempoMin(c) {
+    var d = c.registro_intraop;
+    if (!d || !d.v) return false;
+    var base = tvMin(tRaw(d.v, "h_incision"));
+    if (base === null) {
+      // Sin hito de incisión: la fase «Incisión» si existe; si no, el inicio de la MIO
+      (d.eventos || []).forEach(function (e) {
+        if (base === null && e.cod === "F" && /incisi/i.test(e.fase || "")) base = tvMin(tRaw(e, "hora"));
+      });
+      if (base === null) base = tvMin(tRaw(c, "hora_inicio"));
+      if (base === null) return false;
+      d.v.h_incision = dosDigitos(Math.floor(base / 60)) + ":" + dosDigitos(base % 60);
+    }
+    function conv(o, f) {
+      if (!o || typeof o[f] !== "string" || o[f] === "") return;
+      var m = tvMin(o[f]);
+      if (m === null) return;
+      var x = m - base;
+      while (x < -360) x += 1440;
+      while (x >= 1080) x -= 1440;
+      tFijar(o, f, x);
+    }
+    tRecorrer(d, conv);
+    conv(c, "hora_inicio");
+    conv(c, "hora_fin");
+    var dt = new Date();
+    dt.setHours(Math.floor(base / 60), base % 60, 0, 0);
+    t0Fijar(c, dt.getTime(), false);
+    return true;
   }
 
   function restablecerDemo() {
@@ -22659,7 +23617,6 @@
   cargarApunteDoc();
   pintarTileApuntes();   // la excepción de transición necesita el documento ya cargado
   cargarSync();
-  fijarRepoOrigenSiFalta();
   cargarPerfilUsuario();
   cargarDocente();
   if (MODO_DEMO) prepararDemo();
