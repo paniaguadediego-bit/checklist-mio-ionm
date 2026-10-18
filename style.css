@@ -163,6 +163,18 @@ body {
    vertical que se junta entre ambas para que no quede un hueco doble. */
 .barra-fila-top { padding-bottom: 0.18rem; }
 .barra-fila-sync { padding-top: 0.1rem; gap: 0.5rem; }
+/* Rótulo del espacio activo (solo con varios espacios): una línea, con elipsis */
+.sync-espacio {
+  font-size: 0.7rem;
+  color: var(--panel-tenue);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  max-width: 9rem;
+  flex: 0 1 auto;
+}
+.sync-espacio[hidden] { display: none; }
 
 /* Envoltorio del logo: antes una <img> suelta sin comportamiento, ahora el
    único camino de vuelta a la pantalla de inicio desde cualquier sitio -por

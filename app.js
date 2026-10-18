@@ -469,7 +469,10 @@
                            en: "Disconnect the personal repository?\nNothing is deleted. From now on your notes will go to the repository above." },
     sync_personal_sin:   { es: "Sin repositorio personal: apuntes y Técnicas IONM van al repositorio de arriba.",
                            en: "No personal repository: notes and IONM Techniques go to the repository above." },
-    esp_resumen:         { es: "Espacio de trabajo: {nombre}", en: "Workspace: {nombre}" },
+    sync_personal_sin_esp: { es: "Sin repositorio personal: Técnicas IONM va al repositorio de arriba; en este espacio, Mis apuntes no suben ni bajan (solo quedan en este dispositivo).",
+                           en: "No personal repository: IONM Techniques go to the repository above; in this workspace, My notes are neither uploaded nor downloaded (they stay on this device only)." },
+    esp_rotulo_tit:      { es: "Espacio de trabajo activo: {nombre}", en: "Active workspace: {nombre}" },
+    sync_otro_espacio:   { es: "Este repositorio pertenece a otro espacio de trabajo («{remoto}»), no al activo («{activo}»). No se ha traído nada: cambia de espacio o revisa el repositorio.", en: "This repository belongs to another workspace (“{remoto}”), not the active one (“{activo}”). Nothing was brought in: switch workspace or check the repository." },    esp_resumen:         { es: "Espacio de trabajo: {nombre}", en: "Workspace: {nombre}" },
     esp_intro:           { es: "Cada espacio tiene sus propios casos y plantillas en este dispositivo y su propio repositorio de datos. Nada se mezcla entre espacios.",
                            en: "Each workspace has its own cases and templates on this device and its own data repository. Nothing is shared between workspaces." },
     esp_activo:          { es: "Activo", en: "Active" },
@@ -498,8 +501,11 @@
                            en: "Workspace \u201c{nombre}\u201d has changes that are not uploaded yet. They stay saved on this device and will upload when you return to that workspace, not before.\n\nSwitch workspace anyway?" },
     sync_repo_bloqueado: { es: "Este espacio ya tiene datos y está ligado al repositorio {repo}. No se puede cambiar de repositorio: crea otro espacio para el otro.",
                            en: "This workspace already has data and is tied to repository {repo}. The repository cannot be changed: create another workspace for the other one." },
-    import_espacio_distinto: { es: "ATENCIÓN: esta copia es del espacio «{origen}» y el espacio activo es «{activo}». Importarla mezclaría casos y plantillas de otro espacio con los de este.\n\n¿Importar de todos modos?",
-                           en: "WARNING: this backup is from workspace \u201c{origen}\u201d and the active workspace is \u201c{activo}\u201d. Importing it would mix cases and templates from another workspace into this one.\n\nImport anyway?" },
+    import_espacio_distinto: { es: "ATENCIÓN: esta copia es del espacio «{origen}» y el espacio activo es «{activo}».\n\nSolo se añadirán a «{activo}» los casos y las plantillas (con sus fotos) que no estén ya aquí. Los usuarios, centros, etiquetas, material propio y demás catálogos de «{activo}» no se tocan.\n\n¿Importar de todos modos?",
+                           en: "WARNING: this backup is from workspace \u201c{origen}\u201d and the active workspace is \u201c{activo}\u201d.\n\nOnly the cases and templates (with their photos) not already here will be added to \u201c{activo}\u201d. The users, centres, labels, custom material and other catalogues of \u201c{activo}\u201d are not touched.\n\nImport anyway?" },
+    import_conf_otro:    { es: "Esta copia trae {casos} caso(s) y {montajes} plantilla(s). Solo se añaden los que no estén ya en este dispositivo; no se sustituye nada.\n\n¿Continuar?",
+                           en: "This backup has {casos} case(s) and {montajes} template(s). Only those not already on this device are added; nothing is replaced.\n\nContinue?" },
+    import_otro_vacia:   { es: "Esta copia es de otro espacio y no trae casos ni plantillas (solo catálogos), así que no se importa nada.", en: "This backup is from another workspace and has no cases or templates (catalogues only), so nothing is imported." },
     import_sin_espacio:  { es: "Esta copia no indica de qué espacio es. Se importará al espacio activo («{activo}»).", en: "This backup does not say which workspace it is from. It will be imported into the active workspace (\u201c{activo}\u201d)." },
     sync_fecha_desc:     { es: "fecha desconocida", en: "unknown date" },
     err_token:           { es: "Token no válido o caducado.", en: "Invalid or expired token." },
@@ -4132,7 +4138,7 @@
     equiposConCajas().forEach(function (eq) {
       var op = document.createElement("option");
       op.value = eq;
-      op.textContent = EQUIPOS[eq].nombre;
+      op.textContent = nombreEquipo(eq);
       selEq.appendChild(op);
     });
     selEq.value = equipoDefectoEspacio();
@@ -4177,6 +4183,15 @@
       }
       cont.appendChild(fila);
     });
+  }
+
+  // Nombre del espacio según el índice; si no está, el propio id
+  function nombreEspacioPorId(id) {
+    var lista = leerIndiceEspacios() || [];
+    for (var i = 0; i < lista.length; i++) {
+      if (lista[i] && lista[i].id === id) return lista[i].nombre || id;
+    }
+    return id === ESPACIO.id ? ESPACIO.nombre : id;
   }
 
   function cambiarEspacio(id) {
@@ -4335,6 +4350,15 @@
       }) });
     } else {
       el.textContent = T("sync_conectado");
+    }
+    var rot = document.getElementById("sync-espacio");
+    if (rot) {
+      // Solo con más de un espacio en el índice
+      var lis = MODO_DEMO ? null : leerIndiceEspacios();
+      var varios = !!lis && lis.length > 1;
+      rot.hidden = !varios;
+      rot.textContent = varios ? ESPACIO.nombre : "";
+      rot.title = varios ? T("esp_rotulo_tit", { nombre: ESPACIO.nombre }) : "";
     }
     btn.dataset.estado = estado;
     btn.title = ultimoFallo || T(conflicto ? "sync_conflicto_tit" : "sync_titulo");
@@ -4554,6 +4578,15 @@
       });
   }
 
+  // El estado.json remoto trae el espacio al que pertenece: si no es el activo
+  // no se aplica (sustituiría los catálogos de este espacio por los de otro) y
+  // se avisa en el diálogo ☁. Repos antiguos sin espacio_id: como siempre.
+  function otroEspacioRemoto(copia) {
+    if (!copia || !copia.espacio_id || copia.espacio_id === ESPACIO.id) return false;
+    mensajeSync(T("sync_otro_espacio", { remoto: nombreEspacioPorId(copia.espacio_id), activo: ESPACIO.nombre }), true);
+    return true;
+  }
+
   // Al abrir: si no hay nada local sin subir, se trae lo último sin preguntar.
   // Los casos se traen siempre, porque son archivos aparte: aunque haya
   // cambios locales de escenarios sin subir, hay que ver los casos que se
@@ -4568,6 +4601,7 @@
         if (!remoto.existe || remoto.sha === sync.sha) return;
         var copia = remoto.contenido;
         if (!copia || copia.formato !== "mio-ionm") return;
+        if (otroEspacioRemoto(copia)) return;
         permitirBajada(function () { aplicarEstado(copia); });
         sync.sha = remoto.sha;
         sync.fecha = new Date().toISOString();
@@ -4640,6 +4674,7 @@
         }
         var copia = remoto.contenido;
         if (!copia || copia.formato !== "mio-ionm") throw new Error(T("sync_mal_formato"));
+        if (otroEspacioRemoto(copia)) return;
         if (!confirm(T("sync_traer", {
           fecha: new Date(copia.fecha).toLocaleString(localeActual()),
           escenarios: Object.keys(copia.escenarios || {}).length,
@@ -4694,7 +4729,7 @@
     document.getElementById("sync-personal").hidden = MODO_DEMO || conflicto || (conectado && !syncAvanzado);
     var estP = document.getElementById("sync-personal-estado");
     estP.hidden = false;
-    estP.textContent = personalActivo() ? T("sync_personal_ok", { repo: syncPersonal.repo }) : T("sync_personal_sin");
+    estP.textContent = personalActivo() ? T("sync_personal_ok", { repo: syncPersonal.repo }) : T(ESPACIO.id === "archivo" || MODO_DEMO ? "sync_personal_sin" : "sync_personal_sin_esp");
     document.getElementById("sync-personal-olvidar").hidden = !personalActivo();
   }
   document.getElementById("sync-avanzado").addEventListener("click", function () {
@@ -5157,6 +5192,7 @@
     guardarCasos();
     programarEnvio();
     pintarEstadoSync();
+    return "recuperado";
   }
 
   /* Guarda un caso en local y lo deja listo para subir. En quirófano se
@@ -9871,8 +9907,10 @@
       var rec = regNodo("button", "primario", T("papelera_recuperar"));
       rec.type = "button";
       rec.addEventListener("click", function () {
-        if (recuperarDePapelera(uid) === "ya_estaba") alert(T("papelera_ya_en_lista"));
-        else avisoGuardado(T("papelera_recuperado"));
+        var res = recuperarDePapelera(uid);
+        if (res === "ya_estaba") alert(T("papelera_ya_en_lista"));
+        else if (res === "recuperado") avisoGuardado(T("papelera_recuperado"));
+        else if (ESPACIO.solo_lectura) avisoGuardado(T("esp_sl_aviso"), true);
         renderPapelera();
         renderListaCasos();
       });
@@ -9884,6 +9922,15 @@
         renderPapelera();
         renderListaCasos();
       });
+      // Solo lectura: ni recuperar ni borrar para siempre (el corte de verdad
+      // está en recuperarDePapelera()/vaciarDePapelera())
+      if (ESPACIO.solo_lectura) {
+        [rec, bor].forEach(function (b) {
+          b.disabled = true;
+          b.setAttribute("data-i18n-title", "esp_sl_corto");
+          b.title = T("esp_sl_corto");
+        });
+      }
       fila.appendChild(rec);
       fila.appendChild(bor);
       cont.appendChild(fila);
@@ -10024,7 +10071,9 @@
         al.textContent = T("caso_alerta");
         pie.appendChild(al);
       }
-      if (casosSinSubir[c.caso_uid]) {
+      // Solo si de verdad hay subida posible (repositorio conectado y espacio
+      // no de solo lectura); si no, no hay nada "pendiente de subir"
+      if (casosSinSubir[c.caso_uid] && subidaActiva()) {
         var sub = document.createElement("span");
         sub.className = "caso-etiqueta sin-subir";
         sub.textContent = T("caso_pendiente_subir");
@@ -12643,7 +12692,8 @@
 
   function autorDe(m) {
     if (!m) return "";
-    return m.autor_id ? nombreUsuario(m.autor_id) || T("montaje_autor_ido") : T("montaje_sin_autor");
+    // «de fábrica» solo para las que de verdad lo son; el resto sin autor
+    return m.autor_id ? nombreUsuario(m.autor_id) || T("montaje_autor_ido") : T(m.de_fabrica ? "montaje_sin_autor" : "cambiar_autor_ninguno");
   }
 
   // Orden alfabético por nombre, sin importar de quién sea -antes salían
@@ -13488,7 +13538,17 @@
       // Espacio de la copia frente al activo (aplicarEstado() ya sería tarde)
       var avisoEspacio = "";
       if (copia.espacio_id && copia.espacio_id !== ESPACIO.id) {
-        if (!confirm(T("import_espacio_distinto", { origen: copia.espacio_id, activo: ESPACIO.nombre }))) return;
+        // Copia de OTRO espacio: nunca se llama a aplicarEstado() (sustituiría
+        // los catálogos de este espacio por los del otro hospital); solo se
+        // añaden los casos y plantillas que falten.
+        if (!copia.completa) { alert(T("import_otro_vacia")); return; }
+        if (!confirm(T("import_espacio_distinto", { origen: nombreEspacioPorId(copia.espacio_id), activo: ESPACIO.nombre }))) return;
+        if (!confirm(T("import_conf_otro", {
+          casos: Object.keys(copia.completa.casos || {}).length,
+          montajes: Object.keys(copia.completa.montajes || {}).length
+        }))) return;
+        importarCopiaCompleta(copia.completa, true);
+        return;
       } else if (!copia.espacio_id && ESPACIO.id !== "archivo") {
         avisoEspacio = "\n\n" + T("import_sin_espacio", { activo: ESPACIO.nombre });
       }
@@ -13515,7 +13575,8 @@
   // solo si aquí no hay ninguno. Lo recuperado se sube con la sincronización
   // como cualquier cambio (y si en GitHub ya existía, se fusiona, ver
   // fusionarCaso()).
-  function importarCopiaCompleta(completa) {
+  // soloCasosYPlantillas: copia de otro espacio, no se tocan ni los apuntes.
+  function importarCopiaCompleta(completa, soloCasosYPlantillas) {
     if (ESPACIO.solo_lectura) return;
     var nCasos = 0, nMontajes = 0, conApuntes = false;
     Object.keys(completa.casos || {}).forEach(function (uid) {
@@ -13533,7 +13594,7 @@
       nMontajes++;
     });
     var ap = completa.apuntes;
-    if (ap && ESPACIO.id === "archivo" && (ap.secciones || []).length && !(apunteDoc.secciones || []).length) {
+    if (ap && !soloCasosYPlantillas && ESPACIO.id === "archivo" && (ap.secciones || []).length && !(apunteDoc.secciones || []).length) {
       apunteDoc = ap;
       guardarApunteDoc();
       conApuntes = true;
@@ -22596,6 +22657,7 @@
   cargarCasos();
   cargarPapelera();
   cargarApunteDoc();
+  pintarTileApuntes();   // la excepción de transición necesita el documento ya cargado
   cargarSync();
   fijarRepoOrigenSiFalta();
   cargarPerfilUsuario();

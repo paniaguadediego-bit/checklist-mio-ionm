@@ -24,7 +24,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20261018d">
+<link rel="stylesheet" href="style.css?v=20261018e">
 </head>
 <body>
 
@@ -67,6 +67,7 @@
   </div>
   <div class="barra-fila barra-fila-sync">
     <button type="button" id="btn-sync" class="btn-modo" data-i18n-title="sync_titulo">☁ <span id="sync-estado"></span></button>
+    <span class="sync-espacio" id="sync-espacio" hidden></span>
     <span class="guardado-aviso" id="guardado-aviso"></span>
   </div>
 </header>
@@ -377,7 +378,7 @@
 
   <div class="campo">
     <label for="sync-repo"><span data-i18n="campo_repo"></span> <span class="req">*</span></label>
-    <input id="sync-repo" placeholder="usuario/checklist-mio-datos" autocomplete="off">
+    <input id="sync-repo" placeholder="owner/repo" autocomplete="off">
     <small data-i18n-html="campo_repo_ayuda"></small>
   </div>
   <div class="campo">
@@ -1302,10 +1303,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20261018d"></script>
-<script src="data/i18n-en.js?v=20261018d"></script>
-<script src="data/guia.js?v=20261018d"></script>
-<script src="data/parametros-tecnicas.js?v=20261018d"></script>
-<script src="app.js?v=20261018d"></script>
+<script src="data/surgeries.js?v=20261018e"></script>
+<script src="data/i18n-en.js?v=20261018e"></script>
+<script src="data/guia.js?v=20261018e"></script>
+<script src="data/parametros-tecnicas.js?v=20261018e"></script>
+<script src="app.js?v=20261018e"></script>
 </body>
 </html>
