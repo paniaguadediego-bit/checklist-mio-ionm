@@ -3,63 +3,51 @@
 ## 1. Estado
 
 - Proyecto: MIO-Check (repo público `checklist-mio-ionm` y repo privado de datos `../checklist-mio-datos`).
-- Fase: **decisiones abiertas de la auditoría del 09-10 resueltas** (F10, F14 y detalles sueltos). **Fase cerrada**; no hay nada a medias. Todo subido en los dos repos.
-- Versión actual: `?v=20261010f` (seis etiquetas de `index.html`). El último commit (`133573f`) solo cambia un comentario de `app.js` y no sube el `?v=`.
+- Fase: **piloto multihospital, tanda 1 de 9 cerrada** (almacén local por espacio de trabajo). Nada a medias. Todo subido en los dos repos.
+- Versión actual: `?v=20261018` (seis etiquetas de `index.html`).
+- Plan completo de las 9 tandas, con líneas de código y riesgos: `../checklist-mio-datos/docs/AUDITORIA-ESPACIOS-SEUDONIMIZACION-2026-10-18.md`. Contexto del piloto, grupos y usuarios: memoria `project_piloto_hospitales` y diario privado.
 
-## 2. Hecho en esta sesión
+## 2. Hecho en esta sesión (11 a 18-10-2026)
 
-Cada cambio tiene su entrada en `../checklist-mio-datos/docs/DIARIO-CODIGO.md`. F14 está marcado ✅ en `../checklist-mio-datos/docs/AUDITORIA.md`.
-
-- **F14** (`907b655`): tras «Crear caso» → equipo, si hay plantillas de ese equipo sale «¿Cargar una plantilla?» (`ofrecerPlantillaCasoNuevo(uid, eq)`, diálogo creado por JS, claves `caso_nuevo_plantilla_*`).
-  - «Elegir plantilla…» → `iniciarCargaPlantilla(false)`, la misma vía y la misma confirmación «Aplicar» que en la ficha. «Ahora no» deja la ficha vacía.
-  - Sin plantillas de ese equipo no pregunta. Pasa de ~9 toques a 5. Archivo: `app.js`.
-- **F10** (`907b655`): «Empezar de nuevo» (`.rr-de-antes-btn`) solo con borde y texto tenue. Archivo: `style.css`.
-- **Detalles** (`907b655`):
-  - Tarjeta «Técnicas IONM» en la Guía, tras Biblioteca, con el aviso de que no sale en la demo (`data/guia.js`).
-  - `reflejo_h` nombra H-R Cuádriceps (`data/surgeries.js`, `data/i18n-en.js`).
-  - Radios de `.rr-barra-apuntar`, `.rr-hoja` y `.caja-tab` a `var(--r)` (`style.css`).
-  - Números de línea del mapa del código comprobados el 10-10 (`CLAUDE.md`).
-- **Textos** (`ca9e972`, `app.js`):
-  - `casos_nuevo_cero_ay` menciona la pregunta de plantilla.
-  - `caso_editado_veces` ya no dice «tras el cierre»: `editado_en` cuenta todas las ediciones desde la creación.
-- **Comentario** de `REG_BASALES_SENS` (`133573f`): cuatro columnas y claves `e_<fila>_<col>_<medida>`.
+- **Docs**: README revisado entero contra el código (31 correcciones); `CLAUDE.md` y README: «Exportar copia» es completa desde el 29-09. Dosier de producto en el repo privado: `docs/DOSIER-PRODUCTO-2026-10-11.md`. Propiedad intelectual: NO registrada (solo la memoria descriptiva preparada).
+- **Fase 1 multihospital** (`app.js`, `index.html`, `style.css`, `data/guia.js`, README, CLAUDE.md): plantillas editables por todo el grupo (`puedoEditar()`), «Cambiar autor…» en Más acciones de Plantillas, repositorio personal opcional (`destinoRuta()`/`urlRuta()`; `mio_ionm_sync_personal_v1`; apuntes/ y referencia/ van allí).
+- **Mis apuntes** solo visibles con repo personal, en la demo o si el dispositivo ya tiene apuntes (`apuntesVisibles()`; excepción de transición). Biblioteca de montajes → rótulo «Biblioteca de casos compartidos» (sigue En construcción, aparcada).
+- **Organizador**: fuera la franja de color a la izquierda de cada plantilla.
+- **Ayuda** de «Resultado de la señal»: ya no dice que es el mismo dato que el Cierre del Registro.
+- **Tanda 1** (`app.js` ~l.70-190, `index.html`, `CLAUDE.md`): `almacenEspacio()`, `resolverEspacio()`, `espacioActivo()`, `CLAVES_GLOBALES`, índice `mio_ionm_espacios_v1`, puntero `mio_ionm_espacio_activo`, IDB `mio_ionm_fotos__<id>`. Espacio «archivo» = prefijo vacío (datos actuales sin tocar). Sin interfaz.
+- **Infraestructura fuera del código**: organización de GitHub del piloto (plan Free) con dos repos privados de datos (plantillas y usuarios cargados, sin casos); copia de seguridad `../copia-datos-pamplona-2026-10-18.bundle` del repo de datos anterior (29 casos, último 15-10). No borrar.
 
 ## 3. Siguiente paso exacto
 
-Preguntar al usuario qué quiere abordar ahora. No hay ninguna tanda aprobada pendiente. Le toca probar en el móvil la pregunta de plantilla al crear un caso y el botón «Empezar de nuevo».
+Tanda 2 de la auditoría: **selector de espacios + recarga al cambiar**, con repo inmutable por espacio (`repo_origen`), aviso si hay pendiente de subir, `espacio_id` en `estado.json`, comprobación en «Importar copia» (`importarCopiaCompleta()`), y bloquear el cambio de `sync.repo` en un espacio con datos (`leerCamposSync()`). Incluye pasar **Mis apuntes a ámbito personal global** (hay un `TODO tanda 2` junto a `APUNTE_DOC_KEY`). Delegar a un subagente con el encargo detallado de la auditoría (parte A.3).
+
+Antes, leer y explorar con el usuario las dos ideas de la sección 4.
 
 ## 4. Decisiones abiertas (esperan al usuario)
 
-- **C22** (centro del dispositivo al guardar un caso): espera al multicéntrico.
-- Vistas por el subagente de F14, sin preguntar todavía:
-  - ¿Abrir directamente el selector de plantillas en vez de la pregunta previa? Ahorra un toque.
-  - ¿Quitar la confirmación «Aplicar» cuando el caso está vacío? Serían 4 toques; hoy la regla es «la confirmación con números, siempre».
-- Siguen aparcados: MAV, punto 7 (nube), bloque 4 de textos, multicéntrico, privacidad al sacar los datos y tiendas de apps.
+- **Idea 1: exportar eventos y alarmas.** ¿Quitar el CSV y meterlos en el Sheet «maestro»? Opinión dada: no en la hoja `Casos` (una fila por caso); mejor una hoja `Eventos_long` (una fila por evento/alarma, con `ID_Caso` y minutos desde el inicio) en la tanda 7, y retirar el CSV si nadie lo usa. Falta su respuesta.
+- **Idea 2: rastro de quién hace qué.** «Caso creado por X», historial de modificaciones y obligar a elegir perfil al abrir la herramienta. Ojo: el perfil no es seguridad; la atribución fiable es la cuenta de GitHub de cada médico. Tensión con la seudonimización: `editado_en` con hora real saldría del repo; propuesta: `creado_por` y `editado_por[]` (id + nº de edición, como mucho mes). Falta definir y aprobar.
+- Aprobado el 18-10 (no reabrir): fecha mes/año, minuto 0 = incisión, edad por tramos de 5, sin nombre de caso ni nombres del personal en lo que se sube, imágenes solo locales, textos libres con aviso (sin bloquear), `ID_Caso` actual, seudonimización al guardar, plantillas ajenas en solo lectura (repo común, al final).
+- Parados: **C22** (centro del dispositivo), MAV, nube punto 7, bloque 4 de textos, privacidad al sacar datos, tiendas de apps, **Biblioteca de casos compartidos** (aparcada por riesgo de fuga entre hospitales).
+- Pendiente del usuario (GitHub y Google): invitar a cada médico a su repo (una cuenta por persona, permiso Write), token fine-grained por persona, repo personal para sus apuntes, Sheet por hospital y archivar el repo de datos antiguo cuando exista el modo consulta. Pamplona y el segundo hospital esperan a la seudonimización; **ningún dispositivo con casos reales debe conectarse a otro repo hasta que acaben las tandas 2 y 3**.
+- Subagente sin respuesta del usuario: ¿«Restablecer demo» sigue bien tras la tanda 1? (no se pulsó en las pruebas).
 
 ## 5. Restricciones activas
 
-- Los ids no cambian nunca; las filas renombradas conservan lo escrito con `antigua: true`. Los campos del GRID siguen siendo `grid1_*`/`grid2_*` (rótulos A/B).
-- GRID: umbrales en Basales; electrodo, músculos, sensitivo e inversión en Mapeo. No duplicar campos entre los dos.
-- **Candado**: todo lo que escriba en un caso comprueba `estado === "cerrado"`, salvo Reabrir. `ofrecerPlantillaCasoNuevo()` tampoco ofrece nada en un caso cerrado.
-- Técnicas IONM no se enseña en la demo (decisión del usuario del 27-09): `tile-tecnicas-mio` está oculto en `prepararDemo()`.
-- Hoja impresa: hoja 1 ≤ ≈1045 px. No añadir nada a la hoja 1 sin medir.
-- Botones rectangulares, cambios sutiles, casillas de unos 30 px, sin foco en inputs de texto en el móvil. Radios con `var(--r)`; el Simulador conserva los suyos.
-- ES5 (`var`, sin flechas). Textos con `T()` y su `en`. DOM con `createElement`.
-- Repo público: sin precios, números de caso reales, nombres (ni apodos) ni centro.
+- **Aislamiento entre hospitales**: toda clave nueva de `localStorage` se prefija por defecto; solo va a `CLAVES_GLOBALES` si es preferencia de dispositivo. Nada de datos de un espacio en otro.
+- Los ids no cambian nunca; GRID: umbrales en Basales, mapeo en Mapeo; `grid1_*`/`grid2_*`. Candado de casos cerrados (`candado()`). Técnicas IONM fuera de la demo (`prepararDemo()`). Hoja impresa: hoja 1 ≤ ≈1045 px.
+- Botones rectangulares, casillas ≈30 px, sin foco automático en inputs en el móvil, radios `var(--r)`. ES5 (`var`, sin flechas). Textos con `T()` y su `en`. DOM con `createElement`.
+- **Repo público: sin precios, números de caso reales, nombres de personas (ni apodos), nombres de hospitales ni de repos de datos.** Eso vale también para este archivo.
 - Subir el `?v=` de las **seis** etiquetas de `index.html` en cada cambio de `app.js`, `style.css` o `data/`.
-- Scripts de Python en el scratchpad (la ruta real es `C:\Users\pablo\AppData\Local\Temp\claude\...`; `$TEMP/../claude` no existe), con `python archivo.py < /dev/null` y `newline=""`. `data/guia.js` va en CRLF: si un script busca `\n`, falla; mejor usar Edit. Nada de `sed -i` por número de línea.
-- Repo privado: `git pull --ff-only` antes de tocarlo y `git fetch` antes del push.
-- Sesión principal: orquestar y delegar en subagentes; revisar su diff y verificar. Si un subagente toca `app.js`, los números de línea de `CLAUDE.md` se corrigen después.
+- Scripts de Python en el scratchpad (`C:\Users\pablo\AppData\Local\Temp\claude\...`), con `python archivo.py < /dev/null` y `newline=""`; los scripts largos van en archivo, no en heredoc. `app.js` va en CRLF; mejor Edit que `sed -i`.
+- Repo privado: `git fetch` + `pull --ff-only` antes de tocarlo y `fetch` antes del push. Diario privado: una entrada por cambio.
+- Seguro de datos: GitHub guarda la hora real de cada commit; esto es seudonimizar, no anonimizar. Cada hospital debe consultar a su delegado de protección de datos antes de meter pacientes reales.
+- Sesión principal: orquestar; delegar a subagente lo que toque 3+ archivos, lecturas grandes o búsquedas amplias; revisar el diff y verificar antes de subir.
 
 ## 6. Verificación
 
 1. `node --check app.js`
-2. Servidor `checklist` (preview_start) en `http://localhost:8099/?demo`, a 375 px. Las seis etiquetas cargan con `?v=20261010f`; consola sin errores.
-3. Gestión de Casos → Crear caso → Inomed: sale «¿Cargar una plantilla?».
-   - «Ahora no» deja la ficha vacía.
-   - «Elegir plantilla…» muestra solo plantillas Inomed; con «Aplicar» se carga el montaje.
-   - Con Genérico, sin plantillas en la demo, no pregunta nada.
-4. La ayuda bajo «Crear caso» dice «te ofrece cargar una». El pie de una ficha editada dice «Editado n vez/veces · última: …», sin «tras el cierre».
-5. Guía: tarjeta «Técnicas IONM» tras Biblioteca de montajes.
-6. `getComputedStyle` de `.rr-hoja`: `border-radius` 5px arriba; `.rr-de-antes-btn`: fondo transparente.
-7. Al terminar, «Restablecer demo» si se ha tocado el localStorage.
+2. Servidor `checklist` (preview_start) en `http://localhost:8099/` y en `?demo`, a 375 px: seis etiquetas con `?v=20261018`, consola sin errores.
+3. En `localStorage`: `mio_ionm_espacios_v1` = `[{"id":"archivo","nombre":"Archivo","prefijo":"","solo_lectura":false}]` y `mio_ionm_espacio_activo` = `archivo`.
+4. Aislamiento (solo en el navegador de pruebas): añadir un espacio `prueba` al índice, apuntar el puntero a él y recargar: Gestión de Casos vacía, claves nuevas con prefijo `mio_ionm_esp_prueba__`, IDB `mio_ionm_fotos__prueba`. Volver el puntero a `archivo`: datos del archivo intactos. Limpiar todo al terminar.
+5. Gestión de Casos de la demo: 8 casos; Organizador: plantillas sin franja de color a la izquierda.
