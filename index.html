@@ -24,7 +24,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20261018">
+<link rel="stylesheet" href="style.css?v=20261018b">
 </head>
 <body>
 
@@ -355,6 +355,20 @@
       <li data-i18n-html="sync_paso4"></li>
       <li data-i18n-html="sync_paso5"></li>
     </ol>
+  </details>
+
+  <!-- Espacios de trabajo (tanda 2): ver pintarEspacios() en app.js -->
+  <details class="dlg-ayuda sync-espacios" id="sync-espacios">
+    <summary id="esp-resumen"></summary>
+    <small class="sync-personal-intro" data-i18n="esp_intro"></small>
+    <div id="esp-lista"></div>
+    <div class="campo">
+      <label for="esp-nuevo-nombre" data-i18n="esp_nuevo_nombre"></label>
+      <input id="esp-nuevo-nombre" maxlength="40" autocomplete="off">
+    </div>
+    <div class="dlg-botones">
+      <button type="button" id="esp-crear" data-i18n="esp_crear"></button>
+    </div>
   </details>
 
   <div class="campo">
@@ -1284,10 +1298,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20261018"></script>
-<script src="data/i18n-en.js?v=20261018"></script>
-<script src="data/guia.js?v=20261018"></script>
-<script src="data/parametros-tecnicas.js?v=20261018"></script>
-<script src="app.js?v=20261018"></script>
+<script src="data/surgeries.js?v=20261018b"></script>
+<script src="data/i18n-en.js?v=20261018b"></script>
+<script src="data/guia.js?v=20261018b"></script>
+<script src="data/parametros-tecnicas.js?v=20261018b"></script>
+<script src="app.js?v=20261018b"></script>
 </body>
 </html>

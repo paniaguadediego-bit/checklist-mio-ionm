@@ -3,8 +3,8 @@
 ## 1. Estado
 
 - Proyecto: MIO-Check (repo público `checklist-mio-ionm` y repo privado de datos `../checklist-mio-datos`).
-- Fase: **piloto multihospital, tanda 1 de 9 cerrada** (almacén local por espacio de trabajo). Nada a medias. Todo subido en los dos repos.
-- Versión actual: `?v=20261018` (seis etiquetas de `index.html`).
+- Fase: **piloto multihospital, tandas 1 y 2 de 9 cerradas** (almacén local por espacio y selector de espacios). Nada a medias. Todo subido en los dos repos.
+- Versión actual: `?v=20261018b` (seis etiquetas de `index.html`).
 - Plan completo de las 9 tandas, con líneas de código y riesgos: `../checklist-mio-datos/docs/AUDITORIA-ESPACIOS-SEUDONIMIZACION-2026-10-18.md`. Contexto del piloto, grupos y usuarios: memoria `project_piloto_hospitales` y diario privado.
 
 ## 2. Hecho en esta sesión (11 a 18-10-2026)
@@ -19,9 +19,11 @@
 
 ## 3. Siguiente paso exacto
 
-Tanda 2 de la auditoría: **selector de espacios + recarga al cambiar**, con repo inmutable por espacio (`repo_origen`), aviso si hay pendiente de subir, `espacio_id` en `estado.json`, comprobación en «Importar copia» (`importarCopiaCompleta()`), y bloquear el cambio de `sync.repo` en un espacio con datos (`leerCamposSync()`). Incluye pasar **Mis apuntes a ámbito personal global** (hay un `TODO tanda 2` junto a `APUNTE_DOC_KEY`). Delegar a un subagente con el encargo detallado de la auditoría (parte A.3).
+**Tanda 2 hecha (18-10)**: selector en el diálogo ☁ (`cambiarEspacio()`, `crearEspacio()`), repo inmutable (`repo_origen`, `leerCamposSync()`), `espacio_id` en `estado.json` y en la copia, «Importar copia» pide confirmar si no coincide (confirmación, no bloqueo: decisión del usuario), Mis apuntes globales (solo suben al repo personal; la copia exportada los lleva solo en «archivo»), repo corregible mientras el espacio esté vacío.
 
-Antes, leer y explorar con el usuario las dos ideas de la sección 4.
+**Pendiente de la tanda 2 (sin tocar)**: `bajar()` no compara `espacio_id` remoto con el activo; el texto `sync_personal_sin` ya no es cierto fuera de «archivo»; Técnicas IONM y Simulador siguen prefijados por espacio; `pintarTileApuntes()` en carga en frío no muestra la tarjeta por la excepción de transición. NO verificado: subida/bajada reales a GitHub, importar copia con casos reales, «Restablecer demo», escritorio e inglés.
+
+**Siguiente**: el usuario quiere, al acabar las peticiones actuales, un **simulacro de uso** con tres perfiles: él mismo, un médico del HUNSC y un médico de Pamplona. Equipo por defecto: **HUNSC = Cadwell, Pamplona = Inomed** (comprobar que `equipoNuevo()`/`"por_defecto"` lo respeta por espacio o centro; no se ha tocado). Después, tanda 3 (solo lectura) según la auditoría. Las dos ideas de la sección 4 siguen sin respuesta.
 
 ## 4. Decisiones abiertas (esperan al usuario)
 
@@ -39,7 +41,7 @@ Antes, leer y explorar con el usuario las dos ideas de la sección 4.
 - Botones rectangulares, casillas ≈30 px, sin foco automático en inputs en el móvil, radios `var(--r)`. ES5 (`var`, sin flechas). Textos con `T()` y su `en`. DOM con `createElement`.
 - **Repo público: sin precios, números de caso reales, nombres de personas (ni apodos), nombres de hospitales ni de repos de datos.** Eso vale también para este archivo.
 - Subir el `?v=` de las **seis** etiquetas de `index.html` en cada cambio de `app.js`, `style.css` o `data/`.
-- Scripts de Python en el scratchpad (`C:\Users\pablo\AppData\Local\Temp\claude\...`), con `python archivo.py < /dev/null` y `newline=""`; los scripts largos van en archivo, no en heredoc. `app.js` va en CRLF; mejor Edit que `sed -i`.
+- Scripts de Python en el scratchpad (`C:\Users\pablo\AppData\Local\Temp\claude\...`), con `python archivo.py < /dev/null` y `newline=""`; los scripts largos van en archivo, no en heredoc. En la copia de trabajo `app.js`, `index.html` y `style.css` están en LF (git los normaliza); mejor Edit que `sed -i`. En Python no combinar heredoc con `< /dev/null`: usar un archivo.
 - Repo privado: `git fetch` + `pull --ff-only` antes de tocarlo y `fetch` antes del push. Diario privado: una entrada por cambio.
 - Seguro de datos: GitHub guarda la hora real de cada commit; esto es seudonimizar, no anonimizar. Cada hospital debe consultar a su delegado de protección de datos antes de meter pacientes reales.
 - Sesión principal: orquestar; delegar a subagente lo que toque 3+ archivos, lecturas grandes o búsquedas amplias; revisar el diff y verificar antes de subir.

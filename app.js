@@ -89,7 +89,10 @@
     ESPACIO_INDICE_KEY, ESPACIO_PUNTERO_KEY,
     "mio_ionm_idioma", "mio_ionm_tema_v2", "mio_ionm_tema_claro_v1",
     "mio_ionm_sin_ayudas_v1", "mio_ionm_crono_plegado",
-    "mio_ionm_sync_personal_v1"
+    "mio_ionm_sync_personal_v1",
+    // Mis apuntes (tanda 2): ámbito personal, no dependen del espacio activo.
+    // (Sus fotos van a la base IndexedDB global, ver abrirFotosDB().)
+    "mio_ionm_apunte_doc_v1", "mio_ionm_apuntes_carpetas_abiertas_v1"
   ];
   var ESPACIO = resolverEspacio(window);   // {id, nombre, prefijo, solo_lectura}
 
@@ -412,6 +415,26 @@
                            en: "Disconnect the personal repository?\nNothing is deleted. From now on your notes will go to the repository above." },
     sync_personal_sin:   { es: "Sin repositorio personal: apuntes y Técnicas IONM van al repositorio de arriba.",
                            en: "No personal repository: notes and IONM Techniques go to the repository above." },
+    esp_resumen:         { es: "Espacio de trabajo: {nombre}", en: "Workspace: {nombre}" },
+    esp_intro:           { es: "Cada espacio tiene sus propios casos y plantillas en este dispositivo y su propio repositorio de datos. Nada se mezcla entre espacios.",
+                           en: "Each workspace has its own cases and templates on this device and its own data repository. Nothing is shared between workspaces." },
+    esp_activo:          { es: "Activo", en: "Active" },
+    esp_cambiar:         { es: "Cambiar a este", en: "Switch to this" },
+    esp_nuevo_nombre:    { es: "Nombre del nuevo espacio", en: "New workspace name" },
+    esp_crear:           { es: "Crear espacio", en: "Create workspace" },
+    esp_nombre_vacio:    { es: "Escribe un nombre para el espacio.", en: "Enter a name for the workspace." },
+    esp_nombre_repetido: { es: "Ya existe un espacio con ese nombre.", en: "A workspace with that name already exists." },
+    esp_creado:          { es: "Espacio «{nombre}» creado. Pulsa «Cambiar a este» para entrar.", en: "Workspace \u201c{nombre}\u201d created. Press \u201cSwitch to this\u201d to enter it." },
+    esp_indice_ilegible: { es: "No se puede crear: la lista de espacios de este dispositivo no se puede leer.", en: "Cannot create: the workspace list on this device cannot be read." },
+    esp_no_guardado:     { es: "No se pudo guardar el cambio en este dispositivo.", en: "The change could not be saved on this device." },
+    esp_cambiar_conf:    { es: "La herramienta se recargará en el espacio «{nombre}». ¿Continuar?", en: "The tool will reload in workspace \u201c{nombre}\u201d. Continue?" },
+    esp_pendiente_conf:  { es: "Hay cambios del espacio «{nombre}» sin subir. Seguirán guardados en este dispositivo y se subirán cuando vuelvas a ese espacio, no antes.\n\n¿Cambiar de espacio de todos modos?",
+                           en: "Workspace \u201c{nombre}\u201d has changes that are not uploaded yet. They stay saved on this device and will upload when you return to that workspace, not before.\n\nSwitch workspace anyway?" },
+    sync_repo_bloqueado: { es: "Este espacio ya tiene datos y está ligado al repositorio {repo}. No se puede cambiar de repositorio: crea otro espacio para el otro.",
+                           en: "This workspace already has data and is tied to repository {repo}. The repository cannot be changed: create another workspace for the other one." },
+    import_espacio_distinto: { es: "ATENCIÓN: esta copia es del espacio «{origen}» y el espacio activo es «{activo}». Importarla mezclaría casos y plantillas de otro espacio con los de este.\n\n¿Importar de todos modos?",
+                           en: "WARNING: this backup is from workspace \u201c{origen}\u201d and the active workspace is \u201c{activo}\u201d. Importing it would mix cases and templates from another workspace into this one.\n\nImport anyway?" },
+    import_sin_espacio:  { es: "Esta copia no indica de qué espacio es. Se importará al espacio activo («{activo}»).", en: "This backup does not say which workspace it is from. It will be imported into the active workspace (\u201c{activo}\u201d)." },
     sync_fecha_desc:     { es: "fecha desconocida", en: "unknown date" },
     err_token:           { es: "Token no válido o caducado.", en: "Invalid or expired token." },
     err_permiso:         { es: "El token no tiene permiso de escritura sobre ese repositorio.",
@@ -3508,18 +3531,22 @@
   var FOTOS_DB_NOMBRE = MODO_DEMO ? "mio_ionm_fotos_demo"
     : (ESPACIO.id === "archivo" ? "mio_ionm_fotos" : "mio_ionm_fotos__" + ESPACIO.id);
   var FOTOS_DB_ALMACEN = "fotos";
-  var fotosDBPromesa = null;
+  // Las fotos de Mis apuntes (claves "apunte:<id>") son personales: viven en
+  // la base global (la de "archivo"), igual en todos los espacios.
+  var FOTOS_DB_APUNTES = MODO_DEMO ? "mio_ionm_fotos_demo" : "mio_ionm_fotos";
+  var fotosDBPromesas = {};
 
-  function abrirFotosDB() {
+  function abrirFotosDB(clave) {
     if (!window.indexedDB) return Promise.reject(new Error("sin IndexedDB"));
-    if (fotosDBPromesa) return fotosDBPromesa;
-    fotosDBPromesa = new Promise(function (resolve, reject) {
-      var req = indexedDB.open(FOTOS_DB_NOMBRE, 1);
+    var nombre = (clave && String(clave).indexOf("apunte:") === 0) ? FOTOS_DB_APUNTES : FOTOS_DB_NOMBRE;
+    if (fotosDBPromesas[nombre]) return fotosDBPromesas[nombre];
+    fotosDBPromesas[nombre] = new Promise(function (resolve, reject) {
+      var req = indexedDB.open(nombre, 1);
       req.onupgradeneeded = function () { req.result.createObjectStore(FOTOS_DB_ALMACEN); };
       req.onsuccess = function () { resolve(req.result); };
       req.onerror = function () { reject(req.error || new Error("no se pudo abrir IndexedDB")); };
     });
-    return fotosDBPromesa;
+    return fotosDBPromesas[nombre];
   }
 
   // Qué fotos ya están en IndexedDB en esta sesión, con la longitud de su
@@ -3530,7 +3557,7 @@
   var fotosYaEnIDB = {};
   function guardarFotoIDB(clave, dataUrl) {
     if (fotosYaEnIDB[clave] === String(dataUrl).length) return Promise.resolve();
-    return abrirFotosDB().then(function (db) {
+    return abrirFotosDB(clave).then(function (db) {
       return new Promise(function (resolve, reject) {
         var tx = db.transaction(FOTOS_DB_ALMACEN, "readwrite");
         tx.objectStore(FOTOS_DB_ALMACEN).put(dataUrl, clave);
@@ -3541,7 +3568,7 @@
   }
 
   function leerFotoIDB(clave) {
-    return abrirFotosDB().then(function (db) {
+    return abrirFotosDB(clave).then(function (db) {
       return new Promise(function (resolve, reject) {
         var tx = db.transaction(FOTOS_DB_ALMACEN, "readonly");
         var req = tx.objectStore(FOTOS_DB_ALMACEN).get(clave);
@@ -3553,7 +3580,7 @@
 
   function borrarFotoIDB(clave) {
     delete fotosYaEnIDB[clave];
-    return abrirFotosDB().then(function (db) {
+    return abrirFotosDB(clave).then(function (db) {
       return new Promise(function (resolve, reject) {
         var tx = db.transaction(FOTOS_DB_ALMACEN, "readwrite");
         tx.objectStore(FOTOS_DB_ALMACEN).delete(clave);
@@ -3928,6 +3955,143 @@
     try { localStorage.setItem(SYNC_KEY, JSON.stringify(sync)); } catch (e) { /* sin persistencia */ }
   }
 
+  /* Espacios de trabajo, tanda 2: selector, repo inmutable por espacio.
+   * Cambiar de espacio = escribir el puntero y recargar (el prefijo se fija
+   * al arrancar, ver resolverEspacio()). El índice es global; cada entrada
+   * guarda además "repo_origen": el repositorio al que quedó ligado el
+   * espacio. Con datos locales, ese repositorio ya no se puede cambiar
+   * (subiría las colas de un hospital al repositorio de otro y bajar
+   * borraría en local lo que no aparezca allí). */
+  var espacioCambiando = false;   // evita el aviso del navegador al recargar a propósito
+
+  function leerIndiceEspacios() {
+    var lista = null;
+    try { lista = JSON.parse(localStorage.getItem(ESPACIO_INDICE_KEY) || "null"); } catch (e) { lista = null; }
+    return Object.prototype.toString.call(lista) === "[object Array]" ? lista : null;
+  }
+  function guardarIndiceEspacios(lista) {
+    try { localStorage.setItem(ESPACIO_INDICE_KEY, JSON.stringify(lista)); return true; } catch (e) { return false; }
+  }
+  function repoOrigenEspacio() {
+    var lista = leerIndiceEspacios() || [];
+    for (var i = 0; i < lista.length; i++) {
+      if (lista[i] && lista[i].id === ESPACIO.id) return String(lista[i].repo_origen || "");
+    }
+    return "";
+  }
+  function fijarRepoOrigenEspacio(repo) {
+    var lista = leerIndiceEspacios();
+    if (!lista) return;   // índice ilegible: no se toca
+    for (var i = 0; i < lista.length; i++) {
+      if (lista[i] && lista[i].id === ESPACIO.id) {
+        if (lista[i].repo_origen !== repo) { lista[i].repo_origen = repo; guardarIndiceEspacios(lista); }
+        return;
+      }
+    }
+  }
+  // Un espacio que ya tenía repositorio (p. ej. "archivo", anterior a los
+  // espacios) lo conserva como origen al arrancar.
+  function fijarRepoOrigenSiFalta() {
+    if (MODO_DEMO || !sync.repo || repoOrigenEspacio()) return;
+    fijarRepoOrigenEspacio(sync.repo);
+  }
+  function espacioConDatos() {
+    return Object.keys(casos).length > 0 || Object.keys(montajes).length > 0 || !!sync.sha;
+  }
+  // Pendiente de subir DE ESTE ESPACIO (los apuntes son globales, no cuentan)
+  function hayPendienteEspacio() {
+    return syncActivo() && !!(subiendo || sync.pendiente || casosPendientes().length || borradosPendientes().length ||
+      montajesPendientes().length || montajesBorradosPend().length || simPresetsPendientes());
+  }
+
+  function idDeNombreEspacio(nombre, lista) {
+    var mapa = { "á": "a", "à": "a", "ä": "a", "â": "a", "é": "e", "è": "e", "ë": "e", "ê": "e",
+      "í": "i", "ì": "i", "ï": "i", "î": "i", "ó": "o", "ò": "o", "ö": "o", "ô": "o",
+      "ú": "u", "ù": "u", "ü": "u", "û": "u", "ñ": "n", "ç": "c" };
+    var base = String(nombre).toLowerCase().replace(/[^\u0000-\u007f]/g, function (c) { return mapa[c] || "-"; });
+    // Solo letras, cifras y guiones sueltos (nunca "__": el id acaba en "__" en el prefijo)
+    base = base.replace(/[^a-z0-9]+/g, "-").replace(/^-+/, "").slice(0, 24).replace(/-+$/, "");
+    if (!base) base = "espacio";
+    var usado = function (id) {
+      if (id === "archivo") return true;
+      for (var i = 0; i < lista.length; i++) if (lista[i] && lista[i].id === id) return true;
+      return false;
+    };
+    var id = base, n = 2;
+    while (usado(id)) { id = base + "-" + n; n++; }
+    return id;
+  }
+
+  function pintarEspacios() {
+    if (!document.getElementById("sync-espacios")) return;
+    document.getElementById("esp-resumen").textContent = T("esp_resumen", { nombre: ESPACIO.nombre });
+    var cont = document.getElementById("esp-lista");
+    cont.textContent = "";
+    var lista = leerIndiceEspacios();
+    document.getElementById("esp-crear").disabled = !lista;
+    (lista || [{ id: ESPACIO.id, nombre: ESPACIO.nombre }]).forEach(function (e) {
+      if (!e || !/^[A-Za-z0-9-]+$/.test(String(e.id))) return;
+      var activo = e.id === ESPACIO.id;
+      var fila = document.createElement("div");
+      fila.className = "dlg-botones esp-fila" + (activo ? " activo" : "");
+      var nom = document.createElement("span");
+      nom.className = "esp-nombre";
+      nom.textContent = e.nombre || e.id;
+      fila.appendChild(nom);
+      if (activo) {
+        var etq = document.createElement("span");
+        etq.className = "esp-etq";
+        etq.textContent = T("esp_activo");
+        fila.appendChild(etq);
+      } else {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.textContent = T("esp_cambiar");
+        b.addEventListener("click", function () { cambiarEspacio(e.id); });
+        fila.appendChild(b);
+      }
+      cont.appendChild(fila);
+    });
+  }
+
+  function cambiarEspacio(id) {
+    if (id === ESPACIO.id) return;
+    var lista = leerIndiceEspacios() || [];
+    var destino = null;
+    for (var i = 0; i < lista.length; i++) if (lista[i] && lista[i].id === id) destino = lista[i];
+    if (!destino) return;
+    var msg = hayPendienteEspacio()
+      ? T("esp_pendiente_conf", { nombre: ESPACIO.nombre })
+      : T("esp_cambiar_conf", { nombre: destino.nombre || destino.id });
+    if (!confirm(msg)) return;
+    try { localStorage.setItem(ESPACIO_PUNTERO_KEY, id); } catch (e) {
+      mensajeSync(T("esp_no_guardado"), true);
+      return;
+    }
+    espacioCambiando = true;
+    location.reload();
+  }
+
+  function crearEspacio() {
+    var campo = document.getElementById("esp-nuevo-nombre");
+    var nombre = campo.value.trim().replace(/\s+/g, " ").slice(0, 40);
+    var lista = leerIndiceEspacios();
+    if (!lista) { mensajeSync(T("esp_indice_ilegible"), true); return; }
+    if (!nombre) { mensajeSync(T("esp_nombre_vacio"), true); return; }
+    for (var i = 0; i < lista.length; i++) {
+      if (lista[i] && String(lista[i].nombre || "").toLowerCase() === nombre.toLowerCase()) {
+        mensajeSync(T("esp_nombre_repetido"), true);
+        return;
+      }
+    }
+    var id = idDeNombreEspacio(nombre, lista);
+    lista.push({ id: id, nombre: nombre, prefijo: ESPACIO_PREFIJO_BASE + id + "__", solo_lectura: false, repo_origen: "" });
+    if (!guardarIndiceEspacios(lista)) { mensajeSync(T("esp_no_guardado"), true); return; }
+    campo.value = "";
+    pintarEspacios();
+    mensajeSync(T("esp_creado", { nombre: nombre }));
+  }
+
   /* Repositorio personal opcional (11-10-2026, varios hospitales): el
      repositorio principal es el del grupo del hospital (casos, plantillas,
      estado.json), compartido por todos sus médicos. Mis apuntes (apuntes/) y
@@ -4043,6 +4207,7 @@
       // El bloque "escenarios" se sigue escribiendo con lo que hubiera en la
       // versión 2, sin tocarlo, como copia de seguridad de la conversión.
       version: 3,
+      espacio_id: ESPACIO.id,
       fecha: new Date().toISOString(),
       escenarios: legadoEscenarios || {},
       catalogo_usuario: catalogoUsuario,
@@ -4272,7 +4437,7 @@
 
   // Cerrar la pestaña con algo sin subir: avisa antes de perderlo de vista
   window.addEventListener("beforeunload", function (e) {
-    if (syncActivo() && (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length || apunteDocPendiente() || simPresetsPendientes())) {
+    if (!espacioCambiando && syncActivo() && (sync.pendiente || casosPendientes().length || borradosPendientes().length || montajesPendientes().length || montajesBorradosPend().length || apunteDocPendiente() || simPresetsPendientes())) {
       e.preventDefault();
       e.returnValue = "";
     }
@@ -4394,6 +4559,7 @@
     document.getElementById("sync-personal-token").value = syncPersonal.token || "";
     mensajeSync(null);
     syncAvanzado = false;
+    pintarEspacios();
     dlgSync.showModal();
     pintarDlgSync();
   });
@@ -4410,6 +4576,13 @@
       return false;
     }
     if (repo !== sync.repo) {
+      // Repo inmutable por espacio: con datos locales no se cambia (ver
+      // repoOrigenEspacio()). Vacío, se puede fijar o corregir.
+      var fijado = repoOrigenEspacio() || sync.repo;
+      if (fijado && repo.toLowerCase() !== fijado.toLowerCase() && espacioConDatos()) {
+        mensajeSync(T("sync_repo_bloqueado", { repo: fijado }), true);
+        return false;
+      }
       // Repo distinto: la referencia anterior no vale y hay que subirlo entero
       sync.sha = null;
       conflicto = false;
@@ -4419,10 +4592,12 @@
     sync.token = token;
     ultimoFallo = null;
     guardarSync();
+    fijarRepoOrigenEspacio(repo);
     pintarEstadoSync();
     return true;
   }
 
+  document.getElementById("esp-crear").addEventListener("click", crearEspacio);
   document.getElementById("sync-subir").addEventListener("click", function () {
     if (leerCamposSync()) subir(false);
   });
@@ -6406,15 +6581,20 @@
    * sueltos (dos personas editando a la vez). Mismo mecanismo de subida
    * automática que el resto (programarEnvio()).
    * ---------------------------------------------------------------- */
-  // TODO tanda 2: apuntes = ámbito personal global (decisión: solo personales,
-  // nunca dentro de un espacio de hospital). De momento va prefijado como el
-  // resto; en "archivo" (prefijo vacío) no cambia nada.
+  // Tanda 2: los apuntes son de ámbito personal GLOBAL (no dependen del
+  // espacio activo): su clave está en CLAVES_GLOBALES y sus fotos en la base
+  // global de IndexedDB. Solo suben al repositorio personal: en un espacio
+  // distinto de "archivo" y sin repositorio personal no se sube ni se baja
+  // nada (nunca al repositorio del espacio). En "archivo" no cambia nada.
   var APUNTE_DOC_KEY = "mio_ionm_apunte_doc_v1";
   var apunteDoc = { secciones: [], carpetas: [], fotos: [], editado_en: null };
   var apunteDocSha = null;
   var apunteDocSinSubir = false;
 
-  function apunteDocPendiente() { return apunteDocSinSubir; }
+  function apuntesSinRepoPersonal() {
+    return !MODO_DEMO && ESPACIO.id !== "archivo" && !personalActivo();
+  }
+  function apunteDocPendiente() { return apunteDocSinSubir && !apuntesSinRepoPersonal(); }
 
   // Migra la forma antigua (un solo "texto" de cuando el documento era un
   // único textarea, 07-09-2026 tarde) a la de varias secciones con título
@@ -6580,7 +6760,7 @@
   }
 
   function subirApunteDoc(reintento) {
-    if (!apunteDocSinSubir) return Promise.resolve();
+    if (!apunteDocSinSubir || apuntesSinRepoPersonal()) return Promise.resolve();
     // Igual que subirCaso(): si las fotos todavía se están recuperando de
     // IndexedDB, se espera antes de subir -si no, se subiría un documento
     // con las fotos a medias-.
@@ -6721,7 +6901,7 @@
   }
 
   function bajarApunteDoc() {
-    if (!syncActivo() || navigator.onLine === false) return Promise.resolve();
+    if (!syncActivo() || navigator.onLine === false || apuntesSinRepoPersonal()) return Promise.resolve();
     // Con cambios locales sin subir, no se pisan: igual que casos/montajes.
     if (apunteDocSinSubir) return Promise.resolve();
     return fetch(urlApunteDoc(), { headers: cabeceras(rutaApunteDoc()), cache: "no-store" })
@@ -10421,6 +10601,7 @@
   // apuntes, simplemente no hay tarjeta). Quitar la excepción cuando todos
   // los usuarios tengan repositorio personal.
   function apuntesVisibles() {
+    if (ESPACIO.id !== "archivo" && !MODO_DEMO) return personalActivo();   // espacios de hospital: solo con repositorio personal
     return MODO_DEMO || personalActivo() || !!(apunteDoc && (apunteDoc.secciones || []).length);
   }
   function pintarTileApuntes() {
@@ -13056,7 +13237,8 @@
     // (catálogos, etiquetas, material), los casos, las plantillas y los
     // apuntes, que viven en archivos aparte y antes no salían. Así, sin
     // token o con GitHub caído, hay una copia local de todo.
-    copia.completa = { casos: casos, montajes: montajes, apuntes: apunteDoc };
+    // Los apuntes son personales y globales: solo salen en la copia de "archivo".
+    copia.completa = { casos: casos, montajes: montajes, apuntes: ESPACIO.id === "archivo" ? apunteDoc : null };
     var blob = new Blob([JSON.stringify(copia, null, 2)], { type: "application/json" });
     var url = URL.createObjectURL(blob);
     var a = document.createElement("a");
@@ -13089,13 +13271,20 @@
         alert(T("import_no_formato"));
         return;
       }
+      // Espacio de la copia frente al activo (aplicarEstado() ya sería tarde)
+      var avisoEspacio = "";
+      if (copia.espacio_id && copia.espacio_id !== ESPACIO.id) {
+        if (!confirm(T("import_espacio_distinto", { origen: copia.espacio_id, activo: ESPACIO.nombre }))) return;
+      } else if (!copia.espacio_id && ESPACIO.id !== "archivo") {
+        avisoEspacio = "\n\n" + T("import_sin_espacio", { activo: ESPACIO.nombre });
+      }
       if (!confirm(T("import_conf", {
         escenarios: Object.keys(copia.escenarios || {}).length,
         materiales: (copia.catalogo_usuario || []).length
       }) + (copia.completa ? "\n\n" + T("import_conf_completa", {
         casos: Object.keys(copia.completa.casos || {}).length,
         montajes: Object.keys(copia.completa.montajes || {}).length
-      }) : ""))) return;
+      }) : "") + avisoEspacio)) return;
 
       // Mismo camino que la bajada de GitHub: así las etiquetas propias y
       // las copias antiguas sin etiquetas se tratan igual en los dos sitios.
@@ -13129,7 +13318,7 @@
       nMontajes++;
     });
     var ap = completa.apuntes;
-    if (ap && (ap.secciones || []).length && !(apunteDoc.secciones || []).length) {
+    if (ap && ESPACIO.id === "archivo" && (ap.secciones || []).length && !(apunteDoc.secciones || []).length) {
       apunteDoc = ap;
       guardarApunteDoc();
       conApuntes = true;
@@ -22191,6 +22380,7 @@
   cargarPapelera();
   cargarApunteDoc();
   cargarSync();
+  fijarRepoOrigenSiFalta();
   cargarPerfilUsuario();
   cargarDocente();
   if (MODO_DEMO) prepararDemo();
