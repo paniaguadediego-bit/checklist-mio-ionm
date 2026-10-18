@@ -4,7 +4,7 @@
 
 - Proyecto: MIO-Check (repo público `checklist-mio-ionm` y repo privado de datos `../checklist-mio-datos`).
 - Fase: **piloto multihospital, tandas 1 y 2 de 9 cerradas** (almacén local por espacio y selector de espacios). Nada a medias. Todo subido en los dos repos.
-- Versión actual: `?v=20261018b` (seis etiquetas de `index.html`).
+- Versión actual: `?v=20261018c` (seis etiquetas de `index.html`).
 - Plan completo de las 9 tandas, con líneas de código y riesgos: `../checklist-mio-datos/docs/AUDITORIA-ESPACIOS-SEUDONIMIZACION-2026-10-18.md`. Contexto del piloto, grupos y usuarios: memoria `project_piloto_hospitales` y diario privado.
 
 ## 2. Hecho en esta sesión (11 a 18-10-2026)
@@ -23,7 +23,7 @@
 
 **Pendiente de la tanda 2 (sin tocar)**: `bajar()` no compara `espacio_id` remoto con el activo; el texto `sync_personal_sin` ya no es cierto fuera de «archivo»; Técnicas IONM y Simulador siguen prefijados por espacio; `pintarTileApuntes()` en carga en frío no muestra la tarjeta por la excepción de transición. NO verificado: subida/bajada reales a GitHub, importar copia con casos reales, «Restablecer demo», escritorio e inglés.
 
-**Siguiente**: el usuario quiere, al acabar las peticiones actuales, un **simulacro de uso** con tres perfiles: él mismo, un médico del HUNSC y un médico de Pamplona. Equipo por defecto: **HUNSC = Cadwell, Pamplona = Inomed** (comprobar que `equipoNuevo()`/`"por_defecto"` lo respeta por espacio o centro; no se ha tocado). Después, tanda 3 (solo lectura) según la auditoría. Las dos ideas de la sección 4 siguen sin respuesta.
+**Siguiente**: el usuario quiere, al acabar las peticiones actuales, un **simulacro de uso** con tres perfiles: él mismo, un médico del HUNSC y un médico de Pamplona. Equipo por defecto: **HUNSC = Cadwell, Pamplona = Inomed** (HECHO el 18-10: `equipo_defecto` por espacio, selector en el diálogo ☁; hay que marcar Cadwell en el espacio del HUNSC e Inomed en el de Pamplona). Después, tanda 3 (solo lectura) según la auditoría. Las dos ideas de la sección 4 siguen sin respuesta.
 
 ## 4. Decisiones abiertas (esperan al usuario)
 

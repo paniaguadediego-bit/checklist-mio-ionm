@@ -229,6 +229,11 @@
   // con su propio equipo sin migrar nada de lo ya guardado.
   function equipoNuevo() {
     var disponibles = equiposConCajas();
+    // Cada espacio puede fijar el suyo (índice de espacios, "equipo_defecto"):
+    // un hospital trabaja con Cadwell y otro con Inomed sin tocar los datos de
+    // fábrica. Vacío o ya no disponible = el de fábrica.
+    var delEspacio = equipoDefectoEspacio();
+    if (delEspacio && disponibles.indexOf(delEspacio) !== -1) return delEspacio;
     var marcado = disponibles.filter(function (e) { return EQUIPOS[e].por_defecto; })[0];
     return marcado || (disponibles.indexOf(EQUIPO_DEFECTO) !== -1 ? EQUIPO_DEFECTO : (disponibles[0] || EQUIPO_DEFECTO));
   }
@@ -422,6 +427,9 @@
     esp_cambiar:         { es: "Cambiar a este", en: "Switch to this" },
     esp_nuevo_nombre:    { es: "Nombre del nuevo espacio", en: "New workspace name" },
     esp_crear:           { es: "Crear espacio", en: "Create workspace" },
+    esp_equipo:          { es: "Equipo por defecto de este espacio", en: "Default equipment for this workspace" },
+    esp_equipo_fabrica:  { es: "El de la herramienta", en: "Tool default" },
+    esp_equipo_guardado: { es: "Equipo por defecto guardado. Vale para lo que crees a partir de ahora.", en: "Default equipment saved. It applies to what you create from now on." },
     esp_nombre_vacio:    { es: "Escribe un nombre para el espacio.", en: "Enter a name for the workspace." },
     esp_nombre_repetido: { es: "Ya existe un espacio con ese nombre.", en: "A workspace with that name already exists." },
     esp_creado:          { es: "Espacio «{nombre}» creado. Pulsa «Cambiar a este» para entrar.", en: "Workspace \u201c{nombre}\u201d created. Press \u201cSwitch to this\u201d to enter it." },
@@ -3972,6 +3980,25 @@
   function guardarIndiceEspacios(lista) {
     try { localStorage.setItem(ESPACIO_INDICE_KEY, JSON.stringify(lista)); return true; } catch (e) { return false; }
   }
+  function equipoDefectoEspacio() {
+    if (MODO_DEMO) return "";
+    var lista = leerIndiceEspacios() || [];
+    for (var i = 0; i < lista.length; i++) {
+      if (lista[i] && lista[i].id === ESPACIO.id) return String(lista[i].equipo_defecto || "");
+    }
+    return "";
+  }
+  function fijarEquipoDefectoEspacio(equipo) {
+    var lista = leerIndiceEspacios();
+    if (!lista) return false;
+    for (var i = 0; i < lista.length; i++) {
+      if (lista[i] && lista[i].id === ESPACIO.id) {
+        lista[i].equipo_defecto = equipo;
+        return guardarIndiceEspacios(lista);
+      }
+    }
+    return false;
+  }
   function repoOrigenEspacio() {
     var lista = leerIndiceEspacios() || [];
     for (var i = 0; i < lista.length; i++) {
@@ -4029,6 +4056,20 @@
     cont.textContent = "";
     var lista = leerIndiceEspacios();
     document.getElementById("esp-crear").disabled = !lista;
+    var selEq = document.getElementById("esp-equipo");
+    selEq.textContent = "";
+    var op0 = document.createElement("option");
+    op0.value = "";
+    op0.textContent = T("esp_equipo_fabrica");
+    selEq.appendChild(op0);
+    equiposConCajas().forEach(function (eq) {
+      var op = document.createElement("option");
+      op.value = eq;
+      op.textContent = EQUIPOS[eq].nombre;
+      selEq.appendChild(op);
+    });
+    selEq.value = equipoDefectoEspacio();
+    selEq.disabled = !lista;
     (lista || [{ id: ESPACIO.id, nombre: ESPACIO.nombre }]).forEach(function (e) {
       if (!e || !/^[A-Za-z0-9-]+$/.test(String(e.id))) return;
       var activo = e.id === ESPACIO.id;
@@ -4598,6 +4639,10 @@
   }
 
   document.getElementById("esp-crear").addEventListener("click", crearEspacio);
+  document.getElementById("esp-equipo").addEventListener("change", function () {
+    if (fijarEquipoDefectoEspacio(this.value)) mensajeSync(T("esp_equipo_guardado"));
+    else mensajeSync(T("esp_no_guardado"), true);
+  });
   document.getElementById("sync-subir").addEventListener("click", function () {
     if (leerCamposSync()) subir(false);
   });
