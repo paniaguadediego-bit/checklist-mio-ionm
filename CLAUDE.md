@@ -396,7 +396,7 @@ distinta a la anterior, no importa el formato exacto.
 >   **El repo del código es PÚBLICO otra vez** (el script lo lee con `raw.githubusercontent`
 >   sin token). Sheet viejo de los 29 casos congelado (sin activador; no pulsar
 >   «Reconstruir ahora» allí). Comprobado con un caso real de prueba: fila con mes,
->   tramo de edad, centro HUNSC, minutos y duración; `Listas` sin Intervenciones
+>   tramo de edad, código del centro, minutos y duración; `Listas` sin Intervenciones
 >   (el bloque se quitó de `Codigo.gs`); columnas de minutos con formato número.
 >   Casos: **57 columnas base + 2 por técnica** (145 con 44 técnicas). **Falta
 >   compartir el Sheet** solo con gente del hospital (Lector; sin editores).
@@ -405,7 +405,7 @@ distinta a la anterior, no importa el formato exacto.
 >   etiqueta del espacio en forma de pastilla en la barra, nota de «mejor con
 >   ordenador» en el Simulador, y fuera de Catálogos «Exportar copia»,
 >   «Importar copia» e «Imprimir». Ver las filas nuevas del mapa.
-> - Centro (código HUNSC) y usuarios (iniciales) ya dados de alta en la app.
+> - Centro (con su código) y usuarios (iniciales) ya dados de alta en la app.
 
 > **Resumen a 10-10-2026 (léelo primero; el diario cronológico está en
 > el repositorio privado, ver al final de este archivo).**
