@@ -625,12 +625,8 @@ function construirListas_(cat) {
     { titulo: "Tecnicas", cabecera: ["id", "etiqueta", "grupo", "activa"],
       filas: cat.tecnicas.map(function (t) { return [t.id, t.etiqueta, t.grupo, comoNumero01_(t.activa !== false)]; }) },
     { titulo: "Servicios", cabecera: ["id", "nombre", "activa"],
-      filas: cat.servicios.map(function (s) { return [s.id, s.nombre, comoNumero01_(s.activa !== false)]; }) },
-    { titulo: "Intervenciones", cabecera: ["id", "nombre", "codigo", "servicio", "activa"],
-      filas: cat.intervenciones.map(function (i) {
-        var serv = cat.SERV[i.servicio];
-        return [i.id, i.nombre, i.codigo || "", serv ? serv.nombre : "", comoNumero01_(i.activa !== false)];
-      }) }
+      filas: cat.servicios.map(function (s) { return [s.id, s.nombre, comoNumero01_(s.activa !== false)]; }) }
+    // Sin bloque «Intervenciones»: la intervención es texto libre en el caso.
   ];
   // Centros: solo id y código (el nombre del centro no se vuelca). Último
   // bloque, para no mover los de antes; solo si hay centros dados de alta.
