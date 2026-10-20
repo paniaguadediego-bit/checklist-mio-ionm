@@ -1123,6 +1123,7 @@
     tab_centros:         { es: "Centros", en: "Hospitals" },
     cat_intro_centros:   { es: "Los hospitales que usan la herramienta. Cada caso lleva su centro y el <b>código</b> va delante de su número (H1-2026-003), así que dos hospitales no repiten número. Abajo eliges de qué centro es este dispositivo. Los nombres se guardan con tus datos privados, nunca en el código de la herramienta.",
                            en: "The hospitals using the tool. Each case carries its hospital and the <b>code</b> goes before its number (H1-2026-003), so two hospitals never repeat a number. Below you choose which hospital this device belongs to. Names are kept with your private data, never in the tool's code." },
+    cat_cancelar_edicion: { es: "Cancelar edición", en: "Cancel editing" },
     cat_nueva_usuarios:  { es: "Usuario nuevo", en: "New user" },
     cat_editar_usuarios: { es: "Editar usuario", en: "Edit user" },
     cat_nueva_centros:   { es: "Centro nuevo", en: "New hospital" },
@@ -11999,6 +12000,11 @@
     document.getElementById("cat-form-titulo").textContent =
       T((catEditando ? "cat_editar_" : "cat_nueva_") + catPestana);
     document.getElementById("cat-borrar").hidden = !(catPestana === "perfiles" && catEditando);
+    // «Cancelar edición» solo tiene sentido editando; con el formulario en
+    // blanco (nuevo) no hay nada que cancelar.
+    var btnCancelar = document.getElementById("cat-nueva");
+    btnCancelar.hidden = !catEditando;
+    btnCancelar.textContent = T("cat_cancelar_edicion");
 
     var clave = catClaveTexto();
     cont.appendChild(catCampo("texto",
