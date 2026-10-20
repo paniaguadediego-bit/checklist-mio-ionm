@@ -6805,6 +6805,27 @@
     ".informe-coste-nota{margin:0.2rem 0 0;font-size:0.72rem;font-style:italic;color:#62717c}" +
     ".informe-coste-falta{margin:0.15rem 0 0;font-size:0.72rem;color:#a63428}";
 
+  // Solo con varios casos (20-10-2026): casos seguidos sin salto de página y
+  // sin huecos por «no partir» secciones enteras; cajas en 4 columnas y más
+  // pequeñas. Va aparte de ESTILO_INFORME_PDF porque la hoja de registro
+  // reutiliza ese y tiene que seguir cabiendo en A4.
+  var ESTILO_INFORME_COMPACTO =
+    "@page{margin:9mm}" +
+    "body{font-size:12px;line-height:1.3;padding:0 0.2rem}" +
+    ".informe-caso{padding:0.5rem 0;border-bottom:1px solid #9aa7b1}" +
+    "@media print{.informe-caso{page-break-after:auto}.informe-caso:last-child{border-bottom:none}}" +
+    ".informe-cabecera{break-after:avoid}.informe-cabecera h2{font-size:1.05rem;margin:0 0 0.1rem}" +
+    ".informe-seccion{break-inside:auto;margin-bottom:0.3rem}" +
+    ".informe-seccion h3{break-after:avoid;margin-bottom:0.15rem;padding-bottom:0.05rem}" +
+    ".informe-fila{padding:0}.informe-tecpar{margin:0.15rem 0}" +
+    ".informe-cols-2,.informe-cols-3{column-gap:0.8rem}" +
+    ".informe-cajas{grid-template-columns:repeat(4,minmax(0,1fr));gap:0.25rem}" +
+    ".informe-caja{padding:0.12rem 0.2rem}.informe-caja h4{font-size:0.6rem;margin-bottom:0.1rem}" +
+    ".informe-canal{margin:0}.informe-canal-num{font-size:0.52rem;flex-basis:1.1rem}" +
+    ".informe-slot{min-height:0.7rem;font-size:0.52rem;line-height:1.15}" +
+    ".informe-puertos{margin-top:1px}" +
+    ".informe-imagenes{gap:0.3rem}.informe-imagenes img{max-width:11rem;max-height:11rem}";
+
   // Recibe una lista de CASOS (objetos, no uids): la usan tanto "Exportar
   // casos" (todos) como "Crear informe" (uno solo, el que está abierto).
   function abrirInformeCasos(listaCasos) {
@@ -6817,7 +6838,7 @@
     doc.close();
     doc.title = "MIO-Check — " + (listaCasos.length === 1 ? (listaCasos[0].ID_Caso || "") : T("caso_pdf_titulo_varios"));
     var estilo = doc.createElement("style");
-    estilo.textContent = ESTILO_INFORME_PDF;
+    estilo.textContent = ESTILO_INFORME_PDF + (listaCasos.length > 1 ? ESTILO_INFORME_COMPACTO : "");
     doc.head.appendChild(estilo);
     listaCasos.forEach(function (c) {
       doc.body.appendChild(construirInformeCaso(doc, c));
