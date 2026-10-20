@@ -1123,6 +1123,8 @@
     tab_centros:         { es: "Centros", en: "Hospitals" },
     cat_intro_centros:   { es: "Los hospitales que usan la herramienta. Cada caso lleva su centro y el <b>código</b> va delante de su número (H1-2026-003), así que dos hospitales no repiten número. Abajo eliges de qué centro es este dispositivo. Los nombres se guardan con tus datos privados, nunca en el código de la herramienta.",
                            en: "The hospitals using the tool. Each case carries its hospital and the <b>code</b> goes before its number (H1-2026-003), so two hospitals never repeat a number. Below you choose which hospital this device belongs to. Names are kept with your private data, never in the tool's code." },
+    cat_nueva_usuarios:  { es: "Usuario nuevo", en: "New user" },
+    cat_editar_usuarios: { es: "Editar usuario", en: "Edit user" },
     cat_nueva_centros:   { es: "Centro nuevo", en: "New hospital" },
     cat_editar_centros:  { es: "Editar centro", en: "Edit hospital" },
     cat_campo_codigo_centro: { es: "Código", en: "Code" },
@@ -12163,7 +12165,9 @@
     }
 
     guardarEnCatalogo(catPestana, dato);
-    catEditando = dato.id;
+    // Tras guardar el formulario vuelve en blanco: si se quedara editando lo
+    // recién guardado, el siguiente nombre que se escribiera lo sobrescribiría.
+    catEditando = null;
     catError(null);
     trasCambiarCatalogo();
   }
