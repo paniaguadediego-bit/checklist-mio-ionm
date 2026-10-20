@@ -1166,9 +1166,6 @@ window.SURGERIES_DATA = {
        mismo partirían en dos las estadísticas del histórico. Si de verdad
        son cosas distintas, se separan desde el diálogo Catálogos. */
     { "id": "mapeo_intramedular_ce", "etiqueta": "Mapeo intramedular", "grupo": "mapeo", "activa": true, "descripcion": "Estimulación directa del cordón espinal" },
-    // Retirada de técnicas por el usuario. "Desactivar no borra": si algún
-    // caso o montaje ya la tenía marcada, se sigue viendo (tachada).
-    { "id": "mapeo_material_qx", "etiqueta": "Material Qx", "grupo": "mapeo", "activa": false },
     { "id": "eog", "etiqueta": "EOG", "grupo": "mapeo", "activa": true }
   ],
 
@@ -1262,7 +1259,6 @@ window.SURGERIES_DATA = {
       { "tecnica": "mapeo_intramedular_ce", "usa": ["sondas", "musculos"] },
       { "tecnica": "mapeo_columnas_dorsales", "usa": ["sondas", "grid", "estim_periferico"] },
       { "tecnica": "mapeo_lenguaje", "usa": ["sondas", "grid", "musculos"] },
-      { "tecnica": "mapeo_material_qx", "usa": ["sondas", "musculos"] },
       { "tecnica": "eeg", "usa": ["grid", "reg_cortical_sep", "reg_peatc", "reg_pev"] },
       { "tecnica": "ecog", "usa": ["grid"] },
       { "tecnica": "eog", "usa": ["musculos"] },
