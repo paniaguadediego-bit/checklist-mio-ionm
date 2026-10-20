@@ -197,7 +197,15 @@ window.SURGERIES_I18N.en = {
     "mapeo_iv_ventriculo": { "etiqueta": "Fourth ventricle mapping", "descripcion": "Nuclei of the floor of the fourth ventricle" },
     "mapeo_columnas_dorsales": { "etiqueta": "Dorsal column mapping" },
     "mapeo_raices_tornillos": { "etiqueta": "Root and screw mapping", "descripcion": "Nerve roots and pedicle screws" },
-    "mapeo_nervio_periferico": { "etiqueta": "Peripheral nerve mapping" }
+    "mapeo_nervio_periferico": { "etiqueta": "Peripheral nerve mapping" },
+    "rx_tvcr": { "etiqueta": "Trigemino-vocal reflex (TVcR)" },
+    "rx_thr": { "etiqueta": "Trigemino-hypoglossal reflex (THR)" },
+    "rx_tcr": { "etiqueta": "Trigemino-cervical reflex (TCR)" },
+    "rx_lar": { "etiqueta": "Laryngeal adductor reflex (LAR)" },
+    "rx_glosofaringeo_trigeminal": { "etiqueta": "Glossopharyngeal-trigeminal reflex" },
+    "mapeo_intramedular_ce": { "etiqueta": "Intramedullary mapping", "descripcion": "Direct spinal cord stimulation" },
+    "eng_continua": { "etiqueta": "Continuous ENG" },
+    "onda_f_facial": { "etiqueta": "Facial F wave" }
   },
 
   /* Servicios quirúrgicos: id -> { nombre } */
@@ -208,7 +216,9 @@ window.SURGERIES_I18N.en = {
     "vascular": { "nombre": "Vascular" },
     "endocrino": { "nombre": "Endocrine" },
     "maxilofacial": { "nombre": "Maxillofacial" },
-    "urologia": { "nombre": "Urology" }
+    "urologia": { "nombre": "Urology" },
+    "cirugia_general": { "nombre": "General Surgery" },
+    "cirugia_cardiotoracica": { "nombre": "Cardiac / Thoracic Surgery" }
   },
 
   /* Intervenciones: id -> { nombre } */

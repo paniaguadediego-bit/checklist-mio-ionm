@@ -69,7 +69,7 @@ window.GUIA = {
       { titulo: "Material", texto: "Todo el catálogo, con buscador." },
       { titulo: "Miotomas", texto: "Qué músculos cubren los niveles de la cirugía." },
       { titulo: "Simulador", texto: "Una pantalla de monitorización para ensayar alarmas." },
-      { titulo: "Mis apuntes", texto: "Tus notas y fotos en carpetas; se exportan a Word. Sale al conectar tu repositorio personal (☁ › avanzado) o en la demo." },
+      { titulo: "Mis apuntes", texto: "Tus notas y fotos en carpetas; se exportan a Word. Sale cuando este dispositivo tiene la nube conectada en tu espacio «Archivo» (☁), o en la demo." },
       { titulo: "Bibliografía recomendada", texto: "Libros, guías y artículos en los que se basa, en estilo Vancouver; el DOI abre el artículo." }
     ] }
   ],

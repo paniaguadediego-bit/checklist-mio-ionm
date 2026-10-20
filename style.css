@@ -2698,8 +2698,8 @@ dialog h3 {
 @media print {
   .no-print, .barra-sup { display: none !important; }
   body { background: #fff; font-size: 11pt; }
-  /* Fase 7 (06-09-2026): puede imprimirse (botón "Imprimir" de Catálogos, o
-     Ctrl/Cmd+P nativo) estando en cualquier pantalla, no solo Organizador
+  /* Fase 7 (06-09-2026): puede imprimirse (con Ctrl/Cmd+P nativo; el botón
+     «Imprimir» de Catálogos se retiró el 20-10-2026) en cualquier pantalla, no solo Organizador
      -que es la única con algo que tenga sentido imprimir, el resumen y las
      cajas-. Sin esto, imprimir desde Gestión de Casos/Técnicas IONM/Docencia
      sacaría una página en blanco, porque #pantalla-organizador estaría en

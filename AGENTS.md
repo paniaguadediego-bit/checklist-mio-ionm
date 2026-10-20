@@ -36,6 +36,25 @@ Instrucciones para cualquier asistente de código que trabaje en este repositori
 - El contenido de **Técnicas IONM** (apuntes del autor sacados de libros y
   artículos) vive SOLO en el repositorio privado (`referencia/`): no lo copies
   nunca a este repositorio público.
+- **Espacios, seudonimización y aislamiento entre hospitales** (detalle en las
+  filas «Espacios de trabajo / almacén» y «Seudonimización y tiempo» del mapa
+  de CLAUDE.md):
+  - Cada espacio (un hospital = un repo de datos) tiene sus datos locales
+    aparte: el `localStorage` envuelto prefija sola cada clave según el espacio
+    activo. **Toda clave nueva se prefija**; solo va en la lista blanca
+    `CLAVES_GLOBALES` (sin prefijo, compartida entre espacios) una preferencia
+    del dispositivo que de verdad deba compartirse. **Nunca** `window.localStorage`
+    directo: cruzaría datos entre hospitales. IndexedDB igual: la base lleva el
+    id del espacio.
+  - Casos nuevos = esquema 2, seudónimos: lo que se guarda y se sube lleva mes
+    (no fecha), tramo de edad (no edad), sin personal ni firma, y los tiempos en
+    minutos desde la incisión. **Lo exacto —fecha, edad, personal, `t0`, horas
+    reales— no sale nunca del dispositivo**: ni a `estado.json`, ni a `casos/`,
+    ni a montajes, CSV o mensajes de commit. Un campo nuevo con un dato exacto
+    va a la tabla local de exactos (`mio_ionm_exactos_v1`), no al caso que
+    sube.
+  - Mis apuntes y Técnicas IONM van siempre al repositorio del espacio
+    «Archivo» (`destinoRuta()`), nunca al de un hospital.
 - Con `core.autocrlf=true`, la copia de trabajo suele ir en CRLF: respeta el
   salto de línea que tenga cada archivo al editarlo.
 - Los scripts de Python largos para editar archivos van en un archivo aparte

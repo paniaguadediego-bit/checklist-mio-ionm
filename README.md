@@ -199,8 +199,8 @@ propia en *Después / consulta*).
 - La **ficha del caso se guarda sola** (como el Registro) y tiene **Cerrar caso**
   / **Reabrir caso** en la barra de abajo.
 - **Más difícil perder datos**: si el mismo caso se cambia en dos dispositivos,
-  se juntan las dos versiones; (la copia manual se retiró el 20-10-2026) incluía casos, plantillas y
-  apuntes; **Vaciar** del Registro y del Checklist solo sin caso vinculado.
+  se juntan las dos versiones; la copia manual de entonces (retirada el
+  20-10-2026) incluía casos, plantillas y apuntes; **Vaciar** del Registro y del Checklist solo sin caso vinculado.
 - **Alarmas y concordancia**: una alarma en blanco ya no cuenta como alerta, y
   la propuesta de concordancia dice qué regla aplica (las dudosas, entre «¿…?»).
 - **Nombres unificados**: *plantilla* (lo que guardas en la biblioteca) y
@@ -606,7 +606,10 @@ de alta, la app se ve como siempre.
 
 El botón **Catálogos**, dentro del menú **⋮** de la barra superior
 (09-09-2026: antes iba suelto en la barra, junto al selector de perfil),
-abre una ventana con seis pestañas. En todas funciona igual: **▲▼** para
+abre una ventana con cuatro pestañas: Técnicas, Servicios, Usuarios y
+Centros (Intervenciones y Perfiles se ocultaron el 20-10-2026: la intervención
+se escribe en texto libre y los perfiles no se usan; el dato y el catálogo
+siguen ahí). En todas funciona igual: **▲▼** para
 reordenar, el nombre para editarlo, y **☑** para activar o desactivar.
 Arriba del todo, dentro de ese mismo diálogo, está **Restablecer**. (Los
 botones Exportar copia, Importar copia e Imprimir se retiraron el 20-10-2026:
@@ -619,12 +622,12 @@ no aportaban nada; la copia de seguridad es el repositorio de datos.)
   colgando.
 - **Servicios** — Neurocirugía, COT, ORL, Vascular, Endocrino, Maxilofacial y
   Urología, más los que quieras.
-- **Intervenciones** — la descripción de la cirugía concreta, con su
+- **Intervenciones** (pestaña oculta desde el 20-10-2026) — la descripción de la cirugía concreta, con su
   **código del hospital**. El código puede quedarse vacío: cuando lo
   rellenes se aplicará solo a todos los casos anteriores de ese tipo, sin
   tocarlos uno a uno. Es independiente del campo *Intervención* del caso
   (texto libre, ver más abajo).
-- **Perfiles** — las combinaciones de técnicas que antes alimentaban el
+- **Perfiles** (pestaña oculta desde el 20-10-2026) — las combinaciones de técnicas que antes alimentaban el
   desplegable *Perfil* de la tarjeta Técnicas (retirado el 05-09-2026, ver
   más arriba). Se pueden seguir creando, editando y borrando, pero de
   momento no los usa ninguna otra parte de la interfaz.
@@ -1547,25 +1550,25 @@ El token se guarda solo en ese navegador. **Desconectar** lo borra del
 dispositivo (no toca ni tus montajes ni lo guardado en GitHub), y siempre
 puedes revocarlo desde GitHub.
 
-#### Repositorio personal (opcional)
+#### Mis apuntes y Técnicas IONM: siempre por «Archivo»
 
-Cuando el repositorio de datos es el de todo el grupo de un hospital, lo que
-es solo tuyo puede ir aparte. En el diálogo ☁, dentro de *Opciones avanzadas*,
-**Repositorio personal (opcional)**: tus apuntes y Técnicas IONM van aquí y
-solo los ves tú. Pones `usuario/repositorio` y un token (puede ser el mismo;
-vacío = el de arriba) y **Guardar repositorio personal**.
+Mis apuntes y Técnicas IONM son solo tuyos y nunca van al repositorio del
+grupo de un hospital. Desde el 20-10-2026 no hay que configurar nada aparte
+(la pantalla de «repositorio personal» se retiró): viajan siempre por el
+acceso del espacio **Archivo**, que es tu propio repositorio.
 
-- Con él, **Mis apuntes** (el documento y sus fotos, carpeta `apuntes/`) se
-  leen y se escriben **solo** en el repositorio personal, nunca en el del
-  grupo, y **Técnicas IONM** (`referencia/tecnicas-mio.json`) se lee de él.
-  Casos, plantillas y lo demás siguen yendo al repositorio de arriba.
-- Si el repositorio personal está vacío, la primera vez se suben allí los
-  apuntes que hay en el dispositivo (las fotos que no estén en el dispositivo
-  no se pueden copiar desde el navegador). Si ya tiene apuntes, se traen.
-- Sin repositorio personal todo va al repositorio de arriba, como siempre.
-- Es de cada dispositivo: no se sincroniza. Su
-  botón **Desconectar** lo quita (no borra nada); el **Desconectar** de la
-  nube lo quita también. En la demo no existe.
+- Al conectar la nube en «Archivo», ese acceso queda guardado en el
+  dispositivo, y desde cualquier otro espacio **Mis apuntes** (el documento y
+  sus fotos, carpeta `apuntes/`) y **Técnicas IONM**
+  (`referencia/tecnicas-mio.json`) siguen yendo a ese repositorio. Casos,
+  plantillas y lo demás van al repositorio del espacio en el que estés.
+- Sin «Archivo» conectado en el dispositivo (por ejemplo, quien solo usa el
+  espacio de su hospital) no hay Mis apuntes.
+- **Desconectar** la nube en «Archivo» olvida ese acceso y las Técnicas IONM;
+  desconectar en otro espacio no.
+- Si «Archivo» está en solo lectura, los apuntes no suben desde ahí; sí desde
+  otro espacio.
+- En la demo no existe.
 
 **Informe de casos (PDF)**, dentro de la pantalla **Gestión de Casos** (barra de
 acciones fija), abre un **informe en PDF** —imprimible desde el propio

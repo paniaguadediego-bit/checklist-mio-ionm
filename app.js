@@ -181,12 +181,6 @@
     return archivo;   // puntero a un espacio que no existe
   }
 
-  // Espacio con el que arrancó esta carga de la página (copia, para que
-  // nadie pueda modificar el prefijo fijado). Lo usarán las tandas 2-4.
-  function espacioActivo() {
-    return { id: ESPACIO.id, nombre: ESPACIO.nombre, prefijo: ESPACIO.prefijo, solo_lectura: ESPACIO.solo_lectura };
-  }
-
   var localStorage = (function () {
     var real = null;
     try { real = window.localStorage; } catch (e) { real = null; }
@@ -404,9 +398,6 @@
     guardar_montaje_nuevo: { es: "Guardar como nuevo", en: "Save as new" },
     guardar_montaje_sobrescribir: { es: "Sobrescribir este", en: "Overwrite this one" },
     montaje_guardado:    { es: "Plantilla guardada.", en: "Template saved." },
-    btn_exportar:        { es: "Exportar copia", en: "Export backup" },
-    btn_importar:        { es: "Importar copia", en: "Import backup" },
-    btn_imprimir:        { es: "Imprimir", en: "Print" },
     btn_restablecer:     { es: "Restablecer", en: "Reset" },
 
     /* --- Estado de guardado y sincronización --- */
@@ -497,12 +488,6 @@
                            en: "Workspace \u201c{nombre}\u201d has changes that are not uploaded yet. They stay saved on this device and will upload when you return to that workspace, not before.\n\nSwitch workspace anyway?" },
     sync_repo_bloqueado: { es: "Este espacio ya tiene datos y está ligado al repositorio {repo}. No se puede cambiar de repositorio: crea otro espacio para el otro.",
                            en: "This workspace already has data and is tied to repository {repo}. The repository cannot be changed: create another workspace for the other one." },
-    import_espacio_distinto: { es: "ATENCIÓN: esta copia es del espacio «{origen}» y el espacio activo es «{activo}».\n\nSolo se añadirán a «{activo}» los casos y las plantillas (con sus fotos) que no estén ya aquí. Los usuarios, centros, etiquetas, material propio y demás catálogos de «{activo}» no se tocan.\n\n¿Importar de todos modos?",
-                           en: "WARNING: this backup is from workspace \u201c{origen}\u201d and the active workspace is \u201c{activo}\u201d.\n\nOnly the cases and templates (with their photos) not already here will be added to \u201c{activo}\u201d. The users, centres, labels, custom material and other catalogues of \u201c{activo}\u201d are not touched.\n\nImport anyway?" },
-    import_conf_otro:    { es: "Esta copia trae {casos} caso(s) y {montajes} plantilla(s). Solo se añaden los que no estén ya en este dispositivo; no se sustituye nada.\n\n¿Continuar?",
-                           en: "This backup has {casos} case(s) and {montajes} template(s). Only those not already on this device are added; nothing is replaced.\n\nContinue?" },
-    import_otro_vacia:   { es: "Esta copia es de otro espacio y no trae casos ni plantillas (solo catálogos), así que no se importa nada.", en: "This backup is from another workspace and has no cases or templates (catalogues only), so nothing is imported." },
-    import_sin_espacio:  { es: "Esta copia no indica de qué espacio es. Se importará al espacio activo («{activo}»).", en: "This backup does not say which workspace it is from. It will be imported into the active workspace (\u201c{activo}\u201d)." },
     sync_fecha_desc:     { es: "fecha desconocida", en: "unknown date" },
     err_token:           { es: "Token no válido o caducado.", en: "Invalid or expired token." },
     err_permiso:         { es: "El token no tiene permiso de escritura sobre ese repositorio.",
@@ -607,14 +592,6 @@
                            en: "Delete “{nombre}”?\nThis cannot be undone." },
     restablecer_conf:    { es: "¿Restablecer todo?\nSe perderán las plantillas creadas y las ediciones, y se vuelve a los valores de fábrica.",
                            en: "Reset everything?\nCreated templates and edits will be lost, returning to factory defaults." },
-    exportado:           { es: "Copia exportada. Guárdala o pásala al otro dispositivo.",
-                           en: "Backup exported. Save it or move it to the other device." },
-    import_no_json:      { es: "El archivo no es un JSON válido.", en: "The file is not valid JSON." },
-    import_no_formato:   { es: "El archivo no parece una copia de esta herramienta.",
-                           en: "The file does not look like a backup from this tool." },
-    importado:           { es: "Copia importada correctamente.", en: "Backup imported successfully." },
-    import_conf:         { es: "Importar esta copia:\n· {escenarios} plantilla(s)\n· {materiales} material(es) propios\n\nSustituye lo que tengas en este navegador. ¿Continuar?",
-                           en: "Import this backup:\n· {escenarios} template(s)\n· {materiales} custom material(s)\n\nThis replaces what you have in this browser. Continue?" },
 
     /* --- Diálogo de material --- */
     dlg_mat_nuevo:       { es: "Material nuevo", en: "New material" },
@@ -814,9 +791,6 @@
     caso_crear_informe:  { es: "Informe (PDF)", en: "Report (PDF)" },
     caso_cerrar:         { es: "Cerrar caso", en: "Close case" },
     caso_fusionado:      { es: "El caso {id} había cambiado en otro dispositivo: se han juntado los dos sin perder nada.", en: "Case {id} had changed on another device: both versions were merged without losing anything." },
-    import_completa_hecho: { es: "Copia completa: se han recuperado {casos} casos y {montajes} plantillas que no estaban en este dispositivo. Los que ya estaban no se han tocado.", en: "Full backup: {casos} cases and {montajes} templates that were not on this device have been restored. Existing ones were left untouched." },
-    import_conf_completa: { es: "Es una copia completa: trae {casos} casos y {montajes} plantillas. De esos, solo se añaden los que no estén en este dispositivo.", en: "It is a full backup: it has {casos} cases and {montajes} templates. Only those not already on this device are added." },
-    import_completa_apuntes: { es: "También se han recuperado los apuntes (aquí no había ninguno).", en: "Notes were restored too (there were none here)." },
     caso_reabrir:        { es: "Reabrir caso", en: "Reopen case" },
     caso_candado_aviso:  { es: "🔒 Caso cerrado: solo lectura. Para cambiar algo, «Reabrir caso».", en: "🔒 Closed case: read only. To change anything, «Reopen case»." },
     reg_candado_aviso:   { es: "🔒 Caso cerrado: el Registro es de solo lectura. Para cambiar algo, reábrelo en su ficha (Gestión de Casos).", en: "🔒 Closed case: the record is read only. To change anything, reopen it from its form (Case management)." },
@@ -5668,7 +5642,7 @@
     if (escrituraBloqueada()) return;   // solo lectura
     var e = papeleraCasos[uid];
     delete papeleraCasos[uid];
-    if (e && e.caso && !casos[uid]) { borrarUnCasoLocal(uid, e.caso); exactosBorrar(uid); }
+    if (e && e.caso && !casos[uid]) { borrarUnCasoLocal(uid, e.caso); exactosBorrar(uid); t0Quitar(uid); }
     if (!sinGuardar) guardarPapelera();
   }
   // Devuelve "ya_estaba" si el caso había vuelto a la lista mientras tanto
@@ -5812,13 +5786,6 @@
     div.appendChild(sel);
     div.appendChild(regNodo("small", null, T("cat_centro_dispositivo_ay")));
     return div;
-  }
-
-  // El texto del centro NO sube (esquema 2): se deriva del catálogo por centro_id.
-  // Un caso antiguo, o sin centro del catálogo, conserva el texto que tuviera.
-  function centroTextoDe(c) {
-    if (c && c.centro_id && CENTS[c.centro_id]) return campo(CENTS[c.centro_id], "nombre");
-    return (c && c.centro) || "";
   }
 
   function centroPorDefecto() {
@@ -6166,15 +6133,6 @@
     while (x < -360) x += 1440;
     while (x >= 1080) x -= 1440;
     return x;
-  }
-
-  // Minutos entre dos "HH:MM"; si la recuperación cae pasada la medianoche,
-  // suma un día en vez de dar un número negativo.
-  function minutosEntre(h1, h2) {
-    var m = /^(\d{1,2}):(\d{2})/.exec(h1 || ""), n = /^(\d{1,2}):(\d{2})/.exec(h2 || "");
-    if (!m || !n) return "";
-    var d = (+n[1] * 60 + +n[2]) - (+m[1] * 60 + +m[2]);
-    return d < 0 ? d + 1440 : d;
   }
 
   function eventosACsv(uidsFiltrados) {
@@ -7368,6 +7326,7 @@
           delete casosSha[uid];
           borrarUnCasoLocal(uid, caso);
           exactosBorrar(uid);
+          t0Quitar(uid);   // la hora real de la incisión es exacta: se va con el caso
         });
 
         var quedan = (listado || []).filter(function (f) {
@@ -21491,9 +21450,6 @@
     ids = ids || [];
     return TECNICAS.filter(function (t) { return ids.indexOf(t.id) !== -1; })
       .map(function (t) { return campo(t, "etiqueta"); });
-  }
-  function regTecnicasCaso(c) {
-    return regNombresTecnicas(c ? c.tecnicas_realizadas : []);
   }
 
   /* E2 · Mapeo en pantalla (28-09-2026, pedido del usuario): un bloque por
