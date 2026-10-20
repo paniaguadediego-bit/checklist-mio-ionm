@@ -165,15 +165,36 @@ body {
 .barra-fila-sync { padding-top: 0.1rem; gap: 0.5rem; }
 /* Rótulo del espacio activo (solo con varios espacios): una línea, con elipsis */
 .sync-espacio {
-  font-size: 0.7rem;
-  color: var(--panel-tenue);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.12rem 0.55rem;
+  border: 1px solid var(--accent);
+  border-radius: var(--r);
+  background: rgba(255, 255, 255, 0.07);   /* la barra superior es oscura en los tres modos */
+  color: var(--panel-texto);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
-  max-width: 9rem;
+  max-width: 11rem;
   flex: 0 1 auto;
 }
+.sync-espacio::before {
+  content: "";
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--accent);
+  flex: none;
+}
+/* En el modo claro el acento es azul marino: sobre la barra oscura no se vería */
+html.tema-claro .sync-espacio { border-color: rgba(255, 255, 255, 0.35); }
+html.tema-claro .sync-espacio::before { background: var(--panel-texto); }
 .sync-espacio[hidden] { display: none; }
 
 /* Envoltorio del logo: antes una <img> suelta sin comportamiento, ahora el

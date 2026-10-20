@@ -1193,7 +1193,8 @@
     tile_registro_sub:    { es: "Hoja de quirófano imprimible: hitos, eventos, alarmas", en: "Printable OR sheet: milestones, events, alarms" },
     tile_tecnicas_sub:    { es: "Parámetros de estímulo y registro, con su fuente", en: "Stimulation and recording parameters, with sources" },
     tile_docencia_sub:    { es: "Qué músculos cubren cada raíz", en: "Which muscles cover each root" },
-    tile_simulador_sub:   { es: "Pantalla de monitorización para practicar alarmas", en: "Monitoring screen to practise alarms" },
+    tile_simulador_sub:   { es: "Pantalla de monitorización para practicar alarmas. Mejor con el ordenador",
+                            en: "Monitoring screen to practise alarms. Best on a computer" },
     tile_apuntes_sub:     { es: "Tus notas y fotos, en todos tus dispositivos", en: "Your notes and photos, on all your devices" },
     tile_bibliografia_sub: { es: "Libros, guías y artículos en los que se basa", en: "Books, guidelines and papers it is based on" },
     biblio_intro:        { es: "Las fuentes usadas para construir MIO-Check, en estilo Vancouver. Los DOI llevan al artículo.", en: "The sources used to build MIO-Check, in Vancouver style. DOIs link to the article." },
@@ -1393,7 +1394,7 @@
     sim_vaciar_conf:     { es: "¿Vaciar el simulador? Se quitan todas las ventanas.",
                            en: "Clear the simulator? All windows are removed." },
     sim_aviso_corto:     { es: "Simulación · trazos de ejemplo, sin señal real", en: "Simulation · example traces, no real signal" },
-    sim_girar:           { es: "Gira el móvil: el Simulador se usa en horizontal.", en: "Turn your phone: the Simulator works in landscape." },
+    sim_girar:           { es: "Gira el móvil: el Simulador se usa en horizontal. Se maneja mejor desde un ordenador.", en: "Turn your phone: the Simulator works in landscape. It is easier to use on a computer." },
     sim_vacio:           { es: "Sin ventanas. Abre «Ventanas» para añadir una o cargar un ejemplo.",
                            en: "No windows. Open “Windows” to add one or load an example." },
     sim_todo_minimizado: { es: "Todas las ventanas están minimizadas: pulsa una abajo para recuperarla.",
@@ -17262,8 +17263,9 @@
     btnAyudas.setAttribute("data-i18n", clave);
     btnAyudas.textContent = T(clave);
   }
-  var sinAyudasIni = false;
-  try { sinAyudasIni = localStorage.getItem(AYUDAS_KEY) === "1"; } catch (e) { /* sin persistencia */ }
+  // Ocultas por defecto (20-10-2026): solo se muestran si se activaron a mano («0»)
+  var sinAyudasIni = true;
+  try { sinAyudasIni = localStorage.getItem(AYUDAS_KEY) !== "0"; } catch (e) { /* sin persistencia */ }
   aplicarAyudas(sinAyudasIni);
   btnAyudas.addEventListener("click", function () {
     var sin = !document.body.classList.contains("sin-ayudas");
