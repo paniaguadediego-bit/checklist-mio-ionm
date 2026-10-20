@@ -4270,7 +4270,7 @@
     "btn-etiquetas", "btn-nuevo-material", "barra-caso-guardar-plantilla",
     "guardar-montaje-nuevo", "guardar-montaje-sobrescribir",
     "mat-guardar", "mat-borrar", "mat-nueva-etiqueta", "et-guardar", "et-borrar", "et-nueva",
-    "btn-importar", "btn-restablecer", "cat-anadir", "cat-borrar", "cat-guardar",
+    "btn-restablecer", "cat-anadir", "cat-borrar", "cat-guardar",
     "casos-nuevo-cero", "papelera-vaciar", "checklist-vaciar", "registro-vaciar", "sync-subir"
   ];
   function aplicarSoloLectura() {
@@ -14165,133 +14165,6 @@
     cargarEstado();
     renderTodo();
     avisoGuardado(T("restablecido"));
-  });
-
-  // Copia de seguridad completa. Usa el mismo objeto que se sube a GitHub
-  // (estadoActual), para que el .json exportado y el remoto sean idénticos:
-  // si aquí se armara la copia a mano, sería fácil olvidar un bloque nuevo y
-  // la copia perdería datos en silencio.
-  document.getElementById("btn-exportar").addEventListener("click", function () {
-    var copia = estadoActual();
-    // Copia completa (auditoría 28-09-2026, C6): además de lo de siempre
-    // (catálogos, etiquetas, material), los casos, las plantillas y los
-    // apuntes, que viven en archivos aparte y antes no salían. Así, sin
-    // token o con GitHub caído, hay una copia local de todo.
-    // Los apuntes son personales y globales: solo salen en la copia de "archivo".
-    // Casos y plantillas SEUDÓNIMOS (los mismos que se suben): sin fechas
-    // exactas, edad exacta, nombres, personal, horas reales ni imágenes. La
-    // tabla de datos exactos (EXACTOS_KEY) no va nunca en la copia.
-    var casosCopia = {}, montajesCopia = {};
-    Object.keys(casos).forEach(function (uid) { casosCopia[uid] = seudonimizarCaso(casos[uid]); });
-    Object.keys(montajes).forEach(function (uid) { montajesCopia[uid] = seudonimizarMontaje(montajes[uid]); });
-    copia.completa = { casos: casosCopia, montajes: montajesCopia, apuntes: ESPACIO.id === "archivo" ? apunteDoc : null };
-    var blob = new Blob([JSON.stringify(copia, null, 2)], { type: "application/json" });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement("a");
-    a.href = url;
-    a.download = "mio-ionm-" + new Date().toISOString().slice(0, 10) + ".json";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
-    avisoGuardado(T("exportado"));
-  });
-
-  document.getElementById("btn-importar").addEventListener("click", function () {
-    document.getElementById("fichero-importar").click();
-  });
-
-  document.getElementById("fichero-importar").addEventListener("change", function (e) {
-    if (ESPACIO.solo_lectura) { e.target.value = ""; avisoGuardado(T("esp_sl_aviso"), true); return; }
-    var fichero = e.target.files && e.target.files[0];
-    if (!fichero) return;
-    var lector = new FileReader();
-    lector.onload = function () {
-      var copia;
-      try {
-        copia = JSON.parse(lector.result);
-      } catch (err) {
-        alert(T("import_no_json"));
-        return;
-      }
-      if (!copia || copia.formato !== "mio-ionm") {
-        alert(T("import_no_formato"));
-        return;
-      }
-      // Espacio de la copia frente al activo (aplicarEstado() ya sería tarde)
-      var avisoEspacio = "";
-      if (copia.espacio_id && copia.espacio_id !== ESPACIO.id) {
-        // Copia de OTRO espacio: nunca se llama a aplicarEstado() (sustituiría
-        // los catálogos de este espacio por los del otro hospital); solo se
-        // añaden los casos y plantillas que falten.
-        if (!copia.completa) { alert(T("import_otro_vacia")); return; }
-        if (!confirm(T("import_espacio_distinto", { origen: nombreEspacioPorId(copia.espacio_id), activo: ESPACIO.nombre }))) return;
-        if (!confirm(T("import_conf_otro", {
-          casos: Object.keys(copia.completa.casos || {}).length,
-          montajes: Object.keys(copia.completa.montajes || {}).length
-        }))) return;
-        importarCopiaCompleta(copia.completa, true);
-        return;
-      } else if (!copia.espacio_id && ESPACIO.id !== "archivo") {
-        avisoEspacio = "\n\n" + T("import_sin_espacio", { activo: ESPACIO.nombre });
-      }
-      if (!confirm(T("import_conf", {
-        escenarios: Object.keys(copia.escenarios || {}).length,
-        materiales: (copia.catalogo_usuario || []).length
-      }) + (copia.completa ? "\n\n" + T("import_conf_completa", {
-        casos: Object.keys(copia.completa.casos || {}).length,
-        montajes: Object.keys(copia.completa.montajes || {}).length
-      }) : "") + avisoEspacio)) return;
-
-      // Mismo camino que la bajada de GitHub: así las etiquetas propias y
-      // las copias antiguas sin etiquetas se tratan igual en los dos sitios.
-      aplicarEstado(copia);
-      avisoGuardado(T("importado"));
-      if (copia.completa) importarCopiaCompleta(copia.completa);
-    };
-    lector.readAsText(fichero);
-    e.target.value = "";
-  });
-
-  // Casos y plantillas de una copia completa: solo se añaden los que NO
-  // están en este dispositivo -nunca se pisa uno que ya exista-. Los apuntes,
-  // solo si aquí no hay ninguno. Lo recuperado se sube con la sincronización
-  // como cualquier cambio (y si en GitHub ya existía, se fusiona, ver
-  // fusionarCaso()).
-  // soloCasosYPlantillas: copia de otro espacio, no se tocan ni los apuntes.
-  function importarCopiaCompleta(completa, soloCasosYPlantillas) {
-    if (ESPACIO.solo_lectura) return;
-    var nCasos = 0, nMontajes = 0, conApuntes = false;
-    Object.keys(completa.casos || {}).forEach(function (uid) {
-      var c = completa.casos[uid];
-      if (!c || !c.caso_uid || casos[uid]) return;
-      casos[uid] = c;
-      if (!MODO_DEMO) casosSinSubir[uid] = true;
-      guardarUnCasoLocal(uid);
-      nCasos++;
-    });
-    Object.keys(completa.montajes || {}).forEach(function (uid) {
-      var m = completa.montajes[uid];
-      if (!m || !m.montaje_uid || montajes[uid]) return;
-      guardarMontaje(m, true);
-      nMontajes++;
-    });
-    var ap = completa.apuntes;
-    if (ap && !soloCasosYPlantillas && ESPACIO.id === "archivo" && (ap.secciones || []).length && !(apunteDoc.secciones || []).length) {
-      apunteDoc = ap;
-      guardarApunteDoc();
-      conApuntes = true;
-    }
-    guardarCasos();
-    programarEnvio();
-    pintarEstadoSync();
-    if (pantallaActiva("casos")) renderListaCasos();
-    alert(T("import_completa_hecho", { casos: nCasos, montajes: nMontajes }) +
-      (conApuntes ? "\n" + T("import_completa_apuntes") : ""));
-  }
-
-  document.getElementById("btn-imprimir").addEventListener("click", function () {
-    window.print();
   });
 
   // El resumen es la única tarjeta que sale en el papel -escenario, montajes
