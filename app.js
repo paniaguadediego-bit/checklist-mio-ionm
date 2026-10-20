@@ -6821,7 +6821,7 @@
     ".informe-coste-nota{margin:0.2rem 0 0;font-size:0.72rem;font-style:italic;color:#62717c}" +
     ".informe-coste-falta{margin:0.15rem 0 0;font-size:0.72rem;color:#a63428}";
 
-  // Solo con varios casos (20-10-2026): casos seguidos sin salto de página y
+  // Solo con varios casos (20-10-2026): cada caso en su página (salto al acabar) y
   // sin huecos por «no partir» secciones enteras; cajas en 4 columnas y más
   // pequeñas. Va aparte de ESTILO_INFORME_PDF porque la hoja de registro
   // reutiliza ese y tiene que seguir cabiendo en A4.
@@ -6829,7 +6829,7 @@
     "@page{margin:9mm}" +
     "body{font-size:12px;line-height:1.3;padding:0 0.2rem}" +
     ".informe-caso{padding:0.5rem 0;border-bottom:1px solid #9aa7b1}" +
-    "@media print{.informe-caso{page-break-after:auto}.informe-caso:last-child{border-bottom:none}}" +
+    "@media print{.informe-caso{page-break-after:always;border-bottom:none}.informe-caso:last-child{page-break-after:avoid}}" +
     ".informe-cabecera{break-after:avoid}.informe-cabecera h2{font-size:1.05rem;margin:0 0 0.1rem}" +
     ".informe-seccion{break-inside:auto;margin-bottom:0.3rem}" +
     ".informe-seccion h3{break-after:avoid;margin-bottom:0.15rem;padding-bottom:0.05rem}" +
