@@ -24,7 +24,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20261020m">
+<link rel="stylesheet" href="style.css?v=20261020n">
 </head>
 <body>
 
@@ -1283,29 +1283,39 @@
 
   <p class="dlg-intro" id="cat-intro"></p>
 
+  <div class="dlg-botones">
+    <button type="button" id="cat-anadir" class="primario"></button>
+  </div>
+
   <div id="cat-lista" class="cat-lista"></div>
   <p class="cat-version" id="cat-version"></p>
 
+  <div id="cat-panel" class="cat-panel" hidden>
+    <h4 id="cat-form-titulo"></h4>
+    <div id="cat-form"></div>
+
+    <p class="dlg-error" id="cat-error" hidden></p>
+
+    <div class="dlg-botones">
+      <button type="button" id="cat-borrar" class="peligro" hidden data-i18n="btn_borrar"></button>
+      <span class="barra-flex"></span>
+      <button type="button" id="cat-cancelar" data-i18n="cancelar"></button>
+      <button type="button" id="cat-guardar" class="primario" data-i18n="guardar"></button>
+    </div>
+  </div>
+
   <hr class="dlg-sep">
 
-  <h4 id="cat-form-titulo"></h4>
-  <div id="cat-form"></div>
-
-  <p class="dlg-error" id="cat-error" hidden></p>
-
   <div class="dlg-botones">
-    <button type="button" id="cat-borrar" class="peligro" hidden data-i18n="btn_borrar"></button>
     <span class="barra-flex"></span>
     <button type="button" id="cat-cerrar" data-i18n="cerrar"></button>
-    <button type="button" id="cat-nueva" data-i18n="et_btn_nueva"></button>
-    <button type="button" id="cat-guardar" class="primario" data-i18n="guardar"></button>
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20261020m"></script>
-<script src="data/i18n-en.js?v=20261020m"></script>
-<script src="data/guia.js?v=20261020m"></script>
-<script src="data/parametros-tecnicas.js?v=20261020m"></script>
-<script src="app.js?v=20261020m"></script>
+<script src="data/surgeries.js?v=20261020n"></script>
+<script src="data/i18n-en.js?v=20261020n"></script>
+<script src="data/guia.js?v=20261020n"></script>
+<script src="data/parametros-tecnicas.js?v=20261020n"></script>
+<script src="app.js?v=20261020n"></script>
 </body>
 </html>

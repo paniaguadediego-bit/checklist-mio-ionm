@@ -1123,7 +1123,6 @@
     tab_centros:         { es: "Centros", en: "Hospitals" },
     cat_intro_centros:   { es: "Los hospitales que usan la herramienta. Cada caso lleva su centro y el <b>código</b> va delante de su número (H1-2026-003), así que dos hospitales no repiten número. Abajo eliges de qué centro es este dispositivo. Los nombres se guardan con tus datos privados, nunca en el código de la herramienta.",
                            en: "The hospitals using the tool. Each case carries its hospital and the <b>code</b> goes before its number (H1-2026-003), so two hospitals never repeat a number. Below you choose which hospital this device belongs to. Names are kept with your private data, never in the tool's code." },
-    cat_cancelar_edicion: { es: "Cancelar edición", en: "Cancel editing" },
     cat_nueva_usuarios:  { es: "Usuario nuevo", en: "New user" },
     cat_editar_usuarios: { es: "Editar usuario", en: "Edit user" },
     cat_nueva_centros:   { es: "Centro nuevo", en: "New hospital" },
@@ -4271,7 +4270,7 @@
     "btn-etiquetas", "btn-nuevo-material", "barra-caso-guardar-plantilla",
     "guardar-montaje-nuevo", "guardar-montaje-sobrescribir",
     "mat-guardar", "mat-borrar", "mat-nueva-etiqueta", "et-guardar", "et-borrar", "et-nueva",
-    "btn-importar", "btn-restablecer", "cat-nueva", "cat-borrar", "cat-guardar",
+    "btn-importar", "btn-restablecer", "cat-anadir", "cat-borrar", "cat-guardar",
     "casos-nuevo-cero", "papelera-vaciar", "checklist-vaciar", "registro-vaciar", "sync-subir"
   ];
   function aplicarSoloLectura() {
@@ -11827,6 +11826,7 @@
   var dlgCat = document.getElementById("dlg-catalogos");
   var catPestana = "tecnicas";
   var catEditando = null;    // id que se está editando, o null si es nuevo
+  var catPanel = false;      // el formulario solo se ve al añadir o al editar
   var catCampos = {};        // clave -> elemento del formulario
   var PREFIJO_ID = { tecnicas: "t_", servicios: "s_", intervenciones: "i_", perfiles: "p_",
                      usuarios: "u_", centros: "c_" };
@@ -11869,6 +11869,7 @@
       b.addEventListener("click", function () {
         catPestana = n;
         catEditando = null;
+        catPanel = false;
         renderDlgCatalogos();
       });
       cont.appendChild(b);
@@ -11915,11 +11916,14 @@
       texto.className = "cat-nombre";
       texto.title = T("cat_editar_tit");
       texto.textContent = campo(e, clave) || e.id;
-      texto.addEventListener("click", function () {
+      var abrirEdicion = function () {
         catEditando = e.id;
+        catPanel = true;
         catError(null);
         renderDlgCatalogos();
-      });
+        document.getElementById("cat-panel").scrollIntoView({ block: "nearest" });
+      };
+      texto.addEventListener("click", abrirEdicion);
       fila.appendChild(texto);
 
       var extra = document.createElement("span");
@@ -11937,6 +11941,14 @@
         extra.textContent = CENTS[e.centro_id].codigo || campo(CENTS[e.centro_id], "nombre");
       }
       fila.appendChild(extra);
+
+      var lapiz = document.createElement("button");
+      lapiz.type = "button";
+      lapiz.className = "cat-activa";
+      lapiz.textContent = "✎";
+      lapiz.title = T("cat_editar_tit");
+      lapiz.addEventListener("click", abrirEdicion);
+      fila.appendChild(lapiz);
 
       var estado = document.createElement("button");
       estado.type = "button";
@@ -12000,11 +12012,10 @@
     document.getElementById("cat-form-titulo").textContent =
       T((catEditando ? "cat_editar_" : "cat_nueva_") + catPestana);
     document.getElementById("cat-borrar").hidden = !(catPestana === "perfiles" && catEditando);
-    // «Cancelar edición» solo tiene sentido editando; con el formulario en
-    // blanco (nuevo) no hay nada que cancelar.
-    var btnCancelar = document.getElementById("cat-nueva");
-    btnCancelar.hidden = !catEditando;
-    btnCancelar.textContent = T("cat_cancelar_edicion");
+    // El formulario solo se enseña al añadir o editar; el botón de arriba
+    // dice qué se añade en esta pestaña.
+    document.getElementById("cat-panel").hidden = !catPanel;
+    document.getElementById("cat-anadir").textContent = "+ " + T("cat_nueva_" + catPestana);
 
     var clave = catClaveTexto();
     cont.appendChild(catCampo("texto",
@@ -12174,6 +12185,7 @@
     // Tras guardar el formulario vuelve en blanco: si se quedara editando lo
     // recién guardado, el siguiente nombre que se escribiera lo sobrescribiría.
     catEditando = null;
+    catPanel = false;
     catError(null);
     trasCambiarCatalogo();
   }
@@ -12188,18 +12200,29 @@
     tocarCatalogo("perfiles");
     reconstruirCatalogos();
     catEditando = null;
+    catPanel = false;
     trasCambiarCatalogo();
   }
 
   document.getElementById("btn-catalogos").addEventListener("click", function () {
     catEditando = null;
+    catPanel = false;
     catError(null);
     renderDlgCatalogos();
     dlgCat.showModal();
   });
   document.getElementById("cat-cerrar").addEventListener("click", function () { dlgCat.close(); });
-  document.getElementById("cat-nueva").addEventListener("click", function () {
+  document.getElementById("cat-anadir").addEventListener("click", function () {
     catEditando = null;
+    catPanel = true;
+    catError(null);
+    renderCatForm();
+    renderCatLista();
+    document.getElementById("cat-panel").scrollIntoView({ block: "nearest" });
+  });
+  document.getElementById("cat-cancelar").addEventListener("click", function () {
+    catEditando = null;
+    catPanel = false;
     catError(null);
     renderCatForm();
     renderCatLista();
