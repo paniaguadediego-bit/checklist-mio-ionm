@@ -1830,7 +1830,9 @@
                            en: "Stored only in this browser and never leaves it except towards GitHub." },
     btn_desconectar:     { es: "Desconectar", en: "Disconnect" },
     btn_bajar:           { es: "Traer de la nube", en: "Fetch from the cloud" },
-    btn_subir:           { es: "Guardar en la nube", en: "Save to the cloud" }
+    btn_subir:           { es: "Guardar en la nube", en: "Save to the cloud" },
+    sync_sin_conectar:   { es: "Este dispositivo no está conectado. El repositorio y el token te los da quien administra la app en tu hospital: escríbelos abajo y pulsa «Traer de la nube».",
+                           en: "This device is not connected. The repository and token are given to you by whoever manages the app at your hospital: enter them below and press «Fetch from the cloud»." }
   };
 
   /* Vuelca data/i18n-<idioma>.js dentro de los objetos de datos como campos
@@ -4869,6 +4871,21 @@
     avanz.hidden = !conectado || conflicto || syncAvanzado;
     bSubir.textContent = T(conflicto ? "sync_quedar_dispositivo" : "btn_subir");
     bBajar.textContent = T(conflicto ? "sync_quedar_nube" : "btn_bajar");
+    // Sin conectar: qué hacer y de dónde sale lo que se pide, y los dos
+    // botones apagados hasta tener repositorio y token (auditoría 20-10-2026,
+    // F29). Solo se reactiva lo que se apagó aquí: «Guardar en la nube» puede
+    // estar apagado además por el modo de solo lectura.
+    document.getElementById("sync-sin-conectar").hidden = conectado;
+    var faltan = !conectado && (!document.getElementById("sync-repo").value.trim() ||
+      !document.getElementById("sync-token").value.trim());
+    [bSubir, bBajar].forEach(function (b) {
+      if (faltan) {
+        if (!b.disabled) { b.disabled = true; b.setAttribute("data-falta-conexion", "1"); }
+      } else if (b.hasAttribute("data-falta-conexion")) {
+        b.disabled = false;
+        b.removeAttribute("data-falta-conexion");
+      }
+    });
     // Ya conectado y sin choque, lo técnico (ayuda, espacios, repositorio y
     // token, Desconectar) queda en «Opciones avanzadas»: quien usa la app a
     // diario solo ve «Conectado».
@@ -4884,6 +4901,9 @@
   document.getElementById("sync-avanzado").addEventListener("click", function () {
     syncAvanzado = true;
     pintarDlgSync();
+  });
+  ["sync-repo", "sync-token"].forEach(function (id) {
+    document.getElementById(id).addEventListener("input", pintarDlgSync);
   });
 
   function olvidarSyncPersonal() {
