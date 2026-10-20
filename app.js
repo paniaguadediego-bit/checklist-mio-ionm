@@ -1834,8 +1834,8 @@
 
     /* --- Diálogo de sincronización --- */
     dlg_sync_titulo:     { es: "Guardar en la nube", en: "Save to the cloud" },
-    dlg_sync_intro:      { es: "La «nube» es una carpeta privada en GitHub donde se guarda una copia de tus datos, para tenerlos en todos tus dispositivos. <b>Una vez conectado, todo va solo</b>: al abrir la app se trae lo nuevo, y unos segundos después de cada cambio se guarda en la nube. Sin conexión sigue funcionando y lo manda cuando vuelve. No tienes que pulsar nada más.",
-                           en: "The “cloud” is a private folder on GitHub that keeps a copy of your data, so you have it on all your devices. <b>Once connected, everything is automatic</b>: opening the app fetches what is new, and a few seconds after each change it is saved to the cloud. Offline it keeps working and sends it when the connection returns. You do not need to press anything else." },
+    dlg_sync_intro:      { es: "Tus casos se guardan solos en un almacén privado en internet, para no perderlos y verlos en todos tus dispositivos. <b>Si tu hospital ya lo ha dejado configurado, no tienes que hacer nada</b>: verás «Conectado». Sin conexión la app sigue funcionando y lo manda cuando vuelve.",
+                           en: "Your cases are saved automatically to a private online store, so you do not lose them and can see them on all your devices. <b>If your hospital has already set it up, you do not need to do anything</b>: you will see “Connected”. Offline the app keeps working and sends everything when the connection returns." },
     dlg_sync_ayuda:      { es: "Cómo preparar esto la primera vez", en: "How to set this up the first time" },
     sync_paso1:          { es: "Crea un repositorio <b>privado</b> nuevo y vacío en GitHub, solo para los datos (p. ej. <code>checklist-mio-datos</code>). No uses el del código: es público y dejaría tus datos a la vista.",
                            en: "Create a new, empty <b>private</b> repository on GitHub, just for the data (e.g. <code>checklist-mio-datos</code>). Do not use the code one: it is public and would expose your data." },
@@ -4873,7 +4873,12 @@
     avanz.hidden = !conectado || conflicto || syncAvanzado;
     bSubir.textContent = T(conflicto ? "sync_quedar_dispositivo" : "btn_subir");
     bBajar.textContent = T(conflicto ? "sync_quedar_nube" : "btn_bajar");
-    document.getElementById("sync-olvidar").hidden = !conectado;
+    // Ya conectado y sin choque, lo técnico (ayuda, espacios, repositorio y
+    // token, Desconectar) queda en «Opciones avanzadas»: quien usa la app a
+    // diario solo ve «Conectado».
+    var ocultarConexion = conectado && !conflicto && !syncAvanzado;
+    document.getElementById("sync-conexion").hidden = ocultarConexion;
+    document.getElementById("sync-olvidar").hidden = !conectado || ocultarConexion;
     // Repositorio de otro espacio / no verificable: aviso claro en el diálogo
     if (conectado && repoGuarda.veredicto && !repoGuarda.veredicto.ok && repoGuarda.clave === claveGuarda()) {
       mensajeSync(repoGuarda.veredicto.mensaje, true);

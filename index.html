@@ -24,7 +24,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20261020f">
+<link rel="stylesheet" href="style.css?v=20261020g">
 </head>
 <body>
 
@@ -351,6 +351,8 @@
   <h3 data-i18n="dlg_sync_titulo"></h3>
   <p class="dlg-intro" data-i18n-html="dlg_sync_intro"></p>
 
+  <!-- Con la nube ya conectada, esto queda en «Opciones avanzadas» (pintarDlgSync) -->
+  <div id="sync-conexion">
   <details class="dlg-ayuda">
     <summary data-i18n="dlg_sync_ayuda"></summary>
     <ol>
@@ -389,6 +391,7 @@
     <label for="sync-token"><span data-i18n="campo_token"></span> <span class="req">*</span></label>
     <input id="sync-token" type="password" placeholder="github_pat_…" autocomplete="off">
     <small data-i18n="campo_token_ayuda"></small>
+  </div>
   </div>
 
   <p class="sync-linea" id="sync-linea" hidden></p>
@@ -1315,10 +1318,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20261020f"></script>
-<script src="data/i18n-en.js?v=20261020f"></script>
-<script src="data/guia.js?v=20261020f"></script>
-<script src="data/parametros-tecnicas.js?v=20261020f"></script>
-<script src="app.js?v=20261020f"></script>
+<script src="data/surgeries.js?v=20261020g"></script>
+<script src="data/i18n-en.js?v=20261020g"></script>
+<script src="data/guia.js?v=20261020g"></script>
+<script src="data/parametros-tecnicas.js?v=20261020g"></script>
+<script src="app.js?v=20261020g"></script>
 </body>
 </html>
