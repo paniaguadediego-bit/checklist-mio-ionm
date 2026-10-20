@@ -5727,6 +5727,7 @@
       caso.editado_por = quienGuarda;
     }
     alarmasEnCaso(caso);
+    if (esquemaDe(caso) >= 2) tDuracionDeMinutos(caso);
     // Contador de guardados: lo que sustituye a la hora real donde hay que
     // comparar versiones en lo que se sube (esquema 2; el antiguo no lo lleva)
     if (esquemaDe(caso) >= 2) caso.rev = (caso.rev || 0) + 1;
@@ -5765,7 +5766,9 @@
   function ajustarCentroCaso(c, esNuevo) {
     if (!c.centro_id || !CENTS[c.centro_id]) return;
     c.centro = campo(CENTS[c.centro_id], "nombre");
-    recordarCentroId(c.centro_id);
+    // Solo un caso nuevo fija el centro del dispositivo (C22): guardar uno
+    // antiguo de otro centro cambiaba la numeración y la puerta de usuario.
+    if (esNuevo) recordarCentroId(c.centro_id);
     var m = RE_ID_CASO.exec(c.ID_Caso || "");
     var pref = codigoCentro(c.centro_id);
     if (m && (m[1] || "") !== pref && (esNuevo || m[1])) {
@@ -18745,6 +18748,17 @@
     var mb = /^(\d{1,2}):(\d{2})/.exec(b && b.type === "time" ? b.value : "");
     if (!ma || !mb) { delete c.duracion_min; return; }
     var d = (+mb[1]) * 60 + (+mb[2]) - ((+ma[1]) * 60 + (+ma[2]));
+    if (d < 0) d += 1440;
+    c.duracion_min = d;
+  }
+  // Al guardar (C26): la duración sale de los minutos guardados, que son lo
+  // que sube, para que no quede vieja si inicio o fin cambiaron fuera de la
+  // casilla de reloj (Registro, casilla en minutos sin t0). Mismo criterio
+  // que tDuracionCaso(): si el fin es menor, pasó la medianoche.
+  function tDuracionDeMinutos(c) {
+    var a = tRaw(c, "hora_inicio"), b = tRaw(c, "hora_fin");
+    if (!tvEsNum(a) || !tvEsNum(b)) { delete c.duracion_min; return; }
+    var d = b - a;
     if (d < 0) d += 1440;
     c.duracion_min = d;
   }
