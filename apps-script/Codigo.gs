@@ -592,7 +592,7 @@ function construirCorrelacionLong_(casos, cat) {
   filas.sort(function (a, b) {
     return compararColumna_(a[iFecha], b[iFecha]) || compararColumna_(a[iIdCaso], b[iIdCaso]) || compararColumna_(a[iAl], b[iAl]);
   });
-  return { cabecera: cabecera, filas: filas, columnasMes: ["Fecha"], columnasTexto: [] };
+  return { cabecera: cabecera, filas: filas, columnasMes: ["Fecha"], columnasTexto: [], columnasNumero: ["Min_inicio", "Min_fin"] };
 }
 
 // Hoja añadida sobre la especificación mínima: sin ella, "material consumido
@@ -622,7 +622,7 @@ function construirMaterialLong_(casos) {
   filas.sort(function (a, b) {
     return compararColumna_(a[iFecha], b[iFecha]) || compararColumna_(a[iIdCaso], b[iIdCaso]) || compararColumna_(a[iTipo], b[iTipo]);
   });
-  return { cabecera: cabecera, filas: filas, columnasMes: ["Fecha"], columnasTexto: [], columnasNumero: ["Min_inicio", "Min_fin"] };
+  return { cabecera: cabecera, filas: filas, columnasMes: ["Fecha"], columnasTexto: [] };
 }
 
 function construirListas_(cat) {
