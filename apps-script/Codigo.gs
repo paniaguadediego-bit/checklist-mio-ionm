@@ -535,7 +535,8 @@ function construirFilasCasos_(casos, cat, columnasTec) {
   return {
     cabecera: cabecera, filas: filas,
     columnasMes: ["Fecha", "ultima_edicion_mes", "guardado_mes"],
-    columnasTexto: ["edad"]   // "10-14" no debe leerse como una fecha
+    columnasTexto: ["edad"],   // "10-14" no debe leerse como una fecha
+    columnasNumero: ["min_inicio", "min_fin", "duracion_min"]
   };
 }
 
@@ -621,7 +622,7 @@ function construirMaterialLong_(casos) {
   filas.sort(function (a, b) {
     return compararColumna_(a[iFecha], b[iFecha]) || compararColumna_(a[iIdCaso], b[iIdCaso]) || compararColumna_(a[iTipo], b[iTipo]);
   });
-  return { cabecera: cabecera, filas: filas, columnasMes: ["Fecha"], columnasTexto: [] };
+  return { cabecera: cabecera, filas: filas, columnasMes: ["Fecha"], columnasTexto: [], columnasNumero: ["Min_inicio", "Min_fin"] };
 }
 
 function construirListas_(cat) {
@@ -753,7 +754,9 @@ function quitarFormatoAnterior_(hoja) {
 // columnasTexto: nombres de columna que se escriben como texto plano (si no,
 // Sheets convertiría un tramo como "10-14" en una fecha). columnasMes:
 // columnas de fecha que se enseñan como aaaa-mm. Ambas por NOMBRE.
-function escribirHoja_(ss, nombre, filas, columnasTexto, columnasMes) {
+// columnasNumero: columnas de minutos, que se enseñan como entero (si no, la
+// hoja puede mostrar un −112 como una fecha).
+function escribirHoja_(ss, nombre, filas, columnasTexto, columnasMes, columnasNumero) {
   var hoja = ss.getSheetByName(nombre) || ss.insertSheet(nombre);
   quitarFormatoAnterior_(hoja);
   hoja.clearContents();
@@ -768,6 +771,10 @@ function escribirHoja_(ss, nombre, filas, columnasTexto, columnasMes) {
     (columnasMes || []).forEach(function (n) {
       var i = cab.indexOf(n);
       if (i !== -1 && filas.length > 1) hoja.getRange(2, i + 1, filas.length - 1, 1).setNumberFormat(FORMATO_MES);
+    });
+    (columnasNumero || []).forEach(function (n) {
+      var i = cab.indexOf(n);
+      if (i !== -1 && filas.length > 1) hoja.getRange(2, i + 1, filas.length - 1, 1).setNumberFormat("0");
     });
     hoja.setFrozenRows(1);
   } else {
@@ -823,7 +830,7 @@ function formatearMeta_(hoja, filasMeta) {
 // Escribe una tabla construida por construir*_ (cabecera + filas + qué
 // columnas son mes o texto) y le da formato.
 function volcarTabla_(ss, nombre, t) {
-  var h = escribirHoja_(ss, nombre, [t.cabecera].concat(t.filas), t.columnasTexto, t.columnasMes);
+  var h = escribirHoja_(ss, nombre, [t.cabecera].concat(t.filas), t.columnasTexto, t.columnasMes, t.columnasNumero);
   formatearTabla_(h, t.filas.length + 1, t.cabecera.length);
   return h;
 }
