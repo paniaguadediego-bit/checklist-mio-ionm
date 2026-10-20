@@ -847,8 +847,10 @@
     caso_edad_ay:        { es: "Escribe la edad exacta. Al subir a la nube solo viaja el tramo de 5 años (p. ej. 40-44).",
                            en: "Enter the exact age. Only the 5-year band (e.g. 40-44) is uploaded." },
     ex_no_disp:          { es: "(no disponible en este dispositivo)", en: "(not available on this device)" },
-    txt_leyenda_libre:   { es: "No escribir nombres, iniciales, fechas ni números de historia.",
-                           en: "Do not write names, initials, dates or medical record numbers." },
+    txt_leyenda_libre:   { es: "En los textos libres, no escribir nombres, iniciales, fechas ni números de historia.",
+                           en: "In free-text fields, do not write names, initials, dates or medical record numbers." },
+    reg_espejo_tit:      { es: "Se comparte con la ficha del caso: lo que cambies aquí se ve allí, y al revés.",
+                           en: "Shared with the case record: what you change here shows there, and vice versa." },
     txt_aviso:           { es: "Posible dato que identifica, en el texto libre: {lista}. Se ha guardado igualmente; revisa el texto y quita lo que identifique.",
                            en: "Possible identifying data in free text: {lista}. It was saved anyway; check the text and remove anything identifying." },
     txt_tipo_fecha:      { es: "fecha", en: "date" },
@@ -10093,18 +10095,19 @@
     }
 
     // Pie: cuándo se creó el archivo y cuántas veces se ha tocado después
-    // Leyenda fija junto a los textos libres de cada apartado (no sale en los
-    // que no tienen ninguno). Aviso de qué NO escribir; el detector avisa al guardar.
-    ["traza", "paciente", "cirugia", "anestesia", "montaje", "tecnicas", "desarrollo", "resultado", "formacion"].forEach(function (g) {
-      var cont = document.getElementById("caso-c-" + g);
-      if (!cont) return;
-      var previa = cont.querySelector(".leyenda-texto-libre");
-      if (previa) previa.parentNode.removeChild(previa);
-      var libres = cont.querySelectorAll("textarea, input[type=text]");
-      if (!libres.length) return;
-      var ley = regNodo("p", "leyenda-texto-libre", T("txt_leyenda_libre"));
-      cont.insertBefore(ley, cont.firstChild);
-    });
+    // Leyenda fija de qué NO escribir en los textos libres; el detector avisa
+    // al guardar. Una sola, encima de los apartados: antes salía en cada uno
+    // (hasta nueve) y la de Identificación parecía contradecir «Fecha de la
+    // cirugía» (auditoría 20-10-2026, F36).
+    var scrollFicha = document.querySelector("#dlg-caso .caso-scroll");
+    if (scrollFicha) {
+      Array.prototype.slice.call(scrollFicha.children).forEach(function (n) {
+        if (n.classList.contains("leyenda-texto-libre")) scrollFicha.removeChild(n);
+      });
+      if (scrollFicha.querySelector("textarea, input[type=text]")) {
+        scrollFicha.insertBefore(regNodo("p", "leyenda-texto-libre", T("txt_leyenda_libre")), scrollFicha.firstChild);
+      }
+    }
     var pie = document.getElementById("caso-meta");
     pie.textContent = textoAutoriaCaso(c);
 
@@ -19436,6 +19439,7 @@
       cb.addEventListener("change", function () { fijar(cb.checked); registroGuardarYa(); });
       var sp = document.createElement("span");
       sp.textContent = regL(def) + (compartido ? " ⇄" : "");
+      if (compartido) sp.title = T("reg_espejo_tit");
       lab.appendChild(cb);
       lab.appendChild(sp);
       div.appendChild(lab);
@@ -19445,6 +19449,7 @@
     var etq = document.createElement("label");
     etq.htmlFor = id;
     etq.textContent = regL(def) + (compartido ? " ⇄" : "");
+    if (compartido) etq.title = T("reg_espejo_tit");
     div.appendChild(etq);
 
     var ctl;
@@ -21698,9 +21703,10 @@
       if (!ordenados.length) return;
       var cab = document.createElement("div");
       cab.className = "umbral-raices-fila umbral-raices-cab";
-      [T("umbral_raices_cab_izq"), "", T("umbral_raices_cab_nivel") + (compartido ? " ⇄" : ""), "", T("umbral_raices_cab_der")].forEach(function (t) {
+      [T("umbral_raices_cab_izq"), "", T("umbral_raices_cab_nivel") + (compartido ? " ⇄" : ""), "", T("umbral_raices_cab_der")].forEach(function (t, i) {
         var sp = document.createElement("span");
         sp.textContent = t;
+        if (compartido && i === 2) sp.title = T("reg_espejo_tit");
         cab.appendChild(sp);
       });
       contValores.appendChild(cab);
@@ -22028,7 +22034,9 @@
     var c = registroCaso();
     var tecs = c ? TECNICAS.filter(function (t) { return (c.tecnicas_realizadas || []).indexOf(t.id) !== -1; }) : [];
     var bloque = regNodo("div", "campo reg-campo reg-ancho");
-    bloque.appendChild(regNodo("label", null, T("caso_tecnicas_alteradas") + (c ? " ⇄" : "")));
+    var etqAlt = regNodo("label", null, T("caso_tecnicas_alteradas") + (c ? " ⇄" : ""));
+    if (c) etqAlt.title = T("reg_espejo_tit");
+    bloque.appendChild(etqAlt);
     if (tecs.length) {
       // Son las "Técnicas alteradas" de la ficha (ids). Lo escrito antes a
       // mano en la hoja: los nombres que son técnicas del caso pasan a
