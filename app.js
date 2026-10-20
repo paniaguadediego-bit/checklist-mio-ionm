@@ -5963,7 +5963,7 @@
    * hay que revisarla a la vez -son la misma tabla, en dos sitios-.
    * ---------------------------------------------------------------- */
   var COLUMNAS_CSV_CASOS = [
-    "caso_uid", "ID_Caso", "estado", "motivo_cancelacion", "fecha", "centro_id", "centro_codigo", "min_inicio", "min_fin", "duracion_min",
+    "caso_uid", "ID_Caso", "estado", "motivo_cancelacion", "Fecha", "centro_id", "centro_codigo", "min_inicio", "min_fin", "duracion_min",
     "perfil",
     "edad", "sexo", "antecedentes_relevantes",
     "intervencion", "servicio", "diagnostico",
@@ -5983,7 +5983,7 @@
 
   function valorCsvDeCaso(c, columna) {
     switch (columna) {
-      case "fecha": return mesDe(c.fecha);
+      case "Fecha": return mesDe(c.fecha);
       case "edad": return tramoEdad(c.edad);
       case "centro_id": return c.centro_id || "";
       case "centro_codigo":
