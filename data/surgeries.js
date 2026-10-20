@@ -1152,6 +1152,7 @@ window.SURGERIES_DATA = {
 
     { "id": "mapeo_cortical", "etiqueta": "Mapeo cortical", "grupo": "mapeo", "activa": true, "descripcion": "Técnica de Penfield" },
     { "id": "mapeo_subcortical", "etiqueta": "Mapeo subcortical", "grupo": "mapeo", "activa": true },
+    { "id": "mapeo_cortico_cortical", "etiqueta": "Mapeo cortico-cortical (CCEP)", "corta": "CCEP", "grupo": "mapeo", "activa": true, "descripcion": "Potenciales evocados cortico-corticales: un pulso eléctrico breve de baja frecuencia en una región cortical y su respuesta registrada en otra, con electrodos intracraneales" },
     { "id": "phase_reversal", "etiqueta": "Phase-Reversal", "grupo": "mapeo", "activa": true, "descripcion": "Inversión de fase de los PESS" },
     { "id": "mapeo_lenguaje", "etiqueta": "Mapeo del lenguaje", "grupo": "mapeo", "activa": true },
     { "id": "mapeo_iv_ventriculo", "etiqueta": "Mapeo del IV ventrículo", "grupo": "mapeo", "activa": true, "descripcion": "Núcleos del suelo del IV ventrículo" },

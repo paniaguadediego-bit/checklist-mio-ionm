@@ -191,6 +191,7 @@ window.SURGERIES_I18N.en = {
     "hr_cuadriceps": { "etiqueta": "H-R Quadriceps" },
     "mapeo_cortical": { "etiqueta": "Cortical mapping", "descripcion": "Penfield technique" },
     "mapeo_subcortical": { "etiqueta": "Subcortical mapping" },
+    "mapeo_cortico_cortical": { "etiqueta": "Cortico-cortical mapping (CCEP)", "descripcion": "Cortico-cortical evoked potentials: a brief low-frequency electrical pulse delivered to one cortical region and the response recorded in another, with intracranial electrodes" },
     "phase_reversal": { "etiqueta": "Phase reversal", "descripcion": "SSEP phase inversion" },
     "mapeo_lenguaje": { "etiqueta": "Language mapping" },
     "mapeo_iv_ventriculo": { "etiqueta": "Fourth ventricle mapping", "descripcion": "Nuclei of the floor of the fourth ventricle" },
