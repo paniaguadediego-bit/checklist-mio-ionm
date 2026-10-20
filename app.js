@@ -359,15 +359,15 @@
     idioma_titulo:       { es: "Switch to English", en: "Cambiar a español" },
     sync_titulo:         { es: "Guardar en la nube", en: "Save to the cloud" },
     btn_exportar_casos:  { es: "Informe de casos (PDF)", en: "Cases report (PDF)" },
-    btn_exportar_casos_tit: { es: "Abre un informe imprimible de los casos que cumplen los filtros de arriba. Para tenerlo en PDF, elige «Guardar como PDF» en el diálogo de impresión del navegador.",
-                           en: "Opens a printable report of the cases matching the filters above. To get a PDF, choose “Save as PDF” in the browser's print dialog." },
+    btn_exportar_casos_tit: { es: "Abre un informe imprimible de los casos que elijas en «Exportar» (por defecto, los que cumplen los filtros de arriba). Para tenerlo en PDF, elige «Guardar como PDF» en el diálogo de impresión del navegador.",
+                           en: "Opens a printable report of the cases chosen in “Export” (by default, those matching the filters above). To get a PDF, choose “Save as PDF” in the browser's print dialog." },
     btn_exportar_casos_csv: { es: "Exportar CSV", en: "Export CSV" },
-    btn_exportar_casos_csv_tit: { es: "Descargar en un CSV los casos que cumplen los filtros de arriba, una fila por caso",
-                           en: "Download as a CSV the cases matching the filters above, one row per case" },
+    btn_exportar_casos_csv_tit: { es: "Descargar en un CSV los casos que elijas en «Exportar» (por defecto, los de los filtros de arriba), una fila por caso",
+                           en: "Download as a CSV the cases chosen in “Export” (by default, those matching the filters above), one row per case" },
     casos_exportados:    { es: "Casos exportados a CSV.", en: "Cases exported to CSV." },
     btn_exportar_eventos_csv: { es: "Exportar eventos y alarmas (CSV)", en: "Export events and alarms (CSV)" },
-    btn_exportar_eventos_csv_tit: { es: "Descargar en un CSV los eventos (F) y las alarmas (G) del Registro intraoperatorio de los casos que cumplen los filtros de arriba: una fila por evento o alarma, con el ID del caso para cruzarlo con el CSV de casos",
-                           en: "Download as a CSV the events (F) and alarms (G) from the Intraoperative log of the cases matching the filters above: one row per event or alarm, with the case ID to join it with the cases CSV" },
+    btn_exportar_eventos_csv_tit: { es: "Descargar en un CSV los eventos (F) y las alarmas (G) del Registro intraoperatorio de los casos que elijas en «Exportar» (por defecto, los que cumplen los filtros de arriba): una fila por evento o alarma, con el ID del caso para cruzarlo con el CSV de casos",
+                           en: "Download as a CSV the events (F) and alarms (G) from the Intraoperative log of the cases chosen in “Export” (by default, those matching the filters above): one row per event or alarm, with the case ID to join it with the cases CSV" },
     eventos_exportados:  { es: "Eventos y alarmas exportados a CSV ({n} filas).", en: "Events and alarms exported to CSV ({n} rows)." },
     eventos_sin_datos:   { es: "Ninguno de los casos filtrados tiene eventos ni alarmas en el Registro intraoperatorio.", en: "None of the filtered cases has events or alarms in the Intraoperative log." },
     caso_pdf_sin_datos:  { es: "Todavía no hay ningún caso que exportar.", en: "There are no cases to export yet." },
@@ -742,6 +742,10 @@
     casos_orden_dificultad: { es: "Dificultad (mayor primero)", en: "Difficulty (hardest first)" },
     casos_orden_dificultad_asc: { es: "Dificultad (menor primero)", en: "Difficulty (easiest first)" },
     casos_filtro_destacados: { es: "Destacados", en: "Notable" },
+    casos_export_alcance: { es: "Exportar:", en: "Export:" },
+    casos_export_filtros: { es: "Según los filtros", en: "As filtered" },
+    casos_export_todos: { es: "Todos los casos", en: "All cases" },
+    casos_export_destacados: { es: "Solo destacados", en: "Notable only" },
     casos_filtro_seguimiento: { es: "Seguimiento", en: "Follow-up" },
     casos_vacio:         { es: "Todavía no hay ningún caso.", en: "No cases yet." },
     casos_sin_filtro:    { es: "Ningún caso con esos filtros.", en: "No cases match those filters." },
@@ -6085,8 +6089,20 @@
     setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
   }
 
+  // Qué casos salen en los tres botones de exportar (CSV, eventos y alarmas,
+  // PDF): los que cumplen los filtros (como siempre), todos, o solo los
+  // destacados, sin mirar los demás filtros.
+  function uidsParaExportar() {
+    var alcance = document.getElementById("casos-exportar-alcance").value;
+    if (alcance === "todos") return Object.keys(casos);
+    if (alcance === "destacados") {
+      return Object.keys(casos).filter(function (uid) { return casos[uid].caso_destacado; });
+    }
+    return casosFiltradosUids();
+  }
+
   document.getElementById("btn-exportar-casos-csv").addEventListener("click", function () {
-    descargarCsv(casosACsv(casosFiltradosUids()), "mio-ionm-casos-");
+    descargarCsv(casosACsv(uidsParaExportar()), "mio-ionm-casos-");
     avisoGuardado(T("casos_exportados"));
   });
 
@@ -6219,7 +6235,7 @@
   }
 
   document.getElementById("btn-exportar-eventos-csv").addEventListener("click", function () {
-    var res = eventosACsv(casosFiltradosUids());
+    var res = eventosACsv(uidsParaExportar());
     if (!res.total) { avisoGuardado(T("eventos_sin_datos"), true); return; }
     descargarCsv(res.csv, "mio-ionm-eventos-alarmas-");
     avisoGuardado(T("eventos_exportados").replace("{n}", res.total));
@@ -6854,7 +6870,7 @@
   document.getElementById("btn-exportar-casos").addEventListener("click", function () {
     // Mismo criterio que casosACsv(): filtrado por lo activo en pantalla,
     // pero siempre en orden cronológico dentro del informe.
-    var uids = casosFiltradosUids().sort(function (a, b) {
+    var uids = uidsParaExportar().sort(function (a, b) {
       return (casos[a].fecha || "").localeCompare(casos[b].fecha || "") ||
         (casos[a].ID_Caso || "").localeCompare(casos[b].ID_Caso || "");
     });

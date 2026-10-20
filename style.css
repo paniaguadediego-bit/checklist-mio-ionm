@@ -4666,6 +4666,9 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 /* E8: botones de exportar de Gestión de Casos con la misma altura. */
 .casos-exportar { align-items: stretch; }
 .casos-exportar button { min-height: 2.25rem; }
+/* Alcance de la exportación (20-10-2026): etiqueta y desplegable en una fila. */
+.casos-exportar { flex-wrap: wrap; }
+.casos-exportar-alcance { display: flex; align-items: center; gap: 0.4rem; flex: 1 1 100%; }
 
 /* «Cambiar autor…» de Plantillas (11-10-2026): una opción por fila */
 .autor-opciones { display: flex; flex-direction: column; gap: 0.3rem; max-height: 50vh; overflow-y: auto; margin: 0.4rem 0; }
