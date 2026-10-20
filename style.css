@@ -3988,7 +3988,7 @@ button, input, select, textarea { font-family: inherit; }
    del Registro, líneas bajo las tarjetas de Inicio-. Los avisos de estado
    (".reg-estado", ".empty-hint") y los datos se quedan. */
 body.sin-ayudas .campo > small:not([class]),
-body.sin-ayudas .dlg-intro,
+body.sin-ayudas .dlg-intro:not(.dlg-dato),
 body.sin-ayudas .dlg-ayuda:not(.sync-espacios),
 body.sin-ayudas .campo-ayuda,
 body.sin-ayudas .panel-ayuda,

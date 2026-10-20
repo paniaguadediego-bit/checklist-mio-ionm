@@ -10811,7 +10811,7 @@
         h.id = "caso-nuevo-plantilla-titulo";
         d.appendChild(h);
         var p = document.createElement("p");
-        p.className = "dlg-intro";
+        p.className = "dlg-intro dlg-dato";
         p.id = "caso-nuevo-plantilla-intro";
         d.appendChild(p);
         var botones = document.createElement("div");

@@ -24,7 +24,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20261020x">
+<link rel="stylesheet" href="style.css?v=20261020y">
 </head>
 <body>
 
@@ -349,7 +349,7 @@
 
 <dialog id="dlg-sync" class="no-print">
   <h3 data-i18n="dlg_sync_titulo"></h3>
-  <p class="dlg-intro" data-i18n-html="dlg_sync_intro"></p>
+  <p class="dlg-intro dlg-dato" data-i18n-html="dlg_sync_intro"></p>
 
   <p class="sync-linea" id="sync-linea" hidden></p>
   <p class="sync-choque" id="sync-choque" data-i18n="sync_choque" hidden></p>
@@ -564,7 +564,7 @@
        showModal() para que sea él quien "gane" ese foco automático en vez
        del buscador -sigue siendo tocable a mano cuando sí se quiera
        buscar-. -->
-  <p class="dlg-intro" id="elegir-destino" tabindex="-1"></p>
+  <p class="dlg-intro dlg-dato" id="elegir-destino" tabindex="-1"></p>
   <input id="elegir-buscar" type="search" data-i18n-ph="catalogo_buscar" autocomplete="off">
   <div id="elegir-contenido" class="elegir-contenido"></div>
   <div class="dlg-botones">
@@ -576,7 +576,7 @@
 
 <dialog id="dlg-guardar-montaje" class="no-print">
   <h3 data-i18n="dlg_guardar_montaje_titulo"></h3>
-  <p class="dlg-intro" id="guardar-montaje-nombre"></p>
+  <p class="dlg-intro dlg-dato" id="guardar-montaje-nombre"></p>
   <div class="dlg-botones">
     <button type="button" id="guardar-montaje-cancelar" data-i18n="cancelar"></button>
     <span class="barra-flex"></span>
@@ -589,7 +589,7 @@
      activo y «Sin autor»; tocar una la guarda. -->
 <dialog id="dlg-cambiar-autor" class="no-print">
   <h3 data-i18n="btn_cambiar_autor"></h3>
-  <p class="dlg-intro" id="cambiar-autor-intro"></p>
+  <p class="dlg-intro dlg-dato" id="cambiar-autor-intro"></p>
   <div class="autor-opciones" id="cambiar-autor-lista"></div>
   <div class="dlg-botones">
     <span class="barra-flex"></span>
@@ -600,9 +600,9 @@
 <!-- Puerta de usuario (20-10-2026): no se cierra hasta elegir o crear el tuyo -->
 <dialog id="dlg-quien-eres" class="no-print">
   <h3 data-i18n="quien_titulo"></h3>
-  <p class="dlg-intro" data-i18n="quien_intro"></p>
+  <p class="dlg-intro dlg-dato" data-i18n="quien_intro"></p>
   <div class="autor-opciones" id="quien-lista"></div>
-  <p class="dlg-intro" data-i18n="quien_espera"></p>
+  <p class="dlg-intro dlg-dato" data-i18n="quien_espera"></p>
   <div class="dlg-botones">
     <button type="button" id="quien-crear" class="primario" data-i18n="quien_crear"></button>
   </div>
@@ -980,9 +980,9 @@
 
 <dialog id="dlg-aplicar-plantilla" class="no-print">
   <h3 data-i18n="dlg_aplicar_plantilla_titulo"></h3>
-  <p class="dlg-intro" id="aplicar-plantilla-nombre"></p>
-  <p class="dlg-intro" id="aplicar-plantilla-msg"></p>
-  <p class="dlg-intro" id="aplicar-plantilla-msg2"></p>
+  <p class="dlg-intro dlg-dato" id="aplicar-plantilla-nombre"></p>
+  <p class="dlg-intro dlg-dato" id="aplicar-plantilla-msg"></p>
+  <p class="dlg-intro dlg-dato" id="aplicar-plantilla-msg2"></p>
   <div class="dlg-botones">
     <button type="button" id="aplicar-plantilla-cancelar" data-i18n="cancelar"></button>
     <span class="barra-flex"></span>
@@ -993,7 +993,7 @@
 
 <dialog id="dlg-guia" class="no-print dlg-ancho">
   <h3 data-i18n="dlg_guia_titulo"></h3>
-  <p class="dlg-intro" id="guia-aviso-en" hidden data-i18n="guia_aviso_en"></p>
+  <p class="dlg-intro dlg-dato" id="guia-aviso-en" hidden data-i18n="guia_aviso_en"></p>
   <div id="guia-cuerpo"></div>
   <div class="dlg-botones">
     <span class="barra-flex"></span>
@@ -1057,7 +1057,7 @@
     <h2 data-i18n="tile_tecnicas"></h2>
     <button type="button" class="btn-pantalla-inicio" data-i18n="btn_inicio_pantalla" data-i18n-title="logo_inicio_tit"></button>
   </div>
-  <p class="dlg-intro" id="tecmio-aviso-en" hidden data-i18n="tecnicas_mio_aviso_en"></p>
+  <p class="dlg-intro dlg-dato" id="tecmio-aviso-en" hidden data-i18n="tecnicas_mio_aviso_en"></p>
   <p class="dlg-intro" data-i18n="tecnicas_mio_intro"></p>
   <div class="tecmio-vista-toggle">
     <button type="button" id="tecmio-vista-tarjetas" class="activo" data-i18n="tecmio_vista_tarjetas"></button>
@@ -1320,10 +1320,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20261020x"></script>
-<script src="data/i18n-en.js?v=20261020x"></script>
-<script src="data/guia.js?v=20261020x"></script>
-<script src="data/parametros-tecnicas.js?v=20261020x"></script>
-<script src="app.js?v=20261020x"></script>
+<script src="data/surgeries.js?v=20261020y"></script>
+<script src="data/i18n-en.js?v=20261020y"></script>
+<script src="data/guia.js?v=20261020y"></script>
+<script src="data/parametros-tecnicas.js?v=20261020y"></script>
+<script src="app.js?v=20261020y"></script>
 </body>
 </html>
