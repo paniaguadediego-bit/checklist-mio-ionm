@@ -103,7 +103,7 @@ window.GUIA = {
     { pregunta: "¿Inomed, Cadwell o Genérico?",
       respuesta: "Cada plantilla y cada caso son de un equipo; solo cambian las cajas. Solo se cargan plantillas del mismo equipo. Genérico sirve para cualquier otra marca: estimulador periférico, transcraneal y dos amplificadores de registro." },
     { pregunta: "¿Cómo cambio los colores o quito las ayudas?",
-      respuesta: "El botón redondo junto al ⋮ pasa por oscuro, azul y claro. «Ocultar ayudas» está en el ⋮." },
+      respuesta: "El botón redondo junto al ⋮ pasa por oscuro, azul y claro. Las ayudas arrancan ocultas; «Mostrar ayudas» está en el ⋮." },
     { pregunta: "¿Algún truco para el móvil?",
       respuesta: "Toca y coloca en vez de arrastrar. En el Registro, mantén pulsado un botón para ver qué significa." }
   ]

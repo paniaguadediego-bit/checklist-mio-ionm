@@ -128,8 +128,10 @@ Sustituye `SHA` por el que hayas elegido de la lista anterior:
 gh api "repos/paniaguadediego-bit/checklist-mio-datos/contents/estado.json?ref=SHA" --jq '.content' | base64 -d > estado-recuperado.json
 ```
 
-Ese archivo se importa desde la propia herramienta con **Importar copia**: tiene
-exactamente el mismo formato que la exportación.
+Desde el 20-10-2026 la herramienta ya no tiene botones «Exportar copia» ni
+«Importar copia» (se retiraron de Catálogos por inútiles): la recuperación se hace
+desde el historial del repositorio de datos. Ese archivo es el `estado.json` de ese
+momento; se puede volver a poner en el repositorio con un commit.
 
 ### Copia fría completa, en el ordenador
 
@@ -158,12 +160,9 @@ una copia local y compárala con la del repositorio.
 
 ### Antes de cualquier cambio grande en el código
 
-Exporta una copia desde la herramienta (**Exportar copia**) y guárdala fuera del
-proyecto. Desde el 29-09-2026 esa copia es **completa**: `estadoActual()`
--catálogos, etiquetas y material propio- más `completa: {casos, montajes,
-apuntes}`. Al importarla, casos y plantillas solo se añaden si no existen
-(`importarCopiaCompleta()`). Aun así, la copia con historial es el repositorio
-de datos: clónalo (ver «Copia fría completa» más arriba) antes de un cambio grande.
+La copia con historial es el repositorio de datos: clónalo (ver «Copia fría
+completa» más arriba) antes de un cambio grande. La herramienta ya no exporta ni
+importa copias (botones retirados el 20-10-2026, junto con `importarCopiaCompleta()`).
 
 ---
 
@@ -241,7 +240,10 @@ cambio grande** — si no cuadran con lo que hay, es más fiable un
 | Recuadros de texto que crecen solos (sin tirador): input + MutationObserver (childList y open/class/hidden) | `ajustarAltoTexto()`, `ajustarTodosLosTextos()`; `textarea { resize: none }` | ver `grep` |
 | Nombre corto de técnica en los chips de pantalla (`"corta"` en `data/surgeries.js`: BR, TVcR, TCR, THR, LAR, H-R Masetero) + ayuda al mantener pulsado (`data-ayuda`) | `rotularChipTecnica()`, `ayudaTecnica()`, `mostrarGloboAyuda()`, `.globo-ayuda` | ver `grep` |
 | Casillas de tabla sin texto dentro (la cabecera ya lo dice) | `regInputSinTexto()` | ver `grep` |
-| Menú ⋮ «Ocultar ayudas» | `AYUDAS_KEY`, `aplicarAyudas()`, `body.sin-ayudas` en style.css | ver `grep` |
+| Menú ⋮ «Mostrar/Ocultar ayudas»: **ocultas por defecto desde el 20-10-2026** (solo se ven si se guardó «0»); por dispositivo | `AYUDAS_KEY`, `aplicarAyudas()`, `body.sin-ayudas` en style.css | ver `grep` |
+| Puerta de usuario (20-10-2026): sin usuario marcado sale `#dlg-quien-eres`, que no se cierra (Esc bloqueado) hasta elegir uno de los activos del centro o crear el tuyo; no aplica a la demo ni a un espacio de solo lectura; se reevalúa en cada `renderPerfilUsuario()` (que llama `renderTodo()`), así que si el usuario llega de la nube la lista se rellena sola. No es seguridad | `actualizarPuertaUsuario()`, `puertaUsuarioNecesaria()`, `crearUsuarioDesdeAqui()`, `idUsuarioActual()` | ver `grep` |
+| Quién creó y quién modificó (20-10-2026): casos con `creado_por`/`editado_por` (id de usuario; solo esquema 2; se sellan en `casoVacio()` y `guardarCaso()`), plantillas con `editado_por` (`guardarMontaje()`; el autor `autor_id` ya existía). Se ven en la ficha y bajo el selector del Registro (`textoAutoriaCaso()`, `#registro-autoria`) y en la fila de plantillas («modificada por X · fecha», tooltip «Creada por X»). Fecha exacta solo en el dispositivo que editó; en otro, el mes. Casos anteriores sin `creado_por`: solo la fecha | `textoAutoriaCaso()`, `pintarAutoriaRegistro()`, `fechaMontaje()` | ver `grep` |
+| Hora de inicio/fin de la FICHA (20-10-2026), independiente del Registro: casilla de reloj con la hora real; sin t0 la primera hora escrita es el minuto 0 PROVISIONAL (y mientras sea provisional manda la de inicio), y al marcar «Incisión» todo se recoloca; `duracion_min` (número, sube) = fin − inicio calculado de las dos horas escritas, +1440 si pasa de medianoche, sin pasar por t0. Casos antiguos o ya en minutos sin t0: la casilla de siempre. CSV y Sheet: columna `duracion_min` tras `min_fin` (el Sheet la calcula como fin − inicio si falta) | `tInputHoraCaso()`, `tDuracionCaso()`, `tInputGS()`, `tFijarIncision()` | ver `grep` |
 | Colores: tres modos con el botón redondo junto al ⋮ (ciclo oscuro → azul → claro; azul por defecto; por dispositivo, `mio_ionm_tema_v2`). Azul en `@media screen { :root:not(.tema-claro) … }`, oscuro (negro y dorado) en `:root.tema-oscuro` justo después, claro = `:root` sin más; al imprimir, siempre los claros. `--cab-bg`/`--cab-texto` para cabeceras | `TEMAS`, `aplicarTema()`, `#btn-colores`, `html.tema-claro` / `html.tema-oscuro` en style.css | ver `grep` |
 | Alto real de la barra superior en `--header-h` (lo usan los sticky de debajo) | IIFE junto a `aplicarTema()` con `ResizeObserver` | ver `grep` |
 | Plantillas: fila con aspecto de caso (fecha, marca del equipo, técnicas, «+n» con globo) y favoritas por dispositivo y perfil | `nodoFilaPlantilla()`, `PLANTILLA_MAX_TECS`, `favoritasPlantillas()`, `esFavorita()`, `alternarFavorita()`, `FAV_PLANTILLAS_KEY` (orden solo por nombre: las favoritas no suben arriba desde el 04-10-2026) | ver `grep` |
@@ -384,6 +386,26 @@ distinta a la anterior, no importa el formato exacto.
 ---
 
 ## Estado del proyecto
+
+> **20-10-2026 (`?v=20261020u`) — piloto multihospital, paso 5 casi cerrado.**
+> - **Sheet del hospital propio hecho**: copia de plantilla, `Codigo.gs` entero,
+>   propiedades `REPO_DATOS`, `GITHUB_TOKEN` (fine-grained, **solo lectura y solo ese
+>   repo**, sin caducidad), `REPO_CODIGO`; `appsscript.json` con `oauthScopes`
+>   acotados (`spreadsheets.currentonly`, `script.external_request`,
+>   `script.scriptapp`, `script.container.ui`); activador diario `reconstruirTodo`.
+>   **El repo del código es PÚBLICO otra vez** (el script lo lee con `raw.githubusercontent`
+>   sin token). Sheet viejo de los 29 casos congelado (sin activador; no pulsar
+>   «Reconstruir ahora» allí). Comprobado con un caso real de prueba: fila con mes,
+>   tramo de edad, centro HUNSC, minutos y duración; `Listas` sin Intervenciones
+>   (el bloque se quitó de `Codigo.gs`); columnas de minutos con formato número.
+>   Casos: **57 columnas base + 2 por técnica** (145 con 44 técnicas). **Falta
+>   compartir el Sheet** solo con gente del hospital (Lector; sin editores).
+> - **App**: puerta de usuario obligatoria, quién creó/modificó casos y plantillas,
+>   hora inicio/fin de la ficha con `duracion_min`, ayudas ocultas por defecto,
+>   etiqueta del espacio en forma de pastilla en la barra, nota de «mejor con
+>   ordenador» en el Simulador, y fuera de Catálogos «Exportar copia»,
+>   «Importar copia» e «Imprimir». Ver las filas nuevas del mapa.
+> - Centro (código HUNSC) y usuarios (iniciales) ya dados de alta en la app.
 
 > **Resumen a 10-10-2026 (léelo primero; el diario cronológico está en
 > el repositorio privado, ver al final de este archivo).**
@@ -712,7 +734,7 @@ distinta a la anterior, no importa el formato exacto.
 >   privado `checklist-mio-datos` (`estado.json`, `casos/`, `montajes/`,
 >   `apuntes/` + `apuntes/fotos/`, `simulador/`, `referencia/`). Precios reales y
 >   material propio del usuario: `estado.json` (nunca en este repo).
-> - **Sheet**: `Codigo.gs` con la columna `evolucion_postop` (56 columnas base desde el 19-10; mes, tramo y minutos)
+> - **Sheet**: `Codigo.gs` con la columna `evolucion_postop` (57 columnas base desde el 20-10 con `duracion_min`; mes, tramo y minutos)
 >   y la pestaña **Correlacion_long** (una fila por grupo de alarmas), con `Magnitud_pct`, repegado y
 >   reconstruido por el usuario el 30-09. Los campos de lista llegan como id. Si
 >   vuelve a cambiar, darle el ARCHIVO ENTERO (adjunto o enlace raw de GitHub):

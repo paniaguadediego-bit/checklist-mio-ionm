@@ -199,7 +199,7 @@ propia en *Después / consulta*).
 - La **ficha del caso se guarda sola** (como el Registro) y tiene **Cerrar caso**
   / **Reabrir caso** en la barra de abajo.
 - **Más difícil perder datos**: si el mismo caso se cambia en dos dispositivos,
-  se juntan las dos versiones; **Exportar copia** ya incluye casos, plantillas y
+  se juntan las dos versiones; (la copia manual se retiró el 20-10-2026) incluía casos, plantillas y
   apuntes; **Vaciar** del Registro y del Checklist solo sin caso vinculado.
 - **Alarmas y concordancia**: una alarma en blanco ya no cuenta como alerta, y
   la propuesta de concordancia dice qué regla aplica (las dudosas, entre «¿…?»).
@@ -220,7 +220,7 @@ propia en *Después / consulta*).
   monitorización.
 - **Basales** con Basal · PostPos1 · PostPos2 · Cierre; **umbrales por raíz** en
   columna vertebral; ficha con **Montaje / Material** y **Técnicas** separados;
-  casillas más compactas; botón **Ocultar ayudas** en el menú ⋮; **modo oscuro**
+  casillas más compactas; botón **Ocultar ayudas** en el menú ⋮ (desde el 20-10-2026 las ayudas arrancan ocultas y se activan con «Mostrar ayudas»); **modo oscuro**
   siempre, con **Modo claro** en el menú ⋮ (29-09-2026); la demo enseña
   el **coste** de cada cirugía con precios inventados; **Quirófano** en Inicio
   con el Checklist y el Registro.
@@ -438,10 +438,15 @@ marcada, como *Renombrar*) deja elegir el autor entre los usuarios activos o
 > si alguna vez hace falta volver a sembrar alguno.
 
 **Perfil de usuario** (arriba a la izquierda, junto al logo): quién eres.
-Sirve para firmar tus montajes. Se crea la primera vez desde ese mismo
-desplegable, escribiendo tu nombre — no hay contraseña ni registro. El
-perfil elegido se recuerda en ese navegador y no viaja en la sincronización:
-es de tu dispositivo, no del equipo.
+Desde el 20-10-2026 es **obligatorio**: al abrir la herramienta sin usuario
+elegido sale una pantalla «¿Quién eres?» que no se puede cerrar; eliges tu
+usuario o creas el tuyo (tus iniciales, por ejemplo). No hay contraseña: sirve
+para firmar quién **crea** y quién **modifica por última vez** cada caso y cada
+plantilla, con su fecha. Se ve en la ficha del caso, bajo el selector del
+Registro y en la lista de plantillas. La fecha exacta se ve en el dispositivo
+que lo hizo; en otro dispositivo, solo el mes. En la demo y en un espacio en
+solo lectura no se pide. El perfil elegido se recuerda en ese navegador y no
+viaja en la sincronización: es de tu dispositivo, no del equipo.
 
 ### 1. Catálogo
 
@@ -603,9 +608,9 @@ El botón **Catálogos**, dentro del menú **⋮** de la barra superior
 (09-09-2026: antes iba suelto en la barra, junto al selector de perfil),
 abre una ventana con seis pestañas. En todas funciona igual: **▲▼** para
 reordenar, el nombre para editarlo, y **☑** para activar o desactivar.
-Arriba del todo, dentro de ese mismo diálogo, están **Importar copia,
-Exportar copia, Imprimir y Restablecer** (ver *Dónde se guarda todo* más
-abajo).
+Arriba del todo, dentro de ese mismo diálogo, está **Restablecer**. (Los
+botones Exportar copia, Importar copia e Imprimir se retiraron el 20-10-2026:
+no aportaban nada; la copia de seguridad es el repositorio de datos.)
 
 - **Técnicas** — las de partida (monitorización y mapeo) y las que añadas.
   Lo que ves y cambias es la *etiqueta*; por dentro cada técnica tiene un
@@ -1495,22 +1500,11 @@ archivo**). Si conectas la
 sincronización (siguiente apartado), además viajan solos entre dispositivos;
 si no, el navegador del móvil y el del ordenador son almacenes distintos.
 
-Para pasar tu trabajo de uno a otro a mano:
-
-1. **Exportar copia** descarga un `.json` con todo: tu material propio, tus
-   etiquetas, los catálogos editables (técnicas, servicios, intervenciones,
-   perfiles, usuarios, centros) y, desde el 29-09-2026, también tus
-   **casos, tus plantillas y Mis apuntes**.
-2. Pasa ese archivo al otro dispositivo (correo, nube, cable…).
-3. **Importar copia** allí. Avisa de cuántos elementos trae. El material,
-   las etiquetas y los catálogos **sustituyen** lo que hubiera en ese
-   navegador; los casos y las plantillas **solo se añaden** si no estaban
-   ya (nunca pisa uno que exista), y Mis apuntes solo entran si allí no
-   había ninguno.
-
-Ese mismo archivo sirve de copia de seguridad completa: si el navegador
-borra los datos del sitio, o sin sincronización con GitHub, todo se
-recupera importándolo.
+Desde el 20-10-2026 la herramienta ya no exporta ni importa copias a mano
+(los botones se retiraron). Para pasar tu trabajo de un dispositivo a otro se usa
+la sincronización con GitHub (siguiente apartado). La copia de seguridad es el
+repositorio de datos, con todo su historial: si el navegador borra los datos
+del sitio, al volver a conectar la nube todo se recupera.
 
 ### Sincronización automática con GitHub
 
@@ -1569,7 +1563,7 @@ vacío = el de arriba) y **Guardar repositorio personal**.
   apuntes que hay en el dispositivo (las fotos que no estén en el dispositivo
   no se pueden copiar desde el navegador). Si ya tiene apuntes, se traen.
 - Sin repositorio personal todo va al repositorio de arriba, como siempre.
-- Es de cada dispositivo: no se sincroniza ni entra en *Exportar copia*. Su
+- Es de cada dispositivo: no se sincroniza. Su
   botón **Desconectar** lo quita (no borra nada); el **Desconectar** de la
   nube lo quita también. En la demo no existe.
 
