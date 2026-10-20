@@ -4666,6 +4666,9 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 /* E8: botones de exportar de Gestión de Casos con la misma altura. */
 .casos-exportar { align-items: stretch; }
 .casos-exportar button { min-height: 2.25rem; }
+/* Versión de la app al pie del menú ⋮ (20-10-2026). */
+.menu-version { padding: 0.25rem 0.75rem 0.1rem; font-size: 0.65rem; color: var(--text-muted); text-align: center; user-select: text; }
+.menu-version:empty { display: none; }
 /* Alcance de la exportación (20-10-2026): etiqueta y desplegable en una fila. */
 .casos-exportar { flex-wrap: wrap; }
 .casos-exportar-alcance { display: flex; align-items: center; gap: 0.4rem; flex: 1 1 100%; }

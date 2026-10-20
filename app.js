@@ -17303,6 +17303,17 @@
     try { localStorage.setItem(AYUDAS_KEY, sin ? "1" : "0"); } catch (e) { /* sin persistencia */ }
   });
 
+  /* Versión de la app, en pequeño bajo «Ocultar ayudas» (20-10-2026). Se lee
+     del «?v=» de la etiqueta de app.js en index.html: es el número que ya se
+     sube en cada cambio, así no hay un segundo sitio donde actualizarlo. Sin
+     texto traducible: «v20261020d» vale en los dos idiomas. */
+  (function () {
+    var cajaVersion = document.getElementById("menu-version");
+    var etiquetaApp = document.querySelector("script[src*='app.js']");
+    var m = etiquetaApp && /[?&]v=([^&]+)/.exec(etiquetaApp.getAttribute("src") || "");
+    if (cajaVersion) cajaVersion.textContent = m ? "v" + m[1] : "";
+  })();
+
   /* Colores. Tres modos desde el 30-09-2026, pedido del usuario: «azul»
      (por defecto: paleta azul marino de quirófano), «oscuro» (los colores de
      antes, negro y dorado: clase "tema-oscuro" en <html>) y «claro» (clase
