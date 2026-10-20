@@ -4669,8 +4669,12 @@
     mensajeSync(T("sync_subiendo"));
     leerRemoto()
       .then(function (remoto) {
-        // Si en el repositorio hay algo más nuevo que lo que bajamos, avisamos
-        if (remoto.existe && sync.sha && remoto.sha !== sync.sha && !forzar) {
+        // Si en el repositorio hay algo más nuevo que lo que bajamos, avisamos.
+        // Sin sync.sha (dispositivo recién conectado a un repo con estado.json)
+        // también: subir directo pisaba usuarios, centros y material (C23).
+        if (remoto.existe && remoto.sha !== sync.sha && !forzar) {
+          conflicto = true;
+          pintarEstadoSync();
           var f = remoto.contenido && remoto.contenido.fecha
             ? fechaHoraTxt(remoto.contenido.fecha)
             : T("sync_fecha_desc");
@@ -4723,7 +4727,8 @@
     // archivos independientes y cada uno se resuelve por su cuenta.
     var cadena = (sync.pendiente && !conflicto)
       ? leerRemoto().then(function (remoto) {
-          if (remoto.existe && sync.sha && remoto.sha !== sync.sha) {
+          // Sin sync.sha y con estado.json en la nube también es choque (C23)
+          if (remoto.existe && remoto.sha !== sync.sha) {
             conflicto = true;
             return null;   // hay que decidir a mano cuál se queda
           }
@@ -18718,9 +18723,11 @@
         t0Fijar(c, ms, true);
         tFijar(c, f, 0);
       } else if (e.prov && f === "hora_inicio") {
-        var delta = Math.round((ms - e.ms) / 60000);
+        // La hora se sitúa en la ventana de t0 (−6/+18 h), no en la fecha de
+        // hoy: rellenar la ficha otro día desplazaba todo ±1440 min (C24).
+        var delta = tMinDeReloj(h, e);
         if (delta) tDesplazar(c, delta);
-        t0Fijar(c, ms, true);
+        t0Fijar(c, e.ms + delta * 60000, true);
         tFijar(c, f, 0);
       } else {
         tFijar(c, f, tMinDeReloj(h, e));
