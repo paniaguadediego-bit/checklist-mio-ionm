@@ -7076,11 +7076,12 @@
     var montajeRaw = montajeCaso;
     if (!caso || !montajeRaw) return;
 
-    // Sugerencia a partir del diagnóstico y el nombre del caso -ninguno de
-    // los dos es dato de paciente-: es lo más parecido a "de qué trata esta
-    // plantilla" que el caso ya tiene escrito, sin inventar nada nuevo.
-    var nombreSugerido = [opcionTexto("diagnostico", caso.diagnostico), caso.nombre_caso]
-      .filter(Boolean).join(" — ") || T("esc_nuevo_def");
+    // Sugerencia a partir del diagnóstico, la intervención y el equipo: es lo
+    // más parecido a "de qué trata esta plantilla" que el caso ya tiene
+    // escrito. Nunca "nombre_caso": se queda en el dispositivo y el nombre de
+    // la plantilla sube a montajes/ (auditoría 20-10-2026, C27).
+    var nombreSugerido = [opcionTexto("diagnostico", caso.diagnostico), intervencionDe(caso),
+      nombreEquipo(equipoDe(caso))].filter(Boolean).join(" — ") || T("esc_nuevo_def");
     var nombre = prompt(T("plantilla_guardar_prompt"), nombreSugerido);
     if (!nombre) return;
 
