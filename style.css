@@ -4691,8 +4691,7 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 .autor-opciones button.actual::after { content: " ✓"; color: var(--accent); }
 
 /* Repositorio personal opcional del diálogo ☁ (11-10-2026) */
-.sync-personal { margin-top: 0.7rem; padding-top: 0.6rem; border-top: 1px solid var(--border); }
-.sync-personal[hidden] { display: none; }
+.sync-pie { margin-top: 0.5rem; padding-top: 0.6rem; border-top: 1px solid var(--border); }
 .sync-personal-tit { margin: 0 0 0.2rem; font-size: 0.85rem; font-weight: 600; }
 .sync-personal-intro { display: block; margin-bottom: 0.4rem; color: var(--text-muted); }
 /* Espacios de trabajo (diálogo de sincronización) */

@@ -457,20 +457,8 @@
     sync_quedar_dispositivo: { es: "Quedarme con lo de este dispositivo", en: "Keep this device’s version" },
     sync_quedar_nube:    { es: "Quedarme con lo de la nube", en: "Keep the cloud version" },
     sync_avanzado:       { es: "Opciones avanzadas", en: "Advanced options" },
-    sync_personal_tit:   { es: "Repositorio personal (opcional)", en: "Personal repository (optional)" },
-    sync_personal_intro: { es: "Tus apuntes y Técnicas IONM van aquí y solo los ves tú. Sin él, van al repositorio de arriba.",
-                           en: "Your notes and IONM Techniques go here and only you can see them. Without it, they go to the repository above." },
-    sync_personal_token_ayuda: { es: "Puede ser el mismo token. Vacío = el de arriba. Se guarda solo en este navegador.",
-                           en: "It can be the same token. Empty = the one above. It is stored only in this browser." },
-    sync_personal_apuntes: { es: "Mis apuntes aparece en el Inicio al conectarlo.", en: "My notes appears on the Home screen once it is connected." },
-    sync_personal_guardar: { es: "Guardar repositorio personal", en: "Save personal repository" },
-    sync_personal_ok:    { es: "Apuntes y Técnicas IONM van a {repo}.", en: "Notes and IONM Techniques go to {repo}." },
-    sync_personal_olvidar_conf: { es: "¿Desconectar el repositorio personal?\nNo se borra nada. A partir de ahora tus apuntes irán al repositorio de arriba.",
-                           en: "Disconnect the personal repository?\nNothing is deleted. From now on your notes will go to the repository above." },
-    sync_personal_sin:   { es: "Sin repositorio personal: apuntes y Técnicas IONM van al repositorio de arriba.",
-                           en: "No personal repository: notes and IONM Techniques go to the repository above." },
-    sync_personal_sin_esp: { es: "Sin repositorio personal: Técnicas IONM va al repositorio de arriba; en este espacio, Mis apuntes no suben ni bajan (solo quedan en este dispositivo).",
-                           en: "No personal repository: IONM Techniques go to the repository above; in this workspace, My notes are neither uploaded nor downloaded (they stay on this device only)." },
+    sync_conexion_tit:   { es: "Conexión", en: "Connection" },
+    sync_manual_tit:     { es: "Sincronizar a mano (normalmente no hace falta)", en: "Sync manually (normally not needed)" },
     sync_guarda_origen:  { es: "Este espacio quedó ligado a otro repositorio ({repo}). No se sube ni se baja nada con el repositorio actual: restituye el anterior o crea un espacio nuevo.",
                            en: "This workspace is tied to another repository ({repo}). Nothing is uploaded or downloaded with the current repository: restore the previous one or create a new workspace." },
     sync_guarda_otro:    { es: "Este repositorio pertenece a otro espacio de trabajo («{remoto}»), no al activo («{activo}»). No se sube ni se baja nada: cambia de espacio o revisa el repositorio.",
@@ -4068,6 +4056,7 @@
 
   function guardarSync() {
     try { localStorage.setItem(SYNC_KEY, JSON.stringify(sync)); } catch (e) { /* sin persistencia */ }
+    reflejarArchivoEnPersonal();
   }
 
   /* Espacios de trabajo, tanda 2: selector, repo inmutable por espacio.
@@ -4344,6 +4333,18 @@
   })();
   function personalActivo() {
     return !MODO_DEMO && !!syncPersonal.repo;
+  }
+  // Desde el 20-10-2026 ya no hay pantalla de «repositorio personal»: Mis
+  // apuntes y Técnicas IONM usan siempre el acceso del espacio «Archivo» (el
+  // repositorio del propio usuario). Cuando «Archivo» tiene la nube conectada
+  // se guarda aquí, en la clave global, y desde cualquier otro espacio
+  // (destinoRuta) esas dos rutas van a ese repositorio y no al del hospital.
+  function reflejarArchivoEnPersonal() {
+    if (MODO_DEMO || ESPACIO.id !== "archivo" || !sync.repo || !sync.token) return;
+    if (syncPersonal.repo === sync.repo && syncPersonal.token === sync.token) return;
+    syncPersonal = { repo: sync.repo, token: sync.token };
+    try { localStorage.setItem(SYNC_PERSONAL_KEY, JSON.stringify(syncPersonal)); } catch (e) { /* sin persistencia */ }
+    pintarTileApuntes();
   }
   // A qué repositorio (y con qué token) va cada ruta del repositorio de datos
   function destinoRuta(ruta) {
@@ -4878,65 +4879,27 @@
     // diario solo ve «Conectado».
     var ocultarConexion = conectado && !conflicto && !syncAvanzado;
     document.getElementById("sync-conexion").hidden = ocultarConexion;
+    document.getElementById("sync-manual-tit").hidden = !(conectado && !conflicto && syncAvanzado);
     document.getElementById("sync-olvidar").hidden = !conectado || ocultarConexion;
     // Repositorio de otro espacio / no verificable: aviso claro en el diálogo
     if (conectado && repoGuarda.veredicto && !repoGuarda.veredicto.ok && repoGuarda.clave === claveGuarda()) {
       mensajeSync(repoGuarda.veredicto.mensaje, true);
     }
-    // Repositorio personal: en la parte avanzada (sin conexión todo está a
-    // la vista, como Subir/Bajar); nunca durante un choque
-    document.getElementById("sync-personal").hidden = MODO_DEMO || conflicto || (conectado && !syncAvanzado);
-    var estP = document.getElementById("sync-personal-estado");
-    estP.hidden = false;
-    estP.textContent = personalActivo() ? T("sync_personal_ok", { repo: syncPersonal.repo }) : T(ESPACIO.id === "archivo" || MODO_DEMO ? "sync_personal_sin" : "sync_personal_sin_esp");
-    document.getElementById("sync-personal-olvidar").hidden = !personalActivo();
   }
   document.getElementById("sync-avanzado").addEventListener("click", function () {
     syncAvanzado = true;
     pintarDlgSync();
   });
 
-  // Tras conectar, cambiar o quitar el repositorio personal, se vuelven a
-  // leer apuntes y Técnicas IONM de su nuevo sitio (apunteDocSha distinto =
-  // se baja; 404 en un personal vacío = lo estrena este dispositivo)
-  function releerRutasPersonales() {
-    pintarTileApuntes();
-    if (!syncActivo()) return;
-    bajarApunteDoc();
-    bajarTecnicasMio();
-  }
-  document.getElementById("sync-personal-guardar").addEventListener("click", function () {
-    var repo = document.getElementById("sync-personal-repo").value.trim().replace(/^https?:\/\/github\.com\//, "").replace(/\.git$/, "").replace(/\/$/, "");
-    var token = document.getElementById("sync-personal-token").value.trim();
-    if (!/^[^/\s]+\/[^/\s]+$/.test(repo)) {
-      mensajeSync(T("sync_formato_repo"), true);
-      return;
-    }
-    syncPersonal = { repo: repo, token: token };
-    try { localStorage.setItem(SYNC_PERSONAL_KEY, JSON.stringify(syncPersonal)); } catch (e) { /* sin persistencia */ }
-    mensajeSync(null);
-    pintarDlgSync();
-    releerRutasPersonales();
-  });
   function olvidarSyncPersonal() {
     syncPersonal = { repo: "", token: "" };
     try { localStorage.removeItem(SYNC_PERSONAL_KEY); } catch (e) { /* nada que borrar */ }
-    document.getElementById("sync-personal-repo").value = "";
-    document.getElementById("sync-personal-token").value = "";
   }
-  document.getElementById("sync-personal-olvidar").addEventListener("click", function () {
-    if (!confirm(T("sync_personal_olvidar_conf"))) return;
-    olvidarSyncPersonal();
-    pintarDlgSync();
-    releerRutasPersonales();
-  });
 
   document.getElementById("btn-sync").addEventListener("click", function () {
     if (MODO_DEMO) { alert(T("demo_sin_sync")); return; }
     document.getElementById("sync-repo").value = sync.repo || "";
     document.getElementById("sync-token").value = sync.token || "";
-    document.getElementById("sync-personal-repo").value = syncPersonal.repo || "";
-    document.getElementById("sync-personal-token").value = syncPersonal.token || "";
     mensajeSync(null);
     syncAvanzado = false;
     pintarEspacios();
@@ -5002,8 +4965,10 @@
     // Técnicas IONM solo se enseña a quien tiene el token: al desconectar
     // (p. ej. en un ordenador del hospital) no se queda la copia en este navegador.
     // Por lo mismo se olvida también el repositorio personal y su token.
-    olvidarTecnicasMio();
-    olvidarSyncPersonal();
+    if (ESPACIO.id === "archivo") {
+      olvidarTecnicasMio();
+      olvidarSyncPersonal();
+    }
     document.getElementById("sync-repo").value = "";
     document.getElementById("sync-token").value = "";
     pintarEstadoSync();
@@ -23670,6 +23635,7 @@
   cargarApunteDoc();
   pintarTileApuntes();   // la excepción de transición necesita el documento ya cargado
   cargarSync();
+  reflejarArchivoEnPersonal();
   cargarPerfilUsuario();
   cargarDocente();
   if (MODO_DEMO) prepararDemo();

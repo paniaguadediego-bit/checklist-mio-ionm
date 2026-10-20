@@ -24,7 +24,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20261020g">
+<link rel="stylesheet" href="style.css?v=20261020h">
 </head>
 <body>
 
@@ -351,84 +351,68 @@
   <h3 data-i18n="dlg_sync_titulo"></h3>
   <p class="dlg-intro" data-i18n-html="dlg_sync_intro"></p>
 
-  <!-- Con la nube ya conectada, esto queda en «Opciones avanzadas» (pintarDlgSync) -->
-  <div id="sync-conexion">
-  <details class="dlg-ayuda">
-    <summary data-i18n="dlg_sync_ayuda"></summary>
-    <ol>
-      <li data-i18n-html="sync_paso1"></li>
-      <li data-i18n-html="sync_paso2"></li>
-      <li data-i18n-html="sync_paso3"></li>
-      <li data-i18n-html="sync_paso4"></li>
-      <li data-i18n-html="sync_paso5"></li>
-    </ol>
-  </details>
-
-  <!-- Espacios de trabajo (tanda 2): ver pintarEspacios() en app.js -->
-  <details class="dlg-ayuda sync-espacios" id="sync-espacios">
-    <summary id="esp-resumen"></summary>
-    <small class="sync-personal-intro" data-i18n="esp_intro"></small>
-    <div id="esp-lista"></div>
-    <div class="campo">
-      <label for="esp-equipo" data-i18n="esp_equipo"></label>
-      <select id="esp-equipo"></select>
-    </div>
-    <div class="campo">
-      <label for="esp-nuevo-nombre" data-i18n="esp_nuevo_nombre"></label>
-      <input id="esp-nuevo-nombre" maxlength="40" autocomplete="off">
-    </div>
-    <div class="dlg-botones">
-      <button type="button" id="esp-crear" data-i18n="esp_crear"></button>
-    </div>
-  </details>
-
-  <div class="campo">
-    <label for="sync-repo"><span data-i18n="campo_repo"></span> <span class="req">*</span></label>
-    <input id="sync-repo" placeholder="owner/repo" autocomplete="off">
-    <small data-i18n-html="campo_repo_ayuda"></small>
-  </div>
-  <div class="campo">
-    <label for="sync-token"><span data-i18n="campo_token"></span> <span class="req">*</span></label>
-    <input id="sync-token" type="password" placeholder="github_pat_…" autocomplete="off">
-    <small data-i18n="campo_token_ayuda"></small>
-  </div>
-  </div>
-
   <p class="sync-linea" id="sync-linea" hidden></p>
   <p class="sync-choque" id="sync-choque" data-i18n="sync_choque" hidden></p>
+
+  <!-- Con la nube ya conectada, esto queda en «Opciones avanzadas» (pintarDlgSync) -->
+  <div id="sync-conexion">
+    <!-- Espacios de trabajo (tanda 2): ver pintarEspacios() en app.js -->
+    <details class="dlg-ayuda sync-espacios" id="sync-espacios">
+      <summary id="esp-resumen"></summary>
+      <small class="sync-personal-intro" data-i18n="esp_intro"></small>
+      <div id="esp-lista"></div>
+      <div class="campo">
+        <label for="esp-equipo" data-i18n="esp_equipo"></label>
+        <select id="esp-equipo"></select>
+      </div>
+      <div class="campo">
+        <label for="esp-nuevo-nombre" data-i18n="esp_nuevo_nombre"></label>
+        <input id="esp-nuevo-nombre" maxlength="40" autocomplete="off">
+      </div>
+      <div class="dlg-botones">
+        <button type="button" id="esp-crear" data-i18n="esp_crear"></button>
+      </div>
+    </details>
+
+    <p class="sync-personal-tit" data-i18n="sync_conexion_tit"></p>
+    <div class="campo">
+      <label for="sync-repo"><span data-i18n="campo_repo"></span> <span class="req">*</span></label>
+      <input id="sync-repo" placeholder="owner/repo" autocomplete="off">
+      <small data-i18n-html="campo_repo_ayuda"></small>
+    </div>
+    <div class="campo">
+      <label for="sync-token"><span data-i18n="campo_token"></span> <span class="req">*</span></label>
+      <input id="sync-token" type="password" placeholder="github_pat_…" autocomplete="off">
+      <small data-i18n="campo_token_ayuda"></small>
+    </div>
+    <details class="dlg-ayuda">
+      <summary data-i18n="dlg_sync_ayuda"></summary>
+      <ol>
+        <li data-i18n-html="sync_paso1"></li>
+        <li data-i18n-html="sync_paso2"></li>
+        <li data-i18n-html="sync_paso3"></li>
+        <li data-i18n-html="sync_paso4"></li>
+        <li data-i18n-html="sync_paso5"></li>
+      </ol>
+    </details>
+  </div>
+
+  <p class="sync-personal-tit" id="sync-manual-tit" data-i18n="sync_manual_tit" hidden></p>
   <p class="dlg-error" id="sync-error" hidden></p>
   <p class="dlg-ok" id="sync-ok" hidden></p>
 
   <div class="dlg-botones">
-    <button type="button" id="sync-olvidar" class="peligro" data-i18n="btn_desconectar"></button>
     <button type="button" id="sync-avanzado" class="sync-avanzado" data-i18n="sync_avanzado" hidden></button>
     <span class="barra-flex"></span>
-    <button type="button" id="sync-cerrar" data-i18n="cerrar"></button>
     <button type="button" id="sync-bajar" data-i18n="btn_bajar"></button>
     <button type="button" id="sync-subir" class="primario" data-i18n="btn_subir"></button>
   </div>
 
-  <!-- Repositorio personal opcional (11-10-2026): apuntes y Técnicas IONM.
-       Solo en la parte avanzada; ver destinoRuta() en app.js. -->
-  <div class="sync-personal" id="sync-personal" hidden>
-    <p class="sync-personal-tit" data-i18n="sync_personal_tit"></p>
-    <small class="sync-personal-intro" data-i18n="sync_personal_intro"></small>
-    <small class="sync-personal-intro" data-i18n="sync_personal_apuntes"></small>
-    <div class="campo">
-      <label for="sync-personal-repo" data-i18n="campo_repo"></label>
-      <input id="sync-personal-repo" placeholder="usuario/mis-apuntes" autocomplete="off">
-    </div>
-    <div class="campo">
-      <label for="sync-personal-token" data-i18n="campo_token"></label>
-      <input id="sync-personal-token" type="password" placeholder="github_pat_…" autocomplete="off">
-      <small data-i18n="sync_personal_token_ayuda"></small>
-    </div>
-    <p class="dlg-ok" id="sync-personal-estado" hidden></p>
-    <div class="dlg-botones">
-      <button type="button" id="sync-personal-olvidar" class="peligro" data-i18n="btn_desconectar"></button>
-      <span class="barra-flex"></span>
-      <button type="button" id="sync-personal-guardar" data-i18n="sync_personal_guardar"></button>
-    </div>
+  <!-- Pie: Desconectar a un lado y Cerrar siempre abajo del todo -->
+  <div class="dlg-botones sync-pie">
+    <button type="button" id="sync-olvidar" class="peligro" data-i18n="btn_desconectar"></button>
+    <span class="barra-flex"></span>
+    <button type="button" id="sync-cerrar" data-i18n="cerrar"></button>
   </div>
 </dialog>
 
@@ -1318,10 +1302,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20261020g"></script>
-<script src="data/i18n-en.js?v=20261020g"></script>
-<script src="data/guia.js?v=20261020g"></script>
-<script src="data/parametros-tecnicas.js?v=20261020g"></script>
-<script src="app.js?v=20261020g"></script>
+<script src="data/surgeries.js?v=20261020h"></script>
+<script src="data/i18n-en.js?v=20261020h"></script>
+<script src="data/guia.js?v=20261020h"></script>
+<script src="data/parametros-tecnicas.js?v=20261020h"></script>
+<script src="app.js?v=20261020h"></script>
 </body>
 </html>
