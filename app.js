@@ -5998,6 +5998,7 @@
       case "min_inicio": return tMinRelCaso(c, c, "hora_inicio");
       case "min_fin": return tMinRelCaso(c, c, "hora_fin");
       case "duracion_min":
+        if (tvEsNum(c.duracion_min)) return c.duracion_min;
         var dI = tMinRelCaso(c, c, "hora_inicio"), dF = tMinRelCaso(c, c, "hora_fin");
         return tvEsNum(dI) && tvEsNum(dF) ? dF - dI : "";
       case "intervencion": return intervencionDe(c);
@@ -18630,7 +18631,7 @@
     inp.value = e0 && tvEsNum(v0) ? tHoraReal(e0.ms + v0 * 60000) : "";
     inp.addEventListener("input", function () {
       var h = inp.value;
-      if (h === "") { tFijar(c, f, ""); return; }
+      if (h === "") { tFijar(c, f, ""); tDuracionCaso(c); return; }
       var e = t0De(c);
       var ms = tMsDeReloj(h);
       if (!e) {
@@ -18644,8 +18645,21 @@
       } else {
         tFijar(c, f, tMinDeReloj(h, e));
       }
+      tDuracionCaso(c);
     });
     return inp;
+  }
+  // Duración fin − inicio calculada DIRECTAMENTE de las dos horas escritas (si el
+  // fin es menor, pasó la medianoche), sin pasar por t0: así no depende de la
+  // incisión ni de su ventana de −6/+18 h. Solo minutos, nunca la hora del día.
+  function tDuracionCaso(c) {
+    var a = document.getElementById("caso-f-hora_inicio"), b = document.getElementById("caso-f-hora_fin");
+    var ma = /^(\d{1,2}):(\d{2})/.exec(a && a.type === "time" ? a.value : "");
+    var mb = /^(\d{1,2}):(\d{2})/.exec(b && b.type === "time" ? b.value : "");
+    if (!ma || !mb) { delete c.duracion_min; return; }
+    var d = (+mb[1]) * 60 + (+mb[2]) - ((+ma[1]) * 60 + (+ma[2]));
+    if (d < 0) d += 1440;
+    c.duracion_min = d;
   }
   function tInputObj(obj, f, c, placeholder, alCambiar, guardar) {
     guardar = guardar || REG_GUARDAR;

@@ -491,7 +491,8 @@ function construirFilasCasos_(casos, cat, columnasTec) {
     var editado = c.editado_en || [];
     // Duración de la monitorización (fin − inicio), sin hora del día; vacía si falta uno
     var minInicio = minRelCampo_(c, c, "hora_inicio"), minFin = minRelCampo_(c, c, "hora_fin");
-    var durMin = esNumero_(minInicio) && esNumero_(minFin) ? minFin - minInicio : "";
+    var durMin = esNumero_(c.duracion_min) ? c.duracion_min
+      : (esNumero_(minInicio) && esNumero_(minFin) ? minFin - minInicio : "");
 
     var base = [
       c.caso_uid, c.ID_Caso, c.estado, c.motivo_cancelacion, aMes_(c.fecha), c.centro_id || "", codigoCentroDe_(c, cat),
