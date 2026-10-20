@@ -4696,8 +4696,9 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 .sync-personal-intro { display: block; margin-bottom: 0.4rem; color: var(--text-muted); }
 /* Espacios de trabajo (diálogo de sincronización) */
 .sync-espacios { margin-bottom: 0.6rem; }
-.esp-fila { margin: 0.2rem 0; font-size: 0.85rem; }
+.esp-fila { margin: 0.35rem 0; padding: 0.5rem 0.6rem; font-size: 0.85rem; border: 1px solid var(--border); border-left: 3px solid var(--border); border-radius: var(--r); }
 .esp-fila .esp-nombre { flex: 1; overflow-wrap: anywhere; }
+.esp-fila.activo { border-color: var(--accent); background: var(--accent-soft); }
 .esp-fila.activo .esp-nombre { font-weight: 600; }
 .esp-etq { color: var(--text-muted); font-size: 0.78rem; }
 
