@@ -11855,6 +11855,10 @@
     var cont = document.getElementById("cat-pestanas");
     cont.innerHTML = "";
     CATALOGOS.forEach(function (n) {
+      // Intervenciones y perfiles se esconden (20-10-2026): la intervención se
+      // escribe en texto libre y el perfil ya no se usa. El dato y el catálogo
+      // siguen ahí, solo se quita la pestaña.
+      if (n === "intervenciones" || n === "perfiles") return;
       var b = document.createElement("button");
       b.type = "button";
       b.className = "pestana" + (n === catPestana ? " activa" : "");
