@@ -850,6 +850,17 @@
                              en: "Pre-filled with what was planned. Change only what you used more or less of." },
     caso_editado_veces:  { es: "Editado {n} vez/veces · última: {fecha}",
                            en: "Edited {n} time(s) · last: {fecha}" },
+    caso_creado_por:     { es: "Creado por {quien} · {fecha}", en: "Created by {quien} · {fecha}" },
+    caso_editado_por:    { es: "Última modificación por {quien} · {fecha} · {n} edición/ediciones",
+                           en: "Last modified by {quien} · {fecha} · {n} edit(s)" },
+    montaje_modificado_por: { es: "modificada por {quien} · {fecha}", en: "modified by {quien} · {fecha}" },
+    montaje_creada_por:  { es: "Creada por {quien} · {fecha}", en: "Created by {quien} · {fecha}" },
+    quien_titulo:        { es: "¿Quién eres?", en: "Who are you?" },
+    quien_intro:         { es: "Elige tu usuario para empezar. Así cada caso y cada plantilla queda firmado con quién lo creó y quién lo modificó por última vez. No es una contraseña: solo sirve para saber quién hizo qué.",
+                           en: "Choose your user to start. Every case and template is signed with who created it and who last modified it. It is not a password: it only records who did what." },
+    quien_espera:        { es: "Si tu nombre no aparece, espera unos segundos a que termine de descargarse de la nube.",
+                           en: "If your name is not listed, wait a few seconds for the cloud download to finish." },
+    quien_crear:         { es: "+ Crear mi usuario", en: "+ Create my user" },
     caso_creado_en:      { es: "Archivo creado {fecha}", en: "File created {fecha}" },
 
     /* Etiquetas de los campos del caso */
@@ -1140,7 +1151,7 @@
     perfil_usuario_aria: { es: "Quién eres", en: "Who you are" },
     perfil_usuario_sin:  { es: "— quién eres —", en: "— who are you —" },
     perfil_usuario_nuevo: { es: "+ Añadir usuario…", en: "+ Add user…" },
-    perfil_usuario_pide:  { es: "¿Cómo te llamas? Aparecerá como autor de las plantillas que crees.",
+    perfil_usuario_pide:  { es: "¿Cómo te llamas? (por ejemplo, tus iniciales). Aparecerá como autor de los casos y plantillas que crees.",
                            en: "What is your name? It will appear as the author of the montages you create." },
     montaje_sin_autor:   { es: "de fábrica", en: "factory" },
     montaje_autor_ido:   { es: "otro usuario", en: "another user" },
@@ -2688,6 +2699,8 @@
   function guardarMontaje(m, esNuevo) {
     if (escrituraBloqueada()) return;   // solo lectura
     if (!esNuevo) m.editado_en = (m.editado_en || []).concat(new Date().toISOString());
+    var quienGuardaM = idUsuarioActual();
+    if (quienGuardaM) m.editado_por = quienGuardaM;
     // Contador de guardados: al subir, los sellos pasan a mes y `rev` conserva el orden
     m.rev = (m.rev || 0) + 1;
     montajes[m.montaje_uid] = m;
@@ -5701,6 +5714,12 @@
         caso.editado_en = marcas.concat(new Date().toISOString());
       }
     }
+    // Quién lo toca (esquema 2; el antiguo está congelado y no se reescribe)
+    var quienGuarda = idUsuarioActual();
+    if (quienGuarda && esquemaDe(caso) >= 2) {
+      if (!caso.creado_por && esNuevo) caso.creado_por = quienGuarda;
+      caso.editado_por = quienGuarda;
+    }
     alarmasEnCaso(caso);
     // Contador de guardados: lo que sustituye a la hora real donde hay que
     // comparar versiones en lo que se sube (esquema 2; el antiguo no lo lleva)
@@ -5856,6 +5875,7 @@
       registro_intraop: {},
       version_esquema: VERSION_ESQUEMA,
       rev: 0,
+      creado_por: idUsuarioActual(), editado_por: idUsuarioActual(),   // ids de usuario (iniciales); "" si aún no hay
       guardado_en: new Date().toISOString(),   // hora real: solo local; al subir pasa a mes
       editado_en: []
     };
@@ -10097,16 +10117,7 @@
       cont.insertBefore(ley, cont.firstChild);
     });
     var pie = document.getElementById("caso-meta");
-    var partes = [T("caso_creado_en", {
-      fecha: fechaHoraTxt(c.guardado_en)
-    })];
-    if ((c.editado_en || []).length) {
-      partes.push(T("caso_editado_veces", {
-        n: c.editado_en.length,
-        fecha: fechaHoraTxt(c.editado_en[c.editado_en.length - 1])
-      }));
-    }
-    pie.textContent = partes.join(" · ");
+    pie.textContent = textoAutoriaCaso(c);
 
     // Un caso que todavía no se ha guardado ni una vez no existe en "casos":
     // no hay nada que borrar hasta el primer "Guardar".
@@ -12325,6 +12336,28 @@
     return USRS[id] ? campo(USRS[id], "nombre") : "";
   }
 
+  // Id del usuario activo, o "" si aún no ha dicho quién es
+  function idUsuarioActual() {
+    var u = usuarioActual();
+    return u ? u.id : "";
+  }
+
+  // Quién creó y quién tocó por última vez un caso, con sus fechas (la exacta en
+  // el dispositivo que lo hizo; en otro, solo el mes: ver fechaHoraTxt()).
+  function textoAutoriaCaso(c) {
+    var partes = [];
+    var quienC = c.creado_por ? nombreUsuario(c.creado_por) : "";
+    partes.push(quienC ? T("caso_creado_por", { quien: quienC, fecha: fechaHoraTxt(c.guardado_en) })
+                       : T("caso_creado_en", { fecha: fechaHoraTxt(c.guardado_en) }));
+    var ed = c.editado_en || [];
+    if (ed.length) {
+      var quienE = c.editado_por ? nombreUsuario(c.editado_por) : "";
+      partes.push(quienE ? T("caso_editado_por", { quien: quienE, n: ed.length, fecha: fechaHoraTxt(ed[ed.length - 1]) })
+                         : T("caso_editado_veces", { n: ed.length, fecha: fechaHoraTxt(ed[ed.length - 1]) }));
+    }
+    return partes.join(" · ");
+  }
+
   function renderPerfilUsuario() {
     var sel = document.getElementById("perfil-usuario");
     sel.innerHTML = "";
@@ -12352,6 +12385,7 @@
     nuevo.textContent = T("perfil_usuario_nuevo");
     sel.appendChild(nuevo);
     sel.value = usuarioActual() ? perfilUsuario : "";
+    actualizarPuertaUsuario();
   }
 
   document.getElementById("perfil-usuario").addEventListener("change", function (e) {
@@ -12361,8 +12395,12 @@
       renderTodo();
       return;
     }
-    // Crear un usuario desde aquí, sin tener que ir al diálogo de Catálogos:
-    // es lo primero que hace falta al abrir la herramienta por primera vez.
+    crearUsuarioDesdeAqui();
+  });
+
+  // Crear un usuario desde aquí, sin tener que ir al diálogo de Catálogos:
+  // es lo primero que hace falta al abrir la herramienta por primera vez.
+  function crearUsuarioDesdeAqui() {
     var nombre = (prompt(T("perfil_usuario_pide")) || "").trim();
     if (!nombre) { renderPerfilUsuario(); return; }
     var yaEsta = USUARIOS.filter(function (u) {
@@ -12374,7 +12412,40 @@
     guardarEstado();
     renderPerfilUsuario();
     renderTodo();
-  });
+  }
+
+  /* Puerta de usuario (20-10-2026): sin usuario marcado no se puede usar la
+     herramienta; sale una pantalla que no se cierra con elegir el tuyo o crearlo
+     (lo mínimo, para no bloquear un primer arranque sin usuarios). No es
+     seguridad: sirve para firmar quién crea y quién modifica cada caso y
+     plantilla. No aplica a la demo ni a un espacio de solo lectura (ahí no se
+     escribe y el perfil no se podría guardar). */
+  var dlgQuien = document.getElementById("dlg-quien-eres");
+  dlgQuien.addEventListener("cancel", function (e) { e.preventDefault(); });
+  function puertaUsuarioNecesaria() {
+    return !MODO_DEMO && !ESPACIO.solo_lectura && !usuarioActual();
+  }
+  function actualizarPuertaUsuario() {
+    if (!puertaUsuarioNecesaria()) { if (dlgQuien.open) dlgQuien.close(); return; }
+    var lista = document.getElementById("quien-lista");
+    lista.textContent = "";
+    var centroDisp = centroIdDispositivo();
+    USUARIOS.filter(function (u) {
+      return u.activa !== false && (!centroDisp || !u.centro_id || u.centro_id === centroDisp);
+    }).forEach(function (u) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.textContent = campo(u, "nombre");
+      b.addEventListener("click", function () {
+        fijarPerfilUsuario(u.id);
+        renderPerfilUsuario();
+        renderTodo();
+      });
+      lista.appendChild(b);
+    });
+    if (!dlgQuien.open) dlgQuien.showModal();
+  }
+  document.getElementById("quien-crear").addEventListener("click", crearUsuarioDesdeAqui);
 
   // El desplegable "Perfil" (resaltado de técnicas recomendadas según el
   // tipo de cirugía) se retiró el 05-09-2026 a petición del usuario: ya conoce
@@ -13374,7 +13445,9 @@
     var d = new Date(iso);
     if (isNaN(d.getTime())) return "";
     // Una plantilla que llegó de la nube solo trae el mes (ver seudonimizarMontaje())
-    return T("montaje_modificado", { fecha: esSoloMes(iso) ? fechaHoraTxt(iso) : d.toLocaleDateString(localeActual()) });
+    var fechaTxt = esSoloMes(iso) ? fechaHoraTxt(iso) : d.toLocaleDateString(localeActual());
+    var quien = m.editado_por ? nombreUsuario(m.editado_por) : "";
+    return quien ? T("montaje_modificado_por", { quien: quien, fecha: fechaTxt }) : T("montaje_modificado", { fecha: fechaTxt });
   }
 
   function autorDe(m) {
@@ -13815,6 +13888,11 @@
     fila.appendChild(cab);
     var sub = document.createElement("span");
     sub.className = "montaje-autor";
+    if (m.creado_en) {
+      // Quién la creó y cuándo, al mantener el cursor (en el móvil, el autor ya se ve en la línea)
+      var cd = new Date(m.creado_en);
+      sub.title = T("montaje_creada_por", { quien: autorDe(m), fecha: esSoloMes(m.creado_en) ? fechaHoraTxt(m.creado_en) : (isNaN(cd.getTime()) ? "" : cd.toLocaleDateString(localeActual())) });
+    }
     sub.textContent = autorDe(m) + (yo && m.autor_id === yo.id ? " · " + T("montaje_tuyo") : "") +
       " · " + T("plantilla_entradas", { n: entradas });
     fila.appendChild(sub);
@@ -19753,7 +19831,16 @@
     try { localStorage.setItem(REGISTRO_ABIERTAS_KEY, JSON.stringify(registroAbiertas)); } catch (e) { /* sin persistencia */ }
   }
 
+  // Quién creó el caso y quién lo tocó por última vez, bajo el selector (sin caso: nada)
+  function pintarAutoriaRegistro() {
+    var p = document.getElementById("registro-autoria");
+    var c = registroCaso();
+    p.textContent = c ? textoAutoriaCaso(c) : "";
+    p.hidden = !c;
+  }
+
   function renderRegistroContenido() {
+    pintarAutoriaRegistro();
     var cont = document.getElementById("registro-contenido");
     cont.textContent = "";
     // Fases, eventos y alarmas se apuntan en un solo sitio, arriba de la hoja

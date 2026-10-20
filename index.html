@@ -24,7 +24,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20261020r">
+<link rel="stylesheet" href="style.css?v=20261020s">
 </head>
 <body>
 
@@ -597,6 +597,17 @@
   </div>
 </dialog>
 
+<!-- Puerta de usuario (20-10-2026): no se cierra hasta elegir o crear el tuyo -->
+<dialog id="dlg-quien-eres" class="no-print">
+  <h3 data-i18n="quien_titulo"></h3>
+  <p class="dlg-intro" data-i18n="quien_intro"></p>
+  <div class="autor-opciones" id="quien-lista"></div>
+  <p class="dlg-intro" data-i18n="quien_espera"></p>
+  <div class="dlg-botones">
+    <button type="button" id="quien-crear" class="primario" data-i18n="quien_crear"></button>
+  </div>
+</dialog>
+
 <dialog id="dlg-foto-sonda" class="no-print dlg-ancho">
   <h3 id="foto-sonda-nombre"></h3>
   <img id="foto-sonda-img" alt="">
@@ -1029,6 +1040,7 @@
     <label for="registro-caso-select" data-i18n="checklist_vincular"></label>
     <select id="registro-caso-select" data-i18n-title="modelo0_tit"></select>
   </div>
+  <p class="caso-meta" id="registro-autoria" hidden></p>
   <div id="registro-contenido"></div>
   <div class="dlg-botones no-print">
     <button type="button" id="registro-vaciar" class="peligro" data-i18n="registro_vaciar"></button>
@@ -1308,10 +1320,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20261020r"></script>
-<script src="data/i18n-en.js?v=20261020r"></script>
-<script src="data/guia.js?v=20261020r"></script>
-<script src="data/parametros-tecnicas.js?v=20261020r"></script>
-<script src="app.js?v=20261020r"></script>
+<script src="data/surgeries.js?v=20261020s"></script>
+<script src="data/i18n-en.js?v=20261020s"></script>
+<script src="data/guia.js?v=20261020s"></script>
+<script src="data/parametros-tecnicas.js?v=20261020s"></script>
+<script src="app.js?v=20261020s"></script>
 </body>
 </html>
