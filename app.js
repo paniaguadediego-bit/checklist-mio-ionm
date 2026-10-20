@@ -5967,7 +5967,7 @@
    * hay que revisarla a la vez -son la misma tabla, en dos sitios-.
    * ---------------------------------------------------------------- */
   var COLUMNAS_CSV_CASOS = [
-    "caso_uid", "ID_Caso", "estado", "motivo_cancelacion", "fecha", "centro_id", "centro_codigo", "min_inicio", "min_fin",
+    "caso_uid", "ID_Caso", "estado", "motivo_cancelacion", "fecha", "centro_id", "centro_codigo", "min_inicio", "min_fin", "duracion_min",
     "perfil",
     "edad", "sexo", "antecedentes_relevantes",
     "intervencion", "servicio", "diagnostico",
@@ -5997,6 +5997,9 @@
       case "version_esquema": return esquemaDe(c);
       case "min_inicio": return tMinRelCaso(c, c, "hora_inicio");
       case "min_fin": return tMinRelCaso(c, c, "hora_fin");
+      case "duracion_min":
+        var dI = tMinRelCaso(c, c, "hora_inicio"), dF = tMinRelCaso(c, c, "hora_fin");
+        return tvEsNum(dI) && tvEsNum(dF) ? dF - dI : "";
       case "intervencion": return intervencionDe(c);
       case "servicio": return SERV[c.servicio_id] ? campo(SERV[c.servicio_id], "nombre") : "";
       case "resumen_monitorizacion": return resumenMonitorizacionDe(c);
@@ -9684,7 +9687,13 @@
     if (def.t === "time") {
       // Hora de inicio/fin de la ficha: en minutos desde la incisión (hora real si hay t0 local)
       var cFt = casoAbierto;
-      control = tInputGS(function () { return tRaw(cFt, def.c); }, function (v) { tFijar(cFt, def.c, v); }, cFt);
+      // Caso antiguo, o ya en minutos y sin t0 en este dispositivo: como antes.
+      // Si no, hora real (tInputHoraCaso), también sin t0.
+      if (tLegado(cFt) || (!t0De(cFt) && tvEsNum(tRaw(cFt, def.c)))) {
+        control = tInputGS(function () { return tRaw(cFt, def.c); }, function (v) { tFijar(cFt, def.c, v); }, cFt);
+      } else {
+        control = tInputHoraCaso(cFt, def.c);
+      }
       control.id = "caso-f-" + def.c;
       div.appendChild(control);
       camposCaso[def.c] = control;
@@ -18606,6 +18615,36 @@
       else set(inp.value === "" || isNaN(Number(inp.value)) ? "" : Math.round(Number(inp.value)));
     });
     inp._tRefrescar = ajustar;
+    return inp;
+  }
+  /* Hora de inicio/fin de la FICHA (no depende del Registro): se escribe la hora
+     real, como siempre. Sin referencia (t0) la primera hora escrita se toma como
+     minuto 0 PROVISIONAL, y mientras sea provisional la hora de inicio manda: si
+     se escribe después, el 0 pasa a ser ella y la de fin se reajusta. Al marcar
+     «Incisión» en el Registro, tFijarIncision() mueve todo a la incisión real.
+     Lo que sube son minutos; la hora real no sale del dispositivo. */
+  function tInputHoraCaso(c, f) {
+    var inp = document.createElement("input");
+    inp.type = "time";
+    var e0 = t0De(c), v0 = tRaw(c, f);
+    inp.value = e0 && tvEsNum(v0) ? tHoraReal(e0.ms + v0 * 60000) : "";
+    inp.addEventListener("input", function () {
+      var h = inp.value;
+      if (h === "") { tFijar(c, f, ""); return; }
+      var e = t0De(c);
+      var ms = tMsDeReloj(h);
+      if (!e) {
+        t0Fijar(c, ms, true);
+        tFijar(c, f, 0);
+      } else if (e.prov && f === "hora_inicio") {
+        var delta = Math.round((ms - e.ms) / 60000);
+        if (delta) tDesplazar(c, delta);
+        t0Fijar(c, ms, true);
+        tFijar(c, f, 0);
+      } else {
+        tFijar(c, f, tMinDeReloj(h, e));
+      }
+    });
     return inp;
   }
   function tInputObj(obj, f, c, placeholder, alCambiar, guardar) {
