@@ -2218,6 +2218,9 @@ dialog h3 {
   font-weight: 600;
   color: #fff;
   background: var(--carpeta-color, var(--text-muted));
+  /* E13 (auditoría 20-10-2026): el color de la carpeta oscurecido, para que
+     el número blanco llegue a 4,5:1 también en naranja y turquesa. */
+  background: color-mix(in srgb, var(--carpeta-color, var(--text-muted)) 70%, #000);
   border-radius: 999px;
   padding: 0.05rem 0.5rem;
 }
@@ -3526,6 +3529,9 @@ dialog h3 {
 .demo-inicio[hidden] { display: none; }
 .demo-inicio p { margin: 0 0 0.6rem; }
 body.modo-demo #btn-sync { border-color: var(--aviso-border); color: var(--aviso-border); font-weight: 600; }
+/* E11 (auditoría 20-10-2026): en el tema oscuro el ámbar apagado quedaba a
+   3,3:1 sobre la barra; el del tema claro da 5,3:1. */
+@media screen { :root.tema-oscuro body.modo-demo #btn-sync { border-color: #d99a2b; color: #d99a2b; } }
 
 /* Equipos (25-09-2026): diálogo de elección y marca en la lista de casos. */
 .equipo-opciones { display: flex; flex-direction: column; gap: 0.5rem; margin: 0.6rem 0 0.2rem; }
@@ -4568,7 +4574,7 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
    tonos oscuros legibles en blanco; azul y oscuro = tonos vivos. */
 :root { --fam-aud: #5f5400; --fam-sens: #754b00; --fam-mot: #a02020; --fam-emg: #15603f; --fam-ref: #9a1f62; --fam-eeg: #17549e; --fam-map: #97275e; }
 @media screen {
-  :root:not(.tema-claro) { --fam-aud: #ffe14d; --fam-sens: #f0b429; --fam-mot: #ef4444; --fam-emg: #4cc38a; --fam-ref: #c8408f; --fam-eeg: #5aa9ff; --fam-map: #f7a6c8; }
+  :root:not(.tema-claro) { --fam-aud: #ffe14d; --fam-sens: #f0b429; --fam-mot: #f87171; --fam-emg: #4cc38a; --fam-ref: #ea72ad; --fam-eeg: #5aa9ff; --fam-map: #f7a6c8; }
 }
 /* Sin franja de color a la izquierda (12-10-2026, pedido del usuario): el color queda solo en las etiquetas de técnica */
 .plantilla-fila { position: relative; border-left: 1px solid var(--border-soft); }
@@ -4702,6 +4708,14 @@ body.editando-caso .barra-caso .montajes-acciones { display: none; }
 /* Alcance de la exportación (20-10-2026): etiqueta y desplegable en una fila. */
 .casos-exportar { flex-wrap: wrap; }
 .casos-exportar-alcance { display: flex; align-items: center; gap: 0.4rem; flex: 1 1 100%; }
+/* E10 (auditoría 20-10-2026): el desplegable con el aspecto de «Ordenar». */
+#casos-exportar-alcance { font: inherit; font-size: 0.8rem; padding: 0.3rem 0.35rem; border: 1px solid var(--border); border-radius: var(--r); background: var(--campo-bg); color: var(--text); min-width: 0; }
+/* F31 (auditoría 20-10-2026): zona táctil más grande sin cambiar el aspecto.
+   Colores y Guía crecen solo en vertical (van pegados al ⌂ y al ⋮); las ▲▼
+   de Catálogos, solo en horizontal (van una encima de otra). */
+#btn-colores, #btn-guia, .cat-mover button { position: relative; }
+#btn-colores::after, #btn-guia::after { content: ""; position: absolute; left: 0; right: 0; top: -6px; bottom: -6px; }
+.cat-mover button::after { content: ""; position: absolute; top: 0; bottom: 0; left: -6px; right: -4px; }
 
 /* «Cambiar autor…» de Plantillas (11-10-2026): una opción por fila */
 .autor-opciones { display: flex; flex-direction: column; gap: 0.3rem; max-height: 50vh; overflow-y: auto; margin: 0.4rem 0; }
