@@ -33,6 +33,30 @@ con carpetas de colores, negrita/cursiva, fotos dentro de cada caja y
 de material en filas, con una breve descripción de uso de cada uno; tarjeta
 propia en *Después / consulta*).
 
+**Novedades del 22/10/2026:**
+- **Basales de SEP y MEP con intensidad**: las filas t-SEP, c-SEP, t-MEP y c-MEP
+  llevan **intensidad** (SEP en mA, MEP en mA o V) en lugar de amplitud; la
+  amplitud que ya estuviera escrita se conserva y sale entre paréntesis. El %
+  compara la intensidad (cuenta como cambio fuerte desde +50 %).
+- **Fechas a la vista en dd/mm/aaaa** (mm/aaaa si solo hay mes): Gestión de
+  Casos, filtros, papelera y plantillas.
+- **Móvil**: por debajo de 400 px la pastilla ☁ sube a la primera fila y la
+  cabecera ocupa una sola; colores de los chips motores y de reflejos más
+  legibles en los temas azul y oscuro.
+- **Cerrar caso** pide confirmación siempre (queda con candado 🔒 hasta
+  «Reabrir caso»).
+- **Organizador**: fuera el botón «Guardar plantilla» (la plantilla se guarda
+  sola; para guardarla como nueva, **Duplicar**).
+- **Catálogos**: «Restablecer» baja al final, junto a Cerrar, y se llama
+  **Borrar plantillas y volver a fábrica…**.
+- **Usuarios**: «+ Añadir usuario…» y «Crear mi usuario» abren un diálogo con
+  **nombre** (opcional) e **iniciales**; la cabecera y la autoría muestran las
+  iniciales; Catálogos → Usuarios tiene el campo Iniciales; cambiar de usuario
+  pide confirmación.
+- **Registro**: H-R Sóleo sale una sola vez en la hoja de evento/alarma, en
+  Reflejos medulares; «Criterio de alarma» en los parámetros de técnicas;
+  «Abrir en el Registro» del mismo tamaño que «Borrador del resumen».
+
 **Novedades del 9 y 10/10/2026:**
 - **GRID en el Mapeo**: en **Basales** el GRID solo lleva los umbrales (filas
   c-MEP y c-SEP, A y B con dos mantas). El **Mapeo** recoge, por cada GRID (A, y
@@ -135,6 +159,8 @@ propia en *Después / consulta*).
   dispositivo (botón al pie de Gestión de Casos), donde se recupera durante 30
   días.
 - **Basales**: la amplitud de los motores va en **mV** (la onda D, en µV).
+  (Desde el 22-10-2026, t-SEP, c-SEP, t-MEP y c-MEP llevan intensidad en vez
+  de amplitud: ver Novedades del 22/10/2026.)
 - **Resumen de técnicas y material**: en el portátil, el material y las cajas
   ya no se solapan (si no caben en dos columnas, el material va encima).
 - **Centros** (preparado para un estudio entre dos hospitales, sin usar todavía):
@@ -155,7 +181,8 @@ propia en *Después / consulta*).
   casos de hoy, primeros en el selector; el Cierre ya no lleva la perla docente.
 - **Basales** como lista por técnica: una línea con lo apuntado y el cambio en %
   respecto a la basal; al tocarla, casillas grandes por fase (sensitivos
-  amplitud en µV y latencia en ms; motores amplitud en µV y umbral en mA o V) y
+  amplitud en µV y latencia en ms; motores amplitud en µV y umbral en mA o V;
+  desde el 22-10-2026, intensidad en t-SEP, c-SEP, t-MEP y c-MEP) y
   **= Basal** para copiar la basal cuando no hay cambios.
 - **Ficha**: campos cortos en una misma fila; ⋮ → **Abrir en el Registro**;
   **Borrador desde el Registro** para el resumen; aviso de lo que falta al
@@ -386,7 +413,7 @@ como Gestión de Casos, en **dos pantallas**:
    (eliges el equipo y se abre la nueva), Buscar, Equipo, Solo favoritas ★ y
    **Ordenar por** (nombre o última modificación), y la lista.
 2. **La edición de una plantilla** (al tocarla): el **rótulo** con su nombre,
-   **Guardar plantilla** y **Más acciones** (Duplicar, Renombrar, Vaciar, Borrar);
+   y **Más acciones** (Duplicar, Renombrar, Vaciar, Borrar);
    debajo **Cajas** (ya abierta), **Técnicas**, **Resumen** y **Notas**, con el
    **Catálogo** al lado (en el móvil, encima). Se vuelve a la lista con
    **Plantillas** en la ruta del título («Plantillas › nombre») o con el atrás
@@ -416,11 +443,10 @@ Elegir una plantilla **la abre en su pantalla de edición, sin preguntar**: no h
 ningún riesgo, cada montaje es su propio archivo y el anterior se queda
 guardado tal cual.
 
-**Duplicar, Renombrar, Vaciar y Borrar** (en el menú **Más acciones ▾**, junto
-al botón principal **Guardar plantilla**) actúan sobre el montaje que tengas
-cargado en ese momento. **Guardar plantilla** pregunta cada vez si quieres
-sobrescribir el activo o guardarlo como uno nuevo — una confirmación
-explícita, aparte del guardado automático de siempre en cada colocación.
+**Duplicar, Renombrar, Vaciar y Borrar** (en el menú **Más acciones ▾**)
+actúan sobre el montaje que tengas cargado en ese momento. La plantilla se
+guarda sola en cada colocación; el botón «Guardar plantilla» se quitó el
+22-10-2026 (para guardarla como una nueva, **Duplicar**).
 Cada montaje muestra su **autor**: los tuyos llevan una marca lateral para
 reconocerlos entre los de un compañero. Desde el 11-10-2026 **las plantillas
 son de todo el grupo**: cualquiera puede editar, renombrar, vaciar, borrar o
@@ -440,7 +466,9 @@ marcada, como *Renombrar*) deja elegir el autor entre los usuarios activos o
 **Perfil de usuario** (arriba a la izquierda, junto al logo): quién eres.
 Desde el 20-10-2026 es **obligatorio**: al abrir la herramienta sin usuario
 elegido sale una pantalla «¿Quién eres?» que no se puede cerrar; eliges tu
-usuario o creas el tuyo (tus iniciales, por ejemplo). No hay contraseña: sirve
+usuario o creas el tuyo, con tu **nombre** (opcional) y tus **iniciales**, que
+son lo que se ve en la cabecera y en la autoría (22-10-2026; cambiar de usuario
+pide confirmación). No hay contraseña: sirve
 para firmar quién **crea** y quién **modifica por última vez** cada caso y cada
 plantilla, con su fecha. Se ve en la ficha del caso, bajo el selector del
 Registro y en la lista de plantillas. La fecha exacta se ve en el dispositivo
@@ -611,7 +639,8 @@ Centros (Intervenciones y Perfiles se ocultaron el 20-10-2026: la intervención
 se escribe en texto libre y los perfiles no se usan; el dato y el catálogo
 siguen ahí). En todas funciona igual: **▲▼** para
 reordenar, el nombre para editarlo, y **☑** para activar o desactivar.
-Arriba del todo, dentro de ese mismo diálogo, está **Restablecer**. (Los
+Al final de ese mismo diálogo, junto a Cerrar, está **Borrar plantillas y
+volver a fábrica…** (antes «Restablecer», arriba del todo). (Los
 botones Exportar copia, Importar copia e Imprimir se retiraron el 20-10-2026:
 no aportaban nada; la copia de seguridad es el repositorio de datos.)
 
@@ -852,8 +881,8 @@ al salir guarda lo que quede); **Guardar** sigue ahí como confirmación visible
 Solo deja de guardarse sola si falta la fecha o si el caso cambió en otro
 dispositivo mientras lo tenías abierto: entonces avisa y decide **Guardar**.
 Para cerrar el caso,
-pulsa **Cerrar caso** en la barra de abajo (guarda la ficha con el estado
-*Cerrado* y vuelve a la lista); en un caso cerrado el mismo botón es
+pulsa **Cerrar caso** en la barra de abajo (pide confirmación, guarda la ficha
+con el estado *Cerrado* y vuelve a la lista); en un caso cerrado el mismo botón es
 **Reabrir caso**. También se puede cambiar el campo **Estado** a mano. La barra
 de acciones fija de abajo del diálogo, siempre visible aunque hayas bajado
 en el scroll de los apartados, va en una sola fila (29-09-2026): el menú **⋮**
@@ -1179,7 +1208,10 @@ elegido. Lo que hay dentro es lo de siempre, casi todo con toques:
   (Basal, PostPos1, PostPos2, Cierre), con dos casillas y la unidad en el
   encabezado: **sensitivos** amplitud (µV) y latencia (ms); **motores**
   amplitud (**mV**; la onda D, en **µV**) y umbral (mA o V); sin respuesta,
-  amplitud 0. **= Basal** copia la basal cuando no hay cambios.
+  amplitud 0. **t-SEP y c-SEP** llevan **intensidad (mA)** y latencia, y
+  **t-MEP y c-MEP** **intensidad (mA o V)** y umbral (22-10-2026); la amplitud
+  escrita antes sale entre paréntesis. **= Basal** copia la basal cuando no hay
+  cambios.
 - **Varias técnicas a la vez**: se pueden marcar varias técnicas y lados
   (bilateral, hemicorporal, brazo-pierna-cara, cruzado…) y se apuntan juntas
   como **una sola** alarma o evento («t-MEP MSD + t-MEP MID»), con una causa,
@@ -1606,8 +1638,9 @@ volver a sembrar uno, no basta con rellenar `"escenarios"` en
 `data/surgeries.js` — ver el aviso en *Añadir un montaje de fábrica a mano
 en el JSON* más abajo antes de hacerlo.
 
-**Restablecer** borra lo guardado en el navegador y vuelve a los montajes
-y al catálogo del archivo.
+**Borrar plantillas y volver a fábrica…** (al final de Catálogos; antes
+«Restablecer») borra lo guardado en el navegador y vuelve a los montajes y al
+catálogo del archivo.
 
 ## Añadir material al catálogo editando el archivo
 
@@ -2069,7 +2102,8 @@ y TOF se quitaron el 28-09-2026; el TOF sigue como botón de la hoja de apuntar 
 
 Unidades (en la cabecera de cada tabla): sensitivos, amplitud en **µV** y
 latencia en ms; motores, amplitud en **mV** (la onda D, en **µV**) y umbral en
-mA o V.
+mA o V. Excepción (22-10-2026): t-SEP y c-SEP llevan intensidad en **mA** y
+t-MEP y c-MEP intensidad en **mA o V**, en lugar de amplitud.
 
 ## Modo demostración
 

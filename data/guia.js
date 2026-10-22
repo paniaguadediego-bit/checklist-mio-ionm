@@ -45,7 +45,7 @@ window.GUIA = {
       ] },
       { titulo: "Gestión de Casos", texto: "Una ficha por cirugía.", puntos: [
         "Crear caso: eliges el equipo (Inomed, Cadwell o Genérico, para cualquier otra marca).",
-        "La ficha se guarda sola; «Cerrar caso» al terminar: queda con candado 🔒 (solo lectura y sin borrar) hasta «Reabrir caso».",
+        "La ficha se guarda sola; «Cerrar caso» al terminar (pide confirmación): queda con candado 🔒 (solo lectura y sin borrar) hasta «Reabrir caso».",
         "⋮ → Abrir en el Registro, para apuntar en ese caso.",
         "Resumen: «Borrador desde el Registro» lo escribe a partir del cronograma.",
         "Informe en PDF y CSV de los casos filtrados.",
