@@ -39,6 +39,7 @@ Preguntar a Pani por las decisiones abiertas de la sección 4, todas juntas. Si 
 - T24, menor: renombrar las clases `.sync-personal-*`.
 - F11, efecto secundario: a 360 px el selector de perfil se queda en ≈70 px. Con iniciales cabe (ahora la cabecera enseña las iniciales).
 - Plantillas Cadwell, para revisar con Pani: femoral derecho en la ES1 del módulo 4 (LOE Med T2-T3), `l_v3` repetido en el original de «MAV – tronco», cremáster duplicado en el original de «D-Wave + BCR», salidas del LCSwap en las tres con estimulación directa por grid, puentes de Inomed quitados.
+- Piloto: cuando los médicos de los otros dos hospitales con Inomed tengan su repo de datos, copiarles las plantillas de Inomed de «Archivo» (solo archivos nuevos en `montajes/`). La organización del piloto queda archivada por decisión de Pani (no la usa ningún espacio).
 - Piloto: con quién se comparte el Sheet; consulta al delegado de protección de datos de cada hospital.
 - Pendientes de antes: retirar del todo intervenciones y perfiles (aparcado, opción B); columnas `creado_por`/`editado_por` en el Sheet; Sheet viejo con `CONGELADO = 1`; espacio vacío de más; casos con datos dudosos (están en el diario privado).
 
