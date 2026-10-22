@@ -412,7 +412,7 @@
     guardar_montaje_nuevo: { es: "Guardar como nuevo", en: "Save as new" },
     guardar_montaje_sobrescribir: { es: "Sobrescribir este", en: "Overwrite this one" },
     montaje_guardado:    { es: "Plantilla guardada.", en: "Template saved." },
-    btn_restablecer:     { es: "Restablecer", en: "Reset" },
+    btn_restablecer:     { es: "Borrar plantillas y volver a fábrica…", en: "Delete templates and restore defaults…" },
 
     /* --- Estado de guardado y sincronización --- */
     guardado_local:      { es: "Los cambios se guardan solos en este navegador.",
@@ -854,6 +854,15 @@
     quien_espera:        { es: "Si tu nombre no aparece, espera unos segundos a que termine de descargarse de la nube.",
                            en: "If your name is not listed, wait a few seconds for the cloud download to finish." },
     quien_crear:         { es: "+ Crear mi usuario", en: "+ Create my user" },
+    usuario_nuevo_titulo: { es: "Tu usuario", en: "Your user" },
+    usuario_nuevo_intro: { es: "Aparecerá como autor de los casos y plantillas que crees o modifiques. No es una contraseña.",
+                           en: "It will appear as the author of the cases and templates you create or edit. It is not a password." },
+    campo_iniciales:     { es: "Iniciales", en: "Initials" },
+    usuario_nombre_ay:   { es: "Opcional. Sale en la lista de usuarios.", en: "Optional. Shown in the user list." },
+    usuario_iniciales_ay: { es: "Es lo que se ve en la cabecera y en «Creado por».", en: "Shown in the header and in «Created by»." },
+    usuario_falta_iniciales: { es: "Escribe tus iniciales.", en: "Type your initials." },
+    perfil_usuario_cambiar_conf: { es: "¿Cambiar de usuario a {nombre}?\nLo que crees o modifiques desde ahora quedará firmado con ese usuario.",
+                           en: "Switch user to {nombre}?\nWhat you create or edit from now on will be signed with that user." },
     caso_creado_en:      { es: "Creado · {fecha}", en: "Created · {fecha}" },
 
     /* Etiquetas de los campos del caso */
@@ -12119,6 +12128,11 @@
 
     // Con centros dados de alta, cada usuario puede ir con el suyo: el
     // selector «quién eres» enseña solo los del centro de este dispositivo.
+    if (catPestana === "usuarios") {
+      var cIni = catInput(actual ? actual.iniciales : "", 6);
+      cIni.className = "usuario-iniciales";
+      cont.appendChild(catCampo("iniciales", T("campo_iniciales"), cIni, T("usuario_iniciales_ay")));
+    }
     if (catPestana === "usuarios" && activos(CENTROS).length) {
       cont.appendChild(catCampo("centro", T("cat_campo_centro"),
         catSelect([{ valor: "", texto: T("cat_sin_centro") }].concat(opcionesCentros(actual && actual.centro_id)),
@@ -12251,8 +12265,10 @@
       var codRep = CENTROS.filter(function (e) { return e.id !== catEditando && e.codigo === cod; })[0];
       if (codRep) { catError(T("cat_centro_codigo_rep", { codigo: cod })); return; }
       dato.codigo = cod;
-    } else if (catPestana === "usuarios" && catCampos.centro) {
-      dato.centro_id = catCampos.centro.value;
+    } else if (catPestana === "usuarios") {
+      if (catCampos.centro) dato.centro_id = catCampos.centro.value;
+      var iniCat = catCampos.iniciales ? (catCampos.iniciales.value || "").trim().toUpperCase() : "";
+      if (iniCat) dato.iniciales = iniCat; else delete dato.iniciales;
     }
 
     guardarEnCatalogo(catPestana, dato);
@@ -12386,7 +12402,18 @@
   }
 
   function nombreUsuario(id) {
-    return USRS[id] ? campo(USRS[id], "nombre") : "";
+    return USRS[id] ? nombreCortoUsuario(USRS[id]) : "";
+  }
+
+  // F30 (22-10-2026): las iniciales, si las tiene; si no, el nombre (los
+  // usuarios de antes guardaban las iniciales como nombre).
+  function nombreCortoUsuario(u) {
+    return (u.iniciales || "").trim() || campo(u, "nombre");
+  }
+  // Para las listas: «Nombre (INI)», o lo que haya.
+  function nombreLargoUsuario(u) {
+    var n = campo(u, "nombre") || "", i = (u.iniciales || "").trim();
+    return i && i.toLowerCase() !== n.toLowerCase() ? n + " (" + i + ")" : (n || i);
   }
 
   // Id del usuario activo, o "" si aún no ha dicho quién es
@@ -12432,7 +12459,7 @@
     }).forEach(function (u) {
       var o = document.createElement("option");
       o.value = u.id;
-      o.textContent = campo(u, "nombre");
+      o.textContent = nombreCortoUsuario(u);
       sel.appendChild(o);
     });
     var nuevo = document.createElement("option");
@@ -12445,6 +12472,13 @@
 
   document.getElementById("perfil-usuario").addEventListener("change", function (e) {
     if (e.target.value !== "__nuevo__") {
+      // F30 (22-10-2026): pasar de un usuario a otro se confirma
+      var nuevoU = USRS[e.target.value];
+      if (usuarioActual() && nuevoU && e.target.value !== perfilUsuario &&
+          !confirm(T("perfil_usuario_cambiar_conf", { nombre: nombreLargoUsuario(nuevoU) }))) {
+        renderPerfilUsuario();
+        return;
+      }
       fijarPerfilUsuario(e.target.value);
       renderPerfilUsuario();
       renderTodo();
@@ -12455,19 +12489,41 @@
 
   // Crear un usuario desde aquí, sin tener que ir al diálogo de Catálogos:
   // es lo primero que hace falta al abrir la herramienta por primera vez.
+  // F30 (22-10-2026, decisión de Pani): diálogo propio con nombre (opcional)
+  // e iniciales, en vez de prompt(). Si ya hay alguien con esas iniciales o
+  // ese nombre, se elige ese en vez de crear otro, como antes.
+  var dlgUsuarioNuevo = document.getElementById("dlg-usuario-nuevo");
   function crearUsuarioDesdeAqui() {
-    var nombre = (prompt(T("perfil_usuario_pide")) || "").trim();
-    if (!nombre) { renderPerfilUsuario(); return; }
+    document.getElementById("usuario-nuevo-nombre").value = "";
+    document.getElementById("usuario-nuevo-iniciales").value = "";
+    document.getElementById("usuario-nuevo-error").hidden = true;
+    dlgUsuarioNuevo.showModal();
+    enfocarSinTeclado(document.getElementById("usuario-nuevo-nombre"));
+  }
+  function cerrarUsuarioNuevo() {
+    dlgUsuarioNuevo.close();
+    renderPerfilUsuario();
+  }
+  dlgUsuarioNuevo.addEventListener("cancel", function (e) { e.preventDefault(); cerrarUsuarioNuevo(); });
+  document.getElementById("usuario-nuevo-cancelar").addEventListener("click", cerrarUsuarioNuevo);
+  document.getElementById("usuario-nuevo-guardar").addEventListener("click", function () {
+    var nombre = (document.getElementById("usuario-nuevo-nombre").value || "").trim();
+    var ini = (document.getElementById("usuario-nuevo-iniciales").value || "").trim().toUpperCase();
+    var err = document.getElementById("usuario-nuevo-error");
+    if (!ini) { err.textContent = T("usuario_falta_iniciales"); err.hidden = false; return; }
+    if (!nombre) nombre = ini;
     var yaEsta = USUARIOS.filter(function (u) {
-      return (campo(u, "nombre") || "").toLowerCase() === nombre.toLowerCase();
+      var n = (campo(u, "nombre") || "").toLowerCase(), i = nombreCortoUsuario(u).toLowerCase();
+      return i === ini.toLowerCase() || n === nombre.toLowerCase();
     })[0];
     var id = yaEsta ? yaEsta.id : idLibreEn(USRS, "u_", nombre);
-    if (!yaEsta) guardarEnCatalogo("usuarios", { id: id, nombre: nombre, activa: true, centro_id: centroIdDispositivo() });
+    if (!yaEsta) guardarEnCatalogo("usuarios", { id: id, nombre: nombre, iniciales: ini, activa: true, centro_id: centroIdDispositivo() });
     fijarPerfilUsuario(id);
     guardarEstado();
+    dlgUsuarioNuevo.close();
     renderPerfilUsuario();
     renderTodo();
-  }
+  });
 
   /* Puerta de usuario (20-10-2026): sin usuario marcado no se puede usar la
      herramienta; sale una pantalla que no se cierra con elegir el tuyo o crearlo
@@ -12490,7 +12546,7 @@
     }).forEach(function (u) {
       var b = document.createElement("button");
       b.type = "button";
-      b.textContent = campo(u, "nombre");
+      b.textContent = nombreLargoUsuario(u);
       b.addEventListener("click", function () {
         fijarPerfilUsuario(u.id);
         renderPerfilUsuario();
@@ -20997,6 +21053,13 @@
           if (tecCaso.indexOf("rbc") !== -1) {
             var rbcExtra = REG_QUE_EXTRA.filter(function (x) { return x.tec && x.tec.indexOf("rbc") !== -1; })[0];
             if (rbcExtra) resto = resto.filter(function (p) { return p[1] !== campo(rbcExtra, "l"); });
+          }
+          // F25 (22-10-2026, decisión de Pani): «H-R Sóleo D/I» de Técnicas es
+          // el mismo H-R de Reflejos medulares; se queda solo allí
+          if (tecCaso.indexOf("hr_popliteo") !== -1) {
+            var hrFilas = REG_BASALES_MOT.filter(function (x) { return x.tec && x.tec.indexOf("hr_popliteo") !== -1; })
+              .map(function (x) { return campo(x, "l"); });
+            resto = resto.filter(function (p) { return hrFilas.indexOf(p[1]) === -1; });
           }
           resto = resto.slice();
           // De tronco y medulares, cada uno en su fila (04-10-2026)

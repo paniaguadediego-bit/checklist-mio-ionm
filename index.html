@@ -24,7 +24,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20261022h">
+<link rel="stylesheet" href="style.css?v=20261022i">
 </head>
 <body>
 
@@ -607,6 +607,28 @@
   <p class="dlg-intro dlg-dato" data-i18n="quien_espera"></p>
   <div class="dlg-botones">
     <button type="button" id="quien-crear" class="primario" data-i18n="quien_crear"></button>
+  </div>
+</dialog>
+
+<!-- F30 (22-10-2026, decisión de Pani): crear usuario con nombre e iniciales, sin prompt() -->
+<dialog id="dlg-usuario-nuevo" class="no-print">
+  <h3 data-i18n="usuario_nuevo_titulo"></h3>
+  <p class="dlg-intro dlg-dato" data-i18n="usuario_nuevo_intro"></p>
+  <div class="campo">
+    <label for="usuario-nuevo-nombre" data-i18n="campo_nombre"></label>
+    <input id="usuario-nuevo-nombre" maxlength="60" autocomplete="off">
+    <small data-i18n="usuario_nombre_ay"></small>
+  </div>
+  <div class="campo">
+    <label for="usuario-nuevo-iniciales"><span data-i18n="campo_iniciales"></span> <span class="req">*</span></label>
+    <input id="usuario-nuevo-iniciales" maxlength="6" autocomplete="off" class="usuario-iniciales">
+    <small data-i18n="usuario_iniciales_ay"></small>
+  </div>
+  <p class="dlg-error" id="usuario-nuevo-error" hidden></p>
+  <div class="dlg-botones">
+    <span class="barra-flex"></span>
+    <button type="button" id="usuario-nuevo-cancelar" data-i18n="cancelar"></button>
+    <button type="button" id="usuario-nuevo-guardar" class="primario" data-i18n="guardar"></button>
   </div>
 </dialog>
 
@@ -1283,12 +1305,6 @@
 <dialog id="dlg-catalogos" class="no-print">
   <h3 data-i18n="dlg_cat_titulo"></h3>
 
-  <div class="dlg-botones">
-    <button type="button" id="btn-restablecer" class="peligro" data-i18n="btn_restablecer"></button>
-  </div>
-
-  <hr class="dlg-sep">
-
   <div class="pestanas" id="cat-pestanas"></div>
 
   <p class="dlg-intro" id="cat-intro"></p>
@@ -1316,16 +1332,18 @@
 
   <hr class="dlg-sep">
 
+  <!-- F22 (22-10-2026, decisión de Pani): «Restablecer» al final, con nombre claro -->
   <div class="dlg-botones">
+    <button type="button" id="btn-restablecer" class="peligro" data-i18n="btn_restablecer"></button>
     <span class="barra-flex"></span>
     <button type="button" id="cat-cerrar" data-i18n="cerrar"></button>
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20261022h"></script>
-<script src="data/i18n-en.js?v=20261022h"></script>
-<script src="data/guia.js?v=20261022h"></script>
-<script src="data/parametros-tecnicas.js?v=20261022h"></script>
-<script src="app.js?v=20261022h"></script>
+<script src="data/surgeries.js?v=20261022i"></script>
+<script src="data/i18n-en.js?v=20261022i"></script>
+<script src="data/guia.js?v=20261022i"></script>
+<script src="data/parametros-tecnicas.js?v=20261022i"></script>
+<script src="app.js?v=20261022i"></script>
 </body>
 </html>
