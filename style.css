@@ -4465,6 +4465,9 @@ body:not(.editando-caso) #barra-caso-prefijo { color: var(--accent); }
 .rr-magnitud input { width: 4.2rem; font: inherit; font-size: 0.85rem; padding: 0.2rem 0.35rem; border: 1px solid var(--border); border-radius: var(--r); background: var(--campo-bg); color: var(--text); text-align: right; }
 .reg-p-magnitud { width: 3.6rem; font: inherit; font-size: 0.8rem; padding: 0.2rem 0.3rem; border: 1px solid var(--border); border-radius: var(--r); background: var(--campo-bg); color: var(--text); text-align: right; }
 /* Borrador del resumen desde el Registro */
+/* F27 y F34 (22-10-2026): duración bajo las horas y «Abrir en el Registro» dentro de Desarrollo */
+.caso-duracion { margin: 0.25rem 0 0; font-size: 0.82rem; color: var(--text-muted); }
+.caso-ir-registro-dentro { align-self: flex-start; margin-bottom: 0.4rem; font: inherit; font-size: 0.82rem; padding: 0.35rem 0.7rem; border: 1px solid var(--accent); border-radius: var(--r); background: var(--accent-soft); color: var(--accent); cursor: pointer; }
 .caso-borrador-resumen { margin-top: 0.35rem; font: inherit; font-size: 0.78rem; padding: 0.35rem 0.7rem; border: 1px solid var(--accent); border-radius: var(--r); background: var(--accent-soft); color: var(--accent); cursor: pointer; }
 /* Ficha: campos cortos en una misma línea (30-09-2026, pedido del usuario) */
 .campos-fila { display: grid; gap: 0 0.5rem; align-items: start; }

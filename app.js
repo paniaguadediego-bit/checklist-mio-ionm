@@ -822,11 +822,16 @@
                            en: "No montage saved (case recorded by hand)." },
     caso_material_real_ay: { es: "Viene relleno con lo previsto. Cambia solo lo que gastaste de más o de menos.",
                              en: "Pre-filled with what was planned. Change only what you used more or less of." },
-    caso_editado_veces:  { es: "Editado {n} vez/veces · última: {fecha}",
-                           en: "Edited {n} time(s) · last: {fecha}" },
+    caso_editado_veces:  { es: "Editado {veces} · última: {fecha}",
+                           en: "Edited {veces} · last: {fecha}" },
+    caso_n_veces_1:      { es: "1 vez", en: "once" },
+    caso_n_veces:        { es: "{n} veces", en: "{n} times" },
+    caso_n_ediciones_1:  { es: "1 edición", en: "1 edit" },
+    caso_n_ediciones:    { es: "{n} ediciones", en: "{n} edits" },
+    caso_duracion:       { es: "Duración: {d}", en: "Duration: {d}" },
     caso_creado_por:     { es: "Creado por {quien} · {fecha}", en: "Created by {quien} · {fecha}" },
-    caso_editado_por:    { es: "Última modificación por {quien} · {fecha} · {n} edición/ediciones",
-                           en: "Last modified by {quien} · {fecha} · {n} edit(s)" },
+    caso_editado_por:    { es: "Última modificación por {quien} · {fecha} · {ediciones}",
+                           en: "Last modified by {quien} · {fecha} · {ediciones}" },
     montaje_modificado_por: { es: "modificada por {quien} · {fecha}", en: "modified by {quien} · {fecha}" },
     montaje_creada_por:  { es: "Creada por {quien} · {fecha}", en: "Created by {quien} · {fecha}" },
     quien_titulo:        { es: "¿Quién eres?", en: "Who are you?" },
@@ -835,7 +840,7 @@
     quien_espera:        { es: "Si tu nombre no aparece, espera unos segundos a que termine de descargarse de la nube.",
                            en: "If your name is not listed, wait a few seconds for the cloud download to finish." },
     quien_crear:         { es: "+ Crear mi usuario", en: "+ Create my user" },
-    caso_creado_en:      { es: "Archivo creado {fecha}", en: "File created {fecha}" },
+    caso_creado_en:      { es: "Creado · {fecha}", en: "Created · {fecha}" },
 
     /* Etiquetas de los campos del caso */
     caso_fecha:          { es: "Fecha de la cirugía", en: "Date of surgery" },
@@ -866,7 +871,7 @@
     caso_servicio_id:    { es: "Servicio", en: "Specialty" },
     caso_intervencion:   { es: "Intervención", en: "Procedure" },
     caso_tecnicas_realizadas: { es: "Técnicas realizadas", en: "Techniques performed" },
-    caso_alerta:         { es: "Hubo alerta", en: "There was an alert" },
+    caso_alerta:         { es: "Hubo alarma", en: "There was an alarm" },
     caso_tecnicas_alteradas: { es: "Técnicas con alteración", en: "Techniques with an alteration" },
     caso_tecnicas_alteradas_ay: { es: "Marca las técnicas realizadas que tuvieron algún cambio, hallazgo o aviso durante la cirugía.",
                                   en: "Tick the techniques performed that had some change, finding or alert during surgery." },
@@ -995,7 +1000,7 @@
     caso_resumen_monitorizacion: { es: "Resumen de la monitorización", en: "Monitoring summary" },
     caso_resumen_monitorizacion_ay: { es: "De corrido: qué salió al empezar (basal), qué pasó por el camino, y qué salió al cerrar (cierre). Por ejemplo: «SEP y MEP normales en la basal […] descargas de alta frecuencia a las 14.20h, ceden solas […] al cierre, similares a las de apertura».",
                            en: "In sequence: what came out at the start (baseline), what happened along the way, and what came out at closing. E.g.: “SEP and MEP normal at baseline […] high-frequency discharges at 2:20pm, resolve on their own […] at closing, similar to opening”." },
-    caso_tipo_alerta:    { es: "Tipo de alerta", en: "Type of alert" },
+    caso_tipo_alerta:    { es: "Tipo de alarma", en: "Type of alarm" },
     caso_medida_correctora: { es: "Medida correctora", en: "Corrective action" },
     caso_recuperacion_senal: { es: "Resultado de la señal", en: "Signal outcome" },
     caso_recuperacion_senal_ay: { es: "Cómo terminó la monitorización. Solo se apunta aquí, en la ficha.",
@@ -1004,8 +1009,8 @@
     opc_recuperacion_senal_transitorios: { es: "Cambios transitorios recuperados", en: "Transient changes, recovered" },
     opc_recuperacion_senal_persistentes: { es: "Cambios persistentes", en: "Persistent changes" },
     caso_alarmas_registro: { es: "Alarmas", en: "Alarms" },
-    caso_alarmas_registro_ay: { es: "Son las alarmas del Registro intraoperatorio: lo que escribas aquí sale allí y en la hoja impresa, y al revés. Con ellas se rellenan solos «Tipo de alerta» y «Medida correctora» al exportar.",
-                           en: "These are the alarms of the intraoperative record: what you enter here appears there and on the printed sheet, and vice versa. They fill in “Type of alert” and “Corrective action” on export." },
+    caso_alarmas_registro_ay: { es: "Son las alarmas del Registro intraoperatorio: lo que escribas aquí sale allí y en la hoja impresa, y al revés. Con ellas se rellenan solos «Tipo de alarma» y «Medida correctora» al exportar.",
+                           en: "These are the alarms of the intraoperative record: what you enter here appears there and on the printed sheet, and vice versa. They fill in “Type of alarm” and “Corrective action” on export." },
     caso_mapeo_registro: { es: "Mapeo", en: "Mapping" },
     caso_mapeo_registro_ay: { es: "Es el Mapeo del Registro intraoperatorio (el mismo dato, en los dos sitios). Cada bloque aparece si su técnica está marcada.",
                            en: "It is the Mapping of the intraoperative record (the same data, in both places). Each block appears if its technique is ticked." },
@@ -1022,8 +1027,8 @@
     opc_evolucion_postop_no_valorable:       { es: "No valorable", en: "Not assessable" },
     caso_concordancia_propuesta: { es: "Propuesta según alarmas, resultado de la señal y evolución: {v}", en: "Suggested from alarms, signal outcome and evolution: {v}" },
     caso_concordancia_aplicar: { es: "Aplicar", en: "Apply" },
-    caso_conc_alerta:     { es: "Hubo alerta", en: "Alert" },
-    caso_conc_sin_alerta: { es: "Sin alerta", en: "No alert" },
+    caso_conc_alerta:     { es: "Hubo alarma", en: "Alarm" },
+    caso_conc_sin_alerta: { es: "Sin alarma", en: "No alarm" },
     caso_salir_guardar:   { es: "Hay cambios sin guardar en la ficha.\n\n¿Guardarlos antes de salir?", en: "There are unsaved changes in the case form.\n\nSave them before leaving?" },
     modelo0_tit:          { es: "Sin caso: hoja suelta en este dispositivo, sin sincronizar. Elige un caso para que se guarde dentro de él.", en: "No case: a loose sheet on this device, not synced. Choose a case to save it inside that case." },
     caso_autoguardado:    { es: "Guardado.", en: "Saved." },
@@ -1163,7 +1168,7 @@
     inicio_grupo_en:      { es: "Quirófano", en: "Operating room" },
     inicio_grupo_despues: { es: "Después / consulta", en: "After / reference" },
     tile_organizador_sub: { es: "Qué electrodo va en cada canal", en: "Which electrode goes in each channel" },
-    tile_casos_sub:       { es: "Cada cirugía: planificación, basales, alertas y cierre", en: "Each surgery: planning, baselines, alerts and closure" },
+    tile_casos_sub:       { es: "Cada cirugía: planificación, basales, alarmas y cierre", en: "Each surgery: planning, baselines, alarms and closure" },
     tile_checklist_sub:   { es: "Que no se olvide nada antes de monitorizar", en: "Nothing forgotten before monitoring starts" },
     tile_material_sub:    { es: "Cada electrodo y sonda, y para qué sirve", en: "Every electrode and probe, and what it is for" },
     tile_registro_sub:    { es: "Hoja de quirófano imprimible: hitos, eventos, alarmas", en: "Printable OR sheet: milestones, events, alarms" },
@@ -1211,8 +1216,8 @@
     tour_x_caso_montaje: { es: "El montaje real del caso (se corrige en el Organizador) y el material. Las técnicas realizadas, con sus parámetros (intensidad, duración, músculos…), van en su propio apartado, «Técnicas», justo debajo. Admite fotos de la pantalla del equipo para consultarlas en un caso parecido.",
                            en: "The case's actual montage (corrected in the Organiser) and the material. The techniques performed, with their parameters (intensity, duration, muscles…), have their own section, “Techniques”, just below. You can add photos of the machine's screen to look up in a similar case." },
     tour_t_caso_desarrollo: { es: "Desarrollo intraoperatorio", en: "Intraoperative course" },
-    tour_x_caso_desarrollo: { es: "Basales de apertura, post-posición y cierre; lo que pasó durante la cirugía; la alerta con su criterio, la medida correctora y si se recuperó la señal; las técnicas que se alteraron y los cambios respecto al plan.",
-                           en: "Opening, post-positioning and closing baselines; what happened during surgery; the alert with its criterion, the corrective measure and whether the signal recovered; the techniques that changed and any change from the plan." },
+    tour_x_caso_desarrollo: { es: "Basales de apertura, post-posición y cierre; lo que pasó durante la cirugía; la alarma con su criterio, la medida correctora y si se recuperó la señal; las técnicas que se alteraron y los cambios respecto al plan.",
+                           en: "Opening, post-positioning and closing baselines; what happened during surgery; the alarm with its criterion, the corrective measure and whether the signal recovered; the techniques that changed and any change from the plan." },
     tour_t_caso_resultado: { es: "Resultado y concordancia", en: "Outcome and concordance" },
     tour_x_caso_resultado: { es: "El déficit postoperatorio y la concordancia de la monitorización con la clínica: VP, FP, VN, FN y PR (positivo reversible: hubo cambio, se recuperó al actuar y no quedó déficit). En Gestión de Casos se filtra por concordancia.",
                            en: "The postoperative deficit and how monitoring matched the clinical outcome: TP, FP, TN, FN and RP (reversible positive: a change that recovered after acting, with no new deficit). Case Management can filter by concordance." },
@@ -5106,14 +5111,18 @@
     return lo + "-" + (lo + 4);
   }
   // Mes y año, o fecha y hora locales, para enseñar un sello (real o ya reducido a mes)
-  function fechaHoraTxt(v) {
+  // sinSeg (F28, 22-10-2026): día y hora sin segundos, para la autoría del caso
+  function fechaHoraTxt(v, sinSeg) {
     if (!v) return "";
     if (esSoloMes(v)) {
       var p = String(v).split("-");
       return new Date(+p[0], +p[1] - 1, 1).toLocaleDateString(localeActual(), { month: "long", year: "numeric" });
     }
     var d = new Date(v);
-    return isNaN(d.getTime()) ? String(v) : d.toLocaleString(localeActual());
+    if (isNaN(d.getTime())) return String(v);
+    return sinSeg
+      ? d.toLocaleString(localeActual(), { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })
+      : d.toLocaleString(localeActual());
   }
   // Un caso que llegó de otro dispositivo (solo el mes) y del que aquí no hay datos exactos
   function faltanExactos(c) {
@@ -9708,6 +9717,7 @@
         control = tInputHoraCaso(cFt, def.c);
       }
       control.id = "caso-f-" + def.c;
+      control.addEventListener("input", function () { pintarDuracionCaso(); });
       div.appendChild(control);
       camposCaso[def.c] = control;
       return div;
@@ -9986,6 +9996,13 @@
           var envol = filasCampos[def.fila];
           envol.appendChild(elCampo);
           envol.style.gridTemplateColumns = "repeat(" + envol.children.length + ", minmax(0, 1fr))";
+          // F27 (22-10-2026): la duración, debajo de la fila de horas
+          if (def.c === "hora_fin") {
+            var pDur = regNodo("p", "caso-duracion");
+            pDur.id = "caso-duracion";
+            destino.appendChild(pDur);
+            pintarDuracionCaso(pDur);
+          }
         } else {
           destino.appendChild(elCampo);
         }
@@ -10108,6 +10125,16 @@
       if (scrollFicha.querySelector("textarea, input[type=text]")) {
         scrollFicha.insertBefore(regNodo("p", "leyenda-texto-libre", T("txt_leyenda_libre")), scrollFicha.firstChild);
       }
+    }
+    // F34 (22-10-2026): «Abrir en el Registro» a la vista, arriba de
+    // Desarrollo (donde están los espejos del Registro), solo en casos
+    // abiertos; sigue también en el ⋮.
+    var contDes = document.getElementById("caso-c-desarrollo");
+    if (contDes && !casoBloqueado(c)) {
+      var bIrReg = regNodo("button", "caso-ir-registro-dentro", T("caso_ir_registro"));
+      bIrReg.type = "button";
+      bIrReg.addEventListener("click", function () { document.getElementById("caso-ir-registro").click(); });
+      contDes.insertBefore(bIrReg, contDes.firstChild);
     }
     var pie = document.getElementById("caso-meta");
     pie.textContent = textoAutoriaCaso(c);
@@ -12344,13 +12371,15 @@
   function textoAutoriaCaso(c) {
     var partes = [];
     var quienC = c.creado_por ? nombreUsuario(c.creado_por) : "";
-    partes.push(quienC ? T("caso_creado_por", { quien: quienC, fecha: fechaHoraTxt(c.guardado_en) })
-                       : T("caso_creado_en", { fecha: fechaHoraTxt(c.guardado_en) }));
+    partes.push(quienC ? T("caso_creado_por", { quien: quienC, fecha: fechaHoraTxt(c.guardado_en, true) })
+                       : T("caso_creado_en", { fecha: fechaHoraTxt(c.guardado_en, true) }));
     var ed = c.editado_en || [];
     if (ed.length) {
       var quienE = c.editado_por ? nombreUsuario(c.editado_por) : "";
-      partes.push(quienE ? T("caso_editado_por", { quien: quienE, n: ed.length, fecha: fechaHoraTxt(ed[ed.length - 1]) })
-                         : T("caso_editado_veces", { n: ed.length, fecha: fechaHoraTxt(ed[ed.length - 1]) }));
+      var n = ed.length, ultima = fechaHoraTxt(ed[n - 1], true);
+      partes.push(quienE
+        ? T("caso_editado_por", { quien: quienE, fecha: ultima, ediciones: n === 1 ? T("caso_n_ediciones_1") : T("caso_n_ediciones", { n: n }) })
+        : T("caso_editado_veces", { fecha: ultima, veces: n === 1 ? T("caso_n_veces_1") : T("caso_n_veces", { n: n }) }));
     }
     return partes.join(" · ");
   }
@@ -18748,6 +18777,19 @@
   // que sube, para que no quede vieja si inicio o fin cambiaron fuera de la
   // casilla de reloj (Registro, casilla en minutos sin t0). Mismo criterio
   // que tDuracionCaso(): si el fin es menor, pasó la medianoche.
+  // F27 (22-10-2026): la duración a la vista en la ficha, de los minutos de
+  // inicio y fin (mismo criterio que tDuracionDeMinutos); sin las dos, oculta.
+  function pintarDuracionCaso(el) {
+    el = el || document.getElementById("caso-duracion");
+    if (!el || !casoAbierto) return;
+    var a = tRaw(casoAbierto, "hora_inicio"), b = tRaw(casoAbierto, "hora_fin");
+    if (!tvEsNum(a) || !tvEsNum(b)) { el.hidden = true; return; }
+    var d = b - a;
+    if (d < 0) d += 1440;
+    var h = Math.floor(d / 60), m = d % 60;
+    el.textContent = T("caso_duracion", { d: h ? (m ? h + " h " + m + " min" : h + " h") : m + " min" });
+    el.hidden = false;
+  }
   function tDuracionDeMinutos(c) {
     var a = tRaw(c, "hora_inicio"), b = tRaw(c, "hora_fin");
     if (!tvEsNum(a) || !tvEsNum(b)) { delete c.duracion_min; return; }
