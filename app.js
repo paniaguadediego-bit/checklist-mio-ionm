@@ -1249,8 +1249,11 @@
                            en: "Use the filters above to choose cases and export them: a PDF report of several cases, a CSV with one row per case, or another CSV with the log's events and alarms. Outside the demo everything syncs to a private repository. You can repeat this tour from Home." },
     casos_quitar_fecha:  { es: "Quitar la fecha", en: "Clear the date" },
     caso_basales_registro: { es: "Basales (Basal, Post posicionar y Cierre)", en: "Baselines (Baseline, Post-positioning and Closing)" },
-    registro_basales_leyenda: { es: "Sensitivos: amplitud (µV) / latencia (ms). Motores: amplitud (mV; onda D en µV) / umbral (mA o V).",
-                           en: "Sensory: amplitude (µV) / latency (ms). Motor: amplitude (mV; D-wave in µV) / threshold (mA or V)." },
+    registro_basales_leyenda: { es: "Sensitivos: amplitud (µV) / latencia (ms); en SEP, intensidad de estímulo (mA) / latencia (ms). Motores: amplitud (mV; onda D en µV) / umbral (mA o V); en MEP, intensidad de estímulo (mA o V) / umbral (mA o V). Entre paréntesis, la amplitud de registros anteriores.",
+                           en: "Sensory: amplitude (µV) / latency (ms); for SEP, stimulus intensity (mA) / latency (ms). Motor: amplitude (mV; D-wave in µV) / threshold (mA or V); for MEP, stimulus intensity (mA or V) / threshold (mA or V). In brackets, amplitude from earlier records." },
+    reg_bl_amp_antigua:    { es: "amp. {v} {u}", en: "amp. {v} {u}" },
+    reg_bl_resto:          { es: "resto", en: "others" },
+    reg_bl_onda_d_uv:      { es: "onda D en µV", en: "D-wave in µV" },
     caso_basales_registro_ay: { es: "Es la misma tabla que la del Registro intraoperatorio: lo que escribas aquí sale allí y en la hoja impresa, y al revés. Las filas de t-SEP, t-MEP, c-SEP, c-MEP (A y B con dos GRID), corticobulbares, Onda D, PEATC y H-R aparecen según las técnicas marcadas; el electrodo, los músculos y la inversión de fase del GRID van en Mapeo.",
                               en: "It is the same table as in the Intraoperative record: whatever you write here appears there and on the printed sheet, and vice versa. The t-SEP, t-MEP, c-SEP, c-MEP (A and B with two GRIDs), corticobulbar, D wave, BAEP and H-R rows appear depending on the techniques ticked; the GRID electrodes, muscles and phase reversal go in Mapping." },
     hoja_inversion:      { es: "Inversión de fase", en: "Phase reversal" },
@@ -19073,8 +19076,21 @@
   // resto de motores vaya en mV (30-09-2026, pedido del usuario: son ~20 µV).
   // «uTabla» guarda la de la tabla para escribir la unidad en hoja e informe.
   var REG_BASALES_UNIDAD_FILA = { m_onda_d: { amp: "µV" }, m_onda_d_dist: { amp: "µV" } };
+  // Intensidad en vez de amplitud en t-SEP, c-SEP, t-MEP y c-MEP (22-10-2026,
+  // pedido de Pani): la amplitud no se mide, se juzga a ojo (caída del 50 %,
+  // del 80 %…); lo que interesa es si hubo que subir la intensidad. Clave
+  // nueva e_<fila>_<fase>_int. La amplitud ya escrita (_amp) no se borra: se
+  // sigue leyendo y sale entre paréntesis (regBasalTexto), sin casilla.
+  var RE_BASAL_INTENSIDAD = /^(s_(sep|csep)_|m_(mep|cmep)_)/;
+  var REG_BASAL_INT = {
+    s_: { id: "int", u: "mA", l: "Intensidad", l_en: "Intensity", c: "int" },
+    m_: { id: "int", u: "mA/V", l: "Intensidad", l_en: "Intensity", c: "int" }
+  };
+  function regBasalConIntensidad(idFila) { return RE_BASAL_INTENSIDAD.test(String(idFila)); }
   function regMedidasBasal(idFila) {
-    var base = REG_BASALES_MEDIDAS[String(idFila).indexOf("m_") === 0 ? "m_" : "s_"];
+    var pref = String(idFila).indexOf("m_") === 0 ? "m_" : "s_";
+    var base = REG_BASALES_MEDIDAS[pref];
+    if (regBasalConIntensidad(idFila)) base = base.map(function (m) { return m.id === "amp" ? REG_BASAL_INT[pref] : m; });
     var otra = REG_BASALES_UNIDAD_FILA[idFila];
     if (!otra) return base;
     return base.map(function (m) {
@@ -19089,14 +19105,16 @@
   function regBasalValor(v, idFila, colId, medId) {
     var k = "e_" + idFila + "_" + colId;
     if (v[k + "_" + medId]) return v[k + "_" + medId];
-    if (!v[k]) return "";
+    if (!v[k] || medId === "int") return "";
     var partes = String(v[k]).split("/");
     return (medId === "amp" ? partes[0] : partes.slice(1).join("/")).trim();
   }
   function regBasalMigrar(v, idFila, colId) {
     var k = "e_" + idFila + "_" + colId;
     if (!v[k]) return;
-    regMedidasBasal(idFila).forEach(function (m) {
+    // Con las medidas de la tabla, amplitud incluida: la casilla antigua
+    // nunca llevaba intensidad.
+    REG_BASALES_MEDIDAS[String(idFila).indexOf("m_") === 0 ? "m_" : "s_"].forEach(function (m) {
       var x = regBasalValor(v, idFila, colId, m.id);
       if (x) v[k + "_" + m.id] = x;
     });
@@ -19104,7 +19122,7 @@
   }
   function regBasalEscrita(v, idFila, colId) {
     var k = "e_" + idFila + "_" + colId;
-    return !!(v[k] || v[k + "_amp"] || v[k + "_lat"] || v[k + "_umb"]);
+    return !!(v[k] || v[k + "_amp"] || v[k + "_int"] || v[k + "_lat"] || v[k + "_umb"]);
   }
   // «2,1 / 19,4» para la hoja impresa y el informe
   function regBasalTexto(v, idFila, colId) {
@@ -19113,10 +19131,28 @@
       var x = regBasalValor(v, idFila, colId, m.id);
       return x && m.uTabla ? x + " " + m.u : x;
     });
-    return vals[0] || vals[1] ? vals.map(function (x) { return x || "–"; }).join(" / ") : "";
+    var txt = vals[0] || vals[1] ? vals.map(function (x) { return x || "–"; }).join(" / ") : "";
+    if (regBasalConIntensidad(idFila)) {
+      var amp = regBasalValor(v, idFila, colId, "amp");
+      if (amp) txt += (txt ? " " : "") + "(" + T("reg_bl_amp_antigua", { v: amp, u: REG_BASALES_MEDIDAS[String(idFila).indexOf("m_") === 0 ? "m_" : "s_"][0].u }) + ")";
+    }
+    return txt;
   }
   function regUnidadesBasal(idFila) {
     return regMedidasBasal(idFila).map(function (m) { return m.u; }).join(" / ");
+  }
+  // Unidades de una tabla entera, con SEP/MEP aparte («SEP: mA / ms; resto:
+  // µV / ms»). corta = solo unidades (hoja impresa); si no, con el nombre de
+  // cada medida (cabecera de la pantalla).
+  function regLeyendaUnidades(prefijo, corta) {
+    var fmt = function (ms, ondaD) {
+      return ms.map(function (m) {
+        return corta ? m.u : campo(m, "l").toLowerCase() + " (" + m.u + (ondaD && m.id === "amp" ? "; " + T("reg_bl_onda_d_uv") : "") + ")";
+      }).join(corta ? " / " : " · ");
+    };
+    var esMot = prefijo === "m_";
+    return (esMot ? "MEP" : "SEP") + ": " + fmt(regMedidasBasal(prefijo + (esMot ? "mep_" : "sep_"))) + "; " +
+      T("reg_bl_resto") + ": " + fmt(regMedidasBasal(prefijo), esMot && !corta);
   }
   // Tercera tabla: estimulación de tornillos, IZQ | NIVEL | DER, 8 filas.
   // Claves e_t_<n>_izq / _nivel / _der.
@@ -19646,7 +19682,7 @@
     var bloque = regNodo("div", "reg-bl");
     var cab = regNodo("div", "reg-bl-tit");
     cab.appendChild(regNodo("span", null, titulo));
-    cab.appendChild(regNodo("span", "reg-bl-unid", medidas.map(function (m) { return campo(m, "l").toLowerCase() + " (" + m.u + (prefijo === "m_" && m.id === "amp" ? "; onda D en µV" : "") + ")"; }).join(" · ")));
+    cab.appendChild(regNodo("span", "reg-bl-unid", regLeyendaUnidades(prefijo)));
     bloque.appendChild(cab);
     var defs = filas.map(function (r) { return { id: prefijo + r.id, sin: r.id, rot: regL(r) }; });
     // Filas libres: las que ya tienen algo y, detrás, una vacía para añadir
@@ -19813,7 +19849,7 @@
       var b = ref.v;
       if (!b) return;
       var pct = Math.round((ult.v - b) / b * 100);
-      if ((m.id === "amp" && pct <= -50) || (m.id === "lat" && pct >= 10) || (m.id === "umb" && pct >= 50)) fuerte = true;
+      if ((m.id === "amp" && pct <= -50) || (m.id === "lat" && pct >= 10) || (m.id === "umb" && pct >= 50) || (m.id === "int" && pct >= 50)) fuerte = true;
       fase = fase || ult.col;
       // Si esta medida se escribió en otra fase que la primera, se dice
       trozos.push((corto ? m.c : campo(m, "l").toLowerCase()) + (ult.col !== fase ? " (" + regL(ult.col) + ")" : "") + " " + (pct > 0 ? "+" : (pct < 0 ? "\u2212" : "")) + Math.abs(pct) + " %" +
@@ -22535,8 +22571,8 @@
       // Tabla larga: filas algo más bajas para que la hoja 1 quepa en un A4.
       return hojaTabla(doc, cols, filas, { cls: "hj-basales" + (filas.length > 10 ? " hj-basales-larga" : "") });
     }
-    par.appendChild(tablaBasales(T("registro_sens_otros") + " (" + regUnidadesBasal("s_") + ")", sensVis, "s_", REG_BASALES_LIBRES.sens, T("registro_otro") + ":"));
-    par.appendChild(tablaBasales(T("registro_motores") + " (" + regUnidadesBasal("m_") + ")", motVis, "m_", REG_BASALES_LIBRES.mot, ""));
+    par.appendChild(tablaBasales(T("registro_sens_otros") + " (" + regLeyendaUnidades("s_", true) + ")", sensVis, "s_", REG_BASALES_LIBRES.sens, T("registro_otro") + ":"));
+    par.appendChild(tablaBasales(T("registro_motores") + " (" + regLeyendaUnidades("m_", true) + ")", motVis, "m_", REG_BASALES_LIBRES.mot, ""));
     if (cortVis.length) {
       par.classList.add("hj-par4");
       // Esta tabla junta sensitivos (µV / ms) y motores (mV / mA/V): la
@@ -23074,14 +23110,14 @@
     }, mLumbar);
     cLumbar.registro_intraop = registroDemo({
       quirofano: "Quirófano 1",
-      e_s_sep_msd_basal_amp: "2,4", e_s_sep_msd_basal_lat: "19,1", e_s_sep_msd_post_amp: "2,3", e_s_sep_msd_post_lat: "19,2", e_s_sep_msd_final_amp: "2,2", e_s_sep_msd_final_lat: "19,3",
-      e_s_sep_msi_basal_amp: "2,2", e_s_sep_msi_basal_lat: "19,3", e_s_sep_msi_post_amp: "2,2", e_s_sep_msi_post_lat: "19,3", e_s_sep_msi_final_amp: "2,1", e_s_sep_msi_final_lat: "19,4",
-      e_s_sep_mid_basal_amp: "1,1", e_s_sep_mid_basal_lat: "39,8", e_s_sep_mid_post_amp: "1,0", e_s_sep_mid_post_lat: "40,0", e_s_sep_mid_final_amp: "0,9", e_s_sep_mid_final_lat: "40,4",
-      e_s_sep_mii_basal_amp: "1,0", e_s_sep_mii_basal_lat: "40,1", e_s_sep_mii_post_amp: "1,0", e_s_sep_mii_post_lat: "40,2", e_s_sep_mii_final_amp: "0,9", e_s_sep_mii_final_lat: "40,5",
-      e_m_mep_msd_basal_amp: "0,61", e_m_mep_msd_basal_umb: "70", e_m_mep_msd_post_amp: "0,6", e_m_mep_msd_post_umb: "70", e_m_mep_msd_final_amp: "0,59", e_m_mep_msd_final_umb: "75",
-      e_m_mep_msi_basal_amp: "0,58", e_m_mep_msi_basal_umb: "75", e_m_mep_msi_post_amp: "0,57", e_m_mep_msi_post_umb: "75", e_m_mep_msi_final_amp: "0,56", e_m_mep_msi_final_umb: "75",
-      e_m_mep_mid_basal_amp: "0,26", e_m_mep_mid_basal_umb: "95", e_m_mep_mid_post_amp: "0,24", e_m_mep_mid_post_umb: "95", e_m_mep_mid_final_amp: "0,23", e_m_mep_mid_final_umb: "100",
-      e_m_mep_mii_basal_amp: "0,24", e_m_mep_mii_basal_umb: "100", e_m_mep_mii_post_amp: "0,23", e_m_mep_mii_post_umb: "100", e_m_mep_mii_final_amp: "0,21", e_m_mep_mii_final_umb: "105"
+      e_s_sep_msd_basal_int: "18", e_s_sep_msd_basal_lat: "19,1", e_s_sep_msd_post_int: "18", e_s_sep_msd_post_lat: "19,2", e_s_sep_msd_final_int: "18", e_s_sep_msd_final_lat: "19,3",
+      e_s_sep_msi_basal_int: "18", e_s_sep_msi_basal_lat: "19,3", e_s_sep_msi_post_int: "18", e_s_sep_msi_post_lat: "19,3", e_s_sep_msi_final_int: "18", e_s_sep_msi_final_lat: "19,4",
+      e_s_sep_mid_basal_int: "28", e_s_sep_mid_basal_lat: "39,8", e_s_sep_mid_post_int: "28", e_s_sep_mid_post_lat: "40,0", e_s_sep_mid_final_int: "28", e_s_sep_mid_final_lat: "40,4",
+      e_s_sep_mii_basal_int: "28", e_s_sep_mii_basal_lat: "40,1", e_s_sep_mii_post_int: "28", e_s_sep_mii_post_lat: "40,2", e_s_sep_mii_final_int: "28", e_s_sep_mii_final_lat: "40,5",
+      e_m_mep_msd_basal_int: "120", e_m_mep_msd_basal_umb: "70", e_m_mep_msd_post_int: "120", e_m_mep_msd_post_umb: "70", e_m_mep_msd_final_int: "125", e_m_mep_msd_final_umb: "75",
+      e_m_mep_msi_basal_int: "125", e_m_mep_msi_basal_umb: "75", e_m_mep_msi_post_int: "125", e_m_mep_msi_post_umb: "75", e_m_mep_msi_final_int: "125", e_m_mep_msi_final_umb: "75",
+      e_m_mep_mid_basal_int: "145", e_m_mep_mid_basal_umb: "95", e_m_mep_mid_post_int: "145", e_m_mep_mid_post_umb: "95", e_m_mep_mid_final_int: "150", e_m_mep_mid_final_umb: "100",
+      e_m_mep_mii_basal_int: "150", e_m_mep_mii_basal_umb: "100", e_m_mep_mii_post_int: "150", e_m_mep_mii_post_umb: "100", e_m_mep_mii_final_int: "155", e_m_mep_mii_final_umb: "105"
     }, [
       ["F", "08:40", "Basal", "En supino, antes del volteo"],
       ["TOF", "08:45", "4/4"],
@@ -23151,15 +23187,15 @@
         h_entrada_q: "08:15", h_intubacion: "08:25", h_inicio_montaje: "08:30", h_fin_montaje: "08:50",
         h_basal_pre: "08:55", h_volteo: "09:00", h_basal_post: "09:15", h_incision: "09:25",
         h_apertura_dural: "10:20", h_fase_critica: "10:45", h_cierre: "13:30", h_fin_mio: "14:20",
-        e_s_sep_msd_basal_amp: "2,1", e_s_sep_msd_basal_lat: "19,4", e_s_sep_msd_post_amp: "2,0", e_s_sep_msd_post_lat: "19,5", e_s_sep_msd_final_amp: "1,9", e_s_sep_msd_final_lat: "19,6",
-        e_s_sep_msi_basal_amp: "2,3", e_s_sep_msi_basal_lat: "19,2", e_s_sep_msi_post_amp: "2,2", e_s_sep_msi_post_lat: "19,3", e_s_sep_msi_final_amp: "2,1", e_s_sep_msi_final_lat: "19,4",
-        e_s_sep_mid_basal_amp: "0,8", e_s_sep_mid_basal_lat: "40,6", e_s_sep_mid_post_amp: "0,7", e_s_sep_mid_post_lat: "40,9", e_s_sep_mid_final_amp: "0",
-        e_s_sep_mii_basal_amp: "0,6", e_s_sep_mii_basal_lat: "41,2", e_s_sep_mii_post_amp: "0,6", e_s_sep_mii_post_lat: "41,5", e_s_sep_mii_final_amp: "0",
+        e_s_sep_msd_basal_int: "18", e_s_sep_msd_basal_lat: "19,4", e_s_sep_msd_post_int: "18", e_s_sep_msd_post_lat: "19,5", e_s_sep_msd_final_int: "18", e_s_sep_msd_final_lat: "19,6",
+        e_s_sep_msi_basal_int: "18", e_s_sep_msi_basal_lat: "19,2", e_s_sep_msi_post_int: "18", e_s_sep_msi_post_lat: "19,3", e_s_sep_msi_final_int: "18", e_s_sep_msi_final_lat: "19,4",
+        e_s_sep_mid_basal_int: "28", e_s_sep_mid_basal_lat: "40,6", e_s_sep_mid_post_int: "28", e_s_sep_mid_post_lat: "40,9", e_s_sep_mid_final_int: "40",
+        e_s_sep_mii_basal_int: "28", e_s_sep_mii_basal_lat: "41,2", e_s_sep_mii_post_int: "28", e_s_sep_mii_post_lat: "41,5", e_s_sep_mii_final_int: "40",
         // MEP en mV y umbral en mA (Inomed), inventados; MII cae al final
-        e_m_mep_msd_basal_amp: "0,52", e_m_mep_msd_basal_umb: "80", e_m_mep_msd_post_amp: "0,5", e_m_mep_msd_post_umb: "80", e_m_mep_msd_final_amp: "0,48", e_m_mep_msd_final_umb: "85",
-        e_m_mep_msi_basal_amp: "0,48", e_m_mep_msi_basal_umb: "85", e_m_mep_msi_post_amp: "0,47", e_m_mep_msi_post_umb: "85", e_m_mep_msi_final_amp: "0,45", e_m_mep_msi_final_umb: "90",
-        e_m_mep_mid_basal_amp: "0,21", e_m_mep_mid_basal_umb: "110", e_m_mep_mid_post_amp: "0,19", e_m_mep_mid_post_umb: "110", e_m_mep_mid_final_amp: "0,17", e_m_mep_mid_final_umb: "120",
-        e_m_mep_mii_basal_amp: "0,18", e_m_mep_mii_basal_umb: "115", e_m_mep_mii_post_amp: "0,16", e_m_mep_mii_post_umb: "120", e_m_mep_mii_final_amp: "0,04", e_m_mep_mii_final_umb: "150",
+        e_m_mep_msd_basal_int: "130", e_m_mep_msd_basal_umb: "80", e_m_mep_msd_post_int: "130", e_m_mep_msd_post_umb: "80", e_m_mep_msd_final_int: "135", e_m_mep_msd_final_umb: "85",
+        e_m_mep_msi_basal_int: "135", e_m_mep_msi_basal_umb: "85", e_m_mep_msi_post_int: "135", e_m_mep_msi_post_umb: "85", e_m_mep_msi_final_int: "140", e_m_mep_msi_final_umb: "90",
+        e_m_mep_mid_basal_int: "160", e_m_mep_mid_basal_umb: "110", e_m_mep_mid_post_int: "160", e_m_mep_mid_post_umb: "110", e_m_mep_mid_final_int: "170", e_m_mep_mid_final_umb: "120",
+        e_m_mep_mii_basal_int: "165", e_m_mep_mii_basal_umb: "115", e_m_mep_mii_post_int: "170", e_m_mep_mii_post_umb: "120", e_m_mep_mii_final_int: "200", e_m_mep_mii_final_umb: "150",
         e_m_onda_d_basal_amp: "22", e_m_onda_d_post_amp: "21", e_m_onda_d_final_amp: "20",
         e_m_onda_d_dist_basal_amp: "14", e_m_onda_d_dist_post_amp: "14", e_m_onda_d_dist_final_amp: "12,5",
         cierre_resultado: "persistentes",
@@ -23212,12 +23248,12 @@
     }, mAPC);
     cNeur.registro_intraop = registroDemo({
       quirofano: "Quirófano 3",
-      e_s_sep_msd_basal_amp: "2,0", e_s_sep_msd_basal_lat: "19,6", e_s_sep_msd_post_amp: "1,9", e_s_sep_msd_post_lat: "19,7", e_s_sep_msd_final_amp: "1,9", e_s_sep_msd_final_lat: "19,8",
-      e_s_sep_msi_basal_amp: "2,1", e_s_sep_msi_basal_lat: "19,4", e_s_sep_msi_post_amp: "2,0", e_s_sep_msi_post_lat: "19,5", e_s_sep_msi_final_amp: "2,0", e_s_sep_msi_final_lat: "19,5",
+      e_s_sep_msd_basal_int: "18", e_s_sep_msd_basal_lat: "19,6", e_s_sep_msd_post_int: "18", e_s_sep_msd_post_lat: "19,7", e_s_sep_msd_final_int: "18", e_s_sep_msd_final_lat: "19,8",
+      e_s_sep_msi_basal_int: "18", e_s_sep_msi_basal_lat: "19,4", e_s_sep_msi_post_int: "18", e_s_sep_msi_post_lat: "19,5", e_s_sep_msi_final_int: "18", e_s_sep_msi_final_lat: "19,5",
       e_s_peat_d_basal_amp: "0,45", e_s_peat_d_basal_lat: "5,9", e_s_peat_d_post_amp: "0,44", e_s_peat_d_post_lat: "5,9", e_s_peat_d_final_amp: "0",
       e_s_peat_i_basal_amp: "0,50", e_s_peat_i_basal_lat: "5,7", e_s_peat_i_post_amp: "0,50", e_s_peat_i_post_lat: "5,7", e_s_peat_i_final_amp: "0,48", e_s_peat_i_final_lat: "5,8",
-      e_m_mep_msd_basal_amp: "0,45", e_m_mep_msd_basal_umb: "75", e_m_mep_msd_final_amp: "0,43", e_m_mep_msd_final_umb: "80",
-      e_m_mep_msi_basal_amp: "0,47", e_m_mep_msi_basal_umb: "75", e_m_mep_msi_final_amp: "0,46", e_m_mep_msi_final_umb: "75",
+      e_m_mep_msd_basal_int: "125", e_m_mep_msd_basal_umb: "75", e_m_mep_msd_final_int: "130", e_m_mep_msd_final_umb: "80",
+      e_m_mep_msi_basal_int: "125", e_m_mep_msi_basal_umb: "75", e_m_mep_msi_final_int: "125", e_m_mep_msi_final_umb: "75",
       e_m_cobu_vii_d_basal_amp: "0,35", e_m_cobu_vii_d_basal_umb: "60", e_m_cobu_vii_d_post_amp: "0,34", e_m_cobu_vii_d_post_umb: "60", e_m_cobu_vii_d_final_amp: "0,19", e_m_cobu_vii_d_final_umb: "75",
       e_m_cobu_vii_i_basal_amp: "0,33", e_m_cobu_vii_i_basal_umb: "60", e_m_cobu_vii_i_final_amp: "0,32", e_m_cobu_vii_i_final_umb: "60",
       e_m_cobu_ixx_d_basal_amp: "0,15", e_m_cobu_ixx_d_basal_umb: "65", e_m_cobu_ixx_d_final_amp: "0,13", e_m_cobu_ixx_d_final_umb: "70",
