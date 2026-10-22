@@ -211,7 +211,20 @@
       return !!bloqueado && bloqueado() && !esGlobal(k) && k !== "mio_ionm_sync_v1";
     }
     function real_(k) { return esGlobal(k) ? k : prefijo + k; }
+    // T27 (22-10-2026): la lista filtrada se guarda y se reutiliza; antes se
+    // rehacía en cada key(i)/length y recorrer el almacén era cuadrático. Se
+    // rehace si se escribe o borra por aquí, si otra pestaña cambia el almacén
+    // (evento «storage») o si cambia el número de claves reales.
+    var cache = null, cacheLen = -1;
+    function invalidar() { cache = null; }
+    try { window.addEventListener("storage", invalidar); } catch (e) { /* sin eventos */ }
     function claves() {
+      if (cache && cacheLen === real.length) return cache;
+      cacheLen = real.length;
+      cache = clavesReales();
+      return cache;
+    }
+    function clavesReales() {
       var out = [];
       for (var i = 0; i < real.length; i++) {
         var k = real.key(i);
@@ -228,15 +241,16 @@
     }
     return {
       getItem: function (k) { return real.getItem(real_(k)); },
-      setItem: function (k, v) { if (sinEscribir(k)) return; real.setItem(real_(k), String(v)); },
-      removeItem: function (k) { if (sinEscribir(k)) return; real.removeItem(real_(k)); },
+      setItem: function (k, v) { if (sinEscribir(k)) return; invalidar(); real.setItem(real_(k), String(v)); },
+      removeItem: function (k) { if (sinEscribir(k)) return; invalidar(); real.removeItem(real_(k)); },
       key: function (i) { var c = claves(); return i < c.length ? c[i] : null; },
       get length() { return claves().length; },
       // Solo la usa "Restablecer demo": borra las claves del prefijo. Con
       // prefijo vacío NO borra nada (borraría el archivo real).
       borrarTodo: function () {
         if (!prefijo) return;
-        claves().forEach(function (k) { real.removeItem(prefijo + k); });
+        clavesReales().forEach(function (k) { real.removeItem(prefijo + k); });
+        invalidar();
       }
     };
   }
