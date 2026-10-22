@@ -1783,6 +1783,7 @@
     cat_n_tecnicas:      { es: "{n} técnicas", en: "{n} techniques" },
     cat_sin_servicio:    { es: "— sin servicio —", en: "— no specialty —" },
     cat_version:         { es: "Versión {version} · actualizado {fecha}", en: "Version {version} · updated {fecha}" },
+    cat_version_sin_fecha: { es: "Versión {version}", en: "Version {version}" },
     cat_nunca:           { es: "nunca", en: "never" },
     cat_nueva_tecnicas:  { es: "Técnica nueva", en: "New technique" },
     cat_nueva_servicios: { es: "Servicio nuevo", en: "New specialty" },
@@ -12116,11 +12117,15 @@
 
   function renderCatVersion() {
     var c = catalogos[catPestana];
-    var fecha = c.actualizado_en
-      ? new Date(c.actualizado_en).toLocaleString(localeActual(), {
-          day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit"
-        })
-      : T("cat_nunca");
+    // F32 (22-10-2026): sin fecha, solo la versión (antes «actualizado nunca»)
+    if (!c.actualizado_en) {
+      document.getElementById("cat-version").textContent =
+        T("cat_version_sin_fecha", { version: c.version });
+      return;
+    }
+    var fecha = new Date(c.actualizado_en).toLocaleString(localeActual(), {
+      day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit"
+    });
     document.getElementById("cat-version").textContent =
       T("cat_version", { version: c.version, fecha: fecha });
   }
@@ -13935,6 +13940,11 @@
       try { guardado = localStorage.getItem(EQUIPO_ULTIMO_KEY) || ""; } catch (e) { guardado = ""; }
     }
     llenarSelectEquipos(sel, guardado);
+    // F33 (22-10-2026): si el equipo recordado no tiene plantillas, «Todos»
+    // en vez de una lista vacía; lo recordado no se borra.
+    if (sel.value && !Object.keys(montajes).some(function (uid) {
+      return equipoDe(montajes[uid]) === sel.value;
+    })) sel.value = "";
     return sel.value;
   }
   document.getElementById("montajes-equipo").addEventListener("change", function () {
