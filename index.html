@@ -24,7 +24,7 @@
 
   AL DESPLEGAR UN CAMBIO EN app.js, style.css O data/: sube este número.
 -->
-<link rel="stylesheet" href="style.css?v=20261022g">
+<link rel="stylesheet" href="style.css?v=20261022h">
 </head>
 <body>
 
@@ -264,7 +264,8 @@
              sueltos no pegaban con el estilo): Guardar montaje a la vista como
              acción principal y el resto en el menú "Más acciones". -->
         <div class="montajes-acciones no-print">
-          <button type="button" id="btn-guardar-montaje" class="primario" data-i18n="btn_guardar_montaje"></button>
+          <!-- F23 (22-10-2026, decisión de Pani): oculto; la plantilla se guarda sola y «como nueva» es Duplicar. -->
+          <button type="button" id="btn-guardar-montaje" class="primario" data-i18n="btn_guardar_montaje" hidden></button>
           <div class="montajes-mas" id="montajes-mas">
             <button type="button" id="montajes-mas-btn" class="montajes-mas-btn" aria-haspopup="true" aria-expanded="false"><span data-i18n="montajes_mas"></span> ▾</button>
             <div class="montajes-mas-lista" id="montajes-mas-lista" hidden>
@@ -1321,10 +1322,10 @@
   </div>
 </dialog>
 
-<script src="data/surgeries.js?v=20261022g"></script>
-<script src="data/i18n-en.js?v=20261022g"></script>
-<script src="data/guia.js?v=20261022g"></script>
-<script src="data/parametros-tecnicas.js?v=20261022g"></script>
-<script src="app.js?v=20261022g"></script>
+<script src="data/surgeries.js?v=20261022h"></script>
+<script src="data/i18n-en.js?v=20261022h"></script>
+<script src="data/guia.js?v=20261022h"></script>
+<script src="data/parametros-tecnicas.js?v=20261022h"></script>
+<script src="app.js?v=20261022h"></script>
 </body>
 </html>

@@ -1720,6 +1720,7 @@
     caso_hoja_registro:  { es: "Imprimir hoja de registro", en: "Print record sheet" },
     caso_ir_registro:    { es: "Abrir en el Registro", en: "Open in the Record" },
     caso_cerrar_faltan:  { es: "Faltan: {lista}.\n¿Cerrar el caso igualmente?", en: "Missing: {lista}.\nClose the case anyway?" },
+    caso_cerrar_confirmar: { es: "¿Cerrar el caso?\nQuedará con candado 🔒 (solo lectura) hasta «Reabrir caso».", en: "Close the case?\nIt will be locked 🔒 (read-only) until «Reopen case»." },
     caso_borrador_resumen: { es: "Borrador desde el Registro", en: "Draft from the Record" },
     caso_borrador_vacio: { es: "No hay nada apuntado en el Registro de este caso.", en: "Nothing has been logged in this case's Record." },
     caso_borrador_anadir: { es: "Ya hay texto en el resumen: el borrador se añade al final. ¿Seguir?",
@@ -11039,6 +11040,8 @@
         .filter(function (x) { return camposCaso[x[0]] && !String(camposCaso[x[0]].value || "").trim(); })
         .map(function (x) { return T(x[1]); });
       if (faltan.length && !confirm(T("caso_cerrar_faltan", { lista: faltan.join(", ") }))) return;
+      // F24 (22-10-2026, decisión de Pani): sin nada que falte, también se confirma.
+      if (!faltan.length && !confirm(T("caso_cerrar_confirmar"))) return;
     }
     if (!guardarFicha(true)) return;
     if (estabaCerrado) { renderFichaCaso(); return; }
@@ -14583,7 +14586,7 @@
     tiempo_analisis_ms: "Tiempo de análisis (ms)", tiempo_barrido_s: "Tiempo de barrido (s)",
     ventana_registro_ms: "Ventana de registro (ms)", promediado_n: "Promediado (n)",
     tasa_muestreo_hz: "Tasa de muestreo (Hz)",
-    criterio_alerta: "Criterio de alerta", trampas_frecuentes: "Trampas frecuentes",
+    criterio_alerta: "Criterio de alarma", trampas_frecuentes: "Trampas frecuentes",
     localizacion_por_onda: "Localización por onda",
     umbral_alarma_mas_usado_mA: "Umbral de alarma más usado (mA)",
     rangos_alternativos_publicados_mA: "Rangos alternativos publicados (mA)",
