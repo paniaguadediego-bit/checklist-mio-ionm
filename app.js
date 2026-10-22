@@ -10554,9 +10554,18 @@
     n.hidden = !activos.length;
     document.getElementById("casos-filtros-quitar").hidden = !activos.length;
   }
+  // Fecha a la vista siempre dd/mm/aaaa, y mm/aaaa si solo hay mes (E12,
+  // auditoría 20-10-2026, decisión de Pani el 22-10). Lo guardado y el CSV
+  // siguen en AAAA-MM-DD / AAAA-MM.
   function fechaCorta(iso) {
     var p = String(iso).split("-");
-    return p.length === 3 ? p[2] + "/" + p[1] + "/" + p[0].slice(2) : iso;
+    if (p.length === 3) return p[2].slice(0, 2) + "/" + p[1] + "/" + p[0];
+    if (p.length === 2 && p[0].length === 4) return p[1] + "/" + p[0];
+    return iso;
+  }
+  function fechaCortaDe(d) {
+    var dos = function (n) { return (n < 10 ? "0" : "") + n; };
+    return dos(d.getDate()) + "/" + dos(d.getMonth() + 1) + "/" + d.getFullYear();
   }
 
   document.getElementById("casos-filtros-btn").addEventListener("click", function () {
@@ -10596,7 +10605,7 @@
       var dias = Math.max(0, PAPELERA_DIAS - Math.floor((Date.now() - borrado.getTime()) / 86400000));
       txt.appendChild(regNodo("small", null, T("papelera_info", {
         fecha: c.fecha ? fechaCorta(c.fecha) : "—",
-        borrado: borrado.toLocaleDateString(localeActual()),
+        borrado: fechaCortaDe(borrado),
         dias: dias
       })));
       fila.appendChild(txt);
@@ -10726,7 +10735,7 @@
       cab.appendChild(idGrupo);
       var fecha = document.createElement("span");
       fecha.className = "caso-fila-fecha";
-      fecha.textContent = c.fecha || "";
+      fecha.textContent = c.fecha ? fechaCorta(c.fecha) : "";
       // El equipo, debajo de la fecha (pedido del usuario, 25-09-2026).
       if (hayVariosEquipos()) {
         var colFecha = document.createElement("span");
@@ -13485,7 +13494,7 @@
     var d = new Date(iso);
     if (isNaN(d.getTime())) return "";
     // Una plantilla que llegó de la nube solo trae el mes (ver seudonimizarMontaje())
-    var fechaTxt = esSoloMes(iso) ? fechaHoraTxt(iso) : d.toLocaleDateString(localeActual());
+    var fechaTxt = esSoloMes(iso) ? fechaCorta(String(iso).slice(0, 7)) : fechaCortaDe(d);
     var quien = m.editado_por ? nombreUsuario(m.editado_por) : "";
     return quien ? T("montaje_modificado_por", { quien: quien, fecha: fechaTxt }) : T("montaje_modificado", { fecha: fechaTxt });
   }
@@ -13931,7 +13940,7 @@
     if (m.creado_en) {
       // Quién la creó y cuándo, al mantener el cursor (en el móvil, el autor ya se ve en la línea)
       var cd = new Date(m.creado_en);
-      sub.title = T("montaje_creada_por", { quien: autorDe(m), fecha: esSoloMes(m.creado_en) ? fechaHoraTxt(m.creado_en) : (isNaN(cd.getTime()) ? "" : cd.toLocaleDateString(localeActual())) });
+      sub.title = T("montaje_creada_por", { quien: autorDe(m), fecha: esSoloMes(m.creado_en) ? fechaCorta(String(m.creado_en).slice(0, 7)) : (isNaN(cd.getTime()) ? "" : fechaCortaDe(cd)) });
     }
     sub.textContent = autorDe(m) + (yo && m.autor_id === yo.id ? " · " + T("montaje_tuyo") : "") +
       " · " + T("plantilla_entradas", { n: entradas });
