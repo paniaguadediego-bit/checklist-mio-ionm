@@ -3,39 +3,41 @@
 ## 1. Estado
 
 - Proyecto: MIO-Check (repo público del código; repo privado de datos en la carpeta hermana; aquí no se nombran hospitales, personas, números de caso ni repos de datos).
-- Fase: **arreglos de la auditoría del 20-10-2026, a medias.** Hechos los bloques 1, 3 y 7 del plan, y parte del 2, el 4 y el 6 (ver sección 2). El código está en `?v=20261021d`, limpio y subido; no hay nada sin terminar.
-- Piloto multihospital: el Sheet del hospital propio está hecho y con `Codigo.gs` repegado el 20-10. **Falta compartirlo**: acceso restringido, solo lectores, sin editores y sin descargar ni copiar. La consulta de protección de datos sigue pendiente. C23 y C24 ya están arreglados, pero **no se recogen pacientes reales hasta probar C23 con un repo de prueba y cerrar la consulta**.
+- Fase: **arreglos de la auditoría del 20-10-2026, a medias.** En esta sesión se cerraron tres bloques: Organizador y Catálogos, ficha, y T27. Faltan E9-E13, F31 y F11. El código está en `?v=20261022d`, limpio y subido; no hay nada sin terminar.
+- Piloto multihospital: sin cambios. El Sheet del hospital propio está hecho, pero **falta compartirlo**: acceso restringido, solo lectores, sin editores y sin descargar ni copiar. La consulta de protección de datos sigue pendiente. **No se recogen pacientes reales hasta probar C23 con un repo de prueba y cerrar esa consulta.**
 
-## 2. Hecho en esta sesión
+## 2. Hecho en esta sesión (22-10-2026)
 
-- **C27** (`app.js`, `guardarMontajeComoPlantilla()`): el nombre propuesto es «diagnóstico — intervención — equipo» (`opcionTexto`, `intervencionDe`, `nombreEquipo(equipoDe(caso))`); nunca `nombre_caso`. Probado en la demo: ni la sugerencia ni la plantilla guardada llevan el nombre del caso. Commit f085aa9.
-- **C33**: marcado ✅ (este archivo ya no lleva números de caso; siguen en el historial de git, como C32).
-- **T28** (`app.js`, `COLUMNAS_CSV_CASOS` y `valorCsvDeCaso()`): la columna del CSV pasa de `fecha` a `Fecha`; la cabecera del CSV de casos es idéntica a la de la hoja `Casos` de `Codigo.gs`. No hace falta repegar `Codigo.gs`. Commit 7b2a6e2.
-- **F29** (`index.html`, `app.js`): en el diálogo ☁ sin conectar, línea `#sync-sin-conectar` (clave `sync_sin_conectar`, «te lo da quien administra la app en tu hospital… pulsa «Traer de la nube»»). En `pintarDlgSync()`, «Guardar» y «Traer» se apagan hasta tener repositorio y token (marca `data-falta-conexion`, para no reactivar lo que apaga el modo de solo lectura); se repinta con `input` en `#sync-repo` y `#sync-token`. Commit 8ca026c.
-- **F36** (`app.js`): en la ficha, una sola leyenda `.leyenda-texto-libre` encima de los apartados (antes nueve, una por apartado), en `.caso-scroll`. Texto nuevo de `txt_leyenda_libre`: «En los textos libres, no escribir…». Clave nueva `reg_espejo_tit` como `title` de las cuatro marcas ⇄ (check y etiqueta en `regControl`, cabecera de umbrales por raíz, «Técnicas con alteración»). En el Registro siguen dos leyendas (pantalla y hoja de apuntar). Commit de F36 tras 8ca026c.
-- Repo privado, `docs/AUDITORIA.md`: marcados C27, C33, T28, F29 y F36 como ✅ (20-10-2026).
+- **F21** (`style.css`): `#montajes-mas-lista { left: auto; right: 0; }`. El menú de varias plantillas (`#lote-mas-lista`) sigue anclado a la izquierda, porque ese botón está a la izquierda. Commit 254fbca.
+- **F15** (`style.css`): `.org-migas` en una sola línea (`flex: 1 1 0; nowrap`) y `#org-migas-nombre` cortado con «…»; «Inicio» en la misma fila. Cabecera de ≈128 px a 31 px a 360 px. Por decisión de Pani, el nombre sigue también en «Plantilla seleccionada». Commit 254fbca.
+- **F32** (`style.css`, `app.js`): `#cat-pestanas` baja de línea. En `renderCatVersion()`, sin `actualizado_en` sale solo «Versión N» (clave nueva `cat_version_sin_fecha`); `cat_nunca` ya no se usa, pero no se borra. Por decisión de Pani, la columna del grupo se queda. Commits 254fbca y afe8b10.
+- **F33** (`app.js`, `filtroEquipoPlantillas()`): sigue arrancando en el equipo recordado, pero si ese equipo no tiene plantillas pasa a «Todos» (lo recordado no se borra). También ocurre si se elige a mano un equipo vacío. Commit afe8b10.
+- **F26** (`app.js`, solo textos `es`/`en`): «alarma» en `caso_alerta`, `caso_tipo_alerta`, `caso_conc_alerta`, `caso_conc_sin_alerta`, `tile_casos_sub`, `tour_x_caso_desarrollo` y `caso_alarmas_registro_ay`. Los ids de campo y las columnas del CSV y del Sheet (`alerta`, `tipo_alerta`) no cambian. Commit 52c5432.
+- **F27** (`app.js`, `style.css`): `pintarDuracionCaso()` junto a `tDuracionDeMinutos()`. Pone `<p id="caso-duracion" class="caso-duracion">` («Duración: 3 h 35 min») debajo de la fila de horas, se repinta con `input` en las dos horas y se oculta si falta una. Commit 52c5432.
+- **F28** (`app.js`): `fechaHoraTxt(v, sinSeg)` tiene un segundo parámetro opcional, que solo usa `textoAutoriaCaso()`. Plurales con las claves `caso_n_ediciones(_1)` y `caso_n_veces(_1)`; `caso_creado_en` pasa a «Creado · {fecha}». Commit 52c5432.
+- **F34** (`app.js`, `style.css`): botón `.caso-ir-registro-dentro` al principio de `#caso-c-desarrollo`, solo si `!casoBloqueado(c)`. Llama a `#caso-ir-registro`, que sigue en el ⋮. Commit 52c5432.
+- **T27** (`app.js`, `almacenEspacio()`): la lista de claves se guarda y se rehace con `setItem`/`removeItem`/`borrarTodo` del envoltorio, con el evento `storage` de otra pestaña o si cambia `real.length`. `borrarTodo` usa `clavesReales()`. Commit 7d42d09.
+- Repo privado, `docs/AUDITORIA.md`: F15, F21, F26, F27, F28, F32, F33, F34 y T27 marcados ✅ (22-10-2026).
 
 ## 3. Siguiente paso exacto
 
-Abrir `../checklist-mio-datos/docs/AUDITORIA.md` (filas de F21, F15, F32 y F33 en la tabla de seguimiento y en la tabla detallada, apartado 5) y hacer ese bloque: **F21, F15, F32 y F33** (Organizador y Catálogos). Leer cada fila y buscar el código con `grep`; no leer `app.js` entero.
+Abrir `../checklist-mio-datos/docs/AUDITORIA.md` (antes, `git pull --ff-only`) y leer las filas de **E9, E10, E11, E12, E13, F31 y F11**, en la tabla de seguimiento y en la tabla detallada. Buscar el código de cada una con `grep`, sin leer `app.js` entero. Lo que cambie una decisión anterior o un texto se pregunta a Pani antes de tocarlo, todo junto en una sola pregunta.
 
-Después, en este orden:
-1. **F27**, **F28**, **F34** y **F26** (ficha).
-2. **T27**.
-3. **E9-E13**, **F31** y **F11**.
-
-Antes de cualquier hallazgo que esté en la sección 4, hay que preguntar a Pani.
+Cuando acabe ese bloque, quedan solo los hallazgos de la sección 4, que esperan a Pani.
 
 ## 4. Decisiones abiertas (esperan a Pani)
 
 - **Nuevas de esta sesión:**
+  - F26: en los parámetros de técnicas sigue el rótulo «Criterio de alerta» (`criterio_alerta`, hacia `app.js:14531`). ¿Pasarlo también a «alarma»?
+  - F34: el botón nuevo sale algo más grande que «Borrador del resumen», porque la ficha aplica su propio tamaño de botón. ¿Igualarlo?
+- De la sesión anterior:
   - F36: en el Registro quedan dos leyendas de texto libre (pantalla y hoja de apuntar). ¿Dejar solo una?
-  - Textos nuevos: la leyenda «En los textos libres, no escribir…» y la línea del ☁ sin conectar. Pani puede querer otras palabras.
+  - Textos: la leyenda «En los textos libres, no escribir…» y la línea del ☁ sin conectar.
 - C25: cómo proteger lo exacto y las fotos, que solo viven en el dispositivo y no tienen copia (`persist()`, aviso, papelera).
 - C26, segunda parte: alinear «Hora inicio/Fin MIO» del Registro con las horas de la ficha.
 - C28: ids de usuario opacos, o basta con las iniciales.
 - C29: olvidar el acceso de «Archivo» desde cualquier espacio.
-- C30: si CCEP se registra con tira o con grid (meterlo en `REG_TEC_GRID`).
+- C30: si CCEP se registra con tira o con grid (`REG_TEC_GRID`).
 - C31: informe PDF seudónimo para enviar fuera.
 - C32: reescribir la historia de git para quitar nombres antiguos (afecta también a C33).
 - C34: fijar `Codigo.gs` a una etiqueta o a un sha del repo del código.
@@ -44,36 +46,32 @@ Antes de cualquier hallazgo que esté en la sección 4, hay que preguntar a Pani
 - F24: «Cerrar caso» con confirmación, o renombrado.
 - F25: si H-R Sóleo en Técnicas y en Reflejos medulares es lo mismo.
 - F30: si «¿Quién eres?» deja de usar `prompt()` y admite nombre además de iniciales.
-- T24, menor: renombrar las clases `.sync-personal-*`, que siguen en uso con el nombre viejo.
+- T24, menor: renombrar las clases `.sync-personal-*`.
 - Piloto: con quién se comparte el Sheet; consulta al delegado de protección de datos de cada hospital.
 - Pendientes de antes: retirar del todo intervenciones y perfiles (aparcado, opción B); columnas `creado_por`/`editado_por` en el Sheet; Sheet viejo con `CONGELADO = 1`; espacio vacío de más; casos con datos dudosos (están en el diario privado).
 
 ## 5. Restricciones activas
 
-- **Aislamiento entre hospitales:**
-  - toda clave nueva de `localStorage` se prefija; solo va a `CLAVES_GLOBALES` si es una preferencia del dispositivo; nunca `window.localStorage` directo;
-  - lo exacto (fecha, edad, personal, `t0`, horas reales, `nombre_caso`) no entra en `estado.json`, `casos/`, `montajes/` ni en el Sheet;
-  - un repo de datos por hospital; nunca el token de uno en el Sheet de otro.
-- **El repo del código es PÚBLICO.** No lleva precios, números de caso reales, nombres de personas, nombres ni códigos de hospitales, ni nombres de repos de datos: tampoco en este archivo, en `CLAUDE.md` ni en `Codigo.gs`.
-- **Casos y datos que no se tocan:** los casos de esquema 1 están congelados (se leen, no se reescriben ni se migran); los ids no cambian nunca; candado en los casos cerrados; la hoja impresa 1 mide como mucho ≈1045 px.
-- Exportar/Importar copia e Imprimir se retiraron por decisión expresa: no se vuelven a poner. Intervenciones y perfiles quedan ocultos; sus claves `T()` no se borran.
-- El CSV de casos y la hoja `Casos` de `Codigo.gs` son la misma tabla: si cambia una cabecera, cambiar las dos.
-- Botones apagados por el modo de solo lectura (`SOLO_LECTURA_IDS`): ningún arreglo los reactiva (ver la marca `data-falta-conexion` de F29).
-- **Estilo:** botones rectangulares, casillas de ≈30 px, sin foco automático en el móvil, radios `var(--r)`. Código en ES5, textos con `T()` y su `en` (en el propio diccionario), DOM con `createElement`. Los mensajes de contexto de un diálogo llevan `.dlg-dato` o una clase que no oculte `body.sin-ayudas`.
-- Subir el `?v=` de las **seis** etiquetas de `index.html` en cada cambio de `app.js`, `style.css` o `data/`. La siguiente versión es `?v=20261022a` (la letra que toque ese día).
-- **Saltos de línea:** las ediciones se hacen con un script de Python en binario que detecta CRLF/LF y lo respeta (modelo en el scratchpad: función `edit(p, pares)` con `assert count == 1`). `data/i18n-en.js` tiene saltos mixtos.
-- **Repo privado:** `git fetch` y `pull --ff-only` antes de tocarlo. El PDF de la guía del otro hospital queda sin commitear a propósito.
+- **Aislamiento entre hospitales:** toda clave nueva de `localStorage` se prefija (se usa el `localStorage` envuelto, nunca `window.localStorage` directo); lo exacto (fecha, edad, personal, `t0`, horas reales, `nombre_caso`) no sale del dispositivo; un repo de datos por hospital.
+- **El repo del código es PÚBLICO:** sin precios, números de caso, nombres de personas, ni nombres o códigos de hospitales o de repos de datos (tampoco aquí ni en `CLAUDE.md`).
+- **Casos y datos que no se tocan:** los casos de esquema 1 están congelados; los ids no cambian nunca; candado en los casos cerrados (para «¿está bloqueado?» se usa `casoBloqueado(c)`; `fichaCerrada()` aún no vale mientras se pinta la ficha); la hoja impresa 1 mide como mucho ≈1045 px.
+- **Ids de campo y columnas:** un cambio de texto (como «alerta» → «alarma») no toca ids ni cabeceras. El CSV de casos y la hoja `Casos` de `Codigo.gs` son la misma tabla.
+- **Decisiones de Pani que siguen en pie:** la barra de la ficha va en una sola fila (29-09); el filtro de equipo recuerda el último usado (25-09; F33 solo añade la vuelta a «Todos»); Exportar/Importar copia e Imprimir no se vuelven a poner; intervenciones y perfiles ocultos, sin borrar sus claves `T()`.
+- Botones apagados por el modo de solo lectura (`SOLO_LECTURA_IDS`): ningún arreglo los reactiva.
+- **Estilo:** botones rectangulares, casillas de ≈30 px, sin foco automático en el móvil, radios `var(--r)`. Código en ES5, textos con `T()` y su `en`, DOM con `createElement`/`regNodo`.
+- Subir el `?v=` de las **seis** etiquetas de `index.html` en cada cambio de `app.js`, `style.css` o `data/`. La siguiente versión es `?v=20261023a` (o `20261022e` si es el mismo día).
+- **Saltos de línea:** editar con un script de Python en binario que respete CRLF/LF (`edit(p, pares)` con `assert count == 1`), escrito con la herramienta Write en el scratchpad: los heredoc largos con `'''` fallan en el Bash de esta máquina. Ejecutar con `python -X utf8`.
+- **Repo privado:** `git pull --ff-only` antes de tocarlo. El PDF de la guía del otro hospital queda sin commitear a propósito. Al marcar filas, el patrón debe exigir ⬜/🟡 en la segunda columna, porque si no también encuentra la tabla detallada.
 - Al arreglar un hallazgo, marcar su fila en `AUDITORIA.md` (✅, fecha, nota y commit).
-- **Sesión principal:** delega lo que toque 3 archivos o más, o necesite lecturas grandes; revisa el diff y verifica antes de subir; si el subagente comparte `index.html`, el `?v=` se sube una sola vez al final.
 
 ## 6. Verificación
 
-1. `node --check app.js`, `node --check data/guia.js` y `node --check data/i18n-en.js`. Para `Codigo.gs`: copiarlo a `.js` en el scratchpad y pasarle `node --check`.
-2. Servidor `checklist` (preview_start) en `http://localhost:8099/?demo`: las seis etiquetas con el `?v=` nuevo y la consola sin errores propios.
-3. C27: abrir un caso de la demo → «Editar montaje» → sustituir `window.prompt` para capturar el valor por defecto → pulsar `#barra-caso-guardar-plantilla`. La sugerencia no lleva el «Demo · …» de `nombre_caso`. «Restablecer demo» después.
-4. T28: interceptar `Blob` (una sola vez, sin recargar encima otra intercepción) y pulsar `#btn-exportar-casos-csv`: la cabecera empieza por `caso_uid,ID_Caso,estado,motivo_cancelacion,Fecha,…` y la fecha va en mes.
-5. F29: sin `?demo` (en la demo el ☁ no abre), pulsar `#btn-sync` sin conexión: `#sync-sin-conectar` visible, `#sync-subir` y `#sync-bajar` apagados hasta escribir repositorio y token. No guardar nada.
-6. F36: la ficha de un caso tiene un solo `.leyenda-texto-libre` (hijo de `.caso-scroll`); en el Registro, con un caso elegido, las etiquetas con ⇄ llevan `title`.
-7. Repo del código: `git status -sb` limpio y `git rev-parse HEAD origin/main` iguales. Repo privado: `AUDITORIA.md` con las filas marcadas y subido.
-8. Pendiente de antes: C23 con un repo y un token **de prueba** (nunca los del hospital): desde un almacén vacío, «Guardar en la nube» sobre un repo con `estado.json` debe pedir elegir versión y no subir; con un repo vacío sí sube.
-9. Nunca verificado: GitHub real con dos dispositivos (C1, C3, C10 y el conflicto 409); el PDF impreso de verdad; la puerta de usuario en el móvil real; el segundo hospital.
+1. `node --check app.js` (y `data/guia.js`, `data/i18n-en.js` si se tocan).
+2. Servidor `checklist` (preview_start) en `http://localhost:8099/?demo`: las seis etiquetas con `?v=20261022d` y la consola sin errores propios. Para cerrar la visita guiada, el botón «Ahora no».
+3. Organizador a 360 px, con la plantilla «Supratentorial» abierta: la cabecera mide ≈31 px y «Más acciones» abre dentro de la pantalla (derecha ≤ 360).
+4. Catálogos a 360 px: `#cat-pestanas` sin scroll horizontal (`scrollWidth == clientWidth`); `#cat-version` = «Versión 1».
+5. F33: en `#montajes-equipo` elegir «generico» (sin plantillas): el valor vuelve a «» (Todos) y se ven las 7.
+6. Ficha: un caso cerrado tiene «Duración: 2 h 20 min» y no tiene `.caso-ir-registro-dentro`; en uno preparado, al escribir 08:30 y 12:05 sale «Duración: 3 h 35 min», y al guardar el pie dice «… · 1 edición» sin segundos. El botón de Desarrollo abre `#pantalla-registro`. Etiquetas de la lista: «Hubo alarma».
+7. T27: Gestión de Casos de la demo con 8 filas, igual que las claves `mio_ionm_demo__mio_ionm_caso_*`; borrar un caso → 7, también tras recargar; «Restablecer demo» → 8.
+8. Repo del código: `git status -sb` limpio y `HEAD` igual que `origin/main`. Repo privado: filas marcadas y subido.
+9. Pendiente de antes: C23 con un repo y un token **de prueba** (nunca los del hospital). Nunca verificado: GitHub real con dos dispositivos (C1, C3, C10, 409), el PDF impreso de verdad, la puerta de usuario en el móvil real y el segundo hospital.
