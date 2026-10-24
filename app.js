@@ -1002,8 +1002,8 @@
     caso_hubo_cambios_plan: { es: "¿Hubo cambios respecto al plan?", en: "Were there changes from the plan?" },
     caso_cambios_respecto_al_plan: { es: "Detalle de los cambios", en: "Details of the changes" },
     caso_umbral_raices_niveles: { es: "Umbrales EMG por raíz (mapeo de tornillos)", en: "EMG thresholds by root (screw mapping)" },
-    caso_umbral_raices_niveles_ay: { es: "Marca los niveles testados durante el mapeo y anota el umbral de cada lado.",
-                           en: "Tick the levels tested during mapping and note the threshold on each side." },
+    caso_umbral_raices_niveles_ay: { es: "Los umbrales por raíz se apuntan en el Registro intraoperatorio. Salen en el informe.",
+                           en: "Root thresholds are entered in the intraoperative record. They appear in the report." },
     umbral_raices_izq:  { es: "Izquierdo {nivel}", en: "Left {nivel}" },
     umbral_raices_der:  { es: "{nivel} derecho", en: "{nivel} right" },
     umbral_raices_cab_izq:   { es: "Izquierda (mA)", en: "Left (mA)" },
@@ -1032,8 +1032,10 @@
     opc_recuperacion_senal_transitorios: { es: "Cambios transitorios recuperados", en: "Transient changes, recovered" },
     opc_recuperacion_senal_persistentes: { es: "Cambios persistentes", en: "Persistent changes" },
     caso_alarmas_registro: { es: "Alarmas", en: "Alarms" },
-    caso_alarmas_registro_ay: { es: "Son las alarmas del Registro intraoperatorio: lo que escribas aquí sale allí y en la hoja impresa, y al revés. Con ellas se rellenan solos «Tipo de alarma» y «Medida correctora» al exportar.",
-                           en: "These are the alarms of the intraoperative record: what you enter here appears there and on the printed sheet, and vice versa. They fill in “Type of alarm” and “Corrective action” on export." },
+    caso_alarmas_registro_ay: { es: "Las alarmas se apuntan en el Registro intraoperatorio. Con ellas se marca «Hubo alarma» y se rellenan «Tipo de alarma» y «Medida correctora» al exportar.",
+                           en: "Alarms are entered in the intraoperative record. They set “Alarm” and fill in “Type of alarm” and “Corrective action” on export." },
+    caso_alarmas_n:      { es: "{n} apuntada(s) en el Registro.", en: "{n} entered in the record." },
+    caso_alarmas_ninguna: { es: "Ninguna apuntada en el Registro.", en: "None entered in the record." },
     caso_mapeo_registro: { es: "Mapeo", en: "Mapping" },
     caso_mapeo_registro_ay: { es: "El mapeo se apunta en el Registro intraoperatorio. Sale en el informe y en la hoja impresa.",
                            en: "Mapping is entered in the intraoperative record. It appears in the report and on the printed sheet." },
@@ -9246,10 +9248,29 @@
     div.className = "campo";
     var control;
 
+    // Basales y Mapeo en la ficha (24-10-2026, pedido del usuario): solo el
+    // título y «Abrir en el Registro»; esos datos se apuntan únicamente en el
+    // Registro intraoperatorio (antes, la tabla espejo aquí y un botón arriba
+    // de Desarrollo -F34-). Los datos y el informe no cambian. El botón sale
+    // también en casos cerrados (el Registro se abre en solo lectura), por eso
+    // lleva .candado-libre; sigue también en el ⋮.
+    var nodoIrRegistroFicha = function () {
+      var bIr = regNodo("button", "caso-ir-registro-dentro candado-libre", T("caso_ir_registro"));
+      bIr.type = "button";
+      bIr.addEventListener("click", function () { document.getElementById("caso-ir-registro").click(); });
+      return bIr;
+    };
+
     if (def.dependeDe) {
       div.classList.add("campo-condicional");
       condicionalesPendientes.push({ div: div, de: def.dependeDe });
     }
+
+    // «Hubo alarma» ya no se marca a mano en la ficha (24-10-2026, pedido
+    // del usuario: las alarmas solo se apuntan en el Registro). El dato sigue:
+    // se pone solo al apuntar una alarma y al guardar (alarmasEnCaso()). Sin
+    // control en camposCaso, leerFichaCaso() no lo toca.
+    if (def.c === "alerta") { div.hidden = true; return div; }
 
     if (def.t === "check") {
       if (def.par) div.classList.add("campo-par");
@@ -9516,12 +9537,10 @@
       // {NIVEL: {izq, der}} }. Un nivel presente en "valores" no se borra al
       // desmarcar su chip -mismo criterio que tecnicas_parametros-: es texto
       // escrito a mano, se deja de mostrar pero no se pierde.
-      var datosRaices = { niveles: ((valor && valor.niveles) || []).slice(), valores: Object.assign({}, valor && valor.valores) };
-      camposCaso[def.c] = datosRaices;
-      var contRaices = document.createElement("div");
-      contRaices.className = "umbral-raices";
-      pintarColumnaRaices(contRaices, datosRaices, REG_SIN_GUARDAR, false);
-      div.appendChild(contRaices);
+      // Desde el 24-10-2026 se apuntan solo en el Registro (el mismo dato,
+      // caso.umbral_raices_niveles): aquí, el título y «Abrir en el Registro».
+      // Sin control en camposCaso, leerFichaCaso() no lo toca.
+      div.appendChild(nodoIrRegistroFicha());
       if (def.ay) div.appendChild(ayudaCampo(def.ay));
       ocultarSegunTecnica(div, "mapeo_raices_tornillos");
       return div;
@@ -9640,19 +9659,6 @@
       return div;
     }
 
-    // Basales y Mapeo en la ficha (24-10-2026, pedido del usuario): solo el
-    // título y «Abrir en el Registro»; esos datos se apuntan únicamente en el
-    // Registro intraoperatorio (antes, la tabla espejo aquí y un botón arriba
-    // de Desarrollo -F34-). Los datos y el informe no cambian. El botón sale
-    // también en casos cerrados (el Registro se abre en solo lectura), por eso
-    // lleva .candado-libre; sigue también en el ⋮.
-    var nodoIrRegistroFicha = function () {
-      var bIr = regNodo("button", "caso-ir-registro-dentro candado-libre", T("caso_ir_registro"));
-      bIr.type = "button";
-      bIr.addEventListener("click", function () { document.getElementById("caso-ir-registro").click(); });
-      return bIr;
-    };
-
     if (def.t === "basales_reg") {
       div.appendChild(nodoIrRegistroFicha());
       if (def.ay) div.appendChild(ayudaCampo(def.ay));
@@ -9671,11 +9677,10 @@
       var pintarR = function () {
         contR.textContent = "";
         if (def.t === "alarmas_reg") {
-          pintarAlarmas(contR, dR, { modalidades: regQueRapidos(dR, tecR()), guardar: REG_SIN_GUARDAR, conHora: false, alCambiar: function () {
-            if (camposCaso.alerta && alarmasConDatos(dR).length) camposCaso.alerta.checked = true;
-            if (repintarCorrelato) repintarCorrelato();
-            if (repintarPropuestaCaso) repintarPropuestaCaso();
-          } });
+          // Solo en el Registro desde el 24-10-2026: aquí, cuántas hay y el botón.
+          var nAl = alarmasConDatos(dR).length;
+          contR.appendChild(regNodo("p", "caso-ro", nAl ? T("caso_alarmas_n", { n: nAl }) : T("caso_alarmas_ninguna")));
+          contR.appendChild(nodoIrRegistroFicha());
         } else if (def.t === "mapeo_reg") {
           var bloquesR = REG_MAPEO_BLOQUES.filter(function (b) {
             return b.tec !== "mapeo_raices_tornillos" && regMapeoBloqueVisible(b, tecR(), dR);
@@ -10094,7 +10099,7 @@
       ctlConc.parentNode.appendChild(propC);
       var actualizarPropC = function () {
         var datosC = {
-          alerta: !!(camposCaso.alerta && camposCaso.alerta.checked) || alarmasConDatos(casoAbierto.registro_intraop).length > 0,
+          alerta: !!(camposCaso.alerta ? camposCaso.alerta.checked : casoAbierto.alerta) || alarmasConDatos(casoAbierto.registro_intraop).length > 0,
           senal: camposCaso.recuperacion_senal ? camposCaso.recuperacion_senal.value : "",
           evol: camposCaso.evolucion_postop ? camposCaso.evolucion_postop.value : ""
         };

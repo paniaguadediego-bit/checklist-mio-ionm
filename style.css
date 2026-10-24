@@ -2393,6 +2393,8 @@ dialog h3 {
 .caso-grupo[open] > summary::before { transform: rotate(90deg); }
 .caso-grupo[open] > summary { border-bottom: 1px solid var(--border); }
 .caso-grupo-campos { padding: 0.7rem 0.7rem 0.2rem; background: var(--card-bg); }
+/* Títulos de los apartados de la ficha centrados (24-10-2026, pedido del usuario). */
+#dlg-caso .caso-scroll > .caso-grupo > summary { justify-content: center; }
 
 .caso-ro { font-size: 0.82rem; color: var(--text-muted); padding: 0.2rem 0; }
 .caso-meta { font-size: 0.65rem; color: var(--text-muted); margin: 0.6rem 0 0; }
