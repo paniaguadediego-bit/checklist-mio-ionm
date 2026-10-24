@@ -451,6 +451,20 @@ main {
   .inicio-grupo[class*="blq-"] .tile { min-height: 7.6rem; padding: 0.9rem 0.45rem; gap: 0.35rem; }
   .tile-icono { width: 2.5rem; height: 2.5rem; font-size: 1.25rem; }
 }
+/* Animaciones del inicio, como PPEE-Check (24-10-2026, pedido del usuario):
+   sombra al pasar el ratón y rebote del icono (112 % y vuelta en 0,35 s) con
+   el ratón o el foco del teclado; al pulsar, el icono se encoge al 90 %.
+   Solo si el sistema no pide reducir el movimiento. La sombra es más suave
+   en el tema claro. */
+@media (prefers-reduced-motion: no-preference) {
+  .inicio-grupo[class*="blq-"] .tile { transition: box-shadow 0.2s ease; }
+  .inicio-grupo[class*="blq-"] .tile:hover { box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35); }
+  :root.tema-claro .inicio-grupo[class*="blq-"] .tile:hover { box-shadow: 0 6px 16px rgba(15, 42, 71, 0.16); }
+  .inicio-grupo[class*="blq-"] .tile:hover .tile-icono,
+  .inicio-grupo[class*="blq-"] .tile:focus-visible .tile-icono { animation: tile-rebote 0.35s ease-out; }
+  .inicio-grupo[class*="blq-"] .tile:active .tile-icono { transform: scale(0.9); }
+}
+@keyframes tile-rebote { 0% { transform: scale(1); } 40% { transform: scale(1.12); } 100% { transform: scale(1); } }
 
 /* Botón "Cerrar MIO-Check" (07-09-2026): a propósito más discreto que un
    .tile -es una acción de salida, no una pantalla más-, en tono de
