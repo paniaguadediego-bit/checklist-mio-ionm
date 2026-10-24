@@ -1035,8 +1035,8 @@
     caso_alarmas_registro_ay: { es: "Son las alarmas del Registro intraoperatorio: lo que escribas aquí sale allí y en la hoja impresa, y al revés. Con ellas se rellenan solos «Tipo de alarma» y «Medida correctora» al exportar.",
                            en: "These are the alarms of the intraoperative record: what you enter here appears there and on the printed sheet, and vice versa. They fill in “Type of alarm” and “Corrective action” on export." },
     caso_mapeo_registro: { es: "Mapeo", en: "Mapping" },
-    caso_mapeo_registro_ay: { es: "Es el Mapeo del Registro intraoperatorio (el mismo dato, en los dos sitios). Cada bloque aparece si su técnica está marcada.",
-                           en: "It is the Mapping of the intraoperative record (the same data, in both places). Each block appears if its technique is ticked." },
+    caso_mapeo_registro_ay: { es: "El mapeo se apunta en el Registro intraoperatorio. Sale en el informe y en la hoja impresa.",
+                           en: "Mapping is entered in the intraoperative record. It appears in the report and on the printed sheet." },
     caso_eventos_anestesia: { es: "Eventos de anestesia", en: "Anaesthesia events" },
     caso_eventos_anestesia_ay: { es: "Los eventos «An» del Registro intraoperatorio (hora y qué pasó), en espejo: se apuntan allí o aquí y se ven en los dos sitios.",
                            en: "The “An” events of the intraoperative record (time and what happened), mirrored: enter them there or here and they show in both places." },
@@ -1263,8 +1263,8 @@
     reg_bl_amp_antigua:    { es: "amp. {v} {u}", en: "amp. {v} {u}" },
     reg_bl_resto:          { es: "resto", en: "others" },
     reg_bl_onda_d_uv:      { es: "onda D en µV", en: "D-wave in µV" },
-    caso_basales_registro_ay: { es: "Es la misma tabla que la del Registro intraoperatorio: lo que escribas aquí sale allí y en la hoja impresa, y al revés. Las filas de t-SEP, t-MEP, c-SEP, c-MEP (A y B con dos GRID), corticobulbares, Onda D, PEATC y H-R aparecen según las técnicas marcadas; el electrodo, los músculos y la inversión de fase del GRID van en Mapeo.",
-                              en: "It is the same table as in the Intraoperative record: whatever you write here appears there and on the printed sheet, and vice versa. The t-SEP, t-MEP, c-SEP, c-MEP (A and B with two GRIDs), corticobulbar, D wave, BAEP and H-R rows appear depending on the techniques ticked; the GRID electrodes, muscles and phase reversal go in Mapping." },
+    caso_basales_registro_ay: { es: "Las basales se apuntan en el Registro intraoperatorio. Salen en el informe y en la hoja impresa.",
+                              en: "Baselines are entered in the intraoperative record. They appear in the report and on the printed sheet." },
     hoja_inversion:      { es: "Inversión de fase", en: "Phase reversal" },
     polo_menos:          { es: "− cátodo (negro)", en: "− cathode (black)" },
     polo_mas:            { es: "+ ánodo (rojo)", en: "+ anode (red)" },
@@ -9640,44 +9640,21 @@
       return div;
     }
 
-    // «Abrir en el Registro» debajo de Basales y, si hay técnicas de mapeo,
-    // debajo de Mapeo (24-10-2026, pedido del usuario: esos datos se apuntan
-    // en el Registro; antes, un botón arriba de Desarrollo -F34-). Solo en
-    // casos abiertos; sigue también en el ⋮.
+    // Basales y Mapeo en la ficha (24-10-2026, pedido del usuario): solo el
+    // título y «Abrir en el Registro»; esos datos se apuntan únicamente en el
+    // Registro intraoperatorio (antes, la tabla espejo aquí y un botón arriba
+    // de Desarrollo -F34-). Los datos y el informe no cambian. El botón sale
+    // también en casos cerrados (el Registro se abre en solo lectura), por eso
+    // lleva .candado-libre; sigue también en el ⋮.
     var nodoIrRegistroFicha = function () {
-      if (casoBloqueado(casoAbierto)) return null;
-      var bIr = regNodo("button", "caso-ir-registro-dentro", T("caso_ir_registro"));
+      var bIr = regNodo("button", "caso-ir-registro-dentro candado-libre", T("caso_ir_registro"));
       bIr.type = "button";
       bIr.addEventListener("click", function () { document.getElementById("caso-ir-registro").click(); });
       return bIr;
     };
 
-    // Basales: la tabla del Registro intraoperatorio, sobre la copia de
-    // trabajo de la ficha (se guarda con "Guardar", como el resto). Las filas
-    // dependen de las técnicas marcadas y se repintan si cambian.
     if (def.t === "basales_reg") {
-      if (!casoAbierto.registro_intraop) casoAbierto.registro_intraop = {};
-      var dB = registroAsegurar(casoAbierto.registro_intraop);
-      var sinGuardar = { cambiar: function () {}, salir: function () {} };
-      var contB = document.createElement("div");
-      contB.className = "caso-basales";
-      var pintarB = function () {
-        contB.textContent = "";
-        var tecB = camposCaso.tecnicas_realizadas || casoAbierto.tecnicas_realizadas || [];
-        var parB = document.createElement("div");
-        parB.className = "reg-basales";
-        var sinOtroB = casoBloqueado(casoEsNuevo ? null : casoAbierto);   // candado: sin «+ Otro» (F17)
-        pintarBloqueBasales(T("registro_sens_otros"), regFilasBasales(REG_BASALES_SENS, "s_", dB, tecB), "s_", REG_BASALES_LIBRES.sens, parB, dB, sinGuardar, sinOtroB);
-        pintarBloqueBasales(T("registro_motores"), regFilasBasales(REG_BASALES_MOT, "m_", dB, tecB), "m_", REG_BASALES_LIBRES.mot, parB, dB, sinGuardar, sinOtroB);
-        var bGridB = nodoBotonGridB(dB, tecB, function () { oyentesTecnicasRealizadas.forEach(function (f) { f(); }); }, true);
-        if (bGridB) parB.appendChild(bGridB);
-        contB.appendChild(parB);
-      };
-      pintarB();
-      oyentesTecnicasRealizadas.push(pintarB);
-      div.appendChild(contB);
-      var bIrB = nodoIrRegistroFicha();
-      if (bIrB) div.appendChild(bIrB);
+      div.appendChild(nodoIrRegistroFicha());
       if (def.ay) div.appendChild(ayudaCampo(def.ay));
       return div;
     }
@@ -9703,12 +9680,10 @@
           var bloquesR = REG_MAPEO_BLOQUES.filter(function (b) {
             return b.tec !== "mapeo_raices_tornillos" && regMapeoBloqueVisible(b, tecR(), dR);
           });
-          // Sin técnicas de mapeo, el apartado no se enseña (24-10-2026).
+          // Sin técnicas de mapeo, el apartado no se enseña; con ellas, solo
+          // «Abrir en el Registro» (24-10-2026).
           div.hidden = !bloquesR.length;
-          if (!bloquesR.length) return;
-          bloquesR.forEach(function (b) { b.pintar(nodoBloqueMapeo(contR, b), dR, REG_SIN_GUARDAR); });
-          var bIrM = nodoIrRegistroFicha();
-          if (bIrM) contR.appendChild(bIrM);
+          if (bloquesR.length) contR.appendChild(nodoIrRegistroFicha());
         } else {
           pintarEventosAn(contR, dR, REG_SIN_GUARDAR, false);
         }
