@@ -619,17 +619,17 @@ window.SURGERIES_DATA = {
         { "id": "cz_mas6", "nombre": "Cz+6cm", "etiqueta": "electrodo_sacacorchos", "nota": "6 cm por delante de Cz; pareja de Cz-1 en el montaje de línea media para la Onda D y los MEP de miembros inferiores" },
         { "id": "c5", "nombre": "C5", "color": "verde", "etiqueta": "electrodo_sacacorchos", "nota": "Vías corticobulbares (pares craneales) — combinación principal junto a C6; admite otras con distintas referencias" },
         { "id": "c6", "nombre": "C6", "color": "amarillo", "etiqueta": "electrodo_sacacorchos", "nota": "Vías corticobulbares (pares craneales) — combinación principal junto a C5; admite otras con distintas referencias" },
-        { "id": "mapping", "nombre": "Ref. mapeo cortical", "nombre_en": "Cortical mapping ref.", "color": "negro", "etiqueta": "electrodo_sacacorchos", "nota": "Referencia del mapeo cortical — cátodo (entrada negra, catodal)" },
-        { "id": "ref_mapping_subcortical", "nombre": "Ref. mapeo subcortical", "nombre_en": "Subcortical mapping ref.", "color": "rojo", "etiqueta": "electrodo_sacacorchos", "nota": "Referencia del mapeo subcortical — ánodo (entrada roja, anodal)" },
-        { "id": "ref_grid_estim", "nombre": "Ref.GRID", "color": "negro", "etiqueta": "electrodo_sacacorchos", "nota": "Referencia de la columna catodal (negra) para estimulación por GRID -distinta de \"Referencia GRID\" en GRID y D-Wave" },
-        { "id": "cz_doble_prima", "nombre": "Cz''", "etiqueta": "electrodo_sacacorchos", "nota": "Alternativa a Ref.Raabe (ánodo de referencia)" },
-        { "id": "ref_raabe", "nombre": "Ref.Raabe", "color": "rojo", "etiqueta": "electrodo_sacacorchos", "nota": "Referencia del estimulador Raabe — ánodo (entrada roja)" },
+        { "id": "mapping", "nombre": "Ref. mapeo cortical", "nombre_en": "Cortical mapping ref.", "color": "negro", "etiqueta": "electrodo_sacacorchos", "nota": "Referencia (cátodo) de la estimulación en el mapeo cortical" },
+        { "id": "ref_mapping_subcortical", "nombre": "Ref. mapeo subcortical", "nombre_en": "Subcortical mapping ref.", "color": "rojo", "etiqueta": "electrodo_sacacorchos", "nota": "Referencia (ánodo) de la estimulación en el mapeo subcortical" },
+        { "id": "ref_grid_estim", "nombre": "Ref.GRID", "color": "negro", "etiqueta": "electrodo_sacacorchos", "nota": "Referencia (cátodo) de la estimulación cortical directa a través del GRID. No confundir con «Referencia GRID», que es la referencia del registro" },
+        { "id": "cz_doble_prima", "nombre": "Cz''", "etiqueta": "electrodo_sacacorchos", "nota": "Electrodo en Cz'' usado como referencia (ánodo) de la estimulación directa; alternativa a la referencia de la sonda de aspiración (Raabe)" },
+        { "id": "ref_raabe", "nombre": "Ref.Raabe", "color": "rojo", "etiqueta": "electrodo_sacacorchos", "nota": "Referencia (ánodo) de la sonda de aspiración electrificada (Raabe)" },
         {
           "id": "conmutador",
           "nombre": "Conmutador",
           "equipos": ["inomed"],
           "etiqueta": "conmutador_sw",
-          "nota": "Ocupa una sola entrada anodal (p. ej. la 6)"
+          "nota": "Conmutador de la estimulación transcraneal: reparte el estímulo entre los electrodos de sacacorchos (C1-C4, Cz-1, Cz+6 cm). Ocupa una sola entrada anodal del estimulador"
         }
       ]
     },
@@ -639,7 +639,7 @@ window.SURGERIES_DATA = {
         { "id": "cz_prima", "nombre": "Cz'", "etiqueta": "electrodo_sacacorchos", "nota": "Registro cortical de los PESS de miembros inferiores (tibial posterior), habitualmente frente a Fz" },
         { "id": "c3_prima", "nombre": "C3'", "color": "rojo", "etiqueta": "electrodo_sacacorchos", "nota": "Registro cortical de los PESS del miembro superior derecho (mediano o cubital), sobre la corteza somatosensitiva izquierda, frente a Fz o C4'" },
         { "id": "c4_prima", "nombre": "C4'", "color": "azul", "etiqueta": "electrodo_sacacorchos", "nota": "Registro cortical de los PESS del miembro superior izquierdo (mediano o cubital), sobre la corteza somatosensitiva derecha, frente a Fz o C3'" },
-        { "id": "fz", "nombre": "Fz", "etiqueta": "electrodo_sacacorchos", "nota": "Referencia habitual" }
+        { "id": "fz", "nombre": "Fz", "etiqueta": "electrodo_sacacorchos", "nota": "Referencia habitual del registro cortical de los PESS" }
       ]
     },
     {
@@ -694,7 +694,7 @@ window.SURGERIES_DATA = {
         { "id": "grid2_6", "nombre": "GRID B.6", "etiqueta": "electrodo_grid_mantaB", "nota": "Contacto 6 de la manta GRID B: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
         { "id": "grid2_7", "nombre": "GRID B.7", "etiqueta": "electrodo_grid_mantaB", "nota": "Contacto 7 de la manta GRID B: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
         { "id": "grid2_8", "nombre": "GRID B.8", "etiqueta": "electrodo_grid_mantaB", "nota": "Contacto 8 de la manta GRID B: registro de ECoG y c-SEP (inversión de fase) y estimulación cortical directa (c-MEP)" },
-        { "id": "epidural_dwave", "nombre": "Electrodo epidural (D-Wave)", "etiqueta": "electrodo_epidural_dwave", "nota": "Kit 3 Platinum Contacts" },
+        { "id": "epidural_dwave", "nombre": "Electrodo epidural (D-Wave)", "etiqueta": "electrodo_epidural_dwave", "nota": "Electrodo epidural de tres contactos de platino para el registro de la onda D" },
         // Variantes del D-Wave, pedidas el 19-09-2026 -misma etiqueta que el
         // ítem de arriba, que se deja tal cual porque ya está en casos y
         // montajes reales-. Px.DW/Dst.DW son la entrada rápida: un solo chip
@@ -1030,16 +1030,16 @@ window.SURGERIES_DATA = {
       "categoria": "Potenciales auditivos (PEATC)",
       "plegada_por_defecto": true,
       "items": [
-        { "id": "a1", "nombre": "A1", "etiqueta": "electrodo_sacacorchos", "nota": "Registro auditivo del lado izquierdo. Va en una de las entradas numeradas de REF-AEP" },
-        { "id": "a2", "nombre": "A2", "etiqueta": "electrodo_sacacorchos", "nota": "Registro auditivo del lado derecho. Va en una de las entradas numeradas de REF-AEP" }
+        { "id": "a1", "nombre": "A1", "etiqueta": "electrodo_sacacorchos", "nota": "Registro auditivo del lado izquierdo (PEATC). En Inomed, en una de las entradas numeradas de la caja REF-AEP" },
+        { "id": "a2", "nombre": "A2", "etiqueta": "electrodo_sacacorchos", "nota": "Registro auditivo del lado derecho (PEATC). En Inomed, en una de las entradas numeradas de la caja REF-AEP" }
       ]
     },
     {
       "categoria": "Potenciales visuales (VEP)",
       "plegada_por_defecto": true,
       "items": [
-        { "id": "o1", "nombre": "O1", "etiqueta": "electrodo_sacacorchos", "nota": "Registro visual occipital izquierdo. Va en una de las entradas numeradas de REF-AEP" },
-        { "id": "o2", "nombre": "O2", "etiqueta": "electrodo_sacacorchos", "nota": "Registro visual occipital derecho. Va en una de las entradas numeradas de REF-AEP" },
+        { "id": "o1", "nombre": "O1", "etiqueta": "electrodo_sacacorchos", "nota": "Registro visual occipital izquierdo (PEV). En Inomed, en una de las entradas numeradas de la caja REF-AEP" },
+        { "id": "o2", "nombre": "O2", "etiqueta": "electrodo_sacacorchos", "nota": "Registro visual occipital derecho (PEV). En Inomed, en una de las entradas numeradas de la caja REF-AEP" },
         { "id": "discos_visuales", "nombre": "Discos visuales", "etiqueta": "discos_visuales", "nota": "Estimuladores luminosos (LED) en disco, sobre los párpados cerrados, para los PEV intraoperatorios" }
       ]
     },
@@ -1054,7 +1054,7 @@ window.SURGERIES_DATA = {
         { "id": "sonda_bip_esfericas", "nombre": "S. bipolar de puntas esféricas separadas", "etiqueta": "sonda_mono_esferica", "foto": "img/sondas/sonda_bip_esfericas.png", "nota": "Estimulación bipolar tipo Penfield/Ojemann: mapeo cortical motor y del lenguaje (cirugía despierta)" },
         { "id": "sonda_bip_gancho", "nombre": "S. bipolar de gancho", "etiqueta": "sonda_mono_esferica", "nota": "Para abrazar un nervio o una raíz y estimularlo o registrar su potencial de acción (ENG) aislado del tejido de alrededor" },
         { "id": "sonda_tripolar", "nombre": "S. tripolar", "etiqueta": "sonda_mono_esferica", "nota": "Estimulación muy focal y con poca difusión de corriente (cátodo entre dos ánodos): nervios y raíces" },
-        { "id": "sonda_aspiracion", "nombre": "S. de aspiración electrificada (Raabe)", "etiqueta": "sonda_aspiracion", "foto": "img/sondas/sonda_aspiracion.png", "nota": "Cátodo — mapeo/estimulación subcortical" },
+        { "id": "sonda_aspiracion", "nombre": "S. de aspiración electrificada (Raabe)", "etiqueta": "sonda_aspiracion", "foto": "img/sondas/sonda_aspiracion.png", "nota": "Sonda de aspiración que estimula mientras aspira (cátodo): mapeo subcortical continuo de la vía motora durante la resección" },
         { "id": "sonda_laparoscopica", "nombre": "S. bipolar laparoscópica", "etiqueta": "sonda_mono_esferica", "nota": "Sonda bipolar larga para cirugía laparoscópica o endoscópica: estimular nervios en el campo profundo (p. ej. nervios pélvicos)" },
         { "id": "pinza_estimulacion", "nombre": "Pinza de estimulación", "etiqueta": "pinza_estimulacion", "nota": "Estimula a través de la propia pinza: comprobar un tejido (nervio o tumor) antes de coagularlo o cortarlo" },
         { "id": "bipolar_barra", "nombre": "Bipolar barra / superficie ENG", "etiqueta": "bipolar_barra", "nota": "Electrodo bipolar de barra de superficie: estimulación o registro de nervio periférico a través de la piel (ENG)" },

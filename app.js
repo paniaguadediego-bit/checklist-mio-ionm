@@ -1321,7 +1321,7 @@
     mat_leyenda:         { es: "Tipos físicos", en: "Physical types" },
     mat_par:             { es: "{par} par", en: "CN {par}" },
     mat_par_tit:         { es: "Par craneal", en: "Cranial nerve" },
-    mat_raices_tit:      { es: "Raíces (miotoma, el mismo de Docencia)", en: "Roots (myotome, the same as in Teaching)" },
+    mat_raices_tit:      { es: "Raíces (según los miotomas de la pantalla Miotomas)", en: "Roots (according to the myotomes in the Myotomes screen)" },
     mat_leyenda_doble:   { es: "×2", en: "×2" },
     mat_leyenda_doble_tit: { es: "Cada colocación gasta 2 unidades (activo y referencia)", en: "Each placement uses 2 units (active and reference)" },
     mat_leyenda_reutilizable: { es: "reutilizable", en: "reusable" },
