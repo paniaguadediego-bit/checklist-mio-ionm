@@ -9640,6 +9640,18 @@
       return div;
     }
 
+    // «Abrir en el Registro» debajo de Basales y, si hay técnicas de mapeo,
+    // debajo de Mapeo (24-10-2026, pedido del usuario: esos datos se apuntan
+    // en el Registro; antes, un botón arriba de Desarrollo -F34-). Solo en
+    // casos abiertos; sigue también en el ⋮.
+    var nodoIrRegistroFicha = function () {
+      if (casoBloqueado(casoAbierto)) return null;
+      var bIr = regNodo("button", "caso-ir-registro-dentro", T("caso_ir_registro"));
+      bIr.type = "button";
+      bIr.addEventListener("click", function () { document.getElementById("caso-ir-registro").click(); });
+      return bIr;
+    };
+
     // Basales: la tabla del Registro intraoperatorio, sobre la copia de
     // trabajo de la ficha (se guarda con "Guardar", como el resto). Las filas
     // dependen de las técnicas marcadas y se repintan si cambian.
@@ -9664,6 +9676,8 @@
       pintarB();
       oyentesTecnicasRealizadas.push(pintarB);
       div.appendChild(contB);
+      var bIrB = nodoIrRegistroFicha();
+      if (bIrB) div.appendChild(bIrB);
       if (def.ay) div.appendChild(ayudaCampo(def.ay));
       return div;
     }
@@ -9689,8 +9703,12 @@
           var bloquesR = REG_MAPEO_BLOQUES.filter(function (b) {
             return b.tec !== "mapeo_raices_tornillos" && regMapeoBloqueVisible(b, tecR(), dR);
           });
-          if (!bloquesR.length) { contR.appendChild(regNodo("p", "caso-ro", T("reg_p_mapeo_ninguna"))); return; }
+          // Sin técnicas de mapeo, el apartado no se enseña (24-10-2026).
+          div.hidden = !bloquesR.length;
+          if (!bloquesR.length) return;
           bloquesR.forEach(function (b) { b.pintar(nodoBloqueMapeo(contR, b), dR, REG_SIN_GUARDAR); });
+          var bIrM = nodoIrRegistroFicha();
+          if (bIrM) contR.appendChild(bIrM);
         } else {
           pintarEventosAn(contR, dR, REG_SIN_GUARDAR, false);
         }
@@ -10152,16 +10170,6 @@
       if (scrollFicha.querySelector("textarea, input[type=text]")) {
         scrollFicha.insertBefore(regNodo("p", "leyenda-texto-libre", T("txt_leyenda_libre")), scrollFicha.firstChild);
       }
-    }
-    // F34 (22-10-2026): «Abrir en el Registro» a la vista, arriba de
-    // Desarrollo (donde están los espejos del Registro), solo en casos
-    // abiertos; sigue también en el ⋮.
-    var contDes = document.getElementById("caso-c-desarrollo");
-    if (contDes && !casoBloqueado(c)) {
-      var bIrReg = regNodo("button", "caso-ir-registro-dentro", T("caso_ir_registro"));
-      bIrReg.type = "button";
-      bIrReg.addEventListener("click", function () { document.getElementById("caso-ir-registro").click(); });
-      contDes.insertBefore(bIrReg, contDes.firstChild);
     }
     var pie = document.getElementById("caso-meta");
     pie.textContent = textoAutoriaCaso(c);
