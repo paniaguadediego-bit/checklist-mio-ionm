@@ -418,6 +418,40 @@ main {
   .tile-sub { font-size: 0.72rem; }
 }
 
+/* Inicio como el de PPEE-Check (24-10-2026, pedido del usuario): icono en un
+   círculo, un color por bloque (título, raya arriba de cada tarjeta y fondo
+   algo teñido) y tarjetas más grandes, 3 por fila. La línea de cada tarjeta
+   sigue dependiendo de «Ocultar ayudas». Claro = tonos oscuros legibles en
+   blanco; azul y oscuro = tonos vivos. */
+:root { --blq-antes: #5b3fb8; --blq-en: #136a73; --blq-despues: #7a5a10; }
+@media screen {
+  :root:not(.tema-claro) { --blq-antes: #b39dff; --blq-en: #4fc1cc; --blq-despues: #e0b75e; }
+}
+.inicio-grupo.blq-antes { --blq: var(--blq-antes); }
+.inicio-grupo.blq-en { --blq: var(--blq-en); }
+.inicio-grupo.blq-despues { --blq: var(--blq-despues); }
+.inicio-grupo[class*="blq-"] .inicio-grupo-tit { color: var(--blq); }
+.inicio-grupo[class*="blq-"] .tile {
+  border-top: 3px solid var(--blq);
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--blq) 12%, var(--card-bg)), var(--card-bg));
+  min-height: 9.5rem;
+  padding: 1.2rem 0.9rem;
+  gap: 0.45rem;
+}
+.inicio-grupo[class*="blq-"] .tile:hover { border-color: var(--blq); color: var(--text); }
+.inicio-tiles > .tile { flex-basis: calc((100% - 2 * 0.8rem) / 3); }
+.tile-icono {
+  display: flex; align-items: center; justify-content: center;
+  width: 3.2rem; height: 3.2rem; border-radius: 50%;
+  font-size: 1.6rem; line-height: 1;
+  background: color-mix(in srgb, var(--blq, var(--accent)) 20%, var(--card-bg));
+}
+@media (max-width: 620px) {
+  .inicio-tiles > .tile { flex-basis: calc((100% - 0.5rem) / 2); }
+  .inicio-grupo[class*="blq-"] .tile { min-height: 7.6rem; padding: 0.9rem 0.45rem; gap: 0.35rem; }
+  .tile-icono { width: 2.5rem; height: 2.5rem; font-size: 1.25rem; }
+}
+
 /* Botón "Cerrar MIO-Check" (07-09-2026): a propósito más discreto que un
    .tile -es una acción de salida, no una pantalla más-, en tono de
    peligro suave para distinguirlo del resto sin gritar. */
