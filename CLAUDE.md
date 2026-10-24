@@ -248,7 +248,7 @@ desactualizaban con cada cambio grande): para encontrar una función, usa
 | Alto real de la barra superior en `--header-h` (lo usan los sticky de debajo) | IIFE junto a `aplicarTema()` con `ResizeObserver` | ver `grep` |
 | Plantillas: fila con aspecto de caso (fecha, marca del equipo, técnicas, «+n» con globo) y favoritas por dispositivo y perfil | `nodoFilaPlantilla()`, `PLANTILLA_MAX_TECS`, `favoritasPlantillas()`, `esFavorita()`, `alternarFavorita()`, `FAV_PLANTILLAS_KEY` (orden solo por nombre: las favoritas no suben arriba desde el 04-10-2026) | ver `grep` |
 | Demo: etiqueta «Ficticio» y aviso en la ficha | `nodoFicticio()`, `#caso-aviso-demo` | ver `grep` |
-| Biblioteca de casos compartidos (antes «Biblioteca de montajes»; en construcción; ids internos «casos-modelo») | `renderCasosModelo()`, `CMOD_TECNICAS`, `#pantalla-casos-modelo` | ver `grep` |
+| Biblioteca de casos compartidos (antes «Biblioteca de montajes»; ARCHIVADA el 24-10-2026: `#tile-casos-modelo` con `hidden`, el resto sigue; ids internos «casos-modelo») | `renderCasosModelo()`, `CMOD_TECNICAS`, `#pantalla-casos-modelo` | ver `grep` |
 | Precios inventados de la demo | `PRECIOS_DEMO`, `preciosDemo()` | ver `grep` |
 | Ficha a pantalla completa (04-10-2026): sigue siendo `<dialog id="dlg-caso">` (showModal), pero `#dlg-caso[open]` ocupa 100vw×100dvh sin margen ni bordes y el contenido se centra hasta 1400 px (padding de `.caso-cab`, `.caso-scroll`, `.caso-acciones`); la barra superior de la app queda tapada mientras está abierta | reglas al final de style.css | — |
 | Ficha: autoguardado, salir y cerrar caso | `autoguardarFicha()`, `salirDeFicha()`, `firmaFicha()`, `fichaOrigen`, `casoCambiadoFuera()`, `pintarBotonCerrarCaso()`; aviso de lo que falta al cerrar y, si no falta nada, confirmación `caso_cerrar_confirmar` (22-10-2026); campos cortos en una fila (`fila` en `CAMPOS_CASO` → `.campos-fila`); ⋮ Abrir en el Registro (`#caso-ir-registro`); `borradorResumenCaso()` | ver `grep` |
@@ -389,6 +389,24 @@ distinta a la anterior, no importa el formato exacto.
 ---
 
 ## Estado del proyecto
+
+> **24-10-2026 (`?v=20261024c`) — inicio nuevo y Material genérico.**
+> - **Inicio como PPEE-Check**: `.tile-icono` (emoji en un círculo) en cada
+>   tarjeta; bloques con `blq-antes`/`blq-en`/`blq-despues` y tonos `--blq-*`
+>   (oscuros en claro, vivos en azul y oscuro): título, raya de 3 px, degradado;
+>   3 tarjetas por fila (2 en el móvil). Animaciones dentro de
+>   `prefers-reduced-motion: no-preference`: sombra al pasar el ratón, rebote
+>   del icono (`@keyframes tile-rebote`) con ratón o `:focus-visible`, 90 % al
+>   pulsar.
+> - **Material y Simulador** sin «En construcción». **Biblioteca de casos
+>   compartidos ARCHIVADA** (decisión del usuario, no cruzar datos): `hidden` en
+>   `#tile-casos-modelo`, sin entrada en la Guía; la pantalla, `renderCasosModelo()`
+>   y las claves `cmod_*` siguen.
+> - **Notas del catálogo** (`data/surgeries.js` + `data/i18n-en.js`): sin jerga
+>   de cajas ni texto en inglés; lo propio de Inomed va con «En Inomed, …».
+>   Material es pantalla pública: ninguna nota de un hospital ni personal.
+> - Datos: las plantillas de Inomed para otros hospitales se pasan con un .zip
+>   de `montajes/` que sube cada médico a su repo (guía en el repo privado).
 
 > **22-10-2026 (`?v=20261022j`) — auditoría del 20-10 casi cerrada.**
 > - Quedan 9 filas abiertas en `AUDITORIA.md` (repo privado), todas esperando

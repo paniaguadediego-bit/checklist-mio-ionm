@@ -3,15 +3,18 @@
 Herramienta interna, sin backend ni build step, para montar el material de
 cada cirugía monitorizada y saber exactamente qué hace falta.
 
-**Pantalla de inicio (06-09-2026; al día a 11-10-2026, 11 tarjetas en tres bloques):** el logo
+**Pantalla de inicio (06-09-2026; al día a 24-10-2026, 10 tarjetas en tres bloques):** el logo
 de la cabecera lleva siempre a una pantalla con tarjetas agrupadas por el
 momento de la cirugía — *Antes de quirófano*: **Organizador de Montajes** y
 **Gestión de Casos**; *Quirófano*: **Checklist pre-quirúrgico** y
-**Registro intraoperatorio**; *Después / consulta*: **Biblioteca de casos compartidos**
-(en construcción), **Técnicas IONM** (solo con la sincronización configurada),
-**Material** (en construcción), **Miotomas**, **Simulador** (en construcción),
-**Mis apuntes** y **Bibliografía recomendada**—, cada una con una línea que
-dice para qué sirve y su propio espacio de trabajo. Se pulsa una y se trabaja
+**Registro intraoperatorio**; *Después / consulta*: **Técnicas IONM** (solo con
+la sincronización configurada), **Material**, **Miotomas**, **Simulador**,
+**Mis apuntes** y **Bibliografía recomendada**—, cada una con su icono en un
+círculo, el color de su bloque (violeta, turquesa y dorado), una línea que
+dice para qué sirve (se oculta con «Ocultar ayudas») y su propio espacio de
+trabajo. Al pasar el ratón la tarjeta da sombra y el icono rebota (salvo con
+«reducir movimiento» en el sistema). La **Biblioteca de casos compartidos** se
+archivó el 24-10-2026 (tarjeta oculta): no se cruzan datos entre hospitales. Se pulsa una y se trabaja
 solo ahí; el logo, o el botón **Inicio** junto al título de cada pantalla, son
 el único camino de vuelta al inicio. Al final del inicio, el logo en grande,
 la colaboración del Dr. Javier Urriza Mena y la autoría. En **Material**, cada
@@ -32,6 +35,15 @@ con carpetas de colores, negrita/cursiva, fotos dentro de cada caja y
 **Exportar como Word**) y la pantalla **Material** (todo el catálogo
 de material en filas, con una breve descripción de uso de cada uno; tarjeta
 propia en *Después / consulta*).
+
+**Novedades del 24/10/2026:**
+- **Inicio** con el aspecto de PPEE-Check: icono en un círculo, un color por
+  bloque, tarjetas más grandes y animaciones suaves.
+- **Material** y **Simulador** ya no llevan «En construcción». Las notas del
+  catálogo de Material son más claras y genéricas (conmutador, referencias de
+  mapeo y de GRID, Raabe, Cz'', Fz, onda D, A1/A2, O1/O2).
+- **Biblioteca de casos compartidos** archivada (tarjeta oculta; la pantalla y
+  sus textos siguen por si se retoma).
 
 **Novedades del 22/10/2026:**
 - **Basales de SEP y MEP con intensidad**: las filas t-SEP, c-SEP, t-MEP y c-MEP

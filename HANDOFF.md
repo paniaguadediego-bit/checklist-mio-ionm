@@ -3,10 +3,18 @@
 ## 1. Estado
 
 - Proyecto: MIO-Check (repo público del código; repo privado de datos en la carpeta hermana; aquí no se nombran hospitales, personas, números de caso ni repos de datos).
-- Fase: **auditoría del 20-10-2026 casi cerrada.** Quedan 9 filas abiertas en `AUDITORIA.md` (repo privado), todas esperando decisión de Pani (sección 4). El código está en `?v=20261022j`, limpio y subido; no hay nada a medias. Documentación al día («actualiza todo» del 22-10-2026).
+- Fase: **auditoría del 20-10-2026 casi cerrada.** Quedan 9 filas abiertas en `AUDITORIA.md` (repo privado), todas esperando decisión de Pani (sección 4). El código está en `?v=20261024c`, limpio y subido; no hay nada a medias. Documentación al día («actualiza todo» del 24-10-2026).
 - Piloto multihospital: sin cambios. El Sheet del hospital propio está hecho, pero **falta compartirlo** (solo lectores, sin editores, sin descargar ni copiar). La consulta de protección de datos sigue pendiente. **No se recogen pacientes reales hasta probar C23 con un repo de prueba y cerrar esa consulta.**
 
-## 2. Hecho en esta sesión (22-10-2026)
+## 2. Hecho (24-10-2026)
+
+- **Inicio como PPEE-Check**: icono en un círculo (`.tile-icono`), color por bloque (`blq-antes`/`blq-en`/`blq-despues`, `--blq-*`), tarjetas más grandes y animaciones dentro de `prefers-reduced-motion: no-preference` (sombra, `@keyframes tile-rebote`, 90 % al pulsar). El rebote no se pudo ver en el navegador de pruebas (tiene «reducir movimiento»).
+- Material y Simulador sin «En construcción». **Biblioteca de casos compartidos archivada** (decisión de Pani: no cruzar datos): `#tile-casos-modelo` con `hidden`, fuera de la Guía; la pantalla y sus claves siguen.
+- Material: 13 notas del catálogo reescritas en tono neutro (ES y EN), ids sin tocar; «Raíces (según los miotomas de la pantalla Miotomas)».
+- Guía para el médico de otro hospital con Inomed, con las plantillas en un .zip que sube él a su repo (en el repo privado; PDF y .zip sin commitear).
+- Datos: las 14 copias subidas por error al repo de la organización del piloto se quitaron con un revert. Pani archivará esa organización (le toca a él en GitHub).
+
+## 2 bis. Hecho el 22-10-2026
 
 - Primera parte (ver diario privado): E9-E13, F11, F31, fechas dd/mm/aaaa (E12) e **intensidad en las basales de t-SEP, c-SEP, t-MEP y c-MEP**.
 - Decisiones de Pani aplicadas (commits b9f09f5 y 79979ac, `?v=20261022h` e `i`):
@@ -17,12 +25,12 @@
   - **F22**: `#btn-restablecer` al final de `#dlg-catalogos`, a la izquierda de Cerrar; texto «Borrar plantillas y volver a fábrica…».
   - **F25**: en la hoja de evento/alarma, con `hr_popliteo` en el caso, fuera «H-R Sóleo D/I» de Técnicas (filtro junto a los de Blink y RBC); queda el H-R de Reflejos medulares. Las filas de basales no cambian.
   - **F30**: `#dlg-usuario-nuevo` (nombre opcional + iniciales obligatorias, en mayúsculas) sustituye al `prompt()`; campo `iniciales` opcional en el usuario; `nombreCortoUsuario()` (cabecera y autoría) y `nombreLargoUsuario()` («Nombre (INI)», listas de la puerta); campo Iniciales en Catálogos → Usuarios; cambiar de usuario en `#perfil-usuario` pide `perfil_usuario_cambiar_conf`. Los usuarios de antes se ven igual.
-- **Datos (no es código)**: en el repo de datos del espacio con Cadwell (el que sale en ☁ → Opciones avanzadas de ese espacio, no el de la organización del piloto), las 14 plantillas de Inomed de «Archivo» tal cual y sus 14 copias Cadwell, con «(Cadwell)» en el nombre y una nota de revisión. Faltan 4 casillas de material propio que ese repo no tiene. Detalle y convenciones en el diario privado. Pani las revisará en la app (filtro «Equipo» → «Todos» para ver ambas). Un primer intento fue a un repo que ese espacio no usa: queda preguntar si se quitan de allí.
+- **Datos (no es código)**: en el repo de datos del espacio con Cadwell (el que sale en ☁ → Opciones avanzadas de ese espacio, no el de la organización del piloto), las 14 plantillas de Inomed de «Archivo» tal cual y sus 14 copias Cadwell, con «(Cadwell)» en el nombre y una nota de revisión. Faltan 4 casillas de material propio que ese repo no tiene. Detalle y convenciones en el diario privado. Pani las revisará en la app (filtro «Equipo» → «Todos» para ver ambas). Un primer intento fue a un repo que ese espacio no usa; ya se quitaron de allí.
 - `AUDITORIA.md`: F22, F23, F24, F25 y F30 ✅; notas añadidas en F26 y F34.
 
 ## 3. Siguiente paso exacto
 
-Preguntar a Pani por las decisiones abiertas de la sección 4, todas juntas. Si pide algo nuevo, eso va primero. Si comenta algo de las plantillas Cadwell, corregirlas en el repo de datos del hospital (no en el código).
+Recordar a Pani que archive los dos repos de la organización del piloto (Settings → Archive) y que mande la guía y el .zip al médico de Pamplona; cuando el de Burgos tenga repo, prepararle lo mismo. Después, preguntar por las decisiones abiertas de la sección 4, todas juntas. Si pide algo nuevo, eso va primero. Si comenta algo de las plantillas Cadwell, corregirlas en el repo de datos del hospital (no en el código).
 
 ## 4. Decisiones abiertas (esperan a Pani)
 
@@ -54,7 +62,7 @@ Preguntar a Pani por las decisiones abiertas de la sección 4, todas juntas. Si 
 - **Plantillas Cadwell** (convención de Pani): sin conmutador; motores en el TCS H1 C1, H2 C2, H3 C3, H4 C4, H5 Cz-1, H6 Cz+6; Fz en E13; grid en el amplificador de 32.
 - Botones apagados por el modo de solo lectura (`SOLO_LECTURA_IDS`): ningún arreglo los reactiva.
 - **Estilo:** botones rectangulares, casillas de ≈30 px, sin foco automático en el móvil (`enfocarSinTeclado()`), radios `var(--r)`. Código en ES5, textos con `T()` y su `en`, DOM con `createElement`/`regNodo`.
-- Subir el `?v=` de las **seis** etiquetas de `index.html` en cada cambio de `app.js`, `style.css` o `data/`. La siguiente es `?v=20261023a` (o `20261022k` si es el mismo día).
+- Subir el `?v=` de las **seis** etiquetas de `index.html` en cada cambio de `app.js`, `style.css` o `data/`. La siguiente es `?v=20261024d` (o la fecha del día con «a»).
 - **Saltos de línea:** editar con un script de Python en binario que respete CRLF/LF (`edit(p, pares)` con `assert count == 1`), escrito con Write en el scratchpad; `python -X utf8`.
 - **Repos de datos:** `git pull --ff-only` antes de tocarlos. El PDF de la guía del otro hospital queda sin commitear a propósito. Al marcar filas de `AUDITORIA.md`, el patrón exige ⬜/🟡 en la segunda columna y no acaba en `$` (CRLF). Un clon nuevo no tiene identidad de git: copiar `user.name`/`user.email` del repo de datos de siempre, solo en ese clon.
 
